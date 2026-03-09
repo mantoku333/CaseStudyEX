@@ -37,7 +37,7 @@ namespace ProjectWindowHistory
         {
             // フォルダが何かしら削除されていた場合は無効にしておく
             return (_selectedFolderInstanceIds?.Any() ?? false)
-                   && _selectedFolderInstanceIds.All(instanceId => EditorUtility.InstanceIDToObject(instanceId) != null);
+                   && _selectedFolderInstanceIds.All(instanceId => !string.IsNullOrEmpty(ProjectWindowReflectionUtility.GetAssetPathFromInstanceId(instanceId)));
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace ProjectWindowHistory
                     .Take(displayFolderCountMax)
                     .Select(id =>
                     {
-                        var path = AssetDatabase.GetAssetPath(id);
+                        var path = ProjectWindowReflectionUtility.GetAssetPathFromInstanceId(id);
                         return Path.GetFileName(path);
                     });
 

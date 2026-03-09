@@ -184,6 +184,25 @@ namespace ProjectWindowHistory
             return Array.Empty<int>();
         }
 
+        /// <summary>
+        /// instanceId から Object を取得する。新旧Unity互換のため呼び出し箇所を集約する。
+        /// </summary>
+        public static UnityEngine.Object InstanceIdToObject(int instanceId)
+        {
+#pragma warning disable CS0618
+            return EditorUtility.InstanceIDToObject(instanceId);
+#pragma warning restore CS0618
+        }
+
+        /// <summary>
+        /// instanceId からアセットパスを取得する。無効なIDの場合は空文字を返す。
+        /// </summary>
+        public static string GetAssetPathFromInstanceId(int instanceId)
+        {
+            var obj = InstanceIdToObject(instanceId);
+            return obj == null ? string.Empty : AssetDatabase.GetAssetPath(obj);
+        }
+
         public static void SetFolderSelection(EditorWindow targetProjectWindow, int[] selectedFolderInstanceIds)
         {
             SetFolderSelectionMethod.Invoke(targetProjectWindow, new object[] { selectedFolderInstanceIds, false });
@@ -211,7 +230,7 @@ namespace ProjectWindowHistory
             var searchFilter = CreateSearchFilterFromStringMethod.Invoke(null, new object[] { searchedText });
 
             // searchFilterに選択中のフォルダを設定する
-            var selectedFolderPathList = selectedFolderInstanceIds.Select(AssetDatabase.GetAssetPath).ToArray();
+            var selectedFolderPathList = selectedFolderInstanceIds.Select(GetAssetPathFromInstanceId).ToArray();
             SearchFilterFoldersField.SetValue(searchFilter, selectedFolderPathList);
 
             // targetProjectWindowにsearchFilterを設定する

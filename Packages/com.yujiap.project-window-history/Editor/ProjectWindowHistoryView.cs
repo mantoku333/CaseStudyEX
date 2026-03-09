@@ -226,7 +226,7 @@ namespace ProjectWindowHistory
             }
 
             selectedFolderInstanceIds = selectedFolderInstanceIds
-                .Where(instanceId => AssetDatabase.IsValidFolder(AssetDatabase.GetAssetPath(instanceId)))
+                .Where(instanceId => AssetDatabase.IsValidFolder(ProjectWindowReflectionUtility.GetAssetPathFromInstanceId(instanceId)))
                 .ToArray();
             var lastRecord = _history.CurrentRecord;
             var lastSelectedFolderInstanceIds = lastRecord?.SelectedFolderInstanceIDs;
