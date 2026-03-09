@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -25,6 +26,26 @@ namespace Metroidvania.Player
         [SerializeField] private Transform groundCheck;
         [SerializeField, Min(0.01f)] private float groundCheckRadius = 0.1f;
 
+        [Header("Landing Squash")]
+        [SerializeField] private bool enableLandingSquash = true;
+        [SerializeField] private Transform squashTarget;
+        [SerializeField, Min(0f)] private float landingVelocityThreshold = 4f;
+        [SerializeField, Range(0.5f, 1f)] private float landingScaleY = 0.82f;
+        [SerializeField, Range(1f, 1.5f)] private float landingScaleX = 1.12f;
+        [SerializeField, Min(0.01f)] private float squashDuration = 0.06f;
+        [SerializeField, Min(0.01f)] private float recoverDuration = 0.12f;
+        [SerializeField] private Ease squashEase = Ease.OutQuad;
+        [SerializeField] private Ease recoverEase = Ease.OutBack;
+
+        [Header("Jump Squash")]
+        [SerializeField] private bool enableJumpStartSquash = true;
+        [SerializeField, Range(0.5f, 1f)] private float jumpStartScaleY = 0.88f;
+        [SerializeField, Range(1f, 1.5f)] private float jumpStartScaleX = 1.1f;
+        [SerializeField, Min(0.01f)] private float jumpStartSquashDuration = 0.05f;
+        [SerializeField, Min(0.01f)] private float jumpStartRecoverDuration = 0.1f;
+        [SerializeField] private Ease jumpStartSquashEase = Ease.OutQuad;
+        [SerializeField] private Ease jumpStartRecoverEase = Ease.OutBack;
+
         private Rigidbody2D _rigidbody2D;
         private Collider2D _collider2D;
         private PlayerInput _playerInput;
@@ -33,14 +54,21 @@ namespace Metroidvania.Player
 
         private float _moveInputX;
         private bool _isGrounded;
+        private bool _wasGrounded;
+        private bool _groundStateInitialized;
         private bool _jumpQueued;
+        private float _minAirborneVelocityY;
         private PhysicsMaterial2D _runtimeNoFrictionMaterial;
+        private Sequence _squashSequence;
+        private Vector3 _initialSquashScale;
 
         private void Awake()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _collider2D = GetComponent<Collider2D>();
             _playerInput = GetComponent<PlayerInput>();
+            squashTarget = squashTarget == null ? transform : squashTarget;
+            _initialSquashScale = squashTarget.localScale;
 
             if (freezeRotationZ)
             {
@@ -55,6 +83,9 @@ namespace Metroidvania.Player
 
         private void OnEnable()
         {
+            _groundStateInitialized = false;
+            _wasGrounded = false;
+            _minAirborneVelocityY = 0f;
             BindActions();
         }
 
@@ -63,6 +94,12 @@ namespace Metroidvania.Player
             if (_jumpAction != null)
             {
                 _jumpAction.performed -= OnJumpPerformed;
+            }
+
+            _squashSequence?.Kill();
+            if (squashTarget != null)
+            {
+                squashTarget.localScale = _initialSquashScale;
             }
 
             _moveInputX = 0f;
@@ -77,7 +114,7 @@ namespace Metroidvania.Player
                 _moveInputX = Mathf.Clamp(move.x, -1f, 1f);
             }
 
-            _isGrounded = CheckGrounded();
+            UpdateGroundState();
         }
 
         private void FixedUpdate()
@@ -88,6 +125,17 @@ namespace Metroidvania.Player
 
             if (_jumpQueued && _isGrounded)
             {
+                if (enableJumpStartSquash)
+                {
+                    PlaySquash(
+                        jumpStartScaleX,
+                        jumpStartScaleY,
+                        jumpStartSquashDuration,
+                        jumpStartRecoverDuration,
+                        jumpStartSquashEase,
+                        jumpStartRecoverEase);
+                }
+
                 velocity = _rigidbody2D.linearVelocity;
                 velocity.y = 0f;
                 _rigidbody2D.linearVelocity = velocity;
@@ -103,6 +151,79 @@ namespace Metroidvania.Player
             {
                 _jumpQueued = true;
             }
+        }
+
+        private void UpdateGroundState()
+        {
+            var isGroundedNow = CheckGrounded();
+            var velocityY = _rigidbody2D.linearVelocity.y;
+
+            if (!isGroundedNow)
+            {
+                if (_wasGrounded)
+                {
+                    _minAirborneVelocityY = velocityY;
+                }
+                else
+                {
+                    _minAirborneVelocityY = Mathf.Min(_minAirborneVelocityY, velocityY);
+                }
+            }
+
+            if (_groundStateInitialized && !_wasGrounded && isGroundedNow)
+            {
+                if (enableLandingSquash && _minAirborneVelocityY <= -landingVelocityThreshold)
+                {
+                    PlayLandingSquash();
+                }
+            }
+
+            if (isGroundedNow)
+            {
+                _minAirborneVelocityY = 0f;
+            }
+
+            _isGrounded = isGroundedNow;
+            _wasGrounded = isGroundedNow;
+            _groundStateInitialized = true;
+        }
+
+        private void PlayLandingSquash()
+        {
+            PlaySquash(
+                landingScaleX,
+                landingScaleY,
+                squashDuration,
+                recoverDuration,
+                squashEase,
+                recoverEase);
+        }
+
+        private void PlaySquash(
+            float scaleXMultiplier,
+            float scaleYMultiplier,
+            float squashTime,
+            float recoverTime,
+            Ease squashTweenEase,
+            Ease recoverTweenEase)
+        {
+            if (squashTarget == null)
+            {
+                return;
+            }
+
+            _squashSequence?.Kill();
+            squashTarget.localScale = _initialSquashScale;
+
+            var squashScale = new Vector3(
+                _initialSquashScale.x * scaleXMultiplier,
+                _initialSquashScale.y * scaleYMultiplier,
+                _initialSquashScale.z);
+
+            _squashSequence = DOTween.Sequence();
+            _squashSequence.Append(squashTarget.DOScale(squashScale, squashTime).SetEase(squashTweenEase));
+            _squashSequence.Append(squashTarget.DOScale(_initialSquashScale, recoverTime).SetEase(recoverTweenEase));
+            _squashSequence.SetLink(gameObject);
         }
 
         private void BindActions()
