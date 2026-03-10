@@ -1,9 +1,22 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Metroidvania.Player
 {
+    public enum FacingDirection
+    {
+        Left = -1,
+        Right = 1
+    }
+
+    public enum UmbrellaState
+    {
+        Closed = 0,
+        Opened = 1
+    }
+
     /// <summary>
     /// Minimal 2D platformer controller for metroidvania mock:
     /// horizontal movement (A/D) and jump (Space) via Input System.
@@ -16,10 +29,12 @@ namespace Metroidvania.Player
         [Header("Movement")]
         [SerializeField, Min(0f)] private float moveSpeed = 6f;
         [SerializeField, Min(0f)] private float jumpImpulse = 10f;
+        [SerializeField, Min(0f)] private float glideMoveSpeedMultiplier = 1.15f;
 
         [Header("Physics")]
         [SerializeField] private bool freezeRotationZ = true;
         [SerializeField] private bool applyNoFrictionMaterial = true;
+        [SerializeField, Min(0f)] private float baseGravityScale = 2.2f;
 
         [Header("Ground Check")]
         [SerializeField] private LayerMask groundLayers = ~0;
@@ -46,11 +61,29 @@ namespace Metroidvania.Player
         [SerializeField] private Ease jumpStartSquashEase = Ease.OutQuad;
         [SerializeField] private Ease jumpStartRecoverEase = Ease.OutBack;
 
+        [Header("Umbrella")]
+        [SerializeField] private UmbrellaState umbrellaState = UmbrellaState.Closed;
+        [SerializeField] private GameObject umbrellaOpenedVisual;
+        [SerializeField] private bool mirrorUmbrellaLocalPositionXWithFacing = true;
+
+        [Header("Umbrella Glide")]
+        [SerializeField] private bool enableUmbrellaGlide = true;
+        [SerializeField, Min(0f)] private float glideGravityScale = 0.35f;
+        [SerializeField, Min(0f)] private float glideMaxFallSpeed = 3.5f;
+        [SerializeField] private float glideStartVerticalVelocity = -0.1f;
+
+        [Header("Facing")]
+        [SerializeField] private FacingDirection facingDirection = FacingDirection.Right;
+        [SerializeField, Range(0f, 1f)] private float facingInputThreshold = 0.01f;
+        [SerializeField] private SpriteRenderer[] facingSpriteRenderers;
+
         private Rigidbody2D _rigidbody2D;
         private Collider2D _collider2D;
         private PlayerInput _playerInput;
         private InputAction _moveAction;
         private InputAction _jumpAction;
+        private InputAction _umbrellaToggleAction;
+        private bool _ownsUmbrellaToggleAction;
 
         private float _moveInputX;
         private bool _isGrounded;
@@ -61,14 +94,34 @@ namespace Metroidvania.Player
         private PhysicsMaterial2D _runtimeNoFrictionMaterial;
         private Sequence _squashSequence;
         private Vector3 _initialSquashScale;
+        private float _umbrellaRightLocalX;
+        private float _umbrellaLeftLocalX;
+        private float _umbrellaLocalY;
+        private float _umbrellaLocalZ;
+        private bool _hasUmbrellaFacingOffsets;
+        private float _defaultGravityScale;
+
+        public FacingDirection CurrentFacingDirection => facingDirection;
+        public bool IsFacingRight => facingDirection == FacingDirection.Right;
+        public UmbrellaState CurrentUmbrellaState => umbrellaState;
+        public bool IsUmbrellaOpen => umbrellaState == UmbrellaState.Opened;
+        public bool IsGliding => ShouldGlide();
+        public event Action<UmbrellaState> UmbrellaStateChanged;
 
         private void Awake()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _collider2D = GetComponent<Collider2D>();
             _playerInput = GetComponent<PlayerInput>();
+            _defaultGravityScale = baseGravityScale;
+            _rigidbody2D.gravityScale = _defaultGravityScale;
             squashTarget = squashTarget == null ? transform : squashTarget;
             _initialSquashScale = squashTarget.localScale;
+            if (facingSpriteRenderers == null || facingSpriteRenderers.Length == 0)
+            {
+                facingSpriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+            }
+            CacheUmbrellaFacingOffsets();
 
             if (freezeRotationZ)
             {
@@ -86,6 +139,9 @@ namespace Metroidvania.Player
             _groundStateInitialized = false;
             _wasGrounded = false;
             _minAirborneVelocityY = 0f;
+            _rigidbody2D.gravityScale = _defaultGravityScale;
+            SetUmbrellaState(UmbrellaState.Closed, true);
+            ApplyFacingVisual();
             BindActions();
         }
 
@@ -96,6 +152,15 @@ namespace Metroidvania.Player
                 _jumpAction.performed -= OnJumpPerformed;
             }
 
+            if (_umbrellaToggleAction != null)
+            {
+                _umbrellaToggleAction.performed -= OnUmbrellaTogglePerformed;
+                if (_ownsUmbrellaToggleAction)
+                {
+                    _umbrellaToggleAction.Disable();
+                }
+            }
+
             _squashSequence?.Kill();
             if (squashTarget != null)
             {
@@ -104,6 +169,16 @@ namespace Metroidvania.Player
 
             _moveInputX = 0f;
             _jumpQueued = false;
+            _rigidbody2D.gravityScale = _defaultGravityScale;
+        }
+
+        private void OnDestroy()
+        {
+            if (_ownsUmbrellaToggleAction && _umbrellaToggleAction != null)
+            {
+                _umbrellaToggleAction.Dispose();
+                _umbrellaToggleAction = null;
+            }
         }
 
         private void Update()
@@ -112,6 +187,7 @@ namespace Metroidvania.Player
             {
                 var move = _moveAction.ReadValue<Vector2>();
                 _moveInputX = Mathf.Clamp(move.x, -1f, 1f);
+                UpdateFacingFromMoveInput();
             }
 
             UpdateGroundState();
@@ -120,7 +196,13 @@ namespace Metroidvania.Player
         private void FixedUpdate()
         {
             var velocity = _rigidbody2D.linearVelocity;
-            velocity.x = _moveInputX * moveSpeed;
+            var currentMoveSpeed = moveSpeed;
+            if (IsGliding)
+            {
+                currentMoveSpeed *= glideMoveSpeedMultiplier;
+            }
+
+            velocity.x = _moveInputX * currentMoveSpeed;
             _rigidbody2D.linearVelocity = velocity;
 
             if (_jumpQueued && _isGrounded)
@@ -142,6 +224,7 @@ namespace Metroidvania.Player
                 _rigidbody2D.AddForce(Vector2.up * jumpImpulse, ForceMode2D.Impulse);
             }
 
+            ApplyGlidePhysics();
             _jumpQueued = false;
         }
 
@@ -150,6 +233,14 @@ namespace Metroidvania.Player
             if (context.performed)
             {
                 _jumpQueued = true;
+            }
+        }
+
+        private void OnUmbrellaTogglePerformed(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                ToggleUmbrella();
             }
         }
 
@@ -226,6 +317,63 @@ namespace Metroidvania.Player
             _squashSequence.SetLink(gameObject);
         }
 
+        public void OpenUmbrella()
+        {
+            SetUmbrellaState(UmbrellaState.Opened);
+        }
+
+        public void CloseUmbrella()
+        {
+            SetUmbrellaState(UmbrellaState.Closed);
+        }
+
+        public void ToggleUmbrella()
+        {
+            SetUmbrellaState(IsUmbrellaOpen ? UmbrellaState.Closed : UmbrellaState.Opened);
+        }
+
+        public void SetUmbrellaState(UmbrellaState newState)
+        {
+            SetUmbrellaState(newState, false);
+        }
+
+        private void SetUmbrellaState(UmbrellaState newState, bool forceNotify)
+        {
+            if (!forceNotify && umbrellaState == newState)
+            {
+                return;
+            }
+
+            umbrellaState = newState;
+            ApplyUmbrellaVisual();
+            UmbrellaStateChanged?.Invoke(umbrellaState);
+        }
+
+        private void UpdateFacingFromMoveInput()
+        {
+            if (_moveInputX > facingInputThreshold)
+            {
+                SetFacingDirection(FacingDirection.Right);
+                return;
+            }
+
+            if (_moveInputX < -facingInputThreshold)
+            {
+                SetFacingDirection(FacingDirection.Left);
+            }
+        }
+
+        private void SetFacingDirection(FacingDirection newDirection)
+        {
+            if (facingDirection == newDirection)
+            {
+                return;
+            }
+
+            facingDirection = newDirection;
+            ApplyFacingVisual();
+        }
+
         private void BindActions()
         {
             if (_playerInput == null || _playerInput.actions == null)
@@ -245,6 +393,150 @@ namespace Metroidvania.Player
 
             _jumpAction.performed -= OnJumpPerformed;
             _jumpAction.performed += OnJumpPerformed;
+
+            BindUmbrellaToggleAction();
+        }
+
+        private void BindUmbrellaToggleAction()
+        {
+            var umbrellaActionFromAsset = _playerInput.actions.FindAction("UmbrellaToggle", false);
+            if (umbrellaActionFromAsset != null)
+            {
+                _umbrellaToggleAction = umbrellaActionFromAsset;
+                _ownsUmbrellaToggleAction = false;
+            }
+            else
+            {
+                if (_umbrellaToggleAction == null || !_ownsUmbrellaToggleAction)
+                {
+                    _umbrellaToggleAction = new InputAction(
+                        name: "UmbrellaToggle_MouseRight",
+                        type: InputActionType.Button,
+                        binding: "<Mouse>/rightButton");
+                    _ownsUmbrellaToggleAction = true;
+                }
+
+                if (!_umbrellaToggleAction.enabled)
+                {
+                    _umbrellaToggleAction.Enable();
+                }
+            }
+
+            _umbrellaToggleAction.performed -= OnUmbrellaTogglePerformed;
+            _umbrellaToggleAction.performed += OnUmbrellaTogglePerformed;
+        }
+
+        private void ApplyUmbrellaVisual()
+        {
+            if (umbrellaOpenedVisual == null)
+            {
+                return;
+            }
+
+            umbrellaOpenedVisual.SetActive(IsUmbrellaOpen);
+        }
+
+        private void ApplyFacingVisual()
+        {
+            if (facingSpriteRenderers == null || facingSpriteRenderers.Length == 0)
+            {
+                return;
+            }
+
+            var shouldFlipX = facingDirection == FacingDirection.Left;
+            for (var i = 0; i < facingSpriteRenderers.Length; i++)
+            {
+                var spriteRenderer = facingSpriteRenderers[i];
+                if (spriteRenderer == null)
+                {
+                    continue;
+                }
+
+                spriteRenderer.flipX = shouldFlipX;
+            }
+
+            ApplyUmbrellaFacingOffset();
+        }
+
+        private void CacheUmbrellaFacingOffsets()
+        {
+            _hasUmbrellaFacingOffsets = false;
+            if (umbrellaOpenedVisual == null)
+            {
+                return;
+            }
+
+            var localPos = umbrellaOpenedVisual.transform.localPosition;
+            _umbrellaLocalY = localPos.y;
+            _umbrellaLocalZ = localPos.z;
+
+            if (facingDirection == FacingDirection.Right)
+            {
+                _umbrellaRightLocalX = localPos.x;
+                _umbrellaLeftLocalX = -localPos.x;
+            }
+            else
+            {
+                _umbrellaLeftLocalX = localPos.x;
+                _umbrellaRightLocalX = -localPos.x;
+            }
+
+            _hasUmbrellaFacingOffsets = true;
+        }
+
+        private void ApplyUmbrellaFacingOffset()
+        {
+            if (!mirrorUmbrellaLocalPositionXWithFacing || umbrellaOpenedVisual == null)
+            {
+                return;
+            }
+
+            if (!_hasUmbrellaFacingOffsets)
+            {
+                CacheUmbrellaFacingOffsets();
+                if (!_hasUmbrellaFacingOffsets)
+                {
+                    return;
+                }
+            }
+
+            var localPos = umbrellaOpenedVisual.transform.localPosition;
+            localPos.x = IsFacingRight ? _umbrellaRightLocalX : _umbrellaLeftLocalX;
+            localPos.y = _umbrellaLocalY;
+            localPos.z = _umbrellaLocalZ;
+            umbrellaOpenedVisual.transform.localPosition = localPos;
+        }
+
+        private bool ShouldGlide()
+        {
+            if (!enableUmbrellaGlide || !IsUmbrellaOpen || _isGrounded)
+            {
+                return false;
+            }
+
+            return _rigidbody2D.linearVelocity.y <= glideStartVerticalVelocity;
+        }
+
+        private void ApplyGlidePhysics()
+        {
+            if (ShouldGlide())
+            {
+                _rigidbody2D.gravityScale = glideGravityScale;
+
+                var velocity = _rigidbody2D.linearVelocity;
+                if (velocity.y < -glideMaxFallSpeed)
+                {
+                    velocity.y = -glideMaxFallSpeed;
+                    _rigidbody2D.linearVelocity = velocity;
+                }
+
+                return;
+            }
+
+            if (_rigidbody2D.gravityScale != _defaultGravityScale)
+            {
+                _rigidbody2D.gravityScale = _defaultGravityScale;
+            }
         }
 
         private bool CheckGrounded()
