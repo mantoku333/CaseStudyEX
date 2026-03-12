@@ -7,7 +7,7 @@
 - **Unity**: Unity 6000.3.8f1
 - **Git**: 最新バージョン推奨
 - **Git LFS**: 大きなバイナリファイル管理用（推奨）
-- **IDE**: Visual Studio, Rider, または VS Code
+- **IDE**: Visual Studio, Rider, VS Code
 
 ## 初回セットアップ
 
@@ -20,7 +20,7 @@ cd Case
 
 ### 2. Git LFS のセットアップ（推奨）
 
-大きなアセット（画像、音声、3Dモデル等）を効率的に管理するため、Git LFSの使用を推奨します。
+大きなアセット（画像、音声、3Dモデル等）を効率的に管理するため、Git LFSの使用を推奨。
 
 ```bash
 # Git LFSをインストール（未インストールの場合）
@@ -42,8 +42,7 @@ git lfs pull
 3. 「Install Editor」をクリック
 4. バージョン **6000.3.8f1** を選択してインストール
 5. 必要なモジュールを選択:
-   - **WebGL Build Support**（Web公開する場合）
-   - **Windows Build Support** または **Mac Build Support**
+   - **Windows Build Support** 
    - **Documentation**（推奨）
 
 ### 4. Unity Hub でプロジェクトを開く
@@ -76,7 +75,7 @@ git lfs pull
 
 ### ブランチの作成
 
-作業を開始する前に、必ず作業用ブランチを作成してください。
+作業を開始する前に、作業用ブランチを作成
 
 ```bash
 # developブランチを最新にする
@@ -84,14 +83,14 @@ git checkout develop
 git pull origin develop
 
 # 新しい機能ブランチを作成
-git checkout -b feature/あなたの機能名
+git checkout -b feature-名前-あなたの機能名
 ```
 
 例:
 ```bash
-git checkout -b feature/player-movement
-git checkout -b feature/enemy-slime
-git checkout -b feature/ui-health-bar
+git checkout -b feature-nakae-player-movement
+git checkout -b feature-oozono-enemy-slime
+git checkout -b feature-fuyuno-ui-health-bar
 ```
 
 ### 作業フォルダの確認
@@ -107,14 +106,14 @@ git checkout -b feature/ui-health-bar
 
 ### テストシーンの作成
 
-他の開発者とのコンフリクトを避けるため、自分専用のテストシーンを作成します。
+コンフリクトを避けるため、自分用の作業環境を作る。
 
 1. `Assets/Scenes/TestScenes/` を右クリック
 2. `Create > Scene` を選択
-3. シーン名: `YourName_Test.unity` （例: `Tanaka_PlayerTest.unity`）
-4. このシーンで開発・テストを行う
+3. シーン名: `名前_機能Test.unity` （例: `mantoku_SceneChangeTest.unity`）
+4. このシーンで開発を行う
 
-## 日常的なワークフロー
+## ワークフロー
 
 ### 1. 作業開始前
 
@@ -149,84 +148,3 @@ git rebase origin/develop
 # GitHub上でPull Requestを作成し、レビューを依頼
 ```
 
-## トラブルシューティング
-
-### Unity が起動しない
-
-1. Unity Hub でプロジェクトを削除
-2. `Library/` フォルダを削除
-3. Unity Hub から再度プロジェクトを追加
-
-### .meta ファイルが消えた
-
-```bash
-# Unityエディタを閉じる
-# 該当するアセットを削除して、再度インポート
-```
-
-### マージコンフリクトが発生
-
-詳細は `CONTRIBUTING.md` の「トラブルシューティング」セクションを参照してください。
-
-### 大きなファイルのプッシュに失敗
-
-Git LFS を使用していない場合、大きなファイルのプッシュに失敗することがあります。
-
-```bash
-# Git LFSをセットアップ
-git lfs install
-
-# 該当ファイルをLFS管理に追加（.gitattributesで既に設定済み）
-git lfs track "*.png"
-git lfs track "*.mp3"
-
-# 再度プッシュ
-git push origin feature/あなたの機能名
-```
-
-## よくある質問
-
-### Q: 他の人のブランチを見たい
-
-```bash
-# リモートブランチ一覧を確認
-git branch -r
-
-# 特定のブランチをチェックアウト
-git checkout -b local-branch-name origin/remote-branch-name
-```
-
-### Q: 間違えてメインブランチで作業してしまった
-
-```bash
-# 変更を一時退避
-git stash
-
-# 新しいブランチを作成
-git checkout -b feature/correct-branch-name
-
-# 変更を適用
-git stash pop
-```
-
-### Q: コミットメッセージを間違えた
-
-```bash
-# 直前のコミットメッセージを修正
-git commit --amend -m "正しいメッセージ"
-
-# リモートに反映（まだプッシュしていない場合のみ）
-git push origin feature/あなたの機能名
-```
-
-## 参考資料
-
-- [README.md](README.md) - プロジェクト概要とフォルダ構造
-- [CONTRIBUTING.md](CONTRIBUTING.md) - 開発ガイドライン
-- [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) - 詳細なフォルダ構造図
-- [Unity Documentation](https://docs.unity3d.com/)
-- [Git Documentation](https://git-scm.com/doc)
-
-## サポート
-
-質問や問題がある場合は、チームのコミュニケーションツールで相談してください。
