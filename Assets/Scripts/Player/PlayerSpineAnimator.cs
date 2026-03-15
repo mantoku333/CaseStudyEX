@@ -16,7 +16,6 @@ namespace Metroidvania.Player
         [SpineAnimation] [SerializeField] private string idleAnimation = "idle";
         [SpineAnimation] [SerializeField] private string runAnimation = "run";
         [SpineAnimation] [SerializeField] private string jumpAnimation = "jump";
-        [SpineAnimation] [SerializeField] private string walkAnimation = "walk";
 
         [Header("参照")]
         [Tooltip("親のPlayerPlatformerMockControllerを設定。未設定なら親から自動取得")]
