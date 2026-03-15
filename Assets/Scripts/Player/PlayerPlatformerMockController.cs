@@ -108,6 +108,21 @@ namespace Metroidvania.Player
         public bool IsGliding => ShouldGlide();
         public event Action<UmbrellaState> UmbrellaStateChanged;
 
+        /// <summary>
+        /// Spineアニメーター用：接地しているか
+        /// </summary>
+        public bool IsGrounded => _isGrounded;
+
+        /// <summary>
+        /// Spineアニメーター用：移動入力があるか
+        /// </summary>
+        public bool IsMoving => Mathf.Abs(_moveInputX) > facingInputThreshold;
+
+        /// <summary>
+        /// Spineアニメーター用：垂直方向の速度
+        /// </summary>
+        public float VerticalVelocity => _rigidbody2D != null ? _rigidbody2D.linearVelocity.y : 0f;
+
         private void Awake()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
