@@ -24,7 +24,7 @@ namespace Metroidvania.Environment
             private float _tileWidth;
             private float _centerX;
             private float _centerY;
-            private float _offsetFromCamera;
+            private float _startPositionX;
             private float _offsetYFromCamera;
             private bool _isValid;
 
@@ -55,11 +55,11 @@ namespace Metroidvania.Environment
                 _leftTile = CreateCopy(controllerRoot, centerTile, centerRenderer, "Left");
                 _rightTile = CreateCopy(controllerRoot, centerTile, centerRenderer, "Right");
 
-                var camX = cameraTarget != null ? cameraTarget.position.x : 0f;
                 var camY = cameraTarget != null ? cameraTarget.position.y : 0f;
-                _centerX = centerTile.position.x;
+                
+                _startPositionX = centerTile.position.x;
+                _centerX = _startPositionX;
                 _centerY = centerTile.position.y;
-                _offsetFromCamera = _centerX - (camX * parallaxFactor);
                 _offsetYFromCamera = _centerY - (camY * verticalParallaxFactor);
                 LayoutTiles();
                 _isValid = true;
@@ -72,17 +72,22 @@ namespace Metroidvania.Environment
                     return;
                 }
 
-                var targetCenterX = (cameraX * parallaxFactor) + _offsetFromCamera;
-                var delta = targetCenterX - _centerX;
+                // 背景が動くべき絶対距離（パララックス加味）
+                float distance = cameraX * parallaxFactor;
+                
+                // カメラから見た背景の相対的な移動量（これで端に行ったか判定する）
+                float relativeMovement = cameraX * (1f - parallaxFactor);
 
-                if (delta >= _tileWidth || delta <= -_tileWidth)
+                if (relativeMovement > _startPositionX + _tileWidth)
                 {
-                    _centerX += Mathf.Floor(delta / _tileWidth) * _tileWidth;
+                    _startPositionX += _tileWidth;
                 }
-                else
+                else if (relativeMovement < _startPositionX - _tileWidth)
                 {
-                    _centerX = targetCenterX;
+                    _startPositionX -= _tileWidth;
                 }
+
+                _centerX = _startPositionX + distance;
 
                 if (followCameraY)
                 {

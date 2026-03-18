@@ -25,4 +25,36 @@ public partial class SROptions
             rigidbody2D.angularVelocity = 0f;
         }
     }
+
+    [Category("Debug")]
+    [DisplayName("Cheat Mode")]
+    [Sort(-99)]
+    public bool IsCheatMode
+    {
+        get
+        {
+            var player = Object.FindFirstObjectByType<PlayerPlatformerMockController>();
+            if (player != null)
+            {
+                return player.GetComponent<DebugCheatModeController>() != null;
+            }
+            return false;
+        }
+        set
+        {
+            var player = Object.FindFirstObjectByType<PlayerPlatformerMockController>();
+            if (player != null)
+            {
+                var cheatController = player.GetComponent<DebugCheatModeController>();
+                if (value && cheatController == null)
+                {
+                    player.gameObject.AddComponent<DebugCheatModeController>();
+                }
+                else if (!value && cheatController != null)
+                {
+                    Object.Destroy(cheatController);
+                }
+            }
+        }
+    }
 }
