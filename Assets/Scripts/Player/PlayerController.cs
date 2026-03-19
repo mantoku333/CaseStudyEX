@@ -67,6 +67,12 @@ public class PlayerController : MonoBehaviour
         {
             jumpInput = true;
         }
+
+        //傘開閉
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            umbrellaController.ToggleUmbrella();
+        }
     }
 
     /// <summary>
