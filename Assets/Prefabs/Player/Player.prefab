@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 6761858866438584231}
   - component: {fileID: 4815271993772993668}
   - component: {fileID: 5157689825143129163}
+  - component: {fileID: 8250079272255856443}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -245,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1559bcbc9dd05604ba9d247a5c708f74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Player.PlayerController
-  statsData: {fileID: 0}
+  statsData: {fileID: 11400000, guid: 828b8bd6e59a0de45ac0b6f81b0916f1, type: 2}
   freezeRotationZ: 1
   applyNoFrictionMaterial: 1
   baseGravityScale: 2.2
@@ -310,6 +311,21 @@ MonoBehaviour:
   bulletPrefab: {fileID: 0}
   bulletSpeed: 15
   magazineSize: 6
+--- !u!114 &8250079272255856443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2148330726243905857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1d7eb3aa46d7304892f17521c1d6a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Player.PlayerDamageFlash
+  targetRenderers: []
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.08
 --- !u!1 &3727757521358287408
 GameObject:
   m_ObjectHideFlags: 0
