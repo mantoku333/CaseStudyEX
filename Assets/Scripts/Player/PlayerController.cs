@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GroundCheck groundCheck;
     [SerializeField]  private GunController gunController;    //銃関連のスクリプト
     private UmbrellaController umbrellaController;  //傘関連のスクリプ
-    //private UmbrellaAttackController umbrellaAttack;　　//傘攻撃関連のスクリプト
+    private UmbrellaAttackController umbrellaAttackController;　　//傘攻撃関連のスクリプト
 
     private float moveInput;
     private bool jumpInput;
@@ -33,6 +33,11 @@ public class PlayerController : MonoBehaviour
     {
         gunController = GetComponentInChildren<GunController>();
         umbrellaController = GetComponentInChildren<UmbrellaController>();
+        umbrellaAttackController = GetComponentInChildren<UmbrellaAttackController>();
+        if (umbrellaAttackController == null)
+        {
+            Debug.LogError("UmbrellaAttackControllerが見つかっていません！");
+        }
     }
 
     private void Update()
@@ -51,6 +56,8 @@ public class PlayerController : MonoBehaviour
 
     private void GetInput()
     {
+        bool isGliding = (umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open);
+
         //基本移動
         moveInput = 0;
         if (Keyboard.current.aKey.isPressed)
@@ -93,7 +100,11 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                //傘攻撃
+                Debug.Log("地面にいるため銃を撃てません。");
+                if (!isGliding)
+                {
+                    umbrellaAttackController.Attack();
+                }
             }
         }
 
