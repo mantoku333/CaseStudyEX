@@ -21,8 +21,6 @@ public class UmbrellaAttackController : MonoBehaviour
 
     public async UniTaskVoid Attack()
     {
-        Debug.Log("攻撃！");
-
         if (isAttacking){ return; }
 
         isAttacking = true;
@@ -37,7 +35,5 @@ public class UmbrellaAttackController : MonoBehaviour
         attackCollider.enabled = false;
         
         isAttacking = false;
-
-        Debug.Log("攻撃終わり！");
     }
 }

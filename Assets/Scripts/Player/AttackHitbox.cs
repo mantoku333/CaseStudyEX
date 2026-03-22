@@ -8,15 +8,9 @@ public class AttackHitbox : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Enemyに当たったらダメージ
-        //if (collision.CompareTag("Enemy"))
-        //{
-        //    Debug.Log("Enemy Hit!");
-
-            //Enemy enemy = collision.GetComponent<Enemy>();
-            //if (enemy != null)
-            //{
-            //    enemy.TakeDamage(damage);
-            //}
-        //}
+        if (collision.CompareTag("Finish"))
+        {
+            Debug.Log("Enemy Hit!");
+        }
     }
 }

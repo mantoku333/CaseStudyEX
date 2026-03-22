@@ -2,7 +2,9 @@
 using UnityEngine;
 
 /// <summary>
-/// 
+/// プレイヤーの基本操作を管理するクラス
+/// 左右移動、ジャンプ、向き制御、銃反動、傘の開け閉め、敵への攻撃
+/// 入力を受け取り、それぞれの機能へ処理を振り分ける
 /// </summary>
 public class PlayerController : MonoBehaviour
 {
@@ -14,15 +16,15 @@ public class PlayerController : MonoBehaviour
     [Header("ジャンプ設定")]
     [SerializeField] private float jumpForce = 8.0f;
 
-    [Header("地面判定")]
-    [SerializeField] private GroundCheck groundCheck;
-    [SerializeField]  private GunController gunController;    //銃関連のスクリプト
-    private UmbrellaController umbrellaController;  //傘関連のスクリプ
-    private UmbrellaAttackController umbrellaAttackController;　　//傘攻撃関連のスクリプト
+    private GroundCheck groundCheck;                           //地面判定のスクリプト
+    private GunController gunController;                       //銃関連のスクリプト
+    private UmbrellaController umbrellaController;             //傘関連のスクリプト
+    private UmbrellaAttackController umbrellaAttackController; //傘攻撃関連のスクリプト
+    //private UmbrellaParryController umbrellaParryController;   //
 
-    private float moveInput;
-    private bool jumpInput;
-    private bool isGround;
+    private float moveInput;   //移動入力の値(-1:左,1:右)
+    private bool  jumpInput;   //ジャンプ入力のフラグ
+    private bool   isGround;　 //地面にいるかどうかのフラグ
 
     private void Awake()
     {
@@ -31,8 +33,30 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        //各スクリプトの取得とエラーチェック
+
+        //地面判定のスクリプト
+        groundCheck = GetComponentInChildren<GroundCheck>();
+        if(groundCheck == null)
+        {
+            Debug.LogError("groundCheckが見つかっていません！");
+        }
+
+        //銃のスクリプト
         gunController = GetComponentInChildren<GunController>();
+        if (gunController == null)
+        {
+            Debug.LogError("gunControllerが見つかっていません！");
+        }
+
+        //傘のスクリプト
         umbrellaController = GetComponentInChildren<UmbrellaController>();
+        if (umbrellaController == null)
+        {
+            Debug.LogError("umbrellaControllerが見つかっていません！");
+        }
+
+        //傘攻撃のスクリプト
         umbrellaAttackController = GetComponentInChildren<UmbrellaAttackController>();
         if (umbrellaAttackController == null)
         {
@@ -44,7 +68,6 @@ public class PlayerController : MonoBehaviour
     {
         GetInput();
         Flip();
-
         isGround = groundCheck.IsGround();
     }
 
@@ -69,13 +92,11 @@ public class PlayerController : MonoBehaviour
             moveInput = 1;
         }
 
-
         //ジャンプ
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             jumpInput = true;
         }
-
 
         //傘開閉
         if (Mouse.current.rightButton.wasPressedThisFrame)
@@ -100,7 +121,6 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                Debug.Log("地面にいるため銃を撃てません。");
                 if (!isGliding)
                 {
                     umbrellaAttackController.Attack();
@@ -108,7 +128,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        //銃（下撃ちジャンプ）
+        //銃
         if (Keyboard.current.eKey.wasPressedThisFrame)
         {
             if (groundCheck.IsGround())
@@ -168,7 +188,7 @@ public class PlayerController : MonoBehaviour
         bool isGround = groundCheck.IsGround();
         bool isGliding = (umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open);
 
-        // 地面
+        //地面→進んでいる方向に合わせて設定
         if (isGround)
         {
             if (moveInput > 0)
@@ -183,14 +203,13 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // 滑空中
+        //滑空中→マウスの位置に合わせて設定
         if (isGliding)
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
 
             Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(
-                new Vector3(mousePos.x, mousePos.y, 0f)
-            );
+                new Vector3(mousePos.x, mousePos.y, 0f));
             mouseWorldPos.z = 0f;
 
             if (mouseWorldPos.x > transform.position.x)
@@ -205,7 +224,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // 空中（滑空なし）
+        //空中→進んでいる方向に合わせて設定
         if (moveInput > 0)
         {
             transform.localScale = new Vector3(1, 1, 1);
