@@ -9,27 +9,29 @@ public class UmbrellaParryController : MonoBehaviour
     [Header("当たり判定")]
     [SerializeField] private Collider2D parryCollider;
 
+    [SerializeField] private SpriteRenderer playerSprite;
+    [SerializeField] private Color parryColor = Color.white;
+    [SerializeField] private float flashDuration = 0.1f;
+
+    private Color defaultColor;
+
     private bool isParrying = false;
 
     private void Awake()
     {
-        if (parryCollider != null)
+        if (playerSprite != null)
         {
-            parryCollider.enabled = false;
+            defaultColor = playerSprite.color;
         }
     }
 
     /// <summary>
     /// パリィ時の処理を行う関数
-    /// 
     /// </summary>
     /// <returns></returns>
     public async UniTaskVoid Parry()
     {
-        if (isParrying)
-        {
-            return;
-        }
+        if (isParrying){ return; }
 
         Debug.Log("パリィ開始");
 
@@ -39,6 +41,8 @@ public class UmbrellaParryController : MonoBehaviour
         {
             parryCollider.enabled = true;
         }
+
+        FlashEffect().Forget();
 
         await UniTask.Delay((int)(parryDuration * 1000));
 
@@ -50,6 +54,20 @@ public class UmbrellaParryController : MonoBehaviour
         isParrying = false;
 
         Debug.Log("パリィ終了");
+    }
+
+    private async UniTask FlashEffect()
+    {
+        if (playerSprite == null)
+        {
+            return;
+        }
+
+        playerSprite.color = parryColor;
+
+        await UniTask.Delay((int)(flashDuration * 1000));
+
+        playerSprite.color = defaultColor;
     }
 
     /// <summary>

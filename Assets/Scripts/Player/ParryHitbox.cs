@@ -1,34 +1,59 @@
 ﻿using UnityEngine;
-using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 
 public class ParryHitbox : MonoBehaviour
 {
-    [Header("ヒットストップ時間")]
-    [SerializeField] private float hitStopTime = 0.05f;
+    //--------------接触管理------------------
+    private List<GameObject> enemyAttacks = new List<GameObject>();
 
-    private async void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("EnemyBullet"))
+        if (collision.CompareTag("Finish"))
         {
-            Debug.Log("パリィ成功！");
-
-            Rigidbody2D rigidBody2D = collision.GetComponent<Rigidbody2D>();
-
-            if (rigidBody2D != null)
+            if (!enemyAttacks.Contains(collision.gameObject))
             {
-                //プレイヤーから見た方向に反射
-                Vector2 direction = (collision.transform.position - transform.position).normalized;
-                float speed = rigidBody2D.linearVelocity.magnitude;
-
-                rigidBody2D.linearVelocity = direction * speed;
+                enemyAttacks.Add(collision.gameObject);
             }
-
-            //ヒットストップ
-            Time.timeScale = 0f;
-
-            await UniTask.Delay((int)(hitStopTime * 1000), ignoreTimeScale: true);
-
-            Time.timeScale = 1f;
         }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Finish"))
+        {
+            if (enemyAttacks.Contains(collision.gameObject))
+            {
+                enemyAttacks.Remove(collision.gameObject);
+            }
+        }
+    }
+
+    public bool HasEnemyAttack()
+    {
+        //無効をオブジェクト削除
+        for (int i = enemyAttacks.Count - 1; i >= 0; i--)
+        {
+            if (enemyAttacks[i] == null || !enemyAttacks[i].activeInHierarchy)
+            {
+                enemyAttacks.RemoveAt(i);
+            }
+        }
+
+        if (enemyAttacks.Count > 0)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public List<GameObject> GetEnemyAttacks()
+    {
+        return enemyAttacks;
+    }
+    
+    public void ClearEnemyAttacks()
+    {
+        enemyAttacks.Clear();
     }
 }

@@ -20,7 +20,9 @@ public class PlayerController : MonoBehaviour
     private GunController gunController;                       //銃関連のスクリプト
     private UmbrellaController umbrellaController;             //傘関連のスクリプト
     private UmbrellaAttackController umbrellaAttackController; //傘攻撃関連のスクリプト
-    //private UmbrellaParryController umbrellaParryController;   //
+    private UmbrellaParryController  umbrellaParryController;  //パリィ関連のスクリプト
+    private ParryHitbox parryHitbox;
+    private DodgeController dodgeController;                   //回避関連のスクリプト
 
     private float moveInput;   //移動入力の値(-1:左,1:右)
     private bool  jumpInput;   //ジャンプ入力のフラグ
@@ -34,10 +36,9 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         //各スクリプトの取得とエラーチェック
-
         //地面判定のスクリプト
         groundCheck = GetComponentInChildren<GroundCheck>();
-        if(groundCheck == null)
+        if (groundCheck == null)
         {
             Debug.LogError("groundCheckが見つかっていません！");
         }
@@ -61,6 +62,27 @@ public class PlayerController : MonoBehaviour
         if (umbrellaAttackController == null)
         {
             Debug.LogError("UmbrellaAttackControllerが見つかっていません！");
+        }
+
+        //パリィのスクリプト
+        umbrellaParryController = GetComponentInChildren<UmbrellaParryController>();
+        if (umbrellaParryController == null)
+        {
+            Debug.LogError("umbrellaParryControllerが見つかっていません！");
+        }
+
+        //パリィの当たり判定のスクリプト
+        parryHitbox = GetComponentInChildren<ParryHitbox>();
+        if (parryHitbox == null)
+        {
+            Debug.LogError("parryHitboxが見つかっていません！");
+        }
+
+        //回避のスクリプト
+        dodgeController = GetComponent<DodgeController>();
+        if (dodgeController == null)
+        {
+                Debug.LogError("dodgeControllerが見つかっていません！");
         }
     }
 
@@ -92,16 +114,55 @@ public class PlayerController : MonoBehaviour
             moveInput = 1;
         }
 
+        //回避
+        if (
+            Keyboard.current.leftShiftKey.wasPressedThisFrame ||
+            (Keyboard.current.leftShiftKey.isPressed &&
+            (Keyboard.current.aKey.wasPressedThisFrame || Keyboard.current.dKey.wasPressedThisFrame))
+        )
+        {
+            Vector2 dodgeDirection = Vector2.zero;
+
+            if (Keyboard.current.aKey.isPressed)
+            {
+                dodgeDirection = Vector2.left;
+            }
+            else if (Keyboard.current.dKey.isPressed)
+            {
+                dodgeDirection = Vector2.right;
+            }
+
+            if (dodgeDirection != Vector2.zero)
+            {
+                if (dodgeController != null)
+                {
+                    dodgeController.Dodge(dodgeDirection);
+                }
+            }
+        }
+
         //ジャンプ
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             jumpInput = true;
         }
 
-        //傘開閉
+        //パリィor傘開閉
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            umbrellaController.ToggleUmbrella();
+            
+            if (parryHitbox != null && parryHitbox.HasEnemyAttack())
+            {
+                //Debug.Log("パリィだよ");
+                umbrellaParryController.Parry();
+
+                parryHitbox.ClearEnemyAttacks();
+            }
+            else
+            {
+                //Debug.Log("パリィじゃないよ");
+                umbrellaController.ToggleUmbrella();
+            }
         }
 
         //傘攻撃又は銃の反動
@@ -133,7 +194,7 @@ public class PlayerController : MonoBehaviour
         {
             if (groundCheck.IsGround())
             {
-                gunController.Shoot(Vector2.down);
+                gunController.JumpRecoil();
             }
         }
     }
