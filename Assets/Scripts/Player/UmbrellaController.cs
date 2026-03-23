@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class UmbrellaController : MonoBehaviour
 {
-    private Rigidbody2D rigidBody2D;
+    
+    private Rigidbody2D rigidBody2D; //PlayerのRigidbody2D
 
     /// <summary>
     /// 傘状態関連
@@ -16,10 +17,10 @@ public class UmbrellaController : MonoBehaviour
     }
 
     [Header("滑空関係")]
-    [SerializeField] private float glideFallSpeed = -0.3f;
+    [SerializeField] private float glideFallSpeed = -0.3f;   //滑空中の落下速度
     [SerializeField] private GunController gunController;　　//銃関連のスクリプト
 
-    private UmbrellaState umbrellaState = UmbrellaState.Closed;
+    private UmbrellaState umbrellaState = UmbrellaState.Closed;  //現在の傘の状態
 
     private SpriteRenderer spriteRenderer;  //デバッグ用のスプライトレンダラー(傘が出来たら削除)
 
@@ -31,6 +32,7 @@ public class UmbrellaController : MonoBehaviour
         gunController = GetComponentInParent<GunController>();
         UpdateDebugColor();
     }
+
     private void Update()
     {
         Glide();
@@ -91,6 +93,9 @@ public class UmbrellaController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 傘の開閉に応じてスプライトの色を変える関数(デバッグ用)
+    /// </summary>
     private void UpdateDebugColor()
     {
         if (umbrellaState == UmbrellaState.Open)

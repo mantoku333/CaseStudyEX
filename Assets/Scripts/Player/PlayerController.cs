@@ -11,10 +11,10 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rigidBody2d;
 
     [Header("移動設定")]
-    [SerializeField] private float groundMoveSpeed = 5.0f;
+    [SerializeField] private float groundMoveSpeed = 5.0f;     //地面での移動速度
 
     [Header("ジャンプ設定")]
-    [SerializeField] private float jumpForce = 8.0f;
+    [SerializeField] private float jumpForce = 8.0f;           //ジャンプの強さ
 
     private GroundCheck groundCheck;                           //地面判定のスクリプト
     private GunController gunController;                       //銃関連のスクリプト
@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
     {
         bool isGliding = (umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open);
 
-        //基本移動
+        //基本移動(A/Dキーで左右移動)
         moveInput = 0;
         if (Keyboard.current.aKey.isPressed)
         {
@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
             moveInput = 1;
         }
 
-        //回避
+        //回避(左シフトキー+移動キーで左右に回避)
         if (
             Keyboard.current.leftShiftKey.wasPressedThisFrame ||
             (Keyboard.current.leftShiftKey.isPressed &&
@@ -141,13 +141,13 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        //ジャンプ
+        //ジャンプ(スペースキーでジャンプ)
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             jumpInput = true;
         }
 
-        //パリィor傘開閉
+        //パリィor傘開閉 (右クリックでパリィ、敵の攻撃がない場合は傘の開け閉め)
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
             
@@ -165,7 +165,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        //傘攻撃又は銃の反動
+        //傘攻撃又は銃の反動(左クリックで傘攻撃、空中にいる場合は銃の反動)
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             if (!groundCheck.IsGround())
@@ -189,7 +189,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        //銃
+        //銃での飛び上がり(空中でEキーを押すと銃の反動で飛び上がる)
         if (Keyboard.current.eKey.wasPressedThisFrame)
         {
             if (groundCheck.IsGround())

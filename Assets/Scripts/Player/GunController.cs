@@ -10,9 +10,9 @@ public class GunController : MonoBehaviour
     [SerializeField] private float jumpRecoilPower = 45.0f;   //Eキーで飛び上がる時の反動量
 
     [Header("地面判定")]
-    [SerializeField] private GroundCheck groundCheck;
+    [SerializeField] private GroundCheck groundCheck;   //地面判定のスクリプト
 
-    private bool isRecoiling = false;   //反動が起きているかどうか
+    private bool isRecoiling = false;   　//反動が起きているかどうか
 
     private float currentCoolTime = 0.0f; //クールタイムの残り時間    
 
@@ -20,56 +20,62 @@ public class GunController : MonoBehaviour
 
     void Start()
     {
+        //Rigidbody2Dの取得
         rigidBody2d = GetComponentInParent<Rigidbody2D>();
     }
 
     void Update()
     {
+        //クールタイムの更新
         if (currentCoolTime > 0)
         {
             currentCoolTime -= Time.deltaTime;
         }
     }
 
+    /// <summary>
+    /// 銃の発射処理を行う関数
+    /// </summary>
+    /// <param name="direction">銃の発射方向</param>
     public void Shoot(Vector2 direction)
     {
         if (currentCoolTime > 0) { return; }
 
+        //銃の反動を適用
         ApplyRecoil(direction);
 
         currentCoolTime = coolTime;
 
-        Debug.Log("Shoot! Cooldown started.");
+        //Debug.Log("Shoot! Cooldown started.");
     }
 
+    /// <summary>
+    /// 銃の反動を適用する関数
+    /// </summary>
+    /// <param name="direction">反動の方向</param>
     void ApplyRecoil(Vector2 direction)
     {
-        if (rigidBody2d == null) { return; }
+        if (rigidBody2d == null)
+        {
+            return;
+        }
 
         isRecoiling = true;
 
-        rigidBody2d.linearDamping = 5.0f;
+        //反動中は空気抵抗を増やす
+        rigidBody2d.linearDamping = 2.0f;
 
+        //現在の速度を取得
         Vector2 velocity = rigidBody2d.linearVelocity;
-
-        //下撃ち
-        if (direction == Vector2.down)
-        {
-            velocity.y = 0;
-            rigidBody2d.linearVelocity = velocity;
-
-            Vector2 jumpVelocity = new Vector2(velocity.x, airRecoilPower);
-            rigidBody2d.linearVelocity = jumpVelocity;
-        }
-        else
-        {
-            Vector2 recoil = -direction.normalized * airRecoilPower;
-            rigidBody2d.AddForce(recoil, ForceMode2D.Impulse);
-        }
+        Vector2 recoil = -direction.normalized * airRecoilPower;
+        rigidBody2d.AddForce(recoil, ForceMode2D.Impulse);
 
         Invoke(nameof(EndRecoil), 0.1f);
     }
 
+    /// <summary>
+    /// 地面からの跳ね上がりの反動を適用する関数
+    /// </summary>
     public void JumpRecoil()
     {
         if (currentCoolTime > 0)
@@ -99,9 +105,12 @@ public class GunController : MonoBehaviour
 
         Invoke(nameof(EndRecoil), 0.1f);
 
-        Debug.Log("Jump Recoil!");
+        //Debug.Log("Jump Recoil!");
     }
 
+    /// <summary>
+    /// 反動終了の処理を行う関数
+    /// </summary>
     void EndRecoil()
     {
         isRecoiling = false;
