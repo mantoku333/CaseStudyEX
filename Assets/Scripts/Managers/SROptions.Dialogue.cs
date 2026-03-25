@@ -9,6 +9,8 @@ using SRF.Service;
 /// </summary>
 public partial class SROptions
     {
+        private const string SampleDialogueNode = "SampleNPC";
+
         [Category("Dialogue")]
         [DisplayName("Play Sample Dialogue")]
         [Sort(1)]
@@ -17,7 +19,12 @@ public partial class SROptions
             var manager = Object.FindFirstObjectByType<Metroidvania.Managers.DialogueManager>();
             if (manager != null)
             {
-                manager.StartConversation("SampleNPC", Metroidvania.Managers.DialogueStyle.ADV);
+                if (!manager.Runner.Dialogue.NodeExists(SampleDialogueNode))
+                {
+                    Debug.LogError($"[SRDebugger] Yarnプロジェクトにノード '{SampleDialogueNode}' が見つかりません。ノード名を確認してください。");
+                    return;
+                }
+                manager.StartConversation(SampleDialogueNode, Metroidvania.Managers.DialogueStyle.ADV);
             }
             else
             {
@@ -35,9 +42,14 @@ public partial class SROptions
 
             if (manager != null)
             {
+                if (!manager.Runner.Dialogue.NodeExists(SampleDialogueNode))
+                {
+                    Debug.LogError($"[SRDebugger] Yarnプロジェクトにノード '{SampleDialogueNode}' が見つかりません。ノード名を確認してください。");
+                    return;
+                }
                 // SRDebuggerから直呼び出しテスト用に、プレイヤーの頭上に吹き出しを出す
                 Transform target = player != null ? player.transform : null;
-                manager.StartConversation("SampleNPC", Metroidvania.Managers.DialogueStyle.Bubble, target);
+                manager.StartConversation(SampleDialogueNode, Metroidvania.Managers.DialogueStyle.Bubble, target);
             }
             else
             {
