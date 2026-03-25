@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Metroidvania.Enemy;
+using UnityEngine;
 
 public class ParryHitbox : MonoBehaviour
 {
@@ -7,10 +8,8 @@ public class ParryHitbox : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //敵の攻撃に当たったらパリィ成功
-        //まだ判定を決められていないので、とりあえずFinishタグで管理
-        //後で変更する
-        if (collision.CompareTag("Finish"))
+        EnemyBullet bullet = collision.GetComponent<EnemyBullet>();
+        if (bullet != null)
         {
             if (!enemyAttacks.Contains(collision.gameObject))
             {
@@ -21,10 +20,8 @@ public class ParryHitbox : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        //敵の攻撃から離れたら接触管理から削除
-        //まだ判定を決められていないので、とりあえずFinishタグで管理
-        //後で変更する
-        if (collision.CompareTag("Finish"))
+        EnemyBullet bullet = collision.GetComponent<EnemyBullet>();
+        if (bullet != null)
         {
             if (enemyAttacks.Contains(collision.gameObject))
             {

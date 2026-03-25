@@ -35,7 +35,6 @@ public class UmbrellaParryController : MonoBehaviour
             return;
         }
 
-        //Debug.Log("パリィ開始");
 
         isParrying = true;
 
@@ -50,14 +49,7 @@ public class UmbrellaParryController : MonoBehaviour
         //パリィ状態が続く時間待機
         await UniTask.Delay((int)(parryDuration * 1000));
 
-        if (parryCollider != null)
-        {
-            parryCollider.enabled = false;
-        }
-
         isParrying = false;
-
-        //Debug.Log("パリィ終了");
     }
 
     /// <summary>

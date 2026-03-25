@@ -150,17 +150,24 @@ public class PlayerController : MonoBehaviour
         //パリィor傘開閉 (右クリックでパリィ、敵の攻撃がない場合は傘の開け閉め)
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            
             if (parryHitbox != null && parryHitbox.HasEnemyAttack())
             {
-                //Debug.Log("パリィだよ");
+                Debug.Log("パリィ成功！");
+
                 umbrellaParryController.Parry();
 
-                parryHitbox.ClearEnemyAttacks();
+                var bullets = parryHitbox.GetEnemyAttacks();
+
+                foreach (var bullet in bullets)
+                {
+                    if (bullet != null)
+                    {
+                        Destroy(bullet);
+                    }
+                }
             }
             else
             {
-                //Debug.Log("パリィじゃないよ");
                 umbrellaController.ToggleUmbrella();
             }
         }
@@ -168,7 +175,7 @@ public class PlayerController : MonoBehaviour
         //傘攻撃又は銃の反動(左クリックで傘攻撃、空中にいる場合は銃の反動)
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            if (!groundCheck.IsGround())
+            if (!isGround)
             {
                 Vector2 mousePos = Mouse.current.position.ReadValue();
 
@@ -192,7 +199,7 @@ public class PlayerController : MonoBehaviour
         //銃での飛び上がり(空中でEキーを押すと銃の反動で飛び上がる)
         if (Keyboard.current.eKey.wasPressedThisFrame)
         {
-            if (groundCheck.IsGround())
+            if (isGround)
             {
                 gunController.JumpRecoil();
             }
@@ -246,7 +253,6 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void Flip()
     {
-        bool isGround = groundCheck.IsGround();
         bool isGliding = (umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open);
 
         //地面→進んでいる方向に合わせて設定
