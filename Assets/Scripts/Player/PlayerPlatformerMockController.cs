@@ -72,6 +72,12 @@ namespace Metroidvania.Player
         [SerializeField, Min(0f)] private float glideMaxFallSpeed = 3.5f;
         [SerializeField] private float glideStartVerticalVelocity = -0.1f;
 
+        [Header("Dodge")]
+        [SerializeField] private bool enableDodge = true;
+        [SerializeField, Min(0f)] private float dodgeDistance = 2f;
+        [SerializeField, Min(0.01f)] private float dodgeDuration = 0.12f;
+        [SerializeField, Min(0f)] private float dodgeCooldown = 0.2f;
+
         [Header("Facing")]
         [SerializeField] private FacingDirection facingDirection = FacingDirection.Right;
         [SerializeField, Range(0f, 1f)] private float facingInputThreshold = 0.01f;
@@ -83,7 +89,9 @@ namespace Metroidvania.Player
         private InputAction _moveAction;
         private InputAction _jumpAction;
         private InputAction _umbrellaToggleAction;
+        private InputAction _dodgeAction;
         private bool _ownsUmbrellaToggleAction;
+        private bool _ownsDodgeAction;
 
         private float _moveInputX;
         private bool _isGrounded;
@@ -100,12 +108,18 @@ namespace Metroidvania.Player
         private float _umbrellaLocalZ;
         private bool _hasUmbrellaFacingOffsets;
         private float _defaultGravityScale;
+        private bool _isDodging;
+        private float _dodgeElapsed;
+        private float _dodgeCooldownTimer;
+        private Vector2 _dodgeStartPosition;
+        private Vector2 _dodgeTargetPosition;
 
         public FacingDirection CurrentFacingDirection => facingDirection;
         public bool IsFacingRight => facingDirection == FacingDirection.Right;
         public UmbrellaState CurrentUmbrellaState => umbrellaState;
         public bool IsUmbrellaOpen => umbrellaState == UmbrellaState.Opened;
         public bool IsGliding => ShouldGlide();
+        public bool IsDodging => _isDodging;
         public event Action<UmbrellaState> UmbrellaStateChanged;
 
         /// <summary>
@@ -154,6 +168,9 @@ namespace Metroidvania.Player
             _groundStateInitialized = false;
             _wasGrounded = false;
             _minAirborneVelocityY = 0f;
+            _isDodging = false;
+            _dodgeElapsed = 0f;
+            _dodgeCooldownTimer = 0f;
             _rigidbody2D.gravityScale = _defaultGravityScale;
             SetUmbrellaState(UmbrellaState.Closed, true);
             ApplyFacingVisual();
@@ -176,6 +193,15 @@ namespace Metroidvania.Player
                 }
             }
 
+            if (_dodgeAction != null)
+            {
+                _dodgeAction.performed -= OnDodgePerformed;
+                if (_ownsDodgeAction)
+                {
+                    _dodgeAction.Disable();
+                }
+            }
+
             _squashSequence?.Kill();
             if (squashTarget != null)
             {
@@ -184,6 +210,9 @@ namespace Metroidvania.Player
 
             _moveInputX = 0f;
             _jumpQueued = false;
+            _isDodging = false;
+            _dodgeElapsed = 0f;
+            _dodgeCooldownTimer = 0f;
             _rigidbody2D.gravityScale = _defaultGravityScale;
         }
 
@@ -193,6 +222,12 @@ namespace Metroidvania.Player
             {
                 _umbrellaToggleAction.Dispose();
                 _umbrellaToggleAction = null;
+            }
+
+            if (_ownsDodgeAction && _dodgeAction != null)
+            {
+                _dodgeAction.Dispose();
+                _dodgeAction = null;
             }
         }
 
@@ -205,11 +240,23 @@ namespace Metroidvania.Player
                 UpdateFacingFromMoveInput();
             }
 
+            if (_dodgeCooldownTimer > 0f)
+            {
+                _dodgeCooldownTimer -= Time.deltaTime;
+            }
+
             UpdateGroundState();
         }
 
         private void FixedUpdate()
         {
+            if (_isDodging)
+            {
+                UpdateDodgeMovement(Time.fixedDeltaTime);
+                _jumpQueued = false;
+                return;
+            }
+
             var velocity = _rigidbody2D.linearVelocity;
             var currentMoveSpeed = moveSpeed;
             if (IsGliding)
@@ -253,10 +300,22 @@ namespace Metroidvania.Player
 
         private void OnUmbrellaTogglePerformed(InputAction.CallbackContext context)
         {
-            if (context.performed)
+            if (!context.ReadValueAsButton())
             {
-                ToggleUmbrella();
+                return;
             }
+
+            ToggleUmbrella();
+        }
+
+        private void OnDodgePerformed(InputAction.CallbackContext context)
+        {
+            if (!context.ReadValueAsButton())
+            {
+                return;
+            }
+
+            TryStartDodge();
         }
 
         private void UpdateGroundState()
@@ -409,12 +468,47 @@ namespace Metroidvania.Player
             _jumpAction.performed -= OnJumpPerformed;
             _jumpAction.performed += OnJumpPerformed;
 
+            BindDodgeAction();
             BindUmbrellaToggleAction();
+        }
+
+        private void BindDodgeAction()
+        {
+            var dodgeActionFromAsset = _playerInput.actions.FindAction("Dodge", false);
+            if (dodgeActionFromAsset != null)
+            {
+                _dodgeAction = dodgeActionFromAsset;
+                _ownsDodgeAction = false;
+            }
+            else
+            {
+                if (_dodgeAction == null || !_ownsDodgeAction)
+                {
+                    _dodgeAction = new InputAction(
+                        name: "Dodge_LeftShift",
+                        type: InputActionType.Button,
+                        binding: "<Keyboard>/leftShift");
+                    _dodgeAction.AddBinding("<Keyboard>/rightShift");
+                    _ownsDodgeAction = true;
+                }
+
+                if (!_dodgeAction.enabled)
+                {
+                    _dodgeAction.Enable();
+                }
+            }
+
+            _dodgeAction.performed -= OnDodgePerformed;
+            _dodgeAction.performed += OnDodgePerformed;
         }
 
         private void BindUmbrellaToggleAction()
         {
             var umbrellaActionFromAsset = _playerInput.actions.FindAction("UmbrellaToggle", false);
+            if (umbrellaActionFromAsset == null)
+            {
+                umbrellaActionFromAsset = _playerInput.actions.FindAction("RightClick", false);
+            }
             if (umbrellaActionFromAsset != null)
             {
                 _umbrellaToggleAction = umbrellaActionFromAsset;
@@ -439,6 +533,53 @@ namespace Metroidvania.Player
 
             _umbrellaToggleAction.performed -= OnUmbrellaTogglePerformed;
             _umbrellaToggleAction.performed += OnUmbrellaTogglePerformed;
+        }
+
+        private void TryStartDodge()
+        {
+            if (!enableDodge || _isDodging || _dodgeCooldownTimer > 0f)
+            {
+                return;
+            }
+
+            var directionX = IsFacingRight ? 1f : -1f;
+            _dodgeStartPosition = _rigidbody2D.position;
+            _dodgeTargetPosition = _dodgeStartPosition + new Vector2(directionX * dodgeDistance, 0f);
+            _dodgeElapsed = 0f;
+            _dodgeCooldownTimer = dodgeCooldown;
+            _isDodging = true;
+            _jumpQueued = false;
+            _rigidbody2D.linearVelocity = Vector2.zero;
+        }
+
+        private void UpdateDodgeMovement(float deltaTime)
+        {
+            if (dodgeDuration <= 0f)
+            {
+                _rigidbody2D.MovePosition(_dodgeTargetPosition);
+                EndDodge();
+                return;
+            }
+
+            _dodgeElapsed += deltaTime;
+            var t = Mathf.Clamp01(_dodgeElapsed / dodgeDuration);
+            var nextPos = Vector2.Lerp(_dodgeStartPosition, _dodgeTargetPosition, t);
+            _rigidbody2D.MovePosition(nextPos);
+
+            if (t >= 1f)
+            {
+                EndDodge();
+            }
+        }
+
+        private void EndDodge()
+        {
+            _isDodging = false;
+            _dodgeElapsed = 0f;
+
+            var velocity = _rigidbody2D.linearVelocity;
+            velocity.x = 0f;
+            _rigidbody2D.linearVelocity = velocity;
         }
 
         private void ApplyUmbrellaVisual()

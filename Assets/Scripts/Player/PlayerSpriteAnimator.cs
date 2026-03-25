@@ -25,22 +25,27 @@ namespace Metroidvania.Player
         [SerializeField] private string idleStateName = "idle";
         [SerializeField] private string runStateName = "run";
         [SerializeField] private string jumpStateName = "jump";
+        [SerializeField] private string dodgeStateName = "dodge";
 
         [Header("Sprite Sequence Mode")]
         [SerializeField] private SpriteRenderer targetRenderer;
         [SerializeField] private Sprite[] idleSprites;
         [SerializeField] private Sprite[] runSprites;
         [SerializeField] private Sprite[] jumpSprites;
+        [SerializeField] private Sprite[] dodgeSprites;
         [SerializeField, Min(1f)] private float idleFps = 8f;
         [SerializeField, Min(1f)] private float runFps = 12f;
         [SerializeField, Min(1f)] private float jumpFps = 8f;
+        [SerializeField, Min(1f)] private float dodgeFps = 16f;
         [SerializeField] private bool loopJumpSprites = true;
+        [SerializeField] private bool loopDodgeSprites = false;
 
         private enum VisualState
         {
             Idle,
             Run,
-            Jump
+            Jump,
+            Dodge
         }
 
         private static readonly SpriteRenderer[] EmptyRenderers = new SpriteRenderer[0];
@@ -68,7 +73,7 @@ namespace Metroidvania.Player
 
         private void Update()
         {
-            if (!TryReadControllerState(out var isGrounded, out var isMoving, out var isGliding, out var isFacingRight))
+            if (!TryReadControllerState(out var isGrounded, out var isMoving, out var isGliding, out var isDodging, out var isFacingRight))
             {
                 if (!_warnedNoController)
                 {
@@ -84,7 +89,7 @@ namespace Metroidvania.Player
                 ApplyFacing(isFacingRight);
             }
 
-            var nextState = ResolveState(isGrounded, isMoving, isGliding);
+            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging);
             if (_currentState != nextState)
             {
                 SwitchState(nextState);
@@ -143,13 +148,14 @@ namespace Metroidvania.Player
             }
         }
 
-        private bool TryReadControllerState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isFacingRight)
+        private bool TryReadControllerState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isDodging, out bool isFacingRight)
         {
             if (mockController != null)
             {
                 isGrounded = mockController.IsGrounded;
                 isMoving = mockController.IsMoving;
                 isGliding = mockController.IsGliding;
+                isDodging = mockController.IsDodging;
                 isFacingRight = mockController.IsFacingRight;
                 return true;
             }
@@ -159,6 +165,7 @@ namespace Metroidvania.Player
                 isGrounded = statsController.IsGrounded;
                 isMoving = statsController.IsMoving;
                 isGliding = statsController.IsGliding;
+                isDodging = false;
                 isFacingRight = statsController.IsFacingRight;
                 return true;
             }
@@ -166,12 +173,18 @@ namespace Metroidvania.Player
             isGrounded = false;
             isMoving = false;
             isGliding = false;
+            isDodging = false;
             isFacingRight = true;
             return false;
         }
 
-        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding)
+        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging)
         {
+            if (isDodging)
+            {
+                return VisualState.Dodge;
+            }
+
             if (isGliding)
             {
                 return VisualState.Jump;
@@ -241,6 +254,8 @@ namespace Metroidvania.Player
                     return runStateName;
                 case VisualState.Jump:
                     return jumpStateName;
+                case VisualState.Dodge:
+                    return dodgeStateName;
                 default:
                     return idleStateName;
             }
@@ -254,6 +269,8 @@ namespace Metroidvania.Player
                     return runSprites;
                 case VisualState.Jump:
                     return jumpSprites;
+                case VisualState.Dodge:
+                    return dodgeSprites;
                 default:
                     return idleSprites;
             }
@@ -267,6 +284,8 @@ namespace Metroidvania.Player
                     return runFps;
                 case VisualState.Jump:
                     return jumpFps;
+                case VisualState.Dodge:
+                    return dodgeFps;
                 default:
                     return idleFps;
             }
@@ -277,6 +296,11 @@ namespace Metroidvania.Player
             if (state == VisualState.Jump)
             {
                 return loopJumpSprites;
+            }
+
+            if (state == VisualState.Dodge)
+            {
+                return loopDodgeSprites;
             }
 
             return true;
