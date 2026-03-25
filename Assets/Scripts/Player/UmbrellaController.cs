@@ -1,0 +1,110 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class UmbrellaController : MonoBehaviour
+{
+    
+    private Rigidbody2D rigidBody2D; //PlayerのRigidbody2D
+
+    /// <summary>
+    /// 傘状態関連
+    /// </summary>
+    public enum UmbrellaState
+    {
+        Open,
+        Closed
+    }
+
+    [Header("滑空関係")]
+    [SerializeField] private float glideFallSpeed = -0.3f;   //滑空中の落下速度
+    [SerializeField] private GunController gunController;　　//銃関連のスクリプト
+
+    private UmbrellaState umbrellaState = UmbrellaState.Closed;  //現在の傘の状態
+
+    private SpriteRenderer spriteRenderer;  //デバッグ用のスプライトレンダラー(傘が出来たら削除)
+
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        rigidBody2D = GetComponentInParent<Rigidbody2D>();
+        gunController = GetComponentInParent<GunController>();
+        UpdateDebugColor();
+    }
+
+    private void Update()
+    {
+        Glide();
+    }
+
+    /// <summary>
+    /// 傘の状態のSet関数
+    /// </summary>
+    /// <param name="state">セットする傘の状態</param>
+    public void SetUmbrellaState(UmbrellaState state)
+    {
+        umbrellaState = state;
+        UpdateDebugColor();
+    }
+
+    /// <summary>
+    /// 傘の状態のGet関数
+    /// </summary>
+    /// <returns>現在の傘の状態</returns>
+    public UmbrellaState GetUmbrellaState()
+    {
+        return umbrellaState;
+    }
+
+    /// <summary>
+    /// 傘の開閉を切り替える関数
+    /// </summary>
+    public void ToggleUmbrella()
+    {
+        if (umbrellaState == UmbrellaState.Closed)
+        {
+            umbrellaState = UmbrellaState.Open;
+        }
+        else
+        {
+            umbrellaState = UmbrellaState.Closed;
+        }
+
+        UpdateDebugColor();
+    }
+
+    /// <summary>
+    /// 傘での滑空を行う関数
+    /// </summary>
+    private void Glide()
+    {
+        if (umbrellaState != UmbrellaState.Open) { return; }
+
+        if (gunController != null && gunController.GetRecoiling()) { return; }
+
+        if (rigidBody2D.linearVelocity.y >= 0) { return; }
+
+        // 落下が速すぎるときだけ補正
+        if (rigidBody2D.linearVelocity.y < glideFallSpeed)
+        {
+            float diff = glideFallSpeed - rigidBody2D.linearVelocity.y;
+            rigidBody2D.AddForce(Vector2.up * diff, ForceMode2D.Force);
+        }
+    }
+
+    /// <summary>
+    /// 傘の開閉に応じてスプライトの色を変える関数(デバッグ用)
+    /// </summary>
+    private void UpdateDebugColor()
+    {
+        if (umbrellaState == UmbrellaState.Open)
+        {
+            spriteRenderer.color = Color.blue;
+        }
+        else
+        {
+            spriteRenderer.color = Color.red;
+        }
+    }
+}
