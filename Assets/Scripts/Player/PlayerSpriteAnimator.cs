@@ -233,7 +233,7 @@ namespace Metroidvania.Player
 
             if (IsAnimatorModeActive())
             {
-                var stateName = GetAnimatorStateName(nextState);
+                var stateName = ResolveAnimatorStateName(nextState);
                 if (!string.IsNullOrEmpty(stateName))
                 {
                     animator.Play(stateName, animatorLayer, 0f);
@@ -259,6 +259,47 @@ namespace Metroidvania.Player
                 default:
                     return idleStateName;
             }
+        }
+
+        private string ResolveAnimatorStateName(VisualState state)
+        {
+            var primary = GetAnimatorStateName(state);
+            if (AnimatorHasState(primary))
+            {
+                return primary;
+            }
+
+            switch (state)
+            {
+                case VisualState.Run:
+                    if (AnimatorHasState("Walk")) return "Walk";
+                    if (AnimatorHasState("run")) return "run";
+                    break;
+                case VisualState.Jump:
+                    if (AnimatorHasState("Glide")) return "Glide";
+                    if (AnimatorHasState("jump")) return "jump";
+                    break;
+                case VisualState.Dodge:
+                    if (AnimatorHasState("Dodge")) return "Dodge";
+                    if (AnimatorHasState("dodge")) return "dodge";
+                    break;
+                default:
+                    if (AnimatorHasState("Idle")) return "Idle";
+                    if (AnimatorHasState("idle")) return "idle";
+                    break;
+            }
+
+            return primary;
+        }
+
+        private bool AnimatorHasState(string stateName)
+        {
+            if (animator == null || string.IsNullOrEmpty(stateName))
+            {
+                return false;
+            }
+
+            return animator.HasState(animatorLayer, Animator.StringToHash(stateName));
         }
 
         private Sprite[] GetSprites(VisualState state)
