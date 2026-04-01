@@ -20,16 +20,22 @@ public class UmbrellaController : MonoBehaviour
     [SerializeField] private float glideFallSpeed = -0.3f;   //滑空中の落下速度
     [SerializeField] private GunController gunController;　　//銃関連のスクリプト
 
+    [Header("SE")]
+    [SerializeField] private AudioClip umbrella_open;       //傘開くSE
+    [SerializeField] private AudioClip umbrella_close;      //傘閉じるSE
+
     private UmbrellaState umbrellaState = UmbrellaState.Closed;  //現在の傘の状態
 
     private SpriteRenderer spriteRenderer;  //デバッグ用のスプライトレンダラー(傘が出来たら削除)
 
+    private AudioSource audioSource;        //AudioSource
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigidBody2D = GetComponentInParent<Rigidbody2D>();
         gunController = GetComponentInParent<GunController>();
+        audioSource = GetComponentInParent<AudioSource>();
         UpdateDebugColor();
     }
 
@@ -65,10 +71,16 @@ public class UmbrellaController : MonoBehaviour
         if (umbrellaState == UmbrellaState.Closed)
         {
             umbrellaState = UmbrellaState.Open;
+
+            //傘開けるSE再生
+            PlaySE(umbrella_open);
         }
         else
         {
             umbrellaState = UmbrellaState.Closed;
+
+            //傘閉じるSE再生
+            PlaySE(umbrella_close);
         }
 
         UpdateDebugColor();
@@ -106,5 +118,14 @@ public class UmbrellaController : MonoBehaviour
         {
             spriteRenderer.color = Color.red;
         }
+    }
+
+    /// <summary>
+    /// SE再生用関数
+    /// </summary>
+    private void PlaySE(AudioClip clip)
+    {
+        if (clip == null || audioSource == null) return;
+        audioSource.PlayOneShot(clip);
     }
 }
