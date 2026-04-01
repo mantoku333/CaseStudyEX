@@ -12,16 +12,24 @@ public class GunController : MonoBehaviour
     [Header("地面判定")]
     [SerializeField] private GroundCheck groundCheck;   //地面判定のスクリプト
 
+    [Header("SE")]
+    [SerializeField] private AudioClip player_gun_fire;  //発砲時SE
+
     private bool isRecoiling = false;   　//反動が起きているかどうか
 
     private float currentCoolTime = 0.0f; //クールタイムの残り時間    
 
     private Rigidbody2D rigidBody2d;      //反動を加えるためのRigidbody2D
 
+    private AudioSource audioSource;      //AudioSource
+
     void Start()
     {
         //Rigidbody2Dの取得
         rigidBody2d = GetComponentInParent<Rigidbody2D>();
+
+        //AudioSourceの取得
+        audioSource = GetComponentInParent<AudioSource>();
     }
 
     void Update()
@@ -46,6 +54,8 @@ public class GunController : MonoBehaviour
 
         currentCoolTime = coolTime;
 
+        //発砲SE再生
+        PlaySE(player_gun_fire);
         //Debug.Log("Shoot! Cooldown started.");
     }
 
@@ -124,5 +134,14 @@ public class GunController : MonoBehaviour
     public bool GetRecoiling()
     {
         return isRecoiling;
+    }
+
+    /// <summary>
+    /// SE再生用関数
+    /// </summary>
+    private void PlaySE(AudioClip clip)
+    {
+        if (clip == null || audioSource == null) return;
+        audioSource.PlayOneShot(clip);
     }
 }
