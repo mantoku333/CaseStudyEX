@@ -23,11 +23,14 @@ namespace GameName.EditorTools
             Erase
         }
 
-        private StageEditorPalette palette;
-        private PlayerStatsData playerStatsData;
-        private Tilemap targetStageTilemap;
-        private PlacementType currentPlacementType = PlacementType.None;
+        [SerializeField] private StageEditorPalette palette;
+        [SerializeField] private PlayerStatsData playerStatsData;
+        [SerializeField] private Tilemap targetStageTilemap;
+        [SerializeField] private PlacementType currentPlacementType = PlacementType.None;
         private UnityEditor.Editor cachedStatsEditor;
+
+        private const string PaletteGuidKey = "GameName.StageEditor.PaletteGuid";
+        private const string PlayerStatsGuidKey = "GameName.StageEditor.PlayerStatsGuid";
 
         [MenuItem("Tools/GameName/Stage Editor")]
         public static void Open()
@@ -38,11 +41,19 @@ namespace GameName.EditorTools
 
         private void OnEnable()
         {
+            LoadEditorPrefs();
+
+            if (targetStageTilemap == null)
+            {
+                targetStageTilemap = FindFirstObjectByType<Tilemap>();
+            }
+
             SceneView.duringSceneGui += OnSceneGui;
         }
 
         private void OnDisable()
         {
+            SaveEditorPrefs();
             SceneView.duringSceneGui -= OnSceneGui;
             DestroyCachedEditor();
         }
@@ -60,6 +71,7 @@ namespace GameName.EditorTools
             if (newPalette != palette)
             {
                 palette = newPalette;
+                SaveEditorPrefs();
             }
 
             targetStageTilemap = (Tilemap)EditorGUILayout.ObjectField(
@@ -78,6 +90,7 @@ namespace GameName.EditorTools
             {
                 playerStatsData = newStatsData;
                 RefreshStatsEditor();
+                SaveEditorPrefs();
             }
 
             EditorGUILayout.Space();
@@ -105,9 +118,9 @@ namespace GameName.EditorTools
                     currentPlacementType = PlacementType.Erase;
                 }
 
-                if (GUILayout.Button("Stop"))
+                if (GUILayout.Button("Reset"))
                 {
-                    currentPlacementType = PlacementType.None;
+                    ResetEditorState();
                 }
             }
 
@@ -305,6 +318,95 @@ namespace GameName.EditorTools
                 DestroyImmediate(cachedStatsEditor);
                 cachedStatsEditor = null;
             }
+        }
+
+        /// <summary>
+        /// EditorWindowで選択したアセット参照を保存します。
+        /// </summary>
+        private void SaveEditorPrefs()
+        {
+            SaveAssetGuid(PaletteGuidKey, palette);
+            SaveAssetGuid(PlayerStatsGuidKey, playerStatsData);
+        }
+
+        /// <summary>
+        /// 保存していたアセット参照を復元します。
+        /// </summary>
+        private void LoadEditorPrefs()
+        {
+            palette = LoadAssetFromGuid<StageEditorPalette>(PaletteGuidKey);
+            playerStatsData = LoadAssetFromGuid<PlayerStatsData>(PlayerStatsGuidKey);
+
+            if (playerStatsData != null)
+            {
+                RefreshStatsEditor();
+            }
+        }
+
+        /// <summary>
+        /// アセット参照をGUIDとして保存します。
+        /// </summary>
+        private static void SaveAssetGuid<T>(string key, T asset) where T : UnityEngine.Object
+        {
+            if (asset == null)
+            {
+                EditorPrefs.DeleteKey(key);
+                return;
+            }
+
+            string assetPath = AssetDatabase.GetAssetPath(asset);
+            if (string.IsNullOrEmpty(assetPath))
+            {
+                EditorPrefs.DeleteKey(key);
+                return;
+            }
+
+            string guid = AssetDatabase.AssetPathToGUID(assetPath);
+            EditorPrefs.SetString(key, guid);
+        }
+
+        /// <summary>
+        /// GUIDからアセット参照を復元します。
+        /// </summary>
+        private static T LoadAssetFromGuid<T>(string key) where T : UnityEngine.Object
+        {
+            if (!EditorPrefs.HasKey(key))
+            {
+                return null;
+            }
+
+            string guid = EditorPrefs.GetString(key);
+            if (string.IsNullOrEmpty(guid))
+            {
+                return null;
+            }
+
+            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+            if (string.IsNullOrEmpty(assetPath))
+            {
+                return null;
+            }
+
+            return AssetDatabase.LoadAssetAtPath<T>(assetPath);
+        }
+
+        /// <summary>
+        /// 配置されているeditorやtilemapをリセット
+        /// </summary>
+        private void ResetEditorState()
+        {
+            currentPlacementType = PlacementType.None;
+
+            palette = null;
+            playerStatsData = null;
+            targetStageTilemap = null;
+
+            DestroyCachedEditor();
+
+            EditorPrefs.DeleteKey(PaletteGuidKey);
+            EditorPrefs.DeleteKey(PlayerStatsGuidKey);
+
+            Repaint();
         }
     }
 }
