@@ -10,7 +10,6 @@ public class DodgeController : MonoBehaviour
     [SerializeField] private float dodgeDuration = 0.1f;　 //回避にかかる時間
 
     private bool isDodging = false;   //回避中かどうかのフラグ
-
     private Rigidbody2D rigidBody2d;  //Rigidbody2Dコンポーネント
 
     private void Awake()
@@ -25,23 +24,23 @@ public class DodgeController : MonoBehaviour
     /// <returns></returns>
     public async UniTaskVoid Dodge(Vector2 direction)
     {
-        if (isDodging)
-        {
-            return;
-        }
+        if (isDodging){ return; }
 
-        if (direction == Vector2.zero)
-        {
-            return;
-        }
+        if (direction == Vector2.zero){ return; }
+
+        if (rigidBody2d == null) { return; }
 
         isDodging = true;
+
+        Vector2 velocity = rigidBody2d.linearVelocity;
+        velocity.x = 0.0f;
+        rigidBody2d.linearVelocity = velocity;
 
         //回避の開始位置と目標位置を計算
         Vector2 startPos = rigidBody2d.position;
         Vector2 targetPos = startPos + direction.normalized * dodgeDistance;
 
-        float elapsedTime = 0f;
+        float elapsedTime = 0.0f;
 
         //回避動作を時間で補間して実行
         while (elapsedTime < dodgeDuration)

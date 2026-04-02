@@ -13,8 +13,13 @@ public class UmbrellaParryController : MonoBehaviour
     [SerializeField] private Color parryColor = Color.white; //パリィ中のフラッシュの色
     [SerializeField] private float flashDuration = 0.1f;     //フラッシュの持続時間
 
+    [Header("SE")]
+    [SerializeField] private AudioClip umbrella_open;    //パリィ時SE
+
     private Color defaultColor;       //プレイヤーのスプライトのデフォルトの色
     private bool isParrying = false;  //現在パリィ状態かどうかのフラグ
+
+    private AudioSource audioSource;      //AudioSource
 
     private void Awake()
     {
@@ -22,6 +27,8 @@ public class UmbrellaParryController : MonoBehaviour
         {
             defaultColor = playerSprite.color;
         }
+        //AudioSourceの取得
+        audioSource = GetComponentInParent<AudioSource>();
     }
 
     /// <summary>
@@ -30,11 +37,10 @@ public class UmbrellaParryController : MonoBehaviour
     /// <returns></returns>
     public async UniTaskVoid Parry()
     {
-        if (isParrying)
-        {
-            return;
-        }
+        if (isParrying){ return; }
 
+        //傘開けるSE再生
+        PlaySE(umbrella_open);
 
         isParrying = true;
 
@@ -49,6 +55,11 @@ public class UmbrellaParryController : MonoBehaviour
         //パリィ状態が続く時間待機
         await UniTask.Delay((int)(parryDuration * 1000));
 
+        //if (parryCollider != null)
+        //{
+        //    parryCollider.enabled = false;
+        //}
+
         isParrying = false;
     }
 
@@ -58,10 +69,7 @@ public class UmbrellaParryController : MonoBehaviour
     /// <returns></returns>
     private async UniTask FlashEffect()
     {
-        if (playerSprite == null)
-        {
-            return;
-        }
+        if (playerSprite == null){ return; }
 
         playerSprite.color = parryColor;
 
@@ -77,5 +85,14 @@ public class UmbrellaParryController : MonoBehaviour
     public bool IsParrying()
     {
         return isParrying;
+    }
+
+    /// <summary>
+    /// SE再生用関数
+    /// </summary>
+    private void PlaySE(AudioClip clip)
+    {
+        if (clip == null || audioSource == null) return;
+        audioSource.PlayOneShot(clip);
     }
 }
