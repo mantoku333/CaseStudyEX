@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace GameName.Player
+namespace Player
 {
     /// <summary>
     /// プレイヤーの射撃、反動、リロードを管理するクラス

@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-namespace GameName.Player
+namespace Player
 {
     /// <summary>
     /// プレイヤーの各種ステータスをまとめて保持するデータ
     /// </summary>
-    [CreateAssetMenu(fileName = "PlayerStatsData", menuName = "GameName/Player/Player Stats Data")]
+    [CreateAssetMenu(fileName = "PlayerStatsData", menuName = "Player/Player Stats Data")]
     public class PlayerStatsData : ScriptableObject
     {
         [Header("Movement")]
