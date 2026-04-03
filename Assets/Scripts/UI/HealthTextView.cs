@@ -1,4 +1,4 @@
-﻿using GameName.Player;
+﻿using Player;
 using TMPro;
 using UnityEngine;
 

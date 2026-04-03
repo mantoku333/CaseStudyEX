@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace GameName.Player
+namespace Player
 {
     /// <summary>
     /// プレイヤーの体力を管理するクラス

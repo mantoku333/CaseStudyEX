@@ -1,6 +1,6 @@
 ﻿using System;
 using DG.Tweening;
-using GameName.Player;
+using Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

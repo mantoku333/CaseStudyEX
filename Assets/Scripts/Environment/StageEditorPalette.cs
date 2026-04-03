@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace GameName.EditorTools
+namespace EditorTools
 {
     /// <summary>
     /// ステージエディタで使用するPrefabやTileを保持するデータ
