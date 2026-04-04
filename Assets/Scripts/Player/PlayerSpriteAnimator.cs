@@ -23,6 +23,7 @@ namespace Metroidvania.Player
         [SerializeField] private string idleStateName = "idle";
         [SerializeField] private string runStateName = "run";
         [SerializeField] private string jumpStateName = "jump";
+        [SerializeField] private string landStateName = "land";
         [SerializeField] private string dodgeStateName = "dodge";
 
         private enum VisualState
@@ -30,6 +31,7 @@ namespace Metroidvania.Player
             Idle,
             Run,
             Jump,
+            Land,
             Dodge
         }
 
@@ -39,6 +41,10 @@ namespace Metroidvania.Player
         private bool _warnedNoController;
         private bool _warnedNoAnimator;
         private SpriteRenderer[] _resolvedFlipRenderers = EmptyRenderers;
+        private bool _landingLocked;
+        private bool _hasPreviousGrounded;
+        private bool _previousGrounded;
+        private string _activeLandStateName;
 
         private void Awake()
         {
@@ -48,6 +54,10 @@ namespace Metroidvania.Player
         private void OnEnable()
         {
             _currentState = (VisualState)(-1);
+            _landingLocked = false;
+            _hasPreviousGrounded = false;
+            _previousGrounded = false;
+            _activeLandStateName = null;
         }
 
         private void Update()
@@ -79,7 +89,13 @@ namespace Metroidvania.Player
                 ApplyFacing(isFacingRight);
             }
 
-            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging);
+            UpdateLandingLock(isGrounded);
+            if (_landingLocked && _currentState == VisualState.Land && IsLandAnimationFinished())
+            {
+                _landingLocked = false;
+            }
+
+            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, _landingLocked);
             if (_currentState != nextState)
             {
                 SwitchState(nextState);
@@ -147,11 +163,16 @@ namespace Metroidvania.Player
             return false;
         }
 
-        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging)
+        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool hasLandingLock)
         {
             if (isDodging)
             {
                 return VisualState.Dodge;
+            }
+
+            if (hasLandingLock)
+            {
+                return VisualState.Land;
             }
 
             if (isGliding)
@@ -165,6 +186,27 @@ namespace Metroidvania.Player
             }
 
             return isMoving ? VisualState.Run : VisualState.Idle;
+        }
+
+        private void UpdateLandingLock(bool isGrounded)
+        {
+            if (!_hasPreviousGrounded)
+            {
+                _previousGrounded = isGrounded;
+                _hasPreviousGrounded = true;
+                return;
+            }
+
+            if (!_previousGrounded && isGrounded)
+            {
+                _landingLocked = true;
+            }
+            else if (!isGrounded)
+            {
+                _landingLocked = false;
+            }
+
+            _previousGrounded = isGrounded;
         }
 
         private void ApplyFacing(bool isFacingRight)
@@ -198,9 +240,54 @@ namespace Metroidvania.Player
             _currentState = nextState;
 
             var stateName = ResolveAnimatorStateName(nextState);
+            if (nextState == VisualState.Land)
+            {
+                _activeLandStateName = stateName;
+            }
+            else
+            {
+                _activeLandStateName = null;
+            }
+
             if (!string.IsNullOrEmpty(stateName))
             {
                 animator.Play(stateName, animatorLayer, 0f);
+            }
+        }
+
+        private bool IsLandAnimationFinished()
+        {
+            if (animator == null)
+            {
+                return true;
+            }
+
+            if (string.IsNullOrEmpty(_activeLandStateName))
+            {
+                return true;
+            }
+
+            var stateInfo = animator.GetCurrentAnimatorStateInfo(animatorLayer);
+            if (!stateInfo.IsName(_activeLandStateName))
+            {
+                return true;
+            }
+
+            return stateInfo.normalizedTime >= 1f && !animator.IsInTransition(animatorLayer);
+        }
+
+        /// <summary>
+        /// land.anim の AnimationEvent 受け口。
+        /// SpriteView 側でイベントを受け、必要な後処理を Controller に中継する。
+        /// </summary>
+        public void OnLandAnimationEnd()
+        {
+            _landingLocked = false;
+            _activeLandStateName = null;
+
+            if (statsController != null)
+            {
+                statsController.OnLandAnimationEnd();
             }
         }
 
@@ -212,6 +299,8 @@ namespace Metroidvania.Player
                     return runStateName;
                 case VisualState.Jump:
                     return jumpStateName;
+                case VisualState.Land:
+                    return landStateName;
                 case VisualState.Dodge:
                     return dodgeStateName;
                 default:
@@ -236,6 +325,10 @@ namespace Metroidvania.Player
                 case VisualState.Jump:
                     if (AnimatorHasState("Glide")) return "Glide";
                     if (AnimatorHasState("jump")) return "jump";
+                    break;
+                case VisualState.Land:
+                    if (AnimatorHasState("Land")) return "Land";
+                    if (AnimatorHasState("land")) return "land";
                     break;
                 case VisualState.Dodge:
                     if (AnimatorHasState("Dodge")) return "Dodge";
