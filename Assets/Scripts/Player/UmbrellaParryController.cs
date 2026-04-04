@@ -31,6 +31,26 @@ public class UmbrellaParryController : MonoBehaviour
         audioSource = GetComponentInParent<AudioSource>();
     }
 
+    public void SetParryDuration(float duration)
+    {
+        parryDuration = Mathf.Max(0.01f, duration);
+    }
+
+    public float GetParryDuration()
+    {
+        return parryDuration;
+    }
+
+    public void SetFlashDuration(float duration)
+    {
+        flashDuration = Mathf.Max(0.01f, duration);
+    }
+
+    public float GetFlashDuration()
+    {
+        return flashDuration;
+    }
+
     /// <summary>
     /// パリィ時の処理を行う関数
     /// </summary>

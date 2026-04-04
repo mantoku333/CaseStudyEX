@@ -37,6 +37,16 @@ public class UmbrellaAttackController : MonoBehaviour
         return attackPerSecond;
     }
 
+    public void SetAttackDuration(float duration)
+    {
+        attackDuration = Mathf.Max(0.01f, duration);
+    }
+
+    public float GetAttackDuration()
+    {
+        return attackDuration;
+    }
+
     /// <summary>
     /// 傘での攻撃処理を行う関数
     /// </summary>

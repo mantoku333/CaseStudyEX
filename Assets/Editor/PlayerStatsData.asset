@@ -14,9 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Player.PlayerStatsData
   moveSpeed: 5
   glideMoveSpeed: 10
-  fallSpeed: 10
+  fallSpeed: 3
   jumpForce: 8
+  dodgeDistance: 3
+  dodgeDuration: 0.5
   attackPerSecond: 4
-  gunRecoilForce: 10
+  umbrellaAttackDuration: 0.2
+  gunRecoilForce: 30
+  gunRecoilDuration: 0.1
   reloadSeconds: 1.2
+  parryDuration: 0.1
+  parryFlashDuration: 0.1
   maxHealth: 3

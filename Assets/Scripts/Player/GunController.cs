@@ -6,8 +6,8 @@ public class GunController : MonoBehaviour
 {
     [Header("銃の設定")]
     [SerializeField] private float coolTime = 3.0f;           //銃のクールタイム
-    [SerializeField] private float airRecoilPower  = 25.0f;   //空中にいる時の弾の反動
-    [SerializeField] private float jumpRecoilPower = 45.0f;   //Eキーで飛び上がる時の反動量
+    [SerializeField] private float airRecoilPower  = 25.0f;   //銃反動/リコイルジャンプ共通の反動量
+    [SerializeField] private float recoilDuration = 0.1f;      //反動状態の時間
 
     [Header("地面判定")]
     [SerializeField] private GroundCheck groundCheck;   //地面判定のスクリプト
@@ -18,6 +18,7 @@ public class GunController : MonoBehaviour
     private bool isRecoiling = false;   　//反動が起きているかどうか
     private float currentCoolTime = 0.0f; //クールタイムの残り時間    
     private Rigidbody2D rigidBody2d;      //反動を加えるためのRigidbody2D
+    private float defaultLinearDamping = 0.0f;
 
     private AudioSource audioSource;      //AudioSource
 
@@ -25,6 +26,10 @@ public class GunController : MonoBehaviour
     {
         //Rigidbody2Dの取得
         rigidBody2d = GetComponentInParent<Rigidbody2D>();
+        if (rigidBody2d != null)
+        {
+            defaultLinearDamping = rigidBody2d.linearDamping;
+        }
 
         //AudioSourceの取得
         audioSource = GetComponentInParent<AudioSource>();
@@ -56,6 +61,16 @@ public class GunController : MonoBehaviour
     public float GetAirRecoilPower()
     {
         return airRecoilPower;
+    }
+
+    public void SetRecoilDuration(float duration)
+    {
+        recoilDuration = Mathf.Max(0.01f, duration);
+    }
+
+    public float GetRecoilDuration()
+    {
+        return recoilDuration;
     }
 
 
@@ -108,7 +123,7 @@ public class GunController : MonoBehaviour
         Vector2 recoil = -direction.normalized * airRecoilPower;
         rigidBody2d.AddForce(recoil, ForceMode2D.Impulse);
 
-        Invoke(nameof(EndRecoil), 0.1f);
+        BeginRecoil(recoilDuration);
     }
 
     /// <summary>
@@ -120,23 +135,29 @@ public class GunController : MonoBehaviour
 
         if (rigidBody2d == null){ return; }
 
-        isRecoiling = true;
-        rigidBody2d.linearDamping = 5.0f;
-
+        // 一度上方向速度をリセットしてからインパルスを与えると、挙動が安定しやすい
         Vector2 velocity = rigidBody2d.linearVelocity;
-
-        //縦速度リセット
         velocity.y = 0.0f;
         rigidBody2d.linearVelocity = velocity;
-
-        Vector2 jumpVelocity = new Vector2(velocity.x, jumpRecoilPower);
-        rigidBody2d.linearVelocity = jumpVelocity;
+        rigidBody2d.AddForce(Vector2.up * airRecoilPower, ForceMode2D.Impulse);
+        BeginRecoil(recoilDuration);
 
         currentCoolTime = coolTime;
 
-        Invoke(nameof(EndRecoil), 0.1f);
-
         //Debug.Log("Jump Recoil!");
+    }
+
+    private void BeginRecoil(float duration)
+    {
+        isRecoiling = true;
+        if (rigidBody2d != null)
+        {
+            rigidBody2d.linearDamping = 2.0f;
+            rigidBody2d.WakeUp();
+        }
+
+        CancelInvoke(nameof(EndRecoil));
+        Invoke(nameof(EndRecoil), duration);
     }
 
     /// <summary>
@@ -145,7 +166,10 @@ public class GunController : MonoBehaviour
     void EndRecoil()
     {
         isRecoiling = false;
-        rigidBody2d.linearDamping = 0.0f;
+        if (rigidBody2d != null)
+        {
+            rigidBody2d.linearDamping = defaultLinearDamping;
+        }
     }
 
 

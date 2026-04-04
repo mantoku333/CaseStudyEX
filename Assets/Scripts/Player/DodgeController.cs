@@ -17,6 +17,26 @@ public class DodgeController : MonoBehaviour
         rigidBody2d = GetComponent<Rigidbody2D>();
     }
 
+    public void SetDodgeDistance(float distance)
+    {
+        dodgeDistance = Mathf.Max(0f, distance);
+    }
+
+    public float GetDodgeDistance()
+    {
+        return dodgeDistance;
+    }
+
+    public void SetDodgeDuration(float duration)
+    {
+        dodgeDuration = Mathf.Max(0.01f, duration);
+    }
+
+    public float GetDodgeDuration()
+    {
+        return dodgeDuration;
+    }
+
     /// <summary>
     /// プレイヤーの回避動作を実行する関数
     /// </summary>
@@ -50,9 +70,8 @@ public class DodgeController : MonoBehaviour
             Vector2 newPos = Vector2.Lerp(startPos, targetPos, t);
             rigidBody2d.MovePosition(newPos);
 
-            elapsedTime += Time.deltaTime;
-
-            await UniTask.Yield();
+            await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
+            elapsedTime += Time.fixedDeltaTime;
         }
 
         //最終的に目標位置に移動

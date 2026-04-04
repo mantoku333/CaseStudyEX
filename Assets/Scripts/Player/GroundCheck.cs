@@ -7,8 +7,7 @@ public class GroundCheck : MonoBehaviour
     [Header("地面のレイヤー")]
     [SerializeField] private LayerMask groundLayer;     //地面のレイヤー
 
-    private bool isGround = false;  //接地しているかどうか
-    private bool isGroundEnter, isGroundStay, isGroundExit;　//接地判定のフラグ
+    private readonly HashSet<Collider2D> groundColliders = new HashSet<Collider2D>();
 
     /// <summary>
     ///接地判定を返すメソッド
@@ -17,20 +16,7 @@ public class GroundCheck : MonoBehaviour
     /// <returns></returns>
     public bool IsGround()
     {
-        if (isGroundEnter || isGroundStay)
-        {
-            isGround = true;
-        }
-        else if (isGroundExit)
-        {
-            isGround = false;
-        }
-
-        isGroundEnter = false;
-        isGroundStay = false;
-        isGroundExit = false;
-
-        return isGround;
+        return groundColliders.Count > 0;
     }
 
     /// <summary>
@@ -47,7 +33,7 @@ public class GroundCheck : MonoBehaviour
     {
         if (IsInLayer(collision.gameObject.layer))
         {
-            isGroundEnter = true;
+            groundColliders.Add(collision);
         }
     }
 
@@ -55,7 +41,7 @@ public class GroundCheck : MonoBehaviour
     {
         if (IsInLayer(collision.gameObject.layer))
         {
-            isGroundStay = true;
+            groundColliders.Add(collision);
         }
     }
 
@@ -63,7 +49,12 @@ public class GroundCheck : MonoBehaviour
     {
         if (IsInLayer(collision.gameObject.layer))
         {
-            isGroundExit = true;
+            groundColliders.Remove(collision);
         }
+    }
+
+    private void OnDisable()
+    {
+        groundColliders.Clear();
     }
 }
