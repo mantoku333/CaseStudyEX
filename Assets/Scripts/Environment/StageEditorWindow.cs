@@ -74,12 +74,14 @@ namespace EditorTools
 
         [SerializeField] private StageEditorPalette palette;
         [SerializeField] private PlayerStatsData playerStatsData;
+        [SerializeField] private global::CameraData cameraData;
         [SerializeField] private Tilemap targetStageTilemap;
         [SerializeField] private PlacementType currentPlacementType = PlacementType.None;
         private UnityEditor.Editor cachedStatsEditor;
 
         private const string PaletteGuidKey = "StageEditor.PaletteGuid";
         private const string PlayerStatsGuidKey = "StageEditor.PlayerStatsGuid";
+        private const string CameraDataGuidKey = "StageEditor.CameraDataGuid";
 
         [MenuItem("Tools/Stage Editor")]
         public static void Open()
@@ -141,6 +143,22 @@ namespace EditorTools
                 RefreshStatsEditor();
                 SaveEditorPrefs();
             }
+
+            global::CameraData newCameraData = (global::CameraData)EditorGUILayout.ObjectField(
+                "Camera Data",
+                cameraData,
+                typeof(global::CameraData),
+                false);
+
+            if (newCameraData != cameraData)
+            {
+                cameraData = newCameraData;
+                SaveEditorPrefs();
+                ApplyDirectFollowCamPreview();
+                SceneView.RepaintAll();
+            }
+
+            DrawCameraSection();
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Placement Mode", EditorStyles.boldLabel);
@@ -418,6 +436,97 @@ namespace EditorTools
             }
         }
 
+        private void DrawCameraSection()
+        {
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Camera", EditorStyles.boldLabel);
+
+            if (cameraData == null)
+            {
+                EditorGUILayout.HelpBox("Camera Data を設定すると、Y と Zoom をスライダーで調整できます。", MessageType.Info);
+                return;
+            }
+
+            EditorGUI.BeginChangeCheck();
+
+            float followOffsetY = EditorGUILayout.Slider(
+                "Follow Offset Y",
+                cameraData.FollowOffsetY,
+                global::CameraData.MinFollowOffsetY,
+                global::CameraData.MaxFollowOffsetY);
+
+            float orthographicSize = EditorGUILayout.Slider(
+                "Orthographic Size",
+                cameraData.OrthographicSize,
+                global::CameraData.MinOrthographicSize,
+                global::CameraData.MaxOrthographicSize);
+
+            if (!EditorGUI.EndChangeCheck())
+            {
+                return;
+            }
+
+            Undo.RecordObject(cameraData, "Adjust Camera Data");
+            cameraData.SetFollowOffsetY(followOffsetY);
+            cameraData.SetOrthographicSize(orthographicSize);
+            EditorUtility.SetDirty(cameraData);
+            ApplyDirectFollowCamPreview();
+            SceneView.RepaintAll();
+        }
+
+        private void ApplyDirectFollowCamPreview()
+        {
+            if (cameraData == null)
+            {
+                return;
+            }
+
+            Unity.Cinemachine.CinemachineCamera[] cameras =
+                FindObjectsByType<Unity.Cinemachine.CinemachineCamera>(FindObjectsSortMode.None);
+
+            foreach (Unity.Cinemachine.CinemachineCamera camera in cameras)
+            {
+                if (camera == null || camera.name != "CN_DirectFollowCam")
+                {
+                    continue;
+                }
+
+                Unity.Cinemachine.CinemachineFollow follow =
+                    camera.GetComponent<Unity.Cinemachine.CinemachineFollow>();
+
+                bool offsetChanged = false;
+                if (follow != null)
+                {
+                    Vector3 offset = follow.FollowOffset;
+                    offsetChanged = !Mathf.Approximately(offset.y, cameraData.FollowOffsetY);
+
+                    if (offsetChanged)
+                    {
+                        Undo.RecordObject(follow, "Sync CN_DirectFollowCam Offset");
+                        offset.y = cameraData.FollowOffsetY;
+                        follow.FollowOffset = offset;
+                        EditorUtility.SetDirty(follow);
+                    }
+                }
+
+                var lens = camera.Lens;
+                bool zoomChanged = !Mathf.Approximately(lens.OrthographicSize, cameraData.OrthographicSize);
+
+                if (zoomChanged)
+                {
+                    Undo.RecordObject(camera, "Sync CN_DirectFollowCam Zoom");
+                    lens.OrthographicSize = cameraData.OrthographicSize;
+                    camera.Lens = lens;
+                    EditorUtility.SetDirty(camera);
+                }
+
+                if (offsetChanged || zoomChanged)
+                {
+                    EditorSceneManager.MarkSceneDirty(camera.gameObject.scene);
+                }
+            }
+        }
+
         /// <summary>
         /// 一時生成したInspectorを破棄
         /// </summary>
@@ -437,6 +546,7 @@ namespace EditorTools
         {
             SaveAssetGuid(PaletteGuidKey, palette);
             SaveAssetGuid(PlayerStatsGuidKey, playerStatsData);
+            SaveAssetGuid(CameraDataGuidKey, cameraData);
         }
 
         /// <summary>
@@ -446,6 +556,7 @@ namespace EditorTools
         {
             palette = LoadAssetFromGuid<StageEditorPalette>(PaletteGuidKey);
             playerStatsData = LoadAssetFromGuid<PlayerStatsData>(PlayerStatsGuidKey);
+            cameraData = LoadAssetFromGuid<global::CameraData>(CameraDataGuidKey);
 
             if (playerStatsData != null)
             {
@@ -511,12 +622,14 @@ namespace EditorTools
 
             palette = null;
             playerStatsData = null;
+            cameraData = null;
             targetStageTilemap = null;
 
             DestroyCachedEditor();
 
             EditorPrefs.DeleteKey(PaletteGuidKey);
             EditorPrefs.DeleteKey(PlayerStatsGuidKey);
+            EditorPrefs.DeleteKey(CameraDataGuidKey);
 
             Repaint();
         }

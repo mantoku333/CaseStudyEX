@@ -19,6 +19,9 @@ public class CameraIntroMove : MonoBehaviour
     [SerializeField] private float followOffsetReturnSpeed = 2f;
     [SerializeField] private float returnDelay = 0.2f;
 
+    [Header("Camera Data")]
+    [SerializeField] private CameraData cameraData;
+
     private CinemachineFollow followComponent;
     private bool hasStartedMoving = false;
     private bool canReturnToCenter = false;
@@ -37,8 +40,11 @@ public class CameraIntroMove : MonoBehaviour
         {
             Vector3 offset = followComponent.FollowOffset;
             offset.x = startFollowOffsetX;
+            offset = ApplyCameraDataOffset(offset);
             followComponent.FollowOffset = offset;
         }
+
+        ApplyCameraDataLens();
 
         StartCoroutine(BeginIntro());
     }
@@ -62,12 +68,50 @@ public class CameraIntroMove : MonoBehaviour
             }
         }
 
+        Vector3 offset = followComponent.FollowOffset;
+
         if (canReturnToCenter)
         {
-            Vector3 offset = followComponent.FollowOffset;
             offset.x = Mathf.Lerp(offset.x, centerFollowOffsetX, Time.deltaTime * followOffsetReturnSpeed);
+        }
+
+        offset = ApplyCameraDataOffset(offset);
+
+        if (offset != followComponent.FollowOffset)
+        {
             followComponent.FollowOffset = offset;
         }
+
+        ApplyCameraDataLens();
+    }
+
+    private Vector3 ApplyCameraDataOffset(Vector3 offset)
+    {
+        if (cameraData == null)
+        {
+            return offset;
+        }
+
+        offset.y = cameraData.FollowOffsetY;
+        return offset;
+    }
+
+    private void ApplyCameraDataLens()
+    {
+        if (cameraData == null || followCamera == null)
+        {
+            return;
+        }
+
+        var lens = followCamera.Lens;
+
+        if (Mathf.Approximately(lens.OrthographicSize, cameraData.OrthographicSize))
+        {
+            return;
+        }
+
+        lens.OrthographicSize = cameraData.OrthographicSize;
+        followCamera.Lens = lens;
     }
 
     private IEnumerator StartReturnToCenterAfterDelay()
@@ -83,7 +127,9 @@ public class CameraIntroMove : MonoBehaviour
         targetPos.z = startPos.z;
 
         float startLens = introCamera.Lens.OrthographicSize;
-        float targetLens = followCamera.Lens.OrthographicSize;
+        float targetLens = cameraData != null
+            ? cameraData.OrthographicSize
+            : followCamera.Lens.OrthographicSize;
 
         float time = 0f;
 
