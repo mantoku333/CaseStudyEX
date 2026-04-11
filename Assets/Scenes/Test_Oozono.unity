@@ -2101,7 +2101,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 60
-    OrthographicSize: 10
+    OrthographicSize: 8.4
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -2137,7 +2137,7 @@ MonoBehaviour:
     AngularDampingMode: 1
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  FollowOffset: {x: 0, y: 0, z: -10}
+  FollowOffset: {x: 0, y: -0.6, z: -10}
 --- !u!4 &804635159
 Transform:
   m_ObjectHideFlags: 0
@@ -2147,7 +2147,7 @@ Transform:
   m_GameObject: {fileID: 804635156}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.62, y: 0.7203, z: -10}
+  m_LocalPosition: {x: 2.62, y: 0.120299995, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3843,12 +3843,10 @@ Tilemap:
   - m_RefCount: 13
     m_Data: {fileID: 11400000, guid: b38272ac2b95f0e44a412010f4892ae7, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 140
+  - m_RefCount: 144
     m_Data: {fileID: 5403402469857309872, guid: ed01a7753bf7dd94fb2d1be168f2a946, type: 3}
-  - m_RefCount: 13
-    m_Data: {fileID: -1665951668699781156, guid: d8aed80a3db0cb74cbb67eaf8d7af36b, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 153
+  - m_RefCount: 144
     m_Data:
       e00: 1
       e01: 0
@@ -3867,7 +3865,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 153
+  - m_RefCount: 144
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -5852,6 +5850,7 @@ MonoBehaviour:
   centerFollowOffsetX: 0
   followOffsetReturnSpeed: 0.8
   returnDelay: 0.2
+  cameraData: {fileID: 11400000, guid: 9a5c2bb0a0f44ce4882c9f89fc81d54c, type: 2}
 --- !u!4 &1912780406
 Transform:
   m_ObjectHideFlags: 0

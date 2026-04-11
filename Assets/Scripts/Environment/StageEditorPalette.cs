@@ -6,7 +6,7 @@ namespace EditorTools
     /// <summary>
     /// ステージエディタで使用するPrefabやTileを保持するデータ
     /// </summary>
-    [CreateAssetMenu(fileName = "StageEditorPalette", menuName = "GameName/Editor/Stage Editor Palette")]
+    [CreateAssetMenu(fileName = "StageEditorPalette", menuName = "Editor/Stage Editor Palette")]
     public class StageEditorPalette : ScriptableObject
     {
         [SerializeField] private GameObject playerPrefab;
