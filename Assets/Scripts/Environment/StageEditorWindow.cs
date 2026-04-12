@@ -727,6 +727,10 @@ namespace EditorTools
                         // Brush モードなら、押した瞬間に1マス編集する
                         if (tileEditMode == TileEditMode.Brush)
                         {
+                            Undo.RegisterCompleteObjectUndo(
+                                targetStageTilemap,
+                                currentPlacementType == PlacementType.Stage ? "Paint Stage Tiles" : "Erase Stage Tiles");
+
                             ApplyTileEdit(cell);
                             lastDraggedCell = cell;
                         }
@@ -989,7 +993,7 @@ namespace EditorTools
             int maxY = Mathf.Max(startCell.y, endCell.y);
 
             // Undo に記録して、Ctrl+Z で戻せるようにする
-            Undo.RecordObject(
+            Undo.RegisterCompleteObjectUndo(
                 targetStageTilemap,
                 currentPlacementType == PlacementType.Stage ? "Paint Stage Tiles" : "Erase Stage Tiles");
 
@@ -1030,7 +1034,6 @@ namespace EditorTools
                 return;
             }
 
-            Undo.RecordObject(targetStageTilemap, "Paint Stage Tile");
             SetTileWithTransform(cell, paintData.tile, paintData.transform);
         }
 
@@ -1045,7 +1048,6 @@ namespace EditorTools
                 return;
             }
 
-            Undo.RecordObject(targetStageTilemap, "Erase Stage Tile");
             targetStageTilemap.SetTile(cell, null);
         }
 
