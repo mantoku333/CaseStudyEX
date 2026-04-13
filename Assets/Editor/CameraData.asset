@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a89b541f6574d8ab5e66f61f7a9c12d, type: 3}
   m_Name: CameraData
   m_EditorClassIdentifier: Assembly-CSharp::CameraData
-  followOffsetY: 2.1
-  orthographicSize: 12.5
+  followOffsetY: 7
+  orthographicSize: 11
