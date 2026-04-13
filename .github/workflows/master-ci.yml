@@ -1,0 +1,16 @@
+﻿name: Master CI (Learning)
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  confirm-trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show trigger info
+        run: |
+          echo "CI started on master push"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
