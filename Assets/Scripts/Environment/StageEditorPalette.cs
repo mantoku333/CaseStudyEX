@@ -6,12 +6,13 @@ namespace EditorTools
     /// <summary>
     /// ステージエディタで使用するPrefabやTileを保持するデータ
     /// </summary>
-    [CreateAssetMenu(fileName = "StageEditorPalette", menuName = "GameName/Editor/Stage Editor Palette")]
+    [CreateAssetMenu(fileName = "StageEditorPalette", menuName = "Editor/Stage Editor Palette")]
     public class StageEditorPalette : ScriptableObject
     {
         [SerializeField] private GameObject playerPrefab;
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private TileBase stageTile;
+        [SerializeField] private TileBase slopeTile;
 
         /// <summary>プレイヤー配置用Prefab</summary>
         public GameObject PlayerPrefab => playerPrefab;
@@ -21,5 +22,8 @@ namespace EditorTools
 
         /// <summary>ステージ描画用Tile</summary>
         public TileBase StageTile => stageTile;
+
+        /// <summary>斜面描画用Tile</summary>
+        public TileBase SlopeTile => slopeTile;
     }
 }
