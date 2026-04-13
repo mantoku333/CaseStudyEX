@@ -78,6 +78,28 @@ jobs:
             echo "Required (Pro): UNITY_SERIAL + UNITY_EMAIL + UNITY_PASSWORD"
           fi
 
+      - name: Preflight check for UNITY_LICENSE (Personal)
+        if: ${{ steps.validate-secrets.outputs.mode == 'personal' }}
+        shell: bash
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          echo "UNITY_LICENSE length: ${#UNITY_LICENSE}"
+          echo "UNITY_EMAIL length: ${#UNITY_EMAIL}"
+          echo "UNITY_PASSWORD length: ${#UNITY_PASSWORD}"
+
+          if [[ "$UNITY_LICENSE" == *"<MachineInfo>"* ]]; then
+            echo "::error::UNITY_LICENSE looks like an ALF activation-request file. Please set a ULF license file content."
+            exit 1
+          fi
+
+          if [[ "$UNITY_LICENSE" != *"<root>"* ]] || [[ "$UNITY_LICENSE" != *"<DeveloperData Value="* ]]; then
+            echo "::error::UNITY_LICENSE format is unexpected. Please paste the full ULF XML content."
+            exit 1
+          fi
+
       - name: Run EditMode tests (Personal)
         if: ${{ steps.validate-secrets.outputs.mode == 'personal' }}
         id: tests-personal
