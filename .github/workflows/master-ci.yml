@@ -6,11 +6,26 @@ on:
       - master
 
 jobs:
-  confirm-trigger:
+  unity-ci-skeleton:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Show trigger info
         run: |
           echo "CI started on master push"
           echo "Branch: ${{ github.ref }}"
           echo "Commit: ${{ github.sha }}"
+
+      - name: Read Unity version
+        id: unity-version
+        run: |
+          UNITY_VERSION=$(grep 'm_EditorVersion:' ProjectSettings/ProjectVersion.txt | awk '{print $2}')
+          echo "unity_version=$UNITY_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Detected Unity version: $UNITY_VERSION"
+
+      - name: Step 2 confirmation
+        run: |
+          echo "Unity CI pipeline skeleton is ready"
+          echo "Using Unity version: ${{ steps.unity-version.outputs.unity_version }}"
