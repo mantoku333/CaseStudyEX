@@ -46,3 +46,4 @@ git lfs pull
 - [Contributing](md/CONTRIBUTING.md)
 - [GitHub Actions CI](md/GITHUB_ACTIONS_CI.md)
 - [Jenkins Setup](md/JENKINS_SETUP.md)
+- [Infra Handoff (CI/CD)](md/INFRA_HANDOFF_CI_CD.md)
