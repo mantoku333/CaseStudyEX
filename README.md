@@ -44,3 +44,5 @@ git lfs pull
 - [Setup Guide](md/SETUP.md)
 - [Folder Structure](md/FOLDER_STRUCTURE.md)
 - [Contributing](md/CONTRIBUTING.md)
+- [GitHub Actions CI](md/GITHUB_ACTIONS_CI.md)
+- [Jenkins Setup](md/JENKINS_SETUP.md)

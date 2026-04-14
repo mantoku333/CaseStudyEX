@@ -1,16 +1,22 @@
-name: Master CI (Learning)
+name: CI and Jenkins Trigger
 
 on:
+  pull_request:
+    branches:
+      - master
   push:
     branches:
       - master
 
 permissions:
   contents: read
-  checks: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  unity-ci-skeleton:
+  quick-ci-checks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -20,118 +26,48 @@ jobs:
 
       - name: Show trigger info
         run: |
-          echo "CI started on master push"
+          echo "Event: ${{ github.event_name }}"
           echo "Branch: ${{ github.ref }}"
           echo "Commit: ${{ github.sha }}"
 
       - name: Read Unity version
-        id: unity-version
+        shell: bash
         run: |
           UNITY_VERSION=$(grep 'm_EditorVersion:' ProjectSettings/ProjectVersion.txt | awk '{print $2}')
-          echo "unity_version=$UNITY_VERSION" >> "$GITHUB_OUTPUT"
+          if [[ -z "$UNITY_VERSION" ]]; then
+            echo "::error::Could not detect Unity version from ProjectSettings/ProjectVersion.txt"
+            exit 1
+          fi
           echo "Detected Unity version: $UNITY_VERSION"
 
-      - name: Step 2 confirmation
+      - name: Check for merge conflict markers
+        shell: bash
         run: |
-          echo "Unity CI pipeline skeleton is ready"
-          echo "Using Unity version: ${{ steps.unity-version.outputs.unity_version }}"
+          if grep -RInE "^(<<<<<<<|=======|>>>>>>>)" Assets Packages ProjectSettings \
+            --exclude='*.png' --exclude='*.jpg' --exclude='*.dll' --binary-files=without-match; then
+            echo "::error::Merge conflict markers were found."
+            exit 1
+          fi
+          echo "No merge conflict markers found."
 
-  unity-editmode-tests:
+  trigger-jenkins:
     runs-on: ubuntu-latest
-    needs: unity-ci-skeleton
+    needs: quick-ci-checks
+    if: ${{ github.event_name == 'push' }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-        with:
-          lfs: true
-
-      - name: Cache Unity Library
-        uses: actions/cache@v5
-        with:
-          path: Library
-          key: Library-${{ runner.os }}-${{ hashFiles('ProjectSettings/ProjectVersion.txt', 'Packages/packages-lock.json') }}
-          restore-keys: |
-            Library-${{ runner.os }}-
-
-      - name: Validate Unity secrets
-        id: validate-secrets
-        shell: bash
+      - name: Trigger Jenkins build
+        if: ${{ secrets.JENKINS_WEBHOOK_URL != '' }}
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          JENKINS_WEBHOOK_URL: ${{ secrets.JENKINS_WEBHOOK_URL }}
         run: |
-          if [[ -n "$UNITY_LICENSE" && -n "$UNITY_EMAIL" && -n "$UNITY_PASSWORD" ]]; then
-            echo "mode=personal" >> "$GITHUB_OUTPUT"
-            echo "can_run=true" >> "$GITHUB_OUTPUT"
-            echo "Personal license secret found. Running Personal flow."
-          elif [[ -n "$UNITY_EMAIL" && -n "$UNITY_PASSWORD" && -n "$UNITY_SERIAL" ]]; then
-            echo "mode=professional" >> "$GITHUB_OUTPUT"
-            echo "can_run=true" >> "$GITHUB_OUTPUT"
-            echo "Professional license secrets found. Running Pro flow."
-          else
-            echo "mode=none" >> "$GITHUB_OUTPUT"
-            echo "can_run=false" >> "$GITHUB_OUTPUT"
-            echo "Unity tests will be skipped due to missing secrets."
-            echo "Required (Personal): UNITY_LICENSE + UNITY_EMAIL + UNITY_PASSWORD"
-            echo "Required (Pro): UNITY_SERIAL + UNITY_EMAIL + UNITY_PASSWORD"
-          fi
+          curl -fsS -X POST "$JENKINS_WEBHOOK_URL" \
+            --data-urlencode "cause=github-actions" \
+            --data-urlencode "git_sha=${{ github.sha }}" \
+            --data-urlencode "git_ref=${{ github.ref }}"
+          echo "Jenkins trigger request sent."
 
-      - name: Preflight check for UNITY_LICENSE (Personal)
-        if: ${{ steps.validate-secrets.outputs.mode == 'personal' }}
-        shell: bash
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      - name: Jenkins webhook not configured
+        if: ${{ secrets.JENKINS_WEBHOOK_URL == '' }}
         run: |
-          echo "UNITY_LICENSE length: ${#UNITY_LICENSE}"
-          echo "UNITY_EMAIL length: ${#UNITY_EMAIL}"
-          echo "UNITY_PASSWORD length: ${#UNITY_PASSWORD}"
-
-          if [[ "$UNITY_LICENSE" == *"<MachineInfo>"* ]]; then
-            echo "::error::UNITY_LICENSE looks like an ALF activation-request file. Please set a ULF license file content."
-            exit 1
-          fi
-
-          if [[ "$UNITY_LICENSE" != *"<root>"* ]] || [[ "$UNITY_LICENSE" != *"<DeveloperData Value="* ]]; then
-            echo "::error::UNITY_LICENSE format is unexpected. Please paste the full ULF XML content."
-            exit 1
-          fi
-
-      - name: Run EditMode tests (Personal)
-        if: ${{ steps.validate-secrets.outputs.mode == 'personal' }}
-        id: tests-personal
-        uses: game-ci/unity-test-runner@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          testMode: EditMode
-          projectPath: .
-          artifactsPath: artifacts-personal
-
-      - name: Run EditMode tests (Professional)
-        if: ${{ steps.validate-secrets.outputs.mode == 'professional' }}
-        id: tests-professional
-        uses: game-ci/unity-test-runner@v4
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          testMode: EditMode
-          projectPath: .
-          artifactsPath: artifacts-professional
-
-      - name: Upload EditMode test artifacts
-        if: ${{ always() && steps.validate-secrets.outputs.can_run == 'true' }}
-        uses: actions/upload-artifact@v6
-        with:
-          name: editmode-test-results
-          path: ${{ steps.validate-secrets.outputs.mode == 'personal' && steps.tests-personal.outputs.artifactsPath || steps.tests-professional.outputs.artifactsPath }}
-          if-no-files-found: warn
+          echo "::warning::JENKINS_WEBHOOK_URL secret is not configured."
+          echo "::warning::Set this secret to trigger Jenkins automatically after CI passes on master."
