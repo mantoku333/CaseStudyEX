@@ -1,21 +1,20 @@
 using System;
-using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public sealed class SaveManager : MonoBehaviour
 {
-    private const string SaveFileNameFormat = "save_slot_{0:D2}.json";
-    private const int SaveVersion = 1;
+    private const int SaveVersion = 2;
     public const int DefaultSlotIndex = 1;
     public const int MinSlotIndex = 1;
     public const int MaxSlotIndex = 3;
-    private const bool EnableLoadTrace = false;
+    private static readonly bool EnableLoadTrace = false;
     private const int TraceFrameCount = 120;
     private const float TraceThreshold = 0.001f;
 
     private static SaveManager instance;
-    private static SaveData pendingLoadData;
+    private static SaveGameData pendingLoadData;
     private static int pendingLoadRequestId;
     private static int pendingLoadSlotIndex;
     private static bool sceneHookRegistered;
@@ -26,11 +25,9 @@ public sealed class SaveManager : MonoBehaviour
     private static Vector2 lastTracedRigidbodyPosition;
     private static int traceFramesRemaining;
     private static int tracedLoadRequestId;
-
-    private static string GetSaveFilePath(int slotIndex)
-    {
-        return Path.Combine(Application.persistentDataPath, string.Format(SaveFileNameFormat, slotIndex));
-    }
+    private static readonly Dictionary<string, int> runtimeItems = new Dictionary<string, int>(StringComparer.Ordinal);
+    private static readonly List<ISaveDataModule> registeredModules = new List<ISaveDataModule>();
+    private static readonly List<ISaveDataModule> moduleExecutionBuffer = new List<ISaveDataModule>();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
@@ -106,6 +103,92 @@ public sealed class SaveManager : MonoBehaviour
         sceneHookRegistered = true;
     }
 
+    public static void RegisterModule(ISaveDataModule module)
+    {
+        if (module == null)
+        {
+            return;
+        }
+
+        if (!registeredModules.Contains(module))
+        {
+            registeredModules.Add(module);
+        }
+    }
+
+    public static void UnregisterModule(ISaveDataModule module)
+    {
+        if (module == null)
+        {
+            return;
+        }
+
+        registeredModules.Remove(module);
+    }
+
+    public static void SetFlag(string flagKey, bool value)
+    {
+        GameProgressFlags.Set(flagKey, value);
+    }
+
+    public static bool GetFlag(string flagKey, bool defaultValue = false)
+    {
+        return GameProgressFlags.Get(flagKey, defaultValue);
+    }
+
+    public static void RemoveFlag(string flagKey)
+    {
+        GameProgressFlags.Remove(flagKey);
+    }
+
+    public static void ClearAllFlags()
+    {
+        GameProgressFlags.ClearAll();
+    }
+
+    public static void SetItemCount(string itemId, int count)
+    {
+        if (string.IsNullOrWhiteSpace(itemId))
+        {
+            return;
+        }
+
+        int normalized = Mathf.Max(0, count);
+        if (normalized <= 0)
+        {
+            runtimeItems.Remove(itemId);
+            return;
+        }
+
+        runtimeItems[itemId] = normalized;
+    }
+
+    public static int GetItemCount(string itemId)
+    {
+        if (string.IsNullOrWhiteSpace(itemId))
+        {
+            return 0;
+        }
+
+        return runtimeItems.TryGetValue(itemId, out var count) ? Mathf.Max(0, count) : 0;
+    }
+
+    public static void AddItemCount(string itemId, int delta)
+    {
+        if (string.IsNullOrWhiteSpace(itemId) || delta == 0)
+        {
+            return;
+        }
+
+        int current = GetItemCount(itemId);
+        SetItemCount(itemId, current + delta);
+    }
+
+    public static void ClearAllItems()
+    {
+        runtimeItems.Clear();
+    }
+
     public static bool HasSave()
     {
         return HasSave(DefaultSlotIndex);
@@ -118,7 +201,22 @@ public sealed class SaveManager : MonoBehaviour
             return false;
         }
 
-        return File.Exists(GetSaveFilePath(slotIndex));
+        return SaveRepository.HasSave(slotIndex);
+    }
+
+    public static SaveSlotMeta GetSlotMeta(int slotIndex)
+    {
+        if (!TryValidateSlotIndex(slotIndex))
+        {
+            return new SaveSlotMeta(
+                slotIndex: slotIndex,
+                hasSave: false,
+                isCorrupted: false,
+                sceneName: string.Empty,
+                savedAtUtc: string.Empty);
+        }
+
+        return SaveRepository.GetSlotMeta(slotIndex);
     }
 
     private static bool TryValidateSlotIndex(int slotIndex)
@@ -154,7 +252,7 @@ public sealed class SaveManager : MonoBehaviour
             return false;
         }
 
-        var saveData = new SaveData
+        var saveData = new SaveGameData
         {
             version = SaveVersion,
             sceneName = SceneManager.GetActiveScene().name,
@@ -162,7 +260,10 @@ public sealed class SaveManager : MonoBehaviour
             savedAtUtc = DateTime.UtcNow.ToString("o")
         };
 
-        return WriteSaveData(slotIndex, saveData);
+        WriteRuntimeCollectionsToSave(saveData);
+        CaptureModules(saveData);
+
+        return SaveRepository.TryWrite(slotIndex, saveData);
     }
 
     public static bool TryLoadGame(string fallbackSceneName = null)
@@ -180,7 +281,7 @@ public sealed class SaveManager : MonoBehaviour
         EnsureInstance();
         int loadRequestId = ++loadRequestSequence;
 
-        if (!TryReadSaveData(slotIndex, out var saveData))
+        if (!SaveRepository.TryRead(slotIndex, out var saveData))
         {
             if (EnableLoadTrace)
             {
@@ -263,16 +364,7 @@ public sealed class SaveManager : MonoBehaviour
             return true;
         }
 
-        try
-        {
-            File.Delete(GetSaveFilePath(slotIndex));
-            return true;
-        }
-        catch (Exception exception)
-        {
-            Debug.LogError($"[SaveManager] Failed to delete save: {exception}");
-            return false;
-        }
+        return SaveRepository.TryDelete(slotIndex);
     }
 
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -297,6 +389,8 @@ public sealed class SaveManager : MonoBehaviour
         {
             return;
         }
+
+        SaveGameData loadedData = pendingLoadData;
 
         var playerController = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
         if (playerController == null)
@@ -323,7 +417,10 @@ public sealed class SaveManager : MonoBehaviour
             playerController.transform.position = loadedPosition;
         }
 
-        Debug.Log($"[SaveManager] Save loaded. slot={pendingLoadSlotIndex}, scene={pendingLoadData.sceneName}");
+        ReadRuntimeCollectionsFromSave(loadedData);
+        RestoreModules(loadedData);
+
+        Debug.Log($"[SaveManager] Save loaded. slot={pendingLoadSlotIndex}, scene={loadedData.sceneName}");
         if (EnableLoadTrace)
         {
             Debug.Log(
@@ -431,6 +528,165 @@ public sealed class SaveManager : MonoBehaviour
         }
     }
 
+    private static void WriteRuntimeCollectionsToSave(SaveGameData saveData)
+    {
+        if (saveData == null)
+        {
+            return;
+        }
+
+        if (saveData.items == null)
+        {
+            saveData.items = new List<SaveItemStackEntry>();
+        }
+        else
+        {
+            saveData.items.Clear();
+        }
+
+        foreach (var pair in runtimeItems)
+        {
+            if (string.IsNullOrWhiteSpace(pair.Key))
+            {
+                continue;
+            }
+
+            int count = Mathf.Max(0, pair.Value);
+            if (count <= 0)
+            {
+                continue;
+            }
+
+            saveData.items.Add(new SaveItemStackEntry
+            {
+                itemId = pair.Key,
+                count = count
+            });
+        }
+    }
+
+    private static void ReadRuntimeCollectionsFromSave(SaveGameData saveData)
+    {
+        runtimeItems.Clear();
+
+        if (saveData == null)
+        {
+            return;
+        }
+
+        if (saveData.items != null)
+        {
+            for (int i = 0; i < saveData.items.Count; i++)
+            {
+                SaveItemStackEntry entry = saveData.items[i];
+                if (string.IsNullOrWhiteSpace(entry.itemId))
+                {
+                    continue;
+                }
+
+                int count = Mathf.Max(0, entry.count);
+                if (count <= 0)
+                {
+                    continue;
+                }
+
+                runtimeItems[entry.itemId] = count;
+            }
+        }
+    }
+
+    private static void CaptureModules(SaveGameData saveData)
+    {
+        if (saveData == null)
+        {
+            return;
+        }
+
+        List<ISaveDataModule> modules = CollectModules();
+        for (int i = 0; i < modules.Count; i++)
+        {
+            ISaveDataModule module = modules[i];
+            if (module == null)
+            {
+                continue;
+            }
+
+            try
+            {
+                module.Capture(saveData);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[SaveManager] Save module capture failed: {module.GetType().Name}. {exception}");
+            }
+        }
+    }
+
+    private static void RestoreModules(SaveGameData saveData)
+    {
+        if (saveData == null)
+        {
+            return;
+        }
+
+        List<ISaveDataModule> modules = CollectModules();
+        for (int i = 0; i < modules.Count; i++)
+        {
+            ISaveDataModule module = modules[i];
+            if (module == null)
+            {
+                continue;
+            }
+
+            try
+            {
+                module.Restore(saveData);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[SaveManager] Save module restore failed: {module.GetType().Name}. {exception}");
+            }
+        }
+    }
+
+    private static List<ISaveDataModule> CollectModules()
+    {
+        CleanupRegisteredModules();
+
+        var sceneBehaviours = UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+        for (int i = 0; i < sceneBehaviours.Length; i++)
+        {
+            if (sceneBehaviours[i] is ISaveDataModule sceneModule && !registeredModules.Contains(sceneModule))
+            {
+                registeredModules.Add(sceneModule);
+            }
+        }
+
+        moduleExecutionBuffer.Clear();
+        for (int i = 0; i < registeredModules.Count; i++)
+        {
+            ISaveDataModule module = registeredModules[i];
+            if (module != null)
+            {
+                moduleExecutionBuffer.Add(module);
+            }
+        }
+
+        moduleExecutionBuffer.Sort((left, right) => left.Priority.CompareTo(right.Priority));
+        return moduleExecutionBuffer;
+    }
+
+    private static void CleanupRegisteredModules()
+    {
+        for (int i = registeredModules.Count - 1; i >= 0; i--)
+        {
+            if (registeredModules[i] == null)
+            {
+                registeredModules.RemoveAt(i);
+            }
+        }
+    }
+
     private static string ResolveSceneToLoad(string saveSceneName, string fallbackSceneName)
     {
         if (!string.IsNullOrEmpty(saveSceneName) && Application.CanStreamedLevelBeLoaded(saveSceneName))
@@ -446,77 +702,4 @@ public sealed class SaveManager : MonoBehaviour
         return string.Empty;
     }
 
-    private static bool TryReadSaveData(int slotIndex, out SaveData saveData)
-    {
-        saveData = null;
-
-        if (!HasSave(slotIndex))
-        {
-            return false;
-        }
-
-        try
-        {
-            string json = File.ReadAllText(GetSaveFilePath(slotIndex));
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                return false;
-            }
-
-            saveData = JsonUtility.FromJson<SaveData>(json);
-            return saveData != null;
-        }
-        catch (Exception exception)
-        {
-            Debug.LogError($"[SaveManager] Failed to read save: {exception}");
-            return false;
-        }
-    }
-
-    private static bool WriteSaveData(int slotIndex, SaveData saveData)
-    {
-        try
-        {
-            string json = JsonUtility.ToJson(saveData, true);
-            File.WriteAllText(GetSaveFilePath(slotIndex), json);
-            return true;
-        }
-        catch (Exception exception)
-        {
-            Debug.LogError($"[SaveManager] Failed to write save: {exception}");
-            return false;
-        }
-    }
-
-    [Serializable]
-    private sealed class SaveData
-    {
-        public int version;
-        public string sceneName;
-        public SerializableVector3 playerPosition;
-        public string savedAtUtc;
-    }
-
-    [Serializable]
-    private struct SerializableVector3
-    {
-        public float x;
-        public float y;
-        public float z;
-
-        public Vector3 ToVector3()
-        {
-            return new Vector3(x, y, z);
-        }
-
-        public static SerializableVector3 FromVector3(Vector3 value)
-        {
-            return new SerializableVector3
-            {
-                x = value.x,
-                y = value.y,
-                z = value.z
-            };
-        }
-    }
 }
