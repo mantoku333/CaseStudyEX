@@ -5,8 +5,11 @@ using UnityEngine.SceneManagement;
 
 public sealed class SaveManager : MonoBehaviour
 {
-    private const string SaveFileName = "save_slot_01.json";
+    private const string SaveFileNameFormat = "save_slot_{0:D2}.json";
     private const int SaveVersion = 1;
+    public const int DefaultSlotIndex = 1;
+    public const int MinSlotIndex = 1;
+    public const int MaxSlotIndex = 3;
     private const bool EnableLoadTrace = false;
     private const int TraceFrameCount = 120;
     private const float TraceThreshold = 0.001f;
@@ -14,6 +17,7 @@ public sealed class SaveManager : MonoBehaviour
     private static SaveManager instance;
     private static SaveData pendingLoadData;
     private static int pendingLoadRequestId;
+    private static int pendingLoadSlotIndex;
     private static bool sceneHookRegistered;
     private static int loadRequestSequence;
     private static global::PlayerController tracedPlayerController;
@@ -23,7 +27,10 @@ public sealed class SaveManager : MonoBehaviour
     private static int traceFramesRemaining;
     private static int tracedLoadRequestId;
 
-    private static string SaveFilePath => Path.Combine(Application.persistentDataPath, SaveFileName);
+    private static string GetSaveFilePath(int slotIndex)
+    {
+        return Path.Combine(Application.persistentDataPath, string.Format(SaveFileNameFormat, slotIndex));
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
@@ -101,11 +108,43 @@ public sealed class SaveManager : MonoBehaviour
 
     public static bool HasSave()
     {
-        return File.Exists(SaveFilePath);
+        return HasSave(DefaultSlotIndex);
+    }
+
+    public static bool HasSave(int slotIndex)
+    {
+        if (!TryValidateSlotIndex(slotIndex))
+        {
+            return false;
+        }
+
+        return File.Exists(GetSaveFilePath(slotIndex));
+    }
+
+    private static bool TryValidateSlotIndex(int slotIndex)
+    {
+        if (slotIndex >= MinSlotIndex && slotIndex <= MaxSlotIndex)
+        {
+            return true;
+        }
+
+        Debug.LogWarning(
+            $"[SaveManager] Invalid slot index: {slotIndex}. Valid range is {MinSlotIndex}-{MaxSlotIndex}.");
+        return false;
     }
 
     public static bool TrySaveCurrentGame()
     {
+        return TrySaveCurrentGame(DefaultSlotIndex);
+    }
+
+    public static bool TrySaveCurrentGame(int slotIndex)
+    {
+        if (!TryValidateSlotIndex(slotIndex))
+        {
+            return false;
+        }
+
         EnsureInstance();
 
         var playerController = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
@@ -123,20 +162,30 @@ public sealed class SaveManager : MonoBehaviour
             savedAtUtc = DateTime.UtcNow.ToString("o")
         };
 
-        return WriteSaveData(saveData);
+        return WriteSaveData(slotIndex, saveData);
     }
 
     public static bool TryLoadGame(string fallbackSceneName = null)
     {
+        return TryLoadGame(DefaultSlotIndex, fallbackSceneName);
+    }
+
+    public static bool TryLoadGame(int slotIndex, string fallbackSceneName = null)
+    {
+        if (!TryValidateSlotIndex(slotIndex))
+        {
+            return false;
+        }
+
         EnsureInstance();
         int loadRequestId = ++loadRequestSequence;
 
-        if (!TryReadSaveData(out var saveData))
+        if (!TryReadSaveData(slotIndex, out var saveData))
         {
             if (EnableLoadTrace)
             {
                 Debug.Log(
-                    $"[SaveManager][Trace#{loadRequestId}] TryLoadGame failed: save file not found or unreadable. fallback='{fallbackSceneName}'");
+                    $"[SaveManager][Trace#{loadRequestId}] TryLoadGame failed: slot={slotIndex}, save file not found or unreadable. fallback='{fallbackSceneName}'");
             }
 
             if (!string.IsNullOrEmpty(fallbackSceneName))
@@ -149,10 +198,11 @@ public sealed class SaveManager : MonoBehaviour
 
         pendingLoadData = saveData;
         pendingLoadRequestId = loadRequestId;
+        pendingLoadSlotIndex = slotIndex;
         if (EnableLoadTrace)
         {
             Debug.Log(
-                $"[SaveManager][Trace#{loadRequestId}] TryLoadGame saveScene='{saveData.sceneName}', savePos={saveData.playerPosition.ToVector3()}, fallback='{fallbackSceneName}', activeScene='{SceneManager.GetActiveScene().name}', frame={Time.frameCount}");
+                $"[SaveManager][Trace#{loadRequestId}] TryLoadGame slot={slotIndex}, saveScene='{saveData.sceneName}', savePos={saveData.playerPosition.ToVector3()}, fallback='{fallbackSceneName}', activeScene='{SceneManager.GetActiveScene().name}', frame={Time.frameCount}");
             LogPlayerSnapshot($"TryLoadGame#{loadRequestId}/BeforeLoad");
         }
 
@@ -161,9 +211,10 @@ public sealed class SaveManager : MonoBehaviour
         if (string.IsNullOrEmpty(sceneToLoad))
         {
             Debug.LogError(
-                $"[SaveManager] No loadable scene found. requestId={loadRequestId}, saveScene='{saveData.sceneName}', fallbackScene='{fallbackSceneName}'.");
+                $"[SaveManager] No loadable scene found. requestId={loadRequestId}, slot={slotIndex}, saveScene='{saveData.sceneName}', fallbackScene='{fallbackSceneName}'.");
             pendingLoadData = null;
             pendingLoadRequestId = 0;
+            pendingLoadSlotIndex = 0;
             return false;
         }
 
@@ -193,16 +244,28 @@ public sealed class SaveManager : MonoBehaviour
 
     public static bool DeleteSave()
     {
-        pendingLoadData = null;
+        return DeleteSave(DefaultSlotIndex);
+    }
 
-        if (!HasSave())
+    public static bool DeleteSave(int slotIndex)
+    {
+        if (!TryValidateSlotIndex(slotIndex))
+        {
+            return false;
+        }
+
+        pendingLoadData = null;
+        pendingLoadRequestId = 0;
+        pendingLoadSlotIndex = 0;
+
+        if (!HasSave(slotIndex))
         {
             return true;
         }
 
         try
         {
-            File.Delete(SaveFilePath);
+            File.Delete(GetSaveFilePath(slotIndex));
             return true;
         }
         catch (Exception exception)
@@ -260,7 +323,7 @@ public sealed class SaveManager : MonoBehaviour
             playerController.transform.position = loadedPosition;
         }
 
-        Debug.Log($"[SaveManager] Save loaded. scene={pendingLoadData.sceneName}");
+        Debug.Log($"[SaveManager] Save loaded. slot={pendingLoadSlotIndex}, scene={pendingLoadData.sceneName}");
         if (EnableLoadTrace)
         {
             Debug.Log(
@@ -270,6 +333,7 @@ public sealed class SaveManager : MonoBehaviour
         BeginPostLoadTrace(playerController, pendingLoadRequestId);
         pendingLoadData = null;
         pendingLoadRequestId = 0;
+        pendingLoadSlotIndex = 0;
     }
 
     private static void BeginPostLoadTrace(global::PlayerController playerController, int loadRequestId)
@@ -382,18 +446,18 @@ public sealed class SaveManager : MonoBehaviour
         return string.Empty;
     }
 
-    private static bool TryReadSaveData(out SaveData saveData)
+    private static bool TryReadSaveData(int slotIndex, out SaveData saveData)
     {
         saveData = null;
 
-        if (!HasSave())
+        if (!HasSave(slotIndex))
         {
             return false;
         }
 
         try
         {
-            string json = File.ReadAllText(SaveFilePath);
+            string json = File.ReadAllText(GetSaveFilePath(slotIndex));
             if (string.IsNullOrWhiteSpace(json))
             {
                 return false;
@@ -409,12 +473,12 @@ public sealed class SaveManager : MonoBehaviour
         }
     }
 
-    private static bool WriteSaveData(SaveData saveData)
+    private static bool WriteSaveData(int slotIndex, SaveData saveData)
     {
         try
         {
             string json = JsonUtility.ToJson(saveData, true);
-            File.WriteAllText(SaveFilePath, json);
+            File.WriteAllText(GetSaveFilePath(slotIndex), json);
             return true;
         }
         catch (Exception exception)

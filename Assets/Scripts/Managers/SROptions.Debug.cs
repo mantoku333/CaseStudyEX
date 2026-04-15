@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public partial class SROptions
 {
     private const bool EnableSaveLoadTrace = false;
+    private int selectedSaveSlot = SaveManager.DefaultSlotIndex;
 
     [Category("Debug")]
     [DisplayName("Reset Player Position (0,0,0)")]
@@ -31,7 +32,7 @@ public partial class SROptions
 
     [Category("Debug")]
     [DisplayName("Cheat Mode")]
-    [Sort(-99)]
+    [Sort(-98)]
     public bool IsCheatMode
     {
         get
@@ -62,8 +63,22 @@ public partial class SROptions
     }
 
     [Category("Debug")]
+    [DisplayName("Save Slot")]
+    [Sort(-99)]
+    public int SaveSlot
+    {
+        get => selectedSaveSlot;
+        set => selectedSaveSlot = Mathf.Clamp(value, SaveManager.MinSlotIndex, SaveManager.MaxSlotIndex);
+    }
+
+    [Category("Debug")]
+    [DisplayName("Has Save In Slot")]
+    [Sort(-97)]
+    public bool HasSaveInSelectedSlot => SaveManager.HasSave(selectedSaveSlot);
+
+    [Category("Debug")]
     [DisplayName("Save Current Game")]
-    [Sort(-98)]
+    [Sort(-96)]
     public void SaveCurrentGame()
     {
         if (EnableSaveLoadTrace)
@@ -77,7 +92,7 @@ public partial class SROptions
             Debug.Log($"[SROptions] SaveCurrentGame invoked. source={source}, scene='{SceneManager.GetActiveScene().name}', frame={Time.frameCount}");
         }
 
-        bool saved = SaveManager.TrySaveCurrentGame();
+        bool saved = SaveManager.TrySaveCurrentGame(selectedSaveSlot);
         if (!saved)
         {
             Debug.LogWarning("[SROptions] Save failed.");
@@ -86,7 +101,7 @@ public partial class SROptions
 
     [Category("Debug")]
     [DisplayName("Load Saved Game")]
-    [Sort(-97)]
+    [Sort(-95)]
     public void LoadSavedGame()
     {
         if (EnableSaveLoadTrace)
@@ -100,7 +115,7 @@ public partial class SROptions
             Debug.Log($"[SROptions] LoadSavedGame invoked. source={source}, scene='{SceneManager.GetActiveScene().name}', frame={Time.frameCount}");
         }
 
-        bool loaded = SaveManager.TryLoadGame(SceneManager.GetActiveScene().name);
+        bool loaded = SaveManager.TryLoadGame(selectedSaveSlot, SceneManager.GetActiveScene().name);
         if (!loaded)
         {
             Debug.LogWarning("[SROptions] Load failed. Fallback scene was loaded.");
@@ -109,10 +124,10 @@ public partial class SROptions
 
     [Category("Debug")]
     [DisplayName("Delete Save Data")]
-    [Sort(-96)]
+    [Sort(-94)]
     public void DeleteSaveData()
     {
-        bool deleted = SaveManager.DeleteSave();
+        bool deleted = SaveManager.DeleteSave(selectedSaveSlot);
         if (!deleted)
         {
             Debug.LogWarning("[SROptions] Delete save failed.");
