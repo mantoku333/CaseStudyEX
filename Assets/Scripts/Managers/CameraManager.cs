@@ -16,7 +16,8 @@ public class CameraManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            var root = transform.root != null ? transform.root.gameObject : gameObject;
+            DontDestroyOnLoad(root);
             Initialize();
         }
         else

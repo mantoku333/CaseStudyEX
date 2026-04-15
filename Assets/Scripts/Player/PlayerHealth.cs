@@ -67,6 +67,16 @@ namespace Player
         }
 
         /// <summary>
+        /// セーブデータから現在HPを復元する
+        /// </summary>
+        /// <param name="value">復元するHP</param>
+        public void SetCurrentHealthFromSave(int value)
+        {
+            currentHealth = Mathf.Clamp(value, 0, MaxHealth);
+            NotifyHealthChanged();
+        }
+
+        /// <summary>
         /// HP変更イベントを通知
         /// </summary>
         private void NotifyHealthChanged()
