@@ -2836,7 +2836,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -1.402, y: 3.2882, z: 0}
-  m_LocalScale: {x: 0.35901672, y: 0.3440101, z: 1}
+  m_LocalScale: {x: 0.86989754, y: 0.83353657, z: 2.423}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2100399109}
@@ -2890,7 +2890,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
@@ -2917,6 +2917,8 @@ MonoBehaviour:
   glideFallSpeed: -0.001
   glideMoveSpeed: 3.5
   gunController: {fileID: 2078664045}
+  closedUmbrellaSprite: {fileID: 3844867493183888768, guid: e906e99cda82a5b41b29b0a5865801ab, type: 3}
+  openDebugSprite: {fileID: 0}
   umbrella_open: {fileID: 8300000, guid: b23093459fc678f498899d1ceed37ba0, type: 3}
   umbrella_close: {fileID: 8300000, guid: 631315968a2b9e7428dc0aa7c2457e77, type: 3}
 --- !u!114 &974501602
@@ -12411,8 +12413,8 @@ Transform:
   m_GameObject: {fileID: 1836184500}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.465979, y: -3.862552, z: 0}
-  m_LocalScale: {x: 2.7853856, y: 5.639959, z: 1}
+  m_LocalPosition: {x: 1.8431607, y: -1.5941193, z: 0}
+  m_LocalScale: {x: 1.1495606, y: 2.3276758, z: 0.4127115}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 974501599}
@@ -12985,8 +12987,8 @@ Transform:
   m_GameObject: {fileID: 2100399108}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.505979, y: -3.8427818, z: 0}
-  m_LocalScale: {x: 0.033457268, y: 5.6983013, z: 0.25}
+  m_LocalPosition: {x: 1.8596692, y: -1.58596, z: 0}
+  m_LocalScale: {x: 0.013808198, y: 2.3517544, z: 0.103177875}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 974501599}

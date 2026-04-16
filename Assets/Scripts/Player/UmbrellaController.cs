@@ -21,6 +21,10 @@ public class UmbrellaController : MonoBehaviour
     [SerializeField] private float glideMoveSpeed = 3.5f;
     [SerializeField] private GunController gunController;  //銃関連のスクリプト
 
+    [Header("見た目")]
+    [SerializeField] private Sprite closedUmbrellaSprite;
+    [SerializeField] private Sprite openDebugSprite;
+
     private UmbrellaState umbrellaState = UmbrellaState.Closed;  //現在の傘の状態
     private SpriteRenderer spriteRenderer;  //デバッグ用のスプライトレンダラー(傘が出来たら削除)
 
@@ -36,6 +40,12 @@ public class UmbrellaController : MonoBehaviour
         rigidBody2D = GetComponentInParent<Rigidbody2D>();
         gunController = GetComponentInParent<GunController>();
         audioSource = GetComponentInParent<AudioSource>();
+
+        if (openDebugSprite == null && spriteRenderer != null)
+        {
+            openDebugSprite = spriteRenderer.sprite;
+        }
+
         UpdateDebugColor();
     }
 
@@ -139,13 +149,17 @@ public class UmbrellaController : MonoBehaviour
     /// </summary>
     private void UpdateDebugColor()
     {
+        if (spriteRenderer == null) { return; }
+
         if (umbrellaState == UmbrellaState.Open)
         {
+            spriteRenderer.sprite = openDebugSprite;
             spriteRenderer.color = Color.blue;
         }
         else
         {
-            spriteRenderer.color = Color.red;
+            spriteRenderer.sprite = closedUmbrellaSprite != null ? closedUmbrellaSprite : openDebugSprite;
+            spriteRenderer.color = Color.white;
         }
     }
 
