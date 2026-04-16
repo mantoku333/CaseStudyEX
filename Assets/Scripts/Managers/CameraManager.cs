@@ -16,12 +16,28 @@ public class CameraManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+
+            // Keep only the manager object persistent.
+            // Persisting transform.root can also carry an AudioListener and cause duplicates after scene loads.
+            if (transform.parent != null)
+            {
+                transform.SetParent(null, true);
+            }
+
             DontDestroyOnLoad(gameObject);
             Initialize();
         }
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
         }
     }
 
