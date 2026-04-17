@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using Metroidvania.Player;
@@ -143,14 +143,9 @@ public partial class SROptions
     [Sort(-93)]
     public void SaveCurrentGame()
     {
+        string source = DetectSaveLoadInvokeSource();
         if (EnableSaveLoadTrace)
         {
-            string stack = System.Environment.StackTrace;
-            string source = stack.Contains("SRDebugger.Editor.SROptionsWindow")
-                ? "SRDebuggerEditorWindow"
-                : stack.Contains("SRDebugger.UI.Controls.Data.ActionControl")
-                    ? "SRDebuggerInGameUI"
-                    : "Unknown";
             Debug.Log($"[SROptions] SaveCurrentGame invoked. source={source}, scene='{SceneManager.GetActiveScene().name}', frame={Time.frameCount}");
         }
 
@@ -158,7 +153,12 @@ public partial class SROptions
         if (!saved)
         {
             Debug.LogWarning("[SROptions] Save failed.");
+            ShowSaveLoadOverlay($"Save failed  Slot {selectedSaveSlot}");
+            return;
         }
+
+        ShowSaveLoadOverlay(
+            $"Saved  Slot {selectedSaveSlot}\nSaved At: {GetSavedAtTextForSlot(selectedSaveSlot)}");
     }
 
     [Category(SaveCategory)]
@@ -166,14 +166,9 @@ public partial class SROptions
     [Sort(-92)]
     public void LoadSavedGame()
     {
+        string source = DetectSaveLoadInvokeSource();
         if (EnableSaveLoadTrace)
         {
-            string stack = System.Environment.StackTrace;
-            string source = stack.Contains("SRDebugger.Editor.SROptionsWindow")
-                ? "SRDebuggerEditorWindow"
-                : stack.Contains("SRDebugger.UI.Controls.Data.ActionControl")
-                    ? "SRDebuggerInGameUI"
-                    : "Unknown";
             Debug.Log($"[SROptions] LoadSavedGame invoked. source={source}, scene='{SceneManager.GetActiveScene().name}', frame={Time.frameCount}");
         }
 
@@ -181,7 +176,12 @@ public partial class SROptions
         if (!loaded)
         {
             Debug.LogWarning("[SROptions] Load failed. Fallback scene was loaded.");
+            ShowSaveLoadOverlay($"Load failed  Slot {selectedSaveSlot}");
+            return;
         }
+
+        ShowSaveLoadOverlay(
+            $"Loaded  Slot {selectedSaveSlot}\nSaved At: {GetSavedAtTextForSlot(selectedSaveSlot)}");
     }
 
     [Category(SaveCategory)]
@@ -223,5 +223,47 @@ public partial class SROptions
         {
             Debug.LogError($"[SROptions] Failed to open save file: {exception}");
         }
+    }
+
+    private static string DetectSaveLoadInvokeSource()
+    {
+        string stack = System.Environment.StackTrace;
+        if (stack.Contains("SRDebugger.Editor.SROptionsWindow"))
+        {
+            return "SRDebuggerEditorWindow";
+        }
+
+        if (stack.Contains("SRDebugger.UI.Controls.Data.ActionControl"))
+        {
+            return "SRDebuggerInGameUI";
+        }
+
+        return "Unknown";
+    }
+
+    private static void ShowSaveLoadOverlay(string message)
+    {
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+
+        FullscreenDebugMessageOverlay.Show(message);
+    }
+
+    private static string GetSavedAtTextForSlot(int slotIndex)
+    {
+        SaveSlotMeta slotMeta = SaveManager.GetSlotMeta(slotIndex);
+        if (!slotMeta.HasSave || slotMeta.IsCorrupted || string.IsNullOrEmpty(slotMeta.SavedAtUtc))
+        {
+            return "(unknown)";
+        }
+
+        if (DateTime.TryParse(slotMeta.SavedAtUtc, null, System.Globalization.DateTimeStyles.RoundtripKind, out var utcTime))
+        {
+            return utcTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        return slotMeta.SavedAtUtc;
     }
 }
