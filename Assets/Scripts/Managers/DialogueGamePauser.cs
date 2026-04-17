@@ -5,9 +5,6 @@ using Yarn.Unity;
 
 namespace Metroidvania.Managers
 {
-    /// <summary>
-    /// 会話開始時にポーズポリシーに応じた停止を行い、会話終了時に復帰させる。
-    /// </summary>
     public class DialogueGamePauser : MonoBehaviour
     {
         [SerializeField] private DialogueRunner dialogueRunner = null!;
@@ -34,25 +31,31 @@ namespace Metroidvania.Managers
         private float previousTimeScale = 1f;
         private bool gameplayPaused;
         private bool timeScalePaused;
+        private bool callbacksRegistered;
 
-        private void Start()
+        private void OnEnable()
         {
             StoryPauseRuntime.DialogueDefaultPolicy = defaultPausePolicy;
+            EnsureDialogueRunner();
+            RegisterCallbacks();
 
-            if (dialogueRunner == null)
+            // Catch up when dialogue was already started before callback registration.
+            if (dialogueRunner != null && dialogueRunner.IsDialogueRunning)
             {
-                dialogueRunner = FindFirstObjectByType<DialogueRunner>();
+                PauseGame();
             }
+        }
 
-            if (dialogueRunner != null)
-            {
-                dialogueRunner.onDialogueStart?.AddListener(PauseGame);
-                dialogueRunner.onDialogueComplete?.AddListener(ResumeGame);
-            }
-            else
-            {
-                Debug.LogWarning("[DialogueGamePauser] DialogueRunnerが見つかりません。");
-            }
+        private void OnDisable()
+        {
+            UnregisterCallbacks();
+            ResumeGame();
+        }
+
+        private void OnDestroy()
+        {
+            UnregisterCallbacks();
+            ResumeGame();
         }
 
         private void PauseGame()
@@ -111,13 +114,13 @@ namespace Metroidvania.Managers
                 pausedPlayerInput.enabled = false;
             }
 
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            GameObject player = ResolvePlayerObject();
             if (player == null)
             {
                 return;
             }
 
-            MonoBehaviour[] behaviours = player.GetComponents<MonoBehaviour>();
+            MonoBehaviour[] behaviours = player.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
             for (int i = 0; i < behaviours.Length; i++)
             {
                 MonoBehaviour behaviour = behaviours[i];
@@ -181,15 +184,58 @@ namespace Metroidvania.Managers
             return false;
         }
 
-        private void OnDestroy()
+        private GameObject ResolvePlayerObject()
         {
+            GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
+            if (taggedPlayer != null)
+            {
+                return taggedPlayer;
+            }
+
+            global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
+            return playerController != null ? playerController.gameObject : null;
+        }
+
+        private void EnsureDialogueRunner()
+        {
+            if (dialogueRunner != null)
+            {
+                return;
+            }
+
+            dialogueRunner = FindFirstObjectByType<DialogueRunner>();
+            if (dialogueRunner == null)
+            {
+                Debug.LogWarning("[DialogueGamePauser] DialogueRunner not found.");
+            }
+        }
+
+        private void RegisterCallbacks()
+        {
+            if (callbacksRegistered || dialogueRunner == null)
+            {
+                return;
+            }
+
+            dialogueRunner.onDialogueStart?.AddListener(PauseGame);
+            dialogueRunner.onDialogueComplete?.AddListener(ResumeGame);
+            callbacksRegistered = true;
+        }
+
+        private void UnregisterCallbacks()
+        {
+            if (!callbacksRegistered)
+            {
+                return;
+            }
+
             if (dialogueRunner != null)
             {
                 dialogueRunner.onDialogueStart?.RemoveListener(PauseGame);
                 dialogueRunner.onDialogueComplete?.RemoveListener(ResumeGame);
             }
 
-            ResumeGame();
+            callbacksRegistered = false;
         }
     }
 }

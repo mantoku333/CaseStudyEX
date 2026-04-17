@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class TitleSceneController : MonoBehaviour
 {
     [Header("シーン設定")]
-    [SerializeField] private string gameSceneName = "GameScene";
+    [SerializeField] private string gameSceneName = "Story_Mantoku";
 
     [Header("確認ウィンドウ")]
     [SerializeField] private GameObject quitConfirmPanel;

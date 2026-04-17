@@ -19,6 +19,7 @@ title: Prologue
 イリス: かみなり……？
 <<pg_sfx bed_down>>
 <<pg_stage room_2>>
+<<pg_black 0 0.35>>
 <<pg_actor_active iris 1>>
 <<pg_actor_place iris bed_right>>
 <<pg_wait 0.35>>
@@ -59,4 +60,6 @@ title: Prologue
 イリス: 私はイリス。あなたは？
 ノクス: ノクスだ
 <<pg_black 1 0.8>>
+<<pg_wait 0.35>>
+<<pg_black 0 0.6>>
 ===

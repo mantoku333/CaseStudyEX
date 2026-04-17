@@ -9,6 +9,7 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
     private const string StagePrefix = "PG_STAGE_";
     private const string ActorPrefix = "PG_ACTOR_";
     private const string MarkerPrefix = "PG_MARKER_";
+    private const string IrisActorId = "iris";
 
     private static ProloguePresentationRuntime instance;
 
@@ -18,6 +19,8 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
         new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> warnedMissingClips =
         new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+    [SerializeField] private bool logMissingClipWarnings;
 
     private AudioSource rainSource;
     private AudioSource sfxSource;
@@ -103,7 +106,10 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
         AudioClip clip = ResolveClip(clipKey);
         if (clip == null)
         {
-            WarnMissingClipOnce(clipKey);
+            if (logMissingClipWarnings)
+            {
+                WarnMissingClipOnce(clipKey);
+            }
             return;
         }
 
@@ -117,7 +123,10 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
         AudioClip clip = ResolveClip(clipKey);
         if (clip == null)
         {
-            WarnMissingClipOnce(clipKey);
+            if (logMissingClipWarnings)
+            {
+                WarnMissingClipOnce(clipKey);
+            }
             return;
         }
 
@@ -159,7 +168,7 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
 
     public void SetActorActive(string actorId, bool active)
     {
-        Transform actor = FindNamedTransform(ActorPrefix, actorId);
+        Transform actor = ResolveActorTransform(actorId);
         if (actor != null)
         {
             actor.gameObject.SetActive(active);
@@ -168,19 +177,19 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
 
     public void PlaceActor(string actorId, string markerId)
     {
-        Transform actor = FindNamedTransform(ActorPrefix, actorId);
+        Transform actor = ResolveActorTransform(actorId);
         Transform marker = FindNamedTransform(MarkerPrefix, markerId);
         if (actor == null || marker == null)
         {
             return;
         }
 
-        actor.position = marker.position;
+        SetActorWorldPosition(actor, marker.position, resetVelocity: true);
     }
 
     public IEnumerator MoveActor(string actorId, string markerId, float durationSeconds)
     {
-        Transform actor = FindNamedTransform(ActorPrefix, actorId);
+        Transform actor = ResolveActorTransform(actorId);
         Transform marker = FindNamedTransform(MarkerPrefix, markerId);
         if (actor == null || marker == null)
         {
@@ -196,16 +205,16 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
         {
             elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
-            actor.position = Vector3.Lerp(start, end, t);
+            SetActorWorldPosition(actor, Vector3.Lerp(start, end, t), resetVelocity: false);
             yield return null;
         }
 
-        actor.position = end;
+        SetActorWorldPosition(actor, end, resetVelocity: true);
     }
 
     public void FaceActor(string actorId, string direction)
     {
-        Transform actor = FindNamedTransform(ActorPrefix, actorId);
+        Transform actor = ResolveActorTransform(actorId);
         if (actor == null || string.IsNullOrWhiteSpace(direction))
         {
             return;
@@ -283,6 +292,77 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
         }
 
         return null;
+    }
+
+    private Transform ResolveActorTransform(string actorId)
+    {
+        if (string.IsNullOrWhiteSpace(actorId))
+        {
+            return null;
+        }
+
+        string trimmedActorId = actorId.Trim();
+        if (string.Equals(trimmedActorId, IrisActorId, StringComparison.OrdinalIgnoreCase))
+        {
+            global::PlayerController player =
+                UnityEngine.Object.FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
+
+            if (player != null)
+            {
+                return player.transform;
+            }
+
+            string warningKey = "PlayerControllerForIris";
+            if (warnedMissingObjects.Add(warningKey))
+            {
+                Debug.LogWarning("[ProloguePresentationRuntime] PlayerController not found for actor 'iris'.");
+            }
+
+            return null;
+        }
+
+        return FindNamedTransform(ActorPrefix, trimmedActorId);
+    }
+
+    private static void SetActorWorldPosition(Transform actor, Vector3 worldPosition, bool resetVelocity)
+    {
+        if (actor == null)
+        {
+            return;
+        }
+
+        actor.position = worldPosition;
+
+        Rigidbody2D rigidbody2D = FindAttachedRigidbody2D(actor);
+        if (rigidbody2D == null)
+        {
+            return;
+        }
+
+        rigidbody2D.position = new Vector2(worldPosition.x, worldPosition.y);
+
+        if (resetVelocity)
+        {
+            rigidbody2D.linearVelocity = Vector2.zero;
+            rigidbody2D.angularVelocity = 0f;
+            rigidbody2D.Sleep();
+        }
+    }
+
+    private static Rigidbody2D FindAttachedRigidbody2D(Transform actor)
+    {
+        if (actor == null)
+        {
+            return null;
+        }
+
+        Rigidbody2D rigidbody2D = actor.GetComponent<Rigidbody2D>();
+        if (rigidbody2D != null)
+        {
+            return rigidbody2D;
+        }
+
+        return actor.GetComponentInParent<Rigidbody2D>();
     }
 
     private AudioClip ResolveClip(string clipKey)

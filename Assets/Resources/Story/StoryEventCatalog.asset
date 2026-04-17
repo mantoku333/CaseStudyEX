@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e78324f64a5f4852945e398d8bc4f29a, type: 3}
+  m_Name: StoryEventCatalog
+  m_EditorClassIdentifier: 
+  sceneStartEvents:
+  - eventId: prologue
+    sceneName: Story_Mantoku
+    dialogueNodeName: Prologue
+    dialogueStyle: 0
+    runOnceFlagKey: prologue_completed
+    conditions:
+      requiredTrueFlags: []
+      requiredFalseFlags: []
+    onStartMutations:
+      setTrueFlags:
+      - prologue_started
+      setFalseFlags:
+      - prologue_completed
+      clearFlags: []
+    onCompleteMutations:
+      setTrueFlags:
+      - prologue_completed
+      setFalseFlags: []
+      clearFlags: []
+    preActions: []
+    postActions: []
+    pausePolicy: 2
+    autoSaveOnComplete: 1
+    skipWhenDialogueRunning: 1

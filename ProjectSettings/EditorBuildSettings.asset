@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Fix_Player_Mantoku.unity
     guid: 566ebec55d5079f4c8db9aae7bd4057a
+  - enabled: 1
+    path: Assets/Scenes/Story_Mantoku.unity
+    guid: 8e70eed7a52cea5468ec9cb4e1567eae
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
