@@ -4,10 +4,19 @@ using UnityEngine;
 
 public class GroundCheck : MonoBehaviour
 {
+    private const string FallThroughFloorLayerName = "FallThroughFloor";
+
     [Header("地面のレイヤー")]
     [SerializeField] private LayerMask groundLayer;     //地面のレイヤー
+    [SerializeField] private bool includeFallThroughFloorLayer = true;
 
     private readonly HashSet<Collider2D> groundColliders = new HashSet<Collider2D>();
+    private int fallThroughFloorLayer = -1;
+
+    private void Awake()
+    {
+        fallThroughFloorLayer = LayerMask.NameToLayer(FallThroughFloorLayerName);
+    }
 
     /// <summary>
     ///接地判定を返すメソッド
@@ -26,7 +35,17 @@ public class GroundCheck : MonoBehaviour
     /// <returns></returns>
     private bool IsInLayer(int layer)
     {
-        return (groundLayer & (1 << layer)) != 0;
+        if ((groundLayer & (1 << layer)) != 0)
+        {
+            return true;
+        }
+
+        if (!includeFallThroughFloorLayer)
+        {
+            return false;
+        }
+
+        return fallThroughFloorLayer >= 0 && layer == fallThroughFloorLayer;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
