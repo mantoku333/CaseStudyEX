@@ -1744,6 +1744,8 @@ MonoBehaviour:
   glideFallSpeed: -0.001
   glideMoveSpeed: 3.5
   gunController: {fileID: 1553392621}
+  closedUmbrellaSprite: {fileID: 0}
+  openDebugSprite: {fileID: 0}
   umbrella_open: {fileID: 8300000, guid: b23093459fc678f498899d1ceed37ba0, type: 3}
   umbrella_close: {fileID: 8300000, guid: 631315968a2b9e7428dc0aa7c2457e77, type: 3}
 --- !u!212 &700767043
@@ -2675,7 +2677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4840235118936701351, guid: cb0294c910498c141bd76e47ec9f3e9e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.83348656
+      value: -0.09
       objectReference: {fileID: 0}
     - target: {fileID: 4840235118936701351, guid: cb0294c910498c141bd76e47ec9f3e9e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3572,6 +3574,7 @@ GameObject:
   - component: {fileID: 1334323027}
   - component: {fileID: 1334323026}
   - component: {fileID: 1334323034}
+  - component: {fileID: 1334323035}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -3898,7 +3901,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70e6bbcaa38569d438ef3071b9923275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerAbilityController
-  m_CanDodge: 0
+  canDodge: 0
+--- !u!114 &1334323035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1334323025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18871ee1923e4884594ce7cf6cfc14d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
+  statsData: {fileID: 11400000, guid: 828b8bd6e59a0de45ac0b6f81b0916f1, type: 2}
 --- !u!1 &1336291260
 GameObject:
   m_ObjectHideFlags: 0
@@ -13090,6 +13106,63 @@ Transform:
   - {fileID: 1262801527}
   m_Father: {fileID: 672693009}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2433447032127650961
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3050655825591450720, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 11.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 3050655825591450720, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3050655825591450720, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3050655825591450720, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.92387956
+      objectReference: {fileID: 0}
+    - target: {fileID: 3050655825591450720, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3050655825591450720, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3050655825591450720, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.38268343
+      objectReference: {fileID: 0}
+    - target: {fileID: 3050655825591450720, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3050655825591450720, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3050655825591450720, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 8939175200346428530, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+      propertyPath: m_Name
+      value: HitPointHealItem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -13111,3 +13184,4 @@ SceneRoots:
   - {fileID: 200018301}
   - {fileID: 340569646}
   - {fileID: 930849129}
+  - {fileID: 2433447032127650961}

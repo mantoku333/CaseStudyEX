@@ -5,18 +5,18 @@ namespace Player
     public class PlayerAbilityController : MonoBehaviour
     {
         //--------------能力関連------------------
-        [SerializeField] private bool m_CanDodge = false;
+        [SerializeField] private bool canDodge = false;
 
         //--------Set関数-------
-        public void SetCanDodge(bool canDodge)
+        public void SetCanDodge(bool isEnabled)
         {
-            m_CanDodge = canDodge;
+            canDodge = isEnabled;
         }
 
         //--------Get関数-------
         public bool GetCanDodge()
         {
-            return m_CanDodge;
+            return canDodge;
         }
     }
 }

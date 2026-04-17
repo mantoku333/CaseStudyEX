@@ -1,4 +1,5 @@
 ﻿using Metroidvania.Player;
+using Player;
 using UnityEngine;
 
 namespace Metroidvania.Enemy
@@ -69,6 +70,25 @@ namespace Metroidvania.Enemy
             if (IsInLayerMask(other.gameObject.layer, destroyOnHitLayers))
             {
                 Destroy(gameObject);
+            }
+
+            if (other.gameObject.CompareTag("Player"))
+            {
+                //PlayerHealthコンポーネントを取得
+                PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+
+                //PlayerHealthコンポーネントが取得できない場合、親オブジェクトから取得を試みる
+                if (playerHealth == null)
+                {
+                    playerHealth = other.GetComponentInParent<PlayerHealth>();
+                }
+
+                if (playerHealth == null) { return; }
+
+                //ダメージ
+                playerHealth.TakeDamage(1);
+
+                Debug.Log($"Playerがダメージを受けました　HP: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
             }
         }
 
