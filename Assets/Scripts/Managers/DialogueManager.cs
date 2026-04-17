@@ -95,6 +95,11 @@ namespace Metroidvania.Managers
             if (advView == null) advView = FindFirstObjectByType<DialogueView>(FindObjectsInactive.Include);
             if (bubbleView == null) bubbleView = FindFirstObjectByType<BubbleDialogueView>(FindObjectsInactive.Include);
 
+            Debug.LogWarning(
+                $"[DialogueManager] StartConversation node='{nodeName}', style={style}, " +
+                $"target='{(target != null ? target.name : "null")}', " +
+                $"advViewFound={advView != null}, bubbleViewFound={bubbleView != null}, frame={Time.frameCount}");
+
             if (style == DialogueStyle.ADV)
             {
                 if (advView != null) advView.gameObject.SetActive(true);

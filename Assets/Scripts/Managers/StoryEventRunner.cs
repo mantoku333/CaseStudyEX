@@ -197,6 +197,8 @@ public sealed class StoryEventRunner : MonoBehaviour
 
             activeEventStartMutationsApplied = true;
             definition.onStartMutations?.Apply();
+            Debug.LogWarning(
+                $"[StoryEventRunner] Start eventId='{definition.eventId}', node='{definition.dialogueNodeName}', style={definition.dialogueStyle}, frame={Time.frameCount}");
             dialogueManager.StartConversation(definition.dialogueNodeName, definition.dialogueStyle);
 
             while (waitingDialogueCompletion)
