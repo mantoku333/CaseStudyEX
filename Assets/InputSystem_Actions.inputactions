@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "InputSystem_Actions",
     "maps": [
         {
@@ -91,6 +92,15 @@
                     "type": "Button",
                     "id": "6f8d88d2-2514-4e13-9e63-c90afdc7d271",
                     "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "FallThrough",
+                    "type": "Button",
+                    "id": "df6f11cc-a369-4ad7-be48-4069c48fdfb3",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -501,6 +511,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9511188d-c28e-4123-bc68-989ec5be5953",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "FallThrough",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

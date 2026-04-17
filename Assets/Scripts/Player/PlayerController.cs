@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         public const string Dodge = "Dodge";
         public const string UmbrellaToggle = "UmbrellaToggle";
         public const string RecoilJump = "RecoilJump";
+        public const string FallThrough = "FallThrough";
     }
 
     private Rigidbody2D rigidBody2d;
@@ -54,6 +55,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private UmbrellaParryController  umbrellaParryController;  //パリィ関連のスクリプト
     private ParryHitbox parryHitbox;
     private DodgeController dodgeController;                   //回避関連のスクリプト
+    private MonoBehaviour fallThroughController;               //床すり抜け関連のスクリプト
     private PlayerAbilityController playerAbilityController;   //能力管理のスクリプト
 
     //-------入力関連--------
@@ -64,6 +66,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private InputAction dodgeAction;
     private InputAction recoilJumpAction;
     private InputAction umbrellaToggleAction;
+    private InputAction fallThroughAction;
     private bool inputActionsReady;
 
     //-------View向け状態公開--------
@@ -199,6 +202,12 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             Debug.LogError("DodgeControllerが見つかっていません");
         }
 
+        fallThroughController = GetComponent("FallThroughController") as MonoBehaviour;
+        if (fallThroughController == null)
+        {
+            Debug.LogError("FallThroughControllerが見つかっていません");
+        }
+
         playerAbilityController = GetComponent<PlayerAbilityController>();
         if (playerAbilityController == null)
         {
@@ -260,12 +269,22 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         bool isGliding = (umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open);
         moveInput = 0.0f;
+        Vector2 move = Vector2.zero;
 
         // 左右移動の入力
         if (moveAction != null)
         {
-            Vector2 move = moveAction.ReadValue<Vector2>();
+            move = moveAction.ReadValue<Vector2>();
             moveInput = Mathf.Clamp(move.x, -1.0f, 1.0f);
+        }
+
+        bool isDownHeld = move.y < -0.5f;
+        if (isDownHeld && IsPressedThisFrame(fallThroughAction))
+        {
+            if (fallThroughController != null)
+            {
+                fallThroughController.SendMessage("TryFallThrough", SendMessageOptions.DontRequireReceiver);
+            }
         }
 
         if (dodgeController != null && dodgeController.IsDodging())
@@ -621,6 +640,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.Dodge, ref dodgeAction);
         allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.UmbrellaToggle, ref umbrellaToggleAction);
         allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.RecoilJump, ref recoilJumpAction);
+        allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.FallThrough, ref fallThroughAction);
 
         inputActionsReady = allBound;
     }
