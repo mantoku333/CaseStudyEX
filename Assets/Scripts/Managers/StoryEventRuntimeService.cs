@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using Metroidvania.Managers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,6 +14,7 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
 
     private static StoryEventRuntimeService instance;
     private static bool sceneHookRegistered;
+    private static bool uniTaskExceptionHookRegistered;
     private static string pendingDebugEventId = string.Empty;
     private static string pendingDebugSceneName = string.Empty;
     private static bool pendingDebugIgnoreFlags;
@@ -34,6 +36,18 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
         return instance.TryQueueEventById(eventId, ignoreFlags);
     }
 
+    public static bool TryCompleteActiveEventFromDebugger()
+    {
+        EnsureInstance();
+        if (instance == null)
+        {
+            return false;
+        }
+
+        instance.EnsureEventRunner();
+        return instance.eventRunner != null && instance.eventRunner.CompleteActiveEventImmediately();
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
     {
@@ -42,6 +56,8 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
 
     private static void EnsureInstance()
     {
+        RegisterUniTaskExceptionFilter();
+
         if (instance != null)
         {
             return;
@@ -50,6 +66,45 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
         var gameObject = new GameObject(RuntimeObjectName);
         DontDestroyOnLoad(gameObject);
         instance = gameObject.AddComponent<StoryEventRuntimeService>();
+    }
+
+    private static void RegisterUniTaskExceptionFilter()
+    {
+        if (uniTaskExceptionHookRegistered)
+        {
+            return;
+        }
+
+        UniTaskScheduler.UnobservedTaskException += OnUnobservedUniTaskException;
+        uniTaskExceptionHookRegistered = true;
+    }
+
+    private static void OnUnobservedUniTaskException(Exception exception)
+    {
+        if (IsIgnorableYarnContinueAfterStopException(exception))
+        {
+            return;
+        }
+
+        Debug.LogException(exception);
+    }
+
+    private static bool IsIgnorableYarnContinueAfterStopException(Exception exception)
+    {
+        if (exception == null)
+        {
+            return false;
+        }
+
+        string message = exception.Message ?? string.Empty;
+        if (!message.Contains("Cannot continue running dialogue. No node has been selected.", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        string stack = exception.StackTrace ?? string.Empty;
+        return stack.Contains("Yarn.VirtualMachine.CheckCanContinue", StringComparison.Ordinal) ||
+               stack.Contains("Yarn.Dialogue.Continue", StringComparison.Ordinal);
     }
 
     private void Awake()

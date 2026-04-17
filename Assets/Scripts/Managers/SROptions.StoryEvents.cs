@@ -25,4 +25,23 @@ public partial class SROptions
         Debug.LogWarning(
             "[SROptions] Failed to queue story event 'prologue'. Verify build scene registration and StoryEvent catalog.");
     }
+
+    [Category(StoryEventsCategory)]
+    [DisplayName("Complete Active Event (Skip)")]
+    [Sort(-9)]
+    public void CompleteActiveStoryEvent()
+    {
+        if (!Application.isPlaying)
+        {
+            Debug.LogWarning("[SROptions] This action is available only in Play Mode.");
+            return;
+        }
+
+        if (StoryEventRuntimeService.TryCompleteActiveEventFromDebugger())
+        {
+            return;
+        }
+
+        Debug.LogWarning("[SROptions] No active story event to complete.");
+    }
 }

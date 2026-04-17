@@ -22,6 +22,7 @@ public sealed class StoryEventRunner : MonoBehaviour
     private int cachedEventCameraPriorityValue;
     private bool cachedEventCameraPriorityEnabled;
     private bool hasCachedEventCameraPriority;
+    private bool activeEventStartMutationsApplied;
 
     public bool HasPendingEvents => activeEvent != null || queuedEvents.Count > 0;
 
@@ -39,6 +40,47 @@ public sealed class StoryEventRunner : MonoBehaviour
     public void ClearQueue()
     {
         queuedEvents.Clear();
+    }
+
+    public bool CompleteActiveEventImmediately()
+    {
+        if (activeEvent == null)
+        {
+            return false;
+        }
+
+        StoryEventDefinition completedEvent = activeEvent;
+
+        if (!activeEventStartMutationsApplied)
+        {
+            completedEvent.onStartMutations?.Apply();
+        }
+
+        if (activeDialogueRunner != null && activeDialogueRunner.IsDialogueRunning)
+        {
+            activeDialogueRunner.Stop();
+        }
+
+        StopTimelineActions(completedEvent.preActions);
+        StopTimelineActions(completedEvent.postActions);
+
+        if (activeRoutine != null)
+        {
+            StopCoroutine(activeRoutine);
+            activeRoutine = null;
+        }
+
+        waitingDialogueCompletion = false;
+        UnsubscribeFromDialogueComplete();
+        StoryPauseRuntime.ClearOverride();
+        RestoreEventCameraPriority();
+
+        ApplyCompletionState(completedEvent);
+
+        activeEvent = null;
+        activeEventStartMutationsApplied = false;
+        TryStartNextEvent();
+        return true;
     }
 
     private void OnDisable()
@@ -131,6 +173,7 @@ public sealed class StoryEventRunner : MonoBehaviour
         }
 
         activeEvent = definition;
+        activeEventStartMutationsApplied = false;
         activeRoutine = StartCoroutine(RunEventSequence(definition, runner));
         return true;
     }
@@ -152,6 +195,7 @@ public sealed class StoryEventRunner : MonoBehaviour
             waitingDialogueCompletion = true;
             activeDialogueRunner.onDialogueComplete?.AddListener(OnDialogueComplete);
 
+            activeEventStartMutationsApplied = true;
             definition.onStartMutations?.Apply();
             dialogueManager.StartConversation(definition.dialogueNodeName, definition.dialogueStyle);
 
@@ -167,17 +211,7 @@ public sealed class StoryEventRunner : MonoBehaviour
                 yield return RunActions(definition.postActions);
             }
 
-            definition.onCompleteMutations?.Apply();
-
-            if (!string.IsNullOrWhiteSpace(definition.runOnceFlagKey))
-            {
-                GameProgressFlags.Set(definition.runOnceFlagKey.Trim(), true);
-            }
-
-            if (definition.autoSaveOnComplete)
-            {
-                SaveManager.TrySaveCurrentGame();
-            }
+            ApplyCompletionState(definition);
         }
         finally
         {
@@ -186,6 +220,7 @@ public sealed class StoryEventRunner : MonoBehaviour
             StoryPauseRuntime.ClearOverride();
             RestoreEventCameraPriority();
             activeEvent = null;
+            activeEventStartMutationsApplied = false;
             activeRoutine = null;
         }
 
@@ -351,6 +386,49 @@ public sealed class StoryEventRunner : MonoBehaviour
     private void OnDialogueComplete()
     {
         waitingDialogueCompletion = false;
+    }
+
+    private static void ApplyCompletionState(StoryEventDefinition definition)
+    {
+        if (definition == null)
+        {
+            return;
+        }
+
+        definition.onCompleteMutations?.Apply();
+
+        if (!string.IsNullOrWhiteSpace(definition.runOnceFlagKey))
+        {
+            GameProgressFlags.Set(definition.runOnceFlagKey.Trim(), true);
+        }
+
+        if (definition.autoSaveOnComplete)
+        {
+            SaveManager.TrySaveCurrentGame();
+        }
+    }
+
+    private static void StopTimelineActions(List<StoryEventActionDefinition> actions)
+    {
+        if (actions == null || actions.Count == 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < actions.Count; i++)
+        {
+            StoryEventActionDefinition action = actions[i];
+            if (action == null || action.actionType != StoryEventActionType.PlayTimeline)
+            {
+                continue;
+            }
+
+            PlayableDirector director = FindDirectorByName(action.targetName);
+            if (director != null && director.state == PlayState.Playing)
+            {
+                director.Stop();
+            }
+        }
     }
 
     private void UnsubscribeFromDialogueComplete()
