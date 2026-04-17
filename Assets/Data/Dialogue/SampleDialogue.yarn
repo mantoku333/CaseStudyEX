@@ -10,7 +10,53 @@ title: SampleNPC
 
 title: Prologue
 ---
-ナレーション: 雨がやまない朝だった。
-ナレーション: かさを握りしめて、わたしは最初の一歩を踏み出す。
-ナレーション: ここから、すべてが始まる。
+<<pg_black 1 0>>
+<<pg_stage black>>
+<<pg_rain_start rain_loop_quiet 0.35>>
+<<pg_wait 0.8>>
+<<pg_sfx thunder_once>>
+イリス: ！！
+イリス: かみなり……？
+<<pg_sfx bed_down>>
+<<pg_stage room_2>>
+<<pg_actor_active iris 1>>
+<<pg_actor_place iris bed_right>>
+<<pg_wait 0.35>>
+<<pg_stage room_3>>
+<<pg_actor_move iris window 1.0>>
+イリス: なんだか……いつもより寂しい感じがする……
+イリス: お姉ちゃん、起きてるかな
+<<pg_actor_face iris left>>
+<<pg_actor_move iris room_center 0.7>>
+<<pg_stage room_4>>
+<<pg_sfx glass_break>>
+ノクス: おい！そこのおまえ！
+ナレーション: 閉じた状態の傘が地上に打ち上げられた魚のように、バタバタと暴れながらイリスに大声で叫んだ。
+<<pg_actor_face iris right>>
+ノクス: 早くこのボタンを！
+イリス: ボタン……？
+<<pg_actor_move iris umbrella 0.8>>
+<<pg_stage room_5>>
+イリス: これでいい？
+ノクス: あぁ。助かった
+イリス: じゃあ
+<<pg_actor_move iris window 0.8>>
+ノクス: おい！！何をする気だ！
+イリス: なにって……。外に返してあげようと思っただけだよ
+ノクス: やめろ！あの雨の中でどうしろっていうんだ！
+ノクス: そうだ、ちょうどいい
+ノクス: お前が俺を持って行け
+イリス: 私があなたを？
+ノクス: あぁ。あそこに行きたいんだ
+イリス: あそこって、まさか
+イリス: リュミエール城？
+ノクス: あぁ。俺は1人だと動けないからお前が連れていけ
+イリス: なんで私……
+ノクス: なんでもいいから！早く俺を連れていけ！
+ナレーション: ノクスは大声で叫び続ける。
+イリス: ……
+イリス: 分かった……。
+イリス: 私はイリス。あなたは？
+ノクス: ノクスだ
+<<pg_black 1 0.8>>
 ===

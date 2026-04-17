@@ -168,6 +168,7 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
             sceneName = DefaultEntrySceneName,
             dialogueNodeName = "Prologue",
             dialogueStyle = DialogueStyle.ADV,
+            pausePolicy = StoryPausePolicy.GameplayOnly,
             runOnceFlagKey = GameProgressKeys.PrologueCompleted,
             conditions = new StoryFlagConditionSet(),
             onStartMutations = new StoryFlagMutationSet

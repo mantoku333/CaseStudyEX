@@ -1,22 +1,44 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Yarn.Unity;
 
 namespace Metroidvania.Managers
 {
     /// <summary>
-    /// 会話開始時にゲームの時間を止め、会話終了時に復帰させるコンポーネント。
-    /// DialogueRunnerからイベントを受け取る。
+    /// 会話開始時にポーズポリシーに応じた停止を行い、会話終了時に復帰させる。
     /// </summary>
     public class DialogueGamePauser : MonoBehaviour
     {
         [SerializeField] private DialogueRunner dialogueRunner = null!;
 
-        // もとのTimeScaleを保存しておく
-        private float _previousTimeScale = 1f;
-        private bool _isPaused = false;
+        [Header("Default Policy")]
+        [SerializeField] private StoryPausePolicy defaultPausePolicy = StoryPausePolicy.TimeScaleZero;
+
+        private static readonly string[] PlayerControlBehaviourNames =
+        {
+            "PlayerController",
+            "PlayerController_ozono",
+            "PlayerPlatformerMockController",
+            "DodgeController",
+            "PlayerShooter",
+            "GunController",
+            "UmbrellaController",
+            "UmbrellaAttackController",
+            "UmbrellaParryController"
+        };
+
+        private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
+        private PlayerInput pausedPlayerInput;
+        private bool previousPlayerInputEnabled;
+        private float previousTimeScale = 1f;
+        private bool gameplayPaused;
+        private bool timeScalePaused;
 
         private void Start()
         {
+            StoryPauseRuntime.DialogueDefaultPolicy = defaultPausePolicy;
+
             if (dialogueRunner == null)
             {
                 dialogueRunner = FindFirstObjectByType<DialogueRunner>();
@@ -24,7 +46,6 @@ namespace Metroidvania.Managers
 
             if (dialogueRunner != null)
             {
-                // Yarn Spinnerの開始/終了イベントを購読
                 dialogueRunner.onDialogueStart?.AddListener(PauseGame);
                 dialogueRunner.onDialogueComplete?.AddListener(ResumeGame);
             }
@@ -36,25 +57,128 @@ namespace Metroidvania.Managers
 
         private void PauseGame()
         {
-            if (_isPaused) return;
+            StoryPausePolicy policy = StoryPauseRuntime.EffectivePolicy;
 
-            _isPaused = true;
-            _previousTimeScale = Time.timeScale;
-            Time.timeScale = 0f;
+            switch (policy)
+            {
+                case StoryPausePolicy.None:
+                    return;
 
-            // TODO: 入力制御（プレイヤー動かなくする等）が必要な場合はここに追加
-            // 例: PlayerInputModule.Disable() など
-            Debug.Log("[DialogueGamePauser] 会話開始: タイムスケールを0にしました。");
+                case StoryPausePolicy.GameplayOnly:
+                    PauseGameplay();
+                    return;
+
+                case StoryPausePolicy.TimeScaleZero:
+                    PauseGameplay();
+                    if (!timeScalePaused)
+                    {
+                        timeScalePaused = true;
+                        previousTimeScale = Time.timeScale;
+                        Time.timeScale = 0f;
+                    }
+                    return;
+
+                default:
+                    return;
+            }
         }
 
         private void ResumeGame()
         {
-            if (!_isPaused) return;
+            if (timeScalePaused)
+            {
+                timeScalePaused = false;
+                Time.timeScale = previousTimeScale;
+            }
 
-            _isPaused = false;
-            Time.timeScale = _previousTimeScale;
+            ResumeGameplay();
+        }
 
-            Debug.Log("[DialogueGamePauser] 会話終了: タイムスケールを戻しました。");
+        private void PauseGameplay()
+        {
+            if (gameplayPaused)
+            {
+                return;
+            }
+
+            gameplayPaused = true;
+            pausedBehaviours.Clear();
+
+            pausedPlayerInput = FindFirstObjectByType<PlayerInput>();
+            if (pausedPlayerInput != null)
+            {
+                previousPlayerInputEnabled = pausedPlayerInput.enabled;
+                pausedPlayerInput.enabled = false;
+            }
+
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player == null)
+            {
+                return;
+            }
+
+            MonoBehaviour[] behaviours = player.GetComponents<MonoBehaviour>();
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                MonoBehaviour behaviour = behaviours[i];
+                if (behaviour == null || !behaviour.enabled)
+                {
+                    continue;
+                }
+
+                if (!ShouldPauseBehaviour(behaviour.GetType().Name))
+                {
+                    continue;
+                }
+
+                behaviour.enabled = false;
+                pausedBehaviours.Add(behaviour);
+            }
+
+            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+            }
+        }
+
+        private void ResumeGameplay()
+        {
+            if (!gameplayPaused)
+            {
+                return;
+            }
+
+            gameplayPaused = false;
+
+            if (pausedPlayerInput != null)
+            {
+                pausedPlayerInput.enabled = previousPlayerInputEnabled;
+            }
+
+            for (int i = 0; i < pausedBehaviours.Count; i++)
+            {
+                if (pausedBehaviours[i] != null)
+                {
+                    pausedBehaviours[i].enabled = true;
+                }
+            }
+
+            pausedBehaviours.Clear();
+        }
+
+        private static bool ShouldPauseBehaviour(string typeName)
+        {
+            for (int i = 0; i < PlayerControlBehaviourNames.Length; i++)
+            {
+                if (PlayerControlBehaviourNames[i] == typeName)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void OnDestroy()
@@ -65,11 +189,7 @@ namespace Metroidvania.Managers
                 dialogueRunner.onDialogueComplete?.RemoveListener(ResumeGame);
             }
 
-            // 万が一停止中に破棄された場合は時間を戻す
-            if (_isPaused)
-            {
-                Time.timeScale = _previousTimeScale;
-            }
+            ResumeGame();
         }
     }
 }

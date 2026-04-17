@@ -1,6 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using Metroidvania.Managers;
+using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 using Yarn.Unity;
 
@@ -11,6 +14,8 @@ public sealed class StoryEventRunner : MonoBehaviour
     private readonly Queue<StoryEventDefinition> queuedEvents = new Queue<StoryEventDefinition>();
     private StoryEventDefinition activeEvent;
     private DialogueRunner activeDialogueRunner;
+    private Coroutine activeRoutine;
+    private bool waitingDialogueCompletion;
 
     public bool HasPendingEvents => activeEvent != null || queuedEvents.Count > 0;
 
@@ -32,14 +37,23 @@ public sealed class StoryEventRunner : MonoBehaviour
 
     private void OnDisable()
     {
+        if (activeRoutine != null)
+        {
+            StopCoroutine(activeRoutine);
+            activeRoutine = null;
+        }
+
+        waitingDialogueCompletion = false;
         UnsubscribeFromDialogueComplete();
+        StoryPauseRuntime.ClearOverride();
+
         activeEvent = null;
         queuedEvents.Clear();
     }
 
     private void TryStartNextEvent()
     {
-        if (activeEvent != null)
+        if (activeEvent != null || activeRoutine != null)
         {
             return;
         }
@@ -110,39 +124,216 @@ public sealed class StoryEventRunner : MonoBehaviour
         }
 
         activeEvent = definition;
-        activeDialogueRunner = runner;
-        activeDialogueRunner.onDialogueComplete?.AddListener(OnDialogueComplete);
-
-        activeEvent.onStartMutations?.Apply();
-        dialogueManager.StartConversation(activeEvent.dialogueNodeName, activeEvent.dialogueStyle);
-
+        activeRoutine = StartCoroutine(RunEventSequence(definition, runner));
         return true;
     }
 
-    private void OnDialogueComplete()
+    private IEnumerator RunEventSequence(StoryEventDefinition definition, DialogueRunner runner)
     {
-        if (activeEvent == null)
+        StoryPauseRuntime.SetOverride(definition.pausePolicy);
+
+        if (definition.preActions != null && definition.preActions.Count > 0)
         {
-            return;
+            yield return RunActions(definition.preActions);
         }
 
-        StoryEventDefinition completedEvent = activeEvent;
-        activeEvent = null;
+        activeDialogueRunner = runner;
+        waitingDialogueCompletion = true;
+        activeDialogueRunner.onDialogueComplete?.AddListener(OnDialogueComplete);
+
+        definition.onStartMutations?.Apply();
+        dialogueManager.StartConversation(definition.dialogueNodeName, definition.dialogueStyle);
+
+        while (waitingDialogueCompletion)
+        {
+            yield return null;
+        }
+
         UnsubscribeFromDialogueComplete();
 
-        completedEvent.onCompleteMutations?.Apply();
-
-        if (!string.IsNullOrWhiteSpace(completedEvent.runOnceFlagKey))
+        if (definition.postActions != null && definition.postActions.Count > 0)
         {
-            GameProgressFlags.Set(completedEvent.runOnceFlagKey.Trim(), true);
+            yield return RunActions(definition.postActions);
         }
 
-        if (completedEvent.autoSaveOnComplete)
+        definition.onCompleteMutations?.Apply();
+
+        if (!string.IsNullOrWhiteSpace(definition.runOnceFlagKey))
+        {
+            GameProgressFlags.Set(definition.runOnceFlagKey.Trim(), true);
+        }
+
+        if (definition.autoSaveOnComplete)
         {
             SaveManager.TrySaveCurrentGame();
         }
 
+        StoryPauseRuntime.ClearOverride();
+        activeEvent = null;
+        activeRoutine = null;
+
         TryStartNextEvent();
+    }
+
+    private IEnumerator RunActions(List<StoryEventActionDefinition> actions)
+    {
+        for (int i = 0; i < actions.Count; i++)
+        {
+            StoryEventActionDefinition action = actions[i];
+            if (action == null)
+            {
+                continue;
+            }
+
+            yield return ExecuteAction(action);
+        }
+    }
+
+    private IEnumerator ExecuteAction(StoryEventActionDefinition action)
+    {
+        switch (action.actionType)
+        {
+            case StoryEventActionType.DelayRealtime:
+                yield return WaitForRealtime(action.seconds);
+                yield break;
+
+            case StoryEventActionType.FadeOverlay:
+                yield return StoryOverlayFader.Instance.FadeTo(
+                    action.targetAlpha,
+                    action.durationSeconds,
+                    action.overlayColor);
+                yield break;
+
+            case StoryEventActionType.SwitchCameraPriority:
+                ApplyCameraPriority(action);
+                yield break;
+
+            case StoryEventActionType.PlayTimeline:
+                if (action.waitForCompletion)
+                {
+                    yield return PlayTimelineAndWait(action);
+                }
+                else
+                {
+                    PlayTimeline(action);
+                }
+                yield break;
+        }
+    }
+
+    private static void ApplyCameraPriority(StoryEventActionDefinition action)
+    {
+        if (string.IsNullOrWhiteSpace(action.targetName))
+        {
+            return;
+        }
+
+        CinemachineCamera[] cameras = Object.FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            if (cameras[i] == null)
+            {
+                continue;
+            }
+
+            if (cameras[i].name == action.targetName.Trim())
+            {
+                cameras[i].Priority = action.priority;
+            }
+
+            if (!string.IsNullOrWhiteSpace(action.secondaryTargetName) &&
+                cameras[i].name == action.secondaryTargetName.Trim())
+            {
+                cameras[i].Priority = action.secondaryPriority;
+            }
+        }
+    }
+
+    private static void PlayTimeline(StoryEventActionDefinition action)
+    {
+        PlayableDirector director = FindDirectorByName(action.targetName);
+        if (director == null)
+        {
+            return;
+        }
+
+        if (action.forceUnscaledTime)
+        {
+            director.timeUpdateMode = DirectorUpdateMode.UnscaledGameTime;
+        }
+
+        if (action.stopBeforePlay)
+        {
+            director.Stop();
+        }
+
+        director.Play();
+    }
+
+    private static IEnumerator PlayTimelineAndWait(StoryEventActionDefinition action)
+    {
+        PlayableDirector director = FindDirectorByName(action.targetName);
+        if (director == null)
+        {
+            yield break;
+        }
+
+        if (action.forceUnscaledTime)
+        {
+            director.timeUpdateMode = DirectorUpdateMode.UnscaledGameTime;
+        }
+
+        if (action.stopBeforePlay)
+        {
+            director.Stop();
+        }
+
+        director.Play();
+        while (director.state == PlayState.Playing)
+        {
+            yield return null;
+        }
+    }
+
+    private static PlayableDirector FindDirectorByName(string directorName)
+    {
+        if (string.IsNullOrWhiteSpace(directorName))
+        {
+            return null;
+        }
+
+        string trimmedName = directorName.Trim();
+        PlayableDirector[] directors = Object.FindObjectsByType<PlayableDirector>(FindObjectsSortMode.None);
+        for (int i = 0; i < directors.Length; i++)
+        {
+            if (directors[i] != null && directors[i].name == trimmedName)
+            {
+                return directors[i];
+            }
+        }
+
+        return null;
+    }
+
+    private static IEnumerator WaitForRealtime(float seconds)
+    {
+        float duration = Mathf.Max(0f, seconds);
+        if (duration <= 0f)
+        {
+            yield break;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+    }
+
+    private void OnDialogueComplete()
+    {
+        waitingDialogueCompletion = false;
     }
 
     private void UnsubscribeFromDialogueComplete()
