@@ -28,11 +28,17 @@ public sealed class BossAreaController : MonoBehaviour
     [SerializeField] private int inactiveCameraPriority = 0;
 
     [Header("Confinement")]
+    // エリア内拘束のマスターON/OFF（戦闘中のみ有効）
     [SerializeField] private bool confineInsideArea = true;
+    // プレイヤー拘束の有効化
     [SerializeField] private bool confinePlayerInsideArea = true;
+    // ボス拘束の有効化
     [SerializeField] private bool confineBossInsideArea = true;
+    // 横方向（左右）拘束
     [SerializeField] private bool confineX = true;
+    // 縦方向（上下）拘束
     [SerializeField] private bool confineY = true;
+    // Dynamic Rigidbody2D に対する縦拘束。false なら床判定を優先して落下挙動を壊しにくい。
     [SerializeField] private bool confineYForDynamicBodies = false;
 
     [Header("Debug")]
@@ -51,8 +57,10 @@ public sealed class BossAreaController : MonoBehaviour
 
     private void Awake()
     {
+        // 後でトリガーを無効化しても拘束範囲を使えるよう、起動時に bounds を確定しておく。
         CacheConfinementBounds();
 
+        // どちらか一方だけ設定されていても動くように参照を相互補完する。
         if (stageBossAttack == null && bossRoot != null)
         {
             stageBossAttack = bossRoot.GetComponent<StageBossAttack>();
@@ -70,8 +78,10 @@ public sealed class BossAreaController : MonoBehaviour
 
         CachePlayerReferences();
 
+        // 開始時は固定カメラを非アクティブ優先度に戻す。
         DeactivateBossCamera();
 
+        // 既に撃破済みフラグが立っている場合、再ロックしないよう完了状態で起動する。
         if (!string.IsNullOrWhiteSpace(bossDefeatedFlagKey) && GameProgressFlags.Get(bossDefeatedFlagKey))
         {
             encounterCompleted = true;
@@ -90,6 +100,7 @@ public sealed class BossAreaController : MonoBehaviour
             return;
         }
 
+        // 物理更新タイミングで拘束し、プレイヤー・ボスをエリア外へ出さない。
         ConfineTargetsInsideArea();
     }
 
@@ -100,6 +111,7 @@ public sealed class BossAreaController : MonoBehaviour
             return;
         }
 
+        // Destroy 済みを監視して撃破完了へ遷移する。
         if (!IsBossAlive())
         {
             CompleteEncounter();
@@ -129,6 +141,7 @@ public sealed class BossAreaController : MonoBehaviour
             return;
         }
 
+        // 戦闘開始直前にプレイヤー参照を再取得しておく。
         CachePlayerReferences();
 
         encounterStarted = true;
@@ -138,6 +151,7 @@ public sealed class BossAreaController : MonoBehaviour
             LockArea();
         }
 
+        // カメラ切り替え -> ボス起動 の順で開始演出を揃える。
         ActivateBossCamera();
 
         if (stageBossAttack != null)
@@ -173,6 +187,7 @@ public sealed class BossAreaController : MonoBehaviour
 
         if (!string.IsNullOrWhiteSpace(bossDefeatedFlagKey))
         {
+            // 再入室時に再戦闘しないよう撃破フラグを永続化する。
             GameProgressFlags.Set(bossDefeatedFlagKey, true);
         }
 
@@ -193,6 +208,7 @@ public sealed class BossAreaController : MonoBehaviour
     {
         if (stageBossAttack != null)
         {
+            // StageBossAttack 側が残っている限り同一 transform をボス本体として扱う。
             bossRoot = stageBossAttack.transform;
 
             if (bossRoot != null && bossRigidbody2D == null)
@@ -230,6 +246,7 @@ public sealed class BossAreaController : MonoBehaviour
             return;
         }
 
+        // コライダー外形を加味して、めり込みなく bounds 内に収める。
         Vector2 extents = ResolveColliderExtents(target);
         Vector3 current = target.position;
 
@@ -258,6 +275,7 @@ public sealed class BossAreaController : MonoBehaviour
 
         if (targetRigidbody2D != null)
         {
+            // Rigidbody2D がある場合は transform 直接変更を避けて物理座標を書き換える。
             targetRigidbody2D.position = new Vector2(clampedX, clampedY);
             return;
         }
@@ -272,6 +290,7 @@ public sealed class BossAreaController : MonoBehaviour
             return true;
         }
 
+        // Dynamic は床判定・重力への干渉が大きいため、必要時のみ縦拘束する。
         if (targetRigidbody2D.bodyType != RigidbodyType2D.Dynamic)
         {
             return true;
@@ -315,6 +334,7 @@ public sealed class BossAreaController : MonoBehaviour
 
     private void CacheConfinementBounds()
     {
+        // 2Dコライダー優先、なければ3Dコライダーを拘束範囲として利用する。
         Collider2D area2D = GetComponent<Collider2D>();
         if (area2D != null)
         {
@@ -351,6 +371,7 @@ public sealed class BossAreaController : MonoBehaviour
             return;
         }
 
+        // タグ検索は必要時のみ実行してキャッシュする。
         GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
         if (playerObject == null)
         {

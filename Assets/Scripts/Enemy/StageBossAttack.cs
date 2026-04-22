@@ -12,6 +12,7 @@ namespace GameName.Enemy
     {
         [Header("Activation")]
         [SerializeField] private string playerTag = "Player";
+        // true ならエリア起動を待たずに開始時から攻撃ループに入る。
         [SerializeField] private bool startActiveOnPlay = false;
 
         [Header("Wind Up")]
@@ -24,6 +25,7 @@ namespace GameName.Enemy
         [SerializeField, Min(0.05f)] private float chargeDistance = 3.6f;
         [SerializeField, Min(0f)] private float chargeCooldown = 0.4f;
         [SerializeField] private bool stopChargeOnWall = true;
+        // 長距離部屋用の安全弁。false なら壁/詰まり判定のみで停止する。
         [SerializeField] private bool stopChargeByDistance = false;
         [SerializeField] private bool stopChargeWhenBlocked = true;
         [SerializeField, Min(0.001f)] private float blockedMoveThreshold = 0.01f;
@@ -119,6 +121,7 @@ namespace GameName.Enemy
                 return;
             }
 
+            // ボスの攻撃状態マシン。
             switch (attackState)
             {
                 case AttackState.Idle:
@@ -138,6 +141,7 @@ namespace GameName.Enemy
 
         private void EnterVibrationState()
         {
+            // 予備動作中は通常巡回を止め、向きはプレイヤー位置から確定する。
             enemyController.PauseMovement(true);
             enemyController.StopHorizontalMotion();
 
@@ -165,6 +169,7 @@ namespace GameName.Enemy
 
         private void BeginCharge()
         {
+            // 振動でずれた位置を戻してから突進開始。
             enemyController.SetHorizontalPosition(vibrationBaseX);
             enemyController.FaceDirection(chargeDirection);
 
@@ -176,6 +181,7 @@ namespace GameName.Enemy
 
         private void UpdateChargingState()
         {
+            // 仕様: プレイヤー接触では停止しない。
             if (stopChargeOnWall && enemyController.IsWallAhead())
             {
                 EnterCooldownState();
@@ -198,6 +204,7 @@ namespace GameName.Enemy
 
         private bool IsChargeBlockedThisFrame()
         {
+            // 移動量が閾値以下のフレームが続く場合は詰まりとみなして停止する。
             float currentX = enemyController.CurrentX;
             float movedDistance = Mathf.Abs(currentX - previousChargeX);
 
@@ -248,6 +255,7 @@ namespace GameName.Enemy
 
         private int ResolveChargeDirectionTowardsPlayer()
         {
+            // プレイヤーが見つからない場合は現在の向きを維持する。
             int fallbackDirection = enemyController.FacingDirection >= 0 ? 1 : -1;
             if (!TryGetPlayerTransform(out Transform player))
             {
@@ -284,6 +292,7 @@ namespace GameName.Enemy
                 return false;
             }
 
+            // 一度見つけた参照をキャッシュして毎フレーム検索を避ける。
             playerTransform = playerObject.transform;
             player = playerTransform;
             return true;
