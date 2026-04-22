@@ -100,6 +100,7 @@ namespace EditorTools
         private const string PaletteGuidKey = "StageEditor.PaletteGuid";
         private const string PlayerStatsGuidKey = "StageEditor.PlayerStatsGuid";
         private const string CameraDataGuidKey = "StageEditor.CameraDataGuid";
+        private const string CameraPreviewTargetName = "CN_FollowCam";
 
         [MenuItem("Tools/Stage Editor")]
         public static void Open()
@@ -549,14 +550,12 @@ namespace EditorTools
 
             Unity.Cinemachine.CinemachineCamera followCamera = null;
             Unity.Cinemachine.CinemachinePositionComposer followComposer = null;
-            int bestPriority = int.MinValue;
 
-            Unity.Cinemachine.CinemachineCamera[] cameras =
-                FindObjectsByType<Unity.Cinemachine.CinemachineCamera>(FindObjectsSortMode.None);
+            Unity.Cinemachine.CinemachineCamera[] cameras = FindObjectsByType<Unity.Cinemachine.CinemachineCamera>(FindObjectsSortMode.None);
 
             foreach (Unity.Cinemachine.CinemachineCamera camera in cameras)
             {
-                if (camera == null)
+                if (camera == null || camera.gameObject.name != CameraPreviewTargetName)
                 {
                     continue;
                 }
@@ -565,18 +564,12 @@ namespace EditorTools
                     camera.GetComponent<Unity.Cinemachine.CinemachinePositionComposer>();
                 if (positionComposer == null)
                 {
-                    continue;
-                }
-
-                int priority = camera.Priority.Enabled ? camera.Priority.Value : 0;
-                if (followCamera != null && priority <= bestPriority)
-                {
-                    continue;
+                    return;
                 }
 
                 followCamera = camera;
                 followComposer = positionComposer;
-                bestPriority = priority;
+                break;
             }
 
             if (followCamera == null || followComposer == null)

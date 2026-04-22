@@ -1,75 +1,241 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Yarn.Unity;
 
 namespace Metroidvania.Managers
 {
-    /// <summary>
-    /// 会話開始時にゲームの時間を止め、会話終了時に復帰させるコンポーネント。
-    /// DialogueRunnerからイベントを受け取る。
-    /// </summary>
     public class DialogueGamePauser : MonoBehaviour
     {
         [SerializeField] private DialogueRunner dialogueRunner = null!;
 
-        // もとのTimeScaleを保存しておく
-        private float _previousTimeScale = 1f;
-        private bool _isPaused = false;
+        [Header("Default Policy")]
+        [SerializeField] private StoryPausePolicy defaultPausePolicy = StoryPausePolicy.TimeScaleZero;
 
-        private void Start()
+        private static readonly string[] PlayerControlBehaviourNames =
         {
-            if (dialogueRunner == null)
-            {
-                dialogueRunner = FindFirstObjectByType<DialogueRunner>();
-            }
+            "PlayerController",
+            "PlayerController_ozono",
+            "PlayerPlatformerMockController",
+            "DodgeController",
+            "PlayerShooter",
+            "GunController",
+            "UmbrellaController",
+            "UmbrellaAttackController",
+            "UmbrellaParryController"
+        };
 
-            if (dialogueRunner != null)
+        private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
+        private PlayerInput pausedPlayerInput;
+        private bool previousPlayerInputEnabled;
+        private float previousTimeScale = 1f;
+        private bool gameplayPaused;
+        private bool timeScalePaused;
+        private bool callbacksRegistered;
+
+        private void OnEnable()
+        {
+            StoryPauseRuntime.DialogueDefaultPolicy = defaultPausePolicy;
+            EnsureDialogueRunner();
+            RegisterCallbacks();
+
+            // Catch up when dialogue was already started before callback registration.
+            if (dialogueRunner != null && dialogueRunner.IsDialogueRunning)
             {
-                // Yarn Spinnerの開始/終了イベントを購読
-                dialogueRunner.onDialogueStart?.AddListener(PauseGame);
-                dialogueRunner.onDialogueComplete?.AddListener(ResumeGame);
-            }
-            else
-            {
-                Debug.LogWarning("[DialogueGamePauser] DialogueRunnerが見つかりません。");
+                PauseGame();
             }
         }
 
-        private void PauseGame()
+        private void OnDisable()
         {
-            if (_isPaused) return;
-
-            _isPaused = true;
-            _previousTimeScale = Time.timeScale;
-            Time.timeScale = 0f;
-
-            // TODO: 入力制御（プレイヤー動かなくする等）が必要な場合はここに追加
-            // 例: PlayerInputModule.Disable() など
-            Debug.Log("[DialogueGamePauser] 会話開始: タイムスケールを0にしました。");
-        }
-
-        private void ResumeGame()
-        {
-            if (!_isPaused) return;
-
-            _isPaused = false;
-            Time.timeScale = _previousTimeScale;
-
-            Debug.Log("[DialogueGamePauser] 会話終了: タイムスケールを戻しました。");
+            UnregisterCallbacks();
+            ResumeGame();
         }
 
         private void OnDestroy()
         {
+            UnregisterCallbacks();
+            ResumeGame();
+        }
+
+        private void PauseGame()
+        {
+            StoryPausePolicy policy = StoryPauseRuntime.EffectivePolicy;
+
+            switch (policy)
+            {
+                case StoryPausePolicy.None:
+                    return;
+
+                case StoryPausePolicy.GameplayOnly:
+                    PauseGameplay();
+                    return;
+
+                case StoryPausePolicy.TimeScaleZero:
+                    PauseGameplay();
+                    if (!timeScalePaused)
+                    {
+                        timeScalePaused = true;
+                        previousTimeScale = Time.timeScale;
+                        Time.timeScale = 0f;
+                    }
+                    return;
+
+                default:
+                    return;
+            }
+        }
+
+        private void ResumeGame()
+        {
+            if (timeScalePaused)
+            {
+                timeScalePaused = false;
+                Time.timeScale = previousTimeScale;
+            }
+
+            ResumeGameplay();
+        }
+
+        private void PauseGameplay()
+        {
+            if (gameplayPaused)
+            {
+                return;
+            }
+
+            gameplayPaused = true;
+            pausedBehaviours.Clear();
+
+            pausedPlayerInput = FindFirstObjectByType<PlayerInput>();
+            if (pausedPlayerInput != null)
+            {
+                previousPlayerInputEnabled = pausedPlayerInput.enabled;
+                pausedPlayerInput.enabled = false;
+            }
+
+            GameObject player = ResolvePlayerObject();
+            if (player == null)
+            {
+                return;
+            }
+
+            MonoBehaviour[] behaviours = player.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                MonoBehaviour behaviour = behaviours[i];
+                if (behaviour == null || !behaviour.enabled)
+                {
+                    continue;
+                }
+
+                if (!ShouldPauseBehaviour(behaviour.GetType().Name))
+                {
+                    continue;
+                }
+
+                behaviour.enabled = false;
+                pausedBehaviours.Add(behaviour);
+            }
+
+            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+            }
+        }
+
+        private void ResumeGameplay()
+        {
+            if (!gameplayPaused)
+            {
+                return;
+            }
+
+            gameplayPaused = false;
+
+            if (pausedPlayerInput != null)
+            {
+                pausedPlayerInput.enabled = previousPlayerInputEnabled;
+            }
+
+            for (int i = 0; i < pausedBehaviours.Count; i++)
+            {
+                if (pausedBehaviours[i] != null)
+                {
+                    pausedBehaviours[i].enabled = true;
+                }
+            }
+
+            pausedBehaviours.Clear();
+        }
+
+        private static bool ShouldPauseBehaviour(string typeName)
+        {
+            for (int i = 0; i < PlayerControlBehaviourNames.Length; i++)
+            {
+                if (PlayerControlBehaviourNames[i] == typeName)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private GameObject ResolvePlayerObject()
+        {
+            GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
+            if (taggedPlayer != null)
+            {
+                return taggedPlayer;
+            }
+
+            global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
+            return playerController != null ? playerController.gameObject : null;
+        }
+
+        private void EnsureDialogueRunner()
+        {
+            if (dialogueRunner != null)
+            {
+                return;
+            }
+
+            dialogueRunner = FindFirstObjectByType<DialogueRunner>();
+            if (dialogueRunner == null)
+            {
+                Debug.LogWarning("[DialogueGamePauser] DialogueRunner not found.");
+            }
+        }
+
+        private void RegisterCallbacks()
+        {
+            if (callbacksRegistered || dialogueRunner == null)
+            {
+                return;
+            }
+
+            dialogueRunner.onDialogueStart?.AddListener(PauseGame);
+            dialogueRunner.onDialogueComplete?.AddListener(ResumeGame);
+            callbacksRegistered = true;
+        }
+
+        private void UnregisterCallbacks()
+        {
+            if (!callbacksRegistered)
+            {
+                return;
+            }
+
             if (dialogueRunner != null)
             {
                 dialogueRunner.onDialogueStart?.RemoveListener(PauseGame);
                 dialogueRunner.onDialogueComplete?.RemoveListener(ResumeGame);
             }
 
-            // 万が一停止中に破棄された場合は時間を戻す
-            if (_isPaused)
-            {
-                Time.timeScale = _previousTimeScale;
-            }
+            callbacksRegistered = false;
         }
     }
 }

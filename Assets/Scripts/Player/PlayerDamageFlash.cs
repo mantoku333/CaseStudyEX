@@ -14,7 +14,7 @@ namespace Metroidvania.Player
         [SerializeField] private Color flashColor = Color.red;
         [SerializeField, Min(0.01f)] private float flashDuration = 0.08f;
 
-        private Color[] restoreColors;
+        private Color[] defaultColors;
         private Coroutine flashCoroutine;
 
         private void Awake()
@@ -24,7 +24,15 @@ namespace Metroidvania.Player
                 targetRenderers = GetComponentsInChildren<SpriteRenderer>(true);
             }
 
-            restoreColors = new Color[targetRenderers.Length];
+            defaultColors = new Color[targetRenderers.Length];
+
+            for (int i = 0; i < targetRenderers.Length; i++)
+            {
+                if (targetRenderers[i] != null)
+                {
+                    defaultColors[i] = targetRenderers[i].color;
+                }
+            }
         }
 
         /// <summary>
@@ -32,17 +40,6 @@ namespace Metroidvania.Player
         /// </summary>
         public void PlayFlash()
         {
-            if (targetRenderers == null || targetRenderers.Length == 0)
-            {
-                return;
-            }
-
-            // Capture the current runtime colors so we always restore the latest state.
-            if (flashCoroutine == null)
-            {
-                CaptureCurrentColors();
-            }
-
             if (flashCoroutine != null)
             {
                 StopCoroutine(flashCoroutine);
@@ -83,25 +80,7 @@ namespace Metroidvania.Player
                     continue;
                 }
 
-                targetRenderers[i].color = restoreColors[i];
-            }
-        }
-
-        private void CaptureCurrentColors()
-        {
-            if (restoreColors == null || restoreColors.Length != targetRenderers.Length)
-            {
-                restoreColors = new Color[targetRenderers.Length];
-            }
-
-            for (int i = 0; i < targetRenderers.Length; i++)
-            {
-                if (targetRenderers[i] == null)
-                {
-                    continue;
-                }
-
-                restoreColors[i] = targetRenderers[i].color;
+                targetRenderers[i].color = defaultColors[i];
             }
         }
     }

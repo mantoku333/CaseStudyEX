@@ -16,7 +16,7 @@ namespace Metroidvania.UI
         [SerializeField] private string targetNode = "Start";
         
         [Tooltip("会話の表示形式（画面下部パネル か キャラ頭上吹き出し）")]
-        [SerializeField] private Metroidvania.Managers.DialogueStyle dialogueStyle = Metroidvania.Managers.DialogueStyle.ADV;
+        [SerializeField] private Metroidvania.Managers.DialogueStyle dialogueStyle = Metroidvania.Managers.DialogueStyle.Bubble;
         
         [Tooltip("Bubble形式の場合に吹き出しを追従させる対象（未設定ならこのオブジェクトの頭上に出ます）")]
         [SerializeField] private Transform bubbleTarget;

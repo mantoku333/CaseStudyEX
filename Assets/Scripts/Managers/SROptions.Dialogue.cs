@@ -5,67 +5,67 @@ using SRDebugger;
 using SRF.Service;
 
 /// <summary>
-/// SRDebuggerを用いてデバッグメニューからダイアログを呼び出すための機能拡張
+/// SRDebugger options for dialogue testing.
 /// </summary>
 public partial class SROptions
+{
+    private const string SampleDialogueNode = "SampleNPC";
+
+    [Category("Dialogue")]
+    [DisplayName("Play Sample Dialogue (Bubble)")]
+    [Sort(1)]
+    public void PlaySampleDialogue()
     {
-        private const string SampleDialogueNode = "SampleNPC";
+        var manager = Object.FindFirstObjectByType<Metroidvania.Managers.DialogueManager>();
+        var player = Object.FindFirstObjectByType<global::PlayerController>();
 
-        [Category("Dialogue")]
-        [DisplayName("Play Sample Dialogue")]
-        [Sort(1)]
-        public void PlaySampleDialogue()
+        if (manager == null)
         {
-            var manager = Object.FindFirstObjectByType<Metroidvania.Managers.DialogueManager>();
-            if (manager != null)
-            {
-                if (!manager.Runner.Dialogue.NodeExists(SampleDialogueNode))
-                {
-                    Debug.LogError($"[SRDebugger] Yarnプロジェクトにノード '{SampleDialogueNode}' が見つかりません。ノード名を確認してください。");
-                    return;
-                }
-                manager.StartConversation(SampleDialogueNode, Metroidvania.Managers.DialogueStyle.ADV);
-            }
-            else
-            {
-                Debug.LogError("[SRDebugger] シーン内にDialogueManagerが見つかりません。");
-            }
+            Debug.LogError("[SRDebugger] DialogueManager was not found in the scene.");
+            return;
         }
 
-        [Category("Dialogue")]
-        [DisplayName("Play Bubble Dialogue (On Player)")]
-        [Sort(2)]
-        public void PlayBubbleDialogue()
+        if (!manager.Runner.Dialogue.NodeExists(SampleDialogueNode))
         {
-            var manager = Object.FindFirstObjectByType<Metroidvania.Managers.DialogueManager>();
-            var player = Object.FindFirstObjectByType<global::PlayerController>();
-
-            if (manager != null)
-            {
-                if (!manager.Runner.Dialogue.NodeExists(SampleDialogueNode))
-                {
-                    Debug.LogError($"[SRDebugger] Yarnプロジェクトにノード '{SampleDialogueNode}' が見つかりません。ノード名を確認してください。");
-                    return;
-                }
-                // SRDebuggerから直呼び出しテスト用に、プレイヤーの頭上に吹き出しを出す
-                Transform target = player != null ? player.transform : null;
-                manager.StartConversation(SampleDialogueNode, Metroidvania.Managers.DialogueStyle.Bubble, target);
-            }
-            else
-            {
-                Debug.LogError("[SRDebugger] シーン内にDialogueManagerが見つかりません。");
-            }
+            Debug.LogError($"[SRDebugger] Yarn node '{SampleDialogueNode}' was not found.");
+            return;
         }
-        
-        [Category("Dialogue")]
-        [DisplayName("Stop All Dialogues")]
-        [Sort(2)]
-        public void StopDialogue()
+
+        Transform target = player != null ? player.transform : null;
+        manager.StartConversation(SampleDialogueNode, Metroidvania.Managers.DialogueStyle.Bubble, target);
+    }
+
+    [Category("Dialogue")]
+    [DisplayName("Play Sample Dialogue (ADV Legacy)")]
+    [Sort(2)]
+    public void PlayBubbleDialogue()
+    {
+        var manager = Object.FindFirstObjectByType<Metroidvania.Managers.DialogueManager>();
+
+        if (manager == null)
         {
-            var runner = Object.FindFirstObjectByType<DialogueRunner>();
-            if (runner != null && runner.IsDialogueRunning)
-            {
-                runner.Stop();
-            }
+            Debug.LogError("[SRDebugger] DialogueManager was not found in the scene.");
+            return;
+        }
+
+        if (!manager.Runner.Dialogue.NodeExists(SampleDialogueNode))
+        {
+            Debug.LogError($"[SRDebugger] Yarn node '{SampleDialogueNode}' was not found.");
+            return;
+        }
+
+        manager.StartConversation(SampleDialogueNode, Metroidvania.Managers.DialogueStyle.ADV);
+    }
+
+    [Category("Dialogue")]
+    [DisplayName("Stop All Dialogues")]
+    [Sort(3)]
+    public void StopDialogue()
+    {
+        var runner = Object.FindFirstObjectByType<DialogueRunner>();
+        if (runner != null && runner.IsDialogueRunning)
+        {
+            runner.Stop();
         }
     }
+}

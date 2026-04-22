@@ -28,6 +28,8 @@ public sealed class SaveManager : MonoBehaviour
     private static readonly List<ISaveDataModule> registeredModules = new List<ISaveDataModule>();
     private static readonly List<ISaveDataModule> moduleExecutionBuffer = new List<ISaveDataModule>();
 
+    public static bool IsLoadInProgress => pendingLoadData != null;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
     {
