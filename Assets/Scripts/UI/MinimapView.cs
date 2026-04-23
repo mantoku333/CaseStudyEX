@@ -16,6 +16,9 @@ public sealed class MinimapView : MonoBehaviour
     private const float FullRoomGap = 24f;
     private const float MiniMarkerDiameter = 12f;
     private const float FullMarkerDiameter = 24f;
+    private const float RoomVisualWidthRatio = 0.72f;
+    private const float RoomVisualHeightRatio = 0.42f;
+    private const float ConnectorEndInset = 4f;
 
     [SerializeField] private Color panelColor = new Color(0.02f, 0.04f, 0.05f, 0.82f);
     [SerializeField] private Color visitedColor = new Color(1f, 1f, 1f, 0.92f);
@@ -397,6 +400,9 @@ public sealed class MinimapView : MonoBehaviour
 
         Vector2 start = RoomEdge(room, direction, origin, bounds, cellSize, roomGap);
         Vector2 end = RoomEdge(neighbor, Opposite(direction), origin, bounds, cellSize, roomGap);
+        Vector2 lineDirection = (end - start).normalized;
+        start += lineDirection * ConnectorEndInset;
+        end -= lineDirection * ConnectorEndInset;
         Vector2 delta = end - start;
 
         if (delta.sqrMagnitude <= 0.01f)
@@ -406,9 +412,14 @@ public sealed class MinimapView : MonoBehaviour
 
         RectTransform line = CreateImage("Line_" + room.RoomId + "_" + direction, parent, lineColor);
         line.anchoredPosition = (start + end) * 0.5f;
-        line.sizeDelta = Mathf.Abs(delta.x) >= Mathf.Abs(delta.y)
-            ? new Vector2(Mathf.Abs(delta.x) + 4f, lineThickness)
-            : new Vector2(lineThickness, Mathf.Abs(delta.y) + 4f);
+        if (Mathf.Abs(delta.x) >= Mathf.Abs(delta.y))
+        {
+            line.sizeDelta = new Vector2(Mathf.Abs(delta.x) + 4f, lineThickness);
+        }
+        else
+        {
+            line.sizeDelta = new Vector2(lineThickness, Mathf.Abs(delta.y) + 2f);
+        }
         generatedObjects.Add(line.gameObject);
     }
 
@@ -559,6 +570,13 @@ public sealed class MinimapView : MonoBehaviour
 
     private Vector2 RoomVisualSize(MinimapRoomDefinition room, float cellSize, float roomGap)
     {
+        if (room.MapSize == Vector2Int.one)
+        {
+            return new Vector2(
+                Mathf.Max(12f, cellSize * RoomVisualWidthRatio),
+                Mathf.Max(8f, cellSize * RoomVisualHeightRatio));
+        }
+
         return new Vector2(
             Mathf.Max(8f, room.MapSize.x * cellSize - roomGap),
             Mathf.Max(8f, room.MapSize.y * cellSize - roomGap));

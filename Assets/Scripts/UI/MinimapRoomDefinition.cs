@@ -38,4 +38,14 @@ public sealed class MinimapRoomDefinition
         this.mapSize = new Vector2Int(Mathf.Max(1, mapSize.x), Mathf.Max(1, mapSize.y));
         this.connections = connections;
     }
+
+    public MinimapRoomDefinition WithConnections(MinimapConnection nextConnections)
+    {
+        return new MinimapRoomDefinition(
+            roomId,
+            displayName,
+            mapPosition,
+            mapSize,
+            nextConnections);
+    }
 }

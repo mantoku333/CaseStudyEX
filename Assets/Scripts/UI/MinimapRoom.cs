@@ -1,13 +1,27 @@
 using UnityEngine;
 
+[AddComponentMenu("UI/Minimap Room")]
 [DisallowMultipleComponent]
 public sealed class MinimapRoom : MonoBehaviour
 {
-    [SerializeField] private string roomId;
-    [SerializeField] private string displayName;
-    [SerializeField] private Vector2Int mapPosition;
-    [SerializeField] private Vector2Int mapSize = Vector2Int.one;
-    [SerializeField] private MinimapConnection connections;
+    [Header("Room Identity")]
+    [SerializeField, Tooltip("Unique room id for the minimap. Uses the GameObject name when empty.")]
+    private string roomId;
+
+    [SerializeField, Tooltip("Display name shown by tools or debug UI. Uses Room ID when empty.")]
+    private string displayName;
+
+    [Header("Map Layout")]
+    [SerializeField, Tooltip("Manual map position. X moves left/right, Y moves up/down.")]
+    private Vector2Int mapPosition;
+
+    [SerializeField, Tooltip("Manual map size in layout cells. For simple planner workflow, leave this at 1x1 and only adjust X / Y.")]
+    private Vector2Int mapSize = Vector2Int.one;
+
+    [HideInInspector, SerializeField]
+    private MinimapConnection connections;
+
+    [Header("Detection")]
     [SerializeField] private string playerTag = "Player";
 
     public string RoomId => roomId;
@@ -44,6 +58,24 @@ public sealed class MinimapRoom : MonoBehaviour
         EnterIfPlayerAlreadyInside();
     }
 
+    private void Reset()
+    {
+        ApplyEditorFriendlyDefaults();
+    }
+
+    private void OnValidate()
+    {
+        if (string.IsNullOrWhiteSpace(roomId))
+        {
+            roomId = gameObject.name;
+        }
+
+        if (mapSize.x <= 0 || mapSize.y <= 0)
+        {
+            mapSize = new Vector2Int(Mathf.Max(1, mapSize.x), Mathf.Max(1, mapSize.y));
+        }
+    }
+
     public void Configure(MinimapRoomDefinition definition, string playerTagName = "Player")
     {
         if (definition == null)
@@ -62,6 +94,32 @@ public sealed class MinimapRoom : MonoBehaviour
         {
             MinimapManager.Instance.RegisterRoom(this);
         }
+    }
+
+    // Friendly defaults for planners: use the trigger name as the id
+    // and start with a simple wide room shape.
+    public void ApplyEditorFriendlyDefaults()
+    {
+        roomId = gameObject.name;
+        displayName = gameObject.name;
+        mapPosition = Vector2Int.zero;
+        mapSize = Vector2Int.one;
+        connections = MinimapConnection.None;
+    }
+
+    // Shared entry point used by editor tools and scene bootstrap code.
+    // Room connections are computed automatically by MinimapManager.
+    public void ConfigureAuthoringFields(
+        string nextRoomId,
+        string nextDisplayName,
+        Vector2Int nextMapPosition,
+        Vector2Int nextMapSize)
+    {
+        roomId = string.IsNullOrWhiteSpace(nextRoomId) ? gameObject.name : nextRoomId.Trim();
+        displayName = string.IsNullOrWhiteSpace(nextDisplayName) ? roomId : nextDisplayName.Trim();
+        mapPosition = nextMapPosition;
+        mapSize = new Vector2Int(Mathf.Max(1, nextMapSize.x), Mathf.Max(1, nextMapSize.y));
+        connections = MinimapConnection.None;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

@@ -78,6 +78,7 @@ public sealed class MinimapManager : MonoBehaviour
             }
         }
 
+        NormalizeRoomDefinitions();
         RebuildRoomLookup();
         NotifyChanged();
     }
@@ -109,6 +110,8 @@ public sealed class MinimapManager : MonoBehaviour
             roomDefinitions.Add(room.Definition);
         }
 
+        NormalizeRoomDefinitions();
+        RebuildRoomLookup();
         NotifyChanged();
     }
 
@@ -119,6 +122,11 @@ public sealed class MinimapManager : MonoBehaviour
             return;
         }
 
+        roomDefinitions.RemoveAll(definition =>
+            definition != null &&
+            string.Equals(definition.RoomId, room.RoomId, StringComparison.Ordinal));
+
+        NormalizeRoomDefinitions();
         RebuildRoomLookup();
         NotifyChanged();
     }
@@ -170,6 +178,66 @@ public sealed class MinimapManager : MonoBehaviour
 
             roomsById[definition.RoomId] = definition;
         }
+    }
+
+    // Build room connections from adjacency so scene authors only need to place
+    // rooms with X / Y / Width / Height values.
+    private void NormalizeRoomDefinitions()
+    {
+        var normalized = new List<MinimapRoomDefinition>(roomDefinitions.Count);
+
+        for (int i = 0; i < roomDefinitions.Count; i++)
+        {
+            MinimapRoomDefinition room = roomDefinitions[i];
+            if (room == null)
+            {
+                continue;
+            }
+
+            MinimapConnection connections = MinimapConnection.None;
+
+            for (int j = 0; j < roomDefinitions.Count; j++)
+            {
+                if (i == j || roomDefinitions[j] == null)
+                {
+                    continue;
+                }
+
+                MinimapRoomDefinition candidate = roomDefinitions[j];
+                RectInt a = new RectInt(room.MapPosition, room.MapSize);
+                RectInt b = new RectInt(candidate.MapPosition, candidate.MapSize);
+
+                if (a.xMax == b.xMin && RangesOverlap(a.yMin, a.yMax, b.yMin, b.yMax))
+                {
+                    connections |= MinimapConnection.Right;
+                }
+
+                if (a.xMin == b.xMax && RangesOverlap(a.yMin, a.yMax, b.yMin, b.yMax))
+                {
+                    connections |= MinimapConnection.Left;
+                }
+
+                if (a.yMax == b.yMin && RangesOverlap(a.xMin, a.xMax, b.xMin, b.xMax))
+                {
+                    connections |= MinimapConnection.Up;
+                }
+
+                if (a.yMin == b.yMax && RangesOverlap(a.xMin, a.xMax, b.xMin, b.xMax))
+                {
+                    connections |= MinimapConnection.Down;
+                }
+            }
+
+            normalized.Add(room.WithConnections(connections));
+        }
+
+        roomDefinitions.Clear();
+        roomDefinitions.AddRange(normalized);
+    }
+
+    private static bool RangesOverlap(int aMin, int aMax, int bMin, int bMax)
+    {
+        return aMin < bMax && bMin < aMax;
     }
 
     private void EnsureView()
