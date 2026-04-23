@@ -9,8 +9,10 @@ namespace Player
     public class PlayerHealth : MonoBehaviour
     {
         [SerializeField] private PlayerStatsData statsData;
+        [SerializeField, Min(0f)] private float damageCooldownSeconds = 3f;
 
         private int currentHealth;
+        private float nextDamageTime;
 
         /// <summary>
         /// HPが変化したときに通知
@@ -46,7 +48,13 @@ namespace Player
                 return;
             }
 
+            if (Time.time < nextDamageTime)
+            {
+                return;
+            }
+
             currentHealth = Mathf.Max(0, currentHealth - damage);
+            nextDamageTime = Time.time + damageCooldownSeconds;
             NotifyHealthChanged();
         }
 

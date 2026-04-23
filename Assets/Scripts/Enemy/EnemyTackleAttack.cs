@@ -332,7 +332,8 @@ namespace GameName.Enemy
             int hitCount = Physics2D.OverlapBox(bounds.center, overlapSize, 0f, playerContactFilter, bodyHitResults);
             for (int i = 0; i < hitCount; i++)
             {
-                if (IsPlayerCollider(bodyHitResults[i]))
+                Collider2D hit = bodyHitResults[i];
+                if (hit != null && !hit.isTrigger && IsPlayerCollider(hit))
                 {
                     return true;
                 }
