@@ -13,9 +13,14 @@ namespace Metroidvania.Player
         [SerializeField] private SpriteRenderer[] targetRenderers;
         [SerializeField] private Color flashColor = Color.red;
         [SerializeField, Min(0.01f)] private float flashDuration = 0.08f;
+        [SerializeField, Min(1)] private int flashRepeatCount = 3;
+        [SerializeField, Min(0f)] private float normalDuration = 0.08f;
+        [SerializeField, Min(0f)] private float flashCooldownSeconds = 3f;
+
 
         private Color[] restoreColors;
         private Coroutine flashCoroutine;
+        private float nextFlashTime;
 
         private void Awake()
         {
@@ -37,6 +42,14 @@ namespace Metroidvania.Player
                 return;
             }
 
+            if (Time.time < nextFlashTime)
+            {
+                return;
+            }
+
+            nextFlashTime = Time.time + flashCooldownSeconds;
+
+
             // Capture the current runtime colors so we always restore the latest state.
             if (flashCoroutine == null)
             {
@@ -53,11 +66,17 @@ namespace Metroidvania.Player
 
         private IEnumerator FlashCoroutine()
         {
-            SetColor(flashColor);
-
-            yield return new WaitForSeconds(flashDuration);
-
-            RestoreDefaultColors();
+            int repeatCount = Mathf.Max(1, flashRepeatCount);
+            for (int i = 0; i < repeatCount; i++)
+            {
+                SetColor(flashColor);
+                yield return new WaitForSeconds(flashDuration);
+                RestoreDefaultColors();
+                if (i < repeatCount - 1 && normalDuration > 0f)
+                {
+                    yield return new WaitForSeconds(normalDuration);
+                }
+            }
             flashCoroutine = null;
         }
 
