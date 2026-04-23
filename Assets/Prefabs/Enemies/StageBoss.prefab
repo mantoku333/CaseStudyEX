@@ -14,10 +14,9 @@ GameObject:
   - component: {fileID: 2188640119789683485}
   - component: {fileID: 4333219616003735470}
   - component: {fileID: 867530900123456789}
-  - component: {fileID: 3166498005081650208}
   - component: {fileID: 1141293357520890712}
   m_Layer: 0
-  m_Name: Enemy_Tackle
+  m_Name: StageBoss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.58509, y: 2.69186, z: 0}
-  m_LocalScale: {x: 2.3, y: 2.3, z: 1}
+  m_LocalScale: {x: 5.504594, y: 5.504594, z: 2.3933017}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4817874631926424859}
@@ -89,7 +88,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.109803915, g: 0.25898308, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0.73142433, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -183,8 +182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26ab8aa4fd67adb4badd3c578cb3b4ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyController2D
-  moveSpeed: 2
-  patrolDistance: 10
+  moveSpeed: 0
+  patrolDistance: 0
   damageToPlayer: 1
   maxHealth: 3
   wallCheckDistance: 0.15
@@ -203,44 +202,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1421722041738095275}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f31c6b2e3a74810b4f5c9a271d6be45, type: 3}
+  m_Script: {fileID: 11500000, guid: 0f5a1f3d2f7b4ef5a8d5f4d9b37e2c10, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyTackleAttack
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.StageBossAttack
   playerTag: Player
-  playerDetectionMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  viewHitboxSize: {x: 8.33, y: 2.74}
-  viewForwardOffset: -1.76
-  viewVerticalOffset: 0
+  startActiveOnPlay: 0
   vibrationDuration: 2
-  vibrationAmplitude: 0.05
-  vibrationFrequency: 70
-  chargeSpeed: 8
-  chargeDistance: 3.6
+  vibrationAmplitude: 0.15
+  vibrationFrequency: 30
+  chargeSpeed: 16
+  chargeDistance: 10
   chargeCooldown: 0.4
-  stopChargeOnWall: 1
-  stopChargeOnPlayerHit: 1
+  stopChargeOnWall: 0
+  stopChargeByDistance: 1
   stopChargeWhenBlocked: 1
   blockedMoveThreshold: 0.01
   blockedStopDelay: 0.1
-  drawViewGizmo: 1
---- !u!114 &3166498005081650208
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1421722041738095275}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bfeade17d04ca34f81b762d9087953d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Enemy.ParryTestEnemyShooter
-  bulletPrefab: {fileID: 3964884202035495257, guid: 1c8b7d39b307fd6428103c491f952059, type: 3}
-  firePoint: {fileID: 0}
-  bulletSpeed: 8
-  fireDirection: {x: -1, y: 0}
+  drawDebugGizmo: 1
 --- !u!114 &1141293357520890712
 MonoBehaviour:
   m_ObjectHideFlags: 0
