@@ -33672,13 +33672,13 @@ MonoBehaviour:
   tryAutoResolveSpeakerByObjectName: 1
   logUnresolvedSpeaker: 1
   autoResizeBubble: 1
-  bubblePadding: {x: 56, y: 36}
-  minBubbleWidth: 100
-  maxBubbleWidth: 2000
-  minBubbleHeight: 120
-  maxBubbleHeight: 2200
-  maxTextWidth: 2000
-  logAutoSizeResult: 1
+  bubblePadding: {x: 72, y: 44}
+  minBubbleWidth: 140
+  maxBubbleWidth: 1180
+  minBubbleHeight: 84
+  maxBubbleHeight: 720
+  maxTextWidth: 1100
+  logAutoSizeResult: 0
 --- !u!224 &1984818876
 RectTransform:
   m_ObjectHideFlags: 0

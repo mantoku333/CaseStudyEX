@@ -48,7 +48,11 @@ namespace Metroidvania.UI
         [SerializeField] private float minBubbleHeight = 84f;
         [SerializeField] private float maxBubbleHeight = 640f;
         [SerializeField] private float maxTextWidth = 900f;
+        [SerializeField] private int widenBubbleWhenLineCountExceeds = 2;
+        [SerializeField] private float extraHeightSafetyPadding = 12f;
         [SerializeField] private bool logAutoSizeResult = false;
+        [SerializeField] private bool normalizeTextMargin = true;
+        [SerializeField] private Vector4 normalizedTextMargin = new Vector4(0f, 0f, 12f, 6f);
 
         private readonly Dictionary<string, Transform?> _speakerTargetCache =
             new(StringComparer.OrdinalIgnoreCase);
@@ -82,6 +86,7 @@ namespace Metroidvania.UI
 
             if (dialogueText != null)
             {
+                ApplyTextLayoutDefaults();
                 dialogueText.text = string.Empty;
             }
         }
@@ -250,6 +255,7 @@ namespace Metroidvania.UI
 
             if (dialogueText != null)
             {
+                ApplyTextLayoutDefaults();
                 dialogueText.text = string.Empty;
             }
 
@@ -575,34 +581,70 @@ namespace Metroidvania.UI
                 return;
             }
 
+            ApplyTextLayoutDefaults();
+
+            // Bubble and text rects can have different scales per scene/prefab override.
+            // Convert measurements between text-local units and bubble-local units so
+            // wrapping and padding stay visually consistent.
+            float bubbleScaleX = SafePositiveScale(_bubbleRectTransform.lossyScale.x);
+            float bubbleScaleY = SafePositiveScale(_bubbleRectTransform.lossyScale.y);
+            float textScaleX = SafePositiveScale(_textRectTransform.lossyScale.x);
+            float textScaleY = SafePositiveScale(_textRectTransform.lossyScale.y);
+            float textToBubbleX = textScaleX / bubbleScaleX;
+            float textToBubbleY = textScaleY / bubbleScaleY;
+            float bubbleToTextX = bubbleScaleX / textScaleX;
+            float bubbleToTextY = bubbleScaleY / textScaleY;
+
             string measureText = string.IsNullOrEmpty(text) ? " " : text;
-            float clampedMaxTextWidth = Mathf.Clamp(maxTextWidth, 32f, Mathf.Max(32f, maxBubbleWidth - bubblePadding.x));
+            float clampedMaxTextWidthBubble = Mathf.Clamp(maxTextWidth, 32f, Mathf.Max(32f, maxBubbleWidth - bubblePadding.x));
+            float clampedMaxTextWidthText = Mathf.Max(8f, clampedMaxTextWidthBubble * bubbleToTextX);
 
             // 1) Measure text at max width.
-            _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, clampedMaxTextWidth);
+            _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, clampedMaxTextWidthText);
             dialogueText.text = measureText;
             dialogueText.ForceMeshUpdate();
 
-            float measuredTextWidth = Mathf.Clamp(dialogueText.preferredWidth, 8f, clampedMaxTextWidth);
-            float bubbleWidth = Mathf.Clamp(measuredTextWidth + bubblePadding.x, minBubbleWidth, maxBubbleWidth);
-            float finalTextWidth = Mathf.Max(8f, bubbleWidth - bubblePadding.x);
+            float measuredTextWidthText = Mathf.Clamp(dialogueText.preferredWidth, 8f, clampedMaxTextWidthText);
+            float measuredTextWidthBubble = measuredTextWidthText * textToBubbleX;
+            float bubbleWidth = Mathf.Clamp(measuredTextWidthBubble + bubblePadding.x, minBubbleWidth, maxBubbleWidth);
+            float finalTextWidthBubble = Mathf.Max(8f, bubbleWidth - bubblePadding.x);
+            float finalTextWidthText = Mathf.Max(8f, finalTextWidthBubble * bubbleToTextX);
+
+            // 2) Prime layout and prefer wider bubble when wrapped lines exceed threshold.
+            _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, finalTextWidthText);
+            dialogueText.ForceMeshUpdate();
+            int measuredLineCount = dialogueText.textInfo != null ? dialogueText.textInfo.lineCount : 1;
+            if (measuredLineCount > widenBubbleWhenLineCountExceeds &&
+                finalTextWidthBubble < clampedMaxTextWidthBubble)
+            {
+                float widenedTextWidthBubble = clampedMaxTextWidthBubble;
+                bubbleWidth = Mathf.Clamp(widenedTextWidthBubble + bubblePadding.x, minBubbleWidth, maxBubbleWidth);
+                finalTextWidthBubble = Mathf.Max(8f, bubbleWidth - bubblePadding.x);
+                finalTextWidthText = Mathf.Max(8f, finalTextWidthBubble * bubbleToTextX);
+
+                _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, finalTextWidthText);
+                dialogueText.ForceMeshUpdate();
+                measuredLineCount = dialogueText.textInfo != null ? dialogueText.textInfo.lineCount : measuredLineCount;
+            }
+
             bool hitMaxWidth =
                 Mathf.Approximately(bubbleWidth, maxBubbleWidth) ||
-                Mathf.Approximately(finalTextWidth, clampedMaxTextWidth);
+                Mathf.Approximately(finalTextWidthBubble, clampedMaxTextWidthBubble);
 
-            // 2) Re-measure height with final width.
-            _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, finalTextWidth);
-            dialogueText.ForceMeshUpdate();
-            float measuredTextHeight = Mathf.Max(8f, dialogueText.preferredHeight);
-            float bubbleHeight = Mathf.Clamp(measuredTextHeight + bubblePadding.y, minBubbleHeight, maxBubbleHeight);
-            float finalTextHeight = Mathf.Max(8f, bubbleHeight - bubblePadding.y);
+            // 3) Re-measure height with final width and a small safety padding.
+            Vector2 preferredAtFinalWidth = dialogueText.GetPreferredValues(measureText, finalTextWidthText, 0f);
+            float measuredTextHeightText = Mathf.Max(8f, preferredAtFinalWidth.y);
+            float measuredTextHeightBubble = measuredTextHeightText * textToBubbleY + Mathf.Max(0f, extraHeightSafetyPadding);
+            float bubbleHeight = Mathf.Clamp(measuredTextHeightBubble + bubblePadding.y, minBubbleHeight, maxBubbleHeight);
+            float finalTextHeightBubble = Mathf.Max(8f, bubbleHeight - bubblePadding.y);
+            float finalTextHeightText = Mathf.Max(8f, finalTextHeightBubble * bubbleToTextY);
             bool hitMaxHeight = Mathf.Approximately(bubbleHeight, maxBubbleHeight);
 
-            // 3) Apply final sizes.
+            // 4) Apply final sizes.
             _bubbleRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, bubbleWidth);
             _bubbleRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, bubbleHeight);
-            _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, finalTextWidth);
-            _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, finalTextHeight);
+            _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, finalTextWidthText);
+            _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, finalTextHeightText);
             _textRectTransform.anchorMin = new Vector2(0f, 0.5f);
             _textRectTransform.anchorMax = new Vector2(0f, 0.5f);
             _textRectTransform.pivot = new Vector2(0f, 0.5f);
@@ -610,7 +652,7 @@ namespace Metroidvania.UI
             // Some scenes keep legacy anchored offsets (for example, large +Y),
             // which makes text render outside the bubble. Re-center the text rect
             // inside the current bubble while preserving left/right and top/bottom padding.
-            float textOffsetX = Mathf.Max(0f, (bubbleWidth - finalTextWidth) * 0.5f);
+            float textOffsetX = Mathf.Max(0f, (bubbleWidth - finalTextWidthBubble) * 0.5f);
             _textRectTransform.anchoredPosition = new Vector2(textOffsetX, 0f);
 
             // Keep typewriter behavior intact.
@@ -620,8 +662,29 @@ namespace Metroidvania.UI
             {
                 Debug.LogWarning(
                     $"[BubbleDialogueView] AutoSize textLen={text.Length}, bubble=({bubbleWidth:0.0},{bubbleHeight:0.0}), " +
-                    $"text=({finalTextWidth:0.0},{finalTextHeight:0.0}), hitMaxW={hitMaxWidth}, hitMaxH={hitMaxHeight}");
+                    $"text=({finalTextWidthBubble:0.0},{finalTextHeightBubble:0.0}), lines={measuredLineCount}, " +
+                    $"hitMaxW={hitMaxWidth}, hitMaxH={hitMaxHeight}");
             }
+        }
+
+        private static float SafePositiveScale(float value)
+        {
+            return Mathf.Max(0.0001f, Mathf.Abs(value));
+        }
+
+        private void ApplyTextLayoutDefaults()
+        {
+            if (dialogueText == null)
+            {
+                return;
+            }
+
+            if (normalizeTextMargin)
+            {
+                dialogueText.margin = normalizedTextMargin;
+            }
+
+            dialogueText.enableWordWrapping = true;
         }
 
         private void EnsureAutoSizeDefaultsIfMissing()
@@ -647,10 +710,11 @@ namespace Metroidvania.UI
             minBubbleHeight = 84f;
             maxBubbleHeight = 640f;
             maxTextWidth = 900f;
+            widenBubbleWhenLineCountExceeds = 2;
+            extraHeightSafetyPadding = 12f;
             logAutoSizeResult = false;
 
             Debug.LogWarning("[BubbleDialogueView] AutoSize fields looked uninitialized. Runtime defaults were applied.");
         }
     }
 }
-
