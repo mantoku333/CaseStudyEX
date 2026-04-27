@@ -41733,6 +41733,12 @@ MonoBehaviour:
   completedFlagKey: tutorial_attack_shown
   markCompletedOnOpen: 0
   disableAfterCompletion: 1
+  showAfterDialogue: 1
+  dialogueManager: {fileID: 1563089468}
+  dialogueNodeName: Tutorial_Attack
+  dialogueStyle: 1
+  bubbleTarget: {fileID: 775024343}
+  skipWhenDialogueAlreadyRunning: 1
   playerTag: Player
 --- !u!61 &604896957
 BoxCollider2D:

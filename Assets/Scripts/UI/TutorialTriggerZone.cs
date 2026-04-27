@@ -1,4 +1,6 @@
+using Metroidvania.Managers;
 using UnityEngine;
+using Yarn.Unity;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Collider2D))]
@@ -10,10 +12,20 @@ public sealed class TutorialTriggerZone : MonoBehaviour
     [SerializeField] private bool markCompletedOnOpen;
     [SerializeField] private bool disableAfterCompletion = true;
 
+    [Header("Dialogue Before Tutorial")]
+    [SerializeField] private bool showAfterDialogue;
+    [SerializeField] private DialogueManager dialogueManager;
+    [SerializeField] private string dialogueNodeName = string.Empty;
+    [SerializeField] private DialogueStyle dialogueStyle = DialogueStyle.Bubble;
+    [SerializeField] private Transform bubbleTarget;
+    [SerializeField] private bool skipWhenDialogueAlreadyRunning = true;
+
     [Header("Trigger")]
     [SerializeField] private string playerTag = "Player";
 
     private bool triggered;
+    private DialogueRunner activeDialogueRunner;
+    private bool waitingDialogueCompletion;
 
     private void Reset()
     {
@@ -23,12 +35,23 @@ public sealed class TutorialTriggerZone : MonoBehaviour
     private void Awake()
     {
         EnsureTriggerCollider();
+        ResolveDialogueManagerIfNeeded();
 
         if (IsAlreadyCompleted())
         {
             triggered = true;
             DisableIfConfigured();
         }
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeDialogueComplete();
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeDialogueComplete();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -58,6 +81,70 @@ public sealed class TutorialTriggerZone : MonoBehaviour
 
         triggered = true;
 
+        if (TryStartDialogueBeforeTutorial())
+        {
+            return;
+        }
+
+        ShowTutorialOverlay();
+    }
+
+    private bool TryStartDialogueBeforeTutorial()
+    {
+        if (!showAfterDialogue || string.IsNullOrWhiteSpace(dialogueNodeName))
+        {
+            return false;
+        }
+
+        ResolveDialogueManagerIfNeeded();
+        if (dialogueManager == null || dialogueManager.Runner == null)
+        {
+            Debug.LogWarning($"[TutorialTriggerZone] DialogueManager not found. Fallback to tutorial only. object='{name}'");
+            return false;
+        }
+
+        DialogueRunner runner = dialogueManager.Runner;
+        if (runner.Dialogue == null || !runner.Dialogue.NodeExists(dialogueNodeName))
+        {
+            Debug.LogWarning(
+                $"[TutorialTriggerZone] Dialogue node not found. node='{dialogueNodeName}'. Fallback to tutorial only.");
+            return false;
+        }
+
+        if (runner.IsDialogueRunning)
+        {
+            if (skipWhenDialogueAlreadyRunning)
+            {
+                Debug.LogWarning(
+                    $"[TutorialTriggerZone] Dialogue already running. Skip pre-dialogue and show tutorial. object='{name}'");
+                return false;
+            }
+
+            runner.Stop();
+        }
+
+        activeDialogueRunner = runner;
+        waitingDialogueCompletion = true;
+        activeDialogueRunner.onDialogueComplete?.AddListener(OnDialogueCompleteThenShowTutorial);
+
+        Transform target = bubbleTarget != null ? bubbleTarget : transform;
+        dialogueManager.StartConversation(dialogueNodeName, dialogueStyle, target);
+        return true;
+    }
+
+    private void OnDialogueCompleteThenShowTutorial()
+    {
+        if (!waitingDialogueCompletion)
+        {
+            return;
+        }
+
+        UnsubscribeDialogueComplete();
+        ShowTutorialOverlay();
+    }
+
+    private void ShowTutorialOverlay()
+    {
         if (markCompletedOnOpen)
         {
             MarkCompleted();
@@ -111,5 +198,24 @@ public sealed class TutorialTriggerZone : MonoBehaviour
         {
             target.isTrigger = true;
         }
+    }
+
+    private void ResolveDialogueManagerIfNeeded()
+    {
+        if (dialogueManager == null)
+        {
+            dialogueManager = FindFirstObjectByType<DialogueManager>();
+        }
+    }
+
+    private void UnsubscribeDialogueComplete()
+    {
+        if (activeDialogueRunner != null)
+        {
+            activeDialogueRunner.onDialogueComplete?.RemoveListener(OnDialogueCompleteThenShowTutorial);
+            activeDialogueRunner = null;
+        }
+
+        waitingDialogueCompletion = false;
     }
 }
