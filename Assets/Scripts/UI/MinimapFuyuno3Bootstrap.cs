@@ -27,9 +27,12 @@ public static class MinimapFuyuno3Bootstrap
         }
 
         MinimapManager manager = MinimapSystemFactory.EnsureInstance();
+        MinimapSceneAuthoringData authoringData = Object.FindFirstObjectByType<MinimapSceneAuthoringData>();
 
         Dictionary<string, MinimapRoomDefinition> definitions = CreateFuyuno3Definitions();
-        manager.SetRoomDefinitions(definitions.Values);
+        manager.SetLayout(
+            definitions.Values,
+            authoringData != null ? authoringData.ManualLinks : null);
         BindExistingRoomTriggers(definitions);
     }
 

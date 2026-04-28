@@ -47,12 +47,15 @@ public static class MinimapSceneBootstrap
             return;
         }
 
+        MinimapSceneAuthoringData authoringData = Object.FindFirstObjectByType<MinimapSceneAuthoringData>();
         MinimapManager manager = MinimapSystemFactory.EnsureInstance();
         if (manager == null)
         {
             return;
         }
 
-        manager.SetRoomDefinitions(definitions);
+        manager.SetLayout(
+            definitions,
+            authoringData != null ? authoringData.ManualLinks : null);
     }
 }

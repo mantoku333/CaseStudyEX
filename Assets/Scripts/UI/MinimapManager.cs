@@ -9,6 +9,7 @@ using UnityEngine.InputSystem;
 public sealed class MinimapManager : MonoBehaviour
 {
     [SerializeField] private List<MinimapRoomDefinition> roomDefinitions = new List<MinimapRoomDefinition>();
+    [SerializeField] private List<MinimapLinkDefinition> manualLinks = new List<MinimapLinkDefinition>();
     [SerializeField] private bool showFullMapOnStart;
 #if ENABLE_LEGACY_INPUT_MANAGER
     [SerializeField] private KeyCode fullMapKey = KeyCode.M;
@@ -24,6 +25,7 @@ public sealed class MinimapManager : MonoBehaviour
     public event Action Changed;
 
     public IReadOnlyList<MinimapRoomDefinition> RoomDefinitions => roomDefinitions;
+    public IReadOnlyList<MinimapLinkDefinition> ManualLinks => manualLinks;
     public string CurrentRoomId => currentRoomId;
 
     private void Awake()
@@ -63,21 +65,22 @@ public sealed class MinimapManager : MonoBehaviour
 
     public void SetRoomDefinitions(IEnumerable<MinimapRoomDefinition> definitions)
     {
-        roomDefinitions.Clear();
+        ReplaceRoomDefinitions(definitions);
+        NormalizeRoomDefinitions();
+        RebuildRoomLookup();
+        NotifyChanged();
+    }
 
-        if (definitions != null)
-        {
-            foreach (MinimapRoomDefinition definition in definitions)
-            {
-                if (definition == null || string.IsNullOrWhiteSpace(definition.RoomId))
-                {
-                    continue;
-                }
+    public void SetManualLinks(IEnumerable<MinimapLinkDefinition> links)
+    {
+        ReplaceManualLinks(links);
+        NotifyChanged();
+    }
 
-                roomDefinitions.Add(definition);
-            }
-        }
-
+    public void SetLayout(IEnumerable<MinimapRoomDefinition> definitions, IEnumerable<MinimapLinkDefinition> links)
+    {
+        ReplaceRoomDefinitions(definitions);
+        ReplaceManualLinks(links);
         NormalizeRoomDefinitions();
         RebuildRoomLookup();
         NotifyChanged();
@@ -177,6 +180,46 @@ public sealed class MinimapManager : MonoBehaviour
             }
 
             roomsById[definition.RoomId] = definition;
+        }
+    }
+
+    private void ReplaceRoomDefinitions(IEnumerable<MinimapRoomDefinition> definitions)
+    {
+        roomDefinitions.Clear();
+
+        if (definitions == null)
+        {
+            return;
+        }
+
+        foreach (MinimapRoomDefinition definition in definitions)
+        {
+            if (definition == null || string.IsNullOrWhiteSpace(definition.RoomId))
+            {
+                continue;
+            }
+
+            roomDefinitions.Add(definition);
+        }
+    }
+
+    private void ReplaceManualLinks(IEnumerable<MinimapLinkDefinition> links)
+    {
+        manualLinks.Clear();
+
+        if (links == null)
+        {
+            return;
+        }
+
+        foreach (MinimapLinkDefinition link in links)
+        {
+            if (link == null || !link.IsValid)
+            {
+                continue;
+            }
+
+            manualLinks.Add(link.Clone());
         }
     }
 

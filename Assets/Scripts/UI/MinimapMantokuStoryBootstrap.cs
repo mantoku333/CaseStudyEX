@@ -46,9 +46,12 @@ public static class MinimapMantokuStoryBootstrap
             return;
         }
 
+        MinimapSceneAuthoringData authoringData = Object.FindFirstObjectByType<MinimapSceneAuthoringData>();
         MinimapManager manager = MinimapSystemFactory.EnsureInstance();
 
-        manager.SetRoomDefinitions(definitions.Values);
+        manager.SetLayout(
+            definitions.Values,
+            authoringData != null ? authoringData.ManualLinks : null);
         BindExistingRoomTriggers(triggers, definitions);
     }
 
