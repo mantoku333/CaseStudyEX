@@ -26,7 +26,32 @@ public sealed class StoryEventDefinition
             return true;
         }
 
-        return string.Equals(sceneName.Trim(), currentSceneName, StringComparison.Ordinal);
+        return MatchesConfiguredScene(sceneName, currentSceneName);
+    }
+
+    public static bool MatchesConfiguredScene(string configuredSceneName, string loadedSceneName)
+    {
+        if (string.IsNullOrWhiteSpace(configuredSceneName) || string.IsNullOrWhiteSpace(loadedSceneName))
+        {
+            return false;
+        }
+
+        string configured = configuredSceneName.Trim();
+        string loaded = loadedSceneName.Trim();
+
+        if (string.Equals(configured, loaded, StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        if (!loaded.StartsWith(configured, StringComparison.Ordinal) ||
+            loaded.Length <= configured.Length + 1 ||
+            loaded[configured.Length] != ' ')
+        {
+            return false;
+        }
+
+        return int.TryParse(loaded.Substring(configured.Length + 1), out _);
     }
 
     public bool CanRunByFlags()

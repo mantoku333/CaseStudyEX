@@ -46,12 +46,7 @@ public static class MinimapMantokuStoryBootstrap
             return;
         }
 
-        MinimapManager manager = MinimapManager.Instance;
-        if (manager == null)
-        {
-            GameObject systemObject = new GameObject("MinimapSystem");
-            manager = systemObject.AddComponent<MinimapManager>();
-        }
+        MinimapManager manager = MinimapSystemFactory.EnsureInstance();
 
         manager.SetRoomDefinitions(definitions.Values);
         BindExistingRoomTriggers(triggers, definitions);
