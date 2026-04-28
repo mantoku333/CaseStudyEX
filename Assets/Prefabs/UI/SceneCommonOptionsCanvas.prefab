@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1000005}
   - component: {fileID: 1000006}
   m_Layer: 5
-  m_Name: MantokuStoryOptionsCanvas_ManualPlace
+  m_Name: SceneCommonOptionsCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c0fe24ce7674de0880cf3755a2a6f41, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MantokuStoryOptionsMenu
+  m_EditorClassIdentifier: Assembly-CSharp::SceneCommonOptionsMenu
 --- !u!1 &1000007
 GameObject:
   m_ObjectHideFlags: 0

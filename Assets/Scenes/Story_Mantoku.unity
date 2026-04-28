@@ -41153,7 +41153,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1000001, guid: 5e8eb3bb2f4c4e8f9e4f0fd2b9c6c6d1, type: 3}
       propertyPath: m_Name
-      value: MantokuStoryOptionsCanvas_ManualPlace
+      value: SceneCommonOptionsCanvas
       objectReference: {fileID: 0}
     - target: {fileID: 1000002, guid: 5e8eb3bb2f4c4e8f9e4f0fd2b9c6c6d1, type: 3}
       propertyPath: m_Pivot.x

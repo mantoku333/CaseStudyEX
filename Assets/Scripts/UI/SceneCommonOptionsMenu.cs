@@ -8,11 +8,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-public sealed class MantokuStoryOptionsMenu : MonoBehaviour
+public sealed class SceneCommonOptionsMenu : MonoBehaviour
 {
     private const string PlayerActionMapName = "Player";
     private const string KeyboardMouseGroup = "Keyboard&Mouse";
-    private const string TitleSceneName = "Title";
+    private const string DefaultTitleSceneName = "Title";
     private const string BgmVolumeKey = "MantokuStoryOptions.BgmVolume";
     private const string SeVolumeKey = "MantokuStoryOptions.SeVolume";
     private const string SystemVolumeKey = "MantokuStoryOptions.SystemVolume";
@@ -43,6 +43,17 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
     private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
     private readonly Dictionary<int, float> capturedAudioBaseVolumes = new Dictionary<int, float>();
     private readonly Dictionary<int, float> lastAppliedAudioVolumes = new Dictionary<int, float>();
+
+    [Header("Scene Common Settings")]
+    [SerializeField] private bool allowSave = true;
+    [SerializeField] private bool allowMap = true;
+    [SerializeField] private bool allowReturnToTitle = true;
+    [SerializeField] private bool allowKeyboardConfig = true;
+    [SerializeField] private bool hideUnsupportedButtons;
+    [SerializeField] private string titleSceneName = DefaultTitleSceneName;
+    [SerializeField] private PlayerInput targetPlayerInput;
+    [SerializeField] private GameObject targetPlayerObject;
+    [SerializeField] private MinimapView targetMinimapView;
 
     private GameObject menuRoot;
     private GameObject mainMenuPanel;
@@ -106,6 +117,10 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
     private string activeRebindPreviousOverridePath = string.Empty;
     private int activeRebindBindingIndex = -1;
     private ActiveVolumeBar activeVolumeBar;
+    private bool saveAvailable;
+    private bool mapAvailable;
+    private bool titleAvailable;
+    private bool keyboardConfigAvailable;
 
     private enum AudioChannel
     {
@@ -269,7 +284,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
         if (!referencesResolved)
         {
-            Debug.LogWarning("[MantokuStoryOptionsMenu] UI references are incomplete.");
+            Debug.LogWarning("[SceneCommonOptionsMenu] UI references are incomplete.");
         }
     }
 
@@ -330,6 +345,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             return;
         }
 
+        RefreshFeatureAvailability();
         ApplySavedVolumeValues();
         RefreshVolumeVisuals();
         RefreshKeyboardBindings();
@@ -351,6 +367,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             return;
         }
 
+        RefreshFeatureAvailability();
         mainMenuPanel.SetActive(false);
         optionDetailPanel.SetActive(true);
         ShowSoundTab();
@@ -387,7 +404,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
     private void ShowKeyboardTab()
     {
-        if (!referencesResolved || isRebinding)
+        if (!referencesResolved || isRebinding || !keyboardConfigAvailable)
         {
             return;
         }
@@ -410,6 +427,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         }
 
         PauseGameplay();
+        RefreshFeatureAvailability();
         RefreshKeyboardBindings();
         RefreshVolumeVisuals();
         ResetKeyboardScroll();
@@ -481,7 +499,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             cachedMinimapManager.enabled = false;
         }
 
-        pausedPlayerInput = FindFirstObjectByType<PlayerInput>();
+        pausedPlayerInput = ResolvePlayerInput();
         if (pausedPlayerInput != null)
         {
             previousPlayerInputEnabled = pausedPlayerInput.enabled;
@@ -556,6 +574,12 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
     private void SaveCurrentGame()
     {
+        if (!saveAvailable)
+        {
+            ShowStatus("\u3053\u306E\u30B7\u30FC\u30F3\u3067\u306F\u30BB\u30FC\u30D6\u3067\u304D\u307E\u305B\u3093");
+            return;
+        }
+
         bool saved = SaveManager.TrySaveCurrentGame();
         ShowStatus(saved
             ? "\u30BB\u30FC\u30D6\u3057\u307E\u3057\u305F"
@@ -564,8 +588,13 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
     private void OpenMap()
     {
-        MinimapManager manager = MinimapManager.Instance;
-        MinimapView view = manager != null ? manager.GetComponent<MinimapView>() : null;
+        if (!mapAvailable)
+        {
+            ShowStatus("\u3053\u306E\u30B7\u30FC\u30F3\u3067\u306F\u30DE\u30C3\u30D7\u3092\u958B\u3051\u307E\u305B\u3093");
+            return;
+        }
+
+        MinimapView view = ResolveMinimapView();
         if (view == null)
         {
             ShowStatus("\u30DE\u30C3\u30D7\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093");
@@ -583,8 +612,14 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             return;
         }
 
+        if (!titleAvailable)
+        {
+            ShowStatus("\u30BF\u30A4\u30C8\u30EB\u3078\u623B\u308B\u8A2D\u5B9A\u304C\u3042\u308A\u307E\u305B\u3093");
+            return;
+        }
+
         CloseMenu();
-        SceneManager.LoadScene(TitleSceneName);
+        SceneManager.LoadScene(titleSceneName);
     }
 
     private void HandleVolumePointerInteraction()
@@ -1159,7 +1194,12 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
     private InputActionAsset ResolvePlayerActions()
     {
-        PlayerInput playerInput = FindFirstObjectByType<PlayerInput>();
+        if (!allowKeyboardConfig)
+        {
+            return null;
+        }
+
+        PlayerInput playerInput = ResolvePlayerInput();
         if (playerInput == null)
         {
             return null;
@@ -1492,6 +1532,11 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
     private GameObject ResolvePlayerObject()
     {
+        if (targetPlayerObject != null)
+        {
+            return targetPlayerObject;
+        }
+
         GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
         if (taggedPlayer != null)
         {
@@ -1505,6 +1550,81 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         }
 
         return pausedPlayerInput != null ? pausedPlayerInput.gameObject : null;
+    }
+
+    private PlayerInput ResolvePlayerInput()
+    {
+        if (targetPlayerInput != null)
+        {
+            return targetPlayerInput;
+        }
+
+        return FindFirstObjectByType<PlayerInput>();
+    }
+
+    private MinimapView ResolveMinimapView()
+    {
+        if (targetMinimapView != null)
+        {
+            return targetMinimapView;
+        }
+
+        MinimapManager manager = MinimapManager.Instance;
+        if (manager != null)
+        {
+            MinimapView managerView = manager.GetComponent<MinimapView>();
+            if (managerView != null)
+            {
+                return managerView;
+            }
+        }
+
+        return FindFirstObjectByType<MinimapView>();
+    }
+
+    private void RefreshFeatureAvailability()
+    {
+        saveAvailable = allowSave && FindFirstObjectByType<global::PlayerController>() != null;
+        mapAvailable = allowMap && ResolveMinimapView() != null;
+        titleAvailable = allowReturnToTitle && !string.IsNullOrWhiteSpace(titleSceneName);
+        keyboardConfigAvailable = allowKeyboardConfig && ResolvePlayerActions() != null;
+
+        ApplyButtonAvailability(saveButton, saveAvailable);
+        ApplyButtonAvailability(mapButton, mapAvailable);
+        ApplyButtonAvailability(titleButton, titleAvailable);
+        ApplyButtonAvailability(keyboardTabButton, keyboardConfigAvailable);
+
+        SetRebindButtonsInteractable(keyboardConfigAvailable && !isRebinding);
+
+        if (!keyboardConfigAvailable && keyboardContentPanel != null && keyboardContentPanel.activeSelf)
+        {
+            ShowSoundTab();
+        }
+    }
+
+    private void ApplyButtonAvailability(Button button, bool available)
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        if (hideUnsupportedButtons)
+        {
+            if (button.gameObject.activeSelf != available)
+            {
+                button.gameObject.SetActive(available);
+            }
+        }
+        else
+        {
+            if (!button.gameObject.activeSelf)
+            {
+                button.gameObject.SetActive(true);
+            }
+
+            button.interactable = available;
+        }
     }
 
     private bool ContainsScreenPoint(RectTransform rectTransform, Vector2 screenPoint)
