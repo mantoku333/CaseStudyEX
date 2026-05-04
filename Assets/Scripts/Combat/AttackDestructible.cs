@@ -24,6 +24,11 @@ public class AttackDestructible : MonoBehaviour, IAttackReceiver
 
     public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
     {
+        if (!CanReceiveAttack(attacker, hitCollider))
+        {
+            return;
+        }
+
         ApplyDamage(1, attacker, hitCollider);
     }
 
@@ -46,10 +51,11 @@ public class AttackDestructible : MonoBehaviour, IAttackReceiver
     protected virtual void Break(AttackHitbox attacker, Collider2D hitCollider)
     {
         isBroken = true;
+        GameObject breakEffectInstance = null;
 
         if (breakEffectPrefab != null)
         {
-            Instantiate(breakEffectPrefab, transform.position, Quaternion.identity);
+            breakEffectInstance = Instantiate((Object)breakEffectPrefab, transform.position, Quaternion.identity) as GameObject;
         }
 
         if (breakSe != null)
@@ -57,6 +63,7 @@ public class AttackDestructible : MonoBehaviour, IAttackReceiver
             AudioSource.PlayClipAtPoint(breakSe, transform.position);
         }
 
+        OnBreakEffectSpawned(breakEffectInstance, attacker, hitCollider);
         OnBroken(attacker, hitCollider);
 
         if (destroyOnBreak)
@@ -68,5 +75,14 @@ public class AttackDestructible : MonoBehaviour, IAttackReceiver
     // Override if a concrete object needs custom behavior before destroy.
     protected virtual void OnBroken(AttackHitbox attacker, Collider2D hitCollider)
     {
+    }
+
+    protected virtual void OnBreakEffectSpawned(GameObject breakEffectInstance, AttackHitbox attacker, Collider2D hitCollider)
+    {
+    }
+
+    protected virtual bool CanReceiveAttack(AttackHitbox attacker, Collider2D hitCollider)
+    {
+        return true;
     }
 }
