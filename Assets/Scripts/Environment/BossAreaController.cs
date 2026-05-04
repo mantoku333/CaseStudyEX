@@ -1,4 +1,4 @@
-using GameName.Enemy;
+﻿using GameName.Enemy;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -51,7 +51,7 @@ public sealed class BossAreaController : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool verboseLogging;
 
-    // Change this to true to re-enable shutter wall lock/unlock behavior.
+    
     private static readonly bool enableWallMechanic = false;
 
     private bool encounterStarted;
