@@ -402,15 +402,15 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     /// </remarks>
     private void Move()
     {
-        if(dodgeController != null && dodgeController.IsDodging()){ return; }
+        if (dodgeController != null && dodgeController.IsDodging()) { return; }
 
         if (gunController != null && gunController.GetRecoiling()) { return; }
 
         if (rigidBody2d == null) { return; }
 
-        if(playerStatsData == null) { return; }
+        if (playerStatsData == null) { return; }
 
-        if(umbrellaController == null) { return; }
+        if (umbrellaController == null) { return; }
 
         Vector2 velocity = rigidBody2d.linearVelocity;
 
@@ -429,13 +429,20 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
         else
         {
-            if (isGliding)
+            if (isGround)
             {
-                velocity.x *= 0.95f;
+                velocity.x = 0.0f;
             }
             else
             {
-                velocity.x = 0.0f;
+                if (isGliding)
+                {
+                    velocity.x *= 0.95f;
+                }
+                else
+                {
+                    velocity.x *= 0.98f;
+                }
             }
         }
 
