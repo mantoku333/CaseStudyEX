@@ -1,52 +1,157 @@
 fileFormatVersion: 2
-guid: de066c88a23382548bfbd4f4863c6893
+guid: fc6338fac19d6e64e90369a13e2a8afc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6806549490290401872
-    second: walk_prototype_sprite_0
+      213: -832346962639895179
+    second: AM_iris_Walk_0
   - first:
-      213: 2810279055283154261
-    second: walk_prototype_sprite_1
+      213: 6308099620257669952
+    second: AM_iris_Walk_1
   - first:
-      213: -785994552420720396
-    second: walk_prototype_sprite_2
+      213: 120424949354649401
+    second: AM_iris_Walk_2
   - first:
-      213: -7056190919865203030
-    second: walk_prototype_sprite_3
+      213: 646198860319302688
+    second: AM_iris_Walk_3
   - first:
-      213: -4382397171980514055
-    second: walk_prototype_sprite_4
+      213: 2367597967589428928
+    second: AM_iris_Walk_4
   - first:
-      213: 8730560693833942648
-    second: walk_prototype_sprite_5
+      213: -6307170775200988360
+    second: AM_iris_Walk_5
   - first:
-      213: 8476268855040849523
-    second: walk_prototype_sprite_6
+      213: -3498396215186885427
+    second: AM_iris_Walk_6
   - first:
-      213: 9004518899613684893
-    second: walk_prototype_sprite_7
+      213: 4605454212498329655
+    second: AM_iris_Walk_7
   - first:
-      213: 7522011194808170503
-    second: walk_prototype_sprite_8
+      213: -8123740552096276443
+    second: AM_iris_Walk_8
   - first:
-      213: 3628361818396653379
-    second: walk_prototype_sprite_9
+      213: 6032025277504318742
+    second: AM_iris_Walk_9
   - first:
-      213: 5216394604599458695
-    second: walk_prototype_sprite_10
+      213: 1303140658512130075
+    second: AM_iris_Walk_10
   - first:
-      213: 6346195636849215416
-    second: walk_prototype_sprite_11
+      213: -4905068000565266434
+    second: AM_iris_Walk_11
   - first:
-      213: -5761055611661701493
-    second: walk_prototype_sprite_12
+      213: -2542480853463739399
+    second: AM_iris_Walk_12
   - first:
-      213: 3756976379222384335
-    second: walk_prototype_sprite_13
+      213: 5530360218999124670
+    second: AM_iris_Walk_13
   - first:
-      213: 7095496317599885561
-    second: walk_prototype_sprite_14
+      213: 7097430108475481068
+    second: AM_iris_Walk_14
+  - first:
+      213: 7073698282442934295
+    second: AM_iris_Walk_15
+  - first:
+      213: 8736838157538115694
+    second: AM_iris_Walk_16
+  - first:
+      213: -7486371478628146064
+    second: AM_iris_Walk_17
+  - first:
+      213: -4620286704867633495
+    second: AM_iris_Walk_18
+  - first:
+      213: -5293843589125286204
+    second: AM_iris_Walk_19
+  - first:
+      213: 8617795468100469226
+    second: AM_iris_Walk_20
+  - first:
+      213: 3610089248876481420
+    second: AM_iris_Walk_21
+  - first:
+      213: 6653200818507051377
+    second: AM_iris_Walk_22
+  - first:
+      213: 6605404500808632041
+    second: AM_iris_Walk_23
+  - first:
+      213: 7947534067431978738
+    second: AM_iris_Walk_24
+  - first:
+      213: 1454199241269497128
+    second: AM_iris_Walk_25
+  - first:
+      213: 8551686601387734067
+    second: AM_iris_Walk_26
+  - first:
+      213: -4806608238477175391
+    second: AM_iris_Walk_27
+  - first:
+      213: -138006757524966787
+    second: AM_iris_Walk_28
+  - first:
+      213: 4977034289957556062
+    second: AM_iris_Walk_29
+  - first:
+      213: -3256839774140812912
+    second: AM_iris_Walk_30
+  - first:
+      213: -5894511755349185779
+    second: AM_iris_Walk_31
+  - first:
+      213: 3023051172648991370
+    second: AM_iris_Walk_32
+  - first:
+      213: -8714045786905232281
+    second: AM_iris_Walk_33
+  - first:
+      213: -5183512224402686765
+    second: AM_iris_Walk_34
+  - first:
+      213: -5271851015317465271
+    second: AM_iris_Walk_35
+  - first:
+      213: -3554271427340186708
+    second: AM_iris_Walk_36
+  - first:
+      213: -2861563567557438639
+    second: AM_iris_Walk_37
+  - first:
+      213: 953168093362124419
+    second: AM_iris_Walk_38
+  - first:
+      213: 5827536389106101503
+    second: AM_iris_Walk_39
+  - first:
+      213: -5599774684331480104
+    second: AM_iris_Walk_40
+  - first:
+      213: -8545944767915641810
+    second: AM_iris_Walk_41
+  - first:
+      213: -8976312816519796837
+    second: AM_iris_Walk_42
+  - first:
+      213: 7347198125474402236
+    second: AM_iris_Walk_43
+  - first:
+      213: -4870957949786985630
+    second: AM_iris_Walk_44
+  - first:
+      213: 554811157987546268
+    second: AM_iris_Walk_45
+  - first:
+      213: -5802339752695196707
+    second: AM_iris_Walk_46
+  - first:
+      213: 3362843340170295468
+    second: AM_iris_Walk_47
+  - first:
+      213: -1197079523721404960
+    second: AM_iris_Walk_48
+  - first:
+      213: 8824989301997395190
+    second: AM_iris_Walk_49
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -142,331 +247,1101 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Walk_0
+      name: AM_iris_Walk_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 982
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 30
+        y: 2346
+        width: 345
+        height: 555
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: c7ee585358ea7ab49bbc083b9072ed88
-      internalID: 754377109
+      spriteID: 57549f1f8d8e274f0800000000000000
+      internalID: -832346962639895179
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_1
+      name: AM_iris_Walk_1
       rect:
         serializedVersion: 2
-        x: 355
-        y: 982
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 416
+        y: 2343
+        width: 341
+        height: 555
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 9eff72c7f09a9e04fbf8a24acccc2b1c
-      internalID: -919777275
+      spriteID: 0432c31de2fda8750800000000000000
+      internalID: 6308099620257669952
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_2
+      name: AM_iris_Walk_2
       rect:
         serializedVersion: 2
-        x: 710
-        y: 982
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 801
+        y: 2342
+        width: 337
+        height: 552
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: e8502076c7e789a4b9907c24a2c0802e
-      internalID: 1580676655
+      spriteID: 937d0687ad5dba100800000000000000
+      internalID: 120424949354649401
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_3
+      name: AM_iris_Walk_3
       rect:
         serializedVersion: 2
-        x: 1065
-        y: 982
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 1185
+        y: 2341
+        width: 335
+        height: 550
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: f3272296b2bbab244a72bf578b88c55f
-      internalID: -1155194924
+      spriteID: 02428939072c7f800800000000000000
+      internalID: 646198860319302688
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_4
+      name: AM_iris_Walk_4
       rect:
         serializedVersion: 2
-        x: 1420
-        y: 982
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 1569
+        y: 2341
+        width: 332
+        height: 548
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 9d15576903942894aa0555dcc8aeab41
-      internalID: -1725112493
+      spriteID: 0ceca15bec56bd020800000000000000
+      internalID: 2367597967589428928
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_5
+      name: AM_iris_Walk_5
       rect:
         serializedVersion: 2
-        x: 0
-        y: 492
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 1953
+        y: 2340
+        width: 330
+        height: 547
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 7c70f3a4eda2fc24d9f8a138d6d55446
-      internalID: -629504639
+      spriteID: 8338b66c89d6878a0800000000000000
+      internalID: -6307170775200988360
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_6
+      name: AM_iris_Walk_6
       rect:
         serializedVersion: 2
-        x: 355
-        y: 492
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 2337
+        y: 2340
+        width: 327
+        height: 545
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 0a9038827cbf2914bb6932e8587f1c9d
-      internalID: -1133230331
+      spriteID: dc4f6367d23337fc0800000000000000
+      internalID: -3498396215186885427
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_7
+      name: AM_iris_Walk_7
       rect:
         serializedVersion: 2
-        x: 710
-        y: 492
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 2721
+        y: 2340
+        width: 324
+        height: 543
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: c14cc77f3d9c312439a626cca537a735
-      internalID: -1394079878
+      spriteID: 7301a4d943cd9ef30800000000000000
+      internalID: 4605454212498329655
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_8
+      name: AM_iris_Walk_8
       rect:
         serializedVersion: 2
-        x: 1065
-        y: 492
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 3101
+        y: 2338
+        width: 320
+        height: 555
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 5db98beb797b2e340bfb3d6e633ef8fe
-      internalID: -1690527856
+      spriteID: 520add0620da24f80800000000000000
+      internalID: -8123740552096276443
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_9
+      name: AM_iris_Walk_9
       rect:
         serializedVersion: 2
-        x: 1420
-        y: 492
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 3480
+        y: 2338
+        width: 317
+        height: 565
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 0f0c70cb9814fe141a28cd2a836b7bab
-      internalID: 214443084
+      spriteID: 61d62d5e70f06b350800000000000000
+      internalID: 6032025277504318742
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_10
+      name: AM_iris_Walk_10
       rect:
         serializedVersion: 2
-        x: 0
-        y: 2
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 40
+        y: 1762
+        width: 313
+        height: 566
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: dd28e14adc3917d42ac7b35eb245f7b8
-      internalID: -397955419
+      spriteID: b10fbfa468fa51210800000000000000
+      internalID: 1303140658512130075
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_11
+      name: AM_iris_Walk_11
       rect:
         serializedVersion: 2
-        x: 355
-        y: 2
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 424
+        y: 1762
+        width: 309
+        height: 567
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 17e318bc6651f8b4fad4be8766cf62bb
-      internalID: -358421354
+      spriteID: ef7fb2344a2bdebb0800000000000000
+      internalID: -4905068000565266434
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_12
+      name: AM_iris_Walk_12
       rect:
         serializedVersion: 2
-        x: 710
-        y: 2
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 808
+        y: 1763
+        width: 306
+        height: 567
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 33081b17e1ee4d946ab4ab16322240da
-      internalID: 1967628180
+      spriteID: 9f3df09622b47bcd0800000000000000
+      internalID: -2542480853463739399
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_13
+      name: AM_iris_Walk_13
       rect:
         serializedVersion: 2
-        x: 1065
-        y: 2
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 1188
+        y: 1763
+        width: 307
+        height: 566
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 17a8b9c277878c04881a94de40858a91
-      internalID: 1533024454
+      spriteID: eb2f46d6159cfbc40800000000000000
+      internalID: 5530360218999124670
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk_14
+      name: AM_iris_Walk_14
       rect:
         serializedVersion: 2
-        x: 1420
-        y: 2
-        width: 355
-        height: 490
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        x: 1568
+        y: 1762
+        width: 308
+        height: 567
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 968306a150610c843a46bccb4dbc84e8
-      internalID: 253930179
+      spriteID: cebd7d174132f7260800000000000000
+      internalID: 7097430108475481068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_15
+      rect:
+        serializedVersion: 2
+        x: 1948
+        y: 1762
+        width: 309
+        height: 566
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7184d4d1c13da2260800000000000000
+      internalID: 7073698282442934295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_16
+      rect:
+        serializedVersion: 2
+        x: 2328
+        y: 1762
+        width: 310
+        height: 565
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e604328b30c7f3970800000000000000
+      internalID: 8736838157538115694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_17
+      rect:
+        serializedVersion: 2
+        x: 2712
+        y: 1763
+        width: 312
+        height: 564
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 074e0cffdc01b1890800000000000000
+      internalID: -7486371478628146064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_18
+      rect:
+        serializedVersion: 2
+        x: 3097
+        y: 1764
+        width: 313
+        height: 563
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a697e3a8b171efb0800000000000000
+      internalID: -4620286704867633495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_19
+      rect:
+        serializedVersion: 2
+        x: 3482
+        y: 1762
+        width: 314
+        height: 565
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c655bdbd4d7886b0800000000000000
+      internalID: -5293843589125286204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_20
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 1178
+        width: 315
+        height: 565
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae18917b15f889770800000000000000
+      internalID: 8617795468100469226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_21
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 1178
+        width: 317
+        height: 565
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8b4db67b0d991230800000000000000
+      internalID: 3610089248876481420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_22
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 1178
+        width: 318
+        height: 565
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 171737ee4eae45c50800000000000000
+      internalID: 6653200818507051377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_23
+      rect:
+        serializedVersion: 2
+        x: 1197
+        y: 1175
+        width: 319
+        height: 564
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e60774856c1bab50800000000000000
+      internalID: 6605404500808632041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_24
+      rect:
+        serializedVersion: 2
+        x: 1579
+        y: 1175
+        width: 319
+        height: 561
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f6399160205b4e60800000000000000
+      internalID: 7947534067431978738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_25
+      rect:
+        serializedVersion: 2
+        x: 1960
+        y: 1174
+        width: 321
+        height: 559
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82dc288518a5e2410800000000000000
+      internalID: 1454199241269497128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_26
+      rect:
+        serializedVersion: 2
+        x: 2341
+        y: 1174
+        width: 322
+        height: 555
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 334fe2ab7a1bda670800000000000000
+      internalID: 8551686601387734067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_27
+      rect:
+        serializedVersion: 2
+        x: 2722
+        y: 1173
+        width: 323
+        height: 553
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a51a1b064f7b4db0800000000000000
+      internalID: -4806608238477175391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_28
+      rect:
+        serializedVersion: 2
+        x: 3103
+        y: 1173
+        width: 324
+        height: 550
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d72fe11d593b51ef0800000000000000
+      internalID: -138006757524966787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_29
+      rect:
+        serializedVersion: 2
+        x: 3485
+        y: 1172
+        width: 325
+        height: 548
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5fcbd7315af11540800000000000000
+      internalID: 4977034289957556062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_30
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 588
+        width: 326
+        height: 544
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09139fb1b716dc2d0800000000000000
+      internalID: -3256839774140812912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_31
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 588
+        width: 327
+        height: 541
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0b2c0af9cc723ea0800000000000000
+      internalID: -5894511755349185779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_32
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 588
+        width: 328
+        height: 545
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8a3293560904f920800000000000000
+      internalID: 3023051172648991370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_33
+      rect:
+        serializedVersion: 2
+        x: 1184
+        y: 587
+        width: 330
+        height: 549
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76c360b968d711780800000000000000
+      internalID: -8714045786905232281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_34
+      rect:
+        serializedVersion: 2
+        x: 1563
+        y: 587
+        width: 330
+        height: 553
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dc359768177018b0800000000000000
+      internalID: -5183512224402686765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_35
+      rect:
+        serializedVersion: 2
+        x: 1942
+        y: 585
+        width: 331
+        height: 558
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 947583bde6f96d6b0800000000000000
+      internalID: -5271851015317465271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_36
+      rect:
+        serializedVersion: 2
+        x: 2321
+        y: 590
+        width: 331
+        height: 556
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cab411ad7f0bcaec0800000000000000
+      internalID: -3554271427340186708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_37
+      rect:
+        serializedVersion: 2
+        x: 2699
+        y: 594
+        width: 333
+        height: 556
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1531a85b81fa948d0800000000000000
+      internalID: -2861563567557438639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_38
+      rect:
+        serializedVersion: 2
+        x: 3080
+        y: 594
+        width: 333
+        height: 555
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 386f510b4555a3d00800000000000000
+      internalID: 953168093362124419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_39
+      rect:
+        serializedVersion: 2
+        x: 3460
+        y: 595
+        width: 334
+        height: 554
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffce45468719fd050800000000000000
+      internalID: 5827536389106101503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_40
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 11
+        width: 334
+        height: 553
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8db623ee79a9942b0800000000000000
+      internalID: -5599774684331480104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_41
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 10
+        width: 335
+        height: 554
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e24b74e0384b66980800000000000000
+      internalID: -8545944767915641810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_42
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 10
+        width: 337
+        height: 553
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b972d8a4d0bbd6380800000000000000
+      internalID: -8976312816519796837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_43
+      rect:
+        serializedVersion: 2
+        x: 1161
+        y: 10
+        width: 337
+        height: 553
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbf415b94cd76f560800000000000000
+      internalID: 7347198125474402236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_44
+      rect:
+        serializedVersion: 2
+        x: 1545
+        y: 11
+        width: 339
+        height: 552
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26be4175d81e66cb0800000000000000
+      internalID: -4870957949786985630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_45
+      rect:
+        serializedVersion: 2
+        x: 1930
+        y: 11
+        width: 339
+        height: 553
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9455450fc513b700800000000000000
+      internalID: 554811157987546268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_46
+      rect:
+        serializedVersion: 2
+        x: 2314
+        y: 12
+        width: 340
+        height: 552
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd3997eacb2f97fa0800000000000000
+      internalID: -5802339752695196707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_47
+      rect:
+        serializedVersion: 2
+        x: 2698
+        y: 12
+        width: 341
+        height: 552
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca8732663383bae20800000000000000
+      internalID: 3362843340170295468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_48
+      rect:
+        serializedVersion: 2
+        x: 3082
+        y: 10
+        width: 343
+        height: 554
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ed11bcf38e136fe0800000000000000
+      internalID: -1197079523721404960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_49
+      rect:
+        serializedVersion: 2
+        x: 3466
+        y: 10
+        width: 344
+        height: 554
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fc5d2c6309a87a70800000000000000
+      internalID: 8824989301997395190
       vertices: []
       indices: 
       edges: []
@@ -475,7 +1350,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 2747e439416d3714196c7e63a511ca2b
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -483,25 +1358,58 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":5.0,"y":3.0},"gridSpriteSize":{"x":355.0,"y":490.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      Walk_0: 754377109
-      Walk_1: -919777275
-      Walk_10: -397955419
-      Walk_11: -358421354
-      Walk_12: 1967628180
-      Walk_13: 1533024454
-      Walk_14: 253930179
-      Walk_2: 1580676655
-      Walk_3: -1155194924
-      Walk_4: -1725112493
-      Walk_5: -629504639
-      Walk_6: -1133230331
-      Walk_7: -1394079878
-      Walk_8: -1690527856
-      Walk_9: 214443084
+      AM_iris_Walk_0: -832346962639895179
+      AM_iris_Walk_1: 6308099620257669952
+      AM_iris_Walk_10: 1303140658512130075
+      AM_iris_Walk_11: -4905068000565266434
+      AM_iris_Walk_12: -2542480853463739399
+      AM_iris_Walk_13: 5530360218999124670
+      AM_iris_Walk_14: 7097430108475481068
+      AM_iris_Walk_15: 7073698282442934295
+      AM_iris_Walk_16: 8736838157538115694
+      AM_iris_Walk_17: -7486371478628146064
+      AM_iris_Walk_18: -4620286704867633495
+      AM_iris_Walk_19: -5293843589125286204
+      AM_iris_Walk_2: 120424949354649401
+      AM_iris_Walk_20: 8617795468100469226
+      AM_iris_Walk_21: 3610089248876481420
+      AM_iris_Walk_22: 6653200818507051377
+      AM_iris_Walk_23: 6605404500808632041
+      AM_iris_Walk_24: 7947534067431978738
+      AM_iris_Walk_25: 1454199241269497128
+      AM_iris_Walk_26: 8551686601387734067
+      AM_iris_Walk_27: -4806608238477175391
+      AM_iris_Walk_28: -138006757524966787
+      AM_iris_Walk_29: 4977034289957556062
+      AM_iris_Walk_3: 646198860319302688
+      AM_iris_Walk_30: -3256839774140812912
+      AM_iris_Walk_31: -5894511755349185779
+      AM_iris_Walk_32: 3023051172648991370
+      AM_iris_Walk_33: -8714045786905232281
+      AM_iris_Walk_34: -5183512224402686765
+      AM_iris_Walk_35: -5271851015317465271
+      AM_iris_Walk_36: -3554271427340186708
+      AM_iris_Walk_37: -2861563567557438639
+      AM_iris_Walk_38: 953168093362124419
+      AM_iris_Walk_39: 5827536389106101503
+      AM_iris_Walk_4: 2367597967589428928
+      AM_iris_Walk_40: -5599774684331480104
+      AM_iris_Walk_41: -8545944767915641810
+      AM_iris_Walk_42: -8976312816519796837
+      AM_iris_Walk_43: 7347198125474402236
+      AM_iris_Walk_44: -4870957949786985630
+      AM_iris_Walk_45: 554811157987546268
+      AM_iris_Walk_46: -5802339752695196707
+      AM_iris_Walk_47: 3362843340170295468
+      AM_iris_Walk_48: -1197079523721404960
+      AM_iris_Walk_49: 8824989301997395190
+      AM_iris_Walk_5: -6307170775200988360
+      AM_iris_Walk_6: -3498396215186885427
+      AM_iris_Walk_7: 4605454212498329655
+      AM_iris_Walk_8: -8123740552096276443
+      AM_iris_Walk_9: 6032025277504318742
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
