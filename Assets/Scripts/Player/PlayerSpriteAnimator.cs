@@ -27,6 +27,7 @@ namespace Player
         [SerializeField] private string idleStateName = "idle";
         [SerializeField] private string runStateName = "run";
         [SerializeField] private string jumpStateName = "jump";
+        [SerializeField] private string glideStateName = "glide";
         [SerializeField] private string landStateName = "land";
         [SerializeField] private string dodgeStateName = "dodge";
         [SerializeField] private string parryStateName = "parry";
@@ -38,6 +39,7 @@ namespace Player
             Idle,
             Run,
             Jump,
+            Glide,
             Land,
             Dodge,
             Parry,
@@ -219,7 +221,7 @@ namespace Player
 
             if (isGliding)
             {
-                return VisualState.Jump;
+                return VisualState.Glide;
             }
 
             if (!isGrounded)
@@ -336,6 +338,8 @@ namespace Player
                     return runStateName;
                 case VisualState.Jump:
                     return jumpStateName;
+                case VisualState.Glide:
+                    return glideStateName;
                 case VisualState.Land:
                     return landStateName;
                 case VisualState.Dodge:
@@ -369,8 +373,12 @@ namespace Player
                     if (AnimatorHasState("run")) return "run";
                     break;
                 case VisualState.Jump:
-                    if (AnimatorHasState("Glide")) return "Glide";
+                    if (AnimatorHasState("Jump")) return "Jump";
                     if (AnimatorHasState("jump")) return "jump";
+                    break;
+                case VisualState.Glide:
+                    if (AnimatorHasState("Glide")) return "Glide";
+                    if (AnimatorHasState("glide")) return "glide";
                     break;
                 case VisualState.Land:
                     if (AnimatorHasState("Land")) return "Land";

@@ -987,6 +987,7 @@ MonoBehaviour:
   idleStateName: idle
   runStateName: run
   jumpStateName: jump
+  glideStateName: glide
   landStateName: land
   dodgeStateName: dodge
   parryStateName: parry
