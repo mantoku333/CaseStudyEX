@@ -203,6 +203,11 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
             yield return null;
         }
 
+        if (EnqueueSceneComponentEvents(sceneName))
+        {
+            yield break;
+        }
+
         bool hasCatalogEvents = loadedCatalog != null &&
                                 loadedCatalog.sceneStartEvents != null &&
                                 loadedCatalog.sceneStartEvents.Count > 0;
@@ -228,6 +233,42 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
         {
             eventRunner.Enqueue(fallbackDefinition);
         }
+    }
+
+    private bool EnqueueSceneComponentEvents(string sceneName)
+    {
+        SceneStartStoryEventSource[] sources = FindObjectsByType<SceneStartStoryEventSource>(FindObjectsSortMode.None);
+        if (sources == null || sources.Length == 0)
+        {
+            return false;
+        }
+
+        bool enqueued = false;
+        for (int i = 0; i < sources.Length; i++)
+        {
+            SceneStartStoryEventSource source = sources[i];
+            if (source == null || !source.isActiveAndEnabled)
+            {
+                continue;
+            }
+
+            Scene sourceScene = source.gameObject.scene;
+            if (!sourceScene.IsValid() || !string.Equals(sourceScene.name, sceneName, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            StoryEventDefinition definition = source.CreateDefinition(sceneName);
+            if (definition == null)
+            {
+                continue;
+            }
+
+            eventRunner.Enqueue(definition);
+            enqueued = true;
+        }
+
+        return enqueued;
     }
 
     private bool TryQueueEventById(string eventId, bool ignoreFlags)
@@ -441,12 +482,12 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
 
     private static StoryEventDefinition CreateFallbackPrologueDefinition(string sceneName)
     {
-        if (!string.Equals(sceneName, DefaultEntrySceneName, StringComparison.Ordinal))
+        if (!StoryEventDefinition.MatchesConfiguredScene(DefaultEntrySceneName, sceneName))
         {
             return null;
         }
 
-        return CreatePrologueDefinition(DefaultEntrySceneName);
+        return CreatePrologueDefinition(sceneName.Trim());
     }
 
     private static StoryEventDefinition CreateDebugPrologueDefinition(string sceneName)

@@ -26,12 +26,7 @@ public static class MinimapFuyuno3Bootstrap
             return;
         }
 
-        MinimapManager manager = MinimapManager.Instance;
-        if (manager == null)
-        {
-            GameObject systemObject = new GameObject("MinimapSystem");
-            manager = systemObject.AddComponent<MinimapManager>();
-        }
+        MinimapManager manager = MinimapSystemFactory.EnsureInstance();
 
         Dictionary<string, MinimapRoomDefinition> definitions = CreateFuyuno3Definitions();
         manager.SetRoomDefinitions(definitions.Values);

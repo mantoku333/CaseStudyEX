@@ -1,4 +1,4 @@
-using GameName.Enemy;
+﻿using GameName.Enemy;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -14,7 +14,10 @@ public sealed class BossAreaController : MonoBehaviour
     [SerializeField] private bool disableTriggerAfterStart = true;
 
     [Header("Boss")]
+    // StageBoss用エリアではstageBossAttackのみ、LastBoss用エリアではlastBossControllerのみを設定する。
+    // 両方入れると同じBossAreaで両方のボスが起動するため、1エリア1ボスの設定にする。
     [SerializeField] private StageBossAttack stageBossAttack;
+    [SerializeField] private LastBossController lastBossController;
     [SerializeField] private Transform bossRoot;
     [SerializeField] private string bossDefeatedFlagKey = GameProgressKeys.Boss01Defeated;
 
@@ -26,6 +29,10 @@ public sealed class BossAreaController : MonoBehaviour
     [SerializeField] private CinemachineCamera fixedBossCamera;
     [SerializeField] private int activeCameraPriority = 50;
     [SerializeField] private int inactiveCameraPriority = 0;
+
+    [Header("BGM")]
+    [SerializeField] private StageBgmController stageBgm;
+    [SerializeField] private bool returnToNormalAfterBoss;
 
     [Header("Confinement")]
     // エリア内拘束のマスターON/OFF（戦闘中のみ有効）
@@ -44,7 +51,7 @@ public sealed class BossAreaController : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool verboseLogging;
 
-    // Change this to true to re-enable shutter wall lock/unlock behavior.
+    
     private static readonly bool enableWallMechanic = false;
 
     private bool encounterStarted;
@@ -61,14 +68,25 @@ public sealed class BossAreaController : MonoBehaviour
         CacheConfinementBounds();
 
         // どちらか一方だけ設定されていても動くように参照を相互補完する。
+        // bossRootだけ設定されている場合でも、StageBoss/LastBossどちらかを自動取得する。
         if (stageBossAttack == null && bossRoot != null)
         {
             stageBossAttack = bossRoot.GetComponent<StageBossAttack>();
         }
 
+        if (lastBossController == null && bossRoot != null)
+        {
+            lastBossController = bossRoot.GetComponent<LastBossController>();
+        }
+
         if (bossRoot == null && stageBossAttack != null)
         {
             bossRoot = stageBossAttack.transform;
+        }
+
+        if (bossRoot == null && lastBossController != null)
+        {
+            bossRoot = lastBossController.transform;
         }
 
         if (bossRoot != null)
@@ -152,11 +170,18 @@ public sealed class BossAreaController : MonoBehaviour
         }
 
         // カメラ切り替え -> ボス起動 の順で開始演出を揃える。
+        // カメラ/BGMをボス戦用へ切り替えてから、設定されているボスを起動する。
         ActivateBossCamera();
+        stageBgm?.PlayBoss();
 
         if (stageBossAttack != null)
         {
             stageBossAttack.ActivateEncounter();
+        }
+
+        if (lastBossController != null)
+        {
+            lastBossController.ActivateEncounter();
         }
 
         if (disableTriggerAfterStart)
@@ -185,6 +210,11 @@ public sealed class BossAreaController : MonoBehaviour
             stageBossAttack.DeactivateEncounter();
         }
 
+        if (lastBossController != null)
+        {
+            lastBossController.DeactivateEncounter();
+        }
+
         if (!string.IsNullOrWhiteSpace(bossDefeatedFlagKey))
         {
             // 再入室時に再戦闘しないよう撃破フラグを永続化する。
@@ -198,6 +228,11 @@ public sealed class BossAreaController : MonoBehaviour
 
         DeactivateBossCamera();
 
+        if (returnToNormalAfterBoss)
+        {
+            stageBgm?.PlayNormal();
+        }
+
         if (verboseLogging)
         {
             Debug.Log($"[BossAreaController] Encounter completed on {gameObject.name}", this);
@@ -210,6 +245,15 @@ public sealed class BossAreaController : MonoBehaviour
         {
             // StageBossAttack 側が残っている限り同一 transform をボス本体として扱う。
             bossRoot = stageBossAttack.transform;
+
+            if (bossRoot != null && bossRigidbody2D == null)
+            {
+                bossRigidbody2D = bossRoot.GetComponent<Rigidbody2D>();
+            }
+        }
+        else if (lastBossController != null)
+        {
+            bossRoot = lastBossController.transform;
 
             if (bossRoot != null && bossRigidbody2D == null)
             {

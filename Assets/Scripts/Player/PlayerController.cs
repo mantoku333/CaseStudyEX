@@ -293,40 +293,26 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
-        //回避(左シフトキー+移動キーで左右に回避)
-
-        bool canUseDodge = false;
-
-        if (playerAbilityController != null)
-        {
-            canUseDodge = playerAbilityController.GetCanDodge();
-        }
-
+        //回避(Shift単体でその場回避 / A・D入力中なら左右回避)
         bool isDodgeTriggered = IsPressedThisFrame(dodgeAction) ||
             (IsPressed(dodgeAction) && IsPressedThisFrame(moveAction));
 
-        if (canUseDodge)
+        if (isDodgeTriggered)
         {
-            if (isDodgeTriggered)
+            Vector2 dodgeDirection = Vector2.zero;
+
+            if (moveInput < -0.01f)
             {
-                Vector2 dodgeDirection = Vector2.zero;
+                dodgeDirection = Vector2.left;
+            }
+            else if (moveInput > 0.01f)
+            {
+                dodgeDirection = Vector2.right;
+            }
 
-                if (moveInput < -0.01f)
-                {
-                    dodgeDirection = Vector2.left;
-                }
-                else if (moveInput > 0.01f)
-                {
-                    dodgeDirection = Vector2.right;
-                }
-
-                if (dodgeDirection != Vector2.zero)
-                {
-                    if (dodgeController != null)
-                    {
-                        dodgeController.Dodge(dodgeDirection);
-                    }
-                }
+            if (dodgeController != null)
+            {
+                dodgeController.Dodge(dodgeDirection);
             }
         }
 
@@ -364,7 +350,10 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         if (IsPressedThisFrame(attackAction))
         {
-            if (!isGround && isGliding)
+            bool isUmbrellaOpen = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open;
+            bool isPlayerGliding = isUmbrellaOpen && !isGround;
+
+            if (isPlayerGliding)
             {
                 if (TryGetAimScreenPosition(out var pointerPos))
                 {
@@ -372,21 +361,21 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                     if (mainCamera != null && gunController != null)
                     {
                         Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(
-                            new Vector3(pointerPos.x, pointerPos.y, 0f)
+                            new Vector3(pointerPos.x, pointerPos.y, 0.0f)
                         );
-                        mouseWorldPos.z = 0f;
+                        mouseWorldPos.z = 0.0f;
 
                         Vector2 shootDirection = (mouseWorldPos - transform.position).normalized;
                         gunController.Shoot(shootDirection);
                     }
                 }
+
+                return;
             }
-            else
+
+            if (umbrellaAttackController != null)
             {
-                if (isGround && !isGliding && umbrellaAttackController != null)
-                {
-                    umbrellaAttackController.Attack();
-                }
+                umbrellaAttackController.Attack();
             }
         }
 
@@ -413,15 +402,15 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     /// </remarks>
     private void Move()
     {
-        if(dodgeController != null && dodgeController.IsDodging()){ return; }
+        if (dodgeController != null && dodgeController.IsDodging()) { return; }
 
         if (gunController != null && gunController.GetRecoiling()) { return; }
 
         if (rigidBody2d == null) { return; }
 
-        if(playerStatsData == null) { return; }
+        if (playerStatsData == null) { return; }
 
-        if(umbrellaController == null) { return; }
+        if (umbrellaController == null) { return; }
 
         Vector2 velocity = rigidBody2d.linearVelocity;
 
@@ -440,13 +429,20 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
         else
         {
-            if (isGliding)
+            if (isGround)
             {
-                velocity.x *= 0.95f;
+                velocity.x = 0.0f;
             }
             else
             {
-                velocity.x = 0.0f;
+                if (isGliding)
+                {
+                    velocity.x *= 0.95f;
+                }
+                else
+                {
+                    velocity.x *= 0.98f;
+                }
             }
         }
 

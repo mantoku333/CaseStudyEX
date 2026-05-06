@@ -202,6 +202,7 @@ MonoBehaviour:
   playerTag: Player
   disableTriggerAfterStart: 1
   stageBossAttack: {fileID: 0}
+  lastBossController: {fileID: 0}
   bossRoot: {fileID: 0}
   bossDefeatedFlagKey: boss_01_defeated
   wallsCloseOnStart: []

@@ -1,22 +1,21 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-[RequireComponent(typeof(CanvasGroup))]
+[RequireComponent(typeof(Canvas))]
 public sealed class FlagCanvasGroupVisibility : MonoBehaviour
 {
     [SerializeField] private string triggerFlagKey = GameProgressKeys.PrologueCompleted;
     [SerializeField] private bool expectedFlagValue = true;
     [SerializeField] private bool startHidden = true;
 
-    private CanvasGroup canvasGroup;
+    private Canvas targetCanvas;
+    private GraphicRaycaster targetRaycaster;
 
     private void Awake()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
-        {
-            canvasGroup = gameObject.AddComponent<CanvasGroup>();
-        }
+        targetCanvas = GetComponent<Canvas>();
+        targetRaycaster = GetComponent<GraphicRaycaster>();
 
         if (startHidden)
         {
@@ -47,13 +46,14 @@ public sealed class FlagCanvasGroupVisibility : MonoBehaviour
 
     private void ApplyVisible(bool visible)
     {
-        if (canvasGroup == null)
+        if (targetCanvas != null)
         {
-            return;
+            targetCanvas.enabled = visible;
         }
 
-        canvasGroup.alpha = visible ? 1f : 0f;
-        canvasGroup.interactable = visible;
-        canvasGroup.blocksRaycasts = visible;
+        if (targetRaycaster != null)
+        {
+            targetRaycaster.enabled = visible;
+        }
     }
 }

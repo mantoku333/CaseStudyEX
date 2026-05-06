@@ -1,0 +1,5343 @@
+fileFormatVersion: 2
+guid: f2f6bacc83f7c594fb33b917d075f4c5
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7877417885981628788
+    second: eff_slash_0
+  - first:
+      213: -7970582754200690462
+    second: eff_slash_1
+  - first:
+      213: -4303791935878498711
+    second: eff_slash_2
+  - first:
+      213: -2203006016416519035
+    second: eff_slash_3
+  - first:
+      213: 7067238160059833872
+    second: eff_slash_4
+  - first:
+      213: -3906718414186254798
+    second: eff_slash_5
+  - first:
+      213: -4495011728275308555
+    second: eff_slash_6
+  - first:
+      213: -1289365808957624081
+    second: eff_slash_7
+  - first:
+      213: 5700888976889615758
+    second: eff_slash_8
+  - first:
+      213: -1603214195276110399
+    second: eff_slash_9
+  - first:
+      213: -4420963264002398725
+    second: eff_slash_10
+  - first:
+      213: 489235645342194855
+    second: eff_slash_11
+  - first:
+      213: 8255828371754751463
+    second: eff_slash_12
+  - first:
+      213: 7469456140120775395
+    second: eff_slash_13
+  - first:
+      213: 4252042199805563683
+    second: eff_slash_14
+  - first:
+      213: 1008307243714838778
+    second: eff_slash_15
+  - first:
+      213: -6398746047932960209
+    second: eff_slash_16
+  - first:
+      213: -3070994905559540485
+    second: eff_slash_17
+  - first:
+      213: 1704234858790953776
+    second: eff_slash_18
+  - first:
+      213: -1648862759773800575
+    second: eff_slash_19
+  - first:
+      213: 5014228020325832227
+    second: eff_slash_20
+  - first:
+      213: 7742940246415821371
+    second: eff_slash_21
+  - first:
+      213: -4169030280807831437
+    second: eff_slash_22
+  - first:
+      213: -3767710931005722336
+    second: eff_slash_23
+  - first:
+      213: 4704138664713552774
+    second: eff_slash_24
+  - first:
+      213: -4519951253630733246
+    second: eff_slash_25
+  - first:
+      213: -1751512433949240935
+    second: eff_slash_26
+  - first:
+      213: -8877883322360190799
+    second: eff_slash_27
+  - first:
+      213: -712880492271898788
+    second: eff_slash_28
+  - first:
+      213: -3564346335330746234
+    second: eff_slash_29
+  - first:
+      213: -7755615288910805642
+    second: eff_slash_30
+  - first:
+      213: -2223955692951140868
+    second: eff_slash_31
+  - first:
+      213: 6396282850371721507
+    second: eff_slash_32
+  - first:
+      213: 5416747939324968443
+    second: eff_slash_33
+  - first:
+      213: -4767601318907374892
+    second: eff_slash_34
+  - first:
+      213: -4969629748489107955
+    second: eff_slash_35
+  - first:
+      213: 4323450997897919614
+    second: eff_slash_36
+  - first:
+      213: 310623838370503074
+    second: eff_slash_37
+  - first:
+      213: 8251616777575730561
+    second: eff_slash_38
+  - first:
+      213: 1585094577798250814
+    second: eff_slash_39
+  - first:
+      213: 7337155922325127202
+    second: eff_slash_40
+  - first:
+      213: 6650618833789836163
+    second: eff_slash_41
+  - first:
+      213: -4998367212604098765
+    second: eff_slash_42
+  - first:
+      213: 300950679687098629
+    second: eff_slash_43
+  - first:
+      213: -6667035287434564876
+    second: eff_slash_44
+  - first:
+      213: -7275417228594522673
+    second: eff_slash_45
+  - first:
+      213: 4073508262036468938
+    second: eff_slash_46
+  - first:
+      213: -5332271933581563204
+    second: eff_slash_47
+  - first:
+      213: 8524904398346067961
+    second: eff_slash_48
+  - first:
+      213: 6855848426368943240
+    second: eff_slash_49
+  - first:
+      213: 400463530544213584
+    second: eff_slash_50
+  - first:
+      213: 847536570333096111
+    second: eff_slash_51
+  - first:
+      213: -3497656832836918599
+    second: eff_slash_52
+  - first:
+      213: 838421602944098676
+    second: eff_slash_53
+  - first:
+      213: -3716937083957002610
+    second: eff_slash_54
+  - first:
+      213: -7533674682971477601
+    second: eff_slash_55
+  - first:
+      213: -8933548564985066801
+    second: eff_slash_56
+  - first:
+      213: 6357468862103033552
+    second: eff_slash_57
+  - first:
+      213: -4096182270365520739
+    second: eff_slash_58
+  - first:
+      213: 4193006375614896497
+    second: eff_slash_59
+  - first:
+      213: 8823317207618822142
+    second: eff_slash_60
+  - first:
+      213: -7927269245114017952
+    second: eff_slash_61
+  - first:
+      213: 2623034972251893733
+    second: eff_slash_62
+  - first:
+      213: 8792783200875176767
+    second: eff_slash_63
+  - first:
+      213: -5973449635879108794
+    second: eff_slash_64
+  - first:
+      213: 2613489524689852082
+    second: eff_slash_65
+  - first:
+      213: 4241628454744105477
+    second: eff_slash_66
+  - first:
+      213: 5423026487346899978
+    second: eff_slash_67
+  - first:
+      213: -1657835878477879916
+    second: eff_slash_68
+  - first:
+      213: -7047486758477719799
+    second: eff_slash_69
+  - first:
+      213: -8999645789746093436
+    second: eff_slash_70
+  - first:
+      213: 3044724689577392899
+    second: eff_slash_71
+  - first:
+      213: -5762589535358512594
+    second: eff_slash_72
+  - first:
+      213: 2495292959950257867
+    second: eff_slash_73
+  - first:
+      213: 7555270469438579260
+    second: eff_slash_74
+  - first:
+      213: -8153903174017489781
+    second: eff_slash_75
+  - first:
+      213: 5130649689729829385
+    second: eff_slash_76
+  - first:
+      213: 6581316171569312765
+    second: eff_slash_77
+  - first:
+      213: -617587193490181561
+    second: eff_slash_78
+  - first:
+      213: 480032588450452403
+    second: eff_slash_79
+  - first:
+      213: 1649145526646424448
+    second: eff_slash_80
+  - first:
+      213: 3518398986525007961
+    second: eff_slash_81
+  - first:
+      213: 6753560059782321256
+    second: eff_slash_82
+  - first:
+      213: -7935758370913258876
+    second: eff_slash_83
+  - first:
+      213: -565959885121270526
+    second: eff_slash_84
+  - first:
+      213: -174701411263219776
+    second: eff_slash_85
+  - first:
+      213: 68842213282030502
+    second: eff_slash_86
+  - first:
+      213: -8134749760997507245
+    second: eff_slash_87
+  - first:
+      213: 4258968705785666302
+    second: eff_slash_88
+  - first:
+      213: 3953856953647101076
+    second: eff_slash_89
+  - first:
+      213: -1693404274802406169
+    second: eff_slash_90
+  - first:
+      213: -8416788837730073559
+    second: eff_slash_91
+  - first:
+      213: 8752616223676181141
+    second: eff_slash_92
+  - first:
+      213: 2541252297773309626
+    second: eff_slash_93
+  - first:
+      213: 4993043852794879185
+    second: eff_slash_94
+  - first:
+      213: -7880345091706374516
+    second: eff_slash_95
+  - first:
+      213: -2769041328169568712
+    second: eff_slash_96
+  - first:
+      213: 8225852341362598297
+    second: eff_slash_97
+  - first:
+      213: -4017654992624816459
+    second: eff_slash_98
+  - first:
+      213: -8468198256887842502
+    second: eff_slash_99
+  - first:
+      213: 4472897213284409230
+    second: eff_slash_100
+  - first:
+      213: -8819536079188637051
+    second: eff_slash_101
+  - first:
+      213: -6529795303274658586
+    second: eff_slash_102
+  - first:
+      213: 2470676191813007887
+    second: eff_slash_103
+  - first:
+      213: 5990576381186457390
+    second: eff_slash_104
+  - first:
+      213: -49625982702955821
+    second: eff_slash_105
+  - first:
+      213: -4501337324463528219
+    second: eff_slash_106
+  - first:
+      213: 4157008706095142736
+    second: eff_slash_107
+  - first:
+      213: 7154093403257931634
+    second: eff_slash_108
+  - first:
+      213: -7711029561724964999
+    second: eff_slash_109
+  - first:
+      213: 6002865948757418108
+    second: eff_slash_110
+  - first:
+      213: -1276132780704585348
+    second: eff_slash_111
+  - first:
+      213: -2003347191022335416
+    second: eff_slash_112
+  - first:
+      213: -2902602293356931819
+    second: eff_slash_113
+  - first:
+      213: 4194972594363522881
+    second: eff_slash_114
+  - first:
+      213: -3756521058796880108
+    second: eff_slash_115
+  - first:
+      213: 2080273122539765463
+    second: eff_slash_116
+  - first:
+      213: -8450251928770100512
+    second: eff_slash_117
+  - first:
+      213: -4448861346627027334
+    second: eff_slash_118
+  - first:
+      213: 8936173950180489919
+    second: eff_slash_119
+  - first:
+      213: -1804948680747412788
+    second: eff_slash_120
+  - first:
+      213: 6975422734275372587
+    second: eff_slash_121
+  - first:
+      213: 6341147550892161745
+    second: eff_slash_122
+  - first:
+      213: 8037731523078829048
+    second: eff_slash_123
+  - first:
+      213: 219642947235274444
+    second: eff_slash_124
+  - first:
+      213: 3247590525109186720
+    second: eff_slash_125
+  - first:
+      213: -1287043093084765574
+    second: eff_slash_126
+  - first:
+      213: -427844406099212887
+    second: eff_slash_127
+  - first:
+      213: -2882436558068603017
+    second: eff_slash_128
+  - first:
+      213: -1464637155884928306
+    second: eff_slash_129
+  - first:
+      213: 2780081728527030370
+    second: eff_slash_130
+  - first:
+      213: -4372026674140295066
+    second: eff_slash_131
+  - first:
+      213: 5900656211489128021
+    second: eff_slash_132
+  - first:
+      213: 6372405433021745503
+    second: eff_slash_133
+  - first:
+      213: -1681060223804537487
+    second: eff_slash_134
+  - first:
+      213: -2460730646365005452
+    second: eff_slash_135
+  - first:
+      213: -5373724994362512182
+    second: eff_slash_136
+  - first:
+      213: -3553229304926601972
+    second: eff_slash_137
+  - first:
+      213: -5131045984524626879
+    second: eff_slash_138
+  - first:
+      213: 8484039772669512301
+    second: eff_slash_139
+  - first:
+      213: -992716528316382969
+    second: eff_slash_140
+  - first:
+      213: -1133125562188649108
+    second: eff_slash_141
+  - first:
+      213: 4926060878990245162
+    second: eff_slash_142
+  - first:
+      213: -303042512311026329
+    second: eff_slash_143
+  - first:
+      213: 9100593737816857790
+    second: eff_slash_144
+  - first:
+      213: 7436129038702032165
+    second: eff_slash_145
+  - first:
+      213: 1943424414431805631
+    second: eff_slash_146
+  - first:
+      213: 5678490801013448236
+    second: eff_slash_147
+  - first:
+      213: -3001326964478399318
+    second: eff_slash_148
+  - first:
+      213: -7687577020009392999
+    second: eff_slash_149
+  - first:
+      213: -6082578786512650626
+    second: eff_slash_150
+  - first:
+      213: 2337217253611167313
+    second: eff_slash_151
+  - first:
+      213: 1693383379759948473
+    second: eff_slash_152
+  - first:
+      213: 6262045929712136688
+    second: eff_slash_153
+  - first:
+      213: -3452170496148767848
+    second: eff_slash_154
+  - first:
+      213: 7373701465215322694
+    second: eff_slash_155
+  - first:
+      213: -1669948195716762733
+    second: eff_slash_156
+  - first:
+      213: -537454173803730917
+    second: eff_slash_157
+  - first:
+      213: -7265849755385569132
+    second: eff_slash_158
+  - first:
+      213: -6442545009515322265
+    second: eff_slash_159
+  - first:
+      213: 7772550457363197833
+    second: eff_slash_160
+  - first:
+      213: -8718958713219393006
+    second: eff_slash_161
+  - first:
+      213: 7866525769448544340
+    second: eff_slash_162
+  - first:
+      213: -1529408285723645206
+    second: eff_slash_163
+  - first:
+      213: -496683524303209947
+    second: eff_slash_164
+  - first:
+      213: 5927917280698499225
+    second: eff_slash_165
+  - first:
+      213: -2579058782247548576
+    second: eff_slash_166
+  - first:
+      213: 590510419988899165
+    second: eff_slash_167
+  - first:
+      213: 6236227205242504073
+    second: eff_slash_168
+  - first:
+      213: -9186453175900563359
+    second: eff_slash_169
+  - first:
+      213: -6710135426316167804
+    second: eff_slash_170
+  - first:
+      213: -2350545632003205415
+    second: eff_slash_171
+  - first:
+      213: -650653549769567287
+    second: eff_slash_172
+  - first:
+      213: 3892595948177633799
+    second: eff_slash_173
+  - first:
+      213: -4788883890791089473
+    second: eff_slash_174
+  - first:
+      213: -1418893059553449919
+    second: eff_slash_175
+  - first:
+      213: 9047996899503568564
+    second: eff_slash_176
+  - first:
+      213: -8750205188827939541
+    second: eff_slash_177
+  - first:
+      213: -8469581563962930830
+    second: eff_slash_178
+  - first:
+      213: 6267999099338952907
+    second: eff_slash_179
+  - first:
+      213: -5521992286259442509
+    second: eff_slash_180
+  - first:
+      213: -3953232487547925784
+    second: eff_slash_181
+  - first:
+      213: -967040479019825824
+    second: eff_slash_182
+  - first:
+      213: -3326120970363616258
+    second: eff_slash_183
+  - first:
+      213: -5602686779735547963
+    second: eff_slash_184
+  - first:
+      213: -3185507261570098046
+    second: eff_slash_185
+  - first:
+      213: -6740000898441516435
+    second: eff_slash_186
+  - first:
+      213: -3072644101453314
+    second: eff_slash_187
+  - first:
+      213: -4829512836466229501
+    second: eff_slash_188
+  - first:
+      213: 6044756292551827546
+    second: eff_slash_189
+  - first:
+      213: -8777208894015915723
+    second: eff_slash_190
+  - first:
+      213: 4403064313064500255
+    second: eff_slash_191
+  - first:
+      213: 8395209277649701037
+    second: eff_slash_192
+  - first:
+      213: -6546469952645000984
+    second: eff_slash_193
+  - first:
+      213: 8073738891112988885
+    second: eff_slash_194
+  - first:
+      213: 43271946723824011
+    second: eff_slash_195
+  - first:
+      213: 6089384431709458209
+    second: eff_slash_196
+  - first:
+      213: 4784685598430695609
+    second: eff_slash_197
+  - first:
+      213: 6932888482029616464
+    second: eff_slash_198
+  - first:
+      213: 5842268991686728927
+    second: eff_slash_199
+  - first:
+      213: 2473121479922121667
+    second: eff_slash_200
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_slash_0
+      rect:
+        serializedVersion: 2
+        x: 715
+        y: 2399
+        width: 224
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c86a1c64b2acda290800000000000000
+      internalID: -7877417885981628788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_1
+      rect:
+        serializedVersion: 2
+        x: 1292
+        y: 2313
+        width: 228
+        height: 229
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e0630b073dc26190800000000000000
+      internalID: -7970582754200690462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_2
+      rect:
+        serializedVersion: 2
+        x: 1775
+        y: 2148
+        width: 262
+        height: 397
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96675ca690cd544c0800000000000000
+      internalID: -4303791935878498711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_3
+      rect:
+        serializedVersion: 2
+        x: 2189
+        y: 2059
+        width: 360
+        height: 485
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58ce17933b95d61e0800000000000000
+      internalID: -2203006016416519035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_4
+      rect:
+        serializedVersion: 2
+        x: 1297
+        y: 2309
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01e9379a9afd31260800000000000000
+      internalID: 7067238160059833872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_5
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1544
+        width: 444
+        height: 479
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23e63fc0d4c88c9c0800000000000000
+      internalID: -3906718414186254798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_6
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 1987
+        width: 40
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ff7fe216a28e91c0800000000000000
+      internalID: -4495011728275308555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_7
+      rect:
+        serializedVersion: 2
+        x: 805
+        y: 1989
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe0fb8bc0a04b1ee0800000000000000
+      internalID: -1289365808957624081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_8
+      rect:
+        serializedVersion: 2
+        x: 867
+        y: 1916
+        width: 104
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e851273e150ad1f40800000000000000
+      internalID: 5700888976889615758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_9
+      rect:
+        serializedVersion: 2
+        x: 1321
+        y: 1989
+        width: 31
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c524bffe2d30c9e0800000000000000
+      internalID: -1603214195276110399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_10
+      rect:
+        serializedVersion: 2
+        x: 1389
+        y: 1948
+        width: 60
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf5e51ca55595a2c0800000000000000
+      internalID: -4420963264002398725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_11
+      rect:
+        serializedVersion: 2
+        x: 1838
+        y: 1991
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ac94143a3d1ac600800000000000000
+      internalID: 489235645342194855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_12
+      rect:
+        serializedVersion: 2
+        x: 1908
+        y: 1951
+        width: 52
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e59801b928929270800000000000000
+      internalID: 8255828371754751463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_13
+      rect:
+        serializedVersion: 2
+        x: 2355
+        y: 1993
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ea5249d8c6d8a760800000000000000
+      internalID: 7469456140120775395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_14
+      rect:
+        serializedVersion: 2
+        x: 2429
+        y: 1956
+        width: 40
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32391693ad9420b30800000000000000
+      internalID: 4252042199805563683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_15
+      rect:
+        serializedVersion: 2
+        x: 926
+        y: 1770
+        width: 99
+        height: 182
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af0831e881a3efd00800000000000000
+      internalID: 1008307243714838778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_16
+      rect:
+        serializedVersion: 2
+        x: 1424
+        y: 1918
+        width: 56
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2275051f561337a0800000000000000
+      internalID: -6398746047932960209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_17
+      rect:
+        serializedVersion: 2
+        x: 1447
+        y: 1863
+        width: 76
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfcd61b7762a165d0800000000000000
+      internalID: -3070994905559540485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_18
+      rect:
+        serializedVersion: 2
+        x: 1942
+        y: 1920
+        width: 49
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 033a21c1398a6a710800000000000000
+      internalID: 1704234858790953776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_19
+      rect:
+        serializedVersion: 2
+        x: 1968
+        y: 1866
+        width: 63
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 187ff485e001e19e0800000000000000
+      internalID: -1648862759773800575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_20
+      rect:
+        serializedVersion: 2
+        x: 2462
+        y: 1924
+        width: 39
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 326d45661dd169540800000000000000
+      internalID: 5014228020325832227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_21
+      rect:
+        serializedVersion: 2
+        x: 2487
+        y: 1870
+        width: 54
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3ac0b85123747b60800000000000000
+      internalID: 7742940246415821371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_22
+      rect:
+        serializedVersion: 2
+        x: 888
+        y: 1881
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3782a9e4c01a426c0800000000000000
+      internalID: -4169030280807831437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_23
+      rect:
+        serializedVersion: 2
+        x: 1402
+        y: 1880
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0213c05ded666bbc0800000000000000
+      internalID: -3767710931005722336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_24
+      rect:
+        serializedVersion: 2
+        x: 1446
+        y: 1874
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6838e642135784140800000000000000
+      internalID: 4704138664713552774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_25
+      rect:
+        serializedVersion: 2
+        x: 1470
+        y: 1813
+        width: 67
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24432455848e541c0800000000000000
+      internalID: -4519951253630733246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_26
+      rect:
+        serializedVersion: 2
+        x: 1916
+        y: 1880
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99196c2a8b061b7e0800000000000000
+      internalID: -1751512433949240935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_27
+      rect:
+        serializedVersion: 2
+        x: 1960
+        y: 1873
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b82b55c72c6bc480800000000000000
+      internalID: -8877883322360190799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_28
+      rect:
+        serializedVersion: 2
+        x: 2430
+        y: 1880
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5fe3d228f65b16f0800000000000000
+      internalID: -712880492271898788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_29
+      rect:
+        serializedVersion: 2
+        x: 1986
+        y: 1814
+        width: 61
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 680452a84e5e88ec0800000000000000
+      internalID: -3564346335330746234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_30
+      rect:
+        serializedVersion: 2
+        x: 2475
+        y: 1872
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67502e95cf48e5490800000000000000
+      internalID: -7755615288910805642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_31
+      rect:
+        serializedVersion: 2
+        x: 906
+        y: 1783
+        width: 79
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf5807d841ce221e0800000000000000
+      internalID: -2223955692951140868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_32
+      rect:
+        serializedVersion: 2
+        x: 1422
+        y: 1785
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 329545b0d5924c850800000000000000
+      internalID: 6396282850371721507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_33
+      rect:
+        serializedVersion: 2
+        x: 1453
+        y: 1724
+        width: 84
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfd3b493d872c2b40800000000000000
+      internalID: 5416747939324968443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_34
+      rect:
+        serializedVersion: 2
+        x: 1941
+        y: 1787
+        width: 61
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d297db3cd316ddb0800000000000000
+      internalID: -4767601318907374892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_35
+      rect:
+        serializedVersion: 2
+        x: 1997
+        y: 1765
+        width: 52
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d06c710f214580bb0800000000000000
+      internalID: -4969629748489107955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_36
+      rect:
+        serializedVersion: 2
+        x: 2459
+        y: 1792
+        width: 50
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7c7385a6cbfffb30800000000000000
+      internalID: 4323450997897919614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_37
+      rect:
+        serializedVersion: 2
+        x: 2507
+        y: 1819
+        width: 48
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a997d83cbe8f4400800000000000000
+      internalID: 310623838370503074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_38
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 1551
+        width: 449
+        height: 248
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18d0e028db1a38270800000000000000
+      internalID: 8251616777575730561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_39
+      rect:
+        serializedVersion: 2
+        x: 1970
+        y: 1725
+        width: 62
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e31001dce136ff510800000000000000
+      internalID: 1585094577798250814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_40
+      rect:
+        serializedVersion: 2
+        x: 2489
+        y: 1728
+        width: 49
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 220c7dbff60d2d560800000000000000
+      internalID: 7337155922325127202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_41
+      rect:
+        serializedVersion: 2
+        x: 2517
+        y: 1765
+        width: 42
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38bd094c79ebb4c50800000000000000
+      internalID: 6650618833789836163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_42
+      rect:
+        serializedVersion: 2
+        x: 1064
+        y: 1551
+        width: 374
+        height: 174
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 337f5cba08b32aab0800000000000000
+      internalID: -4998367212604098765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_43
+      rect:
+        serializedVersion: 2
+        x: 1401
+        y: 1691
+        width: 63
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50179a57c013d2400800000000000000
+      internalID: 300950679687098629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_44
+      rect:
+        serializedVersion: 2
+        x: 1492
+        y: 1710
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fae773cabee973a0800000000000000
+      internalID: -6667035287434564876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_45
+      rect:
+        serializedVersion: 2
+        x: 1567
+        y: 1552
+        width: 202
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc5ddd0d396880b90800000000000000
+      internalID: -7275417228594522673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_46
+      rect:
+        serializedVersion: 2
+        x: 1915
+        y: 1691
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac47d449e22088830800000000000000
+      internalID: 4073508262036468938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_47
+      rect:
+        serializedVersion: 2
+        x: 2003
+        y: 1707
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbae5119de6fff5b0800000000000000
+      internalID: -5332271933581563204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_48
+      rect:
+        serializedVersion: 2
+        x: 2227
+        y: 1711
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ff1597226b8e4670800000000000000
+      internalID: 8524904398346067961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_49
+      rect:
+        serializedVersion: 2
+        x: 2431
+        y: 1694
+        width: 46
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88444a7e1ddd42f50800000000000000
+      internalID: 6855848426368943240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_50
+      rect:
+        serializedVersion: 2
+        x: 2123
+        y: 1697
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05e2693957bbe8500800000000000000
+      internalID: 400463530544213584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_51
+      rect:
+        serializedVersion: 2
+        x: 2515
+        y: 1704
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa86bd0350e03cb00800000000000000
+      internalID: 847536570333096111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_52
+      rect:
+        serializedVersion: 2
+        x: 1365
+        y: 1597
+        width: 128
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b2a98454a3d57fc0800000000000000
+      internalID: -3497656832836918599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_53
+      rect:
+        serializedVersion: 2
+        x: 1765
+        y: 1586
+        width: 47
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4712f77710ca2ab00800000000000000
+      internalID: 838421602944098676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_54
+      rect:
+        serializedVersion: 2
+        x: 1810
+        y: 1484
+        width: 65
+        height: 121
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8e34425a69ca6cc0800000000000000
+      internalID: -3716937083957002610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_55
+      rect:
+        serializedVersion: 2
+        x: 1872
+        y: 1593
+        width: 130
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f99a12c7ac2037790800000000000000
+      internalID: -7533674682971477601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_56
+      rect:
+        serializedVersion: 2
+        x: 1896
+        y: 1581
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fca4d5089e8a50480800000000000000
+      internalID: -8933548564985066801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_57
+      rect:
+        serializedVersion: 2
+        x: 2125
+        y: 1558
+        width: 130
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d6124c2f344a3850800000000000000
+      internalID: 6357468862103033552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_58
+      rect:
+        serializedVersion: 2
+        x: 2268
+        y: 1581
+        width: 53
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9c2c977def6727c0800000000000000
+      internalID: -4096182270365520739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_59
+      rect:
+        serializedVersion: 2
+        x: 2318
+        y: 1539
+        width: 63
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1795977451d803a30800000000000000
+      internalID: 4193006375614896497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_60
+      rect:
+        serializedVersion: 2
+        x: 2388
+        y: 1595
+        width: 118
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eff16bc9048b27a70800000000000000
+      internalID: 8823317207618822142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_61
+      rect:
+        serializedVersion: 2
+        x: 2407
+        y: 1581
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 067991e3f9eacf190800000000000000
+      internalID: -7927269245114017952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_62
+      rect:
+        serializedVersion: 2
+        x: 799
+        y: 1535
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ef208ae864e66420800000000000000
+      internalID: 2623034972251893733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_63
+      rect:
+        serializedVersion: 2
+        x: 1300
+        y: 1535
+        width: 25
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f33ef2b2cbd360a70800000000000000
+      internalID: 8792783200875176767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_64
+      rect:
+        serializedVersion: 2
+        x: 1757
+        y: 1546
+        width: 40
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64f3db1743b0a1da0800000000000000
+      internalID: -5973449635879108794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_65
+      rect:
+        serializedVersion: 2
+        x: 1812
+        y: 1535
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b6d75730eaf44420800000000000000
+      internalID: 2613489524689852082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_66
+      rect:
+        serializedVersion: 2
+        x: 2258
+        y: 1538
+        width: 54
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50226324b9a4dda30800000000000000
+      internalID: 4241628454744105477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_67
+      rect:
+        serializedVersion: 2
+        x: 2322
+        y: 1535
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0ca8d99bd5724b40800000000000000
+      internalID: 5423026487346899978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_68
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 1482
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 495ad675d0f2ef8e0800000000000000
+      internalID: -1657835878477879916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_69
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 1483
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9079aa1e12c423e90800000000000000
+      internalID: -7047486758477719799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_70
+      rect:
+        serializedVersion: 2
+        x: 1343
+        y: 1484
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48228dd16d5da1380800000000000000
+      internalID: -8999645789746093436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_71
+      rect:
+        serializedVersion: 2
+        x: 388
+        y: 1448
+        width: 31
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30b3f1939f8014a20800000000000000
+      internalID: 3044724689577392899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_72
+      rect:
+        serializedVersion: 2
+        x: 907
+        y: 1452
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e22929e595b2700b0800000000000000
+      internalID: -5762589535358512594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_73
+      rect:
+        serializedVersion: 2
+        x: 1426
+        y: 1455
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bce3e58f9bf01a220800000000000000
+      internalID: 2495292959950257867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_74
+      rect:
+        serializedVersion: 2
+        x: 1925
+        y: 1355
+        width: 56
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c32a2e06676b9d860800000000000000
+      internalID: 7555270469438579260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_75
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 1367
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b84e1c3b34487de80800000000000000
+      internalID: -8153903174017489781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_76
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 1415
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90a805f95bab33740800000000000000
+      internalID: 5130649689729829385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_77
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 1359
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df33ce05038855b50800000000000000
+      internalID: 6581316171569312765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_78
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 1362
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 742ff2a38b3ed67f0800000000000000
+      internalID: -617587193490181561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_79
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 1357
+        width: 50
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b3533b881b69a600800000000000000
+      internalID: 480032588450452403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_80
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 1417
+        width: 22
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0834fa27e11f2e610800000000000000
+      internalID: 1649145526646424448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_81
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 1364
+        width: 32
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 950eae9ac3dd3d030800000000000000
+      internalID: 3518398986525007961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_82
+      rect:
+        serializedVersion: 2
+        x: 1411
+        y: 1356
+        width: 60
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 864579ca71779bd50800000000000000
+      internalID: 6753560059782321256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_83
+      rect:
+        serializedVersion: 2
+        x: 1484
+        y: 1368
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 482f16e9ec58ed190800000000000000
+      internalID: -7935758370913258876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_84
+      rect:
+        serializedVersion: 2
+        x: 2002
+        y: 1371
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20dc93aab7e4528f0800000000000000
+      internalID: -565959885121270526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_85
+      rect:
+        serializedVersion: 2
+        x: 2520
+        y: 1315
+        width: 19
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c775e7fdf5539df0800000000000000
+      internalID: -174701411263219776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_86
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 1280
+        width: 42
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a32a34d0a394f000800000000000000
+      internalID: 68842213282030502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_87
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 1307
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35fbc0f21309b1f80800000000000000
+      internalID: -8134749760997507245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_88
+      rect:
+        serializedVersion: 2
+        x: 934
+        y: 1282
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efa1cd11975ea1b30800000000000000
+      internalID: 4258968705785666302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_89
+      rect:
+        serializedVersion: 2
+        x: 981
+        y: 1309
+        width: 32
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 494f7de63fbeed630800000000000000
+      internalID: 3953856953647101076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_90
+      rect:
+        serializedVersion: 2
+        x: 1499
+        y: 1311
+        width: 23
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ec464bb8c1df78e0800000000000000
+      internalID: -1693404274802406169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_91
+      rect:
+        serializedVersion: 2
+        x: 2016
+        y: 1313
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92440a9652f813b80800000000000000
+      internalID: -8416788837730073559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_92
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 1256
+        width: 38
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59a2a83051a877970800000000000000
+      internalID: 8752616223676181141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_93
+      rect:
+        serializedVersion: 2
+        x: 1451
+        y: 1284
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abe5c6d2087544320800000000000000
+      internalID: 2541252297773309626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_94
+      rect:
+        serializedVersion: 2
+        x: 1968
+        y: 1286
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dc59c90eeada4540800000000000000
+      internalID: 4993043852794879185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_95
+      rect:
+        serializedVersion: 2
+        x: 2485
+        y: 1288
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c86395514e363a290800000000000000
+      internalID: -7880345091706374516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_96
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 1217
+        width: 43
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 836b31245936299d0800000000000000
+      internalID: -2769041328169568712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_97
+      rect:
+        serializedVersion: 2
+        x: 988
+        y: 1256
+        width: 29
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 991abbd3f19182270800000000000000
+      internalID: 8225852341362598297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_98
+      rect:
+        serializedVersion: 2
+        x: 1504
+        y: 1257
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bee586121c6e38c0800000000000000
+      internalID: -4017654992624816459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_99
+      rect:
+        serializedVersion: 2
+        x: 2019
+        y: 1258
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a393e924d8aea7a80800000000000000
+      internalID: -8468198256887842502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_100
+      rect:
+        serializedVersion: 2
+        x: 2535
+        y: 1259
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8fd6aa215ce21e30800000000000000
+      internalID: 4472897213284409230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_101
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 1175
+        width: 38
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58a4834f9a6ba9580800000000000000
+      internalID: -8819536079188637051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_102
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 1199
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e4cc4c94c18165a0800000000000000
+      internalID: -6529795303274658586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_103
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 1183
+        width: 38
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0a770008ea994220800000000000000
+      internalID: 2470676191813007887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_104
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 1189
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2fb670ba7dc22350800000000000000
+      internalID: 5990576381186457390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_105
+      rect:
+        serializedVersion: 2
+        x: 556
+        y: 1162
+        width: 67
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d25c518e61bf4ff0800000000000000
+      internalID: -49625982702955821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_106
+      rect:
+        serializedVersion: 2
+        x: 685
+        y: 1200
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e6e4217d890881c0800000000000000
+      internalID: -4501337324463528219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_107
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 1184
+        width: 32
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 057d107b469a0b930800000000000000
+      internalID: 4157008706095142736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_108
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1187
+        width: 35
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2778727db02784360800000000000000
+      internalID: 7154093403257931634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_109
+      rect:
+        serializedVersion: 2
+        x: 1060
+        y: 1155
+        width: 79
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97fe8d8e77becf490800000000000000
+      internalID: -7711029561724964999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_110
+      rect:
+        serializedVersion: 2
+        x: 1195
+        y: 1203
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7069fd96c67e4350800000000000000
+      internalID: 6002865948757418108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_111
+      rect:
+        serializedVersion: 2
+        x: 1415
+        y: 1184
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c792fd74ff34a4ee0800000000000000
+      internalID: -1276132780704585348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_112
+      rect:
+        serializedVersion: 2
+        x: 1477
+        y: 1185
+        width: 25
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84a465d085ea234e0800000000000000
+      internalID: -2003347191022335416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_113
+      rect:
+        serializedVersion: 2
+        x: 1575
+        y: 1158
+        width: 69
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 515d934c792e7b7d0800000000000000
+      internalID: -2902602293356931819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_114
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 1205
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14f59814959873a30800000000000000
+      internalID: 4194972594363522881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_115
+      rect:
+        serializedVersion: 2
+        x: 1929
+        y: 1185
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41f332bfff72edbc0800000000000000
+      internalID: -3756521058796880108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_116
+      rect:
+        serializedVersion: 2
+        x: 1993
+        y: 1182
+        width: 18
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7de76c8126d9edc10800000000000000
+      internalID: 2080273122539765463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_117
+      rect:
+        serializedVersion: 2
+        x: 2082
+        y: 1162
+        width: 68
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e2491364acaaba80800000000000000
+      internalID: -8450251928770100512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_118
+      rect:
+        serializedVersion: 2
+        x: 2217
+        y: 1207
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7e74532d287242c0800000000000000
+      internalID: -4448861346627027334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_119
+      rect:
+        serializedVersion: 2
+        x: 2443
+        y: 1186
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fba7b9f9cdaa30c70800000000000000
+      internalID: 8936173950180489919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_120
+      rect:
+        serializedVersion: 2
+        x: 2509
+        y: 1180
+        width: 10
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc29d36ecb883f6e0800000000000000
+      internalID: -1804948680747412788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_121
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 1044
+        width: 142
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b26eaaaf40eadc060800000000000000
+      internalID: 6975422734275372587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_122
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 1161
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1daf347c918400850800000000000000
+      internalID: 6341147550892161745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_123
+      rect:
+        serializedVersion: 2
+        x: 1083
+        y: 1143
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f3b2190c32cb8f60800000000000000
+      internalID: 8037731523078829048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_124
+      rect:
+        serializedVersion: 2
+        x: 1595
+        y: 1147
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cced067c8145c0300800000000000000
+      internalID: 219642947235274444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_125
+      rect:
+        serializedVersion: 2
+        x: 2106
+        y: 1151
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a0be094062c11d20800000000000000
+      internalID: 3247590525109186720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_126
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 1073
+        width: 47
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a72001a3021832ee0800000000000000
+      internalID: -1287043093084765574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_127
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 1098
+        width: 58
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a5815b87cdff0af0800000000000000
+      internalID: -427844406099212887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_128
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 1086
+        width: 66
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 777a8b4e8378ff7d0800000000000000
+      internalID: -2882436558068603017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_129
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 1055
+        width: 130
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec2f3a644409cabe0800000000000000
+      internalID: -1464637155884928306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_130
+      rect:
+        serializedVersion: 2
+        x: 729
+        y: 1074
+        width: 40
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26858634a95d49620800000000000000
+      internalID: 2780081728527030370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_131
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 1098
+        width: 50
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 660d55367e07353c0800000000000000
+      internalID: -4372026674140295066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_132
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 1089
+        width: 54
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55ef283bf8753e150800000000000000
+      internalID: 5900656211489128021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_133
+      rect:
+        serializedVersion: 2
+        x: 1085
+        y: 1064
+        width: 118
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f59c7089af45f6850800000000000000
+      internalID: 6372405433021745503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_134
+      rect:
+        serializedVersion: 2
+        x: 1240
+        y: 1078
+        width: 33
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 175871212acaba8e0800000000000000
+      internalID: -1681060223804537487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_135
+      rect:
+        serializedVersion: 2
+        x: 1370
+        y: 1102
+        width: 40
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4791f7fb38ab9ddd0800000000000000
+      internalID: -2460730646365005452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_136
+      rect:
+        serializedVersion: 2
+        x: 1418
+        y: 1091
+        width: 42
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: acc626eb691bc65b0800000000000000
+      internalID: -5373724994362512182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_137
+      rect:
+        serializedVersion: 2
+        x: 1599
+        y: 1105
+        width: 51
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0d7752e5c460bec0800000000000000
+      internalID: -3553229304926601972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_138
+      rect:
+        serializedVersion: 2
+        x: 1626
+        y: 1072
+        width: 76
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 144173eccdcdac8b0800000000000000
+      internalID: -5131045984524626879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_139
+      rect:
+        serializedVersion: 2
+        x: 1885
+        y: 1103
+        width: 30
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6a804e093d5db570800000000000000
+      internalID: 8484039772669512301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_140
+      rect:
+        serializedVersion: 2
+        x: 1934
+        y: 1093
+        width: 31
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7010b0fb3992932f0800000000000000
+      internalID: -992716528316382969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_141
+      rect:
+        serializedVersion: 2
+        x: 2113
+        y: 1111
+        width: 43
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6da4d30e445640f0800000000000000
+      internalID: -1133125562188649108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_142
+      rect:
+        serializedVersion: 2
+        x: 2139
+        y: 1081
+        width: 64
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2d79222542ec5440800000000000000
+      internalID: 4926060878990245162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_143
+      rect:
+        serializedVersion: 2
+        x: 2399
+        y: 1105
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76dfbddc0706bcbf0800000000000000
+      internalID: -303042512311026329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_144
+      rect:
+        serializedVersion: 2
+        x: 2449
+        y: 1097
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebcd7bb99cdcb4e70800000000000000
+      internalID: 9100593737816857790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_145
+      rect:
+        serializedVersion: 2
+        x: 269
+        y: 1023
+        width: 55
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5253dcf56ff623760800000000000000
+      internalID: 7436129038702032165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_146
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 1068
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb0870e453e68fa10800000000000000
+      internalID: 1943424414431805631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_147
+      rect:
+        serializedVersion: 2
+        x: 867
+        y: 1067
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2edabe2c4d0ece40800000000000000
+      internalID: 5678490801013448236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_148
+      rect:
+        serializedVersion: 2
+        x: 1751
+        y: 1081
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaca67b07052956d0800000000000000
+      internalID: -3001326964478399318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_149
+      rect:
+        serializedVersion: 2
+        x: 2262
+        y: 1083
+        width: 21
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99452ea4e6d305590800000000000000
+      internalID: -7687577020009392999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_150
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 1028
+        width: 49
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7e369f02d6569ba0800000000000000
+      internalID: -6082578786512650626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_151
+      rect:
+        serializedVersion: 2
+        x: 721
+        y: 1031
+        width: 42
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15e586485b67f6020800000000000000
+      internalID: 2337217253611167313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_152
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 1023
+        width: 46
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b26423463b108710800000000000000
+      internalID: 1693383379759948473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_153
+      rect:
+        serializedVersion: 2
+        x: 1233
+        y: 1035
+        width: 36
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f13ca7689147e650800000000000000
+      internalID: 6262045929712136688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_154
+      rect:
+        serializedVersion: 2
+        x: 1294
+        y: 1035
+        width: 39
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89bf7f0693d6710d0800000000000000
+      internalID: -3452170496148767848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_155
+      rect:
+        serializedVersion: 2
+        x: 1379
+        y: 1066
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64acfe14a66a45660800000000000000
+      internalID: 7373701465215322694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_156
+      rect:
+        serializedVersion: 2
+        x: 1746
+        y: 1038
+        width: 29
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3937ff8b6f623d8e0800000000000000
+      internalID: -1669948195716762733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_157
+      rect:
+        serializedVersion: 2
+        x: 1807
+        y: 1039
+        width: 32
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b18a067c6449a88f0800000000000000
+      internalID: -537454173803730917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_158
+      rect:
+        serializedVersion: 2
+        x: 1889
+        y: 1066
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49062e2c4248a2b90800000000000000
+      internalID: -7265849755385569132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_159
+      rect:
+        serializedVersion: 2
+        x: 2401
+        y: 1066
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 764af5aa27b7796a0800000000000000
+      internalID: -6442545009515322265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_160
+      rect:
+        serializedVersion: 2
+        x: 2259
+        y: 1041
+        width: 23
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98feee1d575addb60800000000000000
+      internalID: 7772550457363197833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_161
+      rect:
+        serializedVersion: 2
+        x: 2321
+        y: 1041
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21ad24fce39000780800000000000000
+      internalID: -8718958713219393006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_162
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 653
+        width: 59
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 458df6832838b2d60800000000000000
+      internalID: 7866525769448544340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_163
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 697
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aea27ec644376cae0800000000000000
+      internalID: -1529408285723645206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_164
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 665
+        width: 203
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52a3e1857fc6b19f0800000000000000
+      internalID: -496683524303209947
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_165
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 700
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9900fedfb51344250800000000000000
+      internalID: 5927917280698499225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_166
+      rect:
+        serializedVersion: 2
+        x: 1075
+        y: 677
+        width: 120
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0698845b3b7553cd0800000000000000
+      internalID: -2579058782247548576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_167
+      rect:
+        serializedVersion: 2
+        x: 1591
+        y: 684
+        width: 114
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d55ea9b291ae13800800000000000000
+      internalID: 590510419988899165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_168
+      rect:
+        serializedVersion: 2
+        x: 2106
+        y: 689
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9834b1b2a978b8650800000000000000
+      internalID: 6236227205242504073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_169
+      rect:
+        serializedVersion: 2
+        x: 1062
+        y: 669
+        width: 23
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16810b82289238080800000000000000
+      internalID: -9186453175900563359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_170
+      rect:
+        serializedVersion: 2
+        x: 1574
+        y: 673
+        width: 20
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48519afa16fc0e2a0800000000000000
+      internalID: -6710135426316167804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_171
+      rect:
+        serializedVersion: 2
+        x: 2088
+        y: 676
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d65a10933f216fd0800000000000000
+      internalID: -2350545632003205415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_172
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 642
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c353263b0a68f6f0800000000000000
+      internalID: -650653549769567287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_173
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 604
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 702b0491467450630800000000000000
+      internalID: 3892595948177633799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_174
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 656
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fba7ec259777a8db0800000000000000
+      internalID: -4788883890791089473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_175
+      rect:
+        serializedVersion: 2
+        x: 569
+        y: 646
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 148ac0ba7441f4ce0800000000000000
+      internalID: -1418893059553449919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_176
+      rect:
+        serializedVersion: 2
+        x: 582
+        y: 610
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b6feb3ed31f09d70800000000000000
+      internalID: 9047996899503568564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_177
+      rect:
+        serializedVersion: 2
+        x: 1073
+        y: 659
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2d7128cdb6019680800000000000000
+      internalID: -8750205188827939541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_178
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 649
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 279cacbf070067a80800000000000000
+      internalID: -8469581563962930830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_179
+      rect:
+        serializedVersion: 2
+        x: 1096
+        y: 615
+        width: 18
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc01198b8f76cf650800000000000000
+      internalID: 6267999099338952907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_180
+      rect:
+        serializedVersion: 2
+        x: 1586
+        y: 662
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bc0f0db541fd53b0800000000000000
+      internalID: -5521992286259442509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_181
+      rect:
+        serializedVersion: 2
+        x: 1592
+        y: 651
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ea0c296ffb4329c0800000000000000
+      internalID: -3953232487547925784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_182
+      rect:
+        serializedVersion: 2
+        x: 1610
+        y: 602
+        width: 39
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0658994dec16492f0800000000000000
+      internalID: -967040479019825824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_183
+      rect:
+        serializedVersion: 2
+        x: 2098
+        y: 625
+        width: 30
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef3cf79999e37d1d0800000000000000
+      internalID: -3326120970363616258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_184
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 578
+        width: 53
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cfd512ee024f32b0800000000000000
+      internalID: -5602686779735547963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_185
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 554
+        width: 13
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28cdface50ecac3d0800000000000000
+      internalID: -3185507261570098046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_186
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 596
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6a649694e4b672a0800000000000000
+      internalID: -6740000898441516435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_187
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 587
+        width: 30
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef9cfcb427515fff0800000000000000
+      internalID: -3072644101453314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_188
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 173
+        width: 285
+        height: 428
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30fbd30c9af1afcb0800000000000000
+      internalID: -4829512836466229501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_189
+      rect:
+        serializedVersion: 2
+        x: 1115
+        y: 600
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a50eb5352d943e350800000000000000
+      internalID: 6044756292551827546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_190
+      rect:
+        serializedVersion: 2
+        x: 1130
+        y: 594
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53938c8b307113680800000000000000
+      internalID: -8777208894015915723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_191
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 574
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1ca86f0aa3da1d30800000000000000
+      internalID: 4403064313064500255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_192
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 587
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da8cf59bb56c18470800000000000000
+      internalID: 8395209277649701037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_193
+      rect:
+        serializedVersion: 2
+        x: 725
+        y: 576
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e093d343444625a0800000000000000
+      internalID: -6546469952645000984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_194
+      rect:
+        serializedVersion: 2
+        x: 1236
+        y: 537
+        width: 67
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d0cb06bebeab0070800000000000000
+      internalID: 8073738891112988885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_195
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 532
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8196353b9bb99000800000000000000
+      internalID: 43271946723824011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_196
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 532
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12f06d0b0e6d18450800000000000000
+      internalID: 6089384431709458209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_197
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 535
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b09360933e966240800000000000000
+      internalID: 4784685598430695609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_198
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 183
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05db5c6a751963060800000000000000
+      internalID: 6932888482029616464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_199
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 144
+        width: 17
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdc54cbb1b8e31150800000000000000
+      internalID: 5842268991686728927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_slash_200
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 157
+        width: 12
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cb752102ea425220800000000000000
+      internalID: 2473121479922121667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_slash_0: -7877417885981628788
+      eff_slash_1: -7970582754200690462
+      eff_slash_10: -4420963264002398725
+      eff_slash_100: 4472897213284409230
+      eff_slash_101: -8819536079188637051
+      eff_slash_102: -6529795303274658586
+      eff_slash_103: 2470676191813007887
+      eff_slash_104: 5990576381186457390
+      eff_slash_105: -49625982702955821
+      eff_slash_106: -4501337324463528219
+      eff_slash_107: 4157008706095142736
+      eff_slash_108: 7154093403257931634
+      eff_slash_109: -7711029561724964999
+      eff_slash_11: 489235645342194855
+      eff_slash_110: 6002865948757418108
+      eff_slash_111: -1276132780704585348
+      eff_slash_112: -2003347191022335416
+      eff_slash_113: -2902602293356931819
+      eff_slash_114: 4194972594363522881
+      eff_slash_115: -3756521058796880108
+      eff_slash_116: 2080273122539765463
+      eff_slash_117: -8450251928770100512
+      eff_slash_118: -4448861346627027334
+      eff_slash_119: 8936173950180489919
+      eff_slash_12: 8255828371754751463
+      eff_slash_120: -1804948680747412788
+      eff_slash_121: 6975422734275372587
+      eff_slash_122: 6341147550892161745
+      eff_slash_123: 8037731523078829048
+      eff_slash_124: 219642947235274444
+      eff_slash_125: 3247590525109186720
+      eff_slash_126: -1287043093084765574
+      eff_slash_127: -427844406099212887
+      eff_slash_128: -2882436558068603017
+      eff_slash_129: -1464637155884928306
+      eff_slash_13: 7469456140120775395
+      eff_slash_130: 2780081728527030370
+      eff_slash_131: -4372026674140295066
+      eff_slash_132: 5900656211489128021
+      eff_slash_133: 6372405433021745503
+      eff_slash_134: -1681060223804537487
+      eff_slash_135: -2460730646365005452
+      eff_slash_136: -5373724994362512182
+      eff_slash_137: -3553229304926601972
+      eff_slash_138: -5131045984524626879
+      eff_slash_139: 8484039772669512301
+      eff_slash_14: 4252042199805563683
+      eff_slash_140: -992716528316382969
+      eff_slash_141: -1133125562188649108
+      eff_slash_142: 4926060878990245162
+      eff_slash_143: -303042512311026329
+      eff_slash_144: 9100593737816857790
+      eff_slash_145: 7436129038702032165
+      eff_slash_146: 1943424414431805631
+      eff_slash_147: 5678490801013448236
+      eff_slash_148: -3001326964478399318
+      eff_slash_149: -7687577020009392999
+      eff_slash_15: 1008307243714838778
+      eff_slash_150: -6082578786512650626
+      eff_slash_151: 2337217253611167313
+      eff_slash_152: 1693383379759948473
+      eff_slash_153: 6262045929712136688
+      eff_slash_154: -3452170496148767848
+      eff_slash_155: 7373701465215322694
+      eff_slash_156: -1669948195716762733
+      eff_slash_157: -537454173803730917
+      eff_slash_158: -7265849755385569132
+      eff_slash_159: -6442545009515322265
+      eff_slash_16: -6398746047932960209
+      eff_slash_160: 7772550457363197833
+      eff_slash_161: -8718958713219393006
+      eff_slash_162: 7866525769448544340
+      eff_slash_163: -1529408285723645206
+      eff_slash_164: -496683524303209947
+      eff_slash_165: 5927917280698499225
+      eff_slash_166: -2579058782247548576
+      eff_slash_167: 590510419988899165
+      eff_slash_168: 6236227205242504073
+      eff_slash_169: -9186453175900563359
+      eff_slash_17: -3070994905559540485
+      eff_slash_170: -6710135426316167804
+      eff_slash_171: -2350545632003205415
+      eff_slash_172: -650653549769567287
+      eff_slash_173: 3892595948177633799
+      eff_slash_174: -4788883890791089473
+      eff_slash_175: -1418893059553449919
+      eff_slash_176: 9047996899503568564
+      eff_slash_177: -8750205188827939541
+      eff_slash_178: -8469581563962930830
+      eff_slash_179: 6267999099338952907
+      eff_slash_18: 1704234858790953776
+      eff_slash_180: -5521992286259442509
+      eff_slash_181: -3953232487547925784
+      eff_slash_182: -967040479019825824
+      eff_slash_183: -3326120970363616258
+      eff_slash_184: -5602686779735547963
+      eff_slash_185: -3185507261570098046
+      eff_slash_186: -6740000898441516435
+      eff_slash_187: -3072644101453314
+      eff_slash_188: -4829512836466229501
+      eff_slash_189: 6044756292551827546
+      eff_slash_19: -1648862759773800575
+      eff_slash_190: -8777208894015915723
+      eff_slash_191: 4403064313064500255
+      eff_slash_192: 8395209277649701037
+      eff_slash_193: -6546469952645000984
+      eff_slash_194: 8073738891112988885
+      eff_slash_195: 43271946723824011
+      eff_slash_196: 6089384431709458209
+      eff_slash_197: 4784685598430695609
+      eff_slash_198: 6932888482029616464
+      eff_slash_199: 5842268991686728927
+      eff_slash_2: -4303791935878498711
+      eff_slash_20: 5014228020325832227
+      eff_slash_200: 2473121479922121667
+      eff_slash_21: 7742940246415821371
+      eff_slash_22: -4169030280807831437
+      eff_slash_23: -3767710931005722336
+      eff_slash_24: 4704138664713552774
+      eff_slash_25: -4519951253630733246
+      eff_slash_26: -1751512433949240935
+      eff_slash_27: -8877883322360190799
+      eff_slash_28: -712880492271898788
+      eff_slash_29: -3564346335330746234
+      eff_slash_3: -2203006016416519035
+      eff_slash_30: -7755615288910805642
+      eff_slash_31: -2223955692951140868
+      eff_slash_32: 6396282850371721507
+      eff_slash_33: 5416747939324968443
+      eff_slash_34: -4767601318907374892
+      eff_slash_35: -4969629748489107955
+      eff_slash_36: 4323450997897919614
+      eff_slash_37: 310623838370503074
+      eff_slash_38: 8251616777575730561
+      eff_slash_39: 1585094577798250814
+      eff_slash_4: 7067238160059833872
+      eff_slash_40: 7337155922325127202
+      eff_slash_41: 6650618833789836163
+      eff_slash_42: -4998367212604098765
+      eff_slash_43: 300950679687098629
+      eff_slash_44: -6667035287434564876
+      eff_slash_45: -7275417228594522673
+      eff_slash_46: 4073508262036468938
+      eff_slash_47: -5332271933581563204
+      eff_slash_48: 8524904398346067961
+      eff_slash_49: 6855848426368943240
+      eff_slash_5: -3906718414186254798
+      eff_slash_50: 400463530544213584
+      eff_slash_51: 847536570333096111
+      eff_slash_52: -3497656832836918599
+      eff_slash_53: 838421602944098676
+      eff_slash_54: -3716937083957002610
+      eff_slash_55: -7533674682971477601
+      eff_slash_56: -8933548564985066801
+      eff_slash_57: 6357468862103033552
+      eff_slash_58: -4096182270365520739
+      eff_slash_59: 4193006375614896497
+      eff_slash_6: -4495011728275308555
+      eff_slash_60: 8823317207618822142
+      eff_slash_61: -7927269245114017952
+      eff_slash_62: 2623034972251893733
+      eff_slash_63: 8792783200875176767
+      eff_slash_64: -5973449635879108794
+      eff_slash_65: 2613489524689852082
+      eff_slash_66: 4241628454744105477
+      eff_slash_67: 5423026487346899978
+      eff_slash_68: -1657835878477879916
+      eff_slash_69: -7047486758477719799
+      eff_slash_7: -1289365808957624081
+      eff_slash_70: -8999645789746093436
+      eff_slash_71: 3044724689577392899
+      eff_slash_72: -5762589535358512594
+      eff_slash_73: 2495292959950257867
+      eff_slash_74: 7555270469438579260
+      eff_slash_75: -8153903174017489781
+      eff_slash_76: 5130649689729829385
+      eff_slash_77: 6581316171569312765
+      eff_slash_78: -617587193490181561
+      eff_slash_79: 480032588450452403
+      eff_slash_8: 5700888976889615758
+      eff_slash_80: 1649145526646424448
+      eff_slash_81: 3518398986525007961
+      eff_slash_82: 6753560059782321256
+      eff_slash_83: -7935758370913258876
+      eff_slash_84: -565959885121270526
+      eff_slash_85: -174701411263219776
+      eff_slash_86: 68842213282030502
+      eff_slash_87: -8134749760997507245
+      eff_slash_88: 4258968705785666302
+      eff_slash_89: 3953856953647101076
+      eff_slash_9: -1603214195276110399
+      eff_slash_90: -1693404274802406169
+      eff_slash_91: -8416788837730073559
+      eff_slash_92: 8752616223676181141
+      eff_slash_93: 2541252297773309626
+      eff_slash_94: 4993043852794879185
+      eff_slash_95: -7880345091706374516
+      eff_slash_96: -2769041328169568712
+      eff_slash_97: 8225852341362598297
+      eff_slash_98: -4017654992624816459
+      eff_slash_99: -8468198256887842502
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
