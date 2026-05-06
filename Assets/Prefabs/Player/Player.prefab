@@ -989,6 +989,9 @@ MonoBehaviour:
   jumpStateName: jump
   landStateName: land
   dodgeStateName: dodge
+  parryStateName: parry
+  changeStateName: change
+  attackStateName: attack
 --- !u!1 &7408946771973873088
 GameObject:
   m_ObjectHideFlags: 0

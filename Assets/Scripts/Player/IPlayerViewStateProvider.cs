@@ -10,5 +10,8 @@ namespace Player
         bool IsGliding { get; }
         bool IsFacingRight { get; }
         bool IsDodging { get; }
+        bool IsParrying { get; }
+        bool IsUmbrellaChanging { get; }
+        bool IsAttacking { get; }
     }
 }

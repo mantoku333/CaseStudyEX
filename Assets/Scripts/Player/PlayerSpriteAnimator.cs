@@ -29,6 +29,9 @@ namespace Player
         [SerializeField] private string jumpStateName = "jump";
         [SerializeField] private string landStateName = "land";
         [SerializeField] private string dodgeStateName = "dodge";
+        [SerializeField] private string parryStateName = "parry";
+        [SerializeField] private string changeStateName = "change";
+        [SerializeField] private string attackStateName = "attack";
 
         private enum VisualState
         {
@@ -36,7 +39,10 @@ namespace Player
             Run,
             Jump,
             Land,
-            Dodge
+            Dodge,
+            Parry,
+            Change,
+            Attack
         }
 
         private static readonly SpriteRenderer[] EmptyRenderers = new SpriteRenderer[0];
@@ -67,7 +73,7 @@ namespace Player
 
         private void Update()
         {
-            if (!TryReadProviderState(out var isGrounded, out var isMoving, out var isGliding, out var isDodging, out var isFacingRight))
+            if (!TryReadProviderState(out var isGrounded, out var isMoving, out var isGliding, out var isDodging, out var isFacingRight, out var isParrying, out var isChanging, out var isAttacking))
             {
                 if (!_warnedNoStateProvider)
                 {
@@ -100,7 +106,7 @@ namespace Player
                 _landingLocked = false;
             }
 
-            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, _landingLocked);
+            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, isParrying, isChanging, isAttacking, _landingLocked);
             if (_currentState != nextState)
             {
                 SwitchState(nextState);
@@ -158,7 +164,7 @@ namespace Player
                 : EmptyRenderers;
         }
 
-        private bool TryReadProviderState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isDodging, out bool isFacingRight)
+        private bool TryReadProviderState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isDodging, out bool isFacingRight, out bool isParrying, out bool isChanging, out bool isAttacking)
         {
             if (_stateProvider != null)
             {
@@ -167,6 +173,9 @@ namespace Player
                 isGliding = _stateProvider.IsGliding;
                 isDodging = _stateProvider.IsDodging;
                 isFacingRight = _stateProvider.IsFacingRight;
+                isParrying = _stateProvider.IsParrying;
+                isChanging = _stateProvider.IsUmbrellaChanging;
+                isAttacking = _stateProvider.IsAttacking;
                 return true;
             }
 
@@ -175,11 +184,29 @@ namespace Player
             isGliding = false;
             isDodging = false;
             isFacingRight = true;
+            isParrying = false;
+            isChanging = false;
+            isAttacking = false;
             return false;
         }
 
-        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool hasLandingLock)
+        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool isParrying, bool isChanging, bool isAttacking, bool hasLandingLock)
         {
+            if (isParrying)
+            {
+                return VisualState.Parry;
+            }
+
+            if (isChanging)
+            {
+                return VisualState.Change;
+            }
+
+            if (isAttacking)
+            {
+                return VisualState.Attack;
+            }
+
             if (isDodging)
             {
                 return VisualState.Dodge;
@@ -313,6 +340,12 @@ namespace Player
                     return landStateName;
                 case VisualState.Dodge:
                     return dodgeStateName;
+                case VisualState.Parry:
+                    return parryStateName;
+                case VisualState.Change:
+                    return changeStateName;
+                case VisualState.Attack:
+                    return attackStateName;
                 default:
                     return idleStateName;
             }
@@ -321,7 +354,10 @@ namespace Player
         private string ResolveAnimatorStateName(VisualState state)
         {
             var primary = GetAnimatorStateName(state);
-            if (AnimatorHasState(primary))
+            if (state != VisualState.Parry &&
+                state != VisualState.Change &&
+                state != VisualState.Attack &&
+                AnimatorHasState(primary))
             {
                 return primary;
             }
@@ -344,6 +380,24 @@ namespace Player
                     if (AnimatorHasState("Dodge")) return "Dodge";
                     if (AnimatorHasState("dodge")) return "dodge";
                     break;
+                case VisualState.Parry:
+                    if (IsDefaultStateName(primary, "parry") && AnimatorHasState("Parry")) return "Parry";
+                    if (AnimatorHasState(primary)) return primary;
+                    if (AnimatorHasState("Parry")) return "Parry";
+                    if (AnimatorHasState("parry")) return "parry";
+                    break;
+                case VisualState.Change:
+                    if (IsDefaultStateName(primary, "change") && AnimatorHasState("Change")) return "Change";
+                    if (AnimatorHasState(primary)) return primary;
+                    if (AnimatorHasState("Change")) return "Change";
+                    if (AnimatorHasState("change")) return "change";
+                    break;
+                case VisualState.Attack:
+                    if (IsDefaultStateName(primary, "attack") && AnimatorHasState("Attack")) return "Attack";
+                    if (AnimatorHasState(primary)) return primary;
+                    if (AnimatorHasState("Attack")) return "Attack";
+                    if (AnimatorHasState("attack")) return "attack";
+                    break;
                 default:
                     if (AnimatorHasState("Idle")) return "Idle";
                     if (AnimatorHasState("idle")) return "idle";
@@ -351,6 +405,11 @@ namespace Player
             }
 
             return primary;
+        }
+
+        private static bool IsDefaultStateName(string stateName, string defaultStateName)
+        {
+            return string.Equals(stateName, defaultStateName, System.StringComparison.OrdinalIgnoreCase);
         }
 
         private bool AnimatorHasState(string stateName)
