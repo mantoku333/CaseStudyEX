@@ -63194,6 +63194,11 @@ MonoBehaviour:
   attackPerSecond: 4
   attackCollider: {fileID: 2100399110}
   player_normalAttack: {fileID: 8300000, guid: 298ef99b3d24d514ba42518424f5ddf3, type: 3}
+  attackEffectTexture: {fileID: 0}
+  attackEffectFrameSeconds: 0.025
+  attackEffectWorldOffset: {x: 0, y: 0.1, z: 0}
+  attackEffectScale: {x: 1, y: 1, z: 1}
+  attackEffectSortingOrderOffset: 2
 --- !u!114 &974501603
 MonoBehaviour:
   m_ObjectHideFlags: 0

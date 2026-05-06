@@ -88,7 +88,9 @@ namespace GameName.Enemy
             if (!turnedByEnvironment && patrolDistance > 0f)
             {
                 float distanceFromStart = transform.position.x - startPosition.x;
-                if (Mathf.Abs(distanceFromStart) >= patrolDistance)
+                bool reachedRightLimit = moveDirection > 0 && distanceFromStart >= patrolDistance;
+                bool reachedLeftLimit = moveDirection < 0 && distanceFromStart <= -patrolDistance;
+                if (reachedRightLimit || reachedLeftLimit)
                 {
                     TurnAround();
                 }
