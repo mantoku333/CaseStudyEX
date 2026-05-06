@@ -1,82 +1,67 @@
 fileFormatVersion: 2
-guid: 3101fbc9c9ea9ae4fa4c5a2727fef8c9
+guid: 7141a4b34e1d5014a8515ea7c18e9c2e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3030360634775572080
-    second: AM_iris_Dodge_0
+      213: -699512151399074924
+    second: AM_iris_Attack_0
   - first:
-      213: -6413290697978519868
-    second: AM_iris_Dodge_1
+      213: -3287224372531620187
+    second: AM_iris_Attack_1
   - first:
-      213: 7367504068778626070
-    second: AM_iris_Dodge_2
+      213: 100448381771850151
+    second: AM_iris_Attack_2
   - first:
-      213: 1533203659183351096
-    second: AM_iris_Dodge_3
+      213: 7998193490265647660
+    second: AM_iris_Attack_3
   - first:
-      213: 5772291729766059251
-    second: AM_iris_Dodge_4
+      213: 6341167743659297474
+    second: AM_iris_Attack_4
   - first:
-      213: 6756969197570099130
-    second: AM_iris_Dodge_5
+      213: 5141920850216870133
+    second: AM_iris_Attack_5
   - first:
-      213: 9095463144853811688
-    second: AM_iris_Dodge_6
+      213: 5344128141937128746
+    second: AM_iris_Attack_6
   - first:
-      213: -2754851662066570052
-    second: AM_iris_Dodge_7
+      213: 1364555060807479032
+    second: AM_iris_Attack_7
   - first:
-      213: 3104978854511751341
-    second: AM_iris_Dodge_8
+      213: -420211791585841634
+    second: AM_iris_Attack_8
   - first:
-      213: 8411556832937428846
-    second: AM_iris_Dodge_9
+      213: -4125714843564322971
+    second: AM_iris_Attack_9
   - first:
-      213: -8313268793248657582
-    second: AM_iris_Dodge_10
+      213: -2350436481230363820
+    second: AM_iris_Attack_10
   - first:
-      213: -2753325459173197805
-    second: AM_iris_Dodge_11
+      213: -6946692896310451761
+    second: AM_iris_Attack_11
   - first:
-      213: -8178370960002514305
-    second: AM_iris_Dodge_12
+      213: 6128067939691009138
+    second: AM_iris_Attack_12
   - first:
-      213: 9202294057012956332
-    second: AM_iris_Dodge_13
+      213: -8373139271629286038
+    second: AM_iris_Attack_13
   - first:
-      213: -5779287353063287397
-    second: AM_iris_Dodge_14
+      213: 9042431098985281377
+    second: AM_iris_Attack_14
   - first:
-      213: 1976524289952971136
-    second: AM_iris_Dodge_15
+      213: -376012955011718022
+    second: AM_iris_Attack_15
   - first:
-      213: -7567307716121988305
-    second: AM_iris_Dodge_16
+      213: -8118150592080410969
+    second: AM_iris_Attack_16
   - first:
-      213: -5153248563581104031
-    second: AM_iris_Dodge_17
+      213: -7680364857388765245
+    second: AM_iris_Attack_17
   - first:
-      213: 1911905171633922535
-    second: AM_iris_Dodge_18
+      213: 4117200158264987408
+    second: AM_iris_Attack_18
   - first:
-      213: -1070535471830078297
-    second: AM_iris_Dodge_19
-  - first:
-      213: -2777667307778241324
-    second: AM_iris_Dodge_20
-  - first:
-      213: -3928899241357987760
-    second: AM_iris_Dodge_21
-  - first:
-      213: -7646157526593467
-    second: AM_iris_Dodge_22
-  - first:
-      213: -8734984126414993492
-    second: AM_iris_Dodge_23
-  - first:
-      213: 2798611591604324673
-    second: AM_iris_Dodge_24
+      213: 1669442192257542790
+    second: AM_iris_Attack_19
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -172,13 +157,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Dodge_0
+      name: Attack_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 2858
-        width: 807
-        height: 714
+        y: 2105
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -187,20 +172,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f8da22872f7abcd49baac7375eedf2f8
-      internalID: -1988072047
+      spriteID: 44f39bc13d8d1884888ccfbe6e71c205
+      internalID: -1927884879
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_1
+      name: Attack_1
       rect:
         serializedVersion: 2
-        x: 807
-        y: 2858
-        width: 807
-        height: 714
+        x: 628
+        y: 2105
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -209,20 +194,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7499001cb73a16c4fab2265f546eb220
-      internalID: 2085493702
+      spriteID: 28341b3857f10d5409f9bcca71513cd9
+      internalID: 1890976768
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_2
+      name: Attack_2
       rect:
         serializedVersion: 2
-        x: 1614
-        y: 2858
-        width: 807
-        height: 714
+        x: 1256
+        y: 2105
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -231,20 +216,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a23df5287b7a1a04d8da559c513a1ece
-      internalID: -1264500743
+      spriteID: d471235a793433a4ea1efacdc7e5da2e
+      internalID: 251282644
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_3
+      name: Attack_3
       rect:
         serializedVersion: 2
-        x: 2421
-        y: 2858
-        width: 807
-        height: 714
+        x: 1884
+        y: 2105
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -253,20 +238,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 768444955df980d478368f6061cbdfc0
-      internalID: 171957067
+      spriteID: 6142c2a7951f840409ba0f206d0a588b
+      internalID: 622129497
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_4
+      name: Attack_4
       rect:
         serializedVersion: 2
-        x: 3228
-        y: 2858
-        width: 807
-        height: 714
+        x: 2512
+        y: 2105
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -275,20 +260,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e53137a9bf6282b4686837f8299a4f2f
-      internalID: 399512449
+      spriteID: 1d7cd43c49ca0ef488abd7b3166786fc
+      internalID: -1315040456
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_5
+      name: Attack_5
       rect:
         serializedVersion: 2
-        x: 0
-        y: 2144
-        width: 807
-        height: 714
+        x: 3140
+        y: 2105
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -297,108 +282,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 19ee7bcd5be3491419c8c89b8edebf3d
-      internalID: -1039287187
+      spriteID: 94ed9dea91ff0ba4281038a6c51669b4
+      internalID: 892980986
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_6
-      rect:
-        serializedVersion: 2
-        x: 807
-        y: 2144
-        width: 807
-        height: 714
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d1e74a934175b4241ab67f6e676dc26c
-      internalID: 1504267134
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Dodge_7
-      rect:
-        serializedVersion: 2
-        x: 1614
-        y: 2144
-        width: 807
-        height: 714
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e11e67735de329a4b94723f6bc584a22
-      internalID: -541601545
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Dodge_8
-      rect:
-        serializedVersion: 2
-        x: 2421
-        y: 2144
-        width: 807
-        height: 714
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 803174ea99404c941b9b30c43561c7ea
-      internalID: 1852305871
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Dodge_9
-      rect:
-        serializedVersion: 2
-        x: 3228
-        y: 2154
-        width: 807
-        height: 714
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c67615e95aec638488552462980d1024
-      internalID: 1888405920
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Dodge_10
+      name: Attack_6
       rect:
         serializedVersion: 2
         x: 0
-        y: 1430
-        width: 807
-        height: 714
+        y: 1404
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -407,20 +304,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 984f295e8adf111429d32308df7a6913
-      internalID: -97942702
+      spriteID: 7bd9b3aa9fe1cc143b788532d255a64c
+      internalID: -1246112440
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_11
+      name: Attack_7
       rect:
         serializedVersion: 2
-        x: 807
-        y: 1430
-        width: 807
-        height: 714
+        x: 628
+        y: 1404
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -429,20 +326,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 97356e2b20645224e8afad247088958e
-      internalID: 148760950
+      spriteID: 6e9ba016f608b594e91313fb9dc879fb
+      internalID: -547952402
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_12
+      name: Attack_8
       rect:
         serializedVersion: 2
-        x: 1614
-        y: 1430
-        width: 807
-        height: 714
+        x: 1256
+        y: 1404
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -451,20 +348,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1a2452fdafcb23b4d8d77bebe9687c2d
-      internalID: -1171561296
+      spriteID: f7899812ad9163b409e368a3fd346e7b
+      internalID: 1728253470
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_13
+      name: Attack_9
       rect:
         serializedVersion: 2
-        x: 2421
-        y: 1435
-        width: 807
-        height: 714
+        x: 1884
+        y: 1404
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -473,20 +370,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7da1f1e60a82ee94f81ac7c7d35349c2
-      internalID: -1083604355
+      spriteID: b29140b80272f2c4b82a3f424d2fd2d2
+      internalID: 1884729468
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_14
+      name: Attack_10
       rect:
         serializedVersion: 2
-        x: 3228
-        y: 1430
-        width: 807
-        height: 714
+        x: 2512
+        y: 1404
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -495,20 +392,42 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ad8ea5ddb650a8046bc9aa9ee89b7134
-      internalID: 957218553
+      spriteID: 0ca7f038d96647441bc86a1861e60459
+      internalID: 1035918846
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_15
+      name: Attack_11
+      rect:
+        serializedVersion: 2
+        x: 3140
+        y: 1404
+        width: 628
+        height: 701
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5af4679691e4394479684a7606e22af1
+      internalID: -433551581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Attack_12
       rect:
         serializedVersion: 2
         x: 0
-        y: 716
-        width: 807
-        height: 714
+        y: 703
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -517,20 +436,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d248eaeb3eb0a7c47b1aea56684419d1
-      internalID: -920760937
+      spriteID: b891f1608fc277843ab33e2b58e0ad38
+      internalID: 569588621
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_16
+      name: Attack_13
       rect:
         serializedVersion: 2
-        x: 807
-        y: 716
-        width: 807
-        height: 714
+        x: 628
+        y: 703
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -539,20 +458,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 14463834ad9f9584d8b4420a5a76c5d6
-      internalID: -1053188533
+      spriteID: 9515c683498542a4789fd4bab602fbb5
+      internalID: -1032811015
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_17
+      name: Attack_14
       rect:
         serializedVersion: 2
-        x: 1614
-        y: 716
-        width: 807
-        height: 714
+        x: 1256
+        y: 703
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -561,20 +480,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6508d1c8c7fc0bf42ab287923f2429dd
-      internalID: -268493621
+      spriteID: 96d2ab50d72cb054c97987b437a5e85d
+      internalID: 1191448439
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_18
+      name: Attack_15
       rect:
         serializedVersion: 2
-        x: 2421
-        y: 716
-        width: 807
-        height: 714
+        x: 1884
+        y: 703
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -583,20 +502,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c284a2946271b994ca0ae23709c325eb
-      internalID: -1248257930
+      spriteID: 7910a1930e072a54194118ea74d3278c
+      internalID: -396156031
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_19
+      name: Attack_16
       rect:
         serializedVersion: 2
-        x: 3228
-        y: 716
-        width: 807
-        height: 714
+        x: 2512
+        y: 703
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -605,20 +524,42 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1aee0bdc9e2f7a64fba794e0aadae715
-      internalID: -283099291
+      spriteID: 8bf3b5db99669a94380aa116d1f9e5ba
+      internalID: 734227307
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_20
+      name: Attack_17
+      rect:
+        serializedVersion: 2
+        x: 3140
+        y: 703
+        width: 628
+        height: 701
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14315b3a51ad7ad44be379a0db29125d
+      internalID: 1736574049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Attack_18
       rect:
         serializedVersion: 2
         x: 0
         y: 2
-        width: 807
-        height: 714
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -627,20 +568,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bdf2dad558b38b74dac230d48562e71d
-      internalID: 1459438123
+      spriteID: 3c20bb62e597d334f81a2d0b1819334a
+      internalID: 1353211747
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Dodge_21
+      name: Attack_19
       rect:
         serializedVersion: 2
-        x: 807
+        x: 628
         y: 2
-        width: 807
-        height: 714
+        width: 628
+        height: 701
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -649,74 +590,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c223d34835c8dbb47822c8c7dd7f6613
-      internalID: 349971849
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Dodge_22
-      rect:
-        serializedVersion: 2
-        x: 1614
-        y: 2
-        width: 807
-        height: 714
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 605f8fed740024342bb55fe1cc5fbf83
-      internalID: 591984599
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Dodge_23
-      rect:
-        serializedVersion: 2
-        x: 2421
-        y: 2
-        width: 807
-        height: 714
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 091806c773ce90046bd9a4cf4d862738
-      internalID: 2068596477
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Dodge_24
-      rect:
-        serializedVersion: 2
-        x: 3228
-        y: 2
-        width: 807
-        height: 714
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f890d69d9c83ac74d8e11d9bf22a7e30
-      internalID: -10807188
+      spriteID: f967918c24ec31f4da87867313427452
+      internalID: -1528880447
       vertices: []
       indices: 
       edges: []
@@ -725,7 +600,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 762cd10d84b668042b5430ab3ef64ae0
+    spriteID: 0fd4573b416f59b4a93e3e35c88e2e10
     internalID: 0
     vertices: []
     indices: 
@@ -735,33 +610,28 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":5.0,"y":5.0},"gridSpriteSize":{"x":807.0,"y":714.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":6.0,"y":4.0},"gridSpriteSize":{"x":628.0,"y":701.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Dodge_0: -1988072047
-      Dodge_1: 2085493702
-      Dodge_10: -97942702
-      Dodge_11: 148760950
-      Dodge_12: -1171561296
-      Dodge_13: -1083604355
-      Dodge_14: 957218553
-      Dodge_15: -920760937
-      Dodge_16: -1053188533
-      Dodge_17: -268493621
-      Dodge_18: -1248257930
-      Dodge_19: -283099291
-      Dodge_2: -1264500743
-      Dodge_20: 1459438123
-      Dodge_21: 349971849
-      Dodge_22: 591984599
-      Dodge_23: 2068596477
-      Dodge_24: -10807188
-      Dodge_3: 171957067
-      Dodge_4: 399512449
-      Dodge_5: -1039287187
-      Dodge_6: 1504267134
-      Dodge_7: -541601545
-      Dodge_8: 1852305871
-      Dodge_9: 1888405920
+      Attack_0: -1927884879
+      Attack_1: 1890976768
+      Attack_10: 1035918846
+      Attack_11: -433551581
+      Attack_12: 569588621
+      Attack_13: -1032811015
+      Attack_14: 1191448439
+      Attack_15: -396156031
+      Attack_16: 734227307
+      Attack_17: 1736574049
+      Attack_18: 1353211747
+      Attack_19: -1528880447
+      Attack_2: 251282644
+      Attack_3: 622129497
+      Attack_4: -1315040456
+      Attack_5: 892980986
+      Attack_6: -1246112440
+      Attack_7: -547952402
+      Attack_8: 1728253470
+      Attack_9: 1884729468
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
