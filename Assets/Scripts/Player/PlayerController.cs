@@ -80,6 +80,13 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         !isGround;
     public bool IsFacingRight => isFacingRight;
     public bool IsDodging => dodgeController != null && dodgeController.IsDodging();
+    public bool IsParrying => umbrellaParryController != null && umbrellaParryController.IsParrying();
+    public bool IsUmbrellaChanging => umbrellaController != null && umbrellaController.IsChanging();
+    public bool IsAttacking =>
+        umbrellaAttackController != null &&
+        umbrellaAttackController.IsAttacking() &&
+        umbrellaController != null &&
+        umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Closed;
 
     private void Awake()
     {
@@ -329,7 +336,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             {
                 if (umbrellaController != null)
                 {
-                    umbrellaController.SetUmbrellaState(UmbrellaController.UmbrellaState.Open);
+                    umbrellaController.SetUmbrellaState(UmbrellaController.UmbrellaState.Open, false);
                 }
 
                 if (umbrellaParryController != null)
@@ -353,9 +360,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             bool isUmbrellaOpen = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open;
             bool isPlayerGliding = isUmbrellaOpen && !isGround;
 
-            if (isPlayerGliding)
+            if (isUmbrellaOpen)
             {
-                if (TryGetAimScreenPosition(out var pointerPos))
+                if (isPlayerGliding && TryGetAimScreenPosition(out var pointerPos))
                 {
                     Camera mainCamera = Camera.main;
                     if (mainCamera != null && gunController != null)

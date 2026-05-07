@@ -59,6 +59,10 @@ namespace GameName.Enemy
         private float previousChargeX;
         private float blockedTimer;
 
+        public bool IsWindingUp => attackState == AttackState.Vibration;
+        public bool IsCharging => attackState == AttackState.Charging;
+        public bool IsCoolingDown => attackState == AttackState.Cooldown;
+
         /// <summary>
         /// 依存コンポーネントを取得し、検知マスクの初期化を行う。
         /// </summary>

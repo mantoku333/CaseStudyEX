@@ -77,6 +77,11 @@ public class UmbrellaAttackController : MonoBehaviour
         return attackDuration;
     }
 
+    public bool IsAttacking()
+    {
+        return isAttacking;
+    }
+
     public async UniTaskVoid Attack()
     {
         if (isAttacking) { return; }

@@ -1,0 +1,1549 @@
+fileFormatVersion: 2
+guid: 0c94cc9aba2426f4a9b748aa4ed3559f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6398532992895567966
+    second: AM_iris_Glid_0
+  - first:
+      213: 6334465542202308526
+    second: AM_iris_Glid_1
+  - first:
+      213: -2266074707541393775
+    second: AM_iris_Glid_2
+  - first:
+      213: 3827516983886061118
+    second: AM_iris_Glid_3
+  - first:
+      213: 2329513681120006970
+    second: AM_iris_Glid_4
+  - first:
+      213: -52607348152783240
+    second: AM_iris_Glid_5
+  - first:
+      213: 103483345428722616
+    second: AM_iris_Glid_6
+  - first:
+      213: -7309113378000962415
+    second: AM_iris_Glid_7
+  - first:
+      213: -4508778449494888351
+    second: AM_iris_Glid_8
+  - first:
+      213: -5909514550856225943
+    second: AM_iris_Glid_9
+  - first:
+      213: -5954482351469753530
+    second: AM_iris_Glid_10
+  - first:
+      213: 7997216393085619715
+    second: AM_iris_Glid_11
+  - first:
+      213: 818632823107179384
+    second: AM_iris_Glid_12
+  - first:
+      213: -6332303881136346038
+    second: AM_iris_Glid_13
+  - first:
+      213: 5304488594039264005
+    second: AM_iris_Glid_14
+  - first:
+      213: 1637929785684243139
+    second: AM_iris_Glid_15
+  - first:
+      213: -5635232448908060653
+    second: AM_iris_Glid_16
+  - first:
+      213: -5884408679422929518
+    second: AM_iris_Glid_17
+  - first:
+      213: -134699393584573939
+    second: AM_iris_Glid_18
+  - first:
+      213: -7536675235685669391
+    second: AM_iris_Glid_19
+  - first:
+      213: 4439837765060010334
+    second: AM_iris_Glid_20
+  - first:
+      213: -3469791911110914337
+    second: AM_iris_Glid_21
+  - first:
+      213: -8490906779681320752
+    second: AM_iris_Glid_22
+  - first:
+      213: -1151234397049541306
+    second: AM_iris_Glid_23
+  - first:
+      213: -5143704232378994820
+    second: AM_iris_Glid_24
+  - first:
+      213: 6363674799261513952
+    second: AM_iris_Glid_25
+  - first:
+      213: -2698617553878928064
+    second: AM_iris_Glid_26
+  - first:
+      213: 577413833630587268
+    second: AM_iris_Glid_27
+  - first:
+      213: 6850484769221473023
+    second: AM_iris_Glid_28
+  - first:
+      213: -7822216666339518476
+    second: AM_iris_Glid_29
+  - first:
+      213: 815145540269974940
+    second: AM_iris_Glid_30
+  - first:
+      213: 8350938588523390638
+    second: AM_iris_Glid_31
+  - first:
+      213: 7894454620552223258
+    second: AM_iris_Glid_32
+  - first:
+      213: 5323833392295460100
+    second: AM_iris_Glid_33
+  - first:
+      213: 5148417435806478051
+    second: AM_iris_Glid_34
+  - first:
+      213: 6693989842763716180
+    second: AM_iris_Glid_35
+  - first:
+      213: -6306691456295968611
+    second: AM_iris_Glid_36
+  - first:
+      213: -3958627141243884234
+    second: AM_iris_Glid_37
+  - first:
+      213: 8847856569323612431
+    second: AM_iris_Glid_38
+  - first:
+      213: 3184290157097297575
+    second: AM_iris_Glid_39
+  - first:
+      213: -305247628470718941
+    second: AM_iris_Glid_40
+  - first:
+      213: 2451094180295711908
+    second: AM_iris_Glid_41
+  - first:
+      213: 2351476171385751068
+    second: AM_iris_Glid_42
+  - first:
+      213: -1583483190715659625
+    second: AM_iris_Glid_43
+  - first:
+      213: -1780407204451238841
+    second: AM_iris_Glid_44
+  - first:
+      213: 8148390420589862103
+    second: AM_iris_Glid_45
+  - first:
+      213: -8024314025245052846
+    second: AM_iris_Glid_46
+  - first:
+      213: 7949949299919672130
+    second: AM_iris_Glid_47
+  - first:
+      213: -7796493081902539791
+    second: AM_iris_Glid_48
+  - first:
+      213: -7449337615109923576
+    second: AM_iris_Glid_49
+  - first:
+      213: -2795239809450924303
+    second: AM_iris_Glid_50
+  - first:
+      213: 2396597026298706903
+    second: AM_iris_Glid_51
+  - first:
+      213: 7968431701421264261
+    second: AM_iris_Glid_52
+  - first:
+      213: -1000652574737754439
+    second: AM_iris_Glid_53
+  - first:
+      213: -700540763201263217
+    second: AM_iris_Glid_54
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AM_iris_Glid_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3404
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e58482d2bd72cc850800000000000000
+      internalID: 6398532992895567966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_1
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 3404
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea7bbe469da88e750800000000000000
+      internalID: 6334465542202308526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_2
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 3404
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19e7f764f094d80e0800000000000000
+      internalID: -2266074707541393775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_3
+      rect:
+        serializedVersion: 2
+        x: 1272
+        y: 3404
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3e9d44fa621e1530800000000000000
+      internalID: 3827516983886061118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_4
+      rect:
+        serializedVersion: 2
+        x: 1696
+        y: 3404
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a331296c958145020800000000000000
+      internalID: 2329513681120006970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_5
+      rect:
+        serializedVersion: 2
+        x: 2120
+        y: 3404
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87e27c445e9154ff0800000000000000
+      internalID: -52607348152783240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_6
+      rect:
+        serializedVersion: 2
+        x: 2544
+        y: 3404
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b3b27ced85af6100800000000000000
+      internalID: 103483345428722616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_7
+      rect:
+        serializedVersion: 2
+        x: 2968
+        y: 3404
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19c7239ab10d09a90800000000000000
+      internalID: -7309113378000962415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_8
+      rect:
+        serializedVersion: 2
+        x: 3392
+        y: 3404
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 160bbe283e99d61c0800000000000000
+      internalID: -4508778449494888351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2837
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96b663173df2dfda0800000000000000
+      internalID: -5909514550856225943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_10
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 2837
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64b005b79dd6d5da0800000000000000
+      internalID: -5954482351469753530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_11
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 2837
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30e8ccd30f1dbfe60800000000000000
+      internalID: 7997216393085619715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_12
+      rect:
+        serializedVersion: 2
+        x: 1272
+        y: 2837
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87357ce173e5c5b00800000000000000
+      internalID: 818632823107179384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_13
+      rect:
+        serializedVersion: 2
+        x: 1696
+        y: 2837
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4c6a0b8b232f18a0800000000000000
+      internalID: -6332303881136346038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_14
+      rect:
+        serializedVersion: 2
+        x: 2120
+        y: 2837
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50352da95445d9940800000000000000
+      internalID: 5304488594039264005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_15
+      rect:
+        serializedVersion: 2
+        x: 2544
+        y: 2837
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c2bdb246781bb610800000000000000
+      internalID: 1637929785684243139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_16
+      rect:
+        serializedVersion: 2
+        x: 2968
+        y: 2837
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3189418c1f1abc1b0800000000000000
+      internalID: -5635232448908060653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_17
+      rect:
+        serializedVersion: 2
+        x: 3392
+        y: 2837
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29555c5ab71665ea0800000000000000
+      internalID: -5884408679422929518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2270
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d025eed7d93712ef0800000000000000
+      internalID: -134699393584573939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_19
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 2270
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f5e87dddc9586790800000000000000
+      internalID: -7536675235685669391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_20
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 2270
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5124ce8ce87d9d30800000000000000
+      internalID: 4439837765060010334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_21
+      rect:
+        serializedVersion: 2
+        x: 1272
+        y: 2270
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdec5bdf3a2d8dfc0800000000000000
+      internalID: -3469791911110914337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_22
+      rect:
+        serializedVersion: 2
+        x: 1696
+        y: 2270
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d09328454d3a2a80800000000000000
+      internalID: -8490906779681320752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_23
+      rect:
+        serializedVersion: 2
+        x: 2120
+        y: 2270
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64da6a65a6ef500f0800000000000000
+      internalID: -1151234397049541306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_24
+      rect:
+        serializedVersion: 2
+        x: 2544
+        y: 2270
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7f606fc044ed98b0800000000000000
+      internalID: -5143704232378994820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_25
+      rect:
+        serializedVersion: 2
+        x: 2968
+        y: 2270
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e876148380505850800000000000000
+      internalID: 6363674799261513952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_26
+      rect:
+        serializedVersion: 2
+        x: 3392
+        y: 2270
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 045b964f1a59c8ad0800000000000000
+      internalID: -2698617553878928064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_27
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1703
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48992f982d2630800800000000000000
+      internalID: 577413833630587268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_28
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 1703
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff27ba82a9fc11f50800000000000000
+      internalID: 6850484769221473023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_29
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 1703
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f751b6c267e17390800000000000000
+      internalID: -7822216666339518476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_30
+      rect:
+        serializedVersion: 2
+        x: 1272
+        y: 1703
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c952900dc8aff4b00800000000000000
+      internalID: 815145540269974940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_31
+      rect:
+        serializedVersion: 2
+        x: 1696
+        y: 1703
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea6e90ea66e74e370800000000000000
+      internalID: 8350938588523390638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_32
+      rect:
+        serializedVersion: 2
+        x: 2120
+        y: 1703
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1ad47996acbe8d60800000000000000
+      internalID: 7894454620552223258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_33
+      rect:
+        serializedVersion: 2
+        x: 2544
+        y: 1703
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40d322f634e02e940800000000000000
+      internalID: 5323833392295460100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_34
+      rect:
+        serializedVersion: 2
+        x: 2968
+        y: 1703
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ee2ca0616ad27740800000000000000
+      internalID: 5148417435806478051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_35
+      rect:
+        serializedVersion: 2
+        x: 3392
+        y: 1703
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4561104bb44d5ec50800000000000000
+      internalID: 6693989842763716180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1136
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d90ec77e8812a78a0800000000000000
+      internalID: -6306691456295968611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_37
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 1136
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63d20f7b6912019c0800000000000000
+      internalID: -3958627141243884234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_38
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 1136
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f09e32efba6e9ca70800000000000000
+      internalID: 8847856569323612431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_39
+      rect:
+        serializedVersion: 2
+        x: 1272
+        y: 1136
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a6ae8bd60fd03c20800000000000000
+      internalID: 3184290157097297575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_40
+      rect:
+        serializedVersion: 2
+        x: 1696
+        y: 1136
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32ee87036ea83cbf0800000000000000
+      internalID: -305247628470718941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_41
+      rect:
+        serializedVersion: 2
+        x: 2120
+        y: 1136
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ac9d87ab29040220800000000000000
+      internalID: 2451094180295711908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_42
+      rect:
+        serializedVersion: 2
+        x: 2544
+        y: 1136
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c164e358e1f12a020800000000000000
+      internalID: 2351476171385751068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_43
+      rect:
+        serializedVersion: 2
+        x: 2968
+        y: 1136
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79a479d7d66560ae0800000000000000
+      internalID: -1583483190715659625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_44
+      rect:
+        serializedVersion: 2
+        x: 3392
+        y: 1136
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74c332f9419ba47e0800000000000000
+      internalID: -1780407204451238841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 569
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dc547e5ae5e41170800000000000000
+      internalID: 8148390420589862103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_46
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 569
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 250751f98e8e3a090800000000000000
+      internalID: -8024314025245052846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_47
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 569
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 243d31484c4e35e60800000000000000
+      internalID: 7949949299919672130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_48
+      rect:
+        serializedVersion: 2
+        x: 1272
+        y: 569
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fb986f79da4dc390800000000000000
+      internalID: -7796493081902539791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_49
+      rect:
+        serializedVersion: 2
+        x: 1696
+        y: 569
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80dda6748e2ae9890800000000000000
+      internalID: -7449337615109923576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_50
+      rect:
+        serializedVersion: 2
+        x: 2120
+        y: 569
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f6a5aff3305539d0800000000000000
+      internalID: -2795239809450924303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_51
+      rect:
+        serializedVersion: 2
+        x: 2544
+        y: 569
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dbba463c4c624120800000000000000
+      internalID: 2396597026298706903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_52
+      rect:
+        serializedVersion: 2
+        x: 2968
+        y: 569
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58d0d24f96e859e60800000000000000
+      internalID: 7968431701421264261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_53
+      rect:
+        serializedVersion: 2
+        x: 3392
+        y: 569
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b61d23f8c7fc12f0800000000000000
+      internalID: -1000652574737754439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Glid_54
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2
+        width: 424
+        height: 567
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8925b233ed2746f0800000000000000
+      internalID: -700540763201263217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: a7304cf00d5841a4ebd34d4a25dc1cc9
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":9.0,"y":7.0},"gridSpriteSize":{"x":424.0,"y":567.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      AM_iris_Glid_0: 6398532992895567966
+      AM_iris_Glid_1: 6334465542202308526
+      AM_iris_Glid_10: -5954482351469753530
+      AM_iris_Glid_11: 7997216393085619715
+      AM_iris_Glid_12: 818632823107179384
+      AM_iris_Glid_13: -6332303881136346038
+      AM_iris_Glid_14: 5304488594039264005
+      AM_iris_Glid_15: 1637929785684243139
+      AM_iris_Glid_16: -5635232448908060653
+      AM_iris_Glid_17: -5884408679422929518
+      AM_iris_Glid_18: -134699393584573939
+      AM_iris_Glid_19: -7536675235685669391
+      AM_iris_Glid_2: -2266074707541393775
+      AM_iris_Glid_20: 4439837765060010334
+      AM_iris_Glid_21: -3469791911110914337
+      AM_iris_Glid_22: -8490906779681320752
+      AM_iris_Glid_23: -1151234397049541306
+      AM_iris_Glid_24: -5143704232378994820
+      AM_iris_Glid_25: 6363674799261513952
+      AM_iris_Glid_26: -2698617553878928064
+      AM_iris_Glid_27: 577413833630587268
+      AM_iris_Glid_28: 6850484769221473023
+      AM_iris_Glid_29: -7822216666339518476
+      AM_iris_Glid_3: 3827516983886061118
+      AM_iris_Glid_30: 815145540269974940
+      AM_iris_Glid_31: 8350938588523390638
+      AM_iris_Glid_32: 7894454620552223258
+      AM_iris_Glid_33: 5323833392295460100
+      AM_iris_Glid_34: 5148417435806478051
+      AM_iris_Glid_35: 6693989842763716180
+      AM_iris_Glid_36: -6306691456295968611
+      AM_iris_Glid_37: -3958627141243884234
+      AM_iris_Glid_38: 8847856569323612431
+      AM_iris_Glid_39: 3184290157097297575
+      AM_iris_Glid_4: 2329513681120006970
+      AM_iris_Glid_40: -305247628470718941
+      AM_iris_Glid_41: 2451094180295711908
+      AM_iris_Glid_42: 2351476171385751068
+      AM_iris_Glid_43: -1583483190715659625
+      AM_iris_Glid_44: -1780407204451238841
+      AM_iris_Glid_45: 8148390420589862103
+      AM_iris_Glid_46: -8024314025245052846
+      AM_iris_Glid_47: 7949949299919672130
+      AM_iris_Glid_48: -7796493081902539791
+      AM_iris_Glid_49: -7449337615109923576
+      AM_iris_Glid_5: -52607348152783240
+      AM_iris_Glid_50: -2795239809450924303
+      AM_iris_Glid_51: 2396597026298706903
+      AM_iris_Glid_52: 7968431701421264261
+      AM_iris_Glid_53: -1000652574737754439
+      AM_iris_Glid_54: -700540763201263217
+      AM_iris_Glid_6: 103483345428722616
+      AM_iris_Glid_7: -7309113378000962415
+      AM_iris_Glid_8: -4508778449494888351
+      AM_iris_Glid_9: -5909514550856225943
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

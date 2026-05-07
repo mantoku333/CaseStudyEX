@@ -24,9 +24,11 @@ public class UmbrellaController : MonoBehaviour
     [Header("見た目")]
     [SerializeField] private Sprite closedUmbrellaSprite;
     [SerializeField] private Sprite openDebugSprite;
+    [SerializeField, Min(0.01f)] private float changeAnimationDuration = 0.2f;
 
     private UmbrellaState umbrellaState = UmbrellaState.Closed;  //現在の傘の状態
     private SpriteRenderer spriteRenderer;  //デバッグ用のスプライトレンダラー(傘が出来たら削除)
+    private float changeAnimationTimer;
 
     [Header("SE")]
     [SerializeField] private AudioClip umbrella_open;       //傘開くSE
@@ -51,6 +53,11 @@ public class UmbrellaController : MonoBehaviour
 
     private void Update()
     {
+        if (changeAnimationTimer > 0f)
+        {
+            changeAnimationTimer = Mathf.Max(0f, changeAnimationTimer - Time.deltaTime);
+        }
+
         Glide();
     }
 
@@ -60,7 +67,20 @@ public class UmbrellaController : MonoBehaviour
     /// <param name="state">セットする傘の状態</param>
     public void SetUmbrellaState(UmbrellaState state)
     {
-        umbrellaState = state;
+        SetUmbrellaState(state, true);
+    }
+
+    public void SetUmbrellaState(UmbrellaState state, bool playChangeAnimation)
+    {
+        if (umbrellaState != state)
+        {
+            if (playChangeAnimation)
+            {
+                StartChangeAnimation();
+            }
+
+            umbrellaState = state;
+        }
         UpdateDebugColor();
     }
 
@@ -71,6 +91,11 @@ public class UmbrellaController : MonoBehaviour
     public UmbrellaState GetUmbrellaState()
     {
         return umbrellaState;
+    }
+
+    public bool IsChanging()
+    {
+        return changeAnimationTimer > 0f;
     }
 
     /// <summary>
@@ -105,6 +130,7 @@ public class UmbrellaController : MonoBehaviour
         if (umbrellaState == UmbrellaState.Closed)
         {
             umbrellaState = UmbrellaState.Open;
+            StartChangeAnimation();
 
             //傘開けるSE再生
             PlaySE(umbrella_open);
@@ -112,6 +138,7 @@ public class UmbrellaController : MonoBehaviour
         else
         {
             umbrellaState = UmbrellaState.Closed;
+            StartChangeAnimation();
 
             //傘閉じるSE再生
             PlaySE(umbrella_close);
@@ -161,6 +188,11 @@ public class UmbrellaController : MonoBehaviour
             spriteRenderer.sprite = closedUmbrellaSprite != null ? closedUmbrellaSprite : openDebugSprite;
             spriteRenderer.color = Color.white;
         }
+    }
+
+    private void StartChangeAnimation()
+    {
+        changeAnimationTimer = Mathf.Max(0.01f, changeAnimationDuration);
     }
 
     /// <summary>
