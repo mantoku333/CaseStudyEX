@@ -1,4 +1,5 @@
 ﻿using Player;
+using System;
 using UnityEngine;
 
 namespace GameName.Enemy
@@ -20,6 +21,10 @@ namespace GameName.Enemy
         [SerializeField] private LayerMask stageLayerMask;
         [SerializeField] private bool flipSpriteOnTurn = true;
 
+        [Header("Enemy Collision")]
+        [SerializeField, Min(0f)] private float enemyCollisionTurnCooldown = 0.15f;
+
+        private const float EnemyCollisionSideNormalThreshold = 0.35f;
         private Vector3 startPosition;
         private int moveDirection = 1;
         private bool movementPaused;
@@ -27,6 +32,9 @@ namespace GameName.Enemy
         private Collider2D bodyCollider;
         private SpriteRenderer spriteRenderer;
         private int currentHealth;
+        private float nextEnemyCollisionTurnTime;
+
+        public event Action EnemyCollisionTurned;
 
         /// <summary>
         /// 現在の向き。右が 1、左が -1。
@@ -126,6 +134,27 @@ namespace GameName.Enemy
         public void ResetPatrolOrigin()
         {
             startPosition = transform.position;
+        }
+
+        /// <summary>
+        /// 障害物接触時に向きを反転し、巡回基準位置を現在地に戻す。
+        /// </summary>
+        public void TurnAroundFromObstacle()
+        {
+            FaceDirection(-moveDirection);
+            StopHorizontalMotion();
+            ResetPatrolOrigin();
+        }
+
+        /// <summary>
+        /// 障害物から離れる向きへ方向転換し、巡回基準位置を現在地に戻す。
+        /// </summary>
+        /// <param name="direction">右: 1 / 左: -1。</param>
+        public void TurnAwayFromObstacle(int direction)
+        {
+            FaceDirection(direction);
+            StopHorizontalMotion();
+            ResetPatrolOrigin();
         }
 
         /// <summary>
@@ -271,6 +300,91 @@ namespace GameName.Enemy
             ApplyFacing();
         }
 
+        private void OnCollisionStay2D(Collision2D collision)
+        {
+            TryTurnAroundFromEnemyCollision(collision);
+        }
+
+        private bool TryTurnAroundFromEnemyCollision(Collision2D collision)
+        {
+            if (!TryGetEnemyCollisionTurnDirection(collision, out int turnDirection))
+            {
+                return false;
+            }
+
+            if (Time.time < nextEnemyCollisionTurnTime)
+            {
+                return false;
+            }
+
+            nextEnemyCollisionTurnTime = Time.time + enemyCollisionTurnCooldown;
+            TurnAwayFromObstacle(turnDirection);
+            EnemyCollisionTurned?.Invoke();
+            return true;
+        }
+
+        private bool TryGetEnemyCollisionTurnDirection(Collision2D collision, out int turnDirection)
+        {
+            turnDirection = moveDirection;
+
+            if (collision == null || collision.gameObject == null)
+            {
+                return false;
+            }
+
+            EnemyController otherEnemy = collision.gameObject.GetComponentInParent<EnemyController>();
+            if (otherEnemy == null || otherEnemy == this)
+            {
+                return false;
+            }
+
+            if (!TryGetSideContactDirection(collision, out turnDirection))
+            {
+                return false;
+            }
+
+            if (TryGetDirectionAwayFromOtherEnemy(otherEnemy, out int awayDirection))
+            {
+                turnDirection = awayDirection;
+            }
+
+            return turnDirection != moveDirection;
+        }
+
+        private bool TryGetSideContactDirection(Collision2D collision, out int direction)
+        {
+            direction = moveDirection;
+
+            for (int i = 0; i < collision.contactCount; i++)
+            {
+                ContactPoint2D contact = collision.GetContact(i);
+                float normalX = contact.normal.x;
+                if (Mathf.Abs(normalX) < EnemyCollisionSideNormalThreshold)
+                {
+                    continue;
+                }
+
+                direction = normalX > 0f ? 1 : -1;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool TryGetDirectionAwayFromOtherEnemy(EnemyController otherEnemy, out int direction)
+        {
+            direction = moveDirection;
+
+            float deltaX = CurrentX - otherEnemy.CurrentX;
+            if (Mathf.Abs(deltaX) <= 0.05f)
+            {
+                return false;
+            }
+
+            direction = deltaX > 0f ? 1 : -1;
+            return true;
+        }
+
         /// <summary>
         /// 現在の向きに合わせてスプライトの左右反転を適用する。
         /// </summary>
@@ -292,6 +406,8 @@ namespace GameName.Enemy
             {
                 playerHealth.TakeDamage(damageToPlayer);
             }
+
+            TryTurnAroundFromEnemyCollision(collision);
         }
 
         public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
