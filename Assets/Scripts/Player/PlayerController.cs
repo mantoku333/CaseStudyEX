@@ -294,25 +294,35 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
 
         //回避(Shift単体でその場回避 / A・D入力中なら左右回避)
+        bool canUseDodge = false;
+
+        if (playerAbilityController != null)
+        {
+            canUseDodge = playerAbilityController.GetCanDodge();
+        }
+
         bool isDodgeTriggered = IsPressedThisFrame(dodgeAction) ||
             (IsPressed(dodgeAction) && IsPressedThisFrame(moveAction));
 
-        if (isDodgeTriggered)
+        if (canUseDodge)
         {
-            Vector2 dodgeDirection = Vector2.zero;
+            if (isDodgeTriggered)
+            {
+                Vector2 dodgeDirection = Vector2.zero;
 
-            if (moveInput < -0.01f)
-            {
-                dodgeDirection = Vector2.left;
-            }
-            else if (moveInput > 0.01f)
-            {
-                dodgeDirection = Vector2.right;
-            }
+                if (moveInput < -0.01f)
+                {
+                    dodgeDirection = Vector2.left;
+                }
+                else if (moveInput > 0.01f)
+                {
+                    dodgeDirection = Vector2.right;
+                }
 
-            if (dodgeController != null)
-            {
-                dodgeController.Dodge(dodgeDirection);
+                if (dodgeController != null)
+                {
+                    dodgeController.Dodge(dodgeDirection);
+                }
             }
         }
 
@@ -341,9 +351,21 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             }
             else
             {
-                if (umbrellaController != null)
+                //アイテムを取得しているかどうかを確認し
+                //それによって反動を使用できるかを判断する
+                bool canUseGlide = false;
+
+                if (playerAbilityController != null)
                 {
-                    umbrellaController.ToggleUmbrella();
+                    canUseGlide = playerAbilityController.GetCanGlide();
+                }
+
+                if (canUseGlide)
+                {
+                    if (umbrellaController != null)
+                    {
+                        umbrellaController.ToggleUmbrella();
+                    }
                 }
             }
         }
@@ -366,7 +388,20 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                         mouseWorldPos.z = 0.0f;
 
                         Vector2 shootDirection = (mouseWorldPos - transform.position).normalized;
-                        gunController.Shoot(shootDirection);
+
+                        //アイテムを取得しているかどうかを確認し
+                        //それによって反動を使用できるかを判断する
+                        bool canUseGunRecoil = false;
+
+                        if (playerAbilityController != null)
+                        {
+                            canUseGunRecoil = playerAbilityController.GetCanGunRecoil();
+                        }
+
+                        if (canUseGunRecoil)
+                        {
+                            gunController.Shoot(shootDirection);
+                        }
                     }
                 }
 
@@ -387,7 +422,22 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             {
                 if (gunController != null)
                 {
-                    gunController.JumpRecoil();
+                    //アイテムを取得しているかどうかを確認し
+                    //それによって反動を使用できるかを判断する
+                    bool canUseGunRecoil = false;
+
+                    if (playerAbilityController != null)
+                    {
+                        canUseGunRecoil = playerAbilityController.GetCanGunRecoil();
+                    }
+
+                    if (canUseGunRecoil)
+                    {
+                        if (gunController != null)
+                        {
+                            gunController.JumpRecoil();
+                        }
+                    }
                 }
             }
         }
