@@ -94,6 +94,14 @@ namespace GameName.Enemy
             BuildPlayerContactFilter();
         }
 
+        private void OnEnable()
+        {
+            if (enemyController != null)
+            {
+                enemyController.EnemyCollisionTurned += HandleEnemyCollisionTurned;
+            }
+        }
+
         /// <summary>
         /// 無効化時に移動停止状態を解除し、内部状態をリセットする。
         /// </summary>
@@ -104,6 +112,7 @@ namespace GameName.Enemy
                 return;
             }
 
+            enemyController.EnemyCollisionTurned -= HandleEnemyCollisionTurned;
             enemyController.PauseMovement(false);
             enemyController.StopHorizontalMotion();
             attackState = AttackState.Idle;
@@ -276,6 +285,16 @@ namespace GameName.Enemy
             attackState = AttackState.Cooldown;
             stateTimer = chargeCooldown;
             enemyController.StopHorizontalMotion();
+        }
+
+        private void HandleEnemyCollisionTurned()
+        {
+            if (attackState != AttackState.Vibration && attackState != AttackState.Charging)
+            {
+                return;
+            }
+
+            EnterCooldownState();
         }
 
         /// <summary>
