@@ -46,6 +46,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private bool hasPreviousGroundState;
     private bool previousGroundState;
     private bool isFacingRight = true;
+    private bool externalControlLocked;
+    private bool externalFacingLocked;
+    private bool externalFacingRight = true;
 
     //-------各種コンポーネント参照関連--------
     private GroundCheck groundCheck;                           //地面判定のスクリプト
@@ -87,6 +90,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         umbrellaAttackController.IsAttacking() &&
         umbrellaController != null &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Closed;
+    public bool IsExternalControlLocked => externalControlLocked;
+    public bool IsExternalFacingLocked => externalFacingLocked;
 
     private void Awake()
     {
@@ -114,6 +119,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private void OnDisable()
     {
         inputActionsReady = false;
+        externalControlLocked = false;
+        externalFacingLocked = false;
+        externalFacingRight = true;
     }
 
     private void Start()
@@ -137,6 +145,14 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     {
         RefreshGroundState();
         HandleGroundTransition();
+
+        if (externalControlLocked)
+        {
+            moveInput = 0.0f;
+            jumpInput = false;
+            return;
+        }
+
         Move();
         Jump();
     }
@@ -163,6 +179,28 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public PlayerStatsData GetPlayerStatsData()
     {
         return playerStatsData;
+    }
+
+    public void SetExternalControlLocked(bool locked)
+    {
+        externalControlLocked = locked;
+
+        if (externalControlLocked)
+        {
+            moveInput = 0.0f;
+            jumpInput = false;
+        }
+    }
+
+    public void SetExternalFacingLocked(bool locked, bool faceRight)
+    {
+        externalFacingLocked = locked;
+        externalFacingRight = faceRight;
+
+        if (externalFacingLocked)
+        {
+            isFacingRight = externalFacingRight;
+        }
     }
 
     private void FindComponents()
@@ -271,6 +309,13 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     // - 地上攻撃は傘攻撃
     private void GetInput()
     {
+        if (externalControlLocked)
+        {
+            moveInput = 0.0f;
+            jumpInput = false;
+            return;
+        }
+
         if (umbrellaController == null) { return; }
         if (!inputActionsReady) { return; }
 
@@ -507,6 +552,12 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     /// </remarks>
     private void UpdateFacingDirection()
     {
+        if (externalFacingLocked)
+        {
+            isFacingRight = externalFacingRight;
+            return;
+        }
+
         if (umbrellaController == null)
         {
             return;
