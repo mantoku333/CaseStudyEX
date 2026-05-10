@@ -9,6 +9,8 @@ using UnityEngine.UI;
 public sealed class TutorialOverlayController : MonoBehaviour
 {
     [Header("UI")]
+    [SerializeField] private GameObject viewRoot;
+    [SerializeField] private bool hideViewRootWhenClosed = true;
     [SerializeField] private GameObject panelRoot;
     [SerializeField] private Button closeButton;
     [SerializeField] private TMP_Text keyLabel;
@@ -49,6 +51,20 @@ public sealed class TutorialOverlayController : MonoBehaviour
     private Action onClosed;
     private bool capturedPrePlayPanelState;
     private bool prePlayPanelActive;
+    private bool hidingInternal;
+
+    public void ConfigurePrompt(string actionName, string labelWhenBindingMissing)
+    {
+        if (!string.IsNullOrWhiteSpace(actionName))
+        {
+            inputActionName = actionName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(labelWhenBindingMissing))
+        {
+            fallbackLabel = labelWhenBindingMissing;
+        }
+    }
 
     private void Awake()
     {
@@ -111,6 +127,12 @@ public sealed class TutorialOverlayController : MonoBehaviour
 
     public void Show(Action closeCallback = null)
     {
+        GameObject root = ResolveViewRoot();
+        if (root != null && !root.activeSelf)
+        {
+            root.SetActive(true);
+        }
+
         onClosed = closeCallback;
 
         if (panelRoot != null)
@@ -135,6 +157,13 @@ public sealed class TutorialOverlayController : MonoBehaviour
 
     private void HideInternal(bool invokeCallback)
     {
+        if (hidingInternal)
+        {
+            return;
+        }
+
+        hidingInternal = true;
+
         if (panelRoot != null)
         {
             panelRoot.SetActive(false);
@@ -149,6 +178,19 @@ public sealed class TutorialOverlayController : MonoBehaviour
         {
             callback?.Invoke();
         }
+
+        GameObject root = ResolveViewRoot();
+        if (hideViewRootWhenClosed && root != null && root.activeSelf)
+        {
+            root.SetActive(false);
+        }
+
+        hidingInternal = false;
+    }
+
+    private GameObject ResolveViewRoot()
+    {
+        return viewRoot != null ? viewRoot : gameObject;
     }
 
     private void RestartLoopAnimation()

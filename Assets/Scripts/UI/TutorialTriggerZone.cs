@@ -6,9 +6,22 @@ using Yarn.Unity;
 [RequireComponent(typeof(Collider2D))]
 public sealed class TutorialTriggerZone : MonoBehaviour
 {
+    private enum TutorialPreset
+    {
+        Attack = 0,
+        Dodge,
+        Parry,
+        Gimmick,
+        Glide,
+        Custom
+    }
+
     [Header("Tutorial")]
     [SerializeField] private TutorialOverlayController tutorialOverlay;
+    [SerializeField] private TutorialPreset preset = TutorialPreset.Attack;
     [SerializeField] private string completedFlagKey = GameProgressKeys.TutorialAttackShown;
+    [SerializeField] private string inputActionName = "Attack";
+    [SerializeField] private string fallbackLabel = "Attack";
     [SerializeField] private bool markCompletedOnOpen;
     [SerializeField] private bool disableAfterCompletion = true;
 
@@ -30,6 +43,12 @@ public sealed class TutorialTriggerZone : MonoBehaviour
     private void Reset()
     {
         EnsureTriggerCollider();
+        ApplyPresetValues();
+    }
+
+    private void OnValidate()
+    {
+        ApplyPresetValues();
     }
 
     private void Awake()
@@ -150,6 +169,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
             MarkCompleted();
         }
 
+        tutorialOverlay.ConfigurePrompt(inputActionName, fallbackLabel);
         tutorialOverlay.Show(OnTutorialClosed);
     }
 
@@ -205,6 +225,47 @@ public sealed class TutorialTriggerZone : MonoBehaviour
         if (dialogueManager == null)
         {
             dialogueManager = FindFirstObjectByType<DialogueManager>();
+        }
+    }
+
+    private void ApplyPresetValues()
+    {
+        switch (preset)
+        {
+            case TutorialPreset.Attack:
+                completedFlagKey = GameProgressKeys.TutorialAttackShown;
+                inputActionName = "Attack";
+                fallbackLabel = "Attack";
+                dialogueNodeName = "Tutorial_Attack";
+                break;
+
+            case TutorialPreset.Dodge:
+                completedFlagKey = GameProgressKeys.TutorialDodgeShown;
+                inputActionName = "Dodge";
+                fallbackLabel = "Dodge";
+                dialogueNodeName = "Tutorial_Dodge";
+                break;
+
+            case TutorialPreset.Parry:
+                completedFlagKey = GameProgressKeys.TutorialParryShown;
+                inputActionName = "UmbrellaToggle";
+                fallbackLabel = "Umbrella";
+                dialogueNodeName = "Tutorial_Parry";
+                break;
+
+            case TutorialPreset.Gimmick:
+                completedFlagKey = GameProgressKeys.TutorialGimmickShown;
+                inputActionName = "Attack";
+                fallbackLabel = "Attack";
+                dialogueNodeName = "Tutorial_Gimmick";
+                break;
+
+            case TutorialPreset.Glide:
+                completedFlagKey = GameProgressKeys.TutorialGlideShown;
+                inputActionName = "UmbrellaToggle";
+                fallbackLabel = "Umbrella";
+                dialogueNodeName = "Tutorial_Glide";
+                break;
         }
     }
 
