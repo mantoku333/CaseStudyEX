@@ -7456,8 +7456,12 @@ MonoBehaviour:
   idleStateName: idle
   runStateName: run
   jumpStateName: jump
+  glideStateName: glide
   landStateName: land
   dodgeStateName: dodge
+  parryStateName: parry
+  changeStateName: change
+  attackStateName: attack
 --- !u!1 &775024700
 GameObject:
   m_ObjectHideFlags: 0
@@ -7837,6 +7841,7 @@ MonoBehaviour:
   gunController: {fileID: 2078664045}
   closedUmbrellaSprite: {fileID: 0}
   openDebugSprite: {fileID: 0}
+  changeAnimationDuration: 0.2
   umbrella_open: {fileID: 8300000, guid: b23093459fc678f498899d1ceed37ba0, type: 3}
   umbrella_close: {fileID: 8300000, guid: 631315968a2b9e7428dc0aa7c2457e77, type: 3}
 --- !u!114 &974501602
@@ -7855,6 +7860,11 @@ MonoBehaviour:
   attackPerSecond: 4
   attackCollider: {fileID: 2100399110}
   player_normalAttack: {fileID: 8300000, guid: 298ef99b3d24d514ba42518424f5ddf3, type: 3}
+  attackEffectTexture: {fileID: 0}
+  attackEffectFrameSeconds: 0.025
+  attackEffectWorldOffset: {x: 0, y: 0.1, z: 0}
+  attackEffectScale: {x: 1, y: 1, z: 1}
+  attackEffectSortingOrderOffset: 2
 --- !u!114 &974501603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22299,7 +22309,11 @@ MonoBehaviour:
   minBubbleHeight: 84
   maxBubbleHeight: 640
   maxTextWidth: 900
+  widenBubbleWhenLineCountExceeds: 2
+  extraHeightSafetyPadding: 12
   logAutoSizeResult: 0
+  normalizeTextMargin: 1
+  normalizedTextMargin: {x: 0, y: 0, z: 12, w: 6}
 --- !u!224 &1984818876
 RectTransform:
   m_ObjectHideFlags: 0
