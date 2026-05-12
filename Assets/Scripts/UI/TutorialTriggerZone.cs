@@ -6,9 +6,25 @@ using Yarn.Unity;
 [RequireComponent(typeof(Collider2D))]
 public sealed class TutorialTriggerZone : MonoBehaviour
 {
+    private enum TutorialPreset
+    {
+        Attack = 0,
+        Dodge,
+        Parry,
+        Gimmick,
+        Glide,
+        Custom
+    }
+
     [Header("Tutorial")]
     [SerializeField] private TutorialOverlayController tutorialOverlay;
+    [SerializeField] private TutorialPreset preset = TutorialPreset.Attack;
+    [SerializeField, HideInInspector] private TutorialPreset previousPreset = TutorialPreset.Attack;
     [SerializeField] private string completedFlagKey = GameProgressKeys.TutorialAttackShown;
+    [SerializeField] private string promptText = "攻撃する";
+    [SerializeField] private Sprite[] gifFrames = System.Array.Empty<Sprite>();
+    [SerializeField] private float gifFramesPerSecond = 12f;
+    [SerializeField] private float gifLoopIntervalSeconds = 0.5f;
     [SerializeField] private bool markCompletedOnOpen;
     [SerializeField] private bool disableAfterCompletion = true;
 
@@ -30,6 +46,19 @@ public sealed class TutorialTriggerZone : MonoBehaviour
     private void Reset()
     {
         EnsureTriggerCollider();
+        ApplyPresetValues();
+        previousPreset = preset;
+    }
+
+    private void OnValidate()
+    {
+        if (preset == previousPreset)
+        {
+            return;
+        }
+
+        ApplyPresetValues();
+        previousPreset = preset;
     }
 
     private void Awake()
@@ -150,6 +179,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
             MarkCompleted();
         }
 
+        tutorialOverlay.ConfigureContent(promptText, gifFrames, gifFramesPerSecond, gifLoopIntervalSeconds);
         tutorialOverlay.Show(OnTutorialClosed);
     }
 
@@ -205,6 +235,42 @@ public sealed class TutorialTriggerZone : MonoBehaviour
         if (dialogueManager == null)
         {
             dialogueManager = FindFirstObjectByType<DialogueManager>();
+        }
+    }
+
+    private void ApplyPresetValues()
+    {
+        switch (preset)
+        {
+            case TutorialPreset.Attack:
+                completedFlagKey = GameProgressKeys.TutorialAttackShown;
+                promptText = "攻撃する";
+                dialogueNodeName = "Tutorial_Attack";
+                break;
+
+            case TutorialPreset.Dodge:
+                completedFlagKey = GameProgressKeys.TutorialDodgeShown;
+                promptText = "回避する";
+                dialogueNodeName = "Tutorial_Dodge";
+                break;
+
+            case TutorialPreset.Parry:
+                completedFlagKey = GameProgressKeys.TutorialParryShown;
+                promptText = "傘でパリィする";
+                dialogueNodeName = "Tutorial_Parry";
+                break;
+
+            case TutorialPreset.Gimmick:
+                completedFlagKey = GameProgressKeys.TutorialGimmickShown;
+                promptText = "ギミックを動かす";
+                dialogueNodeName = "Tutorial_Gimmick";
+                break;
+
+            case TutorialPreset.Glide:
+                completedFlagKey = GameProgressKeys.TutorialGlideShown;
+                promptText = "傘を開いて滑空する";
+                dialogueNodeName = "Tutorial_Glide";
+                break;
         }
     }
 
