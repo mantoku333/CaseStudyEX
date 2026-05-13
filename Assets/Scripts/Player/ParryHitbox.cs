@@ -72,7 +72,22 @@ public class ParryHitbox : MonoBehaviour
         // 連打中も再パリィできるよう、通常弾だけリストから外す。
         for (int i = enemyAttacks.Count - 1; i >= 0; i--)
         {
-            if (enemyAttacks[i] == null || enemyAttacks[i].GetComponent<LastBossAttackParryTarget>() == null)
+            GameObject attackObject = enemyAttacks[i];
+            if (attackObject == null)
+            {
+                enemyAttacks.RemoveAt(i);
+                continue;
+            }
+
+            EnemyBullet enemyBullet = attackObject.GetComponent<EnemyBullet>();
+            if (enemyBullet != null)
+            {
+                enemyBullet.DestroyByParry();
+                enemyAttacks.RemoveAt(i);
+                continue;
+            }
+
+            if (attackObject.GetComponent<LastBossAttackParryTarget>() == null)
             {
                 enemyAttacks.RemoveAt(i);
             }
