@@ -1,68 +1,228 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Cinemachine;
 
 /// <summary>
-/// ステージの特定エリアに入ったときにカメラを切り替えるトリガー
-/// メトロイドヴァニアの部屋遷移や、ボス部屋に入った時のカメラ固定などに使用します。
+/// Activates a room camera when the player enters this trigger.
+/// Corridor triggers can instead release back to the default follow camera.
 /// </summary>
 public class RoomCameraTrigger : MonoBehaviour
 {
+    private static RoomCameraTrigger _activeTrigger;
+    private static readonly List<RoomCameraTrigger> _occupiedRoomTriggers = new();
+    private static int _defaultTriggerOverlapCount;
+
     [Header("Camera Settings")]
-    [SerializeField, Tooltip("この部屋に入ったときに有効になるカメラ（子オブジェクト等に配置したものをアサイン）")]
+    [SerializeField]
     private CinemachineCamera _roomCamera;
 
-    [SerializeField, Tooltip("プレイヤー侵入時の優先度（デフォルトカメラの優先度より高く設定する）")]
+    [SerializeField]
+    private bool _useDefaultCameraWhenEntered;
+
+    [SerializeField]
     private int _activePriority = 20;
 
-    [SerializeField, Tooltip("プレイヤー退出時（非アクティブ時）の優先度（デフォルトカメラの優先度より低く設定する）")]
+    [SerializeField]
     private int _inactivePriority = 0;
 
     [Header("Detection Settings")]
-    [SerializeField, Tooltip("侵入を検知する対象のタグ名")]
+    [SerializeField]
     private string _playerTag = "Player";
+
+    private int _overlapCount;
+
+    private bool IsDefaultTrigger => _useDefaultCameraWhenEntered;
+    private bool HasRoomCamera => _roomCamera != null;
 
     private void Awake()
     {
-        if (_roomCamera == null)
+        if (!IsDefaultTrigger && !HasRoomCamera)
         {
-            Debug.LogWarning($"[{gameObject.name}] RoomCameraTriggerにCinemachineCameraが設定されていません！", this);
+            Debug.LogWarning($"[{gameObject.name}] RoomCameraTrigger has no CinemachineCamera assigned.", this);
+            return;
         }
-        else
+
+        DeactivateOwnCamera();
+    }
+
+    private void OnDisable()
+    {
+        if (_overlapCount > 0)
         {
-            // ゲーム開始時は必ず優先度を下げておく（エディタ上の設定のまま意図せずアクティブになるのを防ぐため）
-            DeactivateCamera();
+            if (IsDefaultTrigger)
+            {
+                _defaultTriggerOverlapCount = Mathf.Max(0, _defaultTriggerOverlapCount - 1);
+            }
+            else
+            {
+                _occupiedRoomTriggers.Remove(this);
+            }
+        }
+
+        if (_activeTrigger == this)
+        {
+            _activeTrigger = null;
+        }
+
+        _overlapCount = 0;
+        DeactivateOwnCamera();
+
+        if (_defaultTriggerOverlapCount == 0)
+        {
+            ActivateBestAvailableRoomTrigger();
         }
     }
 
-    /// <summary>
-    /// カメラをアクティブにする（優先度を上げる）
-    /// </summary>
     public void ActivateCamera()
     {
-        if (_roomCamera != null)
+        if (IsDefaultTrigger)
         {
-            _roomCamera.Priority.Value = _activePriority;
-            _roomCamera.Priority.Enabled = true;
+            ReleaseToDefaultCamera();
+            return;
         }
+
+        if (!HasRoomCamera)
+        {
+            return;
+        }
+
+        if (_activeTrigger != null && _activeTrigger != this)
+        {
+            _activeTrigger.DeactivateOwnCamera();
+        }
+
+        _activeTrigger = this;
+        _roomCamera.Priority.Value = _activePriority;
+        _roomCamera.Priority.Enabled = true;
     }
 
-    /// <summary>
-    /// カメラを元の状態に戻す（優先度を下げる）
-    /// </summary>
     public void DeactivateCamera()
     {
-        if (_roomCamera != null)
+        if (IsDefaultTrigger)
         {
-            _roomCamera.Priority.Value = _inactivePriority;
+            return;
+        }
+
+        if (_activeTrigger == this)
+        {
+            _activeTrigger = null;
+        }
+
+        DeactivateOwnCamera();
+    }
+
+    private void DeactivateOwnCamera()
+    {
+        if (!HasRoomCamera)
+        {
+            return;
+        }
+
+        _roomCamera.Priority.Value = _inactivePriority;
+        _roomCamera.Priority.Enabled = true;
+    }
+
+    private static void ReleaseToDefaultCamera()
+    {
+        if (_activeTrigger == null)
+        {
+            return;
+        }
+
+        RoomCameraTrigger previousTrigger = _activeTrigger;
+        _activeTrigger = null;
+        previousTrigger.DeactivateOwnCamera();
+    }
+
+    private static void ActivateBestAvailableRoomTrigger()
+    {
+        if (_defaultTriggerOverlapCount > 0)
+        {
+            return;
+        }
+
+        for (int i = _occupiedRoomTriggers.Count - 1; i >= 0; i--)
+        {
+            RoomCameraTrigger trigger = _occupiedRoomTriggers[i];
+            if (trigger == null || !trigger.isActiveAndEnabled || !trigger.HasRoomCamera)
+            {
+                _occupiedRoomTriggers.RemoveAt(i);
+                continue;
+            }
+
+            trigger.ActivateCamera();
+            return;
         }
     }
 
-    // --- 2D 当たり判定 ---
+    private void HandlePlayerEntered()
+    {
+        _overlapCount++;
+        if (_overlapCount != 1)
+        {
+            return;
+        }
+
+        if (IsDefaultTrigger)
+        {
+            _defaultTriggerOverlapCount++;
+            ReleaseToDefaultCamera();
+            return;
+        }
+
+        if (!HasRoomCamera)
+        {
+            return;
+        }
+
+        _occupiedRoomTriggers.Remove(this);
+        _occupiedRoomTriggers.Add(this);
+
+        if (_defaultTriggerOverlapCount == 0)
+        {
+            ActivateCamera();
+        }
+    }
+
+    private void HandlePlayerExited()
+    {
+        if (_overlapCount <= 0)
+        {
+            return;
+        }
+
+        _overlapCount--;
+        if (_overlapCount != 0)
+        {
+            return;
+        }
+
+        if (IsDefaultTrigger)
+        {
+            _defaultTriggerOverlapCount = Mathf.Max(0, _defaultTriggerOverlapCount - 1);
+            if (_defaultTriggerOverlapCount == 0)
+            {
+                ActivateBestAvailableRoomTrigger();
+            }
+
+            return;
+        }
+
+        _occupiedRoomTriggers.Remove(this);
+
+        if (_activeTrigger == this)
+        {
+            _activeTrigger = null;
+            DeactivateOwnCamera();
+            ActivateBestAvailableRoomTrigger();
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(_playerTag))
         {
-            ActivateCamera();
+            HandlePlayerEntered();
         }
     }
 
@@ -70,16 +230,15 @@ public class RoomCameraTrigger : MonoBehaviour
     {
         if (collision.CompareTag(_playerTag))
         {
-            DeactivateCamera();
+            HandlePlayerExited();
         }
     }
 
-    // --- 3D(2.5D) 当たり判定 ---
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(_playerTag))
         {
-            ActivateCamera();
+            HandlePlayerEntered();
         }
     }
 
@@ -87,7 +246,7 @@ public class RoomCameraTrigger : MonoBehaviour
     {
         if (other.CompareTag(_playerTag))
         {
-            DeactivateCamera();
+            HandlePlayerExited();
         }
     }
 }

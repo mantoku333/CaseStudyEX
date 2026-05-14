@@ -198,6 +198,17 @@ public sealed class StoryEventRunner : MonoBehaviour
         {
             StoryPauseRuntime.SetOverride(definition.pausePolicy);
 
+            if (string.Equals(definition.eventId, "prologue", System.StringComparison.OrdinalIgnoreCase))
+            {
+                CameraIntroMove introMove =
+                    FindFirstObjectByType<CameraIntroMove>(FindObjectsInactive.Include);
+
+                if (introMove != null)
+                {
+                    yield return introMove.PlayIntroSequence();
+                }
+            }
+
             if (definition.preActions != null && definition.preActions.Count > 0)
             {
                 yield return RunActions(definition.preActions);
