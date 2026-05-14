@@ -148,19 +148,9 @@ public class TitleSceneController : MonoBehaviour
         }
     }
 
-    public void OnClickSaveSlot1()
+    public void OnClickSaveSlot(int slotIndex)
     {
-        SelectSaveSlot(1);
-    }
-
-    public void OnClickSaveSlot2()
-    {
-        SelectSaveSlot(2);
-    }
-
-    public void OnClickSaveSlot3()
-    {
-        SelectSaveSlot(3);
+        SelectSaveSlot(slotIndex);
     }
 
     public void OnClickLoadConfirmYesButton()

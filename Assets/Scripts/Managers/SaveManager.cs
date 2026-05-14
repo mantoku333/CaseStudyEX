@@ -8,7 +8,7 @@ public sealed class SaveManager : MonoBehaviour
     private const int SaveVersion = 2;
     public const int DefaultSlotIndex = 1;
     public const int MinSlotIndex = 1;
-    public const int MaxSlotIndex = 3;
+    public const int MaxSlotIndex = 10;
     private static readonly bool EnableLoadTrace = false;
     private const int TraceFrameCount = 120;
     private const float TraceThreshold = 0.001f;
