@@ -10,6 +10,7 @@ namespace Player
     {
         [SerializeField] private PlayerStatsData statsData;
         [SerializeField, Min(0f)] private float damageCooldownSeconds = 3f;
+        [SerializeField] private int maxHealthBonus = 0;
 
         private int currentHealth;
         private float nextDamageTime;
@@ -25,7 +26,20 @@ namespace Player
         public int CurrentHealth => currentHealth;
 
         /// <summary>最大HP</summary>
-        public int MaxHealth => statsData != null ? statsData.MaxHealth : 1;
+        public int MaxHealth
+        {
+            get
+            {
+                int baseMaxHealth = 1;
+
+                if (statsData != null)
+                {
+                    baseMaxHealth = statsData.MaxHealth;
+                }
+
+                return baseMaxHealth + maxHealthBonus;
+            }
+        }
 
         /// <summary>
         /// 初期HPを設定
@@ -69,8 +83,37 @@ namespace Player
             {
                 return;
             }
+            Debug.Log($"回復前 HP: {currentHealth} / {MaxHealth}");
 
             currentHealth = Mathf.Min(MaxHealth, currentHealth + value);
+
+            Debug.Log($"回復後 HP: {currentHealth} / {MaxHealth}");
+
+            NotifyHealthChanged();
+        }
+
+        /// <summary>
+        /// HPの最大値を増加
+        /// </summary>
+        public void AddMaxHealth(int value, bool healAddedAmount)
+        {
+            if (value <= 0){ return; }
+
+            Debug.Log($"上限増加前 HP: {currentHealth} / {MaxHealth}");
+
+            maxHealthBonus += value;
+
+            if (healAddedAmount)
+            {
+                currentHealth = Mathf.Min(MaxHealth, currentHealth + value);
+            }
+            else
+            {
+                currentHealth = Mathf.Min(currentHealth, MaxHealth);
+            }
+
+            Debug.Log($"上限増加後 HP: {currentHealth} / {MaxHealth}");
+
             NotifyHealthChanged();
         }
 

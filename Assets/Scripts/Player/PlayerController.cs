@@ -46,6 +46,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private bool hasPreviousGroundState;
     private bool previousGroundState;
     private bool isFacingRight = true;
+    private bool externalControlLocked;
+    private bool externalFacingLocked;
+    private bool externalFacingRight = true;
 
     //-------各種コンポーネント参照関連--------
     private GroundCheck groundCheck;                           //地面判定のスクリプト
@@ -87,6 +90,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         umbrellaAttackController.IsAttacking() &&
         umbrellaController != null &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Closed;
+    public bool IsExternalControlLocked => externalControlLocked;
+    public bool IsExternalFacingLocked => externalFacingLocked;
 
     private void Awake()
     {
@@ -114,6 +119,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private void OnDisable()
     {
         inputActionsReady = false;
+        externalControlLocked = false;
+        externalFacingLocked = false;
+        externalFacingRight = true;
     }
 
     private void Start()
@@ -137,6 +145,14 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     {
         RefreshGroundState();
         HandleGroundTransition();
+
+        if (externalControlLocked)
+        {
+            moveInput = 0.0f;
+            jumpInput = false;
+            return;
+        }
+
         Move();
         Jump();
     }
@@ -163,6 +179,28 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public PlayerStatsData GetPlayerStatsData()
     {
         return playerStatsData;
+    }
+
+    public void SetExternalControlLocked(bool locked)
+    {
+        externalControlLocked = locked;
+
+        if (externalControlLocked)
+        {
+            moveInput = 0.0f;
+            jumpInput = false;
+        }
+    }
+
+    public void SetExternalFacingLocked(bool locked, bool faceRight)
+    {
+        externalFacingLocked = locked;
+        externalFacingRight = faceRight;
+
+        if (externalFacingLocked)
+        {
+            isFacingRight = externalFacingRight;
+        }
     }
 
     private void FindComponents()
@@ -271,6 +309,13 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     // - 地上攻撃は傘攻撃
     private void GetInput()
     {
+        if (externalControlLocked)
+        {
+            moveInput = 0.0f;
+            jumpInput = false;
+            return;
+        }
+
         if (umbrellaController == null) { return; }
         if (!inputActionsReady) { return; }
 
@@ -301,25 +346,35 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
 
         //回避(Shift単体でその場回避 / A・D入力中なら左右回避)
+        bool canUseDodge = false;
+
+        if (playerAbilityController != null)
+        {
+            canUseDodge = playerAbilityController.GetCanDodge();
+        }
+
         bool isDodgeTriggered = IsPressedThisFrame(dodgeAction) ||
             (IsPressed(dodgeAction) && IsPressedThisFrame(moveAction));
 
-        if (isDodgeTriggered)
+        if (canUseDodge)
         {
-            Vector2 dodgeDirection = Vector2.zero;
+            if (isDodgeTriggered)
+            {
+                Vector2 dodgeDirection = Vector2.zero;
 
-            if (moveInput < -0.01f)
-            {
-                dodgeDirection = Vector2.left;
-            }
-            else if (moveInput > 0.01f)
-            {
-                dodgeDirection = Vector2.right;
-            }
+                if (moveInput < -0.01f)
+                {
+                    dodgeDirection = Vector2.left;
+                }
+                else if (moveInput > 0.01f)
+                {
+                    dodgeDirection = Vector2.right;
+                }
 
-            if (dodgeController != null)
-            {
-                dodgeController.Dodge(dodgeDirection);
+                if (dodgeController != null)
+                {
+                    dodgeController.Dodge(dodgeDirection);
+                }
             }
         }
 
@@ -348,9 +403,21 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             }
             else
             {
-                if (umbrellaController != null)
+                //アイテムを取得しているかどうかを確認し
+                //それによって反動を使用できるかを判断する
+                bool canUseGlide = false;
+
+                if (playerAbilityController != null)
                 {
-                    umbrellaController.ToggleUmbrella();
+                    canUseGlide = playerAbilityController.GetCanGlide();
+                }
+
+                if (canUseGlide)
+                {
+                    if (umbrellaController != null)
+                    {
+                        umbrellaController.ToggleUmbrella();
+                    }
                 }
             }
         }
@@ -373,7 +440,20 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                         mouseWorldPos.z = 0.0f;
 
                         Vector2 shootDirection = (mouseWorldPos - transform.position).normalized;
-                        gunController.Shoot(shootDirection);
+
+                        //アイテムを取得しているかどうかを確認し
+                        //それによって反動を使用できるかを判断する
+                        bool canUseGunRecoil = false;
+
+                        if (playerAbilityController != null)
+                        {
+                            canUseGunRecoil = playerAbilityController.GetCanGunRecoil();
+                        }
+
+                        if (canUseGunRecoil)
+                        {
+                            gunController.Shoot(shootDirection);
+                        }
                     }
                 }
 
@@ -394,7 +474,22 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             {
                 if (gunController != null)
                 {
-                    gunController.JumpRecoil();
+                    //アイテムを取得しているかどうかを確認し
+                    //それによって反動を使用できるかを判断する
+                    bool canUseGunRecoil = false;
+
+                    if (playerAbilityController != null)
+                    {
+                        canUseGunRecoil = playerAbilityController.GetCanGunRecoil();
+                    }
+
+                    if (canUseGunRecoil)
+                    {
+                        if (gunController != null)
+                        {
+                            gunController.JumpRecoil();
+                        }
+                    }
                 }
             }
         }
@@ -507,6 +602,12 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     /// </remarks>
     private void UpdateFacingDirection()
     {
+        if (externalFacingLocked)
+        {
+            isFacingRight = externalFacingRight;
+            return;
+        }
+
         if (umbrellaController == null)
         {
             return;

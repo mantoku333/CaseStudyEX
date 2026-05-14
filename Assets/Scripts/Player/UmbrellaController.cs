@@ -121,6 +121,34 @@ public class UmbrellaController : MonoBehaviour
         return glideFallSpeed;
     }
 
+    public void OpenUmbrella()
+    {
+        if (umbrellaState == UmbrellaState.Open)
+        {
+            UpdateDebugColor();
+            return;
+        }
+
+        umbrellaState = UmbrellaState.Open;
+        StartChangeAnimation();
+        PlaySE(umbrella_open);
+        UpdateDebugColor();
+    }
+
+    public void CloseUmbrella()
+    {
+        if (umbrellaState == UmbrellaState.Closed)
+        {
+            UpdateDebugColor();
+            return;
+        }
+
+        umbrellaState = UmbrellaState.Closed;
+        StartChangeAnimation();
+        PlaySE(umbrella_close);
+        UpdateDebugColor();
+    }
+
 
     /// <summary>
     /// 傘の開閉を切り替える関数
@@ -129,22 +157,12 @@ public class UmbrellaController : MonoBehaviour
     {
         if (umbrellaState == UmbrellaState.Closed)
         {
-            umbrellaState = UmbrellaState.Open;
-            StartChangeAnimation();
-
-            //傘開けるSE再生
-            PlaySE(umbrella_open);
+            OpenUmbrella();
         }
         else
         {
-            umbrellaState = UmbrellaState.Closed;
-            StartChangeAnimation();
-
-            //傘閉じるSE再生
-            PlaySE(umbrella_close);
+            CloseUmbrella();
         }
-
-        UpdateDebugColor();
     }
 
     /// <summary>
