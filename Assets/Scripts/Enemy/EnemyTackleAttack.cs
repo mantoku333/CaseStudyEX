@@ -1,4 +1,5 @@
 ﻿using Player;
+using System;
 using UnityEngine;
 
 namespace GameName.Enemy
@@ -58,6 +59,11 @@ namespace GameName.Enemy
         private float chargeStartX;
         private float previousChargeX;
         private float blockedTimer;
+
+        /// <summary>
+        /// 予備動作ではなく、実際に突進状態へ入った瞬間に通知する。
+        /// </summary>
+        public event Action ChargeStarted;
 
         public bool IsWindingUp => attackState == AttackState.Vibration;
         public bool IsCharging => attackState == AttackState.Charging;
@@ -199,6 +205,8 @@ namespace GameName.Enemy
             blockedTimer = 0f;
 
             attackState = AttackState.Charging;
+            // 突進開始SEはこのタイミングで1回だけ鳴らす。
+            ChargeStarted?.Invoke();
         }
 
         /// <summary>

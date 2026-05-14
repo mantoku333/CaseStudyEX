@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace GameName.Enemy
@@ -54,6 +55,12 @@ namespace GameName.Enemy
         private float chargeStartX;
         private float previousChargeX;
         private float blockedTimer;
+
+        /// <summary>
+        /// StageBossが実際に突進状態へ入った瞬間に通知する。
+        /// Enemy_Tackleと同じ突進開始SEを鳴らすために使う。
+        /// </summary>
+        public event Action ChargeStarted;
 
         public bool IsEncounterActive => encounterActive;
 
@@ -177,6 +184,8 @@ namespace GameName.Enemy
             previousChargeX = chargeStartX;
             blockedTimer = 0f;
             attackState = AttackState.Charging;
+            // StageBossもEnemy_Tackleと同じSEを、この突進開始時に1回だけ鳴らす。
+            ChargeStarted?.Invoke();
         }
 
         private void UpdateChargingState()
