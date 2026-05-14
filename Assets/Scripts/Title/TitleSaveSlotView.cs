@@ -9,6 +9,8 @@ public sealed class TitleSaveSlotView : MonoBehaviour
     [SerializeField] private int slotIndex = SaveManager.DefaultSlotIndex;
     [SerializeField] private Button button;
     [SerializeField] private Image stageThumbnailImage;
+    [SerializeField] private RectTransform stageThumbnailRoot;
+    [SerializeField] private Vector2 stageThumbnailSize = new Vector2(160f, 110f);
     [SerializeField] private TMP_Text savedAtText;
     [SerializeField] private TMP_Text stageNameText;
     [SerializeField] private string emptySavedAtText = "--/-- --:--";
@@ -20,6 +22,7 @@ public sealed class TitleSaveSlotView : MonoBehaviour
     private void Awake()
     {
         ResolveReferences();
+        ApplyThumbnailSize();
         BindButton();
     }
 
@@ -37,6 +40,7 @@ public sealed class TitleSaveSlotView : MonoBehaviour
     {
         titleController = controller != null ? controller : titleController;
         ResolveReferences();
+        ApplyThumbnailSize();
         BindButton();
 
         SaveSlotMeta slotMeta = SaveManager.GetSlotMeta(slotIndex);
@@ -87,6 +91,35 @@ public sealed class TitleSaveSlotView : MonoBehaviour
                 }
             }
         }
+
+        if (stageThumbnailRoot == null && stageThumbnailImage != null)
+        {
+            stageThumbnailRoot = stageThumbnailImage.rectTransform;
+        }
+    }
+
+    private void ApplyThumbnailSize()
+    {
+        if (stageThumbnailRoot == null)
+        {
+            return;
+        }
+
+        stageThumbnailRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, stageThumbnailSize.x);
+        stageThumbnailRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, stageThumbnailSize.y);
+
+        LayoutElement layoutElement = stageThumbnailRoot.GetComponent<LayoutElement>();
+        if (layoutElement == null)
+        {
+            layoutElement = stageThumbnailRoot.gameObject.AddComponent<LayoutElement>();
+        }
+
+        layoutElement.minWidth = stageThumbnailSize.x;
+        layoutElement.preferredWidth = stageThumbnailSize.x;
+        layoutElement.flexibleWidth = 0f;
+        layoutElement.minHeight = stageThumbnailSize.y;
+        layoutElement.preferredHeight = stageThumbnailSize.y;
+        layoutElement.flexibleHeight = 0f;
     }
 
     private void BindButton()
@@ -122,6 +155,7 @@ public sealed class TitleSaveSlotView : MonoBehaviour
 
         stageThumbnailImage.sprite = sprite;
         stageThumbnailImage.enabled = sprite != null;
+        stageThumbnailImage.preserveAspect = true;
     }
 
     private static void SetText(TMP_Text label, string value)
