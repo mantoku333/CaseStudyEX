@@ -20,6 +20,7 @@ public static class SaveRepository
                 hasSave: false,
                 isCorrupted: false,
                 sceneName: string.Empty,
+                locationId: string.Empty,
                 savedAtUtc: string.Empty);
         }
 
@@ -30,14 +31,18 @@ public static class SaveRepository
                 hasSave: true,
                 isCorrupted: true,
                 sceneName: string.Empty,
+                locationId: string.Empty,
                 savedAtUtc: string.Empty);
         }
+
+        string locationId = CurrentLocationService.GetSavedLocationId(saveData);
 
         return new SaveSlotMeta(
             slotIndex: slotIndex,
             hasSave: true,
             isCorrupted: false,
             sceneName: saveData.sceneName,
+            locationId: locationId,
             savedAtUtc: saveData.savedAtUtc);
     }
 

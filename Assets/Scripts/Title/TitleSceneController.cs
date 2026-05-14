@@ -22,6 +22,7 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] private TitleSaveSlotView[] saveSlotViews;
     [SerializeField] private Sprite defaultStageThumbnail;
     [SerializeField] private Sprite emptySlotThumbnail;
+    [SerializeField] private LocationDatabase locationDatabase;
     [SerializeField] private StageDisplayInfo[] stageDisplayInfos;
 
     private int selectedSaveSlotIndex = SaveManager.DefaultSlotIndex;
@@ -58,6 +59,7 @@ public class TitleSceneController : MonoBehaviour
         SaveManager.DeleteSave();
         SaveManager.ClearAllFlags();
         SaveManager.ClearAllItems();
+        CurrentLocationService.ClearCurrentLocation();
 
         SceneManager.LoadScene(gameSceneName);
     }
@@ -160,6 +162,18 @@ public class TitleSceneController : MonoBehaviour
 
     public string GetStageDisplayName(string sceneName)
     {
+        return GetStageDisplayName(sceneName, string.Empty);
+    }
+
+    public string GetStageDisplayName(string sceneName, string locationId)
+    {
+        if (locationDatabase != null &&
+            locationDatabase.TryGetDisplayInfo(locationId, out LocationDisplayInfo locationInfo) &&
+            !string.IsNullOrWhiteSpace(locationInfo.displayName))
+        {
+            return locationInfo.displayName;
+        }
+
         StageDisplayInfo displayInfo = FindStageDisplayInfo(sceneName);
         if (!string.IsNullOrWhiteSpace(displayInfo.displayName))
         {
@@ -171,6 +185,18 @@ public class TitleSceneController : MonoBehaviour
 
     public Sprite GetStageThumbnail(string sceneName)
     {
+        return GetStageThumbnail(sceneName, string.Empty);
+    }
+
+    public Sprite GetStageThumbnail(string sceneName, string locationId)
+    {
+        if (locationDatabase != null &&
+            locationDatabase.TryGetDisplayInfo(locationId, out LocationDisplayInfo locationInfo) &&
+            locationInfo.thumbnail != null)
+        {
+            return locationInfo.thumbnail;
+        }
+
         StageDisplayInfo displayInfo = FindStageDisplayInfo(sceneName);
         if (displayInfo.thumbnail != null)
         {

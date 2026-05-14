@@ -5366,6 +5366,7 @@ MonoBehaviour:
   - {fileID: 224111651}
   defaultStageThumbnail: {fileID: 21300000, guid: 8e911cf5e46cefa4ea616dbc5d3226c8, type: 3}
   emptySlotThumbnail: {fileID: 21300000, guid: 8e911cf5e46cefa4ea616dbc5d3226c8, type: 3}
+  locationDatabase: {fileID: 11400000, guid: 3d60796b6ffbdaf4291897825c86ab4c, type: 2}
   stageDisplayInfos: []
 --- !u!4 &977257629
 Transform:

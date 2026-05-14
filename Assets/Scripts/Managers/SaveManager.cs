@@ -204,6 +204,7 @@ public sealed class SaveManager : MonoBehaviour
                 hasSave: false,
                 isCorrupted: false,
                 sceneName: string.Empty,
+                locationId: string.Empty,
                 savedAtUtc: string.Empty);
         }
 
