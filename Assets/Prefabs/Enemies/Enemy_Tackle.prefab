@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 867530900123456789}
   - component: {fileID: 3166498005081650208}
   - component: {fileID: 1141293357520890712}
+  - component: {fileID: 730100000000000001}
   m_Layer: 0
   m_Name: Enemy_Tackle
   m_TagString: Untagged
@@ -369,3 +370,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3660086356055333866}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &730100000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05d05fb50c3947e4b8ccb0297a9be414, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyKind: 0
+  participatesInGrowls: 1
+  profile: {fileID: 11400000, guid: 74ed3802f52a405899726fdcf474de15, type: 2}
+  autoCollectRenderers: 1
+  visibilityRenderers: []

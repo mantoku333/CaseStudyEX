@@ -1,5 +1,6 @@
 using Metroidvania.Enemy;
 using Player;
+using System;
 using UnityEngine;
 
 namespace GameName.Enemy
@@ -49,6 +50,11 @@ namespace GameName.Enemy
         private float stateTimer;
         private float vibrationBaseX;
         private float vibrationElapsed;
+
+        /// <summary>
+        /// 弾の生成に成功したタイミングで通知する。遠距離攻撃SEの再生に使う。
+        /// </summary>
+        public event Action ProjectileFired;
 
         public bool IsWindingUp => attackState == AttackState.Windup;
         public bool IsFiring => attackState == AttackState.Fire;
@@ -245,6 +251,8 @@ namespace GameName.Enemy
                     bulletRigidbody.linearVelocity = fallbackDirection * bulletSpeed;
                 }
 
+                // EnemyBulletが付いていない弾でも、Rigidbody2Dで発射できた場合は攻撃SEを鳴らす。
+                ProjectileFired?.Invoke();
                 return;
             }
 
@@ -257,6 +265,9 @@ namespace GameName.Enemy
                 projectileLifetime,
                 projectileObstacleMask,
                 true);
+
+            // 弾の初期化完了後に通知し、実際に発射できた攻撃だけSE対象にする。
+            ProjectileFired?.Invoke();
         }
 
         private Vector3 GetBodyCenter()
