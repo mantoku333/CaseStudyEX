@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Metroidvania.Data
 {
@@ -11,7 +11,10 @@ namespace Metroidvania.Data
         [Header("基本情報")]
         [Tooltip("アイテム名")]
         public string itemName;
-        
+
+        [Tooltip("ID")]
+        public string itemId;
+
         [Tooltip("アイテムの説明")]
         [TextArea(3, 5)]
         public string description;
@@ -21,14 +24,18 @@ namespace Metroidvania.Data
         
         [Header("アイテムタイプ")]
         public ItemType itemType;
-        
+
         [Header("効果")]
         [Tooltip("回復量（回復アイテムの場合）")]
         public int healAmount;
-        
         [Tooltip("スタミナ回復量")]
         public int staminaAmount;
-        
+        [Tooltip("増加量（HP増加アイテムの場合）")]
+        public int maxHealthBonus;
+
+        [Tooltip("解放する能力")]
+        public PlayerAbilityType abilityType = PlayerAbilityType.None;
+
         [Header("その他")]
         [Tooltip("スタック可能か")]
         public bool stackable = true;
@@ -39,7 +46,10 @@ namespace Metroidvania.Data
         [Tooltip("取得時の効果音")]
         public AudioClip pickupSound;
     }
-    
+
+    /// <summary>
+    /// アイテムの分類を定義
+    /// </summary>
     public enum ItemType
     {
         Consumable,    // 消費アイテム
