@@ -44,6 +44,9 @@ public sealed class MinimapView : MonoBehaviour
     private Vector2 lastDrawnMiniMapOrigin;
     private bool hasDrawnMiniMapOrigin;
 
+    public bool IsMiniMapVisible => miniMapPanel != null && miniMapPanel.gameObject.activeSelf;
+    public bool IsFullMapVisible => fullMapPanel != null && fullMapPanel.gameObject.activeSelf;
+
     public void Initialize(MinimapManager minimapManager)
     {
         if (manager == minimapManager && miniMapPanel != null && fullMapPanel != null)
@@ -109,9 +112,27 @@ public sealed class MinimapView : MonoBehaviour
 
     public void SetFullMapVisible(bool visible)
     {
-        if (fullMapPanel != null)
+        SetPanelVisibility(!visible, visible);
+    }
+
+    public void SetPanelVisibility(bool miniVisible, bool fullVisible)
+    {
+        bool changed = false;
+
+        if (miniMapPanel != null && miniMapPanel.gameObject.activeSelf != miniVisible)
         {
-            fullMapPanel.gameObject.SetActive(visible);
+            miniMapPanel.gameObject.SetActive(miniVisible);
+            changed = true;
+        }
+
+        if (fullMapPanel != null && fullMapPanel.gameObject.activeSelf != fullVisible)
+        {
+            fullMapPanel.gameObject.SetActive(fullVisible);
+            changed = true;
+        }
+
+        if (changed || fullVisible)
+        {
             Refresh();
         }
     }

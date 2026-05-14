@@ -92,11 +92,15 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
     private PlayerInput pausedPlayerInput;
     private MinimapManager cachedMinimapManager;
+    private MinimapView cachedMinimapView;
     private InputActionRebindingExtensions.RebindingOperation activeRebindOperation;
     private InputAction activeRebindAction;
     private Button activeRebindButton;
     private bool previousPlayerInputEnabled;
     private bool previousMinimapManagerEnabled;
+    private bool previousMinimapVisible;
+    private bool previousFullMapVisible;
+    private bool fullMapOpenedFromMenu;
     private bool gameplayPaused;
     private bool isOpen;
     private bool listenersRegistered;
@@ -104,6 +108,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
     private bool isRebinding;
     private bool isDraggingKeyboardScrollbar;
     private bool activeRebindAllowsMouse;
+    private bool openFullMapAfterClose;
     private float previousTimeScale = 1f;
     private float nextAudioRefreshTime;
     private float statusHideAt;
@@ -382,10 +387,11 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             return;
         }
 
+        bool useAlternateMainMenu = alternateMainMenuPanel != null;
         SetFinishPromptVisible(false);
-        SetOptionPanelVisible(true);
-        mainMenuPanel.SetActive(alternateMainMenuPanel == null);
-        SetAlternateMainMenuVisible(alternateMainMenuPanel != null);
+        SetOptionPanelVisible(!useAlternateMainMenu);
+        mainMenuPanel.SetActive(!useAlternateMainMenu);
+        SetAlternateMainMenuVisible(useAlternateMainMenu);
         optionDetailPanel.SetActive(false);
 
         if (alternateMainMenuSkin != null)
@@ -529,8 +535,17 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         gameplayPaused = true;
         previousTimeScale = Time.timeScale;
         Time.timeScale = 0f;
+        openFullMapAfterClose = false;
 
         cachedMinimapManager = MinimapManager.Instance;
+        cachedMinimapView = cachedMinimapManager != null ? cachedMinimapManager.GetComponent<MinimapView>() : null;
+        previousMinimapVisible = cachedMinimapView != null && cachedMinimapView.IsMiniMapVisible;
+        previousFullMapVisible = cachedMinimapView != null && cachedMinimapView.IsFullMapVisible;
+        if (cachedMinimapView != null)
+        {
+            cachedMinimapView.SetPanelVisibility(false, false);
+        }
+
         if (cachedMinimapManager != null)
         {
             previousMinimapManagerEnabled = cachedMinimapManager.enabled;
@@ -593,6 +608,32 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             cachedMinimapManager = null;
         }
 
+        if (cachedMinimapView != null)
+        {
+            if (openFullMapAfterClose)
+            {
+                cachedMinimapView.SetFullMapVisible(true);
+                fullMapOpenedFromMenu = true;
+            }
+            else if (fullMapOpenedFromMenu && previousFullMapVisible)
+            {
+                cachedMinimapView.SetPanelVisibility(previousMinimapVisible, false);
+                fullMapOpenedFromMenu = false;
+            }
+            else
+            {
+                cachedMinimapView.SetPanelVisibility(previousMinimapVisible, previousFullMapVisible);
+                if (!previousFullMapVisible)
+                {
+                    fullMapOpenedFromMenu = false;
+                }
+            }
+
+            cachedMinimapView = null;
+        }
+
+        openFullMapAfterClose = false;
+
         if (pausedPlayerInput != null)
         {
             pausedPlayerInput.enabled = previousPlayerInputEnabled;
@@ -628,8 +669,15 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             return;
         }
 
-        view.ToggleFullMap();
-        CloseMenu();
+        if (isOpen)
+        {
+            openFullMapAfterClose = true;
+            fullMapOpenedFromMenu = true;
+            CloseMenu();
+            return;
+        }
+
+        view.SetFullMapVisible(true);
     }
 
     public void ShowFinishPrompt()
