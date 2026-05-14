@@ -172,6 +172,19 @@ public sealed class SaveManager : MonoBehaviour
         return HasSave(DefaultSlotIndex);
     }
 
+    public static bool HasAnySave()
+    {
+        for (int slotIndex = MinSlotIndex; slotIndex <= MaxSlotIndex; slotIndex++)
+        {
+            if (HasSave(slotIndex))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static bool HasSave(int slotIndex)
     {
         if (!TryValidateSlotIndex(slotIndex))

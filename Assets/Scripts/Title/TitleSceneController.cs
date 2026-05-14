@@ -16,11 +16,27 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] private Button yesButton;
     [SerializeField] private Button continueButton;
 
+    [Header("Save Data List")]
+    [SerializeField] private GameObject saveListPanel;
+    [SerializeField] private GameObject loadConfirmPanel;
+
+    private int selectedSaveSlotIndex = SaveManager.DefaultSlotIndex;
+
     private void Start()
     {
         if (quitConfirmPanel != null)
         {
             quitConfirmPanel.SetActive(false);
+        }
+
+        if (saveListPanel != null)
+        {
+            saveListPanel.SetActive(false);
+        }
+
+        if (loadConfirmPanel != null)
+        {
+            loadConfirmPanel.SetActive(false);
         }
 
         ResolveContinueButtonReference();
@@ -29,7 +45,7 @@ public class TitleSceneController : MonoBehaviour
         {
             continueButton.onClick.RemoveListener(OnClickContinueButton);
             continueButton.onClick.AddListener(OnClickContinueButton);
-            continueButton.interactable = SaveManager.HasSave();
+            continueButton.interactable = SaveManager.HasAnySave();
         }
     }
 
@@ -44,10 +60,12 @@ public class TitleSceneController : MonoBehaviour
 
     public void OnClickContinueButton()
     {
-        if (!SaveManager.TryLoadGame(gameSceneName))
+        if (!SaveManager.HasAnySave())
         {
-            SceneManager.LoadScene(gameSceneName);
+            return;
         }
+
+        ShowSaveListPanel();
     }
 
     public void OnClickQuitButton()
@@ -99,6 +117,79 @@ public class TitleSceneController : MonoBehaviour
         if (continueObject != null)
         {
             continueButton = continueObject.GetComponent<Button>();
+        }
+    }
+
+    private void ShowSaveListPanel()
+    {
+        if (saveListPanel == null)
+        {
+            Debug.LogWarning("[TitleSceneController] Save list panel is not assigned.");
+            return;
+        }
+
+        saveListPanel.SetActive(true);
+        if (loadConfirmPanel != null)
+        {
+            loadConfirmPanel.SetActive(false);
+        }
+    }
+
+    public void OnClickSaveListBackButton()
+    {
+        if (saveListPanel != null)
+        {
+            saveListPanel.SetActive(false);
+        }
+
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
+    }
+
+    public void OnClickSaveSlot1()
+    {
+        SelectSaveSlot(1);
+    }
+
+    public void OnClickSaveSlot2()
+    {
+        SelectSaveSlot(2);
+    }
+
+    public void OnClickSaveSlot3()
+    {
+        SelectSaveSlot(3);
+    }
+
+    public void OnClickLoadConfirmYesButton()
+    {
+        if (!SaveManager.TryLoadGame(selectedSaveSlotIndex, gameSceneName))
+        {
+            SceneManager.LoadScene(gameSceneName);
+        }
+    }
+
+    public void OnClickLoadConfirmNoButton()
+    {
+        if (loadConfirmPanel != null)
+        {
+            loadConfirmPanel.SetActive(false);
+        }
+    }
+
+    private void SelectSaveSlot(int slotIndex)
+    {
+        if (!SaveManager.HasSave(slotIndex))
+        {
+            return;
+        }
+
+        selectedSaveSlotIndex = slotIndex;
+        if (loadConfirmPanel != null)
+        {
+            loadConfirmPanel.SetActive(true);
         }
     }
 }
