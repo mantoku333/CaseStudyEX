@@ -1014,6 +1014,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  includeFallThroughFloorLayer: 1
 --- !u!61 &347066804
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1607,6 +1608,7 @@ GameObject:
   - component: {fileID: 775024344}
   - component: {fileID: 775024345}
   - component: {fileID: 775024346}
+  - component: {fileID: 775024347}
   m_Layer: 0
   m_Name: TestPlayer
   m_TagString: Untagged
@@ -1626,6 +1628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd167b6fb46d4b541868ee5e197b90fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  applyNoFrictionMaterial: 1
   playerStatsData: {fileID: 11400000, guid: 828b8bd6e59a0de45ac0b6f81b0916f1, type: 2}
 --- !u!61 &775024340
 BoxCollider2D:
@@ -1910,6 +1913,36 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &775024347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775024338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+  m_Actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: 
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &795940352
 GameObject:
   m_ObjectHideFlags: 0
@@ -264016,6 +264049,9 @@ MonoBehaviour:
   glideFallSpeed: -0.001
   glideMoveSpeed: 3.5
   gunController: {fileID: 2078664045}
+  closedUmbrellaSprite: {fileID: 0}
+  openDebugSprite: {fileID: 0}
+  changeAnimationDuration: 0.2
   umbrella_open: {fileID: 8300000, guid: b23093459fc678f498899d1ceed37ba0, type: 3}
   umbrella_close: {fileID: 8300000, guid: 631315968a2b9e7428dc0aa7c2457e77, type: 3}
 --- !u!114 &974501602
@@ -264034,6 +264070,11 @@ MonoBehaviour:
   attackPerSecond: 4
   attackCollider: {fileID: 2100399110}
   player_normalAttack: {fileID: 8300000, guid: 298ef99b3d24d514ba42518424f5ddf3, type: 3}
+  attackEffectTexture: {fileID: 0}
+  attackEffectFrameSeconds: 0.025
+  attackEffectWorldOffset: {x: 0, y: 0.1, z: 0}
+  attackEffectScale: {x: 1, y: 1, z: 1}
+  attackEffectSortingOrderOffset: 2
 --- !u!114 &974501603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266061,7 +266102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GunController
   coolTime: 3
   airRecoilPower: 25
-  jumpRecoilPower: 45
+  recoilDuration: 0.1
   groundCheck: {fileID: 347066803}
   player_gun_fire: {fileID: 8300000, guid: d8d757bebd64f8b48801a10d2d845f53, type: 3}
 --- !u!1 &2100127750
@@ -266333,6 +266374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Managers.DialogueGamePauser
   dialogueRunner: {fileID: 2121580544}
+  defaultPausePolicy: 3
 --- !u!114 &2121580542
 MonoBehaviour:
   m_ObjectHideFlags: 0
