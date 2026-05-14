@@ -121,8 +121,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &-9056477180293243365
-BoxCollider2D:
+--- !u!58 &-9056477180293243365
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -156,17 +156,7 @@ BoxCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Radius: 0.45
 --- !u!114 &-1672026058775243411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,7 +174,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 192
   damage: 10
+  rotateToVelocity: 0
   pathRefreshInterval: 0.15
   pathNodeSpacing: 0.4
   obstacleClearanceRadius: 0.55
   waypointReachDistance: 0.12
+  blockedMovementProbeDistance: 0.8
+  sideSteerProbeDistance: 0.8

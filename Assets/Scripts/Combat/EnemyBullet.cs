@@ -18,12 +18,29 @@ namespace Metroidvania.Enemy
         [Header("Collision")]
         [SerializeField] private LayerMask destroyOnHitLayers;
         [SerializeField, Min(1)] private int damage = 10;
+        // false の場合は移動方向に合わせて見た目を回転させない。
+        [SerializeField] private bool rotateToVelocity;
 
         [Header("Homing")]
         [SerializeField, Min(0.05f)] private float pathRefreshInterval = 0.15f;
         [SerializeField, Min(0.1f)] private float pathNodeSpacing = 0.4f;
         [SerializeField, Min(0.01f)] private float obstacleClearanceRadius = 0.55f;
         [SerializeField, Min(0.05f)] private float waypointReachDistance = 0.12f;
+        // 直進や次のウェイポイントが壁に向かっていないか確認する距離。
+        [SerializeField, Min(0.05f)] private float blockedMovementProbeDistance = 0.8f;
+        // 経路が塞がったとき、一時的に横へ逃げる方向を探す距離。
+        [SerializeField, Min(0.05f)] private float sideSteerProbeDistance = 0.8f;
+
+        // 経路再計算だけで避けられない時に試す回避角度。
+        private static readonly float[] SideSteerAngles =
+        {
+            45f,
+            -45f,
+            90f,
+            -90f,
+            135f,
+            -135f
+        };
 
         private static readonly Vector2Int[] NeighborOffsets =
         {
@@ -85,6 +102,8 @@ namespace Metroidvania.Enemy
             pathNodeSpacing = Mathf.Max(0.1f, pathNodeSpacing);
             obstacleClearanceRadius = Mathf.Max(0.01f, obstacleClearanceRadius);
             waypointReachDistance = Mathf.Max(0.05f, waypointReachDistance);
+            blockedMovementProbeDistance = Mathf.Max(0.05f, blockedMovementProbeDistance);
+            sideSteerProbeDistance = Mathf.Max(0.05f, sideSteerProbeDistance);
 
             if (destroyOnHitLayers.value == 0)
             {
@@ -194,7 +213,11 @@ namespace Metroidvania.Enemy
 
             Vector2 normalizedDirection = direction.normalized;
             rb2D.linearVelocity = normalizedDirection * Mathf.Max(0.1f, bulletSpeed);
-            transform.right = normalizedDirection;
+            // Enemy_Ranged の弾は回転させず、必要な弾だけ Inspector で有効化する。
+            if (rotateToVelocity)
+            {
+                transform.right = normalizedDirection;
+            }
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -265,6 +288,58 @@ namespace Metroidvania.Enemy
         {
             Vector2 currentPosition = transform.position;
 
+            if (useTerrainAvoidance && TryGetPathDirection(currentPosition, out Vector2 pathDirection))
+            {
+                // 古い経路の次ノードが塞がったら、壁へ突っ込む前に経路を作り直す。
+                if (!IsMovementDirectionBlocked(currentPosition, pathDirection, pathDirection.magnitude))
+                {
+                    return pathDirection;
+                }
+
+                RefreshTerrainPath();
+                if (TryGetPathDirection(currentPosition, out pathDirection) &&
+                    !IsMovementDirectionBlocked(currentPosition, pathDirection, pathDirection.magnitude))
+                {
+                    return pathDirection;
+                }
+
+                if (TryGetSideSteerDirection(currentPosition, pathDirection, out Vector2 sideSteerDirection))
+                {
+                    return sideSteerDirection;
+                }
+            }
+
+            Vector2 fallbackDirection = target != null
+                ? GetTargetAimPosition() - currentPosition
+                : rb2D.linearVelocity;
+
+            if (useTerrainAvoidance &&
+                IsMovementDirectionBlocked(currentPosition, fallbackDirection, blockedMovementProbeDistance))
+            {
+                // 経路が使えない場合でも、直進先が壁なら短い横回避を試す。
+                if (Time.time >= nextPathRefreshTime)
+                {
+                    RefreshTerrainPath();
+                    if (TryGetPathDirection(currentPosition, out pathDirection) &&
+                        !IsMovementDirectionBlocked(currentPosition, pathDirection, pathDirection.magnitude))
+                    {
+                        return pathDirection;
+                    }
+                }
+
+                if (TryGetSideSteerDirection(currentPosition, fallbackDirection, out Vector2 sideSteerDirection))
+                {
+                    return sideSteerDirection;
+                }
+            }
+
+            return fallbackDirection;
+        }
+
+        private Vector2 ResolveRawHomingDirection()
+        {
+            Vector2 currentPosition = transform.position;
+
             if (currentPath.Count > 0)
             {
                 while (currentPathIndex < currentPath.Count &&
@@ -283,6 +358,93 @@ namespace Metroidvania.Enemy
             return target != null
                 ? GetTargetAimPosition() - currentPosition
                 : rb2D.linearVelocity;
+        }
+
+        private bool TryGetPathDirection(Vector2 currentPosition, out Vector2 direction)
+        {
+            direction = Vector2.zero;
+            if (currentPath.Count <= 0)
+            {
+                return false;
+            }
+
+            while (currentPathIndex < currentPath.Count &&
+                   Vector2.Distance(currentPosition, currentPath[currentPathIndex]) <= waypointReachDistance)
+            {
+                currentPathIndex++;
+            }
+
+            if (currentPathIndex >= currentPath.Count)
+            {
+                return false;
+            }
+
+            direction = currentPath[currentPathIndex] - currentPosition;
+            return direction.sqrMagnitude > 0.0001f;
+        }
+
+        private bool TryGetSideSteerDirection(Vector2 currentPosition, Vector2 desiredDirection, out Vector2 direction)
+        {
+            direction = Vector2.zero;
+            if (desiredDirection.sqrMagnitude <= 0.0001f)
+            {
+                desiredDirection = target != null
+                    ? GetTargetAimPosition() - currentPosition
+                    : rb2D.linearVelocity;
+            }
+
+            if (desiredDirection.sqrMagnitude <= 0.0001f)
+            {
+                return false;
+            }
+
+            Vector2 desiredNormal = desiredDirection.normalized;
+            Vector2 targetPosition = target != null ? GetTargetAimPosition() : currentPosition + desiredNormal;
+            Vector2 targetDirection = targetPosition - currentPosition;
+            if (targetDirection.sqrMagnitude <= 0.0001f)
+            {
+                targetDirection = desiredNormal;
+            }
+
+            float probeDistance = Mathf.Max(0.05f, sideSteerProbeDistance);
+            float bestScore = float.NegativeInfinity;
+            Vector2 bestDirection = Vector2.zero;
+
+            // 目標へ近づきつつ、壁に当たらない候補方向を選ぶ。
+            for (int i = 0; i < SideSteerAngles.Length; i++)
+            {
+                Vector2 candidateDirection = RotateVector(desiredNormal, SideSteerAngles[i]).normalized;
+                Vector2 candidateEnd = currentPosition + candidateDirection * probeDistance;
+                if (owner != null &&
+                    ownerDetectionRadius > 0f &&
+                    !IsInsideOwnerRadius(candidateEnd, owner.position, ownerDetectionRadius))
+                {
+                    continue;
+                }
+
+                if (IsMovementSegmentBlocked(currentPosition, candidateEnd))
+                {
+                    continue;
+                }
+
+                float score = Vector2.Dot(candidateDirection, targetDirection.normalized) -
+                              Vector2.Distance(candidateEnd, targetPosition) * 0.01f;
+                if (score <= bestScore)
+                {
+                    continue;
+                }
+
+                bestScore = score;
+                bestDirection = candidateDirection;
+            }
+
+            if (bestScore <= float.NegativeInfinity)
+            {
+                return false;
+            }
+
+            direction = bestDirection;
+            return true;
         }
 
         private void RefreshTerrainPath()
@@ -502,6 +664,19 @@ namespace Metroidvania.Enemy
             return hit.collider != null;
         }
 
+        // 指定方向の少し先を CircleCast で確認し、今進むとぶつかるか判定する。
+        private bool IsMovementDirectionBlocked(Vector2 from, Vector2 direction, float maxDistance)
+        {
+            if (direction.sqrMagnitude <= 0.0001f)
+            {
+                return false;
+            }
+
+            float distance = Mathf.Min(direction.magnitude, Mathf.Max(0.05f, maxDistance));
+            Vector2 to = from + direction.normalized * distance;
+            return IsMovementSegmentBlocked(from, to);
+        }
+
         /// <summary>
         /// 追尾先の基準点を返す。プレイヤーの足元ではなく、当たり判定の中心を優先する。
         /// </summary>
@@ -598,6 +773,16 @@ namespace Metroidvania.Enemy
         private static bool IsInLayerMask(int layer, LayerMask layerMask)
         {
             return (layerMask.value & (1 << layer)) != 0;
+        }
+
+        private static Vector2 RotateVector(Vector2 vector, float degrees)
+        {
+            float radians = degrees * Mathf.Deg2Rad;
+            float sin = Mathf.Sin(radians);
+            float cos = Mathf.Cos(radians);
+            return new Vector2(
+                vector.x * cos - vector.y * sin,
+                vector.x * sin + vector.y * cos);
         }
 
         private static LayerMask BuildDefaultObstacleMask()
