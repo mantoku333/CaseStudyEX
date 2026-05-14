@@ -84,6 +84,7 @@ public readonly struct SaveSlotMeta
     public bool HasSave { get; }
     public bool IsCorrupted { get; }
     public string SceneName { get; }
+    public string LocationId { get; }
     public string SavedAtUtc { get; }
 
     public SaveSlotMeta(
@@ -91,12 +92,14 @@ public readonly struct SaveSlotMeta
         bool hasSave,
         bool isCorrupted,
         string sceneName,
+        string locationId,
         string savedAtUtc)
     {
         SlotIndex = slotIndex;
         HasSave = hasSave;
         IsCorrupted = isCorrupted;
         SceneName = sceneName ?? string.Empty;
+        LocationId = locationId ?? string.Empty;
         SavedAtUtc = savedAtUtc ?? string.Empty;
     }
 }

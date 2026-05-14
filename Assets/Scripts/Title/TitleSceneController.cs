@@ -16,11 +16,32 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] private Button yesButton;
     [SerializeField] private Button continueButton;
 
+    [Header("Save Data List")]
+    [SerializeField] private GameObject saveListPanel;
+    [SerializeField] private GameObject loadConfirmPanel;
+    [SerializeField] private TitleSaveSlotView[] saveSlotViews;
+    [SerializeField] private Sprite defaultStageThumbnail;
+    [SerializeField] private Sprite emptySlotThumbnail;
+    [SerializeField] private LocationDatabase locationDatabase;
+    [SerializeField] private StageDisplayInfo[] stageDisplayInfos;
+
+    private int selectedSaveSlotIndex = SaveManager.DefaultSlotIndex;
+
     private void Start()
     {
         if (quitConfirmPanel != null)
         {
             quitConfirmPanel.SetActive(false);
+        }
+
+        if (saveListPanel != null)
+        {
+            saveListPanel.SetActive(false);
+        }
+
+        if (loadConfirmPanel != null)
+        {
+            loadConfirmPanel.SetActive(false);
         }
 
         ResolveContinueButtonReference();
@@ -29,7 +50,7 @@ public class TitleSceneController : MonoBehaviour
         {
             continueButton.onClick.RemoveListener(OnClickContinueButton);
             continueButton.onClick.AddListener(OnClickContinueButton);
-            continueButton.interactable = SaveManager.HasSave();
+            continueButton.interactable = SaveManager.HasAnySave();
         }
     }
 
@@ -38,16 +59,19 @@ public class TitleSceneController : MonoBehaviour
         SaveManager.DeleteSave();
         SaveManager.ClearAllFlags();
         SaveManager.ClearAllItems();
+        CurrentLocationService.ClearCurrentLocation();
 
         SceneManager.LoadScene(gameSceneName);
     }
 
     public void OnClickContinueButton()
     {
-        if (!SaveManager.TryLoadGame(gameSceneName))
+        if (!SaveManager.HasAnySave())
         {
-            SceneManager.LoadScene(gameSceneName);
+            return;
         }
+
+        ShowSaveListPanel();
     }
 
     public void OnClickQuitButton()
@@ -100,5 +124,173 @@ public class TitleSceneController : MonoBehaviour
         {
             continueButton = continueObject.GetComponent<Button>();
         }
+    }
+
+    private void ShowSaveListPanel()
+    {
+        if (saveListPanel == null)
+        {
+            Debug.LogWarning("[TitleSceneController] Save list panel is not assigned.");
+            return;
+        }
+
+        RefreshSaveSlotViews();
+        saveListPanel.SetActive(true);
+        if (loadConfirmPanel != null)
+        {
+            loadConfirmPanel.SetActive(false);
+        }
+    }
+
+    public void OnClickSaveListBackButton()
+    {
+        if (saveListPanel != null)
+        {
+            saveListPanel.SetActive(false);
+        }
+
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
+    }
+
+    public void OnClickSaveSlot(int slotIndex)
+    {
+        SelectSaveSlot(slotIndex);
+    }
+
+    public string GetStageDisplayName(string sceneName)
+    {
+        return GetStageDisplayName(sceneName, string.Empty);
+    }
+
+    public string GetStageDisplayName(string sceneName, string locationId)
+    {
+        if (locationDatabase != null &&
+            locationDatabase.TryGetDisplayInfo(locationId, out LocationDisplayInfo locationInfo) &&
+            !string.IsNullOrWhiteSpace(locationInfo.displayName))
+        {
+            return locationInfo.displayName;
+        }
+
+        StageDisplayInfo displayInfo = FindStageDisplayInfo(sceneName);
+        if (!string.IsNullOrWhiteSpace(displayInfo.displayName))
+        {
+            return displayInfo.displayName;
+        }
+
+        return string.IsNullOrWhiteSpace(sceneName) ? "セーブデータなし" : sceneName;
+    }
+
+    public Sprite GetStageThumbnail(string sceneName)
+    {
+        return GetStageThumbnail(sceneName, string.Empty);
+    }
+
+    public Sprite GetStageThumbnail(string sceneName, string locationId)
+    {
+        if (locationDatabase != null &&
+            locationDatabase.TryGetDisplayInfo(locationId, out LocationDisplayInfo locationInfo) &&
+            locationInfo.thumbnail != null)
+        {
+            return locationInfo.thumbnail;
+        }
+
+        StageDisplayInfo displayInfo = FindStageDisplayInfo(sceneName);
+        if (displayInfo.thumbnail != null)
+        {
+            return displayInfo.thumbnail;
+        }
+
+        return defaultStageThumbnail;
+    }
+
+    public Sprite GetEmptySlotThumbnail()
+    {
+        return emptySlotThumbnail != null ? emptySlotThumbnail : defaultStageThumbnail;
+    }
+
+    public void OnClickLoadConfirmYesButton()
+    {
+        if (!SaveManager.TryLoadGame(selectedSaveSlotIndex, gameSceneName))
+        {
+            SceneManager.LoadScene(gameSceneName);
+        }
+    }
+
+    public void OnClickLoadConfirmNoButton()
+    {
+        if (loadConfirmPanel != null)
+        {
+            loadConfirmPanel.SetActive(false);
+        }
+    }
+
+    private void RefreshSaveSlotViews()
+    {
+        if ((saveSlotViews == null || saveSlotViews.Length == 0) && saveListPanel != null)
+        {
+            saveSlotViews = saveListPanel.GetComponentsInChildren<TitleSaveSlotView>(true);
+        }
+
+        if (saveSlotViews == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < saveSlotViews.Length; i++)
+        {
+            if (saveSlotViews[i] != null)
+            {
+                saveSlotViews[i].Refresh(this);
+            }
+        }
+    }
+
+    private StageDisplayInfo FindStageDisplayInfo(string sceneName)
+    {
+        if (stageDisplayInfos == null || string.IsNullOrWhiteSpace(sceneName))
+        {
+            return default;
+        }
+
+        for (int i = 0; i < stageDisplayInfos.Length; i++)
+        {
+            if (stageDisplayInfos[i].Matches(sceneName))
+            {
+                return stageDisplayInfos[i];
+            }
+        }
+
+        return default;
+    }
+
+    private void SelectSaveSlot(int slotIndex)
+    {
+        if (!SaveManager.HasSave(slotIndex))
+        {
+            return;
+        }
+
+        selectedSaveSlotIndex = slotIndex;
+        if (loadConfirmPanel != null)
+        {
+            loadConfirmPanel.SetActive(true);
+        }
+    }
+}
+
+[System.Serializable]
+public struct StageDisplayInfo
+{
+    public string sceneName;
+    public string displayName;
+    public Sprite thumbnail;
+
+    public bool Matches(string targetSceneName)
+    {
+        return !string.IsNullOrWhiteSpace(sceneName) &&
+               string.Equals(sceneName, targetSceneName, System.StringComparison.Ordinal);
     }
 }
