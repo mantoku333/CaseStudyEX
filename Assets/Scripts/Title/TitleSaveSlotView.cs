@@ -1,0 +1,148 @@
+using System;
+using System.Globalization;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public sealed class TitleSaveSlotView : MonoBehaviour
+{
+    [SerializeField] private int slotIndex = SaveManager.DefaultSlotIndex;
+    [SerializeField] private Button button;
+    [SerializeField] private Image stageThumbnailImage;
+    [SerializeField] private TMP_Text savedAtText;
+    [SerializeField] private TMP_Text stageNameText;
+    [SerializeField] private string emptySavedAtText = "--/-- --:--";
+    [SerializeField] private string emptyStageNameText = "セーブデータなし";
+    [SerializeField] private string corruptedStageNameText = "読み込み不可";
+
+    private TitleSceneController titleController;
+
+    private void Awake()
+    {
+        ResolveReferences();
+        BindButton();
+    }
+
+    private void OnEnable()
+    {
+        if (titleController == null)
+        {
+            titleController = GetComponentInParent<TitleSceneController>();
+        }
+
+        Refresh(titleController);
+    }
+
+    public void Refresh(TitleSceneController controller)
+    {
+        titleController = controller != null ? controller : titleController;
+        ResolveReferences();
+        BindButton();
+
+        SaveSlotMeta slotMeta = SaveManager.GetSlotMeta(slotIndex);
+        bool canLoad = slotMeta.HasSave && !slotMeta.IsCorrupted;
+
+        if (button != null)
+        {
+            button.interactable = canLoad;
+        }
+
+        if (!slotMeta.HasSave)
+        {
+            SetText(savedAtText, emptySavedAtText);
+            SetText(stageNameText, emptyStageNameText);
+            SetThumbnail(titleController != null ? titleController.GetEmptySlotThumbnail() : null);
+            return;
+        }
+
+        if (slotMeta.IsCorrupted)
+        {
+            SetText(savedAtText, emptySavedAtText);
+            SetText(stageNameText, corruptedStageNameText);
+            SetThumbnail(titleController != null ? titleController.GetEmptySlotThumbnail() : null);
+            return;
+        }
+
+        SetText(savedAtText, FormatSavedAt(slotMeta.SavedAtUtc));
+        SetText(stageNameText, titleController != null ? titleController.GetStageDisplayName(slotMeta.SceneName) : slotMeta.SceneName);
+        SetThumbnail(titleController != null ? titleController.GetStageThumbnail(slotMeta.SceneName) : null);
+    }
+
+    private void ResolveReferences()
+    {
+        if (button == null)
+        {
+            button = GetComponent<Button>();
+        }
+
+        if (stageThumbnailImage == null)
+        {
+            Image[] images = GetComponentsInChildren<Image>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                if (images[i] != null && images[i].gameObject != gameObject)
+                {
+                    stageThumbnailImage = images[i];
+                    break;
+                }
+            }
+        }
+    }
+
+    private void BindButton()
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        button.onClick.RemoveListener(OnClick);
+        button.onClick.AddListener(OnClick);
+    }
+
+    private void OnClick()
+    {
+        if (titleController == null)
+        {
+            titleController = GetComponentInParent<TitleSceneController>();
+        }
+
+        if (titleController != null)
+        {
+            titleController.OnClickSaveSlot(slotIndex);
+        }
+    }
+
+    private void SetThumbnail(Sprite sprite)
+    {
+        if (stageThumbnailImage == null)
+        {
+            return;
+        }
+
+        stageThumbnailImage.sprite = sprite;
+        stageThumbnailImage.enabled = sprite != null;
+    }
+
+    private static void SetText(TMP_Text label, string value)
+    {
+        if (label != null)
+        {
+            label.text = value;
+        }
+    }
+
+    private static string FormatSavedAt(string savedAtUtc)
+    {
+        if (DateTime.TryParse(
+                savedAtUtc,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                out DateTime savedAt))
+        {
+            return savedAt.ToLocalTime().ToString("yyyy/MM/dd HH:mm", CultureInfo.InvariantCulture);
+        }
+
+        return "--/-- --:--";
+    }
+}
