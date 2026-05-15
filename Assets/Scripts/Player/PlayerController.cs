@@ -403,21 +403,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             }
             else
             {
-                //アイテムを取得しているかどうかを確認し
-                //それによって反動を使用できるかを判断する
-                bool canUseGlide = false;
-
-                if (playerAbilityController != null)
+                if (umbrellaController != null)
                 {
-                    canUseGlide = playerAbilityController.GetCanGlide();
-                }
-
-                if (canUseGlide)
-                {
-                    if (umbrellaController != null)
-                    {
-                        umbrellaController.ToggleUmbrella();
-                    }
+                    umbrellaController.ToggleUmbrella();
                 }
             }
         }
