@@ -142,6 +142,11 @@ namespace GameName.Enemy
         public bool IsEncounterActive => encounterActive;
         public int CurrentHealth => currentHealth;
         public int MaxHealth => maxHealth;
+        /// <summary>
+        /// LastBossがDestroyされる直前に通知する。専用死亡SEの再生に使う。
+        /// System.Actionを直接書き、UnityEngine.Randomとの名前衝突を避ける。
+        /// </summary>
+        public event System.Action Died;
 
         private void Awake()
         {
@@ -966,6 +971,8 @@ namespace GameName.Enemy
             encounterActive = false;
             StopMotion();
             HideAttackVisual();
+            // Destroy前に通知して、ボスの表示状態を参照できるようにする。
+            Died?.Invoke();
             Destroy(gameObject);
         }
 

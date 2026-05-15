@@ -45,8 +45,11 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
     private readonly Dictionary<int, float> lastAppliedAudioVolumes = new Dictionary<int, float>();
 
     private GameObject menuRoot;
+    private GameObject optionPanel;
     private GameObject mainMenuPanel;
+    private GameObject alternateMainMenuPanel;
     private GameObject optionDetailPanel;
+    private GameObject finishPromptPanel;
     private GameObject soundContentPanel;
     private GameObject keyboardContentPanel;
 
@@ -84,14 +87,20 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
     private TextMeshProUGUI attackValueText;
     private TextMeshProUGUI glideValueText;
     private TextMeshProUGUI dodgeValueText;
+    private MantokuStoryOptionsMainMenuSkin alternateMainMenuSkin;
+    private MantokuStoryOptionsFinishPromptSkin finishPromptSkin;
 
     private PlayerInput pausedPlayerInput;
     private MinimapManager cachedMinimapManager;
+    private MinimapView cachedMinimapView;
     private InputActionRebindingExtensions.RebindingOperation activeRebindOperation;
     private InputAction activeRebindAction;
     private Button activeRebindButton;
     private bool previousPlayerInputEnabled;
     private bool previousMinimapManagerEnabled;
+    private bool previousMinimapVisible;
+    private bool previousFullMapVisible;
+    private bool fullMapOpenedFromMenu;
     private bool gameplayPaused;
     private bool isOpen;
     private bool listenersRegistered;
@@ -99,6 +108,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
     private bool isRebinding;
     private bool isDraggingKeyboardScrollbar;
     private bool activeRebindAllowsMouse;
+    private bool openFullMapAfterClose;
     private float previousTimeScale = 1f;
     private float nextAudioRefreshTime;
     private float statusHideAt;
@@ -188,10 +198,19 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         }
 
         menuRoot = FindChildObject("MenuRoot");
+        optionPanel = FindChildObject("MenuRoot/OptionPanel");
         mainMenuPanel = FindChildObject("MenuRoot/OptionPanel/MainMenuPanel");
+        alternateMainMenuPanel = FindChildObject("MenuRoot/AlternateMainMenuPanel");
         optionDetailPanel = FindChildObject("MenuRoot/OptionPanel/OptionDetailPanel");
+        finishPromptPanel = FindChildObject("MenuRoot/FinishPrompt");
         soundContentPanel = FindChildObject("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel");
         keyboardContentPanel = FindChildObject("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel");
+        alternateMainMenuSkin = alternateMainMenuPanel != null
+            ? alternateMainMenuPanel.GetComponent<MantokuStoryOptionsMainMenuSkin>()
+            : null;
+        finishPromptSkin = finishPromptPanel != null
+            ? finishPromptPanel.GetComponent<MantokuStoryOptionsFinishPromptSkin>()
+            : null;
 
         resumeButton = FindChildComponent<Button>("MenuRoot/OptionPanel/MainMenuPanel/ResumeButton");
         saveButton = FindChildComponent<Button>("MenuRoot/OptionPanel/MainMenuPanel/SaveButton");
@@ -230,6 +249,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
         referencesResolved =
             menuRoot != null &&
+            optionPanel != null &&
             mainMenuPanel != null &&
             optionDetailPanel != null &&
             soundContentPanel != null &&
@@ -284,7 +304,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         BindButton(saveButton, SaveCurrentGame);
         BindButton(mapButton, OpenMap);
         BindButton(optionButton, ShowOptionDetail);
-        BindButton(titleButton, ReturnToTitle);
+        BindButton(titleButton, ShowFinishPrompt);
         BindButton(soundTabButton, ShowSoundTab);
         BindButton(keyboardTabButton, ShowKeyboardTab);
         BindButton(backButton, ShowMainMenu);
@@ -309,7 +329,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         UnbindButton(saveButton, SaveCurrentGame);
         UnbindButton(mapButton, OpenMap);
         UnbindButton(optionButton, ShowOptionDetail);
-        UnbindButton(titleButton, ReturnToTitle);
+        UnbindButton(titleButton, ShowFinishPrompt);
         UnbindButton(soundTabButton, ShowSoundTab);
         UnbindButton(keyboardTabButton, ShowKeyboardTab);
         UnbindButton(backButton, ShowMainMenu);
@@ -338,33 +358,56 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         ClearKeyboardStatus();
         ShowMainMenu();
         SetMenuVisible(false);
+        SetFinishPromptVisible(false);
         if (statusText != null)
         {
             statusText.text = string.Empty;
         }
     }
 
-    private void ShowOptionDetail()
+    public void ShowOptionDetail()
     {
         if (!referencesResolved || isRebinding)
         {
             return;
         }
 
+        SetFinishPromptVisible(false);
+        SetOptionPanelVisible(true);
         mainMenuPanel.SetActive(false);
+        SetAlternateMainMenuVisible(false);
         optionDetailPanel.SetActive(true);
         ShowSoundTab();
     }
 
-    private void ShowMainMenu()
+    public void ShowMainMenu()
     {
         if (!referencesResolved || isRebinding)
         {
             return;
         }
 
-        mainMenuPanel.SetActive(true);
+        bool useAlternateMainMenu = alternateMainMenuPanel != null;
+        SetFinishPromptVisible(false);
+        SetOptionPanelVisible(!useAlternateMainMenu);
+        mainMenuPanel.SetActive(!useAlternateMainMenu);
+        SetAlternateMainMenuVisible(useAlternateMainMenu);
         optionDetailPanel.SetActive(false);
+
+        if (alternateMainMenuSkin != null)
+        {
+            if (isOpen)
+            {
+                alternateMainMenuSkin.SelectDefaultButton();
+            }
+            else
+            {
+                alternateMainMenuSkin.SelectOptionButton();
+            }
+
+            return;
+        }
+
         SelectButton(isOpen ? resumeButton : optionButton);
     }
 
@@ -417,10 +460,18 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         ShowMainMenu();
         SetMenuVisible(true);
         isOpen = true;
-        SelectButton(resumeButton);
+
+        if (alternateMainMenuSkin != null)
+        {
+            alternateMainMenuSkin.SelectDefaultButton();
+        }
+        else
+        {
+            SelectButton(resumeButton);
+        }
     }
 
-    private void CloseMenu()
+    public void CloseMenu()
     {
         if (!isOpen || !referencesResolved || isRebinding)
         {
@@ -433,11 +484,16 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         isDraggingKeyboardScrollbar = false;
         statusHideAt = 0f;
         ClearKeyboardStatus();
+        mainMenuPanel.SetActive(false);
+        SetOptionPanelVisible(false);
+        SetAlternateMainMenuVisible(false);
+        optionDetailPanel.SetActive(false);
         if (statusText != null)
         {
             statusText.text = string.Empty;
         }
 
+        SetFinishPromptVisible(false);
         if (EventSystem.current != null)
         {
             EventSystem.current.SetSelectedGameObject(null);
@@ -451,6 +507,12 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         if (!isOpen)
         {
             OpenMenu();
+            return;
+        }
+
+        if (finishPromptPanel != null && finishPromptPanel.activeSelf)
+        {
+            HideFinishPrompt();
             return;
         }
 
@@ -473,8 +535,17 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         gameplayPaused = true;
         previousTimeScale = Time.timeScale;
         Time.timeScale = 0f;
+        openFullMapAfterClose = false;
 
         cachedMinimapManager = MinimapManager.Instance;
+        cachedMinimapView = cachedMinimapManager != null ? cachedMinimapManager.GetComponent<MinimapView>() : null;
+        previousMinimapVisible = cachedMinimapView != null && cachedMinimapView.IsMiniMapVisible;
+        previousFullMapVisible = cachedMinimapView != null && cachedMinimapView.IsFullMapVisible;
+        if (cachedMinimapView != null)
+        {
+            cachedMinimapView.SetPanelVisibility(false, false);
+        }
+
         if (cachedMinimapManager != null)
         {
             previousMinimapManagerEnabled = cachedMinimapManager.enabled;
@@ -537,6 +608,32 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             cachedMinimapManager = null;
         }
 
+        if (cachedMinimapView != null)
+        {
+            if (openFullMapAfterClose)
+            {
+                cachedMinimapView.SetFullMapVisible(true);
+                fullMapOpenedFromMenu = true;
+            }
+            else if (fullMapOpenedFromMenu && previousFullMapVisible)
+            {
+                cachedMinimapView.SetPanelVisibility(previousMinimapVisible, false);
+                fullMapOpenedFromMenu = false;
+            }
+            else
+            {
+                cachedMinimapView.SetPanelVisibility(previousMinimapVisible, previousFullMapVisible);
+                if (!previousFullMapVisible)
+                {
+                    fullMapOpenedFromMenu = false;
+                }
+            }
+
+            cachedMinimapView = null;
+        }
+
+        openFullMapAfterClose = false;
+
         if (pausedPlayerInput != null)
         {
             pausedPlayerInput.enabled = previousPlayerInputEnabled;
@@ -554,7 +651,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         pausedBehaviours.Clear();
     }
 
-    private void SaveCurrentGame()
+    public void SaveCurrentGame()
     {
         bool saved = SaveManager.TrySaveCurrentGame();
         ShowStatus(saved
@@ -562,7 +659,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             : "\u30BB\u30FC\u30D6\u306B\u5931\u6557\u3057\u307E\u3057\u305F");
     }
 
-    private void OpenMap()
+    public void OpenMap()
     {
         MinimapManager manager = MinimapManager.Instance;
         MinimapView view = manager != null ? manager.GetComponent<MinimapView>() : null;
@@ -572,11 +669,52 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             return;
         }
 
-        view.ToggleFullMap();
-        CloseMenu();
+        if (isOpen)
+        {
+            openFullMapAfterClose = true;
+            fullMapOpenedFromMenu = true;
+            CloseMenu();
+            return;
+        }
+
+        view.SetFullMapVisible(true);
     }
 
-    private void ReturnToTitle()
+    public void ShowFinishPrompt()
+    {
+        if (isRebinding)
+        {
+            return;
+        }
+
+        if (!referencesResolved)
+        {
+            return;
+        }
+
+        mainMenuPanel.SetActive(false);
+        SetOptionPanelVisible(false);
+        SetAlternateMainMenuVisible(false);
+        optionDetailPanel.SetActive(false);
+        SetFinishPromptVisible(true);
+        if (finishPromptSkin != null)
+        {
+            finishPromptSkin.SelectDefaultButton();
+        }
+    }
+
+    public void HideFinishPrompt()
+    {
+        if (!referencesResolved)
+        {
+            return;
+        }
+
+        SetFinishPromptVisible(false);
+        ShowMainMenu();
+    }
+
+    public void ReturnToTitle()
     {
         if (isRebinding)
         {
@@ -585,6 +723,11 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
         CloseMenu();
         SceneManager.LoadScene(TitleSceneName);
+    }
+
+    public void OpenSkillList()
+    {
+        Debug.Log("[MantokuStoryOptionsMenu] Skill list button pressed, but no dedicated skill list UI is implemented yet.");
     }
 
     private void HandleVolumePointerInteraction()
@@ -1452,6 +1595,30 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         if (menuRoot != null && menuRoot.activeSelf != visible)
         {
             menuRoot.SetActive(visible);
+        }
+    }
+
+    private void SetAlternateMainMenuVisible(bool visible)
+    {
+        if (alternateMainMenuPanel != null && alternateMainMenuPanel.activeSelf != visible)
+        {
+            alternateMainMenuPanel.SetActive(visible);
+        }
+    }
+
+    private void SetOptionPanelVisible(bool visible)
+    {
+        if (optionPanel != null && optionPanel.activeSelf != visible)
+        {
+            optionPanel.SetActive(visible);
+        }
+    }
+
+    private void SetFinishPromptVisible(bool visible)
+    {
+        if (finishPromptPanel != null && finishPromptPanel.activeSelf != visible)
+        {
+            finishPromptPanel.SetActive(visible);
         }
     }
 

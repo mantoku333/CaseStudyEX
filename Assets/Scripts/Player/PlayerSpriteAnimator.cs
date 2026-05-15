@@ -34,6 +34,9 @@ namespace Player
         [SerializeField] private string changeStateName = "change";
         [SerializeField] private string attackStateName = "attack";
 
+        [Header("Debug")]
+        [SerializeField] private bool logCurrentSpriteEveryFrame = true;
+
         private enum VisualState
         {
             Idle,
@@ -58,6 +61,7 @@ namespace Player
         private bool _hasPreviousGrounded;
         private bool _previousGrounded;
         private string _activeLandStateName;
+        private string _currentAnimatorStateName;
 
         private void Awake()
         {
@@ -71,6 +75,7 @@ namespace Player
             _hasPreviousGrounded = false;
             _previousGrounded = false;
             _activeLandStateName = null;
+            _currentAnimatorStateName = null;
         }
 
         private void Update()
@@ -113,6 +118,16 @@ namespace Player
             {
                 SwitchState(nextState);
             }
+        }
+
+        private void LateUpdate()
+        {
+            if (!logCurrentSpriteEveryFrame)
+            {
+                return;
+            }
+
+            Debug.Log(BuildCurrentSpriteLog(), this);
         }
 
         private void ResolveReferences()
@@ -284,6 +299,7 @@ namespace Player
             _currentState = nextState;
 
             var stateName = ResolveAnimatorStateName(nextState);
+            _currentAnimatorStateName = stateName;
             if (nextState == VisualState.Land)
             {
                 _activeLandStateName = stateName;
@@ -413,6 +429,39 @@ namespace Player
             }
 
             return primary;
+        }
+
+        private string BuildCurrentSpriteLog()
+        {
+            if (_resolvedFlipRenderers == null || _resolvedFlipRenderers.Length == 0)
+            {
+                return $"[PlayerSprite] frame={Time.frameCount} visualState={_currentState} animatorState={_currentAnimatorStateName ?? "(none)"} sprite=(no SpriteRenderer)";
+            }
+
+            var message = $"[PlayerSprite] frame={Time.frameCount} visualState={_currentState} animatorState={_currentAnimatorStateName ?? "(none)"} sprite=";
+            var appendedAny = false;
+
+            for (int i = 0; i < _resolvedFlipRenderers.Length; i++)
+            {
+                var renderer = _resolvedFlipRenderers[i];
+                if (renderer == null)
+                {
+                    continue;
+                }
+
+                if (appendedAny)
+                {
+                    message += ", ";
+                }
+
+                var spriteName = renderer.sprite != null ? renderer.sprite.name : "(null)";
+                message += $"{renderer.name}:{spriteName}";
+                appendedAny = true;
+            }
+
+            return appendedAny
+                ? message
+                : $"[PlayerSprite] frame={Time.frameCount} visualState={_currentState} animatorState={_currentAnimatorStateName ?? "(none)"} sprite=(no active SpriteRenderer)";
         }
 
         private static bool IsDefaultStateName(string stateName, string defaultStateName)

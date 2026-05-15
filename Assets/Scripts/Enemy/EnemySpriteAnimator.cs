@@ -12,6 +12,7 @@ namespace GameName.Enemy
         [Header("Controller")]
         [SerializeField] private EnemyController enemyController;
         [SerializeField] private EnemyTackleAttack tackleAttack;
+        [SerializeField] private EnemyRangedAttack rangedAttack;
 
         [Header("Facing")]
         [SerializeField] private bool syncFacingFromController = true;
@@ -90,6 +91,11 @@ namespace GameName.Enemy
                 tackleAttack = GetComponentInParent<EnemyTackleAttack>();
             }
 
+            if (rangedAttack == null)
+            {
+                rangedAttack = GetComponentInParent<EnemyRangedAttack>();
+            }
+
             if (animator == null)
             {
                 animator = GetComponent<Animator>();
@@ -123,6 +129,16 @@ namespace GameName.Enemy
             }
 
             if (tackleAttack != null && (tackleAttack.IsWindingUp || tackleAttack.IsCoolingDown))
+            {
+                return VisualState.Engage;
+            }
+
+            if (rangedAttack != null && rangedAttack.IsFiring)
+            {
+                return VisualState.Attack;
+            }
+
+            if (rangedAttack != null && rangedAttack.IsWindingUp)
             {
                 return VisualState.Engage;
             }

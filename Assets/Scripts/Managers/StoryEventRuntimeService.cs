@@ -214,6 +214,7 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
 
         if (hasCatalogEvents)
         {
+            bool enqueuedCatalogEvent = false;
             for (int i = 0; i < loadedCatalog.sceneStartEvents.Count; i++)
             {
                 StoryEventDefinition definition = loadedCatalog.sceneStartEvents[i];
@@ -223,9 +224,13 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
                 }
 
                 eventRunner.Enqueue(definition);
+                enqueuedCatalogEvent = true;
             }
 
-            yield break;
+            if (enqueuedCatalogEvent)
+            {
+                yield break;
+            }
         }
 
         StoryEventDefinition fallbackDefinition = CreateFallbackPrologueDefinition(sceneName);

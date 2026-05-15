@@ -7,6 +7,9 @@ public class UmbrellaController : MonoBehaviour
     
     private Rigidbody2D rigidBody2D; //PlayerのRigidbody2D
 
+    //--------------能力関連------------------
+    private Player.PlayerAbilityController playerAbilityController;
+
     /// <summary>
     /// 傘状態関連
     /// </summary>
@@ -42,6 +45,7 @@ public class UmbrellaController : MonoBehaviour
         rigidBody2D = GetComponentInParent<Rigidbody2D>();
         gunController = GetComponentInParent<GunController>();
         audioSource = GetComponentInParent<AudioSource>();
+        playerAbilityController = GetComponentInParent<Player.PlayerAbilityController>();
 
         if (openDebugSprite == null && spriteRenderer != null)
         {
@@ -170,7 +174,11 @@ public class UmbrellaController : MonoBehaviour
     /// </summary>
     private void Glide()
     {
-        if (umbrellaState != UmbrellaState.Open) { return; }
+        if (playerAbilityController == null) { return; }
+
+        if (!playerAbilityController.GetCanGlide()) { return; }
+
+        if (umbrellaState != UmbrellaState.Open) {  return; }
 
         if (gunController != null && gunController.GetRecoiling()) { return; }
 
@@ -180,7 +188,6 @@ public class UmbrellaController : MonoBehaviour
 
         float maxFallVelocity = -Mathf.Abs(glideFallSpeed);
 
-        // 落下が速すぎるときだけ補正
         if (rigidBody2D.linearVelocity.y < maxFallVelocity)
         {
             Vector2 velocity = rigidBody2D.linearVelocity;

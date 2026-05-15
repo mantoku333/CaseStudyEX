@@ -3,25 +3,26 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public sealed class TutorialOverlayController : MonoBehaviour
 {
     [Header("UI")]
+    [SerializeField] private GameObject viewRoot;
+    [SerializeField] private bool hideViewRootWhenClosed = true;
     [SerializeField] private GameObject panelRoot;
     [SerializeField] private Button closeButton;
-    [SerializeField] private TMP_Text keyLabel;
-    [SerializeField] private string inputActionName = "Attack";
-    [SerializeField] private string fallbackLabel = "Attack";
+    [FormerlySerializedAs("keyLabel")]
+    [SerializeField] private TMP_Text promptLabel;
+    [SerializeField] private string promptText = "攻撃する";
+    [SerializeField] private Image gifImage;
+    [SerializeField] private Sprite[] gifFrames = Array.Empty<Sprite>();
+    [SerializeField] private float gifFramesPerSecond = 12f;
+    [SerializeField] private float gifLoopIntervalSeconds = 0.5f;
     [SerializeField] private Animator loopAnimator;
     [SerializeField] private bool forceAnimatorUnscaledTime = true;
-
-    [Header("Binding Groups")]
-    [SerializeField] private string keyboardMouseGroup = "Keyboard&Mouse";
-    [SerializeField] private string gamepadGroup = "Gamepad";
-    [SerializeField] private string keyboardPreferredPathPrefix = "<Keyboard>/";
-    [SerializeField] private string gamepadPreferredPathPrefix = "<Gamepad>/";
 
     [Header("Pause")]
     [SerializeField] private StoryPausePolicy pausePolicy = StoryPausePolicy.TimeScaleZero;
@@ -49,6 +50,34 @@ public sealed class TutorialOverlayController : MonoBehaviour
     private Action onClosed;
     private bool capturedPrePlayPanelState;
     private bool prePlayPanelActive;
+    private bool hidingInternal;
+    private int currentGifFrameIndex;
+    private float gifFrameTimer;
+    private float gifLoopIntervalTimer;
+    private Image resolvedGifImage;
+
+    public void ConfigureContent(string text, Sprite[] frames, float framesPerSecond, float loopIntervalSeconds)
+    {
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            promptText = text;
+        }
+
+        if (frames != null && frames.Length > 0)
+        {
+            gifFrames = frames;
+        }
+
+        if (framesPerSecond > 0f)
+        {
+            gifFramesPerSecond = framesPerSecond;
+        }
+
+        if (loopIntervalSeconds >= 0f)
+        {
+            gifLoopIntervalSeconds = loopIntervalSeconds;
+        }
+    }
 
     private void Awake()
     {
@@ -111,6 +140,12 @@ public sealed class TutorialOverlayController : MonoBehaviour
 
     public void Show(Action closeCallback = null)
     {
+        GameObject root = ResolveViewRoot();
+        if (root != null && !root.activeSelf)
+        {
+            root.SetActive(true);
+        }
+
         onClosed = closeCallback;
 
         if (panelRoot != null)
@@ -118,9 +153,15 @@ public sealed class TutorialOverlayController : MonoBehaviour
             panelRoot.SetActive(true);
         }
 
-        RefreshKeyLabel();
+        RefreshPromptText();
+        RestartGifAnimation();
         RestartLoopAnimation();
         PauseGame();
+    }
+
+    private void Update()
+    {
+        UpdateGifAnimation();
     }
 
     public void HideWithoutCallback()
@@ -135,6 +176,13 @@ public sealed class TutorialOverlayController : MonoBehaviour
 
     private void HideInternal(bool invokeCallback)
     {
+        if (hidingInternal)
+        {
+            return;
+        }
+
+        hidingInternal = true;
+
         if (panelRoot != null)
         {
             panelRoot.SetActive(false);
@@ -149,6 +197,19 @@ public sealed class TutorialOverlayController : MonoBehaviour
         {
             callback?.Invoke();
         }
+
+        GameObject root = ResolveViewRoot();
+        if (hideViewRootWhenClosed && root != null && root.activeSelf)
+        {
+            root.SetActive(false);
+        }
+
+        hidingInternal = false;
+    }
+
+    private GameObject ResolveViewRoot()
+    {
+        return viewRoot != null ? viewRoot : gameObject;
     }
 
     private void RestartLoopAnimation()
@@ -172,83 +233,132 @@ public sealed class TutorialOverlayController : MonoBehaviour
         loopAnimator.Update(0f);
     }
 
-    private void RefreshKeyLabel()
+    private void RefreshPromptText()
     {
-        if (keyLabel == null)
+        if (promptLabel == null)
         {
             return;
         }
 
-        keyLabel.text = ResolveBindingLabel();
+        promptLabel.text = promptText;
     }
 
-    private string ResolveBindingLabel()
+    private void RestartGifAnimation()
     {
-        PlayerInput playerInput = ResolvePlayerInput();
-        if (playerInput == null || playerInput.actions == null || string.IsNullOrWhiteSpace(inputActionName))
+        currentGifFrameIndex = 0;
+        gifFrameTimer = 0f;
+        gifLoopIntervalTimer = 0f;
+
+        Image targetImage = ResolveGifImage();
+        if (targetImage == null)
         {
-            return fallbackLabel;
+            if (gifFrames != null && gifFrames.Length > 0)
+            {
+                Debug.LogWarning("[TutorialOverlayController] Gif Image is missing.", this);
+            }
+
+            return;
         }
 
-        InputActionAsset actions = playerInput.actions;
-        PlayerInputBindingOverrides.EnsureOverridesLoaded(actions);
-
-        bool preferGamepad = IsGamepadControlScheme(playerInput.currentControlScheme);
-        if (TryResolveBindingLabel(actions, preferGamepad, out string label))
+        if (gifFrames == null || gifFrames.Length == 0)
         {
-            return label;
+            targetImage.enabled = false;
+            targetImage.sprite = null;
+            return;
         }
 
-        if (TryResolveBindingLabel(actions, !preferGamepad, out label))
+        if (gifFrames.Length == 1)
         {
-            return label;
+            Debug.LogWarning("[TutorialOverlayController] Gif Frames has only one sprite, so it will not animate.", this);
         }
 
-        return fallbackLabel;
+        targetImage.enabled = true;
+        targetImage.sprite = gifFrames[0];
     }
 
-    private bool TryResolveBindingLabel(InputActionAsset actions, bool useGamepadGroup, out string label)
+    private void UpdateGifAnimation()
     {
-        label = string.Empty;
-
-        string group = useGamepadGroup ? gamepadGroup : keyboardMouseGroup;
-        string preferredPrefix = useGamepadGroup ? gamepadPreferredPathPrefix : keyboardPreferredPathPrefix;
-        if (string.IsNullOrWhiteSpace(group))
+        Image targetImage = ResolveGifImage();
+        if (targetImage == null || !targetImage.enabled || gifFrames == null || gifFrames.Length <= 1)
         {
-            return false;
+            return;
         }
 
-        if (!PlayerInputBindingOverrides.TryGetBindingEffectivePath(
-                actions,
-                inputActionName,
-                group,
-                out string effectivePath,
-                preferredPrefix))
+        float frameDuration = 1f / Mathf.Max(1f, gifFramesPerSecond);
+        if (gifLoopIntervalTimer > 0f)
         {
-            return false;
+            gifLoopIntervalTimer = Mathf.Max(0f, gifLoopIntervalTimer - Time.unscaledDeltaTime);
+            return;
         }
 
-        if (string.IsNullOrWhiteSpace(effectivePath))
+        gifFrameTimer += Time.unscaledDeltaTime;
+        while (gifFrameTimer >= frameDuration)
         {
-            return false;
+            gifFrameTimer -= frameDuration;
+            currentGifFrameIndex++;
+            if (currentGifFrameIndex >= gifFrames.Length)
+            {
+                currentGifFrameIndex = 0;
+                gifLoopIntervalTimer = gifLoopIntervalSeconds;
+            }
+
+            targetImage.sprite = gifFrames[currentGifFrameIndex];
+
+            if (gifLoopIntervalTimer > 0f)
+            {
+                gifFrameTimer = 0f;
+                break;
+            }
         }
-
-        string humanReadable = InputControlPath.ToHumanReadableString(
-            effectivePath,
-            InputControlPath.HumanReadableStringOptions.OmitDevice);
-
-        label = string.IsNullOrWhiteSpace(humanReadable) ? effectivePath : humanReadable;
-        return true;
     }
 
-    private static bool IsGamepadControlScheme(string controlScheme)
+    private Image ResolveGifImage()
     {
-        if (string.IsNullOrWhiteSpace(controlScheme))
+        if (gifImage != null)
         {
-            return false;
+            resolvedGifImage = gifImage;
+            return resolvedGifImage;
         }
 
-        return controlScheme.IndexOf("gamepad", StringComparison.OrdinalIgnoreCase) >= 0;
+        if (resolvedGifImage != null)
+        {
+            return resolvedGifImage;
+        }
+
+        Image[] images = GetComponentsInChildren<Image>(includeInactive: true);
+        for (int i = 0; i < images.Length; i++)
+        {
+            Image image = images[i];
+            if (image != null && string.Equals(image.name, "Image", StringComparison.OrdinalIgnoreCase))
+            {
+                resolvedGifImage = image;
+                return resolvedGifImage;
+            }
+        }
+
+        for (int i = 0; i < images.Length; i++)
+        {
+            Image image = images[i];
+            if (image == null)
+            {
+                continue;
+            }
+
+            if (closeButton != null && closeButton.targetGraphic == image)
+            {
+                continue;
+            }
+
+            if (string.Equals(image.name, "Bck", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            resolvedGifImage = image;
+            return resolvedGifImage;
+        }
+
+        return null;
     }
 
     private void PauseGame()

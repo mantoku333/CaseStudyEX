@@ -415,6 +415,7 @@ GameObject:
   - component: {fileID: 31609183}
   - component: {fileID: 31609185}
   - component: {fileID: 31609184}
+  - component: {fileID: 31609186}
   m_Layer: 0
   m_Name: Col_1-2
   m_TagString: Untagged
@@ -499,6 +500,24 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &31609186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31609182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42aa186c2a2119242abe50a398c03dc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinimapRoom
+  roomId: Col_1-2
+  displayName: Col_1-2
+  mapPosition: {x: 1, y: 0}
+  mapSize: {x: 1, y: 1}
+  connections: 0
+  playerTag: Player
 --- !u!1001 &43852388
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7857,6 +7876,7 @@ GameObject:
   - component: {fileID: 1202395515}
   - component: {fileID: 1202395517}
   - component: {fileID: 1202395516}
+  - component: {fileID: 1202395518}
   m_Layer: 0
   m_Name: Col_1-3
   m_TagString: Untagged
@@ -7941,6 +7961,24 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1202395518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1202395514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42aa186c2a2119242abe50a398c03dc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinimapRoom
+  roomId: Col_1-3
+  displayName: Col_1-3
+  mapPosition: {x: 2, y: 0}
+  mapSize: {x: 1, y: 1}
+  connections: 0
+  playerTag: Player
 --- !u!1001 &1213888709
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8221,6 +8259,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DiaryItem (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7885030436706907883, guid: 34309c4f1b0a240449d9cf7966edd0e1, type: 3}
+      propertyPath: diaryEntryData
+      value: 
+      objectReference: {fileID: 11400000, guid: 8f01554e4df605240b58e0b9d92c32b4, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9022,6 +9064,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DiaryItem (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7885030436706907883, guid: 34309c4f1b0a240449d9cf7966edd0e1, type: 3}
+      propertyPath: diaryEntryData
+      value: 
+      objectReference: {fileID: 11400000, guid: 8f01554e4df605240b58e0b9d92c32b4, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -105090,6 +105136,7 @@ GameObject:
   - component: {fileID: 1474766320}
   - component: {fileID: 1474766322}
   - component: {fileID: 1474766321}
+  - component: {fileID: 1474766323}
   m_Layer: 0
   m_Name: Col_1-4
   m_TagString: Untagged
@@ -105174,6 +105221,24 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1474766323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474766319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42aa186c2a2119242abe50a398c03dc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinimapRoom
+  roomId: Col_1-4
+  displayName: Col_1-4
+  mapPosition: {x: 3, y: 0}
+  mapSize: {x: 1, y: 1}
+  connections: 0
+  playerTag: Player
 --- !u!1001 &1502658990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -106860,6 +106925,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DiaryItem
       objectReference: {fileID: 0}
+    - target: {fileID: 7885030436706907883, guid: 34309c4f1b0a240449d9cf7966edd0e1, type: 3}
+      propertyPath: diaryEntryData
+      value: 
+      objectReference: {fileID: 11400000, guid: 2ff1fa1019933f045bdbd935307edc21, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -107359,6 +107428,7 @@ MonoBehaviour:
   parryStateName: parry
   changeStateName: change
   attackStateName: attack
+  logCurrentSpriteEveryFrame: 1
 --- !u!95 &1811797130
 Animator:
   serializedVersion: 7
@@ -107964,6 +108034,7 @@ GameObject:
   - component: {fileID: 1937629162}
   - component: {fileID: 1937629164}
   - component: {fileID: 1937629163}
+  - component: {fileID: 1937629165}
   m_Layer: 0
   m_Name: Col_1-1
   m_TagString: Untagged
@@ -108048,6 +108119,24 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1937629165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937629161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42aa186c2a2119242abe50a398c03dc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinimapRoom
+  roomId: Col_1-1
+  displayName: Col_1-1
+  mapPosition: {x: 0, y: 0}
+  mapSize: {x: 1, y: 1}
+  connections: 0
+  playerTag: Player
 --- !u!1001 &1967263078
 PrefabInstance:
   m_ObjectHideFlags: 0

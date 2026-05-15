@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4840235118936701351}
   - component: {fileID: 7048510488898470106}
   - component: {fileID: 8223044389003643432}
-  - component: {fileID: -2478972755846978503}
+  - component: {fileID: -1117361468422607052}
   m_Layer: 0
   m_Name: DodgeAbilityItems
   m_TagString: Untagged
@@ -139,7 +139,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &-2478972755846978503
+--- !u!114 &-1117361468422607052
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,7 +148,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4507611215527482477}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0153510be8bbba4c8c637c9d38d81f2, type: 3}
+  m_Script: {fileID: 11500000, guid: bd1a98103abefe94684a95a23ce822cb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AbilityPickupItem
-  abilityType: 1
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  itemData: {fileID: 11400000, guid: 588c671662446ef4496a80418db811d7, type: 2}

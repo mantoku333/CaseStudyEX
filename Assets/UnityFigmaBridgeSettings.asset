@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 119c1bd3601648f28a252a6030e067b6, type: 3}
   m_Name: UnityFigmaBridgeSettings
   m_EditorClassIdentifier: UnityFigmaBridgeEditor::UnityFigmaBridge.Editor.Settings.UnityFigmaBridgeSettings
-  DocumentUrl: https://www.figma.com/design/vryYIpp65L0a2WcyVP7BVS/CaseStudyEX_UI_Design?node-id=31-2&p=f&t=KSaZR8OYuAqU3ciL-0
-  BuildPrototypeFlow: 1
-  RunTimeAssetsScenePath: Assets/Scenes/Title.unity
+  DocumentUrl: https://www.figma.com/design/vryYIpp65L0a2WcyVP7BVS/CaseStudyEX_UI_Design?node-id=1-2&t=fDQ6S32T09XXPVE0-0
+  BuildPrototypeFlow: 0
+  RunTimeAssetsScenePath: Assets/Scenes/Test_Fuyuno_UI.unity
   EnableAutoLayout: 0
   ScreenBindingNamespace: 
   ServerRenderImageScale: 3

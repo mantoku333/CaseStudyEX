@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 631289890882415409}
   - component: {fileID: 1252295194265366641}
   - component: {fileID: 4510234145586313231}
-  - component: {fileID: 4333739015656651105}
+  - component: {fileID: 4651163016565044578}
   m_Layer: 0
   m_Name: GunAbilityItems
   m_TagString: Untagged
@@ -139,7 +139,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 2}
   m_EdgeRadius: 0
---- !u!114 &4333739015656651105
+--- !u!114 &4651163016565044578
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,7 +148,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7970231769165884641}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0153510be8bbba4c8c637c9d38d81f2, type: 3}
+  m_Script: {fileID: 11500000, guid: bd1a98103abefe94684a95a23ce822cb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AbilityPickupItem
-  abilityType: 3
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  itemData: {fileID: 11400000, guid: 7c8a2f78f0d69714ebf972840c2b7285, type: 2}

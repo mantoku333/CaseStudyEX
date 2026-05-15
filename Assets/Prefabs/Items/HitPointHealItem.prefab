@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3050655825591450720}
   - component: {fileID: 9149506419782867701}
   - component: {fileID: 5712446089753961287}
-  - component: {fileID: 6380941940222711541}
+  - component: {fileID: -7814358605480535016}
   m_Layer: 0
   m_Name: HitPointHealItem
   m_TagString: Untagged
@@ -139,7 +139,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &6380941940222711541
+--- !u!114 &-7814358605480535016
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,7 +148,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8939175200346428530}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75ca9c7401628604b84373a054145440, type: 3}
+  m_Script: {fileID: 11500000, guid: bd1a98103abefe94684a95a23ce822cb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitPointHealItem
-  healAmount: 2
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  itemData: {fileID: 11400000, guid: 028c7db5ee69d76469c07c68e42a89b1, type: 2}

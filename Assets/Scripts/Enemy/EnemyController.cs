@@ -35,6 +35,10 @@ namespace GameName.Enemy
         private float nextEnemyCollisionTurnTime;
 
         public event Action EnemyCollisionTurned;
+        /// <summary>
+        /// 敵がDestroyされる直前に通知する。死亡SEなど、破棄前に必要な処理で使う。
+        /// </summary>
+        public event Action Died;
 
         /// <summary>
         /// 現在の向き。右が 1、左が -1。
@@ -417,6 +421,8 @@ namespace GameName.Enemy
             if (currentHealth <= 0)
             {
                 Debug.Log("敵に当たりました");
+                // Destroy前に通知して、敵の位置や表示状態を参照できるようにする。
+                Died?.Invoke();
                 Destroy(gameObject);
             }
         }

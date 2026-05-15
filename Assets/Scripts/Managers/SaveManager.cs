@@ -8,7 +8,7 @@ public sealed class SaveManager : MonoBehaviour
     private const int SaveVersion = 2;
     public const int DefaultSlotIndex = 1;
     public const int MinSlotIndex = 1;
-    public const int MaxSlotIndex = 3;
+    public const int MaxSlotIndex = 10;
     private static readonly bool EnableLoadTrace = false;
     private const int TraceFrameCount = 120;
     private const float TraceThreshold = 0.001f;
@@ -172,6 +172,19 @@ public sealed class SaveManager : MonoBehaviour
         return HasSave(DefaultSlotIndex);
     }
 
+    public static bool HasAnySave()
+    {
+        for (int slotIndex = MinSlotIndex; slotIndex <= MaxSlotIndex; slotIndex++)
+        {
+            if (HasSave(slotIndex))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static bool HasSave(int slotIndex)
     {
         if (!TryValidateSlotIndex(slotIndex))
@@ -191,6 +204,7 @@ public sealed class SaveManager : MonoBehaviour
                 hasSave: false,
                 isCorrupted: false,
                 sceneName: string.Empty,
+                locationId: string.Empty,
                 savedAtUtc: string.Empty);
         }
 
