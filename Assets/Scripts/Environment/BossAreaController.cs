@@ -14,11 +14,9 @@ public sealed class BossAreaController : MonoBehaviour
     [SerializeField] private bool disableTriggerAfterStart = true;
 
     [Header("Boss")]
-    // StageBoss用エリアではstageBossAttackのみ、LastBoss用エリアではlastBossControllerのみを設定する。
-    // 両方入れると同じBossAreaで両方のボスが起動するため、1エリア1ボスの設定にする。
-    [SerializeField] private StageBossAttack stageBossAttack;
-    [SerializeField] private LastBossController lastBossController;
     [SerializeField] private Transform bossRoot;
+    [HideInInspector, SerializeField] private StageBossAttack stageBossAttack;
+    [HideInInspector, SerializeField] private LastBossController lastBossController;
     [SerializeField] private string bossDefeatedFlagKey = GameProgressKeys.Boss01Defeated;
 
     [Header("Walls")]
@@ -32,6 +30,8 @@ public sealed class BossAreaController : MonoBehaviour
 
     [Header("BGM")]
     [SerializeField] private StageBgmController stageBgm;
+    [SerializeField] private AudioClip bossBgm;
+    [SerializeField, Range(0f, 1f)] private float bossBgmVolume = 0.2f;
     [SerializeField] private bool returnToNormalAfterBoss;
 
     [Header("Confinement")]
@@ -67,32 +67,8 @@ public sealed class BossAreaController : MonoBehaviour
         // 後でトリガーを無効化しても拘束範囲を使えるよう、起動時に bounds を確定しておく。
         CacheConfinementBounds();
 
-        // どちらか一方だけ設定されていても動くように参照を相互補完する。
-        // bossRootだけ設定されている場合でも、StageBoss/LastBossどちらかを自動取得する。
-        if (stageBossAttack == null && bossRoot != null)
-        {
-            stageBossAttack = bossRoot.GetComponent<StageBossAttack>();
-        }
-
-        if (lastBossController == null && bossRoot != null)
-        {
-            lastBossController = bossRoot.GetComponent<LastBossController>();
-        }
-
-        if (bossRoot == null && stageBossAttack != null)
-        {
-            bossRoot = stageBossAttack.transform;
-        }
-
-        if (bossRoot == null && lastBossController != null)
-        {
-            bossRoot = lastBossController.transform;
-        }
-
-        if (bossRoot != null)
-        {
-            bossRigidbody2D = bossRoot.GetComponent<Rigidbody2D>();
-        }
+        ResolveBossReferences(logIssues: false);
+        ResolveStageBgm();
 
         CachePlayerReferences();
 
@@ -159,6 +135,13 @@ public sealed class BossAreaController : MonoBehaviour
             return;
         }
 
+        if (!ResolveBossReferences(logIssues: true))
+        {
+            return;
+        }
+
+        ResolveStageBgm();
+
         // 戦闘開始直前にプレイヤー参照を再取得しておく。
         CachePlayerReferences();
 
@@ -172,14 +155,13 @@ public sealed class BossAreaController : MonoBehaviour
         // カメラ切り替え -> ボス起動 の順で開始演出を揃える。
         // カメラ/BGMをボス戦用へ切り替えてから、設定されているボスを起動する。
         ActivateBossCamera();
-        stageBgm?.PlayBoss();
+        stageBgm?.PlayBoss(bossBgm, bossBgmVolume);
 
         if (stageBossAttack != null)
         {
             stageBossAttack.ActivateEncounter();
         }
-
-        if (lastBossController != null)
+        else if (lastBossController != null)
         {
             lastBossController.ActivateEncounter();
         }
@@ -209,8 +191,7 @@ public sealed class BossAreaController : MonoBehaviour
         {
             stageBossAttack.DeactivateEncounter();
         }
-
-        if (lastBossController != null)
+        else if (lastBossController != null)
         {
             lastBossController.DeactivateEncounter();
         }
@@ -262,6 +243,84 @@ public sealed class BossAreaController : MonoBehaviour
         }
 
         return bossRoot != null;
+    }
+
+    private bool ResolveBossReferences(bool logIssues)
+    {
+        StageBossAttack resolvedStageBoss = null;
+        LastBossController resolvedLastBoss = null;
+
+        if (bossRoot != null)
+        {
+            resolvedStageBoss = bossRoot.GetComponent<StageBossAttack>();
+            resolvedLastBoss = bossRoot.GetComponent<LastBossController>();
+
+            if (resolvedStageBoss == null && resolvedLastBoss == null)
+            {
+                if (logIssues)
+                {
+                    Debug.LogWarning($"[BossAreaController] Boss Root '{bossRoot.name}' has no StageBossAttack or LastBossController.", this);
+                }
+
+                stageBossAttack = null;
+                lastBossController = null;
+                bossRigidbody2D = null;
+                return false;
+            }
+        }
+        else
+        {
+            resolvedStageBoss = stageBossAttack;
+            resolvedLastBoss = lastBossController;
+
+            if (resolvedStageBoss != null)
+            {
+                bossRoot = resolvedStageBoss.transform;
+            }
+            else if (resolvedLastBoss != null)
+            {
+                bossRoot = resolvedLastBoss.transform;
+            }
+        }
+
+        if (resolvedStageBoss != null && resolvedLastBoss != null)
+        {
+            if (logIssues)
+            {
+                Debug.LogError("[BossAreaController] Boss Root has both StageBossAttack and LastBossController. Assign exactly one boss type.", this);
+            }
+
+            stageBossAttack = null;
+            lastBossController = null;
+            bossRigidbody2D = null;
+            return false;
+        }
+
+        stageBossAttack = resolvedStageBoss;
+        lastBossController = resolvedLastBoss;
+        bossRigidbody2D = bossRoot != null ? bossRoot.GetComponent<Rigidbody2D>() : null;
+
+        if (stageBossAttack != null || lastBossController != null)
+        {
+            return true;
+        }
+
+        if (logIssues)
+        {
+            Debug.LogWarning("[BossAreaController] No boss is assigned.", this);
+        }
+
+        return false;
+    }
+
+    private void ResolveStageBgm()
+    {
+        if (stageBgm != null)
+        {
+            return;
+        }
+
+        stageBgm = FindFirstObjectByType<StageBgmController>();
     }
 
     private void ConfineTargetsInsideArea()
