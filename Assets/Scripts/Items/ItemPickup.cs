@@ -43,6 +43,8 @@ public class ItemPickup : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (!other.CompareTag("Player")){ return; }
+
         Debug.Log($"GunAbilityItemに触れた: {other.name}", this);
 
         if (isPickedUp) { return; }
