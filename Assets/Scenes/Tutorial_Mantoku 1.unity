@@ -41028,6 +41028,9 @@ MonoBehaviour:
   dialogueStyle: 1
   bubbleTarget: {fileID: 775024343}
   skipWhenDialogueAlreadyRunning: 1
+  playCutsceneBeforeTutorial: 0
+  disablePlayerControlDuringCutscene: 1
+  cutsceneActions: []
   playerTag: Player
 --- !u!61 &604896957
 BoxCollider2D:
@@ -61439,6 +61442,9 @@ MonoBehaviour:
   dialogueStyle: 1
   bubbleTarget: {fileID: 775024343}
   skipWhenDialogueAlreadyRunning: 1
+  playCutsceneBeforeTutorial: 0
+  disablePlayerControlDuringCutscene: 1
+  cutsceneActions: []
   playerTag: Player
 --- !u!61 &968979941
 BoxCollider2D:
@@ -66758,6 +66764,9 @@ MonoBehaviour:
   dialogueStyle: 1
   bubbleTarget: {fileID: 775024343}
   skipWhenDialogueAlreadyRunning: 1
+  playCutsceneBeforeTutorial: 0
+  disablePlayerControlDuringCutscene: 1
+  cutsceneActions: []
   playerTag: Player
 --- !u!61 &1127934777
 BoxCollider2D:
@@ -67101,6 +67110,9 @@ MonoBehaviour:
   dialogueStyle: 1
   bubbleTarget: {fileID: 775024343}
   skipWhenDialogueAlreadyRunning: 1
+  playCutsceneBeforeTutorial: 0
+  disablePlayerControlDuringCutscene: 1
+  cutsceneActions: []
   playerTag: Player
 --- !u!61 &1219458127
 BoxCollider2D:
@@ -75059,6 +75071,9 @@ MonoBehaviour:
   dialogueStyle: 1
   bubbleTarget: {fileID: 775024343}
   skipWhenDialogueAlreadyRunning: 1
+  playCutsceneBeforeTutorial: 0
+  disablePlayerControlDuringCutscene: 1
+  cutsceneActions: []
   playerTag: Player
 --- !u!61 &1949870673
 BoxCollider2D:
@@ -76058,6 +76073,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 686997044573513151, guid: 737cb231dfc479a478103e76c024f6d7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1116221533759924592, guid: 737cb231dfc479a478103e76c024f6d7, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4220153397358405028, guid: 737cb231dfc479a478103e76c024f6d7, type: 3}
