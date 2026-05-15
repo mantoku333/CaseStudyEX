@@ -20,6 +20,7 @@ MonoBehaviour:
   dodgeDuration: 0.5
   attackPerSecond: 4
   umbrellaAttackDuration: 0.2
+  playerAttackDamage: 1
   gunRecoilForce: 30
   gunRecoilDuration: 0.1
   reloadSeconds: 1.2

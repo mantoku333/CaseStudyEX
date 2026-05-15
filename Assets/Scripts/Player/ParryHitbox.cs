@@ -8,15 +8,52 @@ public class ParryHitbox : MonoBehaviour
     // パリィ判定に接触している敵攻撃を保持する。
     // 通常弾はEnemyBullet、LastBossの範囲攻撃はLastBossAttackParryTargetで判別する。
     private List<GameObject> enemyAttacks = new List<GameObject>();     //接触管理
+    private readonly Collider2D[] overlapResults = new Collider2D[16];
+    private Collider2D hitboxCollider;
+    private ContactFilter2D overlapFilter;
+
+    private void Awake()
+    {
+        hitboxCollider = GetComponent<Collider2D>();
+        overlapFilter = new ContactFilter2D
+        {
+            useLayerMask = true,
+            useTriggers = true
+        };
+        overlapFilter.SetLayerMask(Physics2D.AllLayers);
+    }
+
+    public void ScanCurrentOverlaps()
+    {
+        if (hitboxCollider == null || !hitboxCollider.enabled)
+        {
+            return;
+        }
+
+        Physics2D.SyncTransforms();
+        int overlapCount = hitboxCollider.Overlap(overlapFilter, overlapResults);
+        for (int i = 0; i < overlapCount; i++)
+        {
+            AddEnemyAttackIfNeeded(overlapResults[i]);
+            overlapResults[i] = null;
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (IsEnemyAttack(collision))
+        AddEnemyAttackIfNeeded(collision);
+    }
+
+    private void AddEnemyAttackIfNeeded(Collider2D collision)
+    {
+        if (collision == null || !IsEnemyAttack(collision))
         {
-            if (!enemyAttacks.Contains(collision.gameObject))
-            {
-                enemyAttacks.Add(collision.gameObject);
-            }
+            return;
+        }
+
+        if (!enemyAttacks.Contains(collision.gameObject))
+        {
+            enemyAttacks.Add(collision.gameObject);
         }
     }
 
@@ -37,6 +74,8 @@ public class ParryHitbox : MonoBehaviour
     /// <returns></returns>
     public bool HasEnemyAttack()
     {
+        ScanCurrentOverlaps();
+
         //無効をオブジェクト削除
         for (int i = enemyAttacks.Count - 1; i >= 0; i--)
         {
@@ -101,21 +140,24 @@ public class ParryHitbox : MonoBehaviour
                collision.GetComponent<LastBossAttackParryTarget>() != null;
     }
 
-    private static bool IsTrackedAttackActive(GameObject attackObject)
+    private bool IsTrackedAttackActive(GameObject attackObject)
     {
         if (attackObject == null || !attackObject.activeInHierarchy)
         {
             return false;
         }
 
-        LastBossAttackParryTarget lastBossAttack = attackObject.GetComponent<LastBossAttackParryTarget>();
-        if (lastBossAttack == null)
+        if (hitboxCollider == null || !hitboxCollider.enabled)
         {
-            return true;
+            return false;
         }
 
-        // LastBoss予兆はオブジェクト自体を使い回すので、Colliderの有効状態で判定する。
-        Collider2D attackCollider = lastBossAttack.GetComponent<Collider2D>();
-        return attackCollider != null && attackCollider.enabled;
+        Collider2D attackCollider = attackObject.GetComponent<Collider2D>();
+        if (attackCollider == null || !attackCollider.enabled)
+        {
+            return false;
+        }
+
+        return hitboxCollider.Distance(attackCollider).isOverlapped;
     }
 }

@@ -57,6 +57,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private UmbrellaAttackController umbrellaAttackController; //傘攻撃関連のスクリプト
     private UmbrellaParryController  umbrellaParryController;  //パリィ関連のスクリプト
     private ParryHitbox parryHitbox;
+    private AttackHitbox[] attackHitboxes;
     private DodgeController dodgeController;                   //回避関連のスクリプト
     private MonoBehaviour fallThroughController;               //床すり抜け関連のスクリプト
     private PlayerAbilityController playerAbilityController;   //能力管理のスクリプト
@@ -136,6 +137,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     {
         GetInput();
         UpdateFacingDirection();
+        RefreshParryColliderFacing();
     }
 
     // 物理更新順は依存関係を持つため固定:
@@ -241,6 +243,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             Debug.LogError("ParryHitboxが見つかっていません");
         }
 
+        attackHitboxes = GetComponentsInChildren<AttackHitbox>(true);
+
         dodgeController = GetComponent<DodgeController>();
         if (dodgeController == null)
         {
@@ -269,6 +273,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             Debug.LogWarning("PlayerStatsDataが設定されていません。Inspectorから設定してください。");
             return;
         }
+
+        ApplyStatsToAttackHitboxes();
 
         if (umbrellaController != null)
         {
@@ -302,6 +308,22 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
     }
 
+    private void ApplyStatsToAttackHitboxes()
+    {
+        if (attackHitboxes == null || attackHitboxes.Length == 0)
+        {
+            attackHitboxes = GetComponentsInChildren<AttackHitbox>(true);
+        }
+
+        for (int i = 0; i < attackHitboxes.Length; i++)
+        {
+            if (attackHitboxes[i] != null)
+            {
+                attackHitboxes[i].SetPlayerStatsData(playerStatsData);
+            }
+        }
+    }
+
     // 入力受付専用。
     // ここでは「何をするか」を決めるだけで、実際の物理移動量の確定は Move/Jump に任せる。
     // 攻撃仕様:
@@ -329,6 +351,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             move = moveAction.ReadValue<Vector2>();
             moveInput = Mathf.Clamp(move.x, -1.0f, 1.0f);
         }
+
+        UpdateFacingDirection();
+        RefreshParryColliderFacing();
 
         bool isDownHeld = move.y < -0.5f;
         if (isDownHeld && IsPressedThisFrame(fallThroughAction))
@@ -676,6 +701,14 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         else if (moveInput < 0.0f)
         {
             isFacingRight = false;
+        }
+    }
+
+    private void RefreshParryColliderFacing()
+    {
+        if (umbrellaParryController != null)
+        {
+            umbrellaParryController.RefreshParryColliderFacing();
         }
     }
 

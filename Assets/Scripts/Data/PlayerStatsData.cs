@@ -30,6 +30,8 @@ namespace Player
 
         [BoxGroup("体力"), Label("最大HP"), Tooltip("最大HP"), SerializeField, Min(1)] private int maxHealth = 3;
 
+        [SerializeField, Min(1)] private int playerAttackDamage = 1;
+
         public float MoveSpeed => moveSpeed;
         public float GlideMoveSpeed => glideMoveSpeed;
         public float FallSpeed => fallSpeed;
@@ -38,6 +40,7 @@ namespace Player
         public float DodgeDuration => dodgeDuration;
         public float AttackPerSecond => attackPerSecond;
         public float UmbrellaAttackDuration => umbrellaAttackDuration;
+        public int PlayerAttackDamage => playerAttackDamage;
         public float GunRecoilForce => gunRecoilForce;
         public float GunRecoilDuration => gunRecoilDuration;
         public float ReloadSeconds => reloadSeconds;
@@ -93,6 +96,12 @@ namespace Player
             ClampValues();
         }
 
+        public void SetPlayerAttackDamage(int value)
+        {
+            playerAttackDamage = value;
+            ClampValues();
+        }
+
         public void SetGunRecoilForce(float value)
         {
             gunRecoilForce = value;
@@ -136,6 +145,7 @@ namespace Player
 
         private void ClampValues()
         {
+            playerAttackDamage = Mathf.Max(1, playerAttackDamage);
             moveSpeed = Mathf.Max(0f, moveSpeed);
             glideMoveSpeed = Mathf.Max(0f, glideMoveSpeed);
             fallSpeed = Mathf.Max(0f, fallSpeed);

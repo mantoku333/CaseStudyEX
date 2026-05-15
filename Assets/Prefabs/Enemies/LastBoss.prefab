@@ -187,7 +187,6 @@ MonoBehaviour:
   moveSpeed: 8
   enrageHealthRate: 0.4
   enragedAttackMultiplier: 1.1
-  playerAttackDamage: 1
   closeRangeDistance: 12
   farRangeDistance: 13
   thirdNormalChanceAfterSecondNormal: 0.6
@@ -224,6 +223,10 @@ MonoBehaviour:
   attackColor: {r: 1, g: 0.15, b: 0.05, a: 0.55}
   enragedColor: {r: 0.6, g: 0, b: 0, a: 1}
   enragedPulseSpeed: 8
+  hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
+  hitFlashDuration: 0.14
+  hitFlashRepeatCount: 2
+  hitFlashNormalDuration: 0.05
   drawDebugGizmos: 0
 --- !u!114 &730100000000000004
 MonoBehaviour:

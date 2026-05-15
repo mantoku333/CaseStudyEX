@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
 using UnityEngine.Serialization;
 
@@ -127,7 +127,7 @@ namespace Player
                 return;
             }
 
-            Debug.Log(BuildCurrentSpriteLog(), this);
+            //Debug.Log(BuildCurrentSpriteLog(), this);
         }
 
         private void ResolveReferences()

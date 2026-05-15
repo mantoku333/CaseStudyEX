@@ -112,8 +112,18 @@ public partial class SROptions
     }
 
     [Category("プレイヤー調整②")]
-    [DisplayName("銃反動")]
+    [DisplayName("Player Attack Damage")]
     [Sort(4)]
+    [Increment(1)]
+    public int PlayerAttackDamage
+    {
+        get => CurrentPlayerStatsData != null ? CurrentPlayerStatsData.PlayerAttackDamage : 0;
+        set => UpdateCurrentPlayerStatsData(stats => stats.SetPlayerAttackDamage(value));
+    }
+
+    [Category("プレイヤー調整②")]
+    [DisplayName("銃反動")]
+    [Sort(5)]
     [Increment(0.1)]
     public float GunRecoilForce
     {
