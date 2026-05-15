@@ -15,15 +15,15 @@ MonoBehaviour:
   moveSpeed: 6
   glideMoveSpeed: 10
   fallSpeed: 3
-  jumpForce: 8
+  jumpForce: 1.5
   dodgeDistance: 3
   dodgeDuration: 0.5
-  attackPerSecond: 4
+  attackPerSecond: 3
   umbrellaAttackDuration: 0.2
-  playerAttackDamage: 1
   gunRecoilForce: 30
   gunRecoilDuration: 0.1
-  reloadSeconds: 1.2
+  reloadSeconds: 5
   parryDuration: 0.1
   parryFlashDuration: 0.1
-  maxHealth: 3
+  maxHealth: 100
+  playerAttackDamage: 20

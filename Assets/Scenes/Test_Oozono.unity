@@ -1309,6 +1309,68 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraManager
   _impulseSource: {fileID: 271680278}
+--- !u!1001 &312076005
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 153.00797
+      objectReference: {fileID: 0}
+    - target: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1154671
+      objectReference: {fileID: 0}
+    - target: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4600020788520051928, guid: eaad50d228662c145ab82759af767024, type: 3}
+      propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: eaad50d228662c145ab82759af767024, type: 3}
+--- !u!4 &312076006 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1297286252844393473, guid: eaad50d228662c145ab82759af767024, type: 3}
+  m_PrefabInstance: {fileID: 312076005}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &314809465
 GameObject:
   m_ObjectHideFlags: 0
@@ -32963,7 +33025,7 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 1831714984}
+    TrackingTarget: {fileID: 312076006}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
@@ -33014,7 +33076,7 @@ Transform:
   m_GameObject: {fileID: 804635156}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 152.45125, y: -4.410812, z: -10}
+  m_LocalPosition: {x: 153.00797, y: -3.744533, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -76938,7 +77000,7 @@ Transform:
   m_GameObject: {fileID: 1436671320}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 160.38725, y: 4.329188, z: -10}
+  m_LocalPosition: {x: 160.94397, y: 4.9954667, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -77019,7 +77081,7 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 1831714984}
+    TrackingTarget: {fileID: 312076006}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
@@ -77628,7 +77690,7 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 0}
+    TrackingTarget: {fileID: 312076006}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
@@ -78790,6 +78852,7 @@ MonoBehaviour:
   speakerAnchors:
   - characterName: "\u30A4\u30EA\u30B9"
     target: {fileID: 0}
+    target: {fileID: 0}
     offset: {x: 0, y: 1.5, z: 0}
   - characterName: "\u30CE\u30AF\u30B9"
     target: {fileID: 0}
@@ -79230,7 +79293,7 @@ Transform:
   m_GameObject: {fileID: 2100127750}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 160.38725, y: 4.329188, z: -10}
+  m_LocalPosition: {x: 160.94397, y: 4.9954667, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -79396,6 +79459,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MovingBookshelf
       objectReference: {fileID: 0}
+    - target: {fileID: 7958013458326272076, guid: 618b5f069228f6244890c4771623dbfc, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8422250848740037163, guid: 618b5f069228f6244890c4771623dbfc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 143.1272
@@ -79481,3 +79548,4 @@ SceneRoots:
   - {fileID: 1370012225}
   - {fileID: 438180699}
   - {fileID: 1259117782}
+  - {fileID: 312076005}

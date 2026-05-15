@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4656583997417328821}
   - component: {fileID: 4365071265178462127}
-  - component: {fileID: 1454769854225362428}
+  - component: {fileID: 8672880918955565204}
   m_Layer: 0
   m_Name: ParryHitbox
   m_TagString: Untagged
@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 1455145078984213775}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.05, y: -4.16, z: 0}
-  m_LocalScale: {x: 12.4, y: 9.45, z: 1}
+  m_LocalPosition: {x: 5.869985, y: -5.71, z: 0}
+  m_LocalScale: {x: 10.849807, y: 9.746111, z: 0.7561526}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2251229988448382813}
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adab7e5b3d4b0c04c9078e8e8d2a1b60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ParryHitbox
---- !u!61 &1454769854225362428
+--- !u!61 &8672880918955565204
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -75,7 +75,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -268,7 +268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UmbrellaAttackController
   attackDuration: 0.2
   attackPerSecond: 4
-  attackCollider: {fileID: 539277141468398249}
+  attackCollider: {fileID: 4697355616983758325}
   leftFacingAttackColliderRightOffset: 5
   player_normalAttack: {fileID: 8300000, guid: 298ef99b3d24d514ba42518424f5ddf3, type: 3}
   attackEffectTexture: {fileID: 2800000, guid: f2f6bacc83f7c594fb33b917d075f4c5, type: 3}
@@ -289,7 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UmbrellaParryController
   parryDuration: 0.1
-  parryCollider: {fileID: 1454769854225362428}
+  parryCollider: {fileID: 8672880918955565204}
   leftFacingParryColliderRightOffset: 5
   playerSprite: {fileID: 4532821241702585450}
   parryColor: {r: 1, g: 0.9808723, b: 0.3254717, a: 1}
@@ -1019,7 +1019,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2872472093536943389}
   - component: {fileID: 5083422479060007190}
-  - component: {fileID: 539277141468398249}
+  - component: {fileID: 4697355616983758325}
   m_Layer: 0
   m_Name: AttackHitbox
   m_TagString: Untagged
@@ -1036,8 +1036,8 @@ Transform:
   m_GameObject: {fileID: 7408946771973873088}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.05, y: -4.16, z: 0}
-  m_LocalScale: {x: 12.4, y: 9.45, z: 1}
+  m_LocalPosition: {x: 5.87, y: -5.71, z: 0}
+  m_LocalScale: {x: 10.849807, y: 11.305489, z: 0.7561526}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2251229988448382813}
@@ -1054,7 +1054,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7edd7569fb719334182586f503610334, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackHitbox
---- !u!61 &539277141468398249
+--- !u!61 &4697355616983758325
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1070,7 +1070,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -1084,7 +1084,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
