@@ -186271,7 +186271,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraIntroMove
   introCamera: {fileID: 1673759104}
   followCamera: {fileID: 1436671324}
-  player: {fileID: 1313348996}
+  player: {fileID: 0}
   autoPlayOnStart: 0
   endOffset: {x: 3, y: 8, z: 0}
   moveDuration: 7
