@@ -5,6 +5,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Yarn.Unity;
 
 public sealed class StoryEventRunner : MonoBehaviour
@@ -23,6 +24,16 @@ public sealed class StoryEventRunner : MonoBehaviour
     private bool cachedEventCameraPriorityEnabled;
     private bool hasCachedEventCameraPriority;
     private bool activeEventStartMutationsApplied;
+    private Canvas cachedHudCanvas;
+    private GraphicRaycaster cachedHudRaycaster;
+    private bool cachedHudCanvasEnabled;
+    private bool cachedHudRaycasterEnabled;
+    private MinimapManager cachedMinimapManager;
+    private MinimapView cachedMinimapView;
+    private bool cachedMinimapManagerEnabled;
+    private bool cachedMiniMapVisible;
+    private bool cachedFullMapVisible;
+    private bool hasCachedPrologueUiState;
 
     public bool HasPendingEvents => activeEvent != null || queuedEvents.Count > 0;
 
@@ -181,10 +192,22 @@ public sealed class StoryEventRunner : MonoBehaviour
     private IEnumerator RunEventSequence(StoryEventDefinition definition, DialogueRunner runner)
     {
         ElevateEventCameraPriority();
+        ApplyPrologueUiVisibility(definition);
 
         try
         {
             StoryPauseRuntime.SetOverride(definition.pausePolicy);
+
+            if (string.Equals(definition.eventId, "prologue", System.StringComparison.OrdinalIgnoreCase))
+            {
+                CameraIntroMove introMove =
+                    FindFirstObjectByType<CameraIntroMove>(FindObjectsInactive.Include);
+
+                if (introMove != null)
+                {
+                    yield return introMove.PlayIntroSequence();
+                }
+            }
 
             if (definition.preActions != null && definition.preActions.Count > 0)
             {
@@ -220,6 +243,7 @@ public sealed class StoryEventRunner : MonoBehaviour
             waitingDialogueCompletion = false;
             UnsubscribeFromDialogueComplete();
             StoryPauseRuntime.ClearOverride();
+            RestorePrologueUiVisibility();
             RestoreEventCameraPriority();
             activeEvent = null;
             activeEventStartMutationsApplied = false;
@@ -504,5 +528,93 @@ public sealed class StoryEventRunner : MonoBehaviour
         hasCachedEventCameraPriority = false;
         cachedEventCameraPriorityValue = 0;
         cachedEventCameraPriorityEnabled = false;
+    }
+
+    private void ApplyPrologueUiVisibility(StoryEventDefinition definition)
+    {
+        RestorePrologueUiVisibility();
+
+        if (definition == null ||
+            !string.Equals(definition.eventId, "prologue", System.StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        GameObject hudObject = GameObject.Find("PlayerHUDCanvas");
+        if (hudObject != null)
+        {
+            cachedHudCanvas = hudObject.GetComponent<Canvas>();
+            cachedHudRaycaster = hudObject.GetComponent<GraphicRaycaster>();
+
+            if (cachedHudCanvas != null)
+            {
+                cachedHudCanvasEnabled = cachedHudCanvas.enabled;
+                cachedHudCanvas.enabled = false;
+                hasCachedPrologueUiState = true;
+            }
+
+            if (cachedHudRaycaster != null)
+            {
+                cachedHudRaycasterEnabled = cachedHudRaycaster.enabled;
+                cachedHudRaycaster.enabled = false;
+                hasCachedPrologueUiState = true;
+            }
+        }
+
+        cachedMinimapManager = MinimapManager.Instance;
+        if (cachedMinimapManager != null)
+        {
+            cachedMinimapManagerEnabled = cachedMinimapManager.enabled;
+            cachedMinimapManager.enabled = false;
+            cachedMinimapView = cachedMinimapManager.GetComponent<MinimapView>();
+
+            if (cachedMinimapView != null)
+            {
+                cachedMiniMapVisible = cachedMinimapView.IsMiniMapVisible;
+                cachedFullMapVisible = cachedMinimapView.IsFullMapVisible;
+                cachedMinimapView.SetPanelVisibility(false, false);
+            }
+
+            hasCachedPrologueUiState = true;
+        }
+    }
+
+    private void RestorePrologueUiVisibility()
+    {
+        if (!hasCachedPrologueUiState)
+        {
+            return;
+        }
+
+        if (cachedHudCanvas != null)
+        {
+            cachedHudCanvas.enabled = cachedHudCanvasEnabled;
+        }
+
+        if (cachedHudRaycaster != null)
+        {
+            cachedHudRaycaster.enabled = cachedHudRaycasterEnabled;
+        }
+
+        if (cachedMinimapView != null)
+        {
+            cachedMinimapView.SetPanelVisibility(cachedMiniMapVisible, cachedFullMapVisible);
+        }
+
+        if (cachedMinimapManager != null)
+        {
+            cachedMinimapManager.enabled = cachedMinimapManagerEnabled;
+        }
+
+        cachedHudCanvas = null;
+        cachedHudRaycaster = null;
+        cachedMinimapManager = null;
+        cachedMinimapView = null;
+        cachedHudCanvasEnabled = false;
+        cachedHudRaycasterEnabled = false;
+        cachedMinimapManagerEnabled = false;
+        cachedMiniMapVisible = false;
+        cachedFullMapVisible = false;
+        hasCachedPrologueUiState = false;
     }
 }

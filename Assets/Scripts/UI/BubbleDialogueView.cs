@@ -182,7 +182,7 @@ namespace Metroidvania.UI
             gameObject.SetActive(true);
             if (bubblePanel != null)
             {
-                bubblePanel.SetActive(true);
+                bubblePanel.SetActive(false);
             }
 
             if (_currentTarget == null)
@@ -257,6 +257,11 @@ namespace Metroidvania.UI
             {
                 ApplyTextLayoutDefaults();
                 dialogueText.text = string.Empty;
+            }
+
+            if (bubblePanel != null)
+            {
+                bubblePanel.SetActive(true);
             }
 
             string text = line.TextWithoutCharacterName.Text;
