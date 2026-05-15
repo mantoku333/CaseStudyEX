@@ -31,6 +31,7 @@ namespace GameName.Enemy
         private Rigidbody2D rigidbody2D;
         private Collider2D bodyCollider;
         private SpriteRenderer spriteRenderer;
+        private EnemyDamageFlash damageFlash;
         private int currentHealth;
         private float nextEnemyCollisionTurnTime;
 
@@ -58,6 +59,7 @@ namespace GameName.Enemy
             rigidbody2D = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
+            damageFlash = GetComponentInChildren<EnemyDamageFlash>(true);
             currentHealth = Mathf.Max(1, maxHealth);
 
             if (stageLayerMask.value == 0)
@@ -416,7 +418,14 @@ namespace GameName.Enemy
 
         public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
         {
-            currentHealth -= 1;
+            int damage = attacker != null ? attacker.PlayerAttackDamage : 0;
+            if (damage <= 0)
+            {
+                return;
+            }
+
+            damageFlash?.PlayFlash();
+            currentHealth = Mathf.Max(0, currentHealth - damage);
 
             if (currentHealth <= 0)
             {
