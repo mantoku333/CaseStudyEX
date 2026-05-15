@@ -598,10 +598,33 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         if (isGround)
         {
-            rigidBody2d.linearVelocity = new Vector2(rigidBody2d.linearVelocity.x, playerStatsData.JumpForce);
+            float jumpVelocity = CreateJumpVelocity();
+            rigidBody2d.linearVelocity = new Vector2(rigidBody2d.linearVelocity.x,jumpVelocity);
         }
 
         jumpInput = false;
+    }
+
+    private float CreateJumpVelocity()
+    {
+        if(playerStatsData == null)
+        {
+            return 0.0f;
+        }
+
+        if(rigidBody2d == null)
+        {
+            return 0.0f;
+        }
+
+        float gravity = Mathf.Abs(Physics2D.gravity.y * rigidBody2d.gravityScale);
+
+        if (gravity <= 0.0f)
+        {
+            return 0.0f;
+        }
+
+        return Mathf.Sqrt(2.0f * gravity * playerStatsData.JumpForce);
     }
 
     /// <summary>
