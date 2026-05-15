@@ -13,6 +13,10 @@ public sealed class StoryEventRunner : MonoBehaviour
     [SerializeField] private DialogueManager dialogueManager = null!;
     [SerializeField] private string eventCameraName = "EventCam";
     [SerializeField] private int eventCameraPriorityFloor = 100;
+    [SerializeField] private GameObject letterBoxView;
+    [SerializeField] private string letterBoxViewName = "LetterBoxView";
+    [SerializeField] private float letterBoxFadeSeconds = 0.6f;
+    [SerializeField] private float letterBoxSlidePixels = 120f;
 
     private readonly Queue<StoryEventDefinition> queuedEvents = new Queue<StoryEventDefinition>();
     private StoryEventDefinition activeEvent;
@@ -34,6 +38,15 @@ public sealed class StoryEventRunner : MonoBehaviour
     private bool cachedMiniMapVisible;
     private bool cachedFullMapVisible;
     private bool hasCachedPrologueUiState;
+    private bool cachedLetterBoxViewActiveSelf;
+    private float cachedLetterBoxAlpha = 1f;
+    private CanvasGroup cachedLetterBoxCanvasGroup;
+    private RectTransform cachedLetterBoxTop;
+    private RectTransform cachedLetterBoxBottom;
+    private Vector2 cachedLetterBoxTopAnchoredPosition;
+    private Vector2 cachedLetterBoxBottomAnchoredPosition;
+    private Coroutine letterBoxFadeRoutine;
+    private bool hasCachedLetterBoxViewState;
 
     public bool HasPendingEvents => activeEvent != null || queuedEvents.Count > 0;
 
@@ -85,6 +98,7 @@ public sealed class StoryEventRunner : MonoBehaviour
         UnsubscribeFromDialogueComplete();
         StoryPauseRuntime.ClearOverride();
         RestoreEventCameraPriority();
+        RestoreLetterBoxViewVisibility();
 
         ApplyCompletionState(completedEvent);
 
@@ -105,6 +119,7 @@ public sealed class StoryEventRunner : MonoBehaviour
         waitingDialogueCompletion = false;
         UnsubscribeFromDialogueComplete();
         RestoreEventCameraPriority();
+        RestoreLetterBoxViewVisibility();
         StoryPauseRuntime.ClearOverride();
 
         activeEvent = null;
@@ -193,6 +208,7 @@ public sealed class StoryEventRunner : MonoBehaviour
     {
         ElevateEventCameraPriority();
         ApplyPrologueUiVisibility(definition);
+        ShowLetterBoxView();
 
         try
         {
@@ -245,6 +261,7 @@ public sealed class StoryEventRunner : MonoBehaviour
             StoryPauseRuntime.ClearOverride();
             RestorePrologueUiVisibility();
             RestoreEventCameraPriority();
+            RestoreLetterBoxViewVisibility();
             activeEvent = null;
             activeEventStartMutationsApplied = false;
             activeRoutine = null;
@@ -528,6 +545,279 @@ public sealed class StoryEventRunner : MonoBehaviour
         hasCachedEventCameraPriority = false;
         cachedEventCameraPriorityValue = 0;
         cachedEventCameraPriorityEnabled = false;
+    }
+
+    private void ShowLetterBoxView()
+    {
+        GameObject view = ResolveLetterBoxView();
+        if (view == null)
+        {
+            return;
+        }
+
+        if (!hasCachedLetterBoxViewState)
+        {
+            cachedLetterBoxViewActiveSelf = view.activeSelf;
+            cachedLetterBoxCanvasGroup = EnsureLetterBoxCanvasGroup(view);
+            cachedLetterBoxAlpha = cachedLetterBoxCanvasGroup != null ? cachedLetterBoxCanvasGroup.alpha : 1f;
+            CacheLetterBoxBars(view);
+            hasCachedLetterBoxViewState = true;
+        }
+
+        view.SetActive(true);
+        CanvasGroup canvasGroup = EnsureLetterBoxCanvasGroup(view);
+        if (canvasGroup == null)
+        {
+            return;
+        }
+
+        float fromAlpha = 0f;
+        canvasGroup.alpha = fromAlpha;
+        SetLetterBoxSlidePosition(0f);
+        StartLetterBoxTransition(canvasGroup, fromAlpha, 1f, 0f, 1f, null);
+    }
+
+    private void RestoreLetterBoxViewVisibility()
+    {
+        if (!hasCachedLetterBoxViewState)
+        {
+            return;
+        }
+
+        bool restoreActiveSelf = cachedLetterBoxViewActiveSelf;
+        float restoreAlpha = cachedLetterBoxAlpha;
+        GameObject view = ResolveLetterBoxView();
+        if (view != null)
+        {
+            CanvasGroup canvasGroup = EnsureLetterBoxCanvasGroup(view);
+            if (canvasGroup != null)
+            {
+                StartLetterBoxTransition(canvasGroup, canvasGroup.alpha, 0f, 1f, 0f, () =>
+                {
+                    if (view != null)
+                    {
+                        RestoreLetterBoxBarPositions();
+                        view.SetActive(restoreActiveSelf);
+                        if (restoreActiveSelf && canvasGroup != null)
+                        {
+                            canvasGroup.alpha = restoreAlpha;
+                        }
+                    }
+                });
+            }
+            else
+            {
+                view.SetActive(restoreActiveSelf);
+            }
+        }
+
+        cachedLetterBoxViewActiveSelf = false;
+        cachedLetterBoxAlpha = 1f;
+        cachedLetterBoxCanvasGroup = null;
+        cachedLetterBoxTop = null;
+        cachedLetterBoxBottom = null;
+        cachedLetterBoxTopAnchoredPosition = Vector2.zero;
+        cachedLetterBoxBottomAnchoredPosition = Vector2.zero;
+        hasCachedLetterBoxViewState = false;
+    }
+
+    private CanvasGroup EnsureLetterBoxCanvasGroup(GameObject view)
+    {
+        if (view == null)
+        {
+            return null;
+        }
+
+        CanvasGroup canvasGroup = view.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = view.AddComponent<CanvasGroup>();
+        }
+
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+        return canvasGroup;
+    }
+
+    private void CacheLetterBoxBars(GameObject view)
+    {
+        cachedLetterBoxTop = FindLetterBoxBar(view.transform, "Top");
+        cachedLetterBoxBottom = FindLetterBoxBar(view.transform, "Bottom");
+
+        if (cachedLetterBoxTop != null)
+        {
+            cachedLetterBoxTopAnchoredPosition = cachedLetterBoxTop.anchoredPosition;
+        }
+
+        if (cachedLetterBoxBottom != null)
+        {
+            cachedLetterBoxBottomAnchoredPosition = cachedLetterBoxBottom.anchoredPosition;
+        }
+    }
+
+    private RectTransform FindLetterBoxBar(Transform root, string barName)
+    {
+        if (root == null)
+        {
+            return null;
+        }
+
+        Transform child = root.Find(barName);
+        if (child != null)
+        {
+            return child as RectTransform;
+        }
+
+        RectTransform[] rectTransforms = root.GetComponentsInChildren<RectTransform>(true);
+        for (int i = 0; i < rectTransforms.Length; i++)
+        {
+            RectTransform candidate = rectTransforms[i];
+            if (candidate != null && candidate.name == barName)
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private void SetLetterBoxSlidePosition(float normalizedVisible)
+    {
+        float hiddenOffset = Mathf.Max(0f, letterBoxSlidePixels);
+
+        if (cachedLetterBoxTop != null)
+        {
+            float topHeight = cachedLetterBoxTop.rect.height;
+            float topOffset = Mathf.Max(hiddenOffset, topHeight);
+            cachedLetterBoxTop.anchoredPosition =
+                Vector2.Lerp(
+                    cachedLetterBoxTopAnchoredPosition + new Vector2(0f, topOffset),
+                    cachedLetterBoxTopAnchoredPosition,
+                    normalizedVisible);
+        }
+
+        if (cachedLetterBoxBottom != null)
+        {
+            float bottomHeight = cachedLetterBoxBottom.rect.height;
+            float bottomOffset = Mathf.Max(hiddenOffset, bottomHeight);
+            cachedLetterBoxBottom.anchoredPosition =
+                Vector2.Lerp(
+                    cachedLetterBoxBottomAnchoredPosition - new Vector2(0f, bottomOffset),
+                    cachedLetterBoxBottomAnchoredPosition,
+                    normalizedVisible);
+        }
+    }
+
+    private void RestoreLetterBoxBarPositions()
+    {
+        if (cachedLetterBoxTop != null)
+        {
+            cachedLetterBoxTop.anchoredPosition = cachedLetterBoxTopAnchoredPosition;
+        }
+
+        if (cachedLetterBoxBottom != null)
+        {
+            cachedLetterBoxBottom.anchoredPosition = cachedLetterBoxBottomAnchoredPosition;
+        }
+    }
+
+    private void StartLetterBoxTransition(
+        CanvasGroup canvasGroup,
+        float fromAlpha,
+        float toAlpha,
+        float fromSlide,
+        float toSlide,
+        System.Action onComplete)
+    {
+        if (letterBoxFadeRoutine != null)
+        {
+            StopCoroutine(letterBoxFadeRoutine);
+            letterBoxFadeRoutine = null;
+        }
+
+        float duration = Mathf.Max(0f, letterBoxFadeSeconds);
+        if (duration <= 0f)
+        {
+            if (canvasGroup != null)
+            {
+                canvasGroup.alpha = toAlpha;
+            }
+
+            SetLetterBoxSlidePosition(toSlide);
+            onComplete?.Invoke();
+            return;
+        }
+
+        letterBoxFadeRoutine = StartCoroutine(AnimateLetterBox(
+            canvasGroup,
+            fromAlpha,
+            toAlpha,
+            fromSlide,
+            toSlide,
+            duration,
+            onComplete));
+    }
+
+    private IEnumerator AnimateLetterBox(
+        CanvasGroup canvasGroup,
+        float fromAlpha,
+        float toAlpha,
+        float fromSlide,
+        float toSlide,
+        float duration,
+        System.Action onComplete)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float easedT = t * t * (3f - 2f * t);
+
+            if (canvasGroup != null)
+            {
+                canvasGroup.alpha = Mathf.Lerp(fromAlpha, toAlpha, easedT);
+            }
+
+            SetLetterBoxSlidePosition(Mathf.Lerp(fromSlide, toSlide, easedT));
+            yield return null;
+        }
+
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = toAlpha;
+        }
+
+        SetLetterBoxSlidePosition(toSlide);
+        letterBoxFadeRoutine = null;
+        onComplete?.Invoke();
+    }
+
+    private GameObject ResolveLetterBoxView()
+    {
+        if (letterBoxView != null)
+        {
+            return letterBoxView;
+        }
+
+        if (string.IsNullOrWhiteSpace(letterBoxViewName))
+        {
+            return null;
+        }
+
+        string targetName = letterBoxViewName.Trim();
+        Transform[] transforms = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            Transform candidate = transforms[i];
+            if (candidate != null && candidate.name == targetName)
+            {
+                letterBoxView = candidate.gameObject;
+                return letterBoxView;
+            }
+        }
+
+        return null;
     }
 
     private void ApplyPrologueUiVisibility(StoryEventDefinition definition)

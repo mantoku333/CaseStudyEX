@@ -1,5 +1,9 @@
 using Metroidvania.Managers;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Yarn.Unity;
 
 [DisallowMultipleComponent]
@@ -14,6 +18,28 @@ public sealed class TutorialTriggerZone : MonoBehaviour
         Gimmick,
         Glide,
         Custom
+    }
+
+    private enum TutorialCutsceneActionType
+    {
+        DelayRealtime = 0,
+        FadeBlack = 1,
+        SetActorActive = 2,
+        PlaceActor = 3,
+        MoveActor = 4,
+        FaceActor = 5
+    }
+
+    [Serializable]
+    private sealed class TutorialCutsceneAction
+    {
+        public TutorialCutsceneActionType actionType = TutorialCutsceneActionType.DelayRealtime;
+        public float seconds = 0.25f;
+        public float targetAlpha = 1f;
+        public string actorId = "iris";
+        public string markerId = string.Empty;
+        public string direction = "right";
+        public bool active = true;
     }
 
     [Header("Tutorial")]
@@ -35,13 +61,38 @@ public sealed class TutorialTriggerZone : MonoBehaviour
     [SerializeField] private DialogueStyle dialogueStyle = DialogueStyle.Bubble;
     [SerializeField] private Transform bubbleTarget;
     [SerializeField] private bool skipWhenDialogueAlreadyRunning = true;
+    [SerializeField] private bool hidePromptTextAfterDialogue;
+
+    [Header("Cutscene Before Tutorial")]
+    [SerializeField] private bool playCutsceneBeforeTutorial;
+    [SerializeField] private bool disablePlayerControlDuringCutscene = true;
+    [SerializeField] private List<TutorialCutsceneAction> cutsceneActions = new List<TutorialCutsceneAction>();
 
     [Header("Trigger")]
     [SerializeField] private string playerTag = "Player";
 
+    private static readonly string[] PlayerControlBehaviourNames =
+    {
+        "PlayerController",
+        "PlayerController_ozono",
+        "PlayerPlatformerMockController",
+        "DodgeController",
+        "PlayerShooter",
+        "GunController",
+        "UmbrellaController",
+        "UmbrellaAttackController",
+        "UmbrellaParryController"
+    };
+
+    private readonly List<Behaviour> cutscenePausedBehaviours = new List<Behaviour>();
     private bool triggered;
     private DialogueRunner activeDialogueRunner;
     private bool waitingDialogueCompletion;
+    private Coroutine cutsceneRoutine;
+    private PlayerInput cutscenePausedPlayerInput;
+    private bool previousCutscenePlayerInputEnabled;
+    private bool cutsceneControlPaused;
+    private bool shuttingDown;
 
     private void Reset()
     {
@@ -63,6 +114,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
 
     private void Awake()
     {
+        shuttingDown = false;
         EnsureTriggerCollider();
         ResolveDialogueManagerIfNeeded();
 
@@ -73,13 +125,22 @@ public sealed class TutorialTriggerZone : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        shuttingDown = false;
+    }
+
     private void OnDisable()
     {
+        shuttingDown = true;
+        StopCutsceneIfRunning();
         UnsubscribeDialogueComplete();
     }
 
     private void OnDestroy()
     {
+        shuttingDown = true;
+        StopCutsceneIfRunning();
         UnsubscribeDialogueComplete();
     }
 
@@ -115,7 +176,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
             return;
         }
 
-        ShowTutorialOverlay();
+        ShowTutorialAfterCutscene();
     }
 
     private bool TryStartDialogueBeforeTutorial()
@@ -163,23 +224,229 @@ public sealed class TutorialTriggerZone : MonoBehaviour
 
     private void OnDialogueCompleteThenShowTutorial()
     {
-        if (!waitingDialogueCompletion)
+        if (!waitingDialogueCompletion || shuttingDown || !isActiveAndEnabled)
         {
             return;
         }
 
         UnsubscribeDialogueComplete();
-        ShowTutorialOverlay();
+        ShowTutorialAfterCutscene();
+    }
+
+    private void ShowTutorialAfterCutscene()
+    {
+        if (shuttingDown || !isActiveAndEnabled)
+        {
+            return;
+        }
+
+        if (!playCutsceneBeforeTutorial || cutsceneActions == null || cutsceneActions.Count == 0)
+        {
+            ShowTutorialOverlay();
+            return;
+        }
+
+        StopCutsceneIfRunning();
+        cutsceneRoutine = StartCoroutine(PlayCutsceneThenShowTutorial());
+    }
+
+    private IEnumerator PlayCutsceneThenShowTutorial()
+    {
+        if (shuttingDown || !isActiveAndEnabled)
+        {
+            yield break;
+        }
+
+        PausePlayerControlForCutscene();
+
+        try
+        {
+            for (int i = 0; i < cutsceneActions.Count; i++)
+            {
+                TutorialCutsceneAction action = cutsceneActions[i];
+                if (action == null)
+                {
+                    continue;
+                }
+
+                yield return ExecuteCutsceneAction(action);
+            }
+        }
+        finally
+        {
+            ResumePlayerControlForCutscene();
+            cutsceneRoutine = null;
+        }
+
+        if (!shuttingDown && isActiveAndEnabled)
+        {
+            ShowTutorialOverlay();
+        }
+    }
+
+    private IEnumerator ExecuteCutsceneAction(TutorialCutsceneAction action)
+    {
+        switch (action.actionType)
+        {
+            case TutorialCutsceneActionType.DelayRealtime:
+                yield return ProloguePresentationRuntime.Instance.WaitRealtime(action.seconds);
+                yield break;
+
+            case TutorialCutsceneActionType.FadeBlack:
+                yield return ProloguePresentationRuntime.Instance.FadeBlack(action.targetAlpha, action.seconds);
+                yield break;
+
+            case TutorialCutsceneActionType.SetActorActive:
+                ProloguePresentationRuntime.Instance.SetActorActive(action.actorId, action.active);
+                yield break;
+
+            case TutorialCutsceneActionType.PlaceActor:
+                ProloguePresentationRuntime.Instance.PlaceActor(action.actorId, action.markerId);
+                yield break;
+
+            case TutorialCutsceneActionType.MoveActor:
+                yield return ProloguePresentationRuntime.Instance.MoveActor(action.actorId, action.markerId, action.seconds);
+                yield break;
+
+            case TutorialCutsceneActionType.FaceActor:
+                ProloguePresentationRuntime.Instance.FaceActor(action.actorId, action.direction);
+                yield break;
+        }
+    }
+
+    private void StopCutsceneIfRunning()
+    {
+        if (cutsceneRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(cutsceneRoutine);
+        cutsceneRoutine = null;
+        ResumePlayerControlForCutscene();
+    }
+
+    private void PausePlayerControlForCutscene()
+    {
+        if (!disablePlayerControlDuringCutscene || cutsceneControlPaused)
+        {
+            return;
+        }
+
+        cutsceneControlPaused = true;
+        cutscenePausedBehaviours.Clear();
+
+        GameObject player = ResolvePlayerObject();
+        if (player == null)
+        {
+            return;
+        }
+
+        cutscenePausedPlayerInput = player.GetComponentInChildren<PlayerInput>(includeInactive: true);
+        if (cutscenePausedPlayerInput != null)
+        {
+            previousCutscenePlayerInputEnabled = cutscenePausedPlayerInput.enabled;
+            cutscenePausedPlayerInput.enabled = false;
+        }
+
+        MonoBehaviour[] behaviours = player.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
+        for (int i = 0; i < behaviours.Length; i++)
+        {
+            MonoBehaviour behaviour = behaviours[i];
+            if (behaviour == null || !behaviour.enabled)
+            {
+                continue;
+            }
+
+            if (!ShouldPauseBehaviour(behaviour.GetType().Name))
+            {
+                continue;
+            }
+
+            behaviour.enabled = false;
+            cutscenePausedBehaviours.Add(behaviour);
+        }
+
+        Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+    }
+
+    private void ResumePlayerControlForCutscene()
+    {
+        if (!cutsceneControlPaused)
+        {
+            return;
+        }
+
+        cutsceneControlPaused = false;
+
+        if (cutscenePausedPlayerInput != null)
+        {
+            cutscenePausedPlayerInput.enabled = previousCutscenePlayerInputEnabled;
+        }
+
+        cutscenePausedPlayerInput = null;
+
+        for (int i = 0; i < cutscenePausedBehaviours.Count; i++)
+        {
+            if (cutscenePausedBehaviours[i] != null)
+            {
+                cutscenePausedBehaviours[i].enabled = true;
+            }
+        }
+
+        cutscenePausedBehaviours.Clear();
+    }
+
+    private GameObject ResolvePlayerObject()
+    {
+        if (!string.IsNullOrWhiteSpace(playerTag))
+        {
+            GameObject taggedPlayer = GameObject.FindGameObjectWithTag(playerTag);
+            if (taggedPlayer != null)
+            {
+                return taggedPlayer;
+            }
+        }
+
+        global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
+        return playerController != null ? playerController.gameObject : null;
+    }
+
+    private static bool ShouldPauseBehaviour(string typeName)
+    {
+        for (int i = 0; i < PlayerControlBehaviourNames.Length; i++)
+        {
+            if (PlayerControlBehaviourNames[i] == typeName)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void ShowTutorialOverlay()
     {
+        if (shuttingDown || !isActiveAndEnabled || tutorialOverlay == null)
+        {
+            return;
+        }
+
         if (markCompletedOnOpen)
         {
             MarkCompleted();
         }
 
-        tutorialOverlay.ConfigureContent(promptText, gifFrames, gifFramesPerSecond, gifLoopIntervalSeconds);
+        string resolvedPromptText =
+            hidePromptTextAfterDialogue && showAfterDialogue && !string.IsNullOrWhiteSpace(dialogueNodeName)
+                ? string.Empty
+                : promptText;
+        tutorialOverlay.ConfigureContent(resolvedPromptText, gifFrames, gifFramesPerSecond, gifLoopIntervalSeconds);
         tutorialOverlay.Show(OnTutorialClosed);
     }
 

@@ -65,6 +65,9 @@ namespace Metroidvania.UI
             gameObject.SetActive(true);
             if (dialoguePanel != null) dialoguePanel.SetActive(true);
             if (optionsPanel != null) optionsPanel.SetActive(false);
+            if (speakerNameText != null) speakerNameText.text = "";
+            if (dialogueText != null) dialogueText.text = "";
+            if (nextIndicator != null) nextIndicator.SetActive(false);
             return YarnTask.CompletedTask;
         }
 
@@ -72,6 +75,9 @@ namespace Metroidvania.UI
         {
             if (dialoguePanel != null) dialoguePanel.SetActive(false);
             if (optionsPanel != null) optionsPanel.SetActive(false);
+            if (speakerNameText != null) speakerNameText.text = "";
+            if (dialogueText != null) dialogueText.text = "";
+            if (nextIndicator != null) nextIndicator.SetActive(false);
             if (portraitImage != null) portraitImage.gameObject.SetActive(false);
             gameObject.SetActive(false);
             return YarnTask.CompletedTask;
