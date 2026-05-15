@@ -41028,6 +41028,7 @@ MonoBehaviour:
   dialogueStyle: 1
   bubbleTarget: {fileID: 775024343}
   skipWhenDialogueAlreadyRunning: 1
+  hidePromptTextAfterDialogue: 0
   playCutsceneBeforeTutorial: 0
   disablePlayerControlDuringCutscene: 1
   cutsceneActions: []
@@ -61442,6 +61443,7 @@ MonoBehaviour:
   dialogueStyle: 1
   bubbleTarget: {fileID: 775024343}
   skipWhenDialogueAlreadyRunning: 1
+  hidePromptTextAfterDialogue: 0
   playCutsceneBeforeTutorial: 0
   disablePlayerControlDuringCutscene: 1
   cutsceneActions: []
@@ -66764,6 +66766,7 @@ MonoBehaviour:
   dialogueStyle: 1
   bubbleTarget: {fileID: 775024343}
   skipWhenDialogueAlreadyRunning: 1
+  hidePromptTextAfterDialogue: 0
   playCutsceneBeforeTutorial: 0
   disablePlayerControlDuringCutscene: 1
   cutsceneActions: []
@@ -67110,6 +67113,7 @@ MonoBehaviour:
   dialogueStyle: 1
   bubbleTarget: {fileID: 775024343}
   skipWhenDialogueAlreadyRunning: 1
+  hidePromptTextAfterDialogue: 0
   playCutsceneBeforeTutorial: 0
   disablePlayerControlDuringCutscene: 1
   cutsceneActions: []
@@ -75071,6 +75075,7 @@ MonoBehaviour:
   dialogueStyle: 1
   bubbleTarget: {fileID: 775024343}
   skipWhenDialogueAlreadyRunning: 1
+  hidePromptTextAfterDialogue: 0
   playCutsceneBeforeTutorial: 0
   disablePlayerControlDuringCutscene: 1
   cutsceneActions: []

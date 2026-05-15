@@ -61,6 +61,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
     [SerializeField] private DialogueStyle dialogueStyle = DialogueStyle.Bubble;
     [SerializeField] private Transform bubbleTarget;
     [SerializeField] private bool skipWhenDialogueAlreadyRunning = true;
+    [SerializeField] private bool hidePromptTextAfterDialogue;
 
     [Header("Cutscene Before Tutorial")]
     [SerializeField] private bool playCutsceneBeforeTutorial;
@@ -91,6 +92,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
     private PlayerInput cutscenePausedPlayerInput;
     private bool previousCutscenePlayerInputEnabled;
     private bool cutsceneControlPaused;
+    private bool shuttingDown;
 
     private void Reset()
     {
@@ -112,6 +114,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
 
     private void Awake()
     {
+        shuttingDown = false;
         EnsureTriggerCollider();
         ResolveDialogueManagerIfNeeded();
 
@@ -122,14 +125,21 @@ public sealed class TutorialTriggerZone : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        shuttingDown = false;
+    }
+
     private void OnDisable()
     {
+        shuttingDown = true;
         StopCutsceneIfRunning();
         UnsubscribeDialogueComplete();
     }
 
     private void OnDestroy()
     {
+        shuttingDown = true;
         StopCutsceneIfRunning();
         UnsubscribeDialogueComplete();
     }
@@ -214,7 +224,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
 
     private void OnDialogueCompleteThenShowTutorial()
     {
-        if (!waitingDialogueCompletion)
+        if (!waitingDialogueCompletion || shuttingDown || !isActiveAndEnabled)
         {
             return;
         }
@@ -225,6 +235,11 @@ public sealed class TutorialTriggerZone : MonoBehaviour
 
     private void ShowTutorialAfterCutscene()
     {
+        if (shuttingDown || !isActiveAndEnabled)
+        {
+            return;
+        }
+
         if (!playCutsceneBeforeTutorial || cutsceneActions == null || cutsceneActions.Count == 0)
         {
             ShowTutorialOverlay();
@@ -237,6 +252,11 @@ public sealed class TutorialTriggerZone : MonoBehaviour
 
     private IEnumerator PlayCutsceneThenShowTutorial()
     {
+        if (shuttingDown || !isActiveAndEnabled)
+        {
+            yield break;
+        }
+
         PausePlayerControlForCutscene();
 
         try
@@ -258,7 +278,10 @@ public sealed class TutorialTriggerZone : MonoBehaviour
             cutsceneRoutine = null;
         }
 
-        ShowTutorialOverlay();
+        if (!shuttingDown && isActiveAndEnabled)
+        {
+            ShowTutorialOverlay();
+        }
     }
 
     private IEnumerator ExecuteCutsceneAction(TutorialCutsceneAction action)
@@ -409,12 +432,21 @@ public sealed class TutorialTriggerZone : MonoBehaviour
 
     private void ShowTutorialOverlay()
     {
+        if (shuttingDown || !isActiveAndEnabled || tutorialOverlay == null)
+        {
+            return;
+        }
+
         if (markCompletedOnOpen)
         {
             MarkCompleted();
         }
 
-        tutorialOverlay.ConfigureContent(promptText, gifFrames, gifFramesPerSecond, gifLoopIntervalSeconds);
+        string resolvedPromptText =
+            hidePromptTextAfterDialogue && showAfterDialogue && !string.IsNullOrWhiteSpace(dialogueNodeName)
+                ? string.Empty
+                : promptText;
+        tutorialOverlay.ConfigureContent(resolvedPromptText, gifFrames, gifFramesPerSecond, gifLoopIntervalSeconds);
         tutorialOverlay.Show(OnTutorialClosed);
     }
 
