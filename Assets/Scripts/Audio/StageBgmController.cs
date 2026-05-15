@@ -3,6 +3,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class StageBgmController : MonoBehaviour
 {
+    private const string BgmVolumeKey = "MantokuStoryOptions.BgmVolume";
+
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioClip normalStageBgm;
     [SerializeField] private AudioClip bossStageBgm;
@@ -13,6 +15,8 @@ public sealed class StageBgmController : MonoBehaviour
     private AudioSource sourceB;
     private AudioSource activeSource;
     private Coroutine crossfadeCoroutine;
+    private float sourceABaseVolume;
+    private float sourceBBaseVolume;
 
     private void Awake()
     {
@@ -31,7 +35,9 @@ public sealed class StageBgmController : MonoBehaviour
 
         ConfigureSource(sourceA);
         ConfigureSource(sourceB);
-        sourceA.volume = bgmVolume;
+        SetSourceBaseVolume(sourceA, bgmVolume);
+        SetSourceBaseVolume(sourceB, 0f);
+        sourceA.volume = ResolveEffectiveVolume(bgmVolume);
         sourceB.volume = 0f;
     }
 
@@ -44,32 +50,64 @@ public sealed class StageBgmController : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (crossfadeCoroutine != null)
+        {
+            return;
+        }
+
+        RefreshPlayingSourceVolumes();
+    }
+
     private void Start()
     {
-        PlayImmediate(normalStageBgm);
+        PlayImmediate(normalStageBgm, bgmVolume);
     }
 
     public void PlayNormal()
     {
-        Play(normalStageBgm);
+        Play(normalStageBgm, bgmVolume);
+    }
+
+    public void PlayNormal(AudioClip clip, float volume)
+    {
+        if (clip == null)
+        {
+            PlayNormal();
+            return;
+        }
+
+        Play(clip, volume);
     }
 
     public void PlayBoss()
     {
-        Play(bossStageBgm);
+        Play(bossStageBgm, bgmVolume);
+    }
+
+    public void PlayBoss(AudioClip clip, float volume)
+    {
+        if (clip == null)
+        {
+            PlayBoss();
+            return;
+        }
+
+        Play(clip, volume);
     }
 
     public void PlayNormalImmediate()
     {
-        PlayImmediate(normalStageBgm);
+        PlayImmediate(normalStageBgm, bgmVolume);
     }
 
     public void PlayBossImmediate()
     {
-        PlayImmediate(bossStageBgm);
+        PlayImmediate(bossStageBgm, bgmVolume);
     }
 
-    private void Play(AudioClip clip)
+    private void Play(AudioClip clip, float baseVolume)
     {
         if (clip == null)
         {
@@ -79,6 +117,8 @@ public sealed class StageBgmController : MonoBehaviour
         AudioSource current = ResolveCurrentSource();
         if (current != null && current.clip == clip && current.isPlaying)
         {
+            SetSourceBaseVolume(current, baseVolume);
+            RefreshSourceVolume(current);
             return;
         }
 
@@ -88,10 +128,10 @@ public sealed class StageBgmController : MonoBehaviour
             crossfadeCoroutine = null;
         }
 
-        crossfadeCoroutine = StartCoroutine(CrossfadeTo(clip));
+        crossfadeCoroutine = StartCoroutine(CrossfadeTo(clip, baseVolume));
     }
 
-    private void PlayImmediate(AudioClip clip)
+    private void PlayImmediate(AudioClip clip, float baseVolume)
     {
         if (clip == null)
         {
@@ -124,7 +164,8 @@ public sealed class StageBgmController : MonoBehaviour
         }
 
         to.clip = clip;
-        to.volume = bgmVolume;
+        SetSourceBaseVolume(to, baseVolume);
+        to.volume = ResolveEffectiveVolume(baseVolume);
         if (!to.isPlaying)
         {
             to.Play();
@@ -168,7 +209,64 @@ public sealed class StageBgmController : MonoBehaviour
         return activeSource;
     }
 
-    private System.Collections.IEnumerator CrossfadeTo(AudioClip nextClip)
+    private float ResolveEffectiveVolume(float baseVolume)
+    {
+        return Mathf.Clamp01(baseVolume) * ResolveOptionsBgmVolume();
+    }
+
+    private static float ResolveOptionsBgmVolume()
+    {
+        return Mathf.Clamp01(PlayerPrefs.GetFloat(BgmVolumeKey, 1f));
+    }
+
+    private void SetSourceBaseVolume(AudioSource source, float baseVolume)
+    {
+        float clampedVolume = Mathf.Clamp01(baseVolume);
+
+        if (source == sourceA)
+        {
+            sourceABaseVolume = clampedVolume;
+            return;
+        }
+
+        if (source == sourceB)
+        {
+            sourceBBaseVolume = clampedVolume;
+        }
+    }
+
+    private float GetSourceBaseVolume(AudioSource source)
+    {
+        if (source == sourceA)
+        {
+            return sourceABaseVolume;
+        }
+
+        if (source == sourceB)
+        {
+            return sourceBBaseVolume;
+        }
+
+        return bgmVolume;
+    }
+
+    private void RefreshPlayingSourceVolumes()
+    {
+        RefreshSourceVolume(sourceA);
+        RefreshSourceVolume(sourceB);
+    }
+
+    private void RefreshSourceVolume(AudioSource source)
+    {
+        if (source == null || !source.isPlaying)
+        {
+            return;
+        }
+
+        source.volume = ResolveEffectiveVolume(GetSourceBaseVolume(source));
+    }
+
+    private System.Collections.IEnumerator CrossfadeTo(AudioClip nextClip, float nextBaseVolume)
     {
         AudioSource from = ResolveCurrentSource();
         AudioSource to = from == sourceA ? sourceB : sourceA;
@@ -179,34 +277,38 @@ public sealed class StageBgmController : MonoBehaviour
         }
 
         to.clip = nextClip;
+        SetSourceBaseVolume(to, nextBaseVolume);
         to.volume = 0f;
         to.Play();
 
         if (from == null || !from.isPlaying || crossfadeDuration <= 0f)
         {
-            to.volume = bgmVolume;
+            to.volume = ResolveEffectiveVolume(nextBaseVolume);
             activeSource = to;
             crossfadeCoroutine = null;
             yield break;
         }
 
-        float fromStartVolume = from.volume;
+        float fromStartBaseVolume = GetSourceBaseVolume(from);
+        float toBaseVolume = Mathf.Clamp01(nextBaseVolume);
         float elapsed = 0f;
 
         while (elapsed < crossfadeDuration)
         {
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / crossfadeDuration);
-            from.volume = Mathf.Lerp(fromStartVolume, 0f, t);
-            to.volume = Mathf.Lerp(0f, bgmVolume, t);
+            float optionsVolume = ResolveOptionsBgmVolume();
+            from.volume = Mathf.Lerp(fromStartBaseVolume, 0f, t) * optionsVolume;
+            to.volume = Mathf.Lerp(0f, toBaseVolume, t) * optionsVolume;
             yield return null;
         }
 
         from.Stop();
         from.clip = null;
+        SetSourceBaseVolume(from, 0f);
         from.volume = 0f;
 
-        to.volume = bgmVolume;
+        to.volume = ResolveEffectiveVolume(toBaseVolume);
         activeSource = to;
         crossfadeCoroutine = null;
     }
