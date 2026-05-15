@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Cysharp.Threading.Tasks;
+using Player;
 
 public class UmbrellaParryController : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class UmbrellaParryController : MonoBehaviour
 
     [Header("当たり判定")]
     [SerializeField] private Collider2D parryCollider;     //パリィの当たり判定用コライダー
+    [SerializeField] private float leftFacingParryColliderRightOffset = 1f;
 
     [SerializeField] private SpriteRenderer playerSprite;    //プレイヤーのスプライトレンダラー
     [SerializeField] private Color parryColor = Color.white; //パリィ中のフラッシュの色
@@ -20,15 +22,25 @@ public class UmbrellaParryController : MonoBehaviour
     private bool isParrying = false;  //現在パリィ状態かどうかのフラグ
 
     private AudioSource audioSource;      //AudioSource
+    private IPlayerViewStateProvider facingStateProvider;
+    private Vector3 parryColliderDefaultLocalPosition;
+    private bool hasParryColliderDefaultLocalPosition;
 
     private void Awake()
     {
+        if (parryCollider != null)
+        {
+            parryColliderDefaultLocalPosition = parryCollider.transform.localPosition;
+            hasParryColliderDefaultLocalPosition = true;
+        }
+
         if (playerSprite != null)
         {
             defaultColor = playerSprite.color;
         }
         //AudioSourceの取得
         audioSource = GetComponentInParent<AudioSource>();
+        facingStateProvider = GetComponentInParent<IPlayerViewStateProvider>();
     }
 
     public void SetParryDuration(float duration)
@@ -57,6 +69,8 @@ public class UmbrellaParryController : MonoBehaviour
     /// <returns></returns>
     public async UniTaskVoid Parry()
     {
+        RefreshParryColliderFacing();
+
         if (isParrying){ return; }
 
         //傘開けるSE再生
@@ -105,6 +119,39 @@ public class UmbrellaParryController : MonoBehaviour
     public bool IsParrying()
     {
         return isParrying;
+    }
+
+    public void RefreshParryColliderFacing()
+    {
+        UpdateParryColliderFacing();
+    }
+
+    private bool IsFacingLeft()
+    {
+        if (facingStateProvider != null)
+        {
+            return !facingStateProvider.IsFacingRight;
+        }
+
+        return playerSprite != null && playerSprite.flipX;
+    }
+
+    private void UpdateParryColliderFacing()
+    {
+        if (parryCollider == null || !hasParryColliderDefaultLocalPosition)
+        {
+            return;
+        }
+
+        Vector3 localPosition = parryColliderDefaultLocalPosition;
+        bool isFacingLeft = IsFacingLeft();
+        localPosition.x = Mathf.Abs(parryColliderDefaultLocalPosition.x) * (isFacingLeft ? -1f : 1f);
+        if (isFacingLeft)
+        {
+            localPosition.x += leftFacingParryColliderRightOffset;
+        }
+
+        parryCollider.transform.localPosition = localPosition;
     }
 
     /// <summary>

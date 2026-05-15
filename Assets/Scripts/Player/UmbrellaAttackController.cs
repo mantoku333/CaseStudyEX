@@ -24,6 +24,7 @@ public class UmbrellaAttackController : MonoBehaviour
 
     [Header("当たり判定")]
     [SerializeField] private Collider2D attackCollider;
+    [SerializeField] private float leftFacingAttackColliderRightOffset = 1f;
 
     [Header("SE")]
     [SerializeField] private AudioClip player_normalAttack;
@@ -43,11 +44,17 @@ public class UmbrellaAttackController : MonoBehaviour
     private SpriteRenderer attackEffectRenderer;
     private Sprite[] attackEffectSprites;
     private IPlayerViewStateProvider facingStateProvider;
+    private AttackHitbox attackHitbox;
+    private Vector3 attackColliderDefaultLocalPosition;
+    private bool hasAttackColliderDefaultLocalPosition;
 
     private void Awake()
     {
         if (attackCollider != null)
         {
+            attackHitbox = attackCollider.GetComponent<AttackHitbox>();
+            attackColliderDefaultLocalPosition = attackCollider.transform.localPosition;
+            hasAttackColliderDefaultLocalPosition = true;
             attackCollider.enabled = false;
         }
 
@@ -92,11 +99,14 @@ public class UmbrellaAttackController : MonoBehaviour
 
         isAttacking = true;
 
+        UpdateAttackColliderFacing();
         PlaySE(player_normalAttack);
         PlayAttackEffect().Forget();
 
         lastAttackTime = Time.time;
+        attackHitbox?.ResetHitState();
         attackCollider.enabled = true;
+        attackHitbox?.ScanCurrentOverlaps();
 
         await UniTask.Delay((int)(attackDuration * 1000));
 
@@ -169,6 +179,24 @@ public class UmbrellaAttackController : MonoBehaviour
         }
 
         return offset;
+    }
+
+    private void UpdateAttackColliderFacing()
+    {
+        if (attackCollider == null || !hasAttackColliderDefaultLocalPosition)
+        {
+            return;
+        }
+
+        Vector3 localPosition = attackColliderDefaultLocalPosition;
+        bool isFacingLeft = IsFacingLeft();
+        localPosition.x = Mathf.Abs(attackColliderDefaultLocalPosition.x) * (isFacingLeft ? -1f : 1f);
+        if (isFacingLeft)
+        {
+            localPosition.x += leftFacingAttackColliderRightOffset;
+        }
+
+        attackCollider.transform.localPosition = localPosition;
     }
 
     private void EnsureAttackEffectRenderer()

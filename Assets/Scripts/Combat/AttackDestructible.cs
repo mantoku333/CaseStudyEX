@@ -29,7 +29,7 @@ public class AttackDestructible : MonoBehaviour, IAttackReceiver
             return;
         }
 
-        ApplyDamage(1, attacker, hitCollider);
+        ApplyDamage(attacker != null ? attacker.PlayerAttackDamage : 0, attacker, hitCollider);
     }
 
     public void ApplyDamage(int damage, AttackHitbox attacker = null, Collider2D hitCollider = null)
