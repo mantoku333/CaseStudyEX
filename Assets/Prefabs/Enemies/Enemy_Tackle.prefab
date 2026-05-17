@@ -153,7 +153,6 @@ GameObject:
   - component: {fileID: 2188640119789683485}
   - component: {fileID: 4333219616003735470}
   - component: {fileID: 867530900123456789}
-  - component: {fileID: 3166498005081650208}
   - component: {fileID: 1141293357520890712}
   - component: {fileID: 730100000000000001}
   - component: {fileID: 914900000000000003}
@@ -310,22 +309,6 @@ MonoBehaviour:
   blockedMoveThreshold: 0.01
   blockedStopDelay: 0.1
   drawViewGizmo: 1
---- !u!114 &3166498005081650208
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1421722041738095275}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bfeade17d04ca34f81b762d9087953d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Enemy.ParryTestEnemyShooter
-  bulletPrefab: {fileID: 3964884202035495257, guid: 1c8b7d39b307fd6428103c491f952059, type: 3}
-  firePoint: {fileID: 0}
-  bulletSpeed: 8
-  fireDirection: {x: -1, y: 0}
 --- !u!114 &1141293357520890712
 MonoBehaviour:
   m_ObjectHideFlags: 0
