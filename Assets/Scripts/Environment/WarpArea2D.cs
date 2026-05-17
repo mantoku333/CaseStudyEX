@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Collider2D))]
+// ワープ範囲に入ったプレイヤーへ案内文を出し、Interact入力で指定地点へ移動させる。
 public sealed class WarpArea2D : MonoBehaviour
 {
     [Header("Warp")]
@@ -15,16 +16,19 @@ public sealed class WarpArea2D : MonoBehaviour
 
     [Header("Prompt")]
     [SerializeField] private TextMeshPro promptText;
+    // 日本語などを表示したい場合は、TTFではなくTMPのFont Assetを指定する。
     [SerializeField] private TMP_FontAsset promptFontAsset;
     [SerializeField] private bool autoCreatePrompt = true;
     [SerializeField] private string promptMessage = "Space: Warp";
     [SerializeField] private Color promptTextColor = Color.white;
     [SerializeField, Min(0f)] private float promptVerticalPadding = 0.45f;
+    // promptVerticalPaddingで決めた基準位置から、文字だけを微調整する。
     [SerializeField] private Vector2 promptTextOffset = Vector2.zero;
     [SerializeField, Min(0.01f)] private float promptFontSize = 3f;
     [SerializeField] private int promptSortingOrder = 50;
 
     [Header("Prompt Animation")]
+    // 表示率を0から1へ変えながら、下から上へ動かしてフェードさせる。
     [SerializeField, Min(0f)] private float promptAnimationDuration = 0.25f;
     [SerializeField, Min(0f)] private float promptLiftDistanceY = 0.05f;
 
@@ -32,6 +36,7 @@ public sealed class WarpArea2D : MonoBehaviour
     [SerializeField] private SpriteRenderer promptBackground;
     [SerializeField] private bool autoCreateBackground = true;
     [SerializeField] private Color backgroundColor = new Color(0f, 0f, 0f, 0.65f);
+    // 背景は文字の表示サイズに、この余白を足した大きさになる。
     [SerializeField] private Vector2 backgroundPadding = new Vector2(0.6f, 0.25f);
     [SerializeField] private Vector2 backgroundOffset = new Vector2(0f, -0.12f);
     [SerializeField] private int backgroundSortingOrder = 49;
@@ -46,6 +51,7 @@ public sealed class WarpArea2D : MonoBehaviour
     private Coroutine restoreControlRoutine;
     private Coroutine promptAnimationRoutine;
     private global::PlayerController restoreLockedPlayer;
+    // 0が完全に非表示、1が完全に表示。アルファ値と上下移動の両方に使う。
     private float promptVisibility;
 
     private void Reset()
@@ -94,6 +100,7 @@ public sealed class WarpArea2D : MonoBehaviour
     {
         if (promptText != null && promptText.gameObject.activeSelf)
         {
+            // Play中にInspectorで変えた文字サイズや色を、表示中のプロンプトへすぐ反映する。
             ConfigurePrompt();
             ConfigureBackground();
         }
@@ -187,6 +194,7 @@ public sealed class WarpArea2D : MonoBehaviour
         bool acquiredControlLock = !playerToWarp.IsExternalControlLocked;
         if (acquiredControlLock)
         {
+            // 同じ入力がワープ後にジャンプとして処理されないよう、短時間だけ操作を止める。
             playerToWarp.SetExternalControlLocked(true);
         }
 
@@ -272,6 +280,7 @@ public sealed class WarpArea2D : MonoBehaviour
     {
         if (promptText == null && autoCreatePrompt)
         {
+            // 手動でTextMeshProを置かなくても、このコンポーネントだけで表示できるようにする。
             Transform existingPrompt = transform.Find("WarpPrompt");
             if (existingPrompt != null)
             {
@@ -348,6 +357,7 @@ public sealed class WarpArea2D : MonoBehaviour
     {
         if (sharedBackgroundSprite == null)
         {
+            // 背景は1x1白スプライトを共有し、色とスケールで見た目を作る。
             sharedBackgroundTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false)
             {
                 name = "WarpPromptBackgroundTexture",
@@ -393,6 +403,7 @@ public sealed class WarpArea2D : MonoBehaviour
 
     private void StartPromptAnimation(float targetVisibility, bool deactivateWhenHidden)
     {
+        // 再入場や途中退出では、今の表示率から次の状態へ滑らかにつなぐ。
         StopPromptAnimation();
 
         targetVisibility = Mathf.Clamp01(targetVisibility);
@@ -496,9 +507,10 @@ public sealed class WarpArea2D : MonoBehaviour
             promptPosition = new Vector3(
                 bounds.center.x,
                 bounds.min.y - promptVerticalPadding,
-            transform.position.z);
+                transform.position.z);
         }
 
+        // 非表示に近いほど少し下に置き、表示に近づくほど最終位置へ戻す。
         Vector3 animationOffset = Vector3.down * (promptLiftDistanceY * (1f - Mathf.Clamp01(promptVisibility)));
         Vector3 animatedPromptPosition = promptPosition + animationOffset;
         Vector3 textPosition = animatedPromptPosition + new Vector3(promptTextOffset.x, promptTextOffset.y, 0f);
@@ -523,6 +535,7 @@ public sealed class WarpArea2D : MonoBehaviour
             return;
         }
 
+        // 文字の実際の表示サイズに合わせて、背景の横幅と高さを毎回調整する。
         promptText.ForceMeshUpdate();
         Vector2 textSize = promptText.GetRenderedValues(false);
         if (textSize.x <= 0f || textSize.y <= 0f)
