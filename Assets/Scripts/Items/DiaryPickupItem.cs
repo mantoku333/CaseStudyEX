@@ -53,7 +53,18 @@ public class DiaryPickupItem : MonoBehaviour
 
         Debug.Log($"日記取得: {diaryEntryData.GetTitle()}");
 
+        CompletePickup();
+    }
+
+    private void CompletePickup()
+    {
         isPickedUp = true;
+
+        ItemEffectController effectController = GetComponent<ItemEffectController>();
+        if (effectController != null && effectController.PlayPickupEffectAndDestroy())
+        {
+            return;
+        }
 
         Destroy(gameObject);
     }

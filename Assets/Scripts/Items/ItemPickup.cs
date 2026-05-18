@@ -80,8 +80,7 @@ public class ItemPickup : MonoBehaviour
 
         Debug.Log($"{itemData.itemName} を取得しました！");
 
-        isPickedUp = true;
-        Destroy(gameObject);
+        CompletePickup();
     }
 
     private bool ApplyItem(PlayerHealth playerHealth, PlayerAbilityController abilityController)
@@ -174,5 +173,18 @@ public class ItemPickup : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void CompletePickup()
+    {
+        isPickedUp = true;
+
+        ItemEffectController effectController = GetComponent<ItemEffectController>();
+        if (effectController != null && effectController.PlayPickupEffectAndDestroy())
+        {
+            return;
+        }
+
+        Destroy(gameObject);
     }
 }
