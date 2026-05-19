@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Player;
 
@@ -21,6 +21,7 @@ public class UmbrellaAttackController : MonoBehaviour
     [Header("攻撃設定")]
     [SerializeField] private float attackDuration = 0.2f;
     [SerializeField, Min(0.01f)] private float attackPerSecond = 4.0f;
+    [SerializeField] private float attackPower = 1.0f;
 
     [Header("当たり判定")]
     [SerializeField] private Collider2D attackCollider;
@@ -61,6 +62,7 @@ public class UmbrellaAttackController : MonoBehaviour
         audioSource = GetComponentInParent<AudioSource>();
         sourceSpriteRenderer = GetComponent<SpriteRenderer>();
         facingStateProvider = GetComponentInParent<IPlayerViewStateProvider>();
+
         EnsureAttackEffectRenderer();
     }
 

@@ -55,6 +55,13 @@ public class ItemPickup : MonoBehaviour
             return;
         }
 
+        PlayerController playerController = other.GetComponent<PlayerController>();
+       
+        if (playerController != null)
+        {
+            playerController = other.GetComponentInParent<PlayerController>();
+        }
+
         PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
 
         if (playerHealth == null)
@@ -69,7 +76,7 @@ public class ItemPickup : MonoBehaviour
             abilityController = other.GetComponentInParent<PlayerAbilityController>();
         }
 
-        bool isApplied = ApplyItem(playerHealth, abilityController);
+        bool isApplied = ApplyItem(playerHealth, abilityController, playerController);
 
         if (!isApplied) { return; }
 
@@ -84,7 +91,7 @@ public class ItemPickup : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private bool ApplyItem(PlayerHealth playerHealth, PlayerAbilityController abilityController)
+    private bool ApplyItem(PlayerHealth playerHealth, PlayerAbilityController abilityController, PlayerController playerController)
     {
         bool isApplied = false;
 
@@ -101,6 +108,21 @@ public class ItemPickup : MonoBehaviour
             if (playerHealth == null) { return false; }
 
             playerHealth.AddMaxHealth(itemData.maxHealthBonus, true);
+            isApplied = true;
+        }
+
+        if(itemData.attackhBonus > 0)
+        {
+            if(playerController == null) { return false; }
+
+            PlayerStatsData statsData = playerController.GetPlayerStatsData();
+
+            Debug.Log("Playerの変更前の攻撃力: " + statsData.PlayerAttackDamage);
+
+            statsData.SetPlayerAttackDamage(statsData.PlayerAttackDamage + itemData.attackhBonus);
+
+            Debug.Log("Playerの変更後の攻撃力: " + statsData.PlayerAttackDamage);
+
             isApplied = true;
         }
 
