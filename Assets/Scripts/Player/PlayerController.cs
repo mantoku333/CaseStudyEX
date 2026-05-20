@@ -412,19 +412,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         //パリィor傘開閉 (右クリックでパリィ、敵の攻撃がない場合は傘の開け閉め)
         if (IsPressedThisFrame(umbrellaToggleAction))
         {
-            bool parrySuccess = false;
-
-            if (parryHitbox != null)
-            {
-                parrySuccess = parryHitbox.TryParryEnemyBullets();
-
-                if (!parrySuccess)
-                {
-                    parrySuccess = parryHitbox.TryParryEnemyTackleAttack();
-                }
-            }
-
-            if (parrySuccess)
+            if (parryHitbox != null && parryHitbox.HasEnemyAttack())
             {
                 if (umbrellaController != null)
                 {
@@ -436,12 +424,14 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                     umbrellaParryController.Parry();
                 }
 
-                return;
+                parryHitbox.ClearEnemyAttacks();
             }
-
-            if (umbrellaController != null)
+            else
             {
-                umbrellaController.ToggleUmbrella();
+                if (umbrellaController != null)
+                {
+                    umbrellaController.ToggleUmbrella();
+                }
             }
         }
 
@@ -450,37 +440,37 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             bool isUmbrellaOpen = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open;
             bool isPlayerGliding = isUmbrellaOpen && !isGround;
 
-            if (isPlayerGliding && TryGetAimScreenPosition(out var pointerPos))
+            if (isUmbrellaOpen)
             {
-                Camera mainCamera = Camera.main;
-                if (mainCamera != null && gunController != null)
+                if (isPlayerGliding && TryGetAimScreenPosition(out var pointerPos))
                 {
-                    Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(
-                        new Vector3(pointerPos.x, pointerPos.y, 0.0f)
-                    );
-                    mouseWorldPos.z = 0.0f;
-
-                    Vector2 shootDirection = (mouseWorldPos - transform.position).normalized;
-
-                    bool canUseGunRecoil = false;
-
-                    if (playerAbilityController != null)
+                    Camera mainCamera = Camera.main;
+                    if (mainCamera != null && gunController != null)
                     {
-                        canUseGunRecoil = playerAbilityController.GetCanGunRecoil();
-                    }
+                        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(
+                            new Vector3(pointerPos.x, pointerPos.y, 0.0f)
+                        );
+                        mouseWorldPos.z = 0.0f;
 
-                    if (canUseGunRecoil)
-                    {
-                        gunController.Shoot(shootDirection);
+                        Vector2 shootDirection = (mouseWorldPos - transform.position).normalized;
+
+                        //アイテムを取得しているかどうかを確認し
+                        //それによって反動を使用できるかを判断する
+                        bool canUseGunRecoil = false;
+
+                        if (playerAbilityController != null)
+                        {
+                            canUseGunRecoil = playerAbilityController.GetCanGunRecoil();
+                        }
+
+                        if (canUseGunRecoil)
+                        {
+                            gunController.Shoot(shootDirection);
+                        }
                     }
                 }
 
                 return;
-            }
-
-            if (isUmbrellaOpen)
-            {
-                umbrellaController.SetUmbrellaState(UmbrellaController.UmbrellaState.Closed, false);
             }
 
             if (umbrellaAttackController != null)
