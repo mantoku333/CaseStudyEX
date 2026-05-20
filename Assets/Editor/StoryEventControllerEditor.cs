@@ -215,6 +215,7 @@ public static class StoryEventCreateMenu
         }
 
         root.AddComponent<PlayableDirector>();
+        root.GetComponent<PlayableDirector>().playOnAwake = false;
         root.AddComponent<StoryEventController>();
 
         var markers = new GameObject("Markers");
