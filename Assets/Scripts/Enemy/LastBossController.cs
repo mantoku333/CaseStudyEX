@@ -574,20 +574,32 @@ namespace GameName.Enemy
             for (int i = 0; i < hitCount; i++)
             {
                 Collider2D hit = playerHits[i];
-                if (!IsPlayerCollider(hit))
+                // ボス攻撃も、傘やパリィ判定ではなくプレイヤー本体コライダーだけを被弾対象にする。
+                if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
+                        hit,
+                        out PlayerHealth targetHealth,
+                        out _))
                 {
                     continue;
                 }
 
-                PlayerHealth targetHealth = hit.GetComponentInParent<PlayerHealth>();
                 if (targetHealth == null || targetHealth == damagedHealth)
                 {
                     continue;
                 }
 
                 damagedHealth = targetHealth;
-                targetHealth.TakeDamage(GetAttackDamage(action));
-                hit.GetComponentInParent<PlayerDamageFlash>()?.PlayFlash();
+                if (targetHealth.TryTakeDamage(GetAttackDamage(action)))
+                {
+                    // HP クールダウンを通過した実ダメージだけ、被弾フラッシュを強制再生する。
+                    PlayerDamageFlash damageFlash = targetHealth.GetComponent<PlayerDamageFlash>();
+                    if (damageFlash == null)
+                    {
+                        damageFlash = targetHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+                    }
+
+                    damageFlash?.PlayFlashForced();
+                }
             }
         }
 
@@ -769,26 +781,6 @@ namespace GameName.Enemy
             Vector2 size = action == BossAction.Horizontal ? horizontalAttackSize : normalAttackSize;
             float centerX = bounds.center.x + facingDirection * (bounds.extents.x + size.x * 0.5f);
             return new AttackBox(new Vector2(centerX, bounds.center.y), size, 0f);
-        }
-
-        private bool IsPlayerCollider(Collider2D hit)
-        {
-            if (hit == null)
-            {
-                return false;
-            }
-
-            if (hit.transform == transform || hit.transform.IsChildOf(transform))
-            {
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(playerTag) && hit.CompareTag(playerTag))
-            {
-                return true;
-            }
-
-            return hit.GetComponentInParent<PlayerHealth>() != null;
         }
 
         private bool IsPlayerAvailable()

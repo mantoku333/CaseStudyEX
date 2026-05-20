@@ -55,16 +55,13 @@ public class AbilityPickupItem : MonoBehaviour
 
         if (IsAlreadyUnlocked())
         {
-            isPickedUp = true;
-            Destroy(gameObject);
+            CompletePickup();
             return;
         }
 
         UnlockAbility(abilityController);
 
-        isPickedUp = true;
-
-        Destroy(gameObject);
+        CompletePickup();
     }
 
     private bool IsAlreadyUnlocked()
@@ -112,5 +109,18 @@ public class AbilityPickupItem : MonoBehaviour
             Debug.Log("銃反動能力を取得しました！");
             return;
         }
+    }
+
+    private void CompletePickup()
+    {
+        isPickedUp = true;
+
+        ItemEffectController effectController = GetComponent<ItemEffectController>();
+        if (effectController != null && effectController.PlayPickupEffectAndDestroy())
+        {
+            return;
+        }
+
+        Destroy(gameObject);
     }
 }
