@@ -51,6 +51,8 @@ namespace GameName.Enemy
         /// </summary>
         public float CurrentX => rigidbody2D != null ? rigidbody2D.position.x : transform.position.x;
 
+        private float ignoreContactDamageUntilTime;
+
         /// <summary>
         /// 必要コンポーネントの取得と、未設定レイヤーマスクの補完を行う。
         /// </summary>
@@ -408,13 +410,40 @@ namespace GameName.Enemy
         /// <param name="collision">衝突情報</param>
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
+            if (Time.time < ignoreContactDamageUntilTime)
             {
+                Debug.Log("パリィ後なので接触ダメージ無効");
+                return;
+            }
+
+            UmbrellaParryController umbrellaParryController =
+                collision.gameObject.GetComponentInParent<UmbrellaParryController>();
+
+            if (umbrellaParryController != null)
+            {
+                if (umbrellaParryController.IsParrying())
+                {
+                    Debug.Log("パリィ中なので敵ダメージ無効");
+                    return;
+                }
+            }
+
+            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+
+            if (playerHealth == null)
+            {
+                playerHealth = collision.gameObject.GetComponentInParent<PlayerHealth>();
+            }
+
+            if (playerHealth != null)
+            {
+                Debug.Log("敵接触ダメージ");
                 playerHealth.TakeDamage(damageToPlayer);
             }
 
             TryTurnAroundFromEnemyCollision(collision);
         }
+
 
         public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
         {
@@ -434,6 +463,14 @@ namespace GameName.Enemy
                 Died?.Invoke();
                 Destroy(gameObject);
             }
+        }
+
+        /// <summary>
+        /// 一定時間、プレイヤーとの接触ダメージを無効化する。
+        /// </summary>
+        public void IgnoreContactDamage(float duration)
+        {
+            ignoreContactDamageUntilTime = Time.time + duration;
         }
     }
 }
