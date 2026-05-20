@@ -9,6 +9,7 @@ using UnityEngine.InputSystem;
 public sealed class MinimapManager : MonoBehaviour
 {
     [SerializeField] private List<MinimapRoomDefinition> roomDefinitions = new List<MinimapRoomDefinition>();
+    [SerializeField] private List<MinimapLinkDefinition> linkDefinitions = new List<MinimapLinkDefinition>();
     [SerializeField] private bool showFullMapOnStart;
 #if ENABLE_LEGACY_INPUT_MANAGER
     [SerializeField] private KeyCode fullMapKey = KeyCode.M;
@@ -16,6 +17,7 @@ public sealed class MinimapManager : MonoBehaviour
 
     private readonly Dictionary<string, MinimapRoomDefinition> roomsById = new Dictionary<string, MinimapRoomDefinition>(StringComparer.Ordinal);
     private readonly HashSet<string> visitedRoomIds = new HashSet<string>(StringComparer.Ordinal);
+    private bool hasExplicitLinks;
     private MinimapView view;
     private string currentRoomId;
 
@@ -24,6 +26,7 @@ public sealed class MinimapManager : MonoBehaviour
     public event Action Changed;
 
     public IReadOnlyList<MinimapRoomDefinition> RoomDefinitions => roomDefinitions;
+    public IReadOnlyList<MinimapLinkDefinition> LinkDefinitions => linkDefinitions;
     public string CurrentRoomId => currentRoomId;
 
     private void Awake()
@@ -80,6 +83,34 @@ public sealed class MinimapManager : MonoBehaviour
 
         NormalizeRoomDefinitions();
         RebuildRoomLookup();
+        RebuildLinksIfNeeded();
+        NotifyChanged();
+    }
+
+    public void SetLinkDefinitions(IEnumerable<MinimapLinkDefinition> definitions)
+    {
+        linkDefinitions.Clear();
+        hasExplicitLinks = false;
+
+        if (definitions != null)
+        {
+            foreach (MinimapLinkDefinition definition in definitions)
+            {
+                if (!IsValidLink(definition))
+                {
+                    continue;
+                }
+
+                linkDefinitions.Add(definition);
+                hasExplicitLinks = true;
+            }
+        }
+
+        if (!hasExplicitLinks)
+        {
+            RebuildAutoLinks();
+        }
+
         NotifyChanged();
     }
 
@@ -112,6 +143,7 @@ public sealed class MinimapManager : MonoBehaviour
 
         NormalizeRoomDefinitions();
         RebuildRoomLookup();
+        RebuildLinksIfNeeded();
         NotifyChanged();
     }
 
@@ -128,6 +160,59 @@ public sealed class MinimapManager : MonoBehaviour
 
         NormalizeRoomDefinitions();
         RebuildRoomLookup();
+        RebuildLinksIfNeeded();
+        NotifyChanged();
+    }
+
+    public void RegisterLink(MinimapLink link)
+    {
+        if (link == null || !link.IsValid)
+        {
+            return;
+        }
+
+        MinimapLinkDefinition nextDefinition = link.Definition;
+        if (nextDefinition == null)
+        {
+            return;
+        }
+
+        hasExplicitLinks = true;
+        bool existsInList = false;
+        for (int i = 0; i < linkDefinitions.Count; i++)
+        {
+            MinimapLinkDefinition existing = linkDefinitions[i];
+            if (existing == null || !string.Equals(existing.LinkId, nextDefinition.LinkId, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            linkDefinitions[i] = nextDefinition;
+            existsInList = true;
+            break;
+        }
+
+        if (!existsInList)
+        {
+            linkDefinitions.Add(nextDefinition);
+        }
+
+        NotifyChanged();
+    }
+
+    public void UnregisterLink(MinimapLink link)
+    {
+        if (link == null)
+        {
+            return;
+        }
+
+        linkDefinitions.RemoveAll(definition =>
+            definition != null &&
+            string.Equals(definition.LinkId, link.LinkId, StringComparison.Ordinal));
+
+        hasExplicitLinks = linkDefinitions.Count > 0;
+        RebuildLinksIfNeeded();
         NotifyChanged();
     }
 
@@ -178,6 +263,17 @@ public sealed class MinimapManager : MonoBehaviour
 
             roomsById[definition.RoomId] = definition;
         }
+    }
+
+    private void RebuildLinksIfNeeded()
+    {
+        if (!hasExplicitLinks)
+        {
+            RebuildAutoLinks();
+            return;
+        }
+
+        linkDefinitions.RemoveAll(definition => !IsValidLink(definition));
     }
 
     // Build room connections from adjacency so scene authors only need to place
@@ -238,6 +334,105 @@ public sealed class MinimapManager : MonoBehaviour
     private static bool RangesOverlap(int aMin, int aMax, int bMin, int bMax)
     {
         return aMin < bMax && bMin < aMax;
+    }
+
+    private void RebuildAutoLinks()
+    {
+        linkDefinitions.Clear();
+        var seenKeys = new HashSet<string>(StringComparer.Ordinal);
+
+        for (int i = 0; i < roomDefinitions.Count; i++)
+        {
+            MinimapRoomDefinition room = roomDefinitions[i];
+            if (room == null)
+            {
+                continue;
+            }
+
+            AddAutoLinkForDirection(room, MinimapConnection.Right, seenKeys);
+            AddAutoLinkForDirection(room, MinimapConnection.Left, seenKeys);
+            AddAutoLinkForDirection(room, MinimapConnection.Up, seenKeys);
+            AddAutoLinkForDirection(room, MinimapConnection.Down, seenKeys);
+        }
+    }
+
+    private void AddAutoLinkForDirection(
+        MinimapRoomDefinition room,
+        MinimapConnection direction,
+        ISet<string> seenKeys)
+    {
+        if ((room.Connections & direction) == 0)
+        {
+            return;
+        }
+
+        MinimapRoomDefinition neighbor = FindNeighbor(room, direction);
+        if (neighbor == null)
+        {
+            return;
+        }
+
+        string first = room.RoomId;
+        string second = neighbor.RoomId;
+        if (string.CompareOrdinal(first, second) > 0)
+        {
+            string swap = first;
+            first = second;
+            second = swap;
+        }
+
+        string key = first + "->" + second;
+        if (!seenKeys.Add(key))
+        {
+            return;
+        }
+
+        linkDefinitions.Add(new MinimapLinkDefinition("auto_" + key, first, second, null));
+    }
+
+    private MinimapRoomDefinition FindNeighbor(MinimapRoomDefinition room, MinimapConnection direction)
+    {
+        RectInt a = new RectInt(room.MapPosition, room.MapSize);
+
+        for (int i = 0; i < roomDefinitions.Count; i++)
+        {
+            MinimapRoomDefinition candidate = roomDefinitions[i];
+            if (candidate == null || ReferenceEquals(candidate, room))
+            {
+                continue;
+            }
+
+            RectInt b = new RectInt(candidate.MapPosition, candidate.MapSize);
+
+            if (direction == MinimapConnection.Right && a.xMax == b.xMin && RangesOverlap(a.yMin, a.yMax, b.yMin, b.yMax))
+            {
+                return candidate;
+            }
+
+            if (direction == MinimapConnection.Left && a.xMin == b.xMax && RangesOverlap(a.yMin, a.yMax, b.yMin, b.yMax))
+            {
+                return candidate;
+            }
+
+            if (direction == MinimapConnection.Up && a.yMax == b.yMin && RangesOverlap(a.xMin, a.xMax, b.xMin, b.xMax))
+            {
+                return candidate;
+            }
+
+            if (direction == MinimapConnection.Down && a.yMin == b.yMax && RangesOverlap(a.xMin, a.xMax, b.xMin, b.xMax))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool IsValidLink(MinimapLinkDefinition definition)
+    {
+        return definition != null &&
+            !string.IsNullOrWhiteSpace(definition.FromRoomId) &&
+            !string.IsNullOrWhiteSpace(definition.ToRoomId);
     }
 
     private void EnsureView()

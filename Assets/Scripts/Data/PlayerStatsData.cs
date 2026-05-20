@@ -1,4 +1,4 @@
-﻿using NaughtyAttributes;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace Player
@@ -19,7 +19,6 @@ namespace Player
         [BoxGroup("移動"), Label("回避距離"), Tooltip("回避移動距離"), SerializeField, Min(0f)] private float dodgeDistance = 3f;
         [BoxGroup("移動"), Label("回避時間"), Tooltip("回避時間(秒)"), SerializeField, Min(MinDuration)] private float dodgeDuration = 0.1f;
 
-        [BoxGroup("戦闘"), Label("攻撃力"), Tooltip("傘攻撃の攻撃力"), SerializeField, Min(1)] private int playerAttackDamage = 4;
         [BoxGroup("戦闘"), Label("攻撃回数/秒"), Tooltip("傘攻撃の秒間回数"), SerializeField, Min(MinDuration)] private float attackPerSecond = 4f;
         [BoxGroup("戦闘"), Label("傘攻撃持続"), Tooltip("傘攻撃当たり判定の継続時間(秒)"), SerializeField, Min(MinDuration)] private float umbrellaAttackDuration = 0.2f;
         [BoxGroup("戦闘"), Label("銃反動"), Tooltip("射撃反動/リコイルジャンプの反動量"), SerializeField, Min(0f)] private float gunRecoilForce = 1.5f;
@@ -30,6 +29,8 @@ namespace Player
         [BoxGroup("パリィ"), Label("フラッシュ時間"), Tooltip("パリィ演出フラッシュ時間(秒)"), SerializeField, Min(MinDuration)] private float parryFlashDuration = 0.1f;
 
         [BoxGroup("体力"), Label("最大HP"), Tooltip("最大HP"), SerializeField, Min(1)] private int maxHealth = 3;
+
+        [SerializeField, Min(1)] private int playerAttackDamage = 1;
 
         public float MoveSpeed => moveSpeed;
         public float GlideMoveSpeed => glideMoveSpeed;
