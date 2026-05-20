@@ -6,14 +6,18 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class MinimapView : MonoBehaviour
 {
-    private const float MiniBoardScale = 42f;
-    private const float FullBoardScale = 87f;
+    private const float MiniCellSize = 42f;
+    private const float FullCellSize = 87f;
     private const float MiniLineThickness = 3f;
     private const float FullLineThickness = 6f;
     private const float MiniRoomBorderThickness = 3f;
     private const float FullRoomBorderThickness = 6f;
+    private const float MiniRoomGap = 18f;
+    private const float FullRoomGap = 24f;
     private const float MiniMarkerDiameter = 12f;
     private const float FullMarkerDiameter = 24f;
+    private const float RoomVisualWidthRatio = 0.72f;
+    private const float RoomVisualHeightRatio = 0.42f;
     private const float ConnectorEndInset = 4f;
 
     [SerializeField] private Color panelColor = new Color(0.02f, 0.04f, 0.05f, 0.82f);
@@ -35,7 +39,7 @@ public sealed class MinimapView : MonoBehaviour
     private Vector2 miniMapOrigin;
     private Vector2 miniMapOriginVelocity;
     private Vector2 miniMapTargetOrigin;
-    private Rect miniMapBounds;
+    private RectInt miniMapBounds;
     private bool hasMiniMapOrigin;
     private Vector2 lastDrawnMiniMapOrigin;
     private bool hasDrawnMiniMapOrigin;
@@ -171,7 +175,7 @@ public sealed class MinimapView : MonoBehaviour
 
         if (fullMapPanel != null && fullMapPanel.gameObject.activeSelf)
         {
-            DrawMap(fullMapContent, FullBoardScale, FullLineThickness, FullRoomBorderThickness, false, FullMarkerDiameter);
+            DrawMap(fullMapContent, FullCellSize, FullLineThickness, FullRoomBorderThickness, FullRoomGap, false, FullMarkerDiameter);
         }
     }
 
@@ -190,9 +194,10 @@ public sealed class MinimapView : MonoBehaviour
         ClearGeneratedUnder(miniMapContent);
         DrawMapAtOrigin(
             miniMapContent,
-            MiniBoardScale,
+            MiniCellSize,
             MiniLineThickness,
             MiniRoomBorderThickness,
+            MiniRoomGap,
             MiniMarkerDiameter,
             miniMapBounds,
             miniMapOrigin);
@@ -210,7 +215,7 @@ public sealed class MinimapView : MonoBehaviour
         }
 
         miniMapBounds = CalculateBounds(rooms);
-        miniMapTargetOrigin = CalculateOrigin(miniMapBounds, MiniBoardScale, true);
+        miniMapTargetOrigin = CalculateOrigin(miniMapBounds, MiniCellSize, true);
 
         if (!hasMiniMapOrigin)
         {
@@ -224,9 +229,10 @@ public sealed class MinimapView : MonoBehaviour
 
     private void DrawMap(
         RectTransform parent,
-        float boardScale,
+        float cellSize,
         float lineThickness,
         float roomBorderThickness,
+        float roomGap,
         bool centerOnCurrentRoom,
         float markerDiameter)
     {
@@ -236,18 +242,52 @@ public sealed class MinimapView : MonoBehaviour
             return;
         }
 
-        Rect bounds = CalculateBounds(rooms);
-        Vector2 origin = CalculateOrigin(bounds, boardScale, centerOnCurrentRoom);
-        DrawMapAtOrigin(parent, boardScale, lineThickness, roomBorderThickness, markerDiameter, bounds, origin);
+        RectInt bounds = CalculateBounds(rooms);
+        Vector2 origin = CalculateOrigin(bounds, cellSize, centerOnCurrentRoom);
+
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoomDefinition room = rooms[i];
+            if (room == null || string.IsNullOrWhiteSpace(room.RoomId))
+            {
+                continue;
+            }
+
+            if (!ShouldDrawRoom(room))
+            {
+                continue;
+            }
+
+            DrawConnections(parent, rooms, room, origin, bounds, cellSize, lineThickness, roomGap);
+        }
+
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoomDefinition room = rooms[i];
+            if (room == null || string.IsNullOrWhiteSpace(room.RoomId))
+            {
+                continue;
+            }
+
+            if (!ShouldDrawRoom(room))
+            {
+                continue;
+            }
+
+            DrawBorderRoom(parent, room, origin, bounds, cellSize, roomBorderThickness, roomGap);
+        }
+
+        DrawCurrentMarker(parent, origin, bounds, cellSize, markerDiameter);
     }
 
     private void DrawMapAtOrigin(
         RectTransform parent,
-        float boardScale,
+        float cellSize,
         float lineThickness,
         float roomBorderThickness,
+        float roomGap,
         float markerDiameter,
-        Rect bounds,
+        RectInt bounds,
         Vector2 origin)
     {
         IReadOnlyList<MinimapRoomDefinition> rooms = manager.RoomDefinitions;
@@ -255,8 +295,6 @@ public sealed class MinimapView : MonoBehaviour
         {
             return;
         }
-
-        DrawConnections(parent, bounds, origin, boardScale, lineThickness);
 
         for (int i = 0; i < rooms.Count; i++)
         {
@@ -266,10 +304,21 @@ public sealed class MinimapView : MonoBehaviour
                 continue;
             }
 
-            DrawBorderRoom(parent, room, origin, bounds, boardScale, roomBorderThickness);
+            DrawConnections(parent, rooms, room, origin, bounds, cellSize, lineThickness, roomGap);
         }
 
-        DrawCurrentMarker(parent, origin, bounds, boardScale, markerDiameter);
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoomDefinition room = rooms[i];
+            if (room == null || string.IsNullOrWhiteSpace(room.RoomId) || !ShouldDrawRoom(room))
+            {
+                continue;
+            }
+
+            DrawBorderRoom(parent, room, origin, bounds, cellSize, roomBorderThickness, roomGap);
+        }
+
+        DrawCurrentMarker(parent, origin, bounds, cellSize, markerDiameter);
     }
 
     private bool ShouldDrawRoom(MinimapRoomDefinition room)
@@ -281,12 +330,13 @@ public sealed class MinimapView : MonoBehaviour
         RectTransform parent,
         MinimapRoomDefinition room,
         Vector2 origin,
-        Rect bounds,
-        float boardScale,
-        float borderThickness)
+        RectInt bounds,
+        float cellSize,
+        float borderThickness,
+        float roomGap)
     {
-        Vector2 center = AreaToAnchored(room.AreaCenter, origin, bounds, boardScale);
-        Vector2 size = RoomVisualSize(room, boardScale);
+        Vector2 center = GridToAnchored(room, origin, bounds, cellSize);
+        Vector2 size = RoomVisualSize(room, cellSize, roomGap);
         Color color = RoomColor(room);
 
         if (manager.IsCurrent(room.RoomId))
@@ -311,7 +361,7 @@ public sealed class MinimapView : MonoBehaviour
         generatedObjects.Add(line.gameObject);
     }
 
-    private void DrawCurrentMarker(RectTransform parent, Vector2 origin, Rect bounds, float boardScale, float markerDiameter)
+    private void DrawCurrentMarker(RectTransform parent, Vector2 origin, RectInt bounds, float cellSize, float markerDiameter)
     {
         if (string.IsNullOrWhiteSpace(manager.CurrentRoomId) ||
             !manager.TryGetRoom(manager.CurrentRoomId, out MinimapRoomDefinition currentRoom) ||
@@ -321,156 +371,115 @@ public sealed class MinimapView : MonoBehaviour
         }
 
         RectTransform marker = CreateImage("CurrentRoomMarker", parent, currentMarkerColor, circleSprite);
-        marker.anchoredPosition = AreaToAnchored(currentRoom.AreaCenter, origin, bounds, boardScale);
+        marker.anchoredPosition = GridToAnchored(currentRoom, origin, bounds, cellSize);
         marker.sizeDelta = new Vector2(markerDiameter, markerDiameter);
         generatedObjects.Add(marker.gameObject);
     }
 
     private void DrawConnections(
         RectTransform parent,
-        Rect bounds,
+        IReadOnlyList<MinimapRoomDefinition> rooms,
+        MinimapRoomDefinition room,
         Vector2 origin,
-        float boardScale,
-        float lineThickness)
+        RectInt bounds,
+        float cellSize,
+        float lineThickness,
+        float roomGap)
     {
-        IReadOnlyList<MinimapLinkDefinition> links = manager.LinkDefinitions;
-        if (links == null || links.Count == 0)
+        TryDrawConnection(parent, rooms, room, MinimapConnection.Right, origin, bounds, cellSize, lineThickness, roomGap);
+        TryDrawConnection(parent, rooms, room, MinimapConnection.Left, origin, bounds, cellSize, lineThickness, roomGap);
+        TryDrawConnection(parent, rooms, room, MinimapConnection.Up, origin, bounds, cellSize, lineThickness, roomGap);
+        TryDrawConnection(parent, rooms, room, MinimapConnection.Down, origin, bounds, cellSize, lineThickness, roomGap);
+    }
+
+    private void TryDrawConnection(
+        RectTransform parent,
+        IReadOnlyList<MinimapRoomDefinition> rooms,
+        MinimapRoomDefinition room,
+        MinimapConnection direction,
+        Vector2 origin,
+        RectInt bounds,
+        float cellSize,
+        float lineThickness,
+        float roomGap)
+    {
+        if ((room.Connections & direction) == 0)
         {
             return;
         }
 
-        for (int i = 0; i < links.Count; i++)
+        MinimapRoomDefinition neighbor = FindNeighbor(rooms, room, direction);
+        if (neighbor == null || !ShouldDrawRoom(neighbor))
         {
-            MinimapLinkDefinition link = links[i];
-            if (link == null ||
-                !manager.TryGetRoom(link.FromRoomId, out MinimapRoomDefinition fromRoom) ||
-                !manager.TryGetRoom(link.ToRoomId, out MinimapRoomDefinition toRoom) ||
-                !ShouldDrawRoom(fromRoom) ||
-                !ShouldDrawRoom(toRoom))
+            return;
+        }
+
+        if (string.CompareOrdinal(room.RoomId, neighbor.RoomId) > 0)
+        {
+            return;
+        }
+
+        Vector2 start = RoomEdge(room, direction, origin, bounds, cellSize, roomGap);
+        Vector2 end = RoomEdge(neighbor, Opposite(direction), origin, bounds, cellSize, roomGap);
+        Vector2 lineDirection = (end - start).normalized;
+        start += lineDirection * ConnectorEndInset;
+        end -= lineDirection * ConnectorEndInset;
+        Vector2 delta = end - start;
+
+        if (delta.sqrMagnitude <= 0.01f)
+        {
+            return;
+        }
+
+        RectTransform line = CreateImage("Line_" + room.RoomId + "_" + direction, parent, lineColor);
+        line.anchoredPosition = (start + end) * 0.5f;
+        if (Mathf.Abs(delta.x) >= Mathf.Abs(delta.y))
+        {
+            line.sizeDelta = new Vector2(Mathf.Abs(delta.x) + 4f, lineThickness);
+        }
+        else
+        {
+            line.sizeDelta = new Vector2(lineThickness, Mathf.Abs(delta.y) + 2f);
+        }
+        generatedObjects.Add(line.gameObject);
+    }
+
+    private MinimapRoomDefinition FindNeighbor(IReadOnlyList<MinimapRoomDefinition> rooms, MinimapRoomDefinition room, MinimapConnection direction)
+    {
+        RectInt a = ToRect(room);
+
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoomDefinition candidate = rooms[i];
+            if (candidate == null || ReferenceEquals(candidate, room))
             {
                 continue;
             }
 
-            List<Vector2> boardPoints = BuildBoardPath(link, fromRoom, toRoom);
-            for (int pointIndex = 0; pointIndex < boardPoints.Count - 1; pointIndex++)
+            RectInt b = ToRect(candidate);
+
+            if (direction == MinimapConnection.Right && a.xMax == b.xMin && RangesOverlap(a.yMin, a.yMax, b.yMin, b.yMax))
             {
-                Vector2 start = AreaToAnchored(boardPoints[pointIndex], origin, bounds, boardScale);
-                Vector2 end = AreaToAnchored(boardPoints[pointIndex + 1], origin, bounds, boardScale);
-
-                Vector2 delta = end - start;
-                if (delta.sqrMagnitude <= 0.01f)
-                {
-                    continue;
-                }
-
-                Vector2 direction = delta.normalized;
-                Vector2 startInset = pointIndex == 0 ? start + (direction * ConnectorEndInset) : start;
-                Vector2 endInset = pointIndex == boardPoints.Count - 2 ? end - (direction * ConnectorEndInset) : end;
-                DrawLineSegment(parent, "Link_" + i + "_" + pointIndex, startInset, endInset, lineThickness, lineColor);
+                return candidate;
             }
-        }
-    }
 
-    private List<Vector2> BuildBoardPath(
-        MinimapLinkDefinition link,
-        MinimapRoomDefinition fromRoom,
-        MinimapRoomDefinition toRoom)
-    {
-        var points = new List<Vector2>();
-        IReadOnlyList<Vector2> middlePoints = link.PathPoints;
-
-        Vector2 startTarget = middlePoints != null && middlePoints.Count > 0
-            ? middlePoints[0]
-            : toRoom.AreaCenter;
-        Vector2 endTarget = middlePoints != null && middlePoints.Count > 0
-            ? middlePoints[middlePoints.Count - 1]
-            : fromRoom.AreaCenter;
-
-        points.Add(ClosestPointOnRoom(fromRoom, startTarget));
-
-        if (middlePoints != null)
-        {
-            for (int i = 0; i < middlePoints.Count; i++)
+            if (direction == MinimapConnection.Left && a.xMin == b.xMax && RangesOverlap(a.yMin, a.yMax, b.yMin, b.yMax))
             {
-                points.Add(middlePoints[i]);
+                return candidate;
+            }
+
+            if (direction == MinimapConnection.Up && a.yMax == b.yMin && RangesOverlap(a.xMin, a.xMax, b.xMin, b.xMax))
+            {
+                return candidate;
+            }
+
+            if (direction == MinimapConnection.Down && a.yMin == b.yMax && RangesOverlap(a.xMin, a.xMax, b.xMin, b.xMax))
+            {
+                return candidate;
             }
         }
 
-        points.Add(ClosestPointOnRoom(toRoom, endTarget));
-        return points;
-    }
-
-    private void DrawLineSegment(
-        RectTransform parent,
-        string objectName,
-        Vector2 start,
-        Vector2 end,
-        float thickness,
-        Color color)
-    {
-        Vector2 delta = end - start;
-        float length = delta.magnitude;
-        if (length <= 0.1f)
-        {
-            return;
-        }
-
-        RectTransform line = CreateImage(objectName, parent, color);
-        line.anchoredPosition = (start + end) * 0.5f;
-        line.sizeDelta = new Vector2(length, thickness);
-        line.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
-        generatedObjects.Add(line.gameObject);
-    }
-
-    private Vector2 ClosestPointOnRoom(MinimapRoomDefinition room, Vector2 target)
-    {
-        float minX = room.AreaPosition.x;
-        float maxX = room.AreaPosition.x + room.AreaSize.x;
-        float minY = room.AreaPosition.y;
-        float maxY = room.AreaPosition.y + room.AreaSize.y;
-
-        if (target.x < minX)
-        {
-            return new Vector2(minX, Mathf.Clamp(target.y, minY, maxY));
-        }
-
-        if (target.x > maxX)
-        {
-            return new Vector2(maxX, Mathf.Clamp(target.y, minY, maxY));
-        }
-
-        if (target.y < minY)
-        {
-            return new Vector2(Mathf.Clamp(target.x, minX, maxX), minY);
-        }
-
-        if (target.y > maxY)
-        {
-            return new Vector2(Mathf.Clamp(target.x, minX, maxX), maxY);
-        }
-
-        float leftDistance = Mathf.Abs(target.x - minX);
-        float rightDistance = Mathf.Abs(maxX - target.x);
-        float topDistance = Mathf.Abs(target.y - minY);
-        float bottomDistance = Mathf.Abs(maxY - target.y);
-        float minimumDistance = Mathf.Min(leftDistance, rightDistance, topDistance, bottomDistance);
-
-        if (Mathf.Approximately(minimumDistance, leftDistance))
-        {
-            return new Vector2(minX, target.y);
-        }
-
-        if (Mathf.Approximately(minimumDistance, rightDistance))
-        {
-            return new Vector2(maxX, target.y);
-        }
-
-        if (Mathf.Approximately(minimumDistance, topDistance))
-        {
-            return new Vector2(target.x, minY);
-        }
-
-        return new Vector2(target.x, maxY);
+        return null;
     }
 
     private Color RoomColor(MinimapRoomDefinition room)
@@ -488,13 +497,13 @@ public sealed class MinimapView : MonoBehaviour
         return Color.clear;
     }
 
-    private Rect CalculateBounds(IReadOnlyList<MinimapRoomDefinition> rooms)
+    private RectInt CalculateBounds(IReadOnlyList<MinimapRoomDefinition> rooms)
     {
         bool hasRoom = false;
-        float minX = 0f;
-        float minY = 0f;
-        float maxX = 0f;
-        float maxY = 0f;
+        int minX = 0;
+        int minY = 0;
+        int maxX = 0;
+        int maxY = 0;
 
         for (int i = 0; i < rooms.Count; i++)
         {
@@ -504,8 +513,8 @@ public sealed class MinimapView : MonoBehaviour
                 continue;
             }
 
-            Vector2 position = room.AreaPosition;
-            Vector2 size = room.AreaSize;
+            Vector2Int position = room.MapPosition;
+            Vector2Int size = room.MapSize;
 
             if (!hasRoom)
             {
@@ -525,40 +534,103 @@ public sealed class MinimapView : MonoBehaviour
 
         if (!hasRoom)
         {
-            return new Rect(0f, 0f, 1f, 1f);
+            return new RectInt(0, 0, 1, 1);
         }
 
-        return Rect.MinMaxRect(minX, minY, maxX, maxY);
+        return new RectInt(minX, minY, Mathf.Max(1, maxX - minX), Mathf.Max(1, maxY - minY));
     }
 
-    private Vector2 CalculateOrigin(Rect bounds, float boardScale, bool centerOnCurrentRoom)
+    private Vector2 CalculateOrigin(RectInt bounds, float cellSize, bool centerOnCurrentRoom)
     {
         if (centerOnCurrentRoom &&
             !string.IsNullOrWhiteSpace(manager.CurrentRoomId) &&
             manager.TryGetRoom(manager.CurrentRoomId, out MinimapRoomDefinition currentRoom))
         {
-            Vector2 currentCenter = currentRoom.AreaCenter;
-            return new Vector2(
-                -((currentCenter.x - bounds.xMin) * boardScale),
-                (currentCenter.y - bounds.yMin) * boardScale);
+            return -GridToAnchored(currentRoom, Vector2.zero, bounds, cellSize);
         }
 
-        Vector2 mapSize = new Vector2(bounds.width * boardScale, bounds.height * boardScale);
-        return new Vector2(-mapSize.x * 0.5f, mapSize.y * 0.5f);
+        return CalculateCenteredOrigin(bounds, cellSize);
     }
 
-    private Vector2 AreaToAnchored(Vector2 boardPoint, Vector2 origin, Rect bounds, float boardScale)
+    private Vector2 CalculateCenteredOrigin(RectInt bounds, float cellSize)
     {
-        float x = origin.x + ((boardPoint.x - bounds.xMin) * boardScale);
-        float y = origin.y - ((boardPoint.y - bounds.yMin) * boardScale);
+        Vector2 mapSize = new Vector2(bounds.width * cellSize, bounds.height * cellSize);
+        return new Vector2(-mapSize.x * 0.5f, -mapSize.y * 0.5f);
+    }
+
+    private Vector2 GridToAnchored(MinimapRoomDefinition room, Vector2 origin, RectInt bounds, float cellSize)
+    {
+        Vector2Int size = room.MapSize;
+        float x = origin.x + (room.MapPosition.x - bounds.xMin) * cellSize + size.x * cellSize * 0.5f;
+        float y = origin.y + (bounds.yMax - room.MapPosition.y - size.y) * cellSize + size.y * cellSize * 0.5f;
         return new Vector2(x, y);
     }
 
-    private Vector2 RoomVisualSize(MinimapRoomDefinition room, float boardScale)
+    private Vector2 RoomEdge(MinimapRoomDefinition room, MinimapConnection direction, Vector2 origin, RectInt bounds, float cellSize, float roomGap)
     {
+        Vector2 center = GridToAnchored(room, origin, bounds, cellSize);
+        Vector2 half = RoomVisualSize(room, cellSize, roomGap) * 0.5f;
+
+        if (direction == MinimapConnection.Right)
+        {
+            return center + new Vector2(half.x, 0f);
+        }
+
+        if (direction == MinimapConnection.Left)
+        {
+            return center + new Vector2(-half.x, 0f);
+        }
+
+        if (direction == MinimapConnection.Up)
+        {
+            return center + new Vector2(0f, half.y);
+        }
+
+        return center + new Vector2(0f, -half.y);
+    }
+
+    private Vector2 RoomVisualSize(MinimapRoomDefinition room, float cellSize, float roomGap)
+    {
+        if (room.MapSize == Vector2Int.one)
+        {
+            return new Vector2(
+                Mathf.Max(12f, cellSize * RoomVisualWidthRatio),
+                Mathf.Max(8f, cellSize * RoomVisualHeightRatio));
+        }
+
         return new Vector2(
-            Mathf.Max(12f, room.AreaSize.x * boardScale),
-            Mathf.Max(8f, room.AreaSize.y * boardScale));
+            Mathf.Max(8f, room.MapSize.x * cellSize - roomGap),
+            Mathf.Max(8f, room.MapSize.y * cellSize - roomGap));
+    }
+
+    private RectInt ToRect(MinimapRoomDefinition room)
+    {
+        return new RectInt(room.MapPosition, room.MapSize);
+    }
+
+    private bool RangesOverlap(int aMin, int aMax, int bMin, int bMax)
+    {
+        return aMin < bMax && bMin < aMax;
+    }
+
+    private MinimapConnection Opposite(MinimapConnection direction)
+    {
+        if (direction == MinimapConnection.Right)
+        {
+            return MinimapConnection.Left;
+        }
+
+        if (direction == MinimapConnection.Left)
+        {
+            return MinimapConnection.Right;
+        }
+
+        if (direction == MinimapConnection.Up)
+        {
+            return MinimapConnection.Down;
+        }
+
+        return MinimapConnection.Up;
     }
 
     private Canvas FindCanvas()

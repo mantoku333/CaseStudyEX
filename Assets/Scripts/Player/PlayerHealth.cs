@@ -14,7 +14,6 @@ namespace Player
 
         private int currentHealth;
         private float nextDamageTime;
-        private bool deathNotified;
 
         /// <summary>
         /// HPが変化したときに通知
@@ -22,11 +21,6 @@ namespace Player
         /// 第2引数: 最大HP
         /// </summary>
         public event Action<int, int> HealthChanged;
-
-        /// <summary>
-        /// HPが0になったときに1回だけ通知
-        /// </summary>
-        public event Action Died;
 
         /// <summary>現在HP</summary>
         public int CurrentHealth => currentHealth;
@@ -36,7 +30,6 @@ namespace Player
         {
             get
             {
-                TryResolveStatsData();
                 int baseMaxHealth = 1;
 
                 if (statsData != null)
@@ -46,11 +39,6 @@ namespace Player
 
                 return baseMaxHealth + maxHealthBonus;
             }
-        }
-
-        private void Awake()
-        {
-            TryResolveStatsData();
         }
 
         /// <summary>
@@ -156,33 +144,6 @@ namespace Player
         private void NotifyHealthChanged()
         {
             HealthChanged?.Invoke(currentHealth, MaxHealth);
-
-            if (currentHealth <= 0)
-            {
-                if (!deathNotified)
-                {
-                    deathNotified = true;
-                    Died?.Invoke();
-                }
-            }
-            else
-            {
-                deathNotified = false;
-            }
-        }
-
-        private void TryResolveStatsData()
-        {
-            if (statsData != null)
-            {
-                return;
-            }
-
-            var playerController = GetComponent<global::PlayerController>();
-            if (playerController != null)
-            {
-                statsData = playerController.GetPlayerStatsData();
-            }
         }
     }
 }

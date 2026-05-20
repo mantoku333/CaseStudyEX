@@ -268,7 +268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyController2D
   moveSpeed: 2
   patrolDistance: 7
-  damageToPlayer: 10
+  damageToPlayer: 1
   maxHealth: 5
   wallCheckDistance: 0.15
   edgeCheckDistance: 0.35
@@ -325,7 +325,7 @@ MonoBehaviour:
   playerTag: Player
   hitInterval: 0.2
   applyDamageInPassThrough: 1
-  contactDamage: 10
+  contactDamage: 1
 --- !u!114 &730100000000000001
 MonoBehaviour:
   m_ObjectHideFlags: 0
