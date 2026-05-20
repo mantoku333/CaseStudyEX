@@ -11,14 +11,11 @@ public class GroundCheck : MonoBehaviour
     [SerializeField] private bool includeFallThroughFloorLayer = true;
 
     private readonly HashSet<Collider2D> groundColliders = new HashSet<Collider2D>();
-    private readonly Collider2D[] overlapResults = new Collider2D[16];
-    private Collider2D groundCheckCollider;
     private int fallThroughFloorLayer = -1;
 
     private void Awake()
     {
         fallThroughFloorLayer = LayerMask.NameToLayer(FallThroughFloorLayerName);
-        groundCheckCollider = GetComponent<Collider2D>();
     }
 
     /// <summary>
@@ -28,8 +25,6 @@ public class GroundCheck : MonoBehaviour
     /// <returns></returns>
     public bool IsGround()
     {
-        // Trigger の Enter/Exit が抜けても接地状態がずれないよう、問い合わせ時に現在の重なりを取り直す。
-        RefreshGroundColliders();
         return groundColliders.Count > 0;
     }
 
@@ -80,52 +75,5 @@ public class GroundCheck : MonoBehaviour
     private void OnDisable()
     {
         groundColliders.Clear();
-    }
-
-    private void RefreshGroundColliders()
-    {
-        groundColliders.Clear();
-
-        if (groundCheckCollider == null)
-        {
-            groundCheckCollider = GetComponent<Collider2D>();
-        }
-
-        if (groundCheckCollider == null || !groundCheckCollider.enabled)
-        {
-            return;
-        }
-
-        ContactFilter2D contactFilter = new ContactFilter2D
-        {
-            useLayerMask = true,
-            useTriggers = false
-        };
-        contactFilter.SetLayerMask(BuildGroundMask());
-
-        // GroundCheck 自身のトリガー形状で、Ground と FallThroughFloor の現在の重なりを直接確認する。
-        int overlapCount = groundCheckCollider.Overlap(contactFilter, overlapResults);
-        for (int i = 0; i < overlapCount; i++)
-        {
-            Collider2D overlap = overlapResults[i];
-            if (overlap != null && IsInLayer(overlap.gameObject.layer))
-            {
-                groundColliders.Add(overlap);
-            }
-
-            overlapResults[i] = null;
-        }
-    }
-
-    private LayerMask BuildGroundMask()
-    {
-        int mask = groundLayer.value;
-        if (includeFallThroughFloorLayer && fallThroughFloorLayer >= 0)
-        {
-            // すり抜け床も通常の地面と同じ接地判定として扱う。
-            mask |= 1 << fallThroughFloorLayer;
-        }
-
-        return mask;
     }
 }

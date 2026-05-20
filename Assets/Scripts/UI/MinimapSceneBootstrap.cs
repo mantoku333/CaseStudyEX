@@ -54,5 +54,29 @@ public static class MinimapSceneBootstrap
         }
 
         manager.SetRoomDefinitions(definitions);
+        manager.SetLinkDefinitions(CollectLinkDefinitions());
+    }
+
+    private static List<MinimapLinkDefinition> CollectLinkDefinitions()
+    {
+        MinimapLink[] links = Object.FindObjectsByType<MinimapLink>(FindObjectsSortMode.None);
+        var definitions = new List<MinimapLinkDefinition>();
+        if (links == null)
+        {
+            return definitions;
+        }
+
+        for (int i = 0; i < links.Length; i++)
+        {
+            MinimapLink link = links[i];
+            if (link == null || !link.IsValid || link.Definition == null)
+            {
+                continue;
+            }
+
+            definitions.Add(link.Definition);
+        }
+
+        return definitions;
     }
 }

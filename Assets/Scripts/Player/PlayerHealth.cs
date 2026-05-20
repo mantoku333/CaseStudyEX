@@ -14,6 +14,7 @@ namespace Player
 
         private int currentHealth;
         private float nextDamageTime;
+        private bool deathNotified;
 
         /// <summary>
         /// HPが変化したときに通知
@@ -21,6 +22,11 @@ namespace Player
         /// 第2引数: 最大HP
         /// </summary>
         public event Action<int, int> HealthChanged;
+
+        /// <summary>
+        /// HPが0になったときに1回だけ通知
+        /// </summary>
+        public event Action Died;
 
         /// <summary>現在HP</summary>
         public int CurrentHealth => currentHealth;
@@ -30,6 +36,7 @@ namespace Player
         {
             get
             {
+                TryResolveStatsData();
                 int baseMaxHealth = 1;
 
                 if (statsData != null)
@@ -39,6 +46,11 @@ namespace Player
 
                 return baseMaxHealth + maxHealthBonus;
             }
+        }
+
+        private void Awake()
+        {
+            TryResolveStatsData();
         }
 
         /// <summary>
@@ -56,31 +68,20 @@ namespace Player
         /// <param name="damage">受けるダメージ量</param>
         public void TakeDamage(int damage)
         {
-            TryTakeDamage(damage);
-        }
-
-        /// <summary>
-        /// ダメージを受けた場合は true を返す。
-        /// ダメージ床や敵側の演出は、この戻り値でクールダウン通過後の実ダメージだけを判定する。
-        /// </summary>
-        /// <param name="damage">受けるダメージ量</param>
-        public bool TryTakeDamage(int damage)
-        {
             // 無効なダメージ、またはすでに死亡しているなら何もしない
             if (damage <= 0 || currentHealth <= 0)
             {
-                return false;
+                return;
             }
 
             if (Time.time < nextDamageTime)
             {
-                return false;
+                return;
             }
 
             currentHealth = Mathf.Max(0, currentHealth - damage);
             nextDamageTime = Time.time + damageCooldownSeconds;
             NotifyHealthChanged();
-            return true;
         }
 
         /// <summary>
@@ -144,6 +145,33 @@ namespace Player
         private void NotifyHealthChanged()
         {
             HealthChanged?.Invoke(currentHealth, MaxHealth);
+
+            if (currentHealth <= 0)
+            {
+                if (!deathNotified)
+                {
+                    deathNotified = true;
+                    Died?.Invoke();
+                }
+            }
+            else
+            {
+                deathNotified = false;
+            }
+        }
+
+        private void TryResolveStatsData()
+        {
+            if (statsData != null)
+            {
+                return;
+            }
+
+            var playerController = GetComponent<global::PlayerController>();
+            if (playerController != null)
+            {
+                statsData = playerController.GetPlayerStatsData();
+            }
         }
     }
 }
