@@ -37,25 +37,12 @@ namespace Metroidvania.Player
         /// </summary>
         public void PlayFlash()
         {
-            PlayFlashInternal(false);
-        }
-
-        /// <summary>
-        /// HP 側でダメージ成立済みの時に、表示用クールダウンを無視して赤点滅を再生する。
-        /// </summary>
-        public void PlayFlashForced()
-        {
-            PlayFlashInternal(true);
-        }
-
-        private void PlayFlashInternal(bool ignoreCooldown)
-        {
             if (targetRenderers == null || targetRenderers.Length == 0)
             {
                 return;
             }
 
-            if (!ignoreCooldown && Time.time < nextFlashTime)
+            if (Time.time < nextFlashTime)
             {
                 return;
             }
@@ -63,7 +50,7 @@ namespace Metroidvania.Player
             nextFlashTime = Time.time + flashCooldownSeconds;
 
 
-            // 現在の色を保存しておき、点滅後に最新の表示色へ戻せるようにする。
+            // Capture the current runtime colors so we always restore the latest state.
             if (flashCoroutine == null)
             {
                 CaptureCurrentColors();

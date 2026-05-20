@@ -1,5 +1,4 @@
 ﻿using Player;
-using Metroidvania.Player;
 using System;
 using UnityEngine;
 
@@ -409,40 +408,12 @@ namespace GameName.Enemy
         /// <param name="collision">衝突情報</param>
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            // 通常の敵接触ダメージも、プレイヤー本体コライダーに当たった場合だけ成立させる。
-            if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
-                playerHealth.TryTakeDamage(damageToPlayer))
+            if (collision.gameObject.TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
             {
-                PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
-                if (damageFlash == null)
-                {
-                    damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
-                }
-
-                damageFlash?.PlayFlashForced();
+                playerHealth.TakeDamage(damageToPlayer);
             }
 
             TryTurnAroundFromEnemyCollision(collision);
-        }
-
-        private static bool TryGetPlayerBodyCollision(Collision2D collision, out PlayerHealth playerHealth)
-        {
-            playerHealth = null;
-
-            if (collision == null)
-            {
-                return false;
-            }
-
-            // Collision2D のどちら側にプレイヤー本体が入っていても拾えるよう、両方の collider を確認する。
-            return PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
-                       collision.collider,
-                       out playerHealth,
-                       out _) ||
-                   PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
-                       collision.otherCollider,
-                       out playerHealth,
-                       out _);
         }
 
         public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)

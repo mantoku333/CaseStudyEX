@@ -222,7 +222,7 @@ namespace Metroidvania.Enemy
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (TryApplyPlayerHit(other))
+            if (TryApplyPlayerHit(other.gameObject))
             {
                 return;
             }
@@ -235,7 +235,7 @@ namespace Metroidvania.Enemy
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (TryApplyPlayerHit(collision.collider) || TryApplyPlayerHit(collision.otherCollider))
+            if (TryApplyPlayerHit(collision.gameObject))
             {
                 return;
             }
@@ -246,27 +246,38 @@ namespace Metroidvania.Enemy
             }
         }
 
-        private bool TryApplyPlayerHit(Collider2D hitCollider)
+        private bool TryApplyPlayerHit(GameObject hitObject)
         {
-            // 弾のダメージはプレイヤー本体コライダーに当たった時だけ成立させる。
-            // 傘のパリィ判定に触れた場合は、ParryHitbox 側の検知に任せる。
-            if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
-                    hitCollider,
-                    out PlayerHealth playerHealth,
-                    out _))
+            if (hitObject == null)
             {
                 return false;
             }
 
-            if (playerHealth.TryTakeDamage(damage))
+            PlayerDamageFlash damageFlash = hitObject.GetComponent<PlayerDamageFlash>();
+            if (damageFlash == null)
             {
-                PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
-                if (damageFlash == null)
-                {
-                    damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
-                }
+                damageFlash = hitObject.GetComponentInParent<PlayerDamageFlash>();
+            }
 
-                damageFlash?.PlayFlashForced();
+            PlayerHealth playerHealth = hitObject.GetComponent<PlayerHealth>();
+            if (playerHealth == null)
+            {
+                playerHealth = hitObject.GetComponentInParent<PlayerHealth>();
+            }
+
+            if (damageFlash == null && playerHealth == null && !hitObject.CompareTag("Player"))
+            {
+                return false;
+            }
+
+            if (damageFlash != null)
+            {
+                damageFlash.PlayFlash();
+            }
+
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage);
             }
 
             Destroy(gameObject);
@@ -703,18 +714,6 @@ namespace Metroidvania.Enemy
             if (targetRoot == null)
             {
                 return null;
-            }
-
-            // 追尾弾の狙い先も本体コライダーに固定し、傘の大きな判定へ吸われないようにする。
-            PlayerHealth playerHealth = targetRoot.GetComponent<PlayerHealth>();
-            if (playerHealth == null)
-            {
-                playerHealth = targetRoot.GetComponentInChildren<PlayerHealth>();
-            }
-
-            if (PlayerBodyColliderUtility.TryGetBodyCollider(playerHealth, out Collider2D playerBodyCollider))
-            {
-                return playerBodyCollider;
             }
 
             Collider2D[] colliders = targetRoot.GetComponentsInChildren<Collider2D>();

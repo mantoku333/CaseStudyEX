@@ -861,5 +861,4 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         };
         playerCollider.sharedMaterial = runtimeNoFrictionMaterial;
     }
-
 }
