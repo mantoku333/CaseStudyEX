@@ -338,10 +338,20 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
-        if (umbrellaController == null) { return; }
-        if (!inputActionsReady) { return; }
+        if (umbrellaController == null)
+        {
+            return;
+        }
 
-        bool isGliding = (umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open);
+        if (!inputActionsReady)
+        {
+            return;
+        }
+
+        bool isGliding =
+            umbrellaController.GetUmbrellaState() ==
+            UmbrellaController.UmbrellaState.Open;
+
         moveInput = 0.0f;
         Vector2 move = Vector2.zero;
 
@@ -356,11 +366,14 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         RefreshParryColliderFacing();
 
         bool isDownHeld = move.y < -0.5f;
+
         if (isDownHeld && IsPressedThisFrame(fallThroughAction))
         {
             if (fallThroughController != null)
             {
-                fallThroughController.SendMessage("TryFallThrough", SendMessageOptions.DontRequireReceiver);
+                fallThroughController.SendMessage(
+                    "TryFallThrough",
+                    SendMessageOptions.DontRequireReceiver);
             }
         }
 
@@ -370,7 +383,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
-        //回避(Shift単体でその場回避 / A・D入力中なら左右回避)
+        //--------------回避関連------------------
+
         bool canUseDodge = false;
 
         if (playerAbilityController != null)
@@ -378,7 +392,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             canUseDodge = playerAbilityController.GetCanDodge();
         }
 
-        bool isDodgeTriggered = IsPressedThisFrame(dodgeAction) ||
+        bool isDodgeTriggered =
+            IsPressedThisFrame(dodgeAction) ||
             (IsPressed(dodgeAction) && IsPressedThisFrame(moveAction));
 
         if (canUseDodge)
@@ -403,20 +418,37 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             }
         }
 
-        //ジャンプ(スペースキーでジャンプ)
+        //--------------ジャンプ関連------------------
+
         if (IsPressedThisFrame(jumpAction))
         {
             jumpInput = true;
         }
 
-        //パリィor傘開閉 (右クリックでパリィ、敵の攻撃がない場合は傘の開け閉め)
+        //--------------パリィ・傘関連------------------
+
         if (IsPressedThisFrame(umbrellaToggleAction))
         {
-            if (parryHitbox != null && parryHitbox.HasEnemyAttack())
+            bool parrySuccess = false;
+
+            if (parryHitbox != null)
+            {
+                parrySuccess = parryHitbox.TryParryEnemyBullets();
+
+                if (!parrySuccess)
+                {
+                    parrySuccess =
+                        parryHitbox.TryParryEnemyTackleAttack();
+                }
+            }
+
+            if (parrySuccess)
             {
                 if (umbrellaController != null)
                 {
-                    umbrellaController.SetUmbrellaState(UmbrellaController.UmbrellaState.Open, false);
+                    umbrellaController.SetUmbrellaState(
+                        UmbrellaController.UmbrellaState.Open,
+                        false);
                 }
 
                 if (umbrellaParryController != null)
@@ -424,84 +456,98 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                     umbrellaParryController.Parry();
                 }
 
-                parryHitbox.ClearEnemyAttacks();
+                return;
             }
-            else
+
+            if (umbrellaController != null)
             {
-                if (umbrellaController != null)
-                {
-                    umbrellaController.ToggleUmbrella();
-                }
+                umbrellaController.ToggleUmbrella();
             }
         }
 
+        //--------------攻撃関連------------------
+
         if (IsPressedThisFrame(attackAction))
         {
-            bool isUmbrellaOpen = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open;
-            bool isPlayerGliding = isUmbrellaOpen && !isGround;
+            bool isUmbrellaOpen =
+                umbrellaController.GetUmbrellaState() ==
+                UmbrellaController.UmbrellaState.Open;
 
-            if (isUmbrellaOpen)
+            bool isPlayerGliding =
+                isUmbrellaOpen &&
+                !isGround;
+
+            // 滑空中射撃
+            if (isPlayerGliding &&
+                TryGetAimScreenPosition(out var pointerPos))
             {
-                if (isPlayerGliding && TryGetAimScreenPosition(out var pointerPos))
+                Camera mainCamera = Camera.main;
+
+                if (mainCamera != null && gunController != null)
                 {
-                    Camera mainCamera = Camera.main;
-                    if (mainCamera != null && gunController != null)
+                    Vector3 mouseWorldPos =
+                        mainCamera.ScreenToWorldPoint(
+                            new Vector3(
+                                pointerPos.x,
+                                pointerPos.y,
+                                0.0f));
+
+                    mouseWorldPos.z = 0.0f;
+
+                    Vector2 shootDirection =
+                        (mouseWorldPos - transform.position).normalized;
+
+                    bool canUseGunRecoil = false;
+
+                    if (playerAbilityController != null)
                     {
-                        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(
-                            new Vector3(pointerPos.x, pointerPos.y, 0.0f)
-                        );
-                        mouseWorldPos.z = 0.0f;
+                        canUseGunRecoil =
+                            playerAbilityController.GetCanGunRecoil();
+                    }
 
-                        Vector2 shootDirection = (mouseWorldPos - transform.position).normalized;
-
-                        //アイテムを取得しているかどうかを確認し
-                        //それによって反動を使用できるかを判断する
-                        bool canUseGunRecoil = false;
-
-                        if (playerAbilityController != null)
-                        {
-                            canUseGunRecoil = playerAbilityController.GetCanGunRecoil();
-                        }
-
-                        if (canUseGunRecoil)
-                        {
-                            gunController.Shoot(shootDirection);
-                        }
+                    if (canUseGunRecoil)
+                    {
+                        gunController.Shoot(shootDirection);
                     }
                 }
 
                 return;
             }
 
+            // 傘が開いていたら閉じる
+            if (isUmbrellaOpen)
+            {
+                umbrellaController.SetUmbrellaState(
+                    UmbrellaController.UmbrellaState.Closed,
+                    false);
+            }
+
+            // 通常攻撃
             if (umbrellaAttackController != null)
             {
                 umbrellaAttackController.Attack();
             }
         }
 
+        //--------------リコイルジャンプ関連------------------
 
-        //銃での飛び上がり(空中でEキーを押すと銃の反動で飛び上がる)
         if (IsPressedThisFrame(recoilJumpAction))
         {
             if (isGround)
             {
                 if (gunController != null)
                 {
-                    //アイテムを取得しているかどうかを確認し
-                    //それによって反動を使用できるかを判断する
                     bool canUseGunRecoil = false;
 
                     if (playerAbilityController != null)
                     {
-                        canUseGunRecoil = playerAbilityController.GetCanGunRecoil();
+                        canUseGunRecoil =
+                            playerAbilityController.GetCanGunRecoil();
                     }
 
                     if (canUseGunRecoil)
                     {
-                        if (gunController != null)
-                        {
-                            gunController.JumpRecoil();
-                        }
+                        gunController.JumpRecoil();
                     }
                 }
             }

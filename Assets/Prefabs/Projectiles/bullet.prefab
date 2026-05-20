@@ -181,3 +181,6 @@ MonoBehaviour:
   waypointReachDistance: 0.12
   blockedMovementProbeDistance: 0.8
   sideSteerProbeDistance: 0.8
+  justParryWindow: 0.75
+  maxReflectDistance: 15
+  reflectedDamageMultiplier: 1.5

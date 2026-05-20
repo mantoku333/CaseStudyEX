@@ -52,6 +52,8 @@ namespace GameName.Enemy
         /// </summary>
         public float CurrentX => rigidbody2D != null ? rigidbody2D.position.x : transform.position.x;
 
+        private float ignoreContactDamageUntilTime;  //接触ダメージを無効にする時間
+
         /// <summary>
         /// 必要コンポーネントの取得と、未設定レイヤーマスクの補完を行う。
         /// </summary>
@@ -409,20 +411,38 @@ namespace GameName.Enemy
         /// <param name="collision">衝突情報</param>
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            // 通常の敵接触ダメージも、プレイヤー本体コライダーに当たった場合だけ成立させる。
-            if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
-                playerHealth.TryTakeDamage(damageToPlayer))
-            {
-                PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
-                if (damageFlash == null)
-                {
-                    damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
-                }
+           bool shouldIgnoreContactDamage = Time.time < ignoreContactDamageUntilTime;
 
-                damageFlash?.PlayFlashForced();
+    if (shouldIgnoreContactDamage)
+    {
+        Debug.Log("パリィ後なので接触ダメージ無効");
+    }
+    else
+    {
+        UmbrellaParryController umbrellaParryController =
+            collision.gameObject.GetComponentInParent<UmbrellaParryController>();
+
+        if (umbrellaParryController != null && umbrellaParryController.IsParrying())
+        {
+            Debug.Log("パリィ中なので敵ダメージ無効");
+        }
+        else if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
+                 playerHealth.TryTakeDamage(damageToPlayer))
+        {
+            Debug.Log("敵接触ダメージ");
+
+            PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
+            if (damageFlash == null)
+            {
+                damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
             }
 
-            TryTurnAroundFromEnemyCollision(collision);
+            damageFlash?.PlayFlashForced();
+        }
+    }
+
+    TryTurnAroundFromEnemyCollision(collision);
+
         }
 
         private static bool TryGetPlayerBodyCollision(Collision2D collision, out PlayerHealth playerHealth)
@@ -463,6 +483,15 @@ namespace GameName.Enemy
                 Died?.Invoke();
                 Destroy(gameObject);
             }
+        }
+
+
+        /// <summary>
+        /// 一定時間、プレイヤーとの接触ダメージを無効化する(中江)
+        /// </summary>
+        public void IgnoreContactDamage(float duration)
+        {
+            ignoreContactDamageUntilTime = Time.time + duration;
         }
     }
 }
