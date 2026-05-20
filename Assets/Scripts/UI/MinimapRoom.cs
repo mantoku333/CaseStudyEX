@@ -4,8 +4,6 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class MinimapRoom : MonoBehaviour
 {
-    private static readonly Vector2 DefaultFreeformRoomSize = new Vector2(1.5f, 1f);
-
     [Header("Room Identity")]
     [SerializeField, Tooltip("Unique room id for the minimap. Uses the GameObject name when empty.")]
     private string roomId;
@@ -20,15 +18,6 @@ public sealed class MinimapRoom : MonoBehaviour
     [SerializeField, Tooltip("Manual map size in layout cells. For simple planner workflow, leave this at 1x1 and only adjust X / Y.")]
     private Vector2Int mapSize = Vector2Int.one;
 
-    [SerializeField, Tooltip("Use freeform board coordinates instead of the legacy grid layout.")]
-    private bool usesFreeformLayout;
-
-    [SerializeField, Tooltip("Top-left board position on the minimap editor board.")]
-    private Vector2 areaPosition;
-
-    [SerializeField, Tooltip("Freeform room size on the minimap editor board.")]
-    private Vector2 areaSize = new Vector2(1.5f, 1f);
-
     [HideInInspector, SerializeField]
     private MinimapConnection connections;
 
@@ -40,21 +29,13 @@ public sealed class MinimapRoom : MonoBehaviour
     public Vector2Int MapPosition => mapPosition;
     public Vector2Int MapSize => new Vector2Int(Mathf.Max(1, mapSize.x), Mathf.Max(1, mapSize.y));
     public MinimapConnection Connections => connections;
-    public bool UsesFreeformLayout => usesFreeformLayout;
-    public Vector2 AreaPosition => usesFreeformLayout ? areaPosition : LegacyGridToBoardPosition(mapPosition, MapSize);
-    public Vector2 AreaSize => usesFreeformLayout
-        ? new Vector2(Mathf.Max(0.1f, areaSize.x), Mathf.Max(0.1f, areaSize.y))
-        : new Vector2(MapSize.x, MapSize.y);
 
     public MinimapRoomDefinition Definition => new MinimapRoomDefinition(
         RoomId,
         DisplayName,
         MapPosition,
         MapSize,
-        Connections,
-        AreaPosition,
-        AreaSize,
-        usesFreeformLayout);
+        Connections);
 
     private void OnEnable()
     {
@@ -93,11 +74,6 @@ public sealed class MinimapRoom : MonoBehaviour
         {
             mapSize = new Vector2Int(Mathf.Max(1, mapSize.x), Mathf.Max(1, mapSize.y));
         }
-
-        if (areaSize.x <= 0f || areaSize.y <= 0f)
-        {
-            areaSize = new Vector2(Mathf.Max(0.1f, areaSize.x), Mathf.Max(0.1f, areaSize.y));
-        }
     }
 
     public void Configure(MinimapRoomDefinition definition, string playerTagName = "Player")
@@ -112,9 +88,6 @@ public sealed class MinimapRoom : MonoBehaviour
         mapPosition = definition.MapPosition;
         mapSize = definition.MapSize;
         connections = definition.Connections;
-        usesFreeformLayout = definition.UsesFreeformLayout;
-        areaPosition = definition.AreaPosition;
-        areaSize = definition.AreaSize;
         playerTag = string.IsNullOrWhiteSpace(playerTagName) ? "Player" : playerTagName;
 
         if (isActiveAndEnabled && MinimapManager.Instance != null)
@@ -131,9 +104,6 @@ public sealed class MinimapRoom : MonoBehaviour
         displayName = gameObject.name;
         mapPosition = Vector2Int.zero;
         mapSize = Vector2Int.one;
-        usesFreeformLayout = true;
-        areaPosition = Vector2.zero;
-        areaSize = DefaultFreeformRoomSize;
         connections = MinimapConnection.None;
     }
 
@@ -149,37 +119,7 @@ public sealed class MinimapRoom : MonoBehaviour
         displayName = string.IsNullOrWhiteSpace(nextDisplayName) ? roomId : nextDisplayName.Trim();
         mapPosition = nextMapPosition;
         mapSize = new Vector2Int(Mathf.Max(1, nextMapSize.x), Mathf.Max(1, nextMapSize.y));
-        usesFreeformLayout = false;
-        areaPosition = new Vector2(mapPosition.x, mapPosition.y);
-        areaSize = new Vector2(mapSize.x, mapSize.y);
         connections = MinimapConnection.None;
-    }
-
-    public void ConfigureFreeformAuthoringFields(
-        string nextRoomId,
-        string nextDisplayName,
-        Vector2 nextAreaPosition,
-        Vector2 nextAreaSize)
-    {
-        roomId = string.IsNullOrWhiteSpace(nextRoomId) ? gameObject.name : nextRoomId.Trim();
-        displayName = string.IsNullOrWhiteSpace(nextDisplayName) ? roomId : nextDisplayName.Trim();
-        usesFreeformLayout = true;
-        areaPosition = nextAreaPosition;
-        areaSize = new Vector2(Mathf.Max(0.1f, nextAreaSize.x), Mathf.Max(0.1f, nextAreaSize.y));
-        mapPosition = new Vector2Int(
-            Mathf.RoundToInt(areaPosition.x),
-            Mathf.RoundToInt(areaPosition.y));
-        mapSize = new Vector2Int(
-            Mathf.Max(1, Mathf.RoundToInt(areaSize.x)),
-            Mathf.Max(1, Mathf.RoundToInt(areaSize.y)));
-        connections = MinimapConnection.None;
-    }
-
-    private static Vector2 LegacyGridToBoardPosition(Vector2Int legacyPosition, Vector2Int legacySize)
-    {
-        return new Vector2(
-            legacyPosition.x,
-            -(legacyPosition.y + legacySize.y));
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
