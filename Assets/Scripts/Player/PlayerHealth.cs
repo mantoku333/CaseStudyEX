@@ -89,11 +89,19 @@ namespace Player
                 return false;
             }
 
+            Debug.Log($"ダメージ前 HP: {currentHealth} / {MaxHealth}");
+            Debug.Log($"受けるダメージ量: {damage}");
+
             currentHealth = Mathf.Max(0, currentHealth - damage);
+
+            Debug.Log($"ダメージ後 HP: {currentHealth} / {MaxHealth}");
+
             nextDamageTime = Time.time + damageCooldownSeconds;
+
             NotifyHealthChanged();
             return true;
         }
+
 
         /// <summary>
         /// HPを回復
