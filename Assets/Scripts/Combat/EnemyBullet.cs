@@ -278,7 +278,7 @@ namespace Metroidvania.Enemy
             }
             else
             {
-                if (TryApplyPlayerHit(other.gameObject))
+                if (TryApplyPlayerHit(other))
                 {
                     return;
                 }
@@ -307,23 +307,20 @@ namespace Metroidvania.Enemy
 
             if (isReflectedByPlayer)
             {
-                if (TryApplyEnemyHit(collision.collider))
+               if (TryApplyEnemyHit(collision.collider) || TryApplyEnemyHit(collision.otherCollider))
                 {
                     return;
                 }
 
-                if (IsPlayerCollider(collision.collider))
+                if (IsPlayerCollider(collision.collider) || IsPlayerCollider(collision.otherCollider))
                 {
                     Debug.Log("反射弾なのでPlayerにはダメージを入れません");
                     return;
                 }
             }
-            else
+            else if (TryApplyPlayerHit(collision.collider) || TryApplyPlayerHit(collision.otherCollider))
             {
-                if (TryApplyPlayerHit(collision.gameObject))
-                {
-                    return;
-                }
+                return;
             }
 
             if (IsInLayerMask(collision.gameObject.layer, destroyOnHitLayers))
@@ -332,35 +329,35 @@ namespace Metroidvania.Enemy
             }
         }
 
-        private bool TryApplyPlayerHit(GameObject other)
+        private bool TryApplyPlayerHit(Collider2D hitCollider)
         {
-            if (other == null)
-            {
-                return false;
-            }
-
+            
             if (isReflectedByPlayer)
             {
                 return false;
             }
-
-            PlayerHealth playerHealth =
-                other.GetComponent<PlayerHealth>();
-
-            if (playerHealth == null)
-            {
-                playerHealth =
-                    other.GetComponentInParent<PlayerHealth>();
-            }
-
-            if (playerHealth == null)
+            // 弾のダメージはプレイヤー本体コライダーに当たった時だけ成立させる。
+            // 傘のパリィ判定に触れた場合は、ParryHitbox 側の検知に任せる。
+            if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
+                    hitCollider,
+                    out PlayerHealth playerHealth,
+                    out _))
             {
                 return false;
             }
+            
+            
 
-            Debug.Log($"Playerに弾ダメージ : {damage}");
+            if (playerHealth.TryTakeDamage(damage))
+            {
+                PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
+                if (damageFlash == null)
+                {
+                    damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+                }
 
-            playerHealth.TakeDamage(damage);
+                damageFlash?.PlayFlashForced();
+            }
 
             Destroy(gameObject);
 
@@ -797,6 +794,18 @@ namespace Metroidvania.Enemy
             if (targetRoot == null)
             {
                 return null;
+            }
+
+            // 追尾弾の狙い先も本体コライダーに固定し、傘の大きな判定へ吸われないようにする。
+            PlayerHealth playerHealth = targetRoot.GetComponent<PlayerHealth>();
+            if (playerHealth == null)
+            {
+                playerHealth = targetRoot.GetComponentInChildren<PlayerHealth>();
+            }
+
+            if (PlayerBodyColliderUtility.TryGetBodyCollider(playerHealth, out Collider2D playerBodyCollider))
+            {
+                return playerBodyCollider;
             }
 
             Collider2D[] colliders = targetRoot.GetComponentsInChildren<Collider2D>();

@@ -68,16 +68,25 @@ namespace Player
         /// <param name="damage">受けるダメージ量</param>
         public void TakeDamage(int damage)
         {
+            TryTakeDamage(damage);
+        }
+
+        /// <summary>
+        /// ダメージを受けた場合は true を返す。
+        /// ダメージ床や敵側の演出は、この戻り値でクールダウン通過後の実ダメージだけを判定する。
+        /// </summary>
+        /// <param name="damage">受けるダメージ量</param>
+        public bool TryTakeDamage(int damage)
+        {
             // 無効なダメージ、またはすでに死亡しているなら何もしない
             if (damage <= 0 || currentHealth <= 0)
             {
-                return;
+                return false;
             }
 
             if (Time.time < nextDamageTime)
             {
-                Debug.Log("ダメージクールタイム中です");
-                return;
+                return false;
             }
 
             Debug.Log($"ダメージ前 HP: {currentHealth} / {MaxHealth}");
@@ -90,6 +99,7 @@ namespace Player
             nextDamageTime = Time.time + damageCooldownSeconds;
 
             NotifyHealthChanged();
+            return true;
         }
 
 

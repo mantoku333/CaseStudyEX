@@ -1,4 +1,5 @@
 ﻿using Player;
+using Metroidvania.Player;
 using System;
 using UnityEngine;
 
@@ -410,39 +411,58 @@ namespace GameName.Enemy
         /// <param name="collision">衝突情報</param>
         private void OnCollisionEnter2D(Collision2D collision)
         {
-           if (Time.time < ignoreContactDamageUntilTime)
-           {
-                Debug.Log("パリィ後なので接触ダメージ無効");
-                return;
-           }
+           bool shouldIgnoreContactDamage = Time.time < ignoreContactDamageUntilTime;
 
-            UmbrellaParryController umbrellaParryController =
-                collision.gameObject.GetComponentInParent<UmbrellaParryController>();
+    if (shouldIgnoreContactDamage)
+    {
+        Debug.Log("パリィ後なので接触ダメージ無効");
+    }
+    else
+    {
+        UmbrellaParryController umbrellaParryController =
+            collision.gameObject.GetComponentInParent<UmbrellaParryController>();
 
-            if (umbrellaParryController != null)
+        if (umbrellaParryController != null && umbrellaParryController.IsParrying())
+        {
+            Debug.Log("パリィ中なので敵ダメージ無効");
+        }
+        else if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
+                 playerHealth.TryTakeDamage(damageToPlayer))
+        {
+            Debug.Log("敵接触ダメージ");
+
+            PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
+            if (damageFlash == null)
             {
-                if (umbrellaParryController.IsParrying())
-                {
-                    Debug.Log("パリィ中なので敵ダメージ無効");
-                    return;
-                }
+                damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
             }
 
-            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+            damageFlash?.PlayFlashForced();
+        }
+    }
 
-            if (playerHealth == null)
+    TryTurnAroundFromEnemyCollision(collision);
+
+        }
+
+        private static bool TryGetPlayerBodyCollision(Collision2D collision, out PlayerHealth playerHealth)
+        {
+            playerHealth = null;
+
+            if (collision == null)
             {
-                playerHealth = collision.gameObject.GetComponentInParent<PlayerHealth>();
+                return false;
             }
 
-            if (playerHealth != null)
-            {
-                Debug.Log("敵接触ダメージ");
-                playerHealth.TakeDamage(damageToPlayer);
-            }
-
-            TryTurnAroundFromEnemyCollision(collision);
-
+            // Collision2D のどちら側にプレイヤー本体が入っていても拾えるよう、両方の collider を確認する。
+            return PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
+                       collision.collider,
+                       out playerHealth,
+                       out _) ||
+                   PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
+                       collision.otherCollider,
+                       out playerHealth,
+                       out _);
         }
 
         public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)

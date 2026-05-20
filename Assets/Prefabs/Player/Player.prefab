@@ -399,6 +399,7 @@ GameObject:
   - component: {fileID: 1226412498639681019}
   - component: {fileID: 234568476194810981}
   - component: {fileID: 8257722522928208615}
+  - component: {fileID: -7701998456525910624}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -763,6 +764,24 @@ MonoBehaviour:
   maxIgnoreDuration: 0.6
   restoreBelowMargin: 0.05
   forceDownSpeed: 2
+--- !u!114 &-7701998456525910624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1d7eb3aa46d7304892f17521c1d6a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Player.PlayerDamageFlash
+  targetRenderers: []
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.08
+  flashRepeatCount: 3
+  normalDuration: 0.08
+  flashCooldownSeconds: 3
 --- !u!1 &5437759847484700699
 GameObject:
   m_ObjectHideFlags: 0
