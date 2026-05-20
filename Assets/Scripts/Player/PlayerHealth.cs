@@ -76,13 +76,22 @@ namespace Player
 
             if (Time.time < nextDamageTime)
             {
+                Debug.Log("ダメージクールタイム中です");
                 return;
             }
 
+            Debug.Log($"ダメージ前 HP: {currentHealth} / {MaxHealth}");
+            Debug.Log($"受けるダメージ量: {damage}");
+
             currentHealth = Mathf.Max(0, currentHealth - damage);
+
+            Debug.Log($"ダメージ後 HP: {currentHealth} / {MaxHealth}");
+
             nextDamageTime = Time.time + damageCooldownSeconds;
+
             NotifyHealthChanged();
         }
+
 
         /// <summary>
         /// HPを回復

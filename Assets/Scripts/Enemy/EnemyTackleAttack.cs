@@ -37,6 +37,9 @@ namespace GameName.Enemy
         [Header("Debug")]
         [SerializeField] private bool drawViewGizmo = true;
 
+        [Header("Parry")]
+        [SerializeField, Min(0.0f)] private float parryKnockbackDistance = 0.5f;
+
         private enum AttackState
         {
             Idle,
@@ -472,6 +475,32 @@ namespace GameName.Enemy
 
             Gizmos.color = new Color(1f, 0.85f, 0.1f, 0.9f);
             Gizmos.DrawWireCube(center, size);
+        }
+
+        /// <summary>
+        /// 突進中に通常パリィされた場合の処理(中江)
+        /// </summary>
+        public void StopByParry()
+        {
+            if (attackState != AttackState.Charging)
+            {
+                return;
+            }
+
+            Debug.Log("突進敵を通常パリィしました");
+
+            if (enemyController != null)
+            {
+                enemyController.IgnoreContactDamage(0.3f);
+
+                int knockbackDirection = -chargeDirection;
+                float knockbackX = enemyController.CurrentX + knockbackDirection * 0.5f;
+
+                enemyController.StopHorizontalMotion();
+                enemyController.SetHorizontalPosition(knockbackX);
+            }
+
+            EnterCooldownState();
         }
     }
 }
