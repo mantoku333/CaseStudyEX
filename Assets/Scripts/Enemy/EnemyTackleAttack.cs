@@ -1,4 +1,5 @@
 ﻿using Player;
+using Metroidvania.Player;
 using System;
 using UnityEngine;
 
@@ -408,12 +409,16 @@ namespace GameName.Enemy
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(playerTag) && hit.CompareTag(playerTag))
+            // 突進の検知・停止判定は本体コライダーだけを見る。傘に触れただけでは命中扱いにしない。
+            if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(hit, out PlayerHealth playerHealth, out _))
             {
-                return true;
+                return false;
             }
 
-            return hit.GetComponentInParent<PlayerHealth>() != null;
+            return string.IsNullOrEmpty(playerTag) ||
+                   hit.CompareTag(playerTag) ||
+                   playerHealth.CompareTag(playerTag) ||
+                   (playerHealth.transform.root != null && playerHealth.transform.root.CompareTag(playerTag));
         }
 
         /// <summary>

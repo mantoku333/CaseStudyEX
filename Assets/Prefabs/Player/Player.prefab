@@ -61,7 +61,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -403,12 +403,13 @@ GameObject:
   - component: {fileID: 7949513042368536473}
   - component: {fileID: 3375801726536475401}
   - component: {fileID: 3047304842873908124}
-  - component: {fileID: 4202108349721021491}
   - component: {fileID: 2152828851043830257}
   - component: {fileID: 7711066996538408739}
   - component: {fileID: 1226412498639681019}
   - component: {fileID: 234568476194810981}
   - component: {fileID: 8257722522928208615}
+  - component: {fileID: 6384592111223344550}
+  - component: {fileID: 6384592111223344551}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -425,8 +426,8 @@ Transform:
   m_GameObject: {fileID: 4600020788520051928}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 153.76, y: 0.10912, z: 0}
-  m_LocalScale: {x: 1.594, y: 1.594, z: 1.594}
+  m_LocalPosition: {x: 154.02, y: 1.38, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2251229988448382813}
@@ -483,7 +484,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_MaskInteraction: 0
   m_Sprite: {fileID: 754377109, guid: de066c88a23382548bfbd4f4863c6893, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -582,21 +583,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   applyNoFrictionMaterial: 1
   playerStatsData: {fileID: 11400000, guid: 828b8bd6e59a0de45ac0b6f81b0916f1, type: 2}
---- !u!114 &4202108349721021491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4600020788520051928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18871ee1923e4884594ce7cf6cfc14d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
-  statsData: {fileID: 0}
-  damageCooldownSeconds: 3
-  maxHealthBonus: 0
 --- !u!114 &2152828851043830257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -773,6 +759,39 @@ MonoBehaviour:
   maxIgnoreDuration: 0.6
   restoreBelowMargin: 0.05
   forceDownSpeed: 2
+--- !u!114 &6384592111223344550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18871ee1923e4884594ce7cf6cfc14d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
+  statsData: {fileID: 11400000, guid: 828b8bd6e59a0de45ac0b6f81b0916f1, type: 2}
+  damageCooldownSeconds: 3
+  maxHealthBonus: 0
+--- !u!114 &6384592111223344551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1d7eb3aa46d7304892f17521c1d6a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Player.PlayerDamageFlash
+  targetRenderers: []
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.08
+  flashRepeatCount: 3
+  normalDuration: 0.08
+  flashCooldownSeconds: 3
 --- !u!1 &5437759847484700699
 GameObject:
   m_ObjectHideFlags: 0

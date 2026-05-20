@@ -1,5 +1,4 @@
-using Cysharp.Threading.Tasks;
-using System;
+﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Player;
 
@@ -22,6 +21,7 @@ public class UmbrellaAttackController : MonoBehaviour
     [Header("攻撃設定")]
     [SerializeField] private float attackDuration = 0.2f;
     [SerializeField, Min(0.01f)] private float attackPerSecond = 4.0f;
+    [SerializeField] private float attackPower = 1.0f;
 
     [Header("当たり判定")]
     [SerializeField] private Collider2D attackCollider;
@@ -62,6 +62,7 @@ public class UmbrellaAttackController : MonoBehaviour
         audioSource = GetComponentInParent<AudioSource>();
         sourceSpriteRenderer = GetComponent<SpriteRenderer>();
         facingStateProvider = GetComponentInParent<IPlayerViewStateProvider>();
+
         EnsureAttackEffectRenderer();
     }
 
@@ -99,7 +100,6 @@ public class UmbrellaAttackController : MonoBehaviour
         if (attackCollider == null) { return; }
 
         isAttacking = true;
-        var destroyToken = this.GetCancellationTokenOnDestroy();
 
         UpdateAttackColliderFacing();
         PlaySE(player_normalAttack);
@@ -110,14 +110,7 @@ public class UmbrellaAttackController : MonoBehaviour
         attackCollider.enabled = true;
         attackHitbox?.ScanCurrentOverlaps();
 
-        try
-        {
-            await UniTask.Delay((int)(attackDuration * 1000), cancellationToken: destroyToken);
-        }
-        catch (OperationCanceledException)
-        {
-            return;
-        }
+        await UniTask.Delay((int)(attackDuration * 1000));
 
         if (attackCollider != null)
         {
@@ -142,18 +135,11 @@ public class UmbrellaAttackController : MonoBehaviour
             return;
         }
 
-        var destroyToken = this.GetCancellationTokenOnDestroy();
-
         Vector3 effectPosition = attackCollider != null
             ? attackCollider.bounds.center
             : transform.position;
 
         bool isFacingLeft = IsFacingLeft();
-
-        if (attackEffectRenderer == null)
-        {
-            return;
-        }
 
         attackEffectRenderer.transform.position = effectPosition + GetFacingOffset(isFacingLeft);
         attackEffectRenderer.transform.localScale = attackEffectScale;
@@ -162,11 +148,6 @@ public class UmbrellaAttackController : MonoBehaviour
 
         for (int i = 0; i < attackEffectSprites.Length; i++)
         {
-            if (attackEffectRenderer == null)
-            {
-                return;
-            }
-
             Sprite frame = attackEffectSprites[i];
             if (frame == null)
             {
@@ -174,17 +155,11 @@ public class UmbrellaAttackController : MonoBehaviour
             }
 
             attackEffectRenderer.sprite = frame;
-            try
-            {
-                await UniTask.Delay((int)(attackEffectFrameSeconds * 1000f), cancellationToken: destroyToken);
-            }
-            catch (OperationCanceledException)
-            {
-                return;
-            }
+            await UniTask.Delay((int)(attackEffectFrameSeconds * 1000f));
         }
 
-        HideAttackEffectRenderer();
+        attackEffectRenderer.enabled = false;
+        attackEffectRenderer.sprite = null;
     }
 
     private bool IsFacingLeft()
@@ -307,8 +282,6 @@ public class UmbrellaAttackController : MonoBehaviour
 
     private void OnDestroy()
     {
-        HideAttackEffectRenderer();
-
         if (attackEffectSprites == null)
         {
             return;
@@ -327,16 +300,5 @@ public class UmbrellaAttackController : MonoBehaviour
     {
         if (clip == null || audioSource == null) return;
         audioSource.PlayOneShot(clip);
-    }
-
-    private void HideAttackEffectRenderer()
-    {
-        if (attackEffectRenderer == null)
-        {
-            return;
-        }
-
-        attackEffectRenderer.enabled = false;
-        attackEffectRenderer.sprite = null;
     }
 }
