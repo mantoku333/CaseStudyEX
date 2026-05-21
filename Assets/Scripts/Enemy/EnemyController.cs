@@ -465,24 +465,40 @@ namespace GameName.Enemy
                        out _);
         }
 
-        public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
+        //--------------ダメージ関連------------------
+
+        public void TakeDamage(int damage)
         {
-            int damage = attacker != null ? attacker.PlayerAttackDamage : 0;
             if (damage <= 0)
             {
                 return;
             }
 
             damageFlash?.PlayFlash();
+
             currentHealth = Mathf.Max(0, currentHealth - damage);
 
-            if (currentHealth <= 0)
+            Debug.Log($"敵にダメージ: {damage} / 残りHP: {currentHealth}");
+
+            if (currentHealth > 0)
             {
-                Debug.Log("敵に当たりました");
-                // Destroy前に通知して、敵の位置や表示状態を参照できるようにする。
-                Died?.Invoke();
-                Destroy(gameObject);
+                return;
             }
+
+            Died?.Invoke();
+            Destroy(gameObject);
+        }
+
+        public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
+        {
+            int damage = 0;
+
+            if (attacker != null)
+            {
+                damage = attacker.PlayerAttackDamage;
+            }
+
+            TakeDamage(damage);
         }
 
 

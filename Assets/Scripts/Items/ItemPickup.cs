@@ -154,6 +154,12 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
             GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, true);
             return;
         }
+
+        if (itemData.abilityType == PlayerAbilityType.Parry)
+        {
+            abilityController.SetCanParry(true);
+            return;
+        }
     }
 
     private bool IsAlreadyPickedUp()
