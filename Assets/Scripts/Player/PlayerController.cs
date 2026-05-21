@@ -427,36 +427,47 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         //--------------パリィ・傘関連------------------
 
+        //--------------パリィ・傘関連------------------
+
         if (IsPressedThisFrame(umbrellaToggleAction))
         {
-            bool parrySuccess = false;
+            bool canUseParry = false;
 
-            if (parryHitbox != null)
+            if (playerAbilityController != null)
             {
-                parrySuccess = parryHitbox.TryParryEnemyBullets();
-
-                if (!parrySuccess)
-                {
-                    parrySuccess =
-                        parryHitbox.TryParryEnemyTackleAttack();
-                }
+                canUseParry = playerAbilityController.GetCanParry();
             }
 
-            if (parrySuccess)
+            if (canUseParry)
             {
-                if (umbrellaController != null)
+                bool parrySuccess = false;
+
+                if (parryHitbox != null)
                 {
-                    umbrellaController.SetUmbrellaState(
-                        UmbrellaController.UmbrellaState.Open,
-                        false);
+                    parrySuccess = parryHitbox.TryParryEnemyBullets();
+
+                    if (!parrySuccess)
+                    {
+                        parrySuccess = parryHitbox.TryParryEnemyTackleAttack();
+                    }
                 }
 
-                if (umbrellaParryController != null)
+                if (parrySuccess)
                 {
-                    umbrellaParryController.Parry();
-                }
+                    if (umbrellaController != null)
+                    {
+                        umbrellaController.SetUmbrellaState(
+                            UmbrellaController.UmbrellaState.Open,
+                            false);
+                    }
 
-                return;
+                    if (umbrellaParryController != null)
+                    {
+                        umbrellaParryController.Parry();
+                    }
+
+                    return;
+                }
             }
 
             if (umbrellaController != null)
