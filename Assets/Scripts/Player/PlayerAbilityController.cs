@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 
+using System;
+
 namespace Player
 {
-
     /// <summary>
     /// プレイヤーの能力解放の管理を行うクラス。
     /// 各解放場所からアクセスできるように制作する(中江)
     /// </summary>
-    public class PlayerAbilityController : MonoBehaviour
+    public class PlayerAbilityController : MonoBehaviour, ISaveDataModule
     {
+        private const string SectionKey = "player_abilities_v1";
+
         //--------------能力解放判定関連------------------
         [Header("能力解放判定関連")]
         [SerializeField] private bool canDodge = false;
@@ -16,9 +19,21 @@ namespace Player
         [SerializeField] private bool canGunRecoil = false;
         [SerializeField] private bool canParry = false;
 
+        public int Priority => 220;
+
         private void Awake()
         {
             LoadAbilitieItemsFlags();
+        }
+
+        private void OnEnable()
+        {
+            SaveManager.RegisterModule(this);
+        }
+
+        private void OnDisable()
+        {
+            SaveManager.UnregisterModule(this);
         }
 
         //--------Set関数-------
@@ -26,18 +41,21 @@ namespace Player
         public void SetCanDodge(bool isEnabled)
         {
             canDodge = isEnabled;
+            GameProgressFlags.Set(GameProgressKeys.AbilityDodgeUnlocked, isEnabled);
         }
 
         //滑空
         public void SetCanGlide(bool isEnabled)
         {
             canGlide = isEnabled;
+            GameProgressFlags.Set(GameProgressKeys.AbilityGlideUnlocked, isEnabled);
         }
 
         //銃反動
         public void SetCanGunRecoil(bool isEnabled)
         {
             canGunRecoil = isEnabled;
+            GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, isEnabled);
         }
 
         //パリィ
@@ -148,6 +166,62 @@ namespace Player
             canGlide = GameProgressFlags.Get(GameProgressKeys.AbilityGlideUnlocked);
             canGunRecoil = GameProgressFlags.Get(GameProgressKeys.AbilityGunRecoilUnlocked);
             canParry = GameProgressFlags.Get(GameProgressKeys.AbilityParryUnlocked);
+        }
+        public void Capture(SaveGameData saveData)
+        {
+            GameProgressFlags.Set(GameProgressKeys.AbilityDodgeUnlocked, canDodge);
+            GameProgressFlags.Set(GameProgressKeys.AbilityGlideUnlocked, canGlide);
+            GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, canGunRecoil);
+
+            if (saveData == null)
+            {
+                return;
+            }
+
+            var payload = new PlayerAbilityPayload
+            {
+                canDodge = canDodge,
+                canGlide = canGlide,
+                canGunRecoil = canGunRecoil
+            };
+
+            saveData.SetCustomSectionJson(SectionKey, JsonUtility.ToJson(payload));
+        }
+
+        public void Restore(SaveGameData saveData)
+        {
+            if (saveData != null)
+            {
+                string json = saveData.GetCustomSectionJson(SectionKey);
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+                    try
+                    {
+                        PlayerAbilityPayload payload = JsonUtility.FromJson<PlayerAbilityPayload>(json);
+                        canDodge = payload.canDodge;
+                        canGlide = payload.canGlide;
+                        canGunRecoil = payload.canGunRecoil;
+                        GameProgressFlags.Set(GameProgressKeys.AbilityDodgeUnlocked, canDodge);
+                        GameProgressFlags.Set(GameProgressKeys.AbilityGlideUnlocked, canGlide);
+                        GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, canGunRecoil);
+                        return;
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.LogError($"[PlayerAbilityController] Failed to parse saved abilities. {exception}");
+                    }
+                }
+            }
+
+            LoadAbilitieItemsFlags();
+        }
+
+        [Serializable]
+        private struct PlayerAbilityPayload
+        {
+            public bool canDodge;
+            public bool canGlide;
+            public bool canGunRecoil;
         }
     }
 }

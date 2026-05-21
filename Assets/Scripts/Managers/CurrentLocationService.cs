@@ -55,6 +55,11 @@ public static class CurrentLocationService
         }
     }
 
+    public static void RestoreFromSaveData(SaveGameData saveData)
+    {
+        currentLocationId = GetSavedLocationId(saveData);
+    }
+
     private static CurrentLocationPayload CreatePayload()
     {
         return new CurrentLocationPayload
@@ -86,7 +91,7 @@ public static class CurrentLocationService
 
         public void Restore(SaveGameData saveData)
         {
-            currentLocationId = GetSavedLocationId(saveData);
+            RestoreFromSaveData(saveData);
         }
     }
 }

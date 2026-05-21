@@ -35,6 +35,7 @@
             try
             {
                 _method.Invoke(null);
+                RefreshVisibleOptionControls();
             }
             catch (Exception e)
             {
@@ -47,6 +48,18 @@
         {
             _method = method;
             Title.text = methodName;
+        }
+
+        private static void RefreshVisibleOptionControls()
+        {
+            var controls = FindObjectsByType<OptionsControlBase>(FindObjectsSortMode.None);
+            for (int i = 0; i < controls.Length; i++)
+            {
+                if (controls[i] != null && controls[i].isActiveAndEnabled)
+                {
+                    controls[i].Refresh();
+                }
+            }
         }
     }
 }
