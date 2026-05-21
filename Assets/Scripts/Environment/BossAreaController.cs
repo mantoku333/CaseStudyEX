@@ -7,7 +7,7 @@ using UnityEngine;
 /// 撃破まで壁とカメラをロックするコントローラー。
 /// </summary>
 [DisallowMultipleComponent]
-public sealed class BossAreaController : MonoBehaviour
+public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 {
     [Header("Detection")]
     [SerializeField] private string playerTag = "Player";
@@ -18,6 +18,7 @@ public sealed class BossAreaController : MonoBehaviour
     [HideInInspector, SerializeField] private StageBossAttack stageBossAttack;
     [HideInInspector, SerializeField] private LastBossController lastBossController;
     [SerializeField] private string bossDefeatedFlagKey = GameProgressKeys.Boss01Defeated;
+    [SerializeField] private bool hideBossWhenDefeated = true;
 
     [Header("Walls")]
     [SerializeField] private ShutterWallBlockRise[] wallsCloseOnStart = new ShutterWallBlockRise[0];
@@ -62,6 +63,8 @@ public sealed class BossAreaController : MonoBehaviour
     private Rigidbody2D playerRigidbody2D;
     private Rigidbody2D bossRigidbody2D;
 
+    public int Priority => 240;
+
     private void Awake()
     {
         // 後でトリガーを無効化しても拘束範囲を使えるよう、起動時に bounds を確定しておく。
@@ -75,16 +78,17 @@ public sealed class BossAreaController : MonoBehaviour
         // 開始時は固定カメラを非アクティブ優先度に戻す。
         DeactivateBossCamera();
 
-        // 既に撃破済みフラグが立っている場合、再ロックしないよう完了状態で起動する。
-        if (!string.IsNullOrWhiteSpace(bossDefeatedFlagKey) && GameProgressFlags.Get(bossDefeatedFlagKey))
-        {
-            encounterCompleted = true;
+        ApplyDefeatedStateIfSaved();
+    }
 
-            if (enableWallMechanic)
-            {
-                UnlockArea();
-            }
-        }
+    private void OnEnable()
+    {
+        SaveManager.RegisterModule(this);
+    }
+
+    private void OnDisable()
+    {
+        SaveManager.UnregisterModule(this);
     }
 
     private void FixedUpdate()
@@ -217,6 +221,54 @@ public sealed class BossAreaController : MonoBehaviour
         if (verboseLogging)
         {
             Debug.Log($"[BossAreaController] Encounter completed on {gameObject.name}", this);
+        }
+    }
+
+    public void Capture(SaveGameData saveData)
+    {
+        if (!encounterCompleted || string.IsNullOrWhiteSpace(bossDefeatedFlagKey))
+        {
+            return;
+        }
+
+        GameProgressFlags.Set(bossDefeatedFlagKey, true);
+    }
+
+    public void Restore(SaveGameData saveData)
+    {
+        ApplyDefeatedStateIfSaved();
+    }
+
+    private void ApplyDefeatedStateIfSaved()
+    {
+        if (string.IsNullOrWhiteSpace(bossDefeatedFlagKey) || !GameProgressFlags.Get(bossDefeatedFlagKey))
+        {
+            return;
+        }
+
+        encounterCompleted = true;
+        encounterStarted = false;
+
+        if (stageBossAttack != null)
+        {
+            stageBossAttack.DeactivateEncounter();
+        }
+        else if (lastBossController != null)
+        {
+            lastBossController.DeactivateEncounter();
+        }
+
+        if (enableWallMechanic)
+        {
+            UnlockArea();
+        }
+
+        DeactivateBossCamera();
+        DisableTriggerComponents();
+
+        if (hideBossWhenDefeated && bossRoot != null)
+        {
+            bossRoot.gameObject.SetActive(false);
         }
     }
 

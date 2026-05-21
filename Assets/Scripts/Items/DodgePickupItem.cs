@@ -1,9 +1,29 @@
 ﻿using UnityEngine;
 using Player;
 
-public class DodgePickupItem : MonoBehaviour
+public class DodgePickupItem : MonoBehaviour, ISaveDataModule
 {
     private bool isPickedUp = false;
+
+    public int Priority => 252;
+
+    private void OnEnable()
+    {
+        SaveManager.RegisterModule(this);
+    }
+
+    private void OnDisable()
+    {
+        SaveManager.UnregisterModule(this);
+    }
+
+    private void Start()
+    {
+        if (GameProgressFlags.Get(GameProgressKeys.AbilityDodgeUnlocked))
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Reset()
     {
@@ -30,6 +50,7 @@ public class DodgePickupItem : MonoBehaviour
 
         //Playerに回避の能力を解放させる
         abilityController.SetCanDodge(true);
+        GameProgressFlags.Set(GameProgressKeys.AbilityDodgeUnlocked, true);
 
         Debug.Log("回避能力を取得しました！");
 
@@ -38,5 +59,17 @@ public class DodgePickupItem : MonoBehaviour
 
         //アイテム削除
         Destroy(gameObject);
+    }
+
+    public void Capture(SaveGameData saveData)
+    {
+    }
+
+    public void Restore(SaveGameData saveData)
+    {
+        if (GameProgressFlags.Get(GameProgressKeys.AbilityDodgeUnlocked))
+        {
+            Destroy(gameObject);
+        }
     }
 }

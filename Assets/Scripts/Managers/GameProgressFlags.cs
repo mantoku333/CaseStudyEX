@@ -68,6 +68,33 @@ public static class GameProgressFlags
         return snapshot;
     }
 
+    public static void RestoreFromSaveData(SaveGameData saveData)
+    {
+        if (saveData == null)
+        {
+            ApplyPayload(null);
+            return;
+        }
+
+        string json = saveData.GetCustomSectionJson(SectionKey);
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            ApplyPayload(null);
+            return;
+        }
+
+        try
+        {
+            var payload = JsonUtility.FromJson<GameProgressFlagsPayload>(json);
+            ApplyPayload(payload);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[GameProgressFlags] Failed to parse saved flags. {exception}");
+            ApplyPayload(null);
+        }
+    }
+
     private static void ApplyPayload(GameProgressFlagsPayload payload)
     {
         flags.Clear();
@@ -151,29 +178,7 @@ public static class GameProgressFlags
 
         public void Restore(SaveGameData saveData)
         {
-            if (saveData == null)
-            {
-                ApplyPayload(null);
-                return;
-            }
-
-            string json = saveData.GetCustomSectionJson(SectionKey);
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                ApplyPayload(null);
-                return;
-            }
-
-            try
-            {
-                var payload = JsonUtility.FromJson<GameProgressFlagsPayload>(json);
-                ApplyPayload(payload);
-            }
-            catch (Exception exception)
-            {
-                Debug.LogError($"[GameProgressFlags] Failed to parse saved flags. {exception}");
-                ApplyPayload(null);
-            }
+            RestoreFromSaveData(saveData);
         }
     }
 }

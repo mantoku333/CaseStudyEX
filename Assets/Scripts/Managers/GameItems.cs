@@ -69,6 +69,33 @@ public static class GameItems
         items.Clear();
     }
 
+    public static void RestoreFromSaveData(SaveGameData saveData)
+    {
+        if (saveData == null)
+        {
+            ApplyPayload(null);
+            return;
+        }
+
+        string json = saveData.GetCustomSectionJson(SectionKey);
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            ApplyPayload(null);
+            return;
+        }
+
+        try
+        {
+            var payload = JsonUtility.FromJson<GameItemsPayload>(json);
+            ApplyPayload(payload);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[GameItems] Failed to parse saved items. {exception}");
+            ApplyPayload(null);
+        }
+    }
+
     private static void ApplyPayload(GameItemsPayload payload)
     {
         items.Clear();
@@ -146,29 +173,7 @@ public static class GameItems
 
         public void Restore(SaveGameData saveData)
         {
-            if (saveData == null)
-            {
-                ApplyPayload(null);
-                return;
-            }
-
-            string json = saveData.GetCustomSectionJson(SectionKey);
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                ApplyPayload(null);
-                return;
-            }
-
-            try
-            {
-                var payload = JsonUtility.FromJson<GameItemsPayload>(json);
-                ApplyPayload(payload);
-            }
-            catch (Exception exception)
-            {
-                Debug.LogError($"[GameItems] Failed to parse saved items. {exception}");
-                ApplyPayload(null);
-            }
+            RestoreFromSaveData(saveData);
         }
     }
 }

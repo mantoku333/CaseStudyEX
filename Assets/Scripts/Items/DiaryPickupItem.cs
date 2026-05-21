@@ -1,12 +1,24 @@
 ﻿using UnityEngine;
 
-public class DiaryPickupItem : MonoBehaviour
+public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
 {
     //--------------日記データ関連------------------
     [SerializeField] private DiaryEntryData diaryEntryData;
 
     //--------------状態関連------------------
     private bool isPickedUp = false;
+
+    public int Priority => 253;
+
+    private void OnEnable()
+    {
+        SaveManager.RegisterModule(this);
+    }
+
+    private void OnDisable()
+    {
+        SaveManager.UnregisterModule(this);
+    }
 
     private void Start()
     {
@@ -67,5 +79,22 @@ public class DiaryPickupItem : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    public void Capture(SaveGameData saveData)
+    {
+    }
+
+    public void Restore(SaveGameData saveData)
+    {
+        if (diaryEntryData == null)
+        {
+            return;
+        }
+
+        if (GameProgressFlags.Get(diaryEntryData.GetProgressFlagKey()))
+        {
+            Destroy(gameObject);
+        }
     }
 }

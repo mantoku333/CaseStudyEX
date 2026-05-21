@@ -1,13 +1,25 @@
 ﻿using UnityEngine;
 using Player;
 
-public class AbilityPickupItem : MonoBehaviour
+public class AbilityPickupItem : MonoBehaviour, ISaveDataModule
 {
     //--------------能力関連------------------
     [SerializeField] private PlayerAbilityType abilityType = PlayerAbilityType.None;
 
     //--------------状態関連------------------
     private bool isPickedUp = false;
+
+    public int Priority => 251;
+
+    private void OnEnable()
+    {
+        SaveManager.RegisterModule(this);
+    }
+
+    private void OnDisable()
+    {
+        SaveManager.UnregisterModule(this);
+    }
 
     private void Start()
     {
@@ -122,5 +134,17 @@ public class AbilityPickupItem : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    public void Capture(SaveGameData saveData)
+    {
+    }
+
+    public void Restore(SaveGameData saveData)
+    {
+        if (IsAlreadyUnlocked())
+        {
+            Destroy(gameObject);
+        }
     }
 }
