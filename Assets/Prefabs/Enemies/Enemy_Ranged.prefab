@@ -268,8 +268,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyController2D
   moveSpeed: 0
   patrolDistance: 0
-  damageToPlayer: 10
-  maxHealth: 5
+  damageToPlayer: 5
+  maxHealth: 40
   wallCheckDistance: 0.15
   edgeCheckDistance: 0.35
   edgeCheckForwardOffset: 0.1

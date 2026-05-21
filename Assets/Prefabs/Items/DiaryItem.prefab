@@ -169,6 +169,7 @@ MonoBehaviour:
   settings: {fileID: 11400000, guid: 5f89de98a1fb49b0a6d326ca2a1e9f65, type: 2}
   effectTransform: {fileID: 9100000000000000003}
   effectRenderer: {fileID: 9100000000000000004}
+  pickupSound: {fileID: 8300000, guid: dcb371cd1970cf545b33c60fcfe1a463, type: 3}
 --- !u!1 &9100000000000000002
 GameObject:
   m_ObjectHideFlags: 0

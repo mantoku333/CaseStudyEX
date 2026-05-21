@@ -8,6 +8,7 @@ public class ItemEffectController : MonoBehaviour
     [SerializeField] private ItemEffectSettings settings;
     [SerializeField] private Transform effectTransform;
     [SerializeField] private SpriteRenderer effectRenderer;
+    [SerializeField] private AudioClip pickupSound;
 
     private Coroutine playbackRoutine;
     private bool isPickupPlaying;
@@ -58,6 +59,8 @@ public class ItemEffectController : MonoBehaviour
         {
             return true;
         }
+
+        PlayPickupSound();
 
         if (settings == null || effectRenderer == null)
         {
@@ -375,6 +378,26 @@ public class ItemEffectController : MonoBehaviour
         {
             colliders[i].enabled = false;
         }
+    }
+
+    private void PlayPickupSound()
+    {
+        if (pickupSound == null)
+        {
+            return;
+        }
+
+        GameObject audioObject = new GameObject($"{name}_PickupSfx");
+        audioObject.transform.position = transform.position;
+
+        AudioSource audioSource = audioObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.loop = false;
+        audioSource.spatialBlend = 0f;
+        audioSource.clip = pickupSound;
+        audioSource.Play();
+
+        Destroy(audioObject, pickupSound.length + 0.1f);
     }
 
     private void CacheReferences()
