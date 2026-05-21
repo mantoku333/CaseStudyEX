@@ -240,6 +240,11 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         return null;
     }
 
+    public CinemachineCamera GetEventCameraForTimeline()
+    {
+        return ResolveEventCamera();
+    }
+
     public void OnNotify(Playable origin, INotification notification, object context)
     {
         if (notification is StoryYarnDialogueMarker dialogueMarker)

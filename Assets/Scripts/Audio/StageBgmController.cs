@@ -107,6 +107,36 @@ public sealed class StageBgmController : MonoBehaviour
         PlayImmediate(bossStageBgm, bgmVolume);
     }
 
+    public void PlayTimelineBgm(AudioClip clip, float volume)
+    {
+        Play(clip, volume);
+    }
+
+    public void StopTimelineBgm(float fadeSeconds)
+    {
+        if (crossfadeCoroutine != null)
+        {
+            StopCoroutine(crossfadeCoroutine);
+            crossfadeCoroutine = null;
+        }
+
+        AudioSource current = ResolveCurrentSource();
+        if (current == null || !current.isPlaying)
+        {
+            return;
+        }
+
+        if (fadeSeconds <= 0f)
+        {
+            StopSource(sourceA);
+            StopSource(sourceB);
+            activeSource = null;
+            return;
+        }
+
+        crossfadeCoroutine = StartCoroutine(FadeOutAll(fadeSeconds));
+    }
+
     private void Play(AudioClip clip, float baseVolume)
     {
         if (clip == null)
@@ -184,6 +214,19 @@ public sealed class StageBgmController : MonoBehaviour
         source.loop = true;
         source.playOnAwake = false;
         source.spatialBlend = 0f;
+    }
+
+    private void StopSource(AudioSource source)
+    {
+        if (source == null)
+        {
+            return;
+        }
+
+        source.Stop();
+        source.clip = null;
+        source.volume = 0f;
+        SetSourceBaseVolume(source, 0f);
     }
 
     private AudioSource ResolveCurrentSource()
@@ -310,6 +353,37 @@ public sealed class StageBgmController : MonoBehaviour
 
         to.volume = ResolveEffectiveVolume(toBaseVolume);
         activeSource = to;
+        crossfadeCoroutine = null;
+    }
+
+    private System.Collections.IEnumerator FadeOutAll(float fadeSeconds)
+    {
+        float sourceAStart = sourceA != null ? sourceA.volume : 0f;
+        float sourceBStart = sourceB != null ? sourceB.volume : 0f;
+        float duration = Mathf.Max(0.01f, fadeSeconds);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            if (sourceA != null)
+            {
+                sourceA.volume = Mathf.Lerp(sourceAStart, 0f, t);
+            }
+
+            if (sourceB != null)
+            {
+                sourceB.volume = Mathf.Lerp(sourceBStart, 0f, t);
+            }
+
+            yield return null;
+        }
+
+        StopSource(sourceA);
+        StopSource(sourceB);
+        activeSource = null;
         crossfadeCoroutine = null;
     }
 }
