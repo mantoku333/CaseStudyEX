@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class GameProgressFlags
 {
-    private const string SectionKey = "game_progress_flags_v1";
+    public const string SectionKey = "game_progress_flags_v1";
     private static readonly Dictionary<string, bool> flags = new Dictionary<string, bool>(StringComparer.Ordinal);
     private static readonly GameProgressFlagsSaveModule module = new GameProgressFlagsSaveModule();
 
@@ -56,6 +56,18 @@ public static class GameProgressFlags
         flags.Clear();
     }
 
+    public static List<GameProgressFlagSnapshot> GetSnapshot()
+    {
+        var snapshot = new List<GameProgressFlagSnapshot>(flags.Count);
+        foreach (var pair in flags)
+        {
+            snapshot.Add(new GameProgressFlagSnapshot(pair.Key, pair.Value));
+        }
+
+        snapshot.Sort((left, right) => string.CompareOrdinal(left.Key, right.Key));
+        return snapshot;
+    }
+
     private static void ApplyPayload(GameProgressFlagsPayload payload)
     {
         flags.Clear();
@@ -97,16 +109,28 @@ public static class GameProgressFlags
     }
 
     [Serializable]
-    private sealed class GameProgressFlagsPayload
+    public sealed class GameProgressFlagsPayload
     {
         public List<GameProgressFlagEntry> entries = new List<GameProgressFlagEntry>();
     }
 
     [Serializable]
-    private struct GameProgressFlagEntry
+    public struct GameProgressFlagEntry
     {
         public string key;
         public bool value;
+    }
+
+    public readonly struct GameProgressFlagSnapshot
+    {
+        public string Key { get; }
+        public bool Value { get; }
+
+        public GameProgressFlagSnapshot(string key, bool value)
+        {
+            Key = key ?? string.Empty;
+            Value = value;
+        }
     }
 
     private sealed class GameProgressFlagsSaveModule : ISaveDataModule
