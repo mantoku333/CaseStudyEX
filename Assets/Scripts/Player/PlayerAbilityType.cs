@@ -3,5 +3,6 @@
     None = 0,
     Dodge,
     Glide,
-    GunRecoil
+    GunRecoil,
+    Parry
 }

@@ -16,4 +16,5 @@
     public const string AbilityDodgeUnlocked = "ability_dodge_unlocked";
     public const string AbilityGlideUnlocked = "ability_glide_unlocked";
     public const string AbilityGunRecoilUnlocked = "ability_gun_recoil_unlocked";
+    public const string AbilityParryUnlocked = "ability_parry_unlocked";
 }
