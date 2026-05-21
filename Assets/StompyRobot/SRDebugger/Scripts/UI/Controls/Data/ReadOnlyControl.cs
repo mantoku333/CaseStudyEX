@@ -95,9 +95,11 @@
         {
             return !string.IsNullOrEmpty(propertyName) &&
                    (string.Equals(propertyName, "Runtime Flags", StringComparison.Ordinal) ||
+                    string.Equals(propertyName, "現在のフラグ", StringComparison.Ordinal) ||
                     propertyName.StartsWith("Runtime 0", StringComparison.Ordinal) ||
                     propertyName.StartsWith("Saved 0", StringComparison.Ordinal) ||
-                    string.Equals(propertyName, "Selected Slot Saved Flags", StringComparison.Ordinal));
+                    string.Equals(propertyName, "Selected Slot Saved Flags", StringComparison.Ordinal) ||
+                    string.Equals(propertyName, "選択スロットの保存フラグ", StringComparison.Ordinal));
         }
     }
 }

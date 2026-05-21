@@ -14,7 +14,7 @@ public partial class SROptions
     private bool progressFlagValue = true;
 
     [Category(ProgressFlagsEditCategory)]
-    [DisplayName("Flag Key")]
+    [DisplayName("フラグ名")]
     [Sort(-30)]
     public string ProgressFlagKey
     {
@@ -23,7 +23,7 @@ public partial class SROptions
     }
 
     [Category(ProgressFlagsEditCategory)]
-    [DisplayName("Flag Value")]
+    [DisplayName("設定する値")]
     [Sort(-29)]
     public bool ProgressFlagValue
     {
@@ -32,43 +32,43 @@ public partial class SROptions
     }
 
     [Category(ProgressFlagsEditCategory)]
-    [DisplayName("Current Flag State")]
+    [DisplayName("現在の値")]
     [Sort(-28)]
     public bool CurrentProgressFlagState => GameProgressFlags.Get(progressFlagKey);
 
     [Category(ProgressFlagsInspectCategory)]
-    [DisplayName("Runtime Flag Count")]
+    [DisplayName("現在のフラグ数")]
     [Sort(-27)]
     public int ProgressFlagCount => GameProgressFlags.Count;
 
     [Category(ProgressFlagsInspectCategory)]
-    [DisplayName("Saved Flag Count")]
+    [DisplayName("セーブ内フラグ数")]
     [Sort(-26)]
     public int SelectedSlotSavedProgressFlagCount => GetSavedProgressFlagCount(selectedSaveSlot);
 
     [Category(ProgressFlagsInspectCategory)]
-    [DisplayName("Saved Flag Status")]
+    [DisplayName("セーブ内フラグ状態")]
     [Sort(-25)]
     public string SelectedSlotSavedProgressFlagStatus => GetSavedProgressFlagStatus(selectedSaveSlot);
 
     [Category(ProgressFlagsRuntimeCategory)]
-    [DisplayName("Runtime Flags")]
+    [DisplayName("現在のフラグ")]
     [Sort(-30)]
     public string RuntimeProgressFlagsDump => BuildRuntimeProgressFlagsDump();
 
     [Category(ProgressFlagsSavedCategory)]
-    [DisplayName("Selected Slot Saved Flags")]
+    [DisplayName("選択スロットの保存フラグ")]
     [Sort(-30)]
     public string SelectedSlotSavedProgressFlagsDump => BuildSavedProgressFlagsDump(selectedSaveSlot);
 
     [Browsable(false)]
     [Category(ProgressFlagsInspectCategory)]
-    [DisplayName("Selected Slot Custom Sections")]
+    [DisplayName("選択スロットのカスタム保存データ")]
     [Sort(-21)]
     public string SelectedSlotCustomSectionsDump => BuildCustomSectionsDump(selectedSaveSlot);
 
     [Category(ProgressFlagsEditCategory)]
-    [DisplayName("Set / Update Flag")]
+    [DisplayName("フラグを設定 / 更新")]
     [Sort(-26)]
     public void SetProgressFlag()
     {
@@ -82,7 +82,7 @@ public partial class SROptions
     }
 
     [Category(ProgressFlagsEditCategory)]
-    [DisplayName("Remove Flag")]
+    [DisplayName("フラグを削除")]
     [Sort(-25)]
     public void RemoveProgressFlag()
     {
@@ -96,7 +96,7 @@ public partial class SROptions
     }
 
     [Category(ProgressFlagsEditCategory)]
-    [DisplayName("Clear All Flags")]
+    [DisplayName("全フラグをクリア")]
     [Sort(-24)]
     public void ClearAllProgressFlags()
     {
@@ -104,7 +104,7 @@ public partial class SROptions
     }
 
     [Category(ProgressFlagsInspectCategory)]
-    [DisplayName("Reload Flag View")]
+    [DisplayName("フラグ表示を更新")]
     [Sort(-21)]
     public void ReloadProgressFlagView()
     {
@@ -112,7 +112,7 @@ public partial class SROptions
     }
 
     [Category(ProgressFlagsInspectCategory)]
-    [DisplayName("Log Runtime Flags")]
+    [DisplayName("現在のフラグをログ出力")]
     [Sort(-20)]
     public void LogRuntimeProgressFlags()
     {
@@ -120,7 +120,7 @@ public partial class SROptions
     }
 
     [Category(ProgressFlagsInspectCategory)]
-    [DisplayName("Log Selected Slot Saved Flags")]
+    [DisplayName("セーブ内フラグをログ出力")]
     [Sort(-19)]
     public void LogSelectedSlotSavedProgressFlags()
     {
@@ -128,7 +128,7 @@ public partial class SROptions
     }
 
     [Category(ProgressFlagsInspectCategory)]
-    [DisplayName("Log Selected Slot Custom Sections")]
+    [DisplayName("カスタム保存データをログ出力")]
     [Sort(-18)]
     public void LogSelectedSlotCustomSections()
     {
