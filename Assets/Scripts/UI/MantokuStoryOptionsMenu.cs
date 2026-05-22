@@ -101,6 +101,8 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
     private bool previousMinimapVisible;
     private bool previousFullMapVisible;
     private bool fullMapOpenedFromMenu;
+    private bool minimapVisibleBeforeMenuMap;
+    private bool hasMinimapVisibleBeforeMenuMap;
     private bool gameplayPaused;
     private bool isOpen;
     private bool listenersRegistered;
@@ -617,8 +619,12 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             }
             else if (fullMapOpenedFromMenu && previousFullMapVisible)
             {
-                cachedMinimapView.SetPanelVisibility(previousMinimapVisible, false);
+                bool restoredMiniMapVisible = hasMinimapVisibleBeforeMenuMap
+                    ? minimapVisibleBeforeMenuMap
+                    : previousMinimapVisible;
+                cachedMinimapView.SetPanelVisibility(restoredMiniMapVisible, false);
                 fullMapOpenedFromMenu = false;
+                hasMinimapVisibleBeforeMenuMap = false;
             }
             else
             {
@@ -626,6 +632,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
                 if (!previousFullMapVisible)
                 {
                     fullMapOpenedFromMenu = false;
+                    hasMinimapVisibleBeforeMenuMap = false;
                 }
             }
 
@@ -673,6 +680,8 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         {
             openFullMapAfterClose = true;
             fullMapOpenedFromMenu = true;
+            minimapVisibleBeforeMenuMap = previousMinimapVisible;
+            hasMinimapVisibleBeforeMenuMap = true;
             CloseMenu();
             return;
         }

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8df0e0c66473485408c2c39612e236c4, type: 3}
   m_Name: PlayerStatsData
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Player.PlayerStatsData
-  moveSpeed: 3
+  moveSpeed: 7
   glideMoveSpeed: 10
   fallSpeed: 3
-  jumpForce: 1.5
+  jumpForce: 12
   dodgeDistance: 3
   dodgeDuration: 0.5
   attackSecondsPerAttack: 2
