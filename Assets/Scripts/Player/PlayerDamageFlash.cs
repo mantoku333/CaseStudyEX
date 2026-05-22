@@ -30,6 +30,8 @@ namespace Metroidvania.Player
             }
 
             restoreColors = new Color[targetRenderers.Length];
+
+            CaptureCurrentColors();
         }
 
         /// <summary>
@@ -60,14 +62,8 @@ namespace Metroidvania.Player
                 return;
             }
 
+
             nextFlashTime = Time.time + flashCooldownSeconds;
-
-
-            // 現在の色を保存しておき、点滅後に最新の表示色へ戻せるようにする。
-            if (flashCoroutine == null)
-            {
-                CaptureCurrentColors();
-            }
 
             if (flashCoroutine != null)
             {
@@ -115,6 +111,10 @@ namespace Metroidvania.Player
                     continue;
                 }
 
+                Debug.Log(
+                    $"[DamageFlash Restore] frame={Time.frameCount}, renderer={targetRenderers[i].name}, current={targetRenderers[i].color}, restore={restoreColors[i]}",
+                    targetRenderers[i]);
+
                 targetRenderers[i].color = restoreColors[i];
             }
         }
@@ -134,6 +134,10 @@ namespace Metroidvania.Player
                 }
 
                 restoreColors[i] = targetRenderers[i].color;
+
+                Debug.Log(
+                    $"[DamageFlash Capture] frame={Time.frameCount}, renderer={targetRenderers[i].name}, captured={restoreColors[i]}",
+                    targetRenderers[i]);
             }
         }
     }

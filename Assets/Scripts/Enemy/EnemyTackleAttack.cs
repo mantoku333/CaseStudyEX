@@ -487,6 +487,9 @@ namespace GameName.Enemy
         /// </summary>
         public void StopByParry()
         {
+            //バグ確認ログ
+            Debug.Log($"[Tackle StopByParry] frame={Time.frameCount}, time={Time.time}");
+
             if (attackState != AttackState.Charging)
             {
                 return;
