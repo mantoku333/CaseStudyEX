@@ -1,0 +1,455 @@
+fileFormatVersion: 2
+guid: 6994f2b34fc03804db446cc8b8ef51b7
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4647066175966363183
+    second: AM_iris_jump_start_close_ve3_0
+  - first:
+      213: -2475174985589087800
+    second: AM_iris_jump_start_close_ve3_1
+  - first:
+      213: 4156490043125228505
+    second: AM_iris_jump_start_close_ve3_2
+  - first:
+      213: 8373624886089405788
+    second: AM_iris_jump_start_close_ve3_3
+  - first:
+      213: 8181212199475233940
+    second: AM_iris_jump_start_close_ve3_4
+  - first:
+      213: -5386798981878435230
+    second: AM_iris_jump_start_close_ve3_5
+  - first:
+      213: 7703401545866779342
+    second: AM_iris_jump_start_close_ve3_6
+  - first:
+      213: -2138783577834630714
+    second: AM_iris_jump_start_close_ve3_7
+  - first:
+      213: 1922694623948619270
+    second: AM_iris_jump_start_close_ve3_8
+  - first:
+      213: -6676075112883974439
+    second: AM_iris_jump_start_close_ve3_9
+  - first:
+      213: 7770488554567135453
+    second: AM_iris_jump_start_close_ve3_10
+  - first:
+      213: 5441736042278827657
+    second: AM_iris_jump_start_close_ve3_11
+  - first:
+      213: -495876059507968738
+    second: AM_iris_jump_start_close_ve3_12
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 737
+        width: 250
+        height: 414
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d1cac52fed428fb0800000000000000
+      internalID: -4647066175966363183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_1
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 743
+        width: 321
+        height: 408
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c1a703f67966add0800000000000000
+      internalID: -2475174985589087800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_2
+      rect:
+        serializedVersion: 2
+        x: 717
+        y: 696
+        width: 358
+        height: 455
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d36de41ca1dea930800000000000000
+      internalID: 4156490043125228505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_3
+      rect:
+        serializedVersion: 2
+        x: 1075
+        y: 669
+        width: 285
+        height: 482
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c55dab1f777153470800000000000000
+      internalID: 8373624886089405788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_4
+      rect:
+        serializedVersion: 2
+        x: 1433
+        y: 665
+        width: 241
+        height: 486
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49440d54621898170800000000000000
+      internalID: 8181212199475233940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_5
+      rect:
+        serializedVersion: 2
+        x: 1791
+        y: 651
+        width: 243
+        height: 500
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26233b0ddde3e35b0800000000000000
+      internalID: -5386798981878435230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_6
+      rect:
+        serializedVersion: 2
+        x: 2149
+        y: 638
+        width: 245
+        height: 513
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eca959f34eaf7ea60800000000000000
+      internalID: 7703401545866779342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_7
+      rect:
+        serializedVersion: 2
+        x: 2507
+        y: 625
+        width: 247
+        height: 526
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c15abfeaa38152e0800000000000000
+      internalID: -2138783577834630714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_8
+      rect:
+        serializedVersion: 2
+        x: 2865
+        y: 612
+        width: 248
+        height: 539
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60eb208d298ceaa10800000000000000
+      internalID: 1922694623948619270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_9
+      rect:
+        serializedVersion: 2
+        x: 3223
+        y: 599
+        width: 249
+        height: 552
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9de89b26e01d953a0800000000000000
+      internalID: -6676075112883974439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_10
+      rect:
+        serializedVersion: 2
+        x: 3581
+        y: 588
+        width: 248
+        height: 563
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd0763aab2256db60800000000000000
+      internalID: 7770488554567135453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_11
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1
+        width: 248
+        height: 575
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9863871591ee48b40800000000000000
+      internalID: 5441736042278827657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_start_close_ve3_12
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 162
+        width: 250
+        height: 414
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e153864e95b4e19f0800000000000000
+      internalID: -495876059507968738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AM_iris_jump_start_close_ve3_0: -4647066175966363183
+      AM_iris_jump_start_close_ve3_1: -2475174985589087800
+      AM_iris_jump_start_close_ve3_10: 7770488554567135453
+      AM_iris_jump_start_close_ve3_11: 5441736042278827657
+      AM_iris_jump_start_close_ve3_12: -495876059507968738
+      AM_iris_jump_start_close_ve3_2: 4156490043125228505
+      AM_iris_jump_start_close_ve3_3: 8373624886089405788
+      AM_iris_jump_start_close_ve3_4: 8181212199475233940
+      AM_iris_jump_start_close_ve3_5: -5386798981878435230
+      AM_iris_jump_start_close_ve3_6: 7703401545866779342
+      AM_iris_jump_start_close_ve3_7: -2138783577834630714
+      AM_iris_jump_start_close_ve3_8: 1922694623948619270
+      AM_iris_jump_start_close_ve3_9: -6676075112883974439
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

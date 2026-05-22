@@ -1,0 +1,585 @@
+fileFormatVersion: 2
+guid: f9ec8d4fca3b5c54e9bd8e099e783687
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1704326384258458558
+    second: AM_iris_jump_end_0
+  - first:
+      213: -8544365906704326657
+    second: AM_iris_jump_end_1
+  - first:
+      213: 4566664121513499301
+    second: AM_iris_jump_end_2
+  - first:
+      213: -2370827304638469652
+    second: AM_iris_jump_end_3
+  - first:
+      213: -4166568181227635752
+    second: AM_iris_jump_end_4
+  - first:
+      213: -4188710745213747705
+    second: AM_iris_jump_end_5
+  - first:
+      213: -8002606925026428787
+    second: AM_iris_jump_end_6
+  - first:
+      213: 7014934326535873351
+    second: AM_iris_jump_end_7
+  - first:
+      213: 1167153957544051243
+    second: AM_iris_jump_end_8
+  - first:
+      213: 7296163152262436533
+    second: AM_iris_jump_end_9
+  - first:
+      213: 4792649801237224478
+    second: AM_iris_jump_end_10
+  - first:
+      213: 6348219923850228341
+    second: AM_iris_jump_end_11
+  - first:
+      213: -8562154320401292134
+    second: AM_iris_jump_end_12
+  - first:
+      213: 5410639602507494496
+    second: AM_iris_jump_end_13
+  - first:
+      213: 870718212410917453
+    second: AM_iris_jump_end_14
+  - first:
+      213: -8721815672358265646
+    second: AM_iris_jump_end_15
+  - first:
+      213: -5103911747888872457
+    second: AM_iris_jump_end_16
+  - first:
+      213: -2935482229544509478
+    second: AM_iris_jump_end_17
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AM_iris_jump_end_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 592
+        width: 353
+        height: 591
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24cd2f4fe240958e0800000000000000
+      internalID: -1704326384258458558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_1
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1
+        width: 353
+        height: 591
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fff1ee35a705c6980800000000000000
+      internalID: -8544365906704326657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_2
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 592
+        width: 353
+        height: 591
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5aa5553c2dc006f30800000000000000
+      internalID: 4566664121513499301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_3
+      rect:
+        serializedVersion: 2
+        x: 707
+        y: 588
+        width: 349
+        height: 585
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce92a3ba021291fd0800000000000000
+      internalID: -2370827304638469652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_4
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 585
+        width: 352
+        height: 583
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8db3b7980506d26c0800000000000000
+      internalID: -4166568181227635752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_5
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 582
+        width: 334
+        height: 581
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70e3cac15c5bed5c0800000000000000
+      internalID: -4188710745213747705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_6
+      rect:
+        serializedVersion: 2
+        x: 1742
+        y: 582
+        width: 328
+        height: 574
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d88f7bcb66701f090800000000000000
+      internalID: -8002606925026428787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_7
+      rect:
+        serializedVersion: 2
+        x: 2070
+        y: 566
+        width: 312
+        height: 562
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7436ddf6a9d0a5160800000000000000
+      internalID: 7014934326535873351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_8
+      rect:
+        serializedVersion: 2
+        x: 2386
+        y: 558
+        width: 317
+        height: 559
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b22ca9d2750923010800000000000000
+      internalID: 1167153957544051243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_9
+      rect:
+        serializedVersion: 2
+        x: 2703
+        y: 565
+        width: 307
+        height: 563
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b695e1fabd214560800000000000000
+      internalID: 7296163152262436533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_10
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 1
+        width: 347
+        height: 588
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1c57970a99e28240800000000000000
+      internalID: 4792649801237224478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_11
+      rect:
+        serializedVersion: 2
+        x: 701
+        y: 1
+        width: 347
+        height: 587
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 572762de268691850800000000000000
+      internalID: 6348219923850228341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_12
+      rect:
+        serializedVersion: 2
+        x: 1048
+        y: 1
+        width: 351
+        height: 584
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a94a764820e1d2980800000000000000
+      internalID: -8562154320401292134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_13
+      rect:
+        serializedVersion: 2
+        x: 1399
+        y: 1
+        width: 353
+        height: 581
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 064be1b3d04761b40800000000000000
+      internalID: 5410639602507494496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_14
+      rect:
+        serializedVersion: 2
+        x: 1752
+        y: 1
+        width: 310
+        height: 567
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d424736d999651c00800000000000000
+      internalID: 870718212410917453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_15
+      rect:
+        serializedVersion: 2
+        x: 2062
+        y: 1
+        width: 324
+        height: 565
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2dc96ac2bd2e5f680800000000000000
+      internalID: -8721815672358265646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_16
+      rect:
+        serializedVersion: 2
+        x: 2386
+        y: 1
+        width: 321
+        height: 557
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f304269e434b29b0800000000000000
+      internalID: -5103911747888872457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_jump_end_17
+      rect:
+        serializedVersion: 2
+        x: 2707
+        y: 1
+        width: 304
+        height: 564
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adf178f07721347d0800000000000000
+      internalID: -2935482229544509478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AM_iris_jump_end_0: -1704326384258458558
+      AM_iris_jump_end_1: -8544365906704326657
+      AM_iris_jump_end_10: 4792649801237224478
+      AM_iris_jump_end_11: 6348219923850228341
+      AM_iris_jump_end_12: -8562154320401292134
+      AM_iris_jump_end_13: 5410639602507494496
+      AM_iris_jump_end_14: 870718212410917453
+      AM_iris_jump_end_15: -8721815672358265646
+      AM_iris_jump_end_16: -5103911747888872457
+      AM_iris_jump_end_17: -2935482229544509478
+      AM_iris_jump_end_2: 4566664121513499301
+      AM_iris_jump_end_3: -2370827304638469652
+      AM_iris_jump_end_4: -4166568181227635752
+      AM_iris_jump_end_5: -4188710745213747705
+      AM_iris_jump_end_6: -8002606925026428787
+      AM_iris_jump_end_7: 7014934326535873351
+      AM_iris_jump_end_8: 1167153957544051243
+      AM_iris_jump_end_9: 7296163152262436533
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
