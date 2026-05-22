@@ -1,0 +1,689 @@
+fileFormatVersion: 2
+guid: 762334598fd09c94088ed9f9ac121b48
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 9106116097092507591
+    second: eff_recoil_0
+  - first:
+      213: -7602167728807851034
+    second: eff_recoil_1
+  - first:
+      213: 6254621557827444111
+    second: eff_recoil_2
+  - first:
+      213: 7303423230904599912
+    second: eff_recoil_3
+  - first:
+      213: -7398793152657908923
+    second: eff_recoil_4
+  - first:
+      213: 1389668298046367055
+    second: eff_recoil_5
+  - first:
+      213: -8213720017520101480
+    second: eff_recoil_6
+  - first:
+      213: 6685997131916097578
+    second: eff_recoil_7
+  - first:
+      213: -1548978485314981093
+    second: eff_recoil_8
+  - first:
+      213: -5795929828992030336
+    second: eff_recoil_9
+  - first:
+      213: 7084406708871483354
+    second: eff_recoil_10
+  - first:
+      213: -1131054755042530076
+    second: eff_recoil_11
+  - first:
+      213: 8389528575270911072
+    second: eff_recoil_12
+  - first:
+      213: 5920799754844194826
+    second: eff_recoil_13
+  - first:
+      213: 1343677879503852828
+    second: eff_recoil_14
+  - first:
+      213: 2832559070471336449
+    second: eff_recoil_15
+  - first:
+      213: -1119046825153492996
+    second: eff_recoil_16
+  - first:
+      213: -7147855603640662868
+    second: eff_recoil_17
+  - first:
+      213: 1398251085722444990
+    second: eff_recoil_18
+  - first:
+      213: -1442918444004306074
+    second: eff_recoil_19
+  - first:
+      213: -8911570138299754707
+    second: eff_recoil_20
+  - first:
+      213: 3743198504998307100
+    second: eff_recoil_21
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_recoil_0
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 2352
+        width: 428
+        height: 424
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c75aa2185c6f5e70800000000000000
+      internalID: 9106116097092507591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_1
+      rect:
+        serializedVersion: 2
+        x: 1425
+        y: 2332
+        width: 432
+        height: 447
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6eb48798abcaf7690800000000000000
+      internalID: -7602167728807851034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_2
+      rect:
+        serializedVersion: 2
+        x: 2485
+        y: 2324
+        width: 417
+        height: 449
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8d1ece1b21ecc650800000000000000
+      internalID: 6254621557827444111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_3
+      rect:
+        serializedVersion: 2
+        x: 2875
+        y: 2579
+        width: 30
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 865876abbb8fa5560800000000000000
+      internalID: 7303423230904599912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_4
+      rect:
+        serializedVersion: 2
+        x: 3538
+        y: 2322
+        width: 387
+        height: 455
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54b9b3104d4325990800000000000000
+      internalID: -7398793152657908923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_5
+      rect:
+        serializedVersion: 2
+        x: 4574
+        y: 2322
+        width: 381
+        height: 459
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f45ecac44f7194310800000000000000
+      internalID: 1389668298046367055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_6
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 1299
+        width: 380
+        height: 462
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 897f2378921030e80800000000000000
+      internalID: -8213720017520101480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_7
+      rect:
+        serializedVersion: 2
+        x: 1522
+        y: 1300
+        width: 383
+        height: 466
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a28b321b7fe69cc50800000000000000
+      internalID: 6685997131916097578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_8
+      rect:
+        serializedVersion: 2
+        x: 2553
+        y: 1301
+        width: 387
+        height: 468
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b13f312464ce08ae0800000000000000
+      internalID: -1548978485314981093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_9
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1301
+        width: 390
+        height: 470
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 089e6d75788b09fa0800000000000000
+      internalID: -5795929828992030336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_10
+      rect:
+        serializedVersion: 2
+        x: 4616
+        y: 1301
+        width: 388
+        height: 471
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adfcdaeed5ed05260800000000000000
+      internalID: 7084406708871483354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_11
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 278
+        width: 378
+        height: 462
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ec6c2061bfad40f0800000000000000
+      internalID: -1131054755042530076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_12
+      rect:
+        serializedVersion: 2
+        x: 1571
+        y: 283
+        width: 362
+        height: 431
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06cf2022ac79d6470800000000000000
+      internalID: 8389528575270911072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_13
+      rect:
+        serializedVersion: 2
+        x: 2614
+        y: 290
+        width: 335
+        height: 419
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0845bdd108ea2250800000000000000
+      internalID: 5920799754844194826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_14
+      rect:
+        serializedVersion: 2
+        x: 3638
+        y: 290
+        width: 335
+        height: 419
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c15906c89e3b5a210800000000000000
+      internalID: 1343677879503852828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_15
+      rect:
+        serializedVersion: 2
+        x: 4719
+        y: 632
+        width: 35
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10231c097754f4720800000000000000
+      internalID: 2832559070471336449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_16
+      rect:
+        serializedVersion: 2
+        x: 4813
+        y: 657
+        width: 36
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf782bb67d85870f0800000000000000
+      internalID: -1119046825153492996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_17
+      rect:
+        serializedVersion: 2
+        x: 4806
+        y: 587
+        width: 39
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca4863f0337bdcc90800000000000000
+      internalID: -7147855603640662868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_18
+      rect:
+        serializedVersion: 2
+        x: 4853
+        y: 503
+        width: 45
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb46a4744f5976310800000000000000
+      internalID: 1398251085722444990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_19
+      rect:
+        serializedVersion: 2
+        x: 4903
+        y: 519
+        width: 43
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6639341f159b9fbe0800000000000000
+      internalID: -1442918444004306074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_20
+      rect:
+        serializedVersion: 2
+        x: 4812
+        y: 418
+        width: 142
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d271aabbc2eb35480800000000000000
+      internalID: -8911570138299754707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_recoil_21
+      rect:
+        serializedVersion: 2
+        x: 4811
+        y: 320
+        width: 99
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c15823e353382f330800000000000000
+      internalID: 3743198504998307100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_recoil_0: 9106116097092507591
+      eff_recoil_1: -7602167728807851034
+      eff_recoil_10: 7084406708871483354
+      eff_recoil_11: -1131054755042530076
+      eff_recoil_12: 8389528575270911072
+      eff_recoil_13: 5920799754844194826
+      eff_recoil_14: 1343677879503852828
+      eff_recoil_15: 2832559070471336449
+      eff_recoil_16: -1119046825153492996
+      eff_recoil_17: -7147855603640662868
+      eff_recoil_18: 1398251085722444990
+      eff_recoil_19: -1442918444004306074
+      eff_recoil_2: 6254621557827444111
+      eff_recoil_20: -8911570138299754707
+      eff_recoil_21: 3743198504998307100
+      eff_recoil_3: 7303423230904599912
+      eff_recoil_4: -7398793152657908923
+      eff_recoil_5: 1389668298046367055
+      eff_recoil_6: -8213720017520101480
+      eff_recoil_7: 6685997131916097578
+      eff_recoil_8: -1548978485314981093
+      eff_recoil_9: -5795929828992030336
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
