@@ -8,6 +8,8 @@
     public const string TutorialParryShown = "tutorial_parry_shown";
     public const string TutorialGimmickShown = "tutorial_gimmick_shown";
     public const string TutorialGlideShown = "tutorial_glide_shown";
+    public const string TutorialGunShown = "tutorial_gun_shown";
+    public const string TutorialBasicMoveShown = "tutorial_basicmove_shown";
     public const string PrologueStarted = "prologue_started";
     public const string PrologueCompleted = "prologue_completed";
     public const string PrologueCompletionUiShown = "prologue_completion_ui_shown";

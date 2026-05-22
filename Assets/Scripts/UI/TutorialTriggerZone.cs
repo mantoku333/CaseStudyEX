@@ -1,4 +1,4 @@
-using Metroidvania.Managers;
+﻿using Metroidvania.Managers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +17,8 @@ public sealed class TutorialTriggerZone : MonoBehaviour
         Parry,
         Gimmick,
         Glide,
+        Gun,
+        BasicMove,
         Custom
     }
 
@@ -70,6 +72,12 @@ public sealed class TutorialTriggerZone : MonoBehaviour
 
     [Header("Trigger")]
     [SerializeField] private string playerTag = "Player";
+
+
+    [Header("Background(中江5/22)")]
+    [SerializeField] private Sprite backgroundSprite;
+    [SerializeField] private Vector2 backgroundImageSize = new Vector2(800f, 450f);
+    [SerializeField] private bool overrideBackgroundImageSize;
 
     private static readonly string[] PlayerControlBehaviourNames =
     {
@@ -445,8 +453,15 @@ public sealed class TutorialTriggerZone : MonoBehaviour
         string resolvedPromptText =
             hidePromptTextAfterDialogue && showAfterDialogue && !string.IsNullOrWhiteSpace(dialogueNodeName)
                 ? string.Empty
-                : promptText;
-        tutorialOverlay.ConfigureContent(resolvedPromptText, gifFrames, gifFramesPerSecond, gifLoopIntervalSeconds);
+                : promptText; tutorialOverlay.ConfigureContent(
+    resolvedPromptText,
+    gifFrames,
+    gifFramesPerSecond,
+    gifLoopIntervalSeconds,
+    backgroundSprite,
+    overrideBackgroundImageSize,
+    backgroundImageSize
+);//中江変更5/22
         tutorialOverlay.Show(OnTutorialClosed);
     }
 
@@ -537,6 +552,18 @@ public sealed class TutorialTriggerZone : MonoBehaviour
                 completedFlagKey = GameProgressKeys.TutorialGlideShown;
                 promptText = "傘を開いて滑空する";
                 dialogueNodeName = "Tutorial_Glide";
+                break;
+
+            case TutorialPreset.Gun:
+                completedFlagKey = GameProgressKeys.TutorialGlideShown;
+                promptText = "銃で反動する";
+                dialogueNodeName = "Tutorial_Gun";
+                break;
+
+            case TutorialPreset.BasicMove:
+                completedFlagKey = GameProgressKeys.TutorialGlideShown;
+                promptText = "動く";
+                dialogueNodeName = "Tutorial_BasicMove";
                 break;
         }
     }
