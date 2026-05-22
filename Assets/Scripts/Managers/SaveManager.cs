@@ -12,11 +12,14 @@ public sealed class SaveManager : MonoBehaviour
     private static readonly bool EnableLoadTrace = false;
     private const int TraceFrameCount = 120;
     private const float TraceThreshold = 0.001f;
+    private const int PendingLoadPositionApplyFrameCount = 5;
 
     private static SaveManager instance;
     private static SaveGameData pendingLoadData;
     private static int pendingLoadRequestId;
     private static int pendingLoadSlotIndex;
+    private static int pendingLoadPositionApplyFramesRemaining;
+    private static bool pendingLoadModulesRestored;
     private static bool sceneHookRegistered;
     private static int loadRequestSequence;
     private static global::PlayerController tracedPlayerController;
@@ -64,11 +67,6 @@ public sealed class SaveManager : MonoBehaviour
     private void Update()
     {
         TraceLoadedPlayerPosition("Update");
-
-        if (pendingLoadData != null)
-        {
-            TryApplyPendingLoad();
-        }
     }
 
     private void FixedUpdate()
@@ -79,6 +77,11 @@ public sealed class SaveManager : MonoBehaviour
     private void LateUpdate()
     {
         TraceLoadedPlayerPosition("LateUpdate");
+
+        if (pendingLoadData != null)
+        {
+            TryApplyPendingLoad();
+        }
     }
 
     private static void EnsureInstance()
@@ -211,6 +214,53 @@ public sealed class SaveManager : MonoBehaviour
         return SaveRepository.GetSlotMeta(slotIndex);
     }
 
+    public static bool TryGetLatestSaveSlot(out int slotIndex, out SaveSlotMeta slotMeta)
+    {
+        slotIndex = DefaultSlotIndex;
+        slotMeta = new SaveSlotMeta(
+            slotIndex: DefaultSlotIndex,
+            hasSave: false,
+            isCorrupted: false,
+            sceneName: string.Empty,
+            locationId: string.Empty,
+            savedAtUtc: string.Empty);
+
+        bool foundReadableSave = false;
+        bool foundValidTimestamp = false;
+        DateTime latestSavedAtUtc = DateTime.MinValue;
+
+        for (int i = MinSlotIndex; i <= MaxSlotIndex; i++)
+        {
+            SaveSlotMeta candidate = GetSlotMeta(i);
+            if (!candidate.HasSave || candidate.IsCorrupted)
+            {
+                continue;
+            }
+
+            if (!foundReadableSave)
+            {
+                foundReadableSave = true;
+                slotIndex = i;
+                slotMeta = candidate;
+            }
+
+            if (!TryParseSavedAtUtc(candidate.SavedAtUtc, out DateTime candidateSavedAtUtc))
+            {
+                continue;
+            }
+
+            if (!foundValidTimestamp || candidateSavedAtUtc > latestSavedAtUtc)
+            {
+                foundValidTimestamp = true;
+                latestSavedAtUtc = candidateSavedAtUtc;
+                slotIndex = i;
+                slotMeta = candidate;
+            }
+        }
+
+        return foundReadableSave;
+    }
+
     private static bool TryValidateSlotIndex(int slotIndex)
     {
         if (slotIndex >= MinSlotIndex && slotIndex <= MaxSlotIndex)
@@ -221,6 +271,23 @@ public sealed class SaveManager : MonoBehaviour
         Debug.LogWarning(
             $"[SaveManager] Invalid slot index: {slotIndex}. Valid range is {MinSlotIndex}-{MaxSlotIndex}.");
         return false;
+    }
+
+    private static bool TryParseSavedAtUtc(string savedAtUtc, out DateTime utcTime)
+    {
+        utcTime = DateTime.MinValue;
+        if (string.IsNullOrWhiteSpace(savedAtUtc))
+        {
+            return false;
+        }
+
+        if (!DateTime.TryParse(savedAtUtc, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime parsedTime))
+        {
+            return false;
+        }
+
+        utcTime = parsedTime.Kind == DateTimeKind.Local ? parsedTime.ToUniversalTime() : parsedTime;
+        return true;
     }
 
     public static bool TrySaveCurrentGame()
@@ -262,7 +329,7 @@ public sealed class SaveManager : MonoBehaviour
         return TryLoadGame(DefaultSlotIndex, fallbackSceneName);
     }
 
-    public static bool TryLoadGame(int slotIndex, string fallbackSceneName = null)
+    public static bool TryLoadGame(int slotIndex, string fallbackSceneName = null, bool reloadCurrentScene = false)
     {
         if (!TryValidateSlotIndex(slotIndex))
         {
@@ -291,6 +358,8 @@ public sealed class SaveManager : MonoBehaviour
         pendingLoadData = saveData;
         pendingLoadRequestId = loadRequestId;
         pendingLoadSlotIndex = slotIndex;
+        pendingLoadPositionApplyFramesRemaining = PendingLoadPositionApplyFrameCount;
+        pendingLoadModulesRestored = false;
 
         RestorePreSceneState(saveData);
 
@@ -307,9 +376,7 @@ public sealed class SaveManager : MonoBehaviour
         {
             Debug.LogError(
                 $"[SaveManager] No loadable scene found. requestId={loadRequestId}, slot={slotIndex}, saveScene='{saveData.sceneName}', fallbackScene='{fallbackSceneName}'.");
-            pendingLoadData = null;
-            pendingLoadRequestId = 0;
-            pendingLoadSlotIndex = 0;
+            ClearPendingLoad();
             return false;
         }
 
@@ -319,7 +386,7 @@ public sealed class SaveManager : MonoBehaviour
             activeScene.isLoaded &&
             string.Equals(activeScene.name, sceneToLoad, StringComparison.Ordinal);
 
-        if (isSameLoadedScene)
+        if (isSameLoadedScene && !reloadCurrentScene)
         {
             if (EnableLoadTrace)
             {
@@ -349,9 +416,7 @@ public sealed class SaveManager : MonoBehaviour
             return false;
         }
 
-        pendingLoadData = null;
-        pendingLoadRequestId = 0;
-        pendingLoadSlotIndex = 0;
+        ClearPendingLoad();
 
         if (!HasSave(slotIndex))
         {
@@ -374,7 +439,7 @@ public sealed class SaveManager : MonoBehaviour
             LogPlayerSnapshot($"TryApplyPendingLoad#{pendingLoadRequestId}/OnSceneLoaded");
         }
 
-        TryApplyPendingLoad();
+        // Apply from Update instead of sceneLoaded so scene Start() initialization cannot overwrite the loaded position.
     }
 
     private static void TryApplyPendingLoad()
@@ -411,19 +476,41 @@ public sealed class SaveManager : MonoBehaviour
             playerController.transform.position = loadedPosition;
         }
 
-        RestoreModules(loadedData);
+        if (!pendingLoadModulesRestored)
+        {
+            RestoreModules(loadedData);
+            pendingLoadModulesRestored = true;
+        }
 
-        Debug.Log($"[SaveManager] Save loaded. slot={pendingLoadSlotIndex}, scene={loadedData.sceneName}");
+        if (pendingLoadPositionApplyFramesRemaining == PendingLoadPositionApplyFrameCount)
+        {
+            Debug.Log($"[SaveManager] Save loaded. slot={pendingLoadSlotIndex}, scene={loadedData.sceneName}, position={loadedPosition}");
+        }
+
         if (EnableLoadTrace)
         {
             Debug.Log(
                 $"[SaveManager][Trace#{pendingLoadRequestId}] Applied position: transform={playerController.transform.position}, rb={(rigidbody2d != null ? rigidbody2d.position.ToString() : "none")}, frame={Time.frameCount}, playerName='{playerController.gameObject.name}', instanceId={playerController.GetInstanceID()}");
             LogPlayerSnapshot($"TryApplyPendingLoad#{pendingLoadRequestId}/AfterApply");
         }
+
+        pendingLoadPositionApplyFramesRemaining--;
+        if (pendingLoadPositionApplyFramesRemaining > 0)
+        {
+            return;
+        }
+
         BeginPostLoadTrace(playerController, pendingLoadRequestId);
+        ClearPendingLoad();
+    }
+
+    private static void ClearPendingLoad()
+    {
         pendingLoadData = null;
         pendingLoadRequestId = 0;
         pendingLoadSlotIndex = 0;
+        pendingLoadPositionApplyFramesRemaining = 0;
+        pendingLoadModulesRestored = false;
     }
 
     private static void BeginPostLoadTrace(global::PlayerController playerController, int loadRequestId)

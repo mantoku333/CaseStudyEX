@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using Yarn.Unity;
 using Metroidvania.UI;
 
@@ -26,6 +27,9 @@ namespace Metroidvania.Managers
         [SerializeField] private BubbleDialogueView bubbleView = null!;
 
         public DialogueRunner Runner => dialogueRunner;
+
+        private int lastAdvanceFrame = -1;
+        private int ignoreAnyButtonInputFrame = -1;
 
         private void Start()
         {
@@ -61,6 +65,15 @@ namespace Metroidvania.Managers
             }
         }
 
+        private void Update()
+        {
+            if (dialogueRunner == null || !dialogueRunner.IsDialogueRunning) return;
+            if (Time.frameCount <= ignoreAnyButtonInputFrame) return;
+            if (!WasAnyButtonPressedThisFrame()) return;
+
+            AdvanceActiveDialogueViews();
+        }
+
         private void OnDestroy()
         {
             if (nextAction != null)
@@ -71,7 +84,15 @@ namespace Metroidvania.Managers
 
         private void OnNextPerformed(InputAction.CallbackContext context)
         {
+            AdvanceActiveDialogueViews();
+        }
+
+        private void AdvanceActiveDialogueViews()
+        {
             if (dialogueRunner == null || !dialogueRunner.IsDialogueRunning) return;
+            if (lastAdvanceFrame == Time.frameCount) return;
+
+            lastAdvanceFrame = Time.frameCount;
 
             // アクティブなViewのみ進行指示を出す
             foreach (var view in dialogueRunner.DialoguePresenters)
@@ -82,6 +103,27 @@ namespace Metroidvania.Managers
                     if (view is BubbleDialogueView bv) bv.OnContinueClicked();
                 }
             }
+        }
+
+        private static bool WasAnyButtonPressedThisFrame()
+        {
+            foreach (var device in InputSystem.devices)
+            {
+                if (device == null || !device.enabled)
+                {
+                    continue;
+                }
+
+                foreach (var control in device.allControls)
+                {
+                    if (control is ButtonControl button && button.wasPressedThisFrame)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -115,6 +157,7 @@ namespace Metroidvania.Managers
                 }
             }
 
+            ignoreAnyButtonInputFrame = Time.frameCount;
             dialogueRunner.StartDialogue(nodeName);
         }
     }

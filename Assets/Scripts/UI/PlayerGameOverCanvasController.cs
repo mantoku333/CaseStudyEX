@@ -209,6 +209,7 @@ namespace GameName.UI
             isVisible = true;
             SetCanvasRenderingEnabled(true);
             PauseGameplay();
+            RefreshRetryButtonState();
             panelRoot.SetActive(true);
             BeginRevealAnimation();
 
@@ -284,24 +285,25 @@ namespace GameName.UI
 
         private void RestartFromLastSavePoint()
         {
+            if (!SaveManager.TryGetLatestSaveSlot(out int latestSlotIndex, out _))
+            {
+                Debug.LogWarning(
+                    "[PlayerGameOverCanvasController] No readable save found.",
+                    this);
+                RefreshRetryButtonState();
+                return;
+            }
+
             PrepareForSceneTransition();
             Time.timeScale = 1f;
 
             string activeSceneName = SceneManager.GetActiveScene().name;
-            SaveSlotMeta slotMeta = SaveManager.GetSlotMeta(SaveManager.DefaultSlotIndex);
-            bool sameSceneRestart =
-                slotMeta.HasSave &&
-                string.Equals(slotMeta.SceneName, activeSceneName, System.StringComparison.Ordinal);
-
-            if (!SaveManager.TryLoadGame(activeSceneName))
+            if (!SaveManager.TryLoadGame(latestSlotIndex, activeSceneName, reloadCurrentScene: true))
             {
-                SceneManager.LoadScene(activeSceneName);
-                return;
-            }
-
-            if (sameSceneRestart)
-            {
-                SceneManager.LoadScene(activeSceneName);
+                Debug.LogWarning(
+                    $"[PlayerGameOverCanvasController] Failed to load latest save slot {latestSlotIndex}. Returning to title.",
+                    this);
+                SceneManager.LoadScene(titleSceneName);
             }
         }
 
@@ -462,6 +464,16 @@ namespace GameName.UI
             }
 
             return canvasGroup;
+        }
+
+        private void RefreshRetryButtonState()
+        {
+            if (retryButton == null)
+            {
+                return;
+            }
+
+            retryButton.interactable = SaveManager.TryGetLatestSaveSlot(out _, out _);
         }
 
         private void SetCanvasRenderingEnabled(bool isEnabled)
