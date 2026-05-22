@@ -463,7 +463,7 @@ namespace GameName.Enemy
         {
             if (spriteRenderer != null && flipSpriteOnTurn)
             {
-                spriteRenderer.flipX = moveDirection < 0;
+                spriteRenderer.flipX = moveDirection > 0;
             }
         }
 

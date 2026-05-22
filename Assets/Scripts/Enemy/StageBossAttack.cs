@@ -156,6 +156,7 @@ namespace GameName.Enemy
             stateTimer = vibrationDuration;
             vibrationElapsed = 0f;
             chargeDirection = ResolveChargeDirectionTowardsPlayer();
+            enemyController.FaceDirection(chargeDirection);
             vibrationBaseX = enemyController.CurrentX;
         }
 
@@ -165,6 +166,7 @@ namespace GameName.Enemy
             vibrationElapsed += Time.fixedDeltaTime;
 
             float offset = Mathf.Sin(vibrationElapsed * vibrationFrequency * Mathf.PI * 2f) * vibrationAmplitude;
+            enemyController.FaceDirection(chargeDirection);
             enemyController.SetHorizontalPosition(vibrationBaseX + offset);
             enemyController.StopHorizontalMotion();
 
@@ -191,6 +193,8 @@ namespace GameName.Enemy
         private void UpdateChargingState()
         {
             // 仕様: プレイヤー接触では停止しない。
+            enemyController.FaceDirection(chargeDirection);
+
             if (stopChargeOnWall && enemyController.IsWallAhead())
             {
                 EnterCooldownState();
