@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
 using Player;
@@ -29,6 +29,7 @@ public class UmbrellaAttackController : MonoBehaviour
 
     [Header("SE")]
     [SerializeField] private AudioClip player_normalAttack;
+    [SerializeField] private AudioClip player_attackHit;
 
     [Header("斬撃エフェクト")]
     [SerializeField] private Texture2D attackEffectTexture;
@@ -54,6 +55,11 @@ public class UmbrellaAttackController : MonoBehaviour
         if (attackCollider != null)
         {
             attackHitbox = attackCollider.GetComponent<AttackHitbox>();
+            if (attackHitbox != null)
+            {
+                attackHitbox.OnHit += PlayAttackHitSE;
+            }
+
             attackColliderDefaultLocalPosition = attackCollider.transform.localPosition;
             hasAttackColliderDefaultLocalPosition = true;
             attackCollider.enabled = false;
@@ -306,6 +312,11 @@ public class UmbrellaAttackController : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (attackHitbox != null)
+        {
+            attackHitbox.OnHit -= PlayAttackHitSE;
+        }
+
         HideAttackEffectRenderer();
 
         if (attackEffectSprites == null)
@@ -320,6 +331,11 @@ public class UmbrellaAttackController : MonoBehaviour
                 Destroy(attackEffectSprites[i]);
             }
         }
+    }
+
+    private void PlayAttackHitSE(Collider2D collision)
+    {
+        PlaySE(player_attackHit);
     }
 
     private void PlaySE(AudioClip clip)
