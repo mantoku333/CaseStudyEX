@@ -14,6 +14,7 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
     [SerializeField] private string targetRoomId = "Col_1-1,1-1";
     [SerializeField] private string requiredFlagKey = GameProgressKeys.PrologueCompleted;
     [SerializeField] private bool expectedFlagValue = true;
+    [SerializeField] private string playerTag = "Player";
 
     [Header("References")]
     [SerializeField] private Canvas canvas;
@@ -85,7 +86,8 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
         MinimapManager manager = MinimapManager.Instance;
         return manager != null &&
             !string.IsNullOrWhiteSpace(targetRoomId) &&
-            MatchesRoomId(manager.CurrentRoomId);
+            MatchesRoomId(manager.CurrentRoomId) &&
+            IsPlayerInsideTargetRoom();
     }
 
     private bool MatchesRoomId(string currentRoomId)
@@ -102,6 +104,50 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
             if (candidate.Length > 0 && string.Equals(currentRoomId, candidate, System.StringComparison.Ordinal))
             {
                 return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsPlayerInsideTargetRoom()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
+        if (playerObject == null)
+        {
+            return false;
+        }
+
+        Vector3 playerPosition = playerObject.transform.position;
+        Vector2 playerPosition2D = new Vector2(playerPosition.x, playerPosition.y);
+        MinimapRoom[] rooms = FindObjectsByType<MinimapRoom>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            MinimapRoom room = rooms[i];
+            if (room == null || !MatchesRoomId(room.RoomId))
+            {
+                continue;
+            }
+
+            Collider2D[] colliders2D = room.GetComponents<Collider2D>();
+            for (int colliderIndex = 0; colliderIndex < colliders2D.Length; colliderIndex++)
+            {
+                Collider2D roomCollider = colliders2D[colliderIndex];
+                if (roomCollider != null && roomCollider.enabled && roomCollider.OverlapPoint(playerPosition2D))
+                {
+                    return true;
+                }
+            }
+
+            Collider[] colliders = room.GetComponents<Collider>();
+            for (int colliderIndex = 0; colliderIndex < colliders.Length; colliderIndex++)
+            {
+                Collider roomCollider = colliders[colliderIndex];
+                if (roomCollider != null && roomCollider.enabled && roomCollider.bounds.Contains(playerPosition))
+                {
+                    return true;
+                }
             }
         }
 

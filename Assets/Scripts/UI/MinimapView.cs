@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -172,7 +172,7 @@ public sealed class MinimapView : MonoBehaviour
         miniMapContent = CreateRect("Content", miniMapPanel);
         Stretch(miniMapContent, 14f);
 
-        fullMapPanel = CreatePanel("FullMapPanel", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1320f, 800f), Vector2.zero, fullMapPanelColor);
+        fullMapPanel = CreatePanel("FullMapPanel", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1620f, 800f), Vector2.zero, fullMapPanelColor);
         fullMapContent = CreateRect("Content", fullMapPanel);
         Stretch(fullMapContent, 22f);
         fullMapPanel.gameObject.SetActive(false);
