@@ -144,6 +144,18 @@ namespace Player
             NotifyHealthChanged();
         }
 
+        public void ForceDeath()
+        {
+            if (currentHealth <= 0)
+            {
+                return;
+            }
+
+            currentHealth = 0;
+            nextDamageTime = Time.time + damageCooldownSeconds;
+            NotifyHealthChanged();
+        }
+
         /// <summary>
         /// HPの最大値を増加
         /// </summary>
