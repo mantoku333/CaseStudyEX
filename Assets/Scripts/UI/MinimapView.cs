@@ -16,7 +16,8 @@ public sealed class MinimapView : MonoBehaviour
     private const float FullMarkerDiameter = 24f;
     private const float ConnectorEndInset = 4f;
 
-    [SerializeField] private Color panelColor = new Color(0.02f, 0.04f, 0.05f, 0.82f);
+    [SerializeField] private Color panelColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+    [SerializeField] private Color fullMapPanelColor = new Color(0.12f, 0.12f, 0.14f, 0.9f);
     [SerializeField] private Color visitedColor = new Color(1f, 1f, 1f, 0.92f);
     [SerializeField] private Color currentRoomBorderColor = new Color(0.12f, 0.95f, 0.72f, 1f);
     [SerializeField] private Color currentRoomFillColor = new Color(0.04f, 0.42f, 0.32f, 0.78f);
@@ -147,12 +148,12 @@ public sealed class MinimapView : MonoBehaviour
         root.offsetMin = Vector2.zero;
         root.offsetMax = Vector2.zero;
 
-        miniMapPanel = CreatePanel("MiniMapPanel", root, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(280f, 160f), new Vector2(-22f, -22f));
+        miniMapPanel = CreatePanel("MiniMapPanel", root, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(290f, 170f), new Vector2(-80f, -70f));
         miniMapPanel.gameObject.AddComponent<RectMask2D>();
         miniMapContent = CreateRect("Content", miniMapPanel);
         Stretch(miniMapContent, 14f);
 
-        fullMapPanel = CreatePanel("FullMapPanel", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1140f, 690f), Vector2.zero);
+        fullMapPanel = CreatePanel("FullMapPanel", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1320f, 800f), Vector2.zero, fullMapPanelColor);
         fullMapContent = CreateRect("Content", fullMapPanel);
         Stretch(fullMapContent, 22f);
         fullMapPanel.gameObject.SetActive(false);
@@ -587,12 +588,22 @@ public sealed class MinimapView : MonoBehaviour
 
     private RectTransform CreatePanel(string objectName, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 size, Vector2 anchoredPosition)
     {
-        return CreatePanel(objectName, parent, anchorMin, anchorMax, size, anchoredPosition, whiteSprite);
+        return CreatePanel(objectName, parent, anchorMin, anchorMax, size, anchoredPosition, panelColor);
+    }
+
+    private RectTransform CreatePanel(string objectName, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 size, Vector2 anchoredPosition, Color color)
+    {
+        return CreatePanel(objectName, parent, anchorMin, anchorMax, size, anchoredPosition, color, whiteSprite);
     }
 
     private RectTransform CreatePanel(string objectName, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 size, Vector2 anchoredPosition, Sprite sprite)
     {
-        RectTransform rect = CreateImage(objectName, parent, panelColor);
+        return CreatePanel(objectName, parent, anchorMin, anchorMax, size, anchoredPosition, panelColor, sprite);
+    }
+
+    private RectTransform CreatePanel(string objectName, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 size, Vector2 anchoredPosition, Color color, Sprite sprite)
+    {
+        RectTransform rect = CreateImage(objectName, parent, color);
         Image image = rect.GetComponent<Image>();
         if (image != null)
         {

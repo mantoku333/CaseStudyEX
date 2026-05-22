@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &100000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 400000}
+  - component: {fileID: 11400000}
+  m_Layer: 5
+  m_Name: AreaIllustrationCanvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &400000
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f814e36ea5348429a1960e7ab76e6d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetSceneName: Fix_Alpha2_Fuyuno
+  targetRoomId: Col_1-1
+  requiredFlagKey: prologue_completed
+  expectedFlagValue: 1
+  backgroundSprite: {fileID: 1040094083807629558, guid: 8019982c016dcda4b9d66e3329229602, type: 3}
+  textSprites:
+  - {fileID: 2404807676194140575, guid: 2a8d951becf67da4b8557b1cb784dfcd, type: 3}
+  - {fileID: 58537100469905467, guid: 2a8d951becf67da4b8557b1cb784dfcd, type: 3}
+  - {fileID: -3592396704118122205, guid: 2a8d951becf67da4b8557b1cb784dfcd, type: 3}
+  - {fileID: -8619688543816571363, guid: 2a8d951becf67da4b8557b1cb784dfcd, type: 3}
+  - {fileID: -1503551702922736426, guid: 2a8d951becf67da4b8557b1cb784dfcd, type: 3}
+  - {fileID: 6377790231192970833, guid: 2a8d951becf67da4b8557b1cb784dfcd, type: 3}
+  - {fileID: -7983644740441650174, guid: 2a8d951becf67da4b8557b1cb784dfcd, type: 3}
+  referenceResolution: {x: 1920, y: 1080}
+  sortingOrder: 30
+  anchoredPosition: {x: 0, y: 245}
+  backgroundSize: {x: 836, y: 392}
+  textSpacing: 12
+  textScale: 1.15
+  textOffset: {x: 0, y: 22}
+  showDuration: 0.45
+  hideDuration: 0.22
