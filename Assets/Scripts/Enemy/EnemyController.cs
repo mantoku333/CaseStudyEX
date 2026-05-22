@@ -583,7 +583,8 @@ namespace GameName.Enemy
         private void NotifyHealthChanged()
         {
             HealthChanged?.Invoke(currentHealth, MaxHealth);
-
+        }
+        
         /// <summary>
         /// 現在、接触ダメージを一時的に無効化しているかを返す。
         /// </summary>
