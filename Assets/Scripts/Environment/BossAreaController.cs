@@ -1,4 +1,5 @@
-﻿using GameName.Enemy;
+﻿using System;
+using GameName.Enemy;
 using Metroidvania.Player;
 using Player;
 using Unity.Cinemachine;
@@ -11,11 +12,16 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 {
+    public static event Action<BossAreaController> EncounterStarted;
+    public static event Action<BossAreaController> EncounterCompleted;
+    public static event Action<BossAreaController> EncounterReset;
+
     [Header("Detection")]
     [SerializeField] private string playerTag = "Player";
     [SerializeField] private bool disableTriggerAfterStart = true;
 
     [Header("Boss")]
+    [SerializeField] private string bossDisplayName = "Boss";
     [SerializeField] private Transform bossRoot;
     [HideInInspector, SerializeField] private StageBossAttack stageBossAttack;
     [HideInInspector, SerializeField] private LastBossController lastBossController;
@@ -70,6 +76,11 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private Rigidbody2D bossRigidbody2D;
 
     public int Priority => 240;
+    public string BossDisplayName => ResolveBossDisplayName();
+    public Transform BossRoot => bossRoot;
+    public StageBossAttack StageBossAttack => stageBossAttack;
+    public LastBossController LastBossController => lastBossController;
+    public IBossHealthSource BossHealthSource => ResolveBossHealthSource();
 
     private void Awake()
     {
@@ -178,6 +189,8 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             lastBossController.ActivateEncounter();
         }
 
+        EncounterStarted?.Invoke(this);
+
         if (disableTriggerAfterStart)
         {
             DisableTriggerComponents();
@@ -227,6 +240,8 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             stageBgm?.PlayNormal();
         }
 
+        EncounterCompleted?.Invoke(this);
+
         if (verboseLogging)
         {
             Debug.Log($"[BossAreaController] Encounter completed on {gameObject.name}", this);
@@ -245,12 +260,18 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     public void Restore(SaveGameData saveData)
     {
-        ApplyDefeatedStateIfSaved();
+        if (IsBossDefeatedInSavedProgress())
+        {
+            ApplyDefeatedStateIfSaved();
+            return;
+        }
+
+        ResetUnfinishedEncounterAfterLoad();
     }
 
     private void ApplyDefeatedStateIfSaved()
     {
-        if (string.IsNullOrWhiteSpace(bossDefeatedFlagKey) || !GameProgressFlags.Get(bossDefeatedFlagKey))
+        if (!IsBossDefeatedInSavedProgress())
         {
             return;
         }
@@ -280,6 +301,40 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         {
             bossRoot.gameObject.SetActive(false);
         }
+    }
+
+    private bool IsBossDefeatedInSavedProgress()
+    {
+        return !string.IsNullOrWhiteSpace(bossDefeatedFlagKey) && GameProgressFlags.Get(bossDefeatedFlagKey);
+    }
+
+    private void ResetUnfinishedEncounterAfterLoad()
+    {
+        encounterCompleted = false;
+        encounterStarted = false;
+        ClearActiveDodgeBounds();
+
+        ResolveBossReferences(logIssues: false);
+
+        if (stageBossAttack != null)
+        {
+            stageBossAttack.DeactivateEncounter();
+        }
+        else if (lastBossController != null)
+        {
+            lastBossController.DeactivateEncounter();
+        }
+
+        BossHealthSource?.ResetHealthToFull();
+
+        if (enableWallMechanic)
+        {
+            UnlockArea();
+        }
+
+        DeactivateBossCamera();
+        EnableTriggerComponents();
+        EncounterReset?.Invoke(this);
     }
 
     private bool IsBossAlive()
@@ -373,6 +428,58 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         }
 
         return false;
+    }
+
+    private string ResolveBossDisplayName()
+    {
+        string trimmedName = bossDisplayName != null ? bossDisplayName.Trim() : string.Empty;
+        if (!string.IsNullOrEmpty(trimmedName))
+        {
+            return trimmedName;
+        }
+
+        if (bossRoot != null)
+        {
+            return bossRoot.name;
+        }
+
+        if (stageBossAttack != null)
+        {
+            return stageBossAttack.name;
+        }
+
+        if (lastBossController != null)
+        {
+            return lastBossController.name;
+        }
+
+        return "Boss";
+    }
+
+    private IBossHealthSource ResolveBossHealthSource()
+    {
+        if (lastBossController != null)
+        {
+            return lastBossController;
+        }
+
+        if (stageBossAttack != null)
+        {
+            return stageBossAttack.GetComponent<EnemyController>();
+        }
+
+        if (bossRoot == null)
+        {
+            return null;
+        }
+
+        LastBossController resolvedLastBoss = bossRoot.GetComponent<LastBossController>();
+        if (resolvedLastBoss != null)
+        {
+            return resolvedLastBoss;
+        }
+
+        return bossRoot.GetComponent<EnemyController>();
     }
 
     private void ResolveStageBgm()
@@ -747,6 +854,21 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         if (trigger3D != null)
         {
             trigger3D.enabled = false;
+        }
+    }
+
+    private void EnableTriggerComponents()
+    {
+        Collider2D trigger2D = GetComponent<Collider2D>();
+        if (trigger2D != null)
+        {
+            trigger2D.enabled = true;
+        }
+
+        Collider trigger3D = GetComponent<Collider>();
+        if (trigger3D != null)
+        {
+            trigger3D.enabled = true;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace GameName.Enemy
     /// <summary>
     /// シンプルな敵の巡回移動と接触ダメージを管理するクラス
     /// </summary>
-    public class EnemyController : MonoBehaviour, IAttackReceiver
+    public class EnemyController : MonoBehaviour, IAttackReceiver, IBossHealthSource
     {
         [SerializeField] private float moveSpeed = 2f;
         [SerializeField] private float patrolDistance = 2f;
@@ -46,6 +46,7 @@ namespace GameName.Enemy
         /// 敵がDestroyされる直前に通知する。死亡SEなど、破棄前に必要な処理で使う。
         /// </summary>
         public event Action Died;
+        public event Action<int, int> HealthChanged;
 
         /// <summary>
         /// 現在の向き。右が 1、左が -1。
@@ -56,6 +57,8 @@ namespace GameName.Enemy
         /// 現在の X 座標（Rigidbody2D がある場合は物理座標）。
         /// </summary>
         public float CurrentX => rigidbody2D != null ? rigidbody2D.position.x : transform.position.x;
+        public int CurrentHealth => currentHealth;
+        public int MaxHealth => Mathf.Max(1, maxHealth);
 
         private float ignoreContactDamageUntilTime;  //接触ダメージを無効にする時間
 
@@ -68,7 +71,7 @@ namespace GameName.Enemy
             bodyCollider = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             damageFlash = GetComponentInChildren<EnemyDamageFlash>(true);
-            currentHealth = Mathf.Max(1, maxHealth);
+            currentHealth = MaxHealth;
 
             if (stageLayerMask.value == 0)
             {
@@ -534,6 +537,7 @@ namespace GameName.Enemy
 
             damageFlash?.PlayFlash();
             currentHealth = Mathf.Max(0, currentHealth - damage);
+            NotifyHealthChanged();
 
             if (currentHealth <= 0)
             {
@@ -551,6 +555,17 @@ namespace GameName.Enemy
         public void IgnoreContactDamage(float duration)
         {
             ignoreContactDamageUntilTime = Time.time + duration;
+        }
+
+        public void ResetHealthToFull()
+        {
+            currentHealth = MaxHealth;
+            NotifyHealthChanged();
+        }
+
+        private void NotifyHealthChanged()
+        {
+            HealthChanged?.Invoke(currentHealth, MaxHealth);
         }
     }
 }
