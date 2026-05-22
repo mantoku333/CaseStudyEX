@@ -21,7 +21,7 @@ public class UmbrellaAttackController : MonoBehaviour
 
     [Header("攻撃設定")]
     [SerializeField] private float attackDuration = 0.2f;
-    [SerializeField, Min(0.01f)] private float attackPerSecond = 4.0f;
+    [SerializeField, Min(0.01f)] private float attackSecondsPerAttack = 0.25f;
 
     [Header("当たり判定")]
     [SerializeField] private Collider2D attackCollider;
@@ -65,14 +65,14 @@ public class UmbrellaAttackController : MonoBehaviour
         EnsureAttackEffectRenderer();
     }
 
-    public void SetAttackPerSecond(float attackPerSecond)
+    public void SetAttackSecondsPerAttack(float attackSecondsPerAttack)
     {
-        this.attackPerSecond = Mathf.Max(0.01f, attackPerSecond);
+        this.attackSecondsPerAttack = Mathf.Max(0.01f, attackSecondsPerAttack);
     }
 
-    public float GetAttackPerSecond()
+    public float GetAttackSecondsPerAttack()
     {
-        return attackPerSecond;
+        return attackSecondsPerAttack;
     }
 
     public void SetAttackDuration(float duration)
@@ -94,8 +94,7 @@ public class UmbrellaAttackController : MonoBehaviour
     {
         if (isAttacking) { return; }
 
-        float attackInterval = 1.0f / attackPerSecond;
-        if (Time.time < lastAttackTime + attackInterval) { return; }
+        if (Time.time < lastAttackTime + attackSecondsPerAttack) { return; }
         if (attackCollider == null) { return; }
 
         isAttacking = true;

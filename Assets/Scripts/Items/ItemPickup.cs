@@ -2,13 +2,25 @@
 using Player;
 using UnityEngine;
 
-public class ItemPickup : MonoBehaviour
+public class ItemPickup : MonoBehaviour, ISaveDataModule
 {
     //--------------アイテムデータ関連------------------
     [SerializeField] private ItemData itemData;
 
     //--------------状態関連------------------
     private bool isPickedUp = false;
+
+    public int Priority => 250;
+
+    private void OnEnable()
+    {
+        SaveManager.RegisterModule(this);
+    }
+
+    private void OnDisable()
+    {
+        SaveManager.UnregisterModule(this);
+    }
 
     private void Start()
     {
@@ -111,6 +123,12 @@ public class ItemPickup : MonoBehaviour
             isApplied = true;
         }
 
+        if (!isApplied && IsInventoryItem())
+        {
+            GameItems.AddCount(itemData.itemId, 1);
+            isApplied = true;
+        }
+
         return isApplied;
     }
 
@@ -119,18 +137,21 @@ public class ItemPickup : MonoBehaviour
         if (itemData.abilityType == PlayerAbilityType.Dodge)
         {
             abilityController.SetCanDodge(true);
+            GameProgressFlags.Set(GameProgressKeys.AbilityDodgeUnlocked, true);
             return;
         }
 
         if (itemData.abilityType == PlayerAbilityType.Glide)
         {
             abilityController.SetCanGlide(true);
+            GameProgressFlags.Set(GameProgressKeys.AbilityGlideUnlocked, true);
             return;
         }
 
         if (itemData.abilityType == PlayerAbilityType.GunRecoil)
         {
             abilityController.SetCanGunRecoil(true);
+            GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, true);
             return;
         }
     }
@@ -172,7 +193,24 @@ public class ItemPickup : MonoBehaviour
             return true;
         }
 
+        if (IsInventoryItem())
+        {
+            return true;
+        }
+
         return false;
+    }
+
+    private bool IsInventoryItem()
+    {
+        if (itemData == null || string.IsNullOrWhiteSpace(itemData.itemId))
+        {
+            return false;
+        }
+
+        return itemData.itemType == ItemType.KeyItem ||
+               itemData.itemType == ItemType.Equipment ||
+               itemData.itemType == ItemType.Collectible;
     }
 
     private void CompletePickup()
@@ -186,5 +224,17 @@ public class ItemPickup : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    public void Capture(SaveGameData saveData)
+    {
+    }
+
+    public void Restore(SaveGameData saveData)
+    {
+        if (IsAlreadyPickedUp())
+        {
+            Destroy(gameObject);
+        }
     }
 }

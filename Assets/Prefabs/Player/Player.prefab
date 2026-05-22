@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UmbrellaAttackController
   attackDuration: 0.2
-  attackPerSecond: 4
+  attackSecondsPerAttack: 0.25
   attackCollider: {fileID: 4697355616983758325}
   leftFacingAttackColliderRightOffset: 5
   player_normalAttack: {fileID: 8300000, guid: 298ef99b3d24d514ba42518424f5ddf3, type: 3}

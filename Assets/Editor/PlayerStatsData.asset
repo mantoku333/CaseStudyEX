@@ -18,7 +18,7 @@ MonoBehaviour:
   jumpForce: 1.5
   dodgeDistance: 3
   dodgeDuration: 0.5
-  attackPerSecond: 2
+  attackSecondsPerAttack: 3
   umbrellaAttackDuration: 0.2
   gunRecoilForce: 30
   gunRecoilDuration: 0.1

@@ -7,7 +7,7 @@ public partial class SROptions
     private const string PrologueEventId = "prologue";
 
     [Category(StoryEventsCategory)]
-    [DisplayName("Play Prologue (Ignore Flags)")]
+    [DisplayName("プロローグを再生（フラグ無視）")]
     [Sort(-10)]
     public void PlayPrologueIgnoringFlags()
     {
@@ -27,7 +27,7 @@ public partial class SROptions
     }
 
     [Category(StoryEventsCategory)]
-    [DisplayName("Complete Active Event (Skip)")]
+    [DisplayName("実行中イベントを完了（スキップ）")]
     [Sort(-9)]
     public void CompleteActiveStoryEvent()
     {

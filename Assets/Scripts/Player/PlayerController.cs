@@ -291,7 +291,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         if (umbrellaAttackController != null)
         {
-            umbrellaAttackController.SetAttackPerSecond(playerStatsData.AttackPerSecond);
+            umbrellaAttackController.SetAttackSecondsPerAttack(playerStatsData.AttackSecondsPerAttack);
             umbrellaAttackController.SetAttackDuration(playerStatsData.UmbrellaAttackDuration);
         }
 

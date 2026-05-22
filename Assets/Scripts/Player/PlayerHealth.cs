@@ -6,8 +6,10 @@ namespace Player
     /// <summary>
     /// プレイヤーの体力を管理するクラス
     /// </summary>
-    public class PlayerHealth : MonoBehaviour
+    public class PlayerHealth : MonoBehaviour, ISaveDataModule
     {
+        private const string SectionKey = "player_health_v1";
+
         [SerializeField] private PlayerStatsData statsData;
         [SerializeField, Min(0f)] private float damageCooldownSeconds = 3f;
         [SerializeField] private int maxHealthBonus = 0;
@@ -15,6 +17,9 @@ namespace Player
         private int currentHealth;
         private float nextDamageTime;
         private bool deathNotified;
+        private bool restoredFromSave;
+
+        public int Priority => 230;
 
         /// <summary>
         /// HPが変化したときに通知
@@ -53,11 +58,27 @@ namespace Player
             TryResolveStatsData();
         }
 
+        private void OnEnable()
+        {
+            SaveManager.RegisterModule(this);
+        }
+
+        private void OnDisable()
+        {
+            SaveManager.UnregisterModule(this);
+        }
+
         /// <summary>
         /// 初期HPを設定
         /// </summary>
         private void Start()
         {
+            if (restoredFromSave)
+            {
+                NotifyHealthChanged();
+                return;
+            }
+
             currentHealth = MaxHealth;
             NotifyHealthChanged();
         }
@@ -158,6 +179,49 @@ namespace Player
             NotifyHealthChanged();
         }
 
+        public void Capture(SaveGameData saveData)
+        {
+            if (saveData == null)
+            {
+                return;
+            }
+
+            var payload = new PlayerHealthPayload
+            {
+                currentHealth = currentHealth,
+                maxHealthBonus = maxHealthBonus
+            };
+
+            saveData.SetCustomSectionJson(SectionKey, JsonUtility.ToJson(payload));
+        }
+
+        public void Restore(SaveGameData saveData)
+        {
+            if (saveData == null)
+            {
+                return;
+            }
+
+            string json = saveData.GetCustomSectionJson(SectionKey);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return;
+            }
+
+            try
+            {
+                PlayerHealthPayload payload = JsonUtility.FromJson<PlayerHealthPayload>(json);
+                maxHealthBonus = Mathf.Max(0, payload.maxHealthBonus);
+                currentHealth = Mathf.Clamp(payload.currentHealth, 0, MaxHealth);
+                restoredFromSave = true;
+                NotifyHealthChanged();
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[PlayerHealth] Failed to parse saved health. {exception}");
+            }
+        }
+
         /// <summary>
         /// HP変更イベントを通知
         /// </summary>
@@ -191,6 +255,13 @@ namespace Player
             {
                 statsData = playerController.GetPlayerStatsData();
             }
+        }
+
+        [Serializable]
+        private struct PlayerHealthPayload
+        {
+            public int currentHealth;
+            public int maxHealthBonus;
         }
     }
 }
