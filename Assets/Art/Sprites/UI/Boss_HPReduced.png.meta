@@ -1,22 +1,10 @@
 fileFormatVersion: 2
-guid: fc83af3c3654a7b4d88db6d6d4df88e7
+guid: 11109bc10f8ac44419d9c07dfde26a19
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6217520614494105665
-    second: Boss_fireRight_0
-  - first:
-      213: 1495618037623047403
-    second: Boss_fireRight_1
-  - first:
-      213: -4146034746500474388
-    second: Boss_fireRight_2
-  - first:
-      213: 5237923826674798670
-    second: Boss_fireRight_3
-  - first:
-      213: 3437187908455738309
-    second: Boss_fireRight_4
+      213: -8694038115122431877
+    second: Boss_HPFull_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -112,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Boss_fireRight_0
+      name: Boss_HPFull_0
       rect:
         serializedVersion: 2
-        x: 13
-        y: 46
-        width: 30
-        height: 18
+        x: 75
+        y: 634
+        width: 1232
+        height: 33
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -127,96 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 140f69a9e02194650800000000000000
-      internalID: 6217520614494105665
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Boss_fireRight_1
-      rect:
-        serializedVersion: 2
-        x: 17
-        y: 36
-        width: 63
-        height: 44
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: be4403c5ea081c410800000000000000
-      internalID: 1495618037623047403
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Boss_fireRight_2
-      rect:
-        serializedVersion: 2
-        x: 31
-        y: 63
-        width: 51
-        height: 47
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ce9996c5d535676c0800000000000000
-      internalID: -4146034746500474388
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Boss_fireRight_3
-      rect:
-        serializedVersion: 2
-        x: 80
-        y: 62
-        width: 55
-        height: 42
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e409189f7f7d0b840800000000000000
-      internalID: 5237923826674798670
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Boss_fireRight_4
-      rect:
-        serializedVersion: 2
-        x: 77
-        y: 44
-        width: 30
-        height: 13
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5cba5c5113853bf20800000000000000
-      internalID: 3437187908455738309
+      spriteID: b78bb64b562985780800000000000000
+      internalID: -8694038115122431877
       vertices: []
       indices: 
       edges: []
@@ -225,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -235,11 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Boss_fireRight_0: 6217520614494105665
-      Boss_fireRight_1: 1495618037623047403
-      Boss_fireRight_2: -4146034746500474388
-      Boss_fireRight_3: 5237923826674798670
-      Boss_fireRight_4: 3437187908455738309
+      Boss_HPFull_0: -8694038115122431877
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

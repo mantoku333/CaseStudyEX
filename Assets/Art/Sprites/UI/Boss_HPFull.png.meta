@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 11109bc10f8ac44419d9c07dfde26a19
+guid: d09fe473e7283c34d8acf36a42e6dc66
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8694038115122431877
-    second: Boss_HPFull_0
+      213: 1385599198221962524
+    second: HP Full 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Boss_HPFull_0
+      name: HP Full 1_0
       rect:
         serializedVersion: 2
         x: 75
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b78bb64b562985780800000000000000
-      internalID: -8694038115122431877
+      spriteID: c1d061b2123aa3310800000000000000
+      internalID: 1385599198221962524
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Boss_HPFull_0: -8694038115122431877
+      HP Full 1_0: 1385599198221962524
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
