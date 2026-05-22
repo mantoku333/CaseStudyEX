@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -27,6 +27,13 @@ public sealed class TutorialOverlayController : MonoBehaviour
     [Header("Pause")]
     [SerializeField] private StoryPausePolicy pausePolicy = StoryPausePolicy.TimeScaleZero;
     [SerializeField] private string playerTag = "Player";
+
+    //中江5/22
+    [SerializeField] private Image backgroundImage;
+
+    private Sprite backgroundSprite;
+    private bool overrideBackgroundImageSize;
+    private Vector2 backgroundImageSize;
 
     private static readonly string[] PlayerControlBehaviourNames =
     {
@@ -57,7 +64,15 @@ public sealed class TutorialOverlayController : MonoBehaviour
     private float gifLoopIntervalTimer;
     private Image resolvedGifImage;
 
-    public void ConfigureContent(string text, Sprite[] frames, float framesPerSecond, float loopIntervalSeconds)
+    public void ConfigureContent(
+    string text,
+    Sprite[] frames,
+    float framesPerSecond,
+    float loopIntervalSeconds,
+    Sprite background,
+    bool overrideBackgroundSize,
+    Vector2 backgroundSize
+)
     {
         if (!string.IsNullOrWhiteSpace(text))
         {
@@ -78,6 +93,10 @@ public sealed class TutorialOverlayController : MonoBehaviour
         {
             gifLoopIntervalSeconds = loopIntervalSeconds;
         }
+
+        backgroundSprite = background;
+        overrideBackgroundImageSize = overrideBackgroundSize;
+        backgroundImageSize = backgroundSize;
     }
 
     private void Awake()
@@ -162,6 +181,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
         }
 
         RefreshPromptText();
+        RefreshBackgroundImage();
         RestartGifAnimation();
         RestartLoopAnimation();
         PauseGame();
@@ -550,5 +570,31 @@ public sealed class TutorialOverlayController : MonoBehaviour
         }
 
         return pausedPlayerInput != null ? pausedPlayerInput.gameObject : null;
+    }
+
+
+
+
+    //中江5/22
+    private void RefreshBackgroundImage()
+    {
+        if (backgroundImage == null)
+        {
+            return;
+        }
+
+        backgroundImage.sprite = backgroundSprite;
+        backgroundImage.enabled = backgroundSprite != null;
+
+        if (backgroundSprite == null)
+        {
+            return;
+        }
+
+        if (overrideBackgroundImageSize)
+        {
+            RectTransform rectTransform = backgroundImage.rectTransform;
+            rectTransform.sizeDelta = backgroundImageSize;
+        }
     }
 }
