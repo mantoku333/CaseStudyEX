@@ -12,6 +12,17 @@ public class DodgeController : MonoBehaviour
     private bool isDodging = false;   //回避中かどうかのフラグ
     private Rigidbody2D rigidBody2d;  //Rigidbody2Dコンポーネント
 
+    // ロック中のエリアから渡される、回避移動専用の境界情報。
+    // 回避の目標地点を先に切り詰めることで、エリア拘束との押し戻し競合を防ぐ。
+    private Object areaDodgeBoundsOwner;
+    private Bounds areaDodgeBounds;
+    private Vector2 areaDodgeInset;
+    private bool hasAreaDodgeBounds;
+    private bool areaDodgeConfineX;
+    private bool areaDodgeConfineY;
+    private bool areaDodgeConfineYForDynamicBodies;
+    private Collider2D areaDodgeBodyCollider;
+
     private void Awake()
     {
         rigidBody2d = GetComponent<Rigidbody2D>();
@@ -38,10 +49,59 @@ public class DodgeController : MonoBehaviour
     }
 
     /// <summary>
+    /// エリア拘束中の回避移動が、指定範囲の外へ出ないようにする。
+    /// </summary>
+    /// <param name="owner">この制限を設定したエリア。</param>
+    /// <param name="bounds">回避を収めるワールド範囲。</param>
+    /// <param name="inset">壁へのめり込みを避けるための内側余白。</param>
+    /// <param name="confineX">横方向を制限するか。</param>
+    /// <param name="confineY">縦方向を制限するか。</param>
+    /// <param name="confineYForDynamicBodies">Dynamic Rigidbody2D でも縦方向を制限するか。</param>
+    /// <param name="bodyCollider">プレイヤー本体コライダー。</param>
+    public void SetAreaDodgeBounds(
+        Object owner,
+        Bounds bounds,
+        Vector2 inset,
+        bool confineX,
+        bool confineY,
+        bool confineYForDynamicBodies,
+        Collider2D bodyCollider)
+    {
+        if (owner == null || bodyCollider == null)
+        {
+            return;
+        }
+
+        areaDodgeBoundsOwner = owner;
+        areaDodgeBounds = bounds;
+        areaDodgeInset = new Vector2(Mathf.Max(0f, inset.x), Mathf.Max(0f, inset.y));
+        areaDodgeConfineX = confineX;
+        areaDodgeConfineY = confineY;
+        areaDodgeConfineYForDynamicBodies = confineYForDynamicBodies;
+        areaDodgeBodyCollider = bodyCollider;
+        hasAreaDodgeBounds = true;
+    }
+
+    /// <summary>
+    /// 指定エリアが設定した回避移動制限を解除する。
+    /// </summary>
+    /// <param name="owner">解除を要求しているエリア。</param>
+    public void ClearAreaDodgeBounds(Object owner)
+    {
+        if (!hasAreaDodgeBounds || areaDodgeBoundsOwner != owner)
+        {
+            return;
+        }
+
+        hasAreaDodgeBounds = false;
+        areaDodgeBoundsOwner = null;
+        areaDodgeBodyCollider = null;
+    }
+
+    /// <summary>
     /// プレイヤーの回避動作を実行する関数
     /// </summary>
-    /// <param name="direction"></param>
-    /// <returns></returns>
+    /// <param name="direction">回避する方向。</param>
     public async UniTaskVoid Dodge(Vector2 direction)
     {
         if (isDodging) { return; }
@@ -62,20 +122,23 @@ public class DodgeController : MonoBehaviour
             targetPos = startPos + direction.normalized * dodgeDistance;
         }
 
+        // 回避アニメーションは通常通り再生しつつ、移動先だけをロック範囲内に収める。
+        targetPos = ClampPositionToAreaDodgeBounds(targetPos);
+
         float elapsedTime = 0.0f;
 
         while (elapsedTime < dodgeDuration)
         {
             float t = elapsedTime / dodgeDuration;
 
-            Vector2 newPos = Vector2.Lerp(startPos, targetPos, t);
+            Vector2 newPos = ClampPositionToAreaDodgeBounds(Vector2.Lerp(startPos, targetPos, t));
             rigidBody2d.MovePosition(newPos);
 
             await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
             elapsedTime += Time.fixedDeltaTime;
         }
 
-        rigidBody2d.MovePosition(targetPos);
+        rigidBody2d.MovePosition(ClampPositionToAreaDodgeBounds(targetPos));
 
         isDodging = false;
     }
@@ -83,9 +146,55 @@ public class DodgeController : MonoBehaviour
     /// <summary>
     /// 今回避中かどうかを返す関数
     /// </summary>
-    /// <returns></returns>
+    /// <returns>回避中なら true。</returns>
     public bool IsDodging()
     {
         return isDodging;
+    }
+
+    private Vector2 ClampPositionToAreaDodgeBounds(Vector2 position)
+    {
+        // 本体コライダーの現在の相対位置を使い、子トリガーに影響されない範囲で回避先を補正する。
+        if (!hasAreaDodgeBounds || areaDodgeBodyCollider == null || rigidBody2d == null)
+        {
+            return position;
+        }
+
+        Bounds bodyBounds = areaDodgeBodyCollider.bounds;
+        Vector2 currentRigidbodyPosition = rigidBody2d.position;
+        Vector2 minOffset = (Vector2)bodyBounds.min - currentRigidbodyPosition;
+        Vector2 maxOffset = (Vector2)bodyBounds.max - currentRigidbodyPosition;
+        Vector2 clamped = position;
+
+        if (areaDodgeConfineX)
+        {
+            float minX = areaDodgeBounds.min.x + areaDodgeInset.x - minOffset.x;
+            float maxX = areaDodgeBounds.max.x - areaDodgeInset.x - maxOffset.x;
+            clamped.x = minX <= maxX ? Mathf.Clamp(clamped.x, minX, maxX) : areaDodgeBounds.center.x;
+        }
+
+        if (areaDodgeConfineY && ShouldConfineYForAreaDodge())
+        {
+            float minY = areaDodgeBounds.min.y + areaDodgeInset.y - minOffset.y;
+            float maxY = areaDodgeBounds.max.y - areaDodgeInset.y - maxOffset.y;
+            clamped.y = minY <= maxY ? Mathf.Clamp(clamped.y, minY, maxY) : areaDodgeBounds.center.y;
+        }
+
+        return clamped;
+    }
+
+    private bool ShouldConfineYForAreaDodge()
+    {
+        if (rigidBody2d == null)
+        {
+            return true;
+        }
+
+        if (rigidBody2d.bodyType != RigidbodyType2D.Dynamic)
+        {
+            return true;
+        }
+
+        return areaDodgeConfineYForDynamicBodies;
     }
 }
