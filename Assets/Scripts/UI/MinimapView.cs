@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +6,7 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class MinimapView : MonoBehaviour
 {
+    private const string MiniMapBackgroundName = "MiniMapBackGround";
     private const float MiniBoardScale = 42f;
     private const float FullBoardScale = 87f;
     private const float MiniLineThickness = 3f;
@@ -25,12 +26,23 @@ public sealed class MinimapView : MonoBehaviour
     [SerializeField] private Color lineColor = new Color(1f, 1f, 1f, 0.72f);
     [SerializeField] private float minimapFollowSmoothTime = 0.22f;
 
+    [Header("Player Overlap Fade")]
+    [SerializeField] private bool enablePlayerOverlapFade = true;
+    [SerializeField, Range(0f, 1f)] private float occludedAlpha = 0.25f;
+    [SerializeField, Min(0f)] private float fadeSpeed = 1f;
+    [SerializeField, Min(0f)] private float overlapPaddingPixels = 80f;
+
     private readonly List<GameObject> generatedObjects = new List<GameObject>();
+    private readonly Vector3[] miniMapWorldCorners = new Vector3[4];
     private MinimapManager manager;
     private RectTransform miniMapPanel;
     private RectTransform miniMapContent;
     private RectTransform fullMapPanel;
     private RectTransform fullMapContent;
+    private CanvasGroup miniMapCanvasGroup;
+    private CanvasGroup miniMapBackgroundCanvasGroup;
+    private PlayerController cachedPlayer;
+    private Collider2D cachedPlayerCollider;
     private Sprite whiteSprite;
     private Sprite circleSprite;
     private Vector2 miniMapOrigin;
@@ -97,6 +109,11 @@ public sealed class MinimapView : MonoBehaviour
         DrawMiniMapAtCurrentOrigin();
     }
 
+    private void LateUpdate()
+    {
+        UpdateMiniMapOverlapFade();
+    }
+
     public void ToggleFullMap()
     {
         if (fullMapPanel == null)
@@ -150,10 +167,12 @@ public sealed class MinimapView : MonoBehaviour
 
         miniMapPanel = CreatePanel("MiniMapPanel", root, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(290f, 170f), new Vector2(-80f, -70f));
         miniMapPanel.gameObject.AddComponent<RectMask2D>();
+        miniMapCanvasGroup = EnsureCanvasGroup(miniMapPanel.gameObject);
+        miniMapBackgroundCanvasGroup = FindMiniMapBackgroundCanvasGroup(canvas);
         miniMapContent = CreateRect("Content", miniMapPanel);
         Stretch(miniMapContent, 14f);
 
-        fullMapPanel = CreatePanel("FullMapPanel", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1320f, 800f), Vector2.zero, fullMapPanelColor);
+        fullMapPanel = CreatePanel("FullMapPanel", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1620f, 800f), Vector2.zero, fullMapPanelColor);
         fullMapContent = CreateRect("Content", fullMapPanel);
         Stretch(fullMapContent, 22f);
         fullMapPanel.gameObject.SetActive(false);
@@ -560,6 +579,253 @@ public sealed class MinimapView : MonoBehaviour
         return new Vector2(
             Mathf.Max(12f, room.AreaSize.x * boardScale),
             Mathf.Max(8f, room.AreaSize.y * boardScale));
+    }
+
+    private void UpdateMiniMapOverlapFade()
+    {
+        if (miniMapPanel == null || miniMapCanvasGroup == null)
+        {
+            return;
+        }
+
+        float targetAlpha = 1f;
+        if (enablePlayerOverlapFade && IsPlayerTouchingMiniMap())
+        {
+            targetAlpha = Mathf.Clamp01(occludedAlpha);
+        }
+
+        if (fadeSpeed <= 0f)
+        {
+            SetMiniMapFadeAlpha(targetAlpha);
+            return;
+        }
+
+        float alpha = Mathf.MoveTowards(
+            miniMapCanvasGroup.alpha,
+            targetAlpha,
+            fadeSpeed * Time.unscaledDeltaTime);
+        SetMiniMapFadeAlpha(alpha);
+    }
+
+    private bool IsPlayerTouchingMiniMap()
+    {
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null || !TryResolvePlayerCollider(out Collider2D playerCollider))
+        {
+            return false;
+        }
+
+        Rect playerScreenRect = CalculatePlayerScreenRect(playerCollider.bounds, mainCamera);
+        Rect miniMapScreenRect = CalculateMiniMapScreenRect();
+        miniMapScreenRect = ExpandRect(miniMapScreenRect, overlapPaddingPixels);
+        return RectsTouchOrOverlap(playerScreenRect, miniMapScreenRect);
+    }
+
+    private void SetMiniMapFadeAlpha(float alpha)
+    {
+        miniMapCanvasGroup.alpha = alpha;
+
+        if (miniMapBackgroundCanvasGroup == null)
+        {
+            miniMapBackgroundCanvasGroup = FindMiniMapBackgroundCanvasGroup();
+        }
+
+        if (miniMapBackgroundCanvasGroup != null)
+        {
+            miniMapBackgroundCanvasGroup.alpha = alpha;
+        }
+    }
+
+    private bool TryResolvePlayerCollider(out Collider2D playerCollider)
+    {
+        if (cachedPlayer == null)
+        {
+            cachedPlayer = FindFirstObjectByType<PlayerController>();
+            cachedPlayerCollider = null;
+        }
+
+        if (cachedPlayer == null)
+        {
+            playerCollider = null;
+            return false;
+        }
+
+        if (cachedPlayerCollider == null)
+        {
+            cachedPlayerCollider = cachedPlayer.GetComponent<Collider2D>();
+        }
+
+        playerCollider = cachedPlayerCollider;
+        return playerCollider != null && playerCollider.enabled;
+    }
+
+    private Rect CalculatePlayerScreenRect(Bounds bounds, Camera mainCamera)
+    {
+        float minX = float.PositiveInfinity;
+        float minY = float.PositiveInfinity;
+        float maxX = float.NegativeInfinity;
+        float maxY = float.NegativeInfinity;
+
+        AddWorldPointToScreenRect(new Vector3(bounds.min.x, bounds.min.y, bounds.center.z), mainCamera, ref minX, ref minY, ref maxX, ref maxY);
+        AddWorldPointToScreenRect(new Vector3(bounds.min.x, bounds.max.y, bounds.center.z), mainCamera, ref minX, ref minY, ref maxX, ref maxY);
+        AddWorldPointToScreenRect(new Vector3(bounds.max.x, bounds.min.y, bounds.center.z), mainCamera, ref minX, ref minY, ref maxX, ref maxY);
+        AddWorldPointToScreenRect(new Vector3(bounds.max.x, bounds.max.y, bounds.center.z), mainCamera, ref minX, ref minY, ref maxX, ref maxY);
+
+        return Rect.MinMaxRect(minX, minY, maxX, maxY);
+    }
+
+    private static void AddWorldPointToScreenRect(
+        Vector3 worldPoint,
+        Camera mainCamera,
+        ref float minX,
+        ref float minY,
+        ref float maxX,
+        ref float maxY)
+    {
+        Vector3 screenPoint = mainCamera.WorldToScreenPoint(worldPoint);
+        minX = Mathf.Min(minX, screenPoint.x);
+        minY = Mathf.Min(minY, screenPoint.y);
+        maxX = Mathf.Max(maxX, screenPoint.x);
+        maxY = Mathf.Max(maxY, screenPoint.y);
+    }
+
+    private Rect CalculateMiniMapScreenRect()
+    {
+        Rect screenRect = CalculateScreenRect(miniMapPanel);
+
+        if (miniMapBackgroundCanvasGroup == null)
+        {
+            miniMapBackgroundCanvasGroup = FindMiniMapBackgroundCanvasGroup();
+        }
+
+        RectTransform backgroundRect = miniMapBackgroundCanvasGroup != null
+            ? miniMapBackgroundCanvasGroup.transform as RectTransform
+            : null;
+        if (backgroundRect != null)
+        {
+            screenRect = UnionRects(screenRect, CalculateScreenRect(backgroundRect));
+        }
+
+        return screenRect;
+    }
+
+    private Rect CalculateScreenRect(RectTransform rectTransform)
+    {
+        rectTransform.GetWorldCorners(miniMapWorldCorners);
+
+        Canvas canvas = rectTransform.GetComponentInParent<Canvas>();
+        Camera uiCamera = null;
+        if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+        {
+            uiCamera = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
+        }
+
+        float minX = float.PositiveInfinity;
+        float minY = float.PositiveInfinity;
+        float maxX = float.NegativeInfinity;
+        float maxY = float.NegativeInfinity;
+
+        for (int i = 0; i < miniMapWorldCorners.Length; i++)
+        {
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(uiCamera, miniMapWorldCorners[i]);
+            minX = Mathf.Min(minX, screenPoint.x);
+            minY = Mathf.Min(minY, screenPoint.y);
+            maxX = Mathf.Max(maxX, screenPoint.x);
+            maxY = Mathf.Max(maxY, screenPoint.y);
+        }
+
+        return Rect.MinMaxRect(minX, minY, maxX, maxY);
+    }
+
+    private static Rect UnionRects(Rect a, Rect b)
+    {
+        return Rect.MinMaxRect(
+            Mathf.Min(a.xMin, b.xMin),
+            Mathf.Min(a.yMin, b.yMin),
+            Mathf.Max(a.xMax, b.xMax),
+            Mathf.Max(a.yMax, b.yMax));
+    }
+
+    private static Rect ExpandRect(Rect rect, float padding)
+    {
+        if (padding <= 0f)
+        {
+            return rect;
+        }
+
+        return Rect.MinMaxRect(
+            rect.xMin - padding,
+            rect.yMin - padding,
+            rect.xMax + padding,
+            rect.yMax + padding);
+    }
+
+    private static bool RectsTouchOrOverlap(Rect a, Rect b)
+    {
+        return a.xMin <= b.xMax &&
+            a.xMax >= b.xMin &&
+            a.yMin <= b.yMax &&
+            a.yMax >= b.yMin;
+    }
+
+    private CanvasGroup FindMiniMapBackgroundCanvasGroup()
+    {
+        if (miniMapPanel == null)
+        {
+            return null;
+        }
+
+        return FindMiniMapBackgroundCanvasGroup(miniMapPanel.GetComponentInParent<Canvas>());
+    }
+
+    private CanvasGroup FindMiniMapBackgroundCanvasGroup(Canvas canvas)
+    {
+        if (canvas == null)
+        {
+            return null;
+        }
+
+        RectTransform background = FindChildRectTransform(canvas.transform, MiniMapBackgroundName);
+        if (background == null)
+        {
+            return null;
+        }
+
+        return EnsureCanvasGroup(background.gameObject);
+    }
+
+    private static RectTransform FindChildRectTransform(Transform root, string objectName)
+    {
+        if (root == null)
+        {
+            return null;
+        }
+
+        RectTransform[] children = root.GetComponentsInChildren<RectTransform>(true);
+        for (int i = 0; i < children.Length; i++)
+        {
+            if (children[i] != null && children[i].gameObject.name == objectName)
+            {
+                return children[i];
+            }
+        }
+
+        return null;
+    }
+
+    private static CanvasGroup EnsureCanvasGroup(GameObject targetObject)
+    {
+        if (targetObject == null)
+        {
+            return null;
+        }
+
+        if (!targetObject.TryGetComponent(out CanvasGroup canvasGroup))
+        {
+            canvasGroup = targetObject.AddComponent<CanvasGroup>();
+        }
+
+        return canvasGroup;
     }
 
     private Canvas FindCanvas()

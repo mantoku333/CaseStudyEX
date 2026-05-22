@@ -228,6 +228,17 @@ public sealed class MinimapManager : MonoBehaviour
         NotifyChanged();
     }
 
+    public void ClearCurrentRoom()
+    {
+        if (string.IsNullOrWhiteSpace(currentRoomId))
+        {
+            return;
+        }
+
+        currentRoomId = string.Empty;
+        NotifyChanged();
+    }
+
     public bool IsVisited(string roomId)
     {
         return !string.IsNullOrWhiteSpace(roomId) && visitedRoomIds.Contains(roomId);
