@@ -26,9 +26,12 @@ namespace Player
         [SerializeField] private int animatorLayer = 0;
         [SerializeField] private string idleStateName = "idle";
         [SerializeField] private string runStateName = "run";
+        [SerializeField] private string jumpStartStateName = "jumpStart";
         [SerializeField] private string jumpStateName = "jump";
         [SerializeField] private string glideStateName = "glide";
-        [SerializeField] private string landStateName = "land";
+        [SerializeField] private string jumpEndStateName = "jumpEnd";
+        [FormerlySerializedAs("landStateName")]
+        [SerializeField] private string landFallbackStateName = "land";
         [SerializeField] private string dodgeStateName = "dodge";
         [SerializeField] private string parryStateName = "parry";
         [SerializeField] private string changeStateName = "change";
@@ -41,9 +44,10 @@ namespace Player
         {
             Idle,
             Run,
+            JumpStart,
             Jump,
             Glide,
-            Land,
+            JumpEnd,
             Dodge,
             Parry,
             Change,
@@ -57,9 +61,11 @@ namespace Player
         private bool _warnedNoAnimator;
         private IPlayerViewStateProvider _stateProvider;
         private SpriteRenderer[] _resolvedFlipRenderers = EmptyRenderers;
+        private bool _jumpStartLocked;
         private bool _landingLocked;
         private bool _hasPreviousGrounded;
         private bool _previousGrounded;
+        private string _activeJumpStartStateName;
         private string _activeLandStateName;
         private string _currentAnimatorStateName;
 
@@ -71,9 +77,11 @@ namespace Player
         private void OnEnable()
         {
             _currentState = (VisualState)(-1);
+            _jumpStartLocked = false;
             _landingLocked = false;
             _hasPreviousGrounded = false;
             _previousGrounded = false;
+            _activeJumpStartStateName = null;
             _activeLandStateName = null;
             _currentAnimatorStateName = null;
         }
@@ -107,13 +115,18 @@ namespace Player
                 ApplyFacing(isFacingRight);
             }
 
-            UpdateLandingLock(isGrounded);
-            if (_landingLocked && _currentState == VisualState.Land && IsLandAnimationFinished())
+            UpdateJumpAnimationLocks(isGrounded);
+            if (_jumpStartLocked && _currentState == VisualState.JumpStart && IsActiveAnimationFinished(_activeJumpStartStateName))
+            {
+                _jumpStartLocked = false;
+            }
+
+            if (_landingLocked && _currentState == VisualState.JumpEnd && IsActiveAnimationFinished(_activeLandStateName))
             {
                 _landingLocked = false;
             }
 
-            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, isParrying, isChanging, isAttacking, _landingLocked);
+            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, isParrying, isChanging, isAttacking, _jumpStartLocked, _landingLocked);
             if (_currentState != nextState)
             {
                 SwitchState(nextState);
@@ -207,7 +220,7 @@ namespace Player
             return false;
         }
 
-        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool isParrying, bool isChanging, bool isAttacking, bool hasLandingLock)
+        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool isParrying, bool isChanging, bool isAttacking, bool hasJumpStartLock, bool hasLandingLock)
         {
             if (isParrying)
             {
@@ -231,12 +244,17 @@ namespace Player
 
             if (hasLandingLock)
             {
-                return VisualState.Land;
+                return VisualState.JumpEnd;
             }
 
             if (isGliding)
             {
                 return VisualState.Glide;
+            }
+
+            if (hasJumpStartLock)
+            {
+                return VisualState.JumpStart;
             }
 
             if (!isGrounded)
@@ -247,7 +265,7 @@ namespace Player
             return isMoving ? VisualState.Run : VisualState.Idle;
         }
 
-        private void UpdateLandingLock(bool isGrounded)
+        private void UpdateJumpAnimationLocks(bool isGrounded)
         {
             if (!_hasPreviousGrounded)
             {
@@ -256,13 +274,27 @@ namespace Player
                 return;
             }
 
-            if (!_previousGrounded && isGrounded)
+            if (_previousGrounded && !isGrounded)
+            {
+                _jumpStartLocked = true;
+                _landingLocked = false;
+                _activeJumpStartStateName = null;
+                _activeLandStateName = null;
+            }
+            else if (!_previousGrounded && isGrounded)
             {
                 _landingLocked = true;
+                _jumpStartLocked = false;
+                _activeJumpStartStateName = null;
             }
             else if (!isGrounded)
             {
                 _landingLocked = false;
+            }
+            else
+            {
+                _jumpStartLocked = false;
+                _activeJumpStartStateName = null;
             }
 
             _previousGrounded = isGrounded;
@@ -299,36 +331,45 @@ namespace Player
             _currentState = nextState;
 
             var stateName = ResolveAnimatorStateName(nextState);
-            _currentAnimatorStateName = stateName;
-            if (nextState == VisualState.Land)
+            if (nextState == VisualState.JumpStart)
+            {
+                _activeJumpStartStateName = stateName;
+                _activeLandStateName = null;
+            }
+            else if (nextState == VisualState.JumpEnd)
             {
                 _activeLandStateName = stateName;
+                _activeJumpStartStateName = null;
             }
             else
             {
+                _activeJumpStartStateName = null;
                 _activeLandStateName = null;
             }
 
-            if (!string.IsNullOrEmpty(stateName))
+            if (!string.IsNullOrEmpty(stateName) &&
+                !string.Equals(stateName, _currentAnimatorStateName, System.StringComparison.Ordinal))
             {
                 animator.Play(stateName, animatorLayer, 0f);
             }
+
+            _currentAnimatorStateName = stateName;
         }
 
-        private bool IsLandAnimationFinished()
+        private bool IsActiveAnimationFinished(string activeStateName)
         {
             if (animator == null)
             {
                 return true;
             }
 
-            if (string.IsNullOrEmpty(_activeLandStateName))
+            if (string.IsNullOrEmpty(activeStateName))
             {
                 return true;
             }
 
             var stateInfo = animator.GetCurrentAnimatorStateInfo(animatorLayer);
-            if (!stateInfo.IsName(_activeLandStateName))
+            if (!stateInfo.IsName(activeStateName))
             {
                 return true;
             }
@@ -337,7 +378,7 @@ namespace Player
         }
 
         /// <summary>
-        /// Receives AnimationEvent from land.anim.
+        /// Receives AnimationEvent from jumpEnd.anim.
         /// Kept for compatibility with clip event wiring.
         /// </summary>
         public void OnLandAnimationEnd()
@@ -352,12 +393,14 @@ namespace Player
             {
                 case VisualState.Run:
                     return runStateName;
+                case VisualState.JumpStart:
+                    return jumpStartStateName;
                 case VisualState.Jump:
                     return jumpStateName;
                 case VisualState.Glide:
                     return glideStateName;
-                case VisualState.Land:
-                    return landStateName;
+                case VisualState.JumpEnd:
+                    return jumpEndStateName;
                 case VisualState.Dodge:
                     return dodgeStateName;
                 case VisualState.Parry:
@@ -388,15 +431,26 @@ namespace Player
                     if (AnimatorHasState("Walk")) return "Walk";
                     if (AnimatorHasState("run")) return "run";
                     break;
+                case VisualState.JumpStart:
+                    if (AnimatorHasState("JumpStart")) return "JumpStart";
+                    if (AnimatorHasState("jumpStart")) return "jumpStart";
+                    if (AnimatorHasState("Jump")) return "Jump";
+                    if (AnimatorHasState("jump")) return "jump";
+                    break;
                 case VisualState.Jump:
                     if (AnimatorHasState("Jump")) return "Jump";
                     if (AnimatorHasState("jump")) return "jump";
+                    if (AnimatorHasState("JumpStart")) return "JumpStart";
+                    if (AnimatorHasState("jumpStart")) return "jumpStart";
                     break;
                 case VisualState.Glide:
                     if (AnimatorHasState("Glide")) return "Glide";
                     if (AnimatorHasState("glide")) return "glide";
                     break;
-                case VisualState.Land:
+                case VisualState.JumpEnd:
+                    if (AnimatorHasState("JumpEnd")) return "JumpEnd";
+                    if (AnimatorHasState("jumpEnd")) return "jumpEnd";
+                    if (AnimatorHasState(landFallbackStateName)) return landFallbackStateName;
                     if (AnimatorHasState("Land")) return "Land";
                     if (AnimatorHasState("land")) return "land";
                     break;
