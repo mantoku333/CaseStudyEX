@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [AddComponentMenu("UI/Minimap Room")]
@@ -5,6 +6,7 @@ using UnityEngine;
 public sealed class MinimapRoom : MonoBehaviour
 {
     private static readonly Vector2 DefaultFreeformRoomSize = new Vector2(1.5f, 1f);
+    private static readonly List<MinimapRoom> OccupiedRooms = new List<MinimapRoom>();
 
     [Header("Room Identity")]
     [SerializeField, Tooltip("Unique room id for the minimap. Uses the GameObject name when empty.")]
@@ -34,6 +36,8 @@ public sealed class MinimapRoom : MonoBehaviour
 
     [Header("Detection")]
     [SerializeField] private string playerTag = "Player";
+
+    private int overlapCount;
 
     public string RoomId => roomId;
     public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? roomId : displayName;
@@ -69,6 +73,13 @@ public sealed class MinimapRoom : MonoBehaviour
         if (MinimapManager.Instance != null)
         {
             MinimapManager.Instance.UnregisterRoom(this);
+        }
+
+        if (overlapCount > 0)
+        {
+            OccupiedRooms.Remove(this);
+            overlapCount = 0;
+            ActivateBestOccupiedRoom();
         }
     }
 
@@ -186,7 +197,15 @@ public sealed class MinimapRoom : MonoBehaviour
     {
         if (collision.CompareTag(playerTag))
         {
-            EnterRoom();
+            HandlePlayerEntered();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag(playerTag))
+        {
+            HandlePlayerExited();
         }
     }
 
@@ -194,8 +213,46 @@ public sealed class MinimapRoom : MonoBehaviour
     {
         if (other.CompareTag(playerTag))
         {
-            EnterRoom();
+            HandlePlayerEntered();
         }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag(playerTag))
+        {
+            HandlePlayerExited();
+        }
+    }
+
+    private void HandlePlayerEntered()
+    {
+        overlapCount++;
+        if (overlapCount != 1)
+        {
+            return;
+        }
+
+        OccupiedRooms.Remove(this);
+        OccupiedRooms.Add(this);
+        EnterRoom();
+    }
+
+    private void HandlePlayerExited()
+    {
+        if (overlapCount <= 0)
+        {
+            return;
+        }
+
+        overlapCount--;
+        if (overlapCount != 0)
+        {
+            return;
+        }
+
+        OccupiedRooms.Remove(this);
+        ActivateBestOccupiedRoom();
     }
 
     private void EnterRoom()
@@ -230,7 +287,7 @@ public sealed class MinimapRoom : MonoBehaviour
             Collider2D roomCollider = colliders2D[i];
             if (roomCollider != null && roomCollider.enabled && roomCollider.OverlapPoint(playerPosition2D))
             {
-                EnterRoom();
+                HandlePlayerEntered();
                 return;
             }
         }
@@ -241,9 +298,25 @@ public sealed class MinimapRoom : MonoBehaviour
             Collider roomCollider = colliders[i];
             if (roomCollider != null && roomCollider.enabled && roomCollider.bounds.Contains(playerPosition))
             {
-                EnterRoom();
+                HandlePlayerEntered();
                 return;
             }
+        }
+    }
+
+    private static void ActivateBestOccupiedRoom()
+    {
+        for (int i = OccupiedRooms.Count - 1; i >= 0; i--)
+        {
+            MinimapRoom room = OccupiedRooms[i];
+            if (room == null || !room.isActiveAndEnabled || room.overlapCount <= 0)
+            {
+                OccupiedRooms.RemoveAt(i);
+                continue;
+            }
+
+            room.EnterRoom();
+            return;
         }
     }
 }
