@@ -51,6 +51,12 @@ public class GunController : MonoBehaviour
     private SpriteRenderer sourceSpriteRenderer;
     private Sprite[] recoilEffectSprites;
 
+    public float CurrentCoolTime => Mathf.Max(0.0f, currentCoolTime);
+    public float ReloadDuration => Mathf.Max(0.0f, coolTime);
+    public float ReloadRemainingRatio =>
+        coolTime > 0.0f ? Mathf.Clamp01(currentCoolTime / coolTime) : 0.0f;
+    public bool IsReloading => currentCoolTime > 0.0f && coolTime > 0.0f;
+
     void Start()
     {
         //Rigidbody2Dの取得
