@@ -62,6 +62,24 @@ public class CameraManager : MonoBehaviour
             if (cam.gameObject.name == "CN_FollowCam") _followCam = cam;
             else if (cam.gameObject.name == "CN_DirectFollowCam") _directFollowCam = cam;
         }
+
+        EnsurePlayerFollowBiasComponents();
+    }
+
+    private void EnsurePlayerFollowBiasComponents()
+    {
+        EnsurePlayerFollowBiasComponent(_followCam);
+        EnsurePlayerFollowBiasComponent(_directFollowCam);
+    }
+
+    private static void EnsurePlayerFollowBiasComponent(CinemachineCamera camera)
+    {
+        if (camera == null || camera.GetComponent<FollowCameraFacingBias>() != null)
+        {
+            return;
+        }
+
+        camera.gameObject.AddComponent<FollowCameraFacingBias>();
     }
 
     /// <summary>
