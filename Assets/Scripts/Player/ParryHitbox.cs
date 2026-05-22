@@ -54,15 +54,15 @@ public class ParryHitbox : MonoBehaviour
 
         if (enemyBullet != null)
         {
-            if (umbrellaParryController == null)
+            if (enemyBullet.IsReflectedByPlayer)
             {
+                Debug.Log("反射弾なのでパリィ対象外です");
                 return;
             }
 
-            if (!umbrellaParryController.IsParrying())
-            {
-                return;
-            }
+            if (umbrellaParryController == null){  return; }
+
+            if (!umbrellaParryController.IsParrying()){ return; }
 
             Debug.Log("弾を通常パリィしました");
 
@@ -75,15 +75,9 @@ public class ParryHitbox : MonoBehaviour
 
         if (enemyTackleAttack != null)
         {
-            if (umbrellaParryController == null)
-            {
-                return;
-            }
+            if (umbrellaParryController == null){ return; }
 
-            if (!umbrellaParryController.IsParrying())
-            {
-                return;
-            }
+            if (!umbrellaParryController.IsParrying()){ return; }
 
             if (!enemyTackleAttack.IsCharging)
             {
@@ -182,8 +176,24 @@ public class ParryHitbox : MonoBehaviour
 
     private static bool IsEnemyAttack(Collider2D collision)
     {
-        return collision.GetComponent<EnemyBullet>() != null ||
-               collision.GetComponentInParent<EnemyTackleAttack>() != null ||
+        if (collision == null)
+        {
+            return false;
+        }
+
+        EnemyBullet enemyBullet = collision.GetComponent<EnemyBullet>();
+
+        if (enemyBullet != null)
+        {
+            if (enemyBullet.IsReflectedByPlayer)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        return collision.GetComponentInParent<EnemyTackleAttack>() != null ||
                collision.GetComponent<LastBossAttackParryTarget>() != null;
     }
 
@@ -239,10 +249,9 @@ public class ParryHitbox : MonoBehaviour
 
             EnemyBullet enemyBullet = attackObject.GetComponent<EnemyBullet>();
 
-            if (enemyBullet == null)
-            {
-                continue;
-            }
+            if (enemyBullet == null) { continue; }
+
+            if (enemyBullet.IsReflectedByPlayer) { continue; }
 
             if (enemyBullet.CanJustParry())
             {
