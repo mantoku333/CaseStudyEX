@@ -191,8 +191,6 @@ namespace Metroidvania.Enemy
                 return;
             }
 
-            //Debug.Log($"[EnemyContact ApplyContactHit] frame={Time.frameCount}, time={Time.time}, enemy={name}");
-
             if (Time.time < nextHitTime)
             {
                 return;
@@ -203,13 +201,11 @@ namespace Metroidvania.Enemy
             {
                 didDamage = cachedPlayerHealth.TryTakeDamage(contactDamage);
 
-                //Debug.Log($"[EnemyContact DamageResult] frame={Time.frameCount}, didDamage={didDamage}");
             }
 
             // フラッシュは HP クールダウンを通過して、実際にダメージが入った時だけ再生する。
             if (didDamage && cachedPlayerFlash != null)
             {
-                //Debug.Log($"[EnemyContact PlayFlashForced] frame={Time.frameCount}");
                 cachedPlayerFlash.PlayFlashForced();
             }
 

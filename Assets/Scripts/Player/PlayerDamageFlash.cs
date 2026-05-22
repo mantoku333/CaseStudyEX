@@ -111,10 +111,6 @@ namespace Metroidvania.Player
                     continue;
                 }
 
-                Debug.Log(
-                    $"[DamageFlash Restore] frame={Time.frameCount}, renderer={targetRenderers[i].name}, current={targetRenderers[i].color}, restore={restoreColors[i]}",
-                    targetRenderers[i]);
-
                 targetRenderers[i].color = restoreColors[i];
             }
         }
@@ -134,10 +130,6 @@ namespace Metroidvania.Player
                 }
 
                 restoreColors[i] = targetRenderers[i].color;
-
-                Debug.Log(
-                    $"[DamageFlash Capture] frame={Time.frameCount}, renderer={targetRenderers[i].name}, captured={restoreColors[i]}",
-                    targetRenderers[i]);
             }
         }
     }
