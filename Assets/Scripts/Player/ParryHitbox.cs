@@ -49,7 +49,6 @@ public class ParryHitbox : MonoBehaviour
     {
         AddEnemyAttackIfNeeded(collision);
 
-
         EnemyBullet enemyBullet = collision.GetComponent<EnemyBullet>();
 
         if (enemyBullet != null)
@@ -60,9 +59,9 @@ public class ParryHitbox : MonoBehaviour
                 return;
             }
 
-            if (umbrellaParryController == null){  return; }
+            if (umbrellaParryController == null) { return; }
 
-            if (!umbrellaParryController.IsParrying()){ return; }
+            if (!umbrellaParryController.IsParrying()) { return; }
 
             Debug.Log("弾を通常パリィしました");
 
@@ -70,24 +69,21 @@ public class ParryHitbox : MonoBehaviour
             return;
         }
 
-        EnemyTackleAttack enemyTackleAttack =
-            collision.GetComponentInParent<EnemyTackleAttack>();
-
-        if (enemyTackleAttack != null)
+        if (TryGetParryableAttack(collision, out IParryableAttack parryableAttack))
         {
-            if (umbrellaParryController == null){ return; }
+            if (umbrellaParryController == null) { return; }
 
-            if (!umbrellaParryController.IsParrying()){ return; }
+            if (!umbrellaParryController.IsParrying()) { return; }
 
-            if (!enemyTackleAttack.IsCharging)
+            if (!parryableAttack.IsParryable)
             {
-                Debug.Log("敵は突進していない");
+                Debug.Log("敵攻撃はパリィ可能状態ではありません");
                 return;
             }
 
-            Debug.Log("突進をパリィしました");
+            Debug.Log("突進攻撃をパリィしました");
 
-            enemyTackleAttack.StopByParry();
+            parryableAttack.StopByParry();
         }
     }
 
@@ -193,8 +189,8 @@ public class ParryHitbox : MonoBehaviour
             return true;
         }
 
-        return collision.GetComponentInParent<EnemyTackleAttack>() != null ||
-               collision.GetComponent<LastBossAttackParryTarget>() != null;
+        return TryGetParryableAttack(collision, out _) ||
+       collision.GetComponent<LastBossAttackParryTarget>() != null;
     }
 
     private bool IsTrackedAttackActive(GameObject attackObject)
@@ -282,7 +278,7 @@ public class ParryHitbox : MonoBehaviour
     /// 成功した場合は敵の突進を止める。
     /// </summary>
     /// <returns></returns>
-    public bool TryParryEnemyTackleAttack()
+    public bool TryParryEnemyAttack()
     {
         if (hitboxCollider == null || !hitboxCollider.enabled)
         {
@@ -303,23 +299,45 @@ public class ParryHitbox : MonoBehaviour
                 continue;
             }
 
-            EnemyTackleAttack enemyTackleAttack = hitCollider.GetComponentInParent<EnemyTackleAttack>();
-
-            if (enemyTackleAttack == null)
+            if (!TryGetParryableAttack(hitCollider, out IParryableAttack parryableAttack))
             {
                 continue;
             }
 
-            if (!enemyTackleAttack.IsCharging)
+            if (!parryableAttack.IsParryable)
             {
-                Debug.Log("突進していない敵なのでパリィしません");
+                Debug.Log("パリィ可能状態ではない攻撃なのでパリィしません");
                 continue;
             }
 
-            Debug.Log("突進敵の通常パリィ成功");
-
-            enemyTackleAttack.StopByParry();
+            parryableAttack.StopByParry();
             return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryGetParryableAttack(
+    Collider2D collision,
+    out IParryableAttack parryableAttack)
+    {
+        parryableAttack = null;
+
+        if (collision == null)
+        {
+            return false;
+        }
+
+        MonoBehaviour[] behaviours =
+            collision.GetComponentsInParent<MonoBehaviour>();
+
+        for (int i = 0; i < behaviours.Length; i++)
+        {
+            if (behaviours[i] is IParryableAttack attack)
+            {
+                parryableAttack = attack;
+                return true;
+            }
         }
 
         return false;

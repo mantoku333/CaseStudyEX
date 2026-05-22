@@ -448,7 +448,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
                     if (!parrySuccess)
                     {
-                        parrySuccess = parryHitbox.TryParryEnemyTackleAttack();
+                        parrySuccess = parryHitbox.TryParryEnemyAttack();
                     }
                 }
 
