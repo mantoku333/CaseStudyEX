@@ -26,9 +26,12 @@ namespace Metroidvania.Enemy
         private PlayerHealth cachedPlayerHealth;
         private float nextHitTime;
 
+        private GameName.Enemy.EnemyController enemyController;　　//(中江)
+
         private void Awake()
         {
             enemyColliders = GetComponents<Collider2D>();
+            enemyController = GetComponent<GameName.Enemy.EnemyController>();
             CachePlayerReferences();
 
             if (passThroughPlayer)
@@ -177,6 +180,17 @@ namespace Metroidvania.Enemy
 
         private void ApplyContactHit()
         {
+            if (enemyController != null && enemyController.IsContactDamageIgnored())
+            {
+                Debug.Log($"[EnemyContact] パリィ後なので接触ダメージ無効 frame={Time.frameCount}");
+                return;
+            }
+
+            if (Time.time < nextHitTime)
+            {
+                return;
+            }
+
             if (Time.time < nextHitTime)
             {
                 return;
@@ -186,6 +200,7 @@ namespace Metroidvania.Enemy
             if (applyDamageInPassThrough && cachedPlayerHealth != null)
             {
                 didDamage = cachedPlayerHealth.TryTakeDamage(contactDamage);
+
             }
 
             // フラッシュは HP クールダウンを通過して、実際にダメージが入った時だけ再生する。

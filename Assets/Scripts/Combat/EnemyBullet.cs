@@ -982,7 +982,7 @@ namespace Metroidvania.Enemy
 
             Debug.Log($"反射弾が敵に命中。ダメージ:{reflectedDamage}");
 
-            //enemyController.TakeDamage(reflectedDamage);
+            enemyController.TakeDamage(reflectedDamage);
 
             Destroy(gameObject);
             return true;
