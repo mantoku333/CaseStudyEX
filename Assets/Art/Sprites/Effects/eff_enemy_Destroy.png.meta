@@ -1,0 +1,2405 @@
+fileFormatVersion: 2
+guid: dc02057457a47ea49ab3df414abe5057
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 145026030085412847
+    second: eff_enemy_Destroy_0
+  - first:
+      213: -6444965203314296063
+    second: eff_enemy_Destroy_1
+  - first:
+      213: -5634795398103597922
+    second: eff_enemy_Destroy_2
+  - first:
+      213: -1681079815420842902
+    second: eff_enemy_Destroy_3
+  - first:
+      213: -524439311450690381
+    second: eff_enemy_Destroy_4
+  - first:
+      213: -6966020469227298767
+    second: eff_enemy_Destroy_5
+  - first:
+      213: -70826544381714349
+    second: eff_enemy_Destroy_6
+  - first:
+      213: -3782994732550473065
+    second: eff_enemy_Destroy_7
+  - first:
+      213: 4730632262308976853
+    second: eff_enemy_Destroy_8
+  - first:
+      213: -5614439397767788265
+    second: eff_enemy_Destroy_9
+  - first:
+      213: 806635480155004787
+    second: eff_enemy_Destroy_10
+  - first:
+      213: -5554322365620356516
+    second: eff_enemy_Destroy_11
+  - first:
+      213: -2569918981726238165
+    second: eff_enemy_Destroy_12
+  - first:
+      213: -2882322509740506585
+    second: eff_enemy_Destroy_13
+  - first:
+      213: -79356318761888190
+    second: eff_enemy_Destroy_14
+  - first:
+      213: -3758452726247281530
+    second: eff_enemy_Destroy_15
+  - first:
+      213: 4633286594407859059
+    second: eff_enemy_Destroy_16
+  - first:
+      213: -2361142159468778048
+    second: eff_enemy_Destroy_17
+  - first:
+      213: -8836381192343905652
+    second: eff_enemy_Destroy_18
+  - first:
+      213: -1881166295938358027
+    second: eff_enemy_Destroy_19
+  - first:
+      213: -6435334702936681870
+    second: eff_enemy_Destroy_20
+  - first:
+      213: -6718024891146161785
+    second: eff_enemy_Destroy_21
+  - first:
+      213: -698994296046651873
+    second: eff_enemy_Destroy_22
+  - first:
+      213: 4372965446214673651
+    second: eff_enemy_Destroy_23
+  - first:
+      213: -8908573024719531410
+    second: eff_enemy_Destroy_24
+  - first:
+      213: 2319200057341007555
+    second: eff_enemy_Destroy_25
+  - first:
+      213: 2622913700125188383
+    second: eff_enemy_Destroy_26
+  - first:
+      213: -6143065002007497632
+    second: eff_enemy_Destroy_27
+  - first:
+      213: -5691153141669750088
+    second: eff_enemy_Destroy_28
+  - first:
+      213: -6344876469270631482
+    second: eff_enemy_Destroy_29
+  - first:
+      213: -1106148686722771778
+    second: eff_enemy_Destroy_30
+  - first:
+      213: -8611121718019049514
+    second: eff_enemy_Destroy_31
+  - first:
+      213: 5325230301486593401
+    second: eff_enemy_Destroy_32
+  - first:
+      213: 4314290597495189641
+    second: eff_enemy_Destroy_33
+  - first:
+      213: 5650296005167241679
+    second: eff_enemy_Destroy_34
+  - first:
+      213: 4256580175172606060
+    second: eff_enemy_Destroy_35
+  - first:
+      213: -3727764298550806149
+    second: eff_enemy_Destroy_36
+  - first:
+      213: 636118549705494979
+    second: eff_enemy_Destroy_37
+  - first:
+      213: 6894830113669095063
+    second: eff_enemy_Destroy_38
+  - first:
+      213: 5694065374899819501
+    second: eff_enemy_Destroy_39
+  - first:
+      213: -1702310592626667584
+    second: eff_enemy_Destroy_40
+  - first:
+      213: 5243467298875404204
+    second: eff_enemy_Destroy_41
+  - first:
+      213: 7826904909434484361
+    second: eff_enemy_Destroy_42
+  - first:
+      213: 6522165982753228027
+    second: eff_enemy_Destroy_43
+  - first:
+      213: -1571427417798604259
+    second: eff_enemy_Destroy_44
+  - first:
+      213: -1238728589993874643
+    second: eff_enemy_Destroy_45
+  - first:
+      213: 5366474060911696451
+    second: eff_enemy_Destroy_46
+  - first:
+      213: 5476161653502140632
+    second: eff_enemy_Destroy_47
+  - first:
+      213: 4548822940483310721
+    second: eff_enemy_Destroy_48
+  - first:
+      213: 3838012441631160331
+    second: eff_enemy_Destroy_49
+  - first:
+      213: 218698576950773683
+    second: eff_enemy_Destroy_50
+  - first:
+      213: 5687656260324271072
+    second: eff_enemy_Destroy_51
+  - first:
+      213: 5873244057431627621
+    second: eff_enemy_Destroy_52
+  - first:
+      213: -6573689222843458255
+    second: eff_enemy_Destroy_53
+  - first:
+      213: -3672182452778905674
+    second: eff_enemy_Destroy_54
+  - first:
+      213: 6050208826229643209
+    second: eff_enemy_Destroy_55
+  - first:
+      213: 3891991291317932102
+    second: eff_enemy_Destroy_56
+  - first:
+      213: -1483920932479554796
+    second: eff_enemy_Destroy_57
+  - first:
+      213: 3620471509622300123
+    second: eff_enemy_Destroy_58
+  - first:
+      213: 15774325537777341
+    second: eff_enemy_Destroy_59
+  - first:
+      213: -4807433265060801709
+    second: eff_enemy_Destroy_60
+  - first:
+      213: -5741877277009562717
+    second: eff_enemy_Destroy_61
+  - first:
+      213: 4825837213198787151
+    second: eff_enemy_Destroy_62
+  - first:
+      213: -5203850821712768573
+    second: eff_enemy_Destroy_63
+  - first:
+      213: -2662340010455169777
+    second: eff_enemy_Destroy_64
+  - first:
+      213: -7739101360776770857
+    second: eff_enemy_Destroy_65
+  - first:
+      213: 5604178956536881258
+    second: eff_enemy_Destroy_66
+  - first:
+      213: -3580310284311282188
+    second: eff_enemy_Destroy_67
+  - first:
+      213: 6828202072413824928
+    second: eff_enemy_Destroy_68
+  - first:
+      213: -8575048390310680794
+    second: eff_enemy_Destroy_69
+  - first:
+      213: 7527277847587795481
+    second: eff_enemy_Destroy_70
+  - first:
+      213: 1349969192841529646
+    second: eff_enemy_Destroy_71
+  - first:
+      213: 1225354170768750038
+    second: eff_enemy_Destroy_72
+  - first:
+      213: 7620983598856937386
+    second: eff_enemy_Destroy_73
+  - first:
+      213: -7318410855570407994
+    second: eff_enemy_Destroy_74
+  - first:
+      213: 1246960125782880905
+    second: eff_enemy_Destroy_75
+  - first:
+      213: 5504575617976416595
+    second: eff_enemy_Destroy_76
+  - first:
+      213: 4255129908923363980
+    second: eff_enemy_Destroy_77
+  - first:
+      213: -1975572747039940253
+    second: eff_enemy_Destroy_78
+  - first:
+      213: 3810362332159052458
+    second: eff_enemy_Destroy_79
+  - first:
+      213: -1484725464068952304
+    second: eff_enemy_Destroy_80
+  - first:
+      213: 2438840357624908387
+    second: eff_enemy_Destroy_81
+  - first:
+      213: -2240682581075190551
+    second: eff_enemy_Destroy_82
+  - first:
+      213: -2177827183582689500
+    second: eff_enemy_Destroy_83
+  - first:
+      213: 2999931518455244038
+    second: eff_enemy_Destroy_84
+  - first:
+      213: 2304413824821184433
+    second: eff_enemy_Destroy_85
+  - first:
+      213: -734247015604133543
+    second: eff_enemy_Destroy_86
+  - first:
+      213: -8302569673551368210
+    second: eff_enemy_Destroy_87
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_0
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 4426
+        width: 260
+        height: 223
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe71d6ee76c330200800000000000000
+      internalID: 145026030085412847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_1
+      rect:
+        serializedVersion: 2
+        x: 1395
+        y: 4426
+        width: 282
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10bb2b26b42ee86a0800000000000000
+      internalID: -6444965203314296063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_2
+      rect:
+        serializedVersion: 2
+        x: 2416
+        y: 4426
+        width: 288
+        height: 236
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9c770a907f2dc1b0800000000000000
+      internalID: -5634795398103597922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_3
+      rect:
+        serializedVersion: 2
+        x: 3437
+        y: 4426
+        width: 299
+        height: 244
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6ce2ca80da9ba8e0800000000000000
+      internalID: -1681079815420842902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_4
+      rect:
+        serializedVersion: 2
+        x: 4456
+        y: 4426
+        width: 310
+        height: 249
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bc2bbe8931d8b8f0800000000000000
+      internalID: -524439311450690381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_5
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 3402
+        width: 324
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1306b917a49b35f90800000000000000
+      internalID: -6966020469227298767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_6
+      rect:
+        serializedVersion: 2
+        x: 1375
+        y: 3402
+        width: 331
+        height: 260
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 350a57512af540ff0800000000000000
+      internalID: -70826544381714349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_7
+      rect:
+        serializedVersion: 2
+        x: 2393
+        y: 3402
+        width: 345
+        height: 268
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79ab72b755a108bc0800000000000000
+      internalID: -3782994732550473065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_8
+      rect:
+        serializedVersion: 2
+        x: 3415
+        y: 3402
+        width: 350
+        height: 272
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d8dde58af496a140800000000000000
+      internalID: 4730632262308976853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_9
+      rect:
+        serializedVersion: 2
+        x: 4437
+        y: 3402
+        width: 354
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 719c7134d118512b0800000000000000
+      internalID: -5614439397767788265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_10
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 2378
+        width: 356
+        height: 277
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37f9dd902beb13b00800000000000000
+      internalID: 806635480155004787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_11
+      rect:
+        serializedVersion: 2
+        x: 1396
+        y: 2378
+        width: 326
+        height: 280
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5af03d8c351be2b0800000000000000
+      internalID: -5554322365620356516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_12
+      rect:
+        serializedVersion: 2
+        x: 2425
+        y: 2378
+        width: 322
+        height: 281
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2a8ca85d40d55cd0800000000000000
+      internalID: -2569918981726238165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_13
+      rect:
+        serializedVersion: 2
+        x: 3462
+        y: 2378
+        width: 228
+        height: 283
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7220ec6d2feeff7d0800000000000000
+      internalID: -2882322509740506585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_14
+      rect:
+        serializedVersion: 2
+        x: 4486
+        y: 2378
+        width: 217
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 246d38939d116eef0800000000000000
+      internalID: -79356318761888190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_15
+      rect:
+        serializedVersion: 2
+        x: 4530
+        y: 2586
+        width: 36
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68caeea982b47dbc0800000000000000
+      internalID: -3758452726247281530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_16
+      rect:
+        serializedVersion: 2
+        x: 4572
+        y: 2601
+        width: 65
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37382420c9dbc4040800000000000000
+      internalID: 4633286594407859059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_17
+      rect:
+        serializedVersion: 2
+        x: 3450
+        y: 2502
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cd2aa047b98b3fd0800000000000000
+      internalID: -2361142159468778048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_18
+      rect:
+        serializedVersion: 2
+        x: 3679
+        y: 2418
+        width: 92
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8a166a6f1ede5580800000000000000
+      internalID: -8836381192343905652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_19
+      rect:
+        serializedVersion: 2
+        x: 4471
+        y: 2501
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f4282f7831c4e5e0800000000000000
+      internalID: -1881166295938358027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_20
+      rect:
+        serializedVersion: 2
+        x: 4705
+        y: 2430
+        width: 88
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27217bcfe2911b6a0800000000000000
+      internalID: -6435334702936681870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_21
+      rect:
+        serializedVersion: 2
+        x: 1379
+        y: 2385
+        width: 40
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 781300384f7c4c2a0800000000000000
+      internalID: -6718024891146161785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_22
+      rect:
+        serializedVersion: 2
+        x: 2405
+        y: 2386
+        width: 16
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f167d14246cac46f0800000000000000
+      internalID: -698994296046651873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_23
+      rect:
+        serializedVersion: 2
+        x: 4675
+        y: 2380
+        width: 38
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f4eea487e4efac30800000000000000
+      internalID: 4372965446214673651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_24
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 1566
+        width: 37
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6217fd98046e5480800000000000000
+      internalID: -8908573024719531410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_25
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 1579
+        width: 46
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c650ec1a247f2020800000000000000
+      internalID: 2319200057341007555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_26
+      rect:
+        serializedVersion: 2
+        x: 1457
+        y: 1566
+        width: 37
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f11a77c0d16766420800000000000000
+      internalID: 2622913700125188383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_27
+      rect:
+        serializedVersion: 2
+        x: 1500
+        y: 1579
+        width: 46
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06475339de27fbaa0800000000000000
+      internalID: -6143065002007497632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_28
+      rect:
+        serializedVersion: 2
+        x: 2481
+        y: 1569
+        width: 37
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ba1d64ee56f401b0800000000000000
+      internalID: -5691153141669750088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_29
+      rect:
+        serializedVersion: 2
+        x: 2524
+        y: 1583
+        width: 44
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cba361c77872f7a0800000000000000
+      internalID: -6344876469270631482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_30
+      rect:
+        serializedVersion: 2
+        x: 3506
+        y: 1573
+        width: 33
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb4df1b41ab26a0f0800000000000000
+      internalID: -1106148686722771778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_31
+      rect:
+        serializedVersion: 2
+        x: 3548
+        y: 1590
+        width: 40
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d7b2dfcb662f7880800000000000000
+      internalID: -8611121718019049514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_32
+      rect:
+        serializedVersion: 2
+        x: 4508
+        y: 1568
+        width: 48
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9753143beb407e940800000000000000
+      internalID: 5325230301486593401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_33
+      rect:
+        serializedVersion: 2
+        x: 4574
+        y: 1595
+        width: 36
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9803289b0707fdb30800000000000000
+      internalID: 4314290597495189641
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_34
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 1354
+        width: 218
+        height: 220
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc95dc7b742e96e40800000000000000
+      internalID: 5650296005167241679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_35
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 1566
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c681223fd19621b30800000000000000
+      internalID: 4256580175172606060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_36
+      rect:
+        serializedVersion: 2
+        x: 1414
+        y: 1354
+        width: 218
+        height: 220
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b79fe7afe12544cc0800000000000000
+      internalID: -3727764298550806149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_37
+      rect:
+        serializedVersion: 2
+        x: 1443
+        y: 1566
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c19b3e5372f3d800800000000000000
+      internalID: 636118549705494979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_38
+      rect:
+        serializedVersion: 2
+        x: 2464
+        y: 1567
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79e99ef357b5faf50800000000000000
+      internalID: 6894830113669095063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_39
+      rect:
+        serializedVersion: 2
+        x: 3487
+        y: 1567
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de351ce3a42650f40800000000000000
+      internalID: 5694065374899819501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_40
+      rect:
+        serializedVersion: 2
+        x: 2568
+        y: 1499
+        width: 63
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cf4a15098d2068e0800000000000000
+      internalID: -1702310592626667584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_41
+      rect:
+        serializedVersion: 2
+        x: 2632
+        y: 1544
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caf68dc2ab984c840800000000000000
+      internalID: 5243467298875404204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_42
+      rect:
+        serializedVersion: 2
+        x: 3593
+        y: 1500
+        width: 61
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9867a91eb80ce9c60800000000000000
+      internalID: 7826904909434484361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_43
+      rect:
+        serializedVersion: 2
+        x: 3659
+        y: 1545
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf48428c763638a50800000000000000
+      internalID: 6522165982753228027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_44
+      rect:
+        serializedVersion: 2
+        x: 4621
+        y: 1501
+        width: 56
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1a0ecbd61b213ae0800000000000000
+      internalID: -1571427417798604259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_45
+      rect:
+        serializedVersion: 2
+        x: 4686
+        y: 1546
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2b6b4419e62fcee0800000000000000
+      internalID: -1238728589993874643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_46
+      rect:
+        serializedVersion: 2
+        x: 2411
+        y: 369
+        width: 247
+        height: 1171
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34a5df0c9bb897a40800000000000000
+      internalID: 5366474060911696451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_47
+      rect:
+        serializedVersion: 2
+        x: 3509
+        y: 1354
+        width: 175
+        height: 185
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d06c99820c3ffb40800000000000000
+      internalID: 5476161653502140632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_48
+      rect:
+        serializedVersion: 2
+        x: 4535
+        y: 1501
+        width: 37
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 184d7a91d5aa02f30800000000000000
+      internalID: 4548822940483310721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_49
+      rect:
+        serializedVersion: 2
+        x: 4559
+        y: 1477
+        width: 41
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0874f22bfb534530800000000000000
+      internalID: 3838012441631160331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_50
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 1476
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b7c8007239f80300800000000000000
+      internalID: 218698576950773683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_51
+      rect:
+        serializedVersion: 2
+        x: 612
+        y: 1414
+        width: 69
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e3a729fb3d9eee40800000000000000
+      internalID: 5687656260324271072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_52
+      rect:
+        serializedVersion: 2
+        x: 1396
+        y: 1476
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 567d26a3a54f18150800000000000000
+      internalID: 5873244057431627621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_53
+      rect:
+        serializedVersion: 2
+        x: 1636
+        y: 1414
+        width: 69
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13d1a901b7095c4a0800000000000000
+      internalID: -6573689222843458255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_54
+      rect:
+        serializedVersion: 2
+        x: 2418
+        y: 1475
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bfc0b7e389c90dc0800000000000000
+      internalID: -3672182452778905674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_55
+      rect:
+        serializedVersion: 2
+        x: 2436
+        y: 1434
+        width: 75
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c7d9504fd8a6f350800000000000000
+      internalID: 6050208826229643209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_56
+      rect:
+        serializedVersion: 2
+        x: 3439
+        y: 1473
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6405be37571230630800000000000000
+      internalID: 3891991291317932102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_57
+      rect:
+        serializedVersion: 2
+        x: 3460
+        y: 1435
+        width: 73
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41b2ac826cd086be0800000000000000
+      internalID: -1483920932479554796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_58
+      rect:
+        serializedVersion: 2
+        x: 4462
+        y: 1472
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdd957ae7af7e3230800000000000000
+      internalID: 3620471509622300123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_59
+      rect:
+        serializedVersion: 2
+        x: 4484
+        y: 1438
+        width: 71
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db6204e5aaa083000800000000000000
+      internalID: 15774325537777341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_60
+      rect:
+        serializedVersion: 2
+        x: 4534
+        y: 1401
+        width: 84
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35397a29ae0984db0800000000000000
+      internalID: -4807433265060801709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_61
+      rect:
+        serializedVersion: 2
+        x: 4638
+        y: 1455
+        width: 61
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a335ffc901c050b0800000000000000
+      internalID: -5741877277009562717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_62
+      rect:
+        serializedVersion: 2
+        x: 2661
+        y: 1414
+        width: 53
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4223948061d8f240800000000000000
+      internalID: 4825837213198787151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_63
+      rect:
+        serializedVersion: 2
+        x: 3687
+        y: 1416
+        width: 51
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c19fa3bf3538c7b0800000000000000
+      internalID: -5203850821712768573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_64
+      rect:
+        serializedVersion: 2
+        x: 4619
+        y: 1354
+        width: 88
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f05828dbdd77d0bd0800000000000000
+      internalID: -2662340010455169777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_65
+      rect:
+        serializedVersion: 2
+        x: 4714
+        y: 1419
+        width: 46
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7da882ed050399490800000000000000
+      internalID: -7739101360776770857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_66
+      rect:
+        serializedVersion: 2
+        x: 2468
+        y: 1356
+        width: 48
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a60a91a911b06cd40800000000000000
+      internalID: 5604178956536881258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_67
+      rect:
+        serializedVersion: 2
+        x: 3472
+        y: 1356
+        width: 64
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fdb2f504ce205ec0800000000000000
+      internalID: -3580310284311282188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_68
+      rect:
+        serializedVersion: 2
+        x: 4580
+        y: 1400
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a7efc48b95a2ce50800000000000000
+      internalID: 6828202072413824928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_69
+      rect:
+        serializedVersion: 2
+        x: 582
+        y: 1356
+        width: 35
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6272fbbebee4ff880800000000000000
+      internalID: -8575048390310680794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_70
+      rect:
+        serializedVersion: 2
+        x: 1606
+        y: 1356
+        width: 35
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91233273253467860800000000000000
+      internalID: 7527277847587795481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_71
+      rect:
+        serializedVersion: 2
+        x: 2445
+        y: 1357
+        width: 22
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e294a0514dd0cb210800000000000000
+      internalID: 1349969192841529646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_72
+      rect:
+        serializedVersion: 2
+        x: 2632
+        y: 1356
+        width: 32
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d5f6b84025510110800000000000000
+      internalID: 1225354170768750038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_73
+      rect:
+        serializedVersion: 2
+        x: 3659
+        y: 1356
+        width: 28
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaf12f8943c23c960800000000000000
+      internalID: 7620983598856937386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_74
+      rect:
+        serializedVersion: 2
+        x: 4520
+        y: 1360
+        width: 32
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cdfc59f918cf6a90800000000000000
+      internalID: -7318410855570407994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_75
+      rect:
+        serializedVersion: 2
+        x: 4686
+        y: 1357
+        width: 22
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9827d52b0a71e4110800000000000000
+      internalID: 1246960125782880905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_76
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 484
+        width: 48
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 359b2cc2c5e246c40800000000000000
+      internalID: 5504575617976416595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_77
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 485
+        width: 67
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8274868b124d0b30800000000000000
+      internalID: 4255129908923363980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_78
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 478
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 361edb8bd0b5594e0800000000000000
+      internalID: -1975572747039940253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_79
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 446
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaa8ed95a5021e430800000000000000
+      internalID: 3810362332159052458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_80
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 425
+        width: 27
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01f613d8e02356be0800000000000000
+      internalID: -1484725464068952304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_81
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 450
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36a8e1c326088d120800000000000000
+      internalID: 2438840357624908387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_82
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 445
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ec9b9c601f77e0e0800000000000000
+      internalID: -2240682581075190551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_83
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 369
+        width: 890
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4274d5417bdc6c1e0800000000000000
+      internalID: -2177827183582689500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_84
+      rect:
+        serializedVersion: 2
+        x: 441
+        y: 373
+        width: 70
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 605e50c52d5e1a920800000000000000
+      internalID: 2999931518455244038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_85
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 430
+        width: 20
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b747f31a2ceaff10800000000000000
+      internalID: 2304413824821184433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_86
+      rect:
+        serializedVersion: 2
+        x: 526
+        y: 330
+        width: 55
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9516681ca3e6fc5f0800000000000000
+      internalID: -734247015604133543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_enemy_Destroy_87
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 389
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eef2a0deed857cc80800000000000000
+      internalID: -8302569673551368210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_enemy_Destroy_0: 145026030085412847
+      eff_enemy_Destroy_1: -6444965203314296063
+      eff_enemy_Destroy_10: 806635480155004787
+      eff_enemy_Destroy_11: -5554322365620356516
+      eff_enemy_Destroy_12: -2569918981726238165
+      eff_enemy_Destroy_13: -2882322509740506585
+      eff_enemy_Destroy_14: -79356318761888190
+      eff_enemy_Destroy_15: -3758452726247281530
+      eff_enemy_Destroy_16: 4633286594407859059
+      eff_enemy_Destroy_17: -2361142159468778048
+      eff_enemy_Destroy_18: -8836381192343905652
+      eff_enemy_Destroy_19: -1881166295938358027
+      eff_enemy_Destroy_2: -5634795398103597922
+      eff_enemy_Destroy_20: -6435334702936681870
+      eff_enemy_Destroy_21: -6718024891146161785
+      eff_enemy_Destroy_22: -698994296046651873
+      eff_enemy_Destroy_23: 4372965446214673651
+      eff_enemy_Destroy_24: -8908573024719531410
+      eff_enemy_Destroy_25: 2319200057341007555
+      eff_enemy_Destroy_26: 2622913700125188383
+      eff_enemy_Destroy_27: -6143065002007497632
+      eff_enemy_Destroy_28: -5691153141669750088
+      eff_enemy_Destroy_29: -6344876469270631482
+      eff_enemy_Destroy_3: -1681079815420842902
+      eff_enemy_Destroy_30: -1106148686722771778
+      eff_enemy_Destroy_31: -8611121718019049514
+      eff_enemy_Destroy_32: 5325230301486593401
+      eff_enemy_Destroy_33: 4314290597495189641
+      eff_enemy_Destroy_34: 5650296005167241679
+      eff_enemy_Destroy_35: 4256580175172606060
+      eff_enemy_Destroy_36: -3727764298550806149
+      eff_enemy_Destroy_37: 636118549705494979
+      eff_enemy_Destroy_38: 6894830113669095063
+      eff_enemy_Destroy_39: 5694065374899819501
+      eff_enemy_Destroy_4: -524439311450690381
+      eff_enemy_Destroy_40: -1702310592626667584
+      eff_enemy_Destroy_41: 5243467298875404204
+      eff_enemy_Destroy_42: 7826904909434484361
+      eff_enemy_Destroy_43: 6522165982753228027
+      eff_enemy_Destroy_44: -1571427417798604259
+      eff_enemy_Destroy_45: -1238728589993874643
+      eff_enemy_Destroy_46: 5366474060911696451
+      eff_enemy_Destroy_47: 5476161653502140632
+      eff_enemy_Destroy_48: 4548822940483310721
+      eff_enemy_Destroy_49: 3838012441631160331
+      eff_enemy_Destroy_5: -6966020469227298767
+      eff_enemy_Destroy_50: 218698576950773683
+      eff_enemy_Destroy_51: 5687656260324271072
+      eff_enemy_Destroy_52: 5873244057431627621
+      eff_enemy_Destroy_53: -6573689222843458255
+      eff_enemy_Destroy_54: -3672182452778905674
+      eff_enemy_Destroy_55: 6050208826229643209
+      eff_enemy_Destroy_56: 3891991291317932102
+      eff_enemy_Destroy_57: -1483920932479554796
+      eff_enemy_Destroy_58: 3620471509622300123
+      eff_enemy_Destroy_59: 15774325537777341
+      eff_enemy_Destroy_6: -70826544381714349
+      eff_enemy_Destroy_60: -4807433265060801709
+      eff_enemy_Destroy_61: -5741877277009562717
+      eff_enemy_Destroy_62: 4825837213198787151
+      eff_enemy_Destroy_63: -5203850821712768573
+      eff_enemy_Destroy_64: -2662340010455169777
+      eff_enemy_Destroy_65: -7739101360776770857
+      eff_enemy_Destroy_66: 5604178956536881258
+      eff_enemy_Destroy_67: -3580310284311282188
+      eff_enemy_Destroy_68: 6828202072413824928
+      eff_enemy_Destroy_69: -8575048390310680794
+      eff_enemy_Destroy_7: -3782994732550473065
+      eff_enemy_Destroy_70: 7527277847587795481
+      eff_enemy_Destroy_71: 1349969192841529646
+      eff_enemy_Destroy_72: 1225354170768750038
+      eff_enemy_Destroy_73: 7620983598856937386
+      eff_enemy_Destroy_74: -7318410855570407994
+      eff_enemy_Destroy_75: 1246960125782880905
+      eff_enemy_Destroy_76: 5504575617976416595
+      eff_enemy_Destroy_77: 4255129908923363980
+      eff_enemy_Destroy_78: -1975572747039940253
+      eff_enemy_Destroy_79: 3810362332159052458
+      eff_enemy_Destroy_8: 4730632262308976853
+      eff_enemy_Destroy_80: -1484725464068952304
+      eff_enemy_Destroy_81: 2438840357624908387
+      eff_enemy_Destroy_82: -2240682581075190551
+      eff_enemy_Destroy_83: -2177827183582689500
+      eff_enemy_Destroy_84: 2999931518455244038
+      eff_enemy_Destroy_85: 2304413824821184433
+      eff_enemy_Destroy_86: -734247015604133543
+      eff_enemy_Destroy_87: -8302569673551368210
+      eff_enemy_Destroy_9: -5614439397767788265
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

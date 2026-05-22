@@ -156,6 +156,7 @@ GameObject:
   - component: {fileID: 1141293357520890712}
   - component: {fileID: 730100000000000001}
   - component: {fileID: 914900000000000003}
+  - component: {fileID: 820100000000000002}
   m_Layer: 0
   m_Name: Enemy_Tackle
   m_TagString: Untagged
@@ -309,6 +310,7 @@ MonoBehaviour:
   blockedMoveThreshold: 0.01
   blockedStopDelay: 0.1
   drawViewGizmo: 1
+  parryKnockbackDistance: 0.5
 --- !u!114 &1141293357520890712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,6 +364,21 @@ MonoBehaviour:
   flashRepeatCount: 2
   normalDuration: 0.05
   flashCooldownSeconds: 0.02
+--- !u!114 &820100000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ff842568c04ff9a78905b235595136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyDeathEffectSpawner
+  deathEffectPrefab: {fileID: 100000, guid: 200954b3ebad4d3cbbae01f6b2439763, type: 3}
+  spawnOffset: {x: 0, y: 1.5, z: 0}
+  useColliderCenter: 1
 --- !u!1 &1701081988696678631
 GameObject:
   m_ObjectHideFlags: 0
