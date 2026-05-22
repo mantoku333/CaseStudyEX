@@ -475,35 +475,35 @@ namespace GameName.Enemy
         {
            bool shouldIgnoreContactDamage = Time.time < ignoreContactDamageUntilTime;
 
-    if (shouldIgnoreContactDamage)
-    {
-        Debug.Log("パリィ後なので接触ダメージ無効");
-    }
-    else
-    {
-        UmbrellaParryController umbrellaParryController =
-            collision.gameObject.GetComponentInParent<UmbrellaParryController>();
-
-        if (umbrellaParryController != null && umbrellaParryController.IsParrying())
-        {
-            Debug.Log("パリィ中なので敵ダメージ無効");
-        }
-        else if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
-                 playerHealth.TryTakeDamage(damageToPlayer))
-        {
-            Debug.Log("敵接触ダメージ");
-
-            PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
-            if (damageFlash == null)
+            if (shouldIgnoreContactDamage)
             {
-                damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+                Debug.Log("パリィ後なので接触ダメージ無効");
+            }
+            else
+            {
+                UmbrellaParryController umbrellaParryController =
+                    collision.gameObject.GetComponentInParent<UmbrellaParryController>();
+
+                if (umbrellaParryController != null && umbrellaParryController.IsParrying())
+                {
+                    Debug.Log("パリィ中なので敵ダメージ無効");
+                }
+                else if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
+                        playerHealth.TryTakeDamage(damageToPlayer))
+                {
+                    Debug.Log("敵接触ダメージ");
+
+                    PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
+                    if (damageFlash == null)
+                    {
+                        damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+                    }
+
+                    damageFlash?.PlayFlashForced();
+                }
             }
 
-            damageFlash?.PlayFlashForced();
-        }
-    }
-
-    TryTurnAroundFromEnemyCollision(collision);
+            TryTurnAroundFromEnemyCollision(collision);
 
         }
 
@@ -527,25 +527,41 @@ namespace GameName.Enemy
                        out _);
         }
 
-        public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
+        //--------------ダメージ関連------------------
+
+        public void TakeDamage(int damage)
         {
-            int damage = attacker != null ? attacker.PlayerAttackDamage : 0;
             if (damage <= 0)
             {
                 return;
             }
 
             damageFlash?.PlayFlash();
+
             currentHealth = Mathf.Max(0, currentHealth - damage);
             NotifyHealthChanged();
 
-            if (currentHealth <= 0)
+            Debug.Log($"敵にダメージ: {damage} / 残りHP: {currentHealth}");
+
+            if (currentHealth > 0)
             {
-                Debug.Log("敵に当たりました");
-                // Destroy前に通知して、敵の位置や表示状態を参照できるようにする。
-                Died?.Invoke();
-                Destroy(gameObject);
+                return;
             }
+
+            Died?.Invoke();
+            Destroy(gameObject);
+        }
+
+        public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
+        {
+            int damage = 0;
+
+            if (attacker != null)
+            {
+                damage = attacker.PlayerAttackDamage;
+            }
+
+            TakeDamage(damage);
         }
 
 
@@ -554,6 +570,7 @@ namespace GameName.Enemy
         /// </summary>
         public void IgnoreContactDamage(float duration)
         {
+            Debug.Log($"[IgnoreContactDamage] frame={Time.frameCount}, until={ignoreContactDamageUntilTime}");
             ignoreContactDamageUntilTime = Time.time + duration;
         }
 
@@ -566,6 +583,14 @@ namespace GameName.Enemy
         private void NotifyHealthChanged()
         {
             HealthChanged?.Invoke(currentHealth, MaxHealth);
+
+        /// <summary>
+        /// 現在、接触ダメージを一時的に無効化しているかを返す。
+        /// </summary>
+        /// <returns></returns>
+        public bool IsContactDamageIgnored()
+        {
+            return Time.time < ignoreContactDamageUntilTime;
         }
     }
 }

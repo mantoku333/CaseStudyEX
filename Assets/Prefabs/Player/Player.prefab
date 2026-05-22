@@ -261,6 +261,7 @@ MonoBehaviour:
   attackCollider: {fileID: 4697355616983758325}
   leftFacingAttackColliderRightOffset: 5
   player_normalAttack: {fileID: 8300000, guid: 298ef99b3d24d514ba42518424f5ddf3, type: 3}
+  player_attackHit: {fileID: 8300000, guid: e696d0bdc1b833747b0eaa12f9d98789, type: 3}
   attackEffectTexture: {fileID: 2800000, guid: f2f6bacc83f7c594fb33b917d075f4c5, type: 3}
   attackEffectFrameSeconds: 0.025
   attackEffectWorldOffset: {x: 0, y: 0.1, z: 0}
@@ -741,9 +742,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70e6bbcaa38569d438ef3071b9923275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerAbilityController
+  useInspectorDebugAbility: 0
   canDodge: 1
   canGlide: 0
   canGunRecoil: 0
+  canParry: 0
 --- !u!114 &8257722522928208615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -891,6 +894,12 @@ MonoBehaviour:
   recoilDuration: 0.1
   groundCheck: {fileID: 4002620521091409378}
   player_gun_fire: {fileID: 8300000, guid: d8d757bebd64f8b48801a10d2d845f53, type: 3}
+  recoilEffectTexture: {fileID: 2800000, guid: 762334598fd09c94088ed9f9ac121b48, type: 3}
+  recoilEffectFrameSeconds: 0.025
+  recoilEffectSpawnDistance: 0.6
+  recoilEffectWorldOffset: {x: 0, y: 0, z: 0}
+  recoilEffectScale: {x: 1, y: 1, z: 1}
+  recoilEffectSortingOrderOffset: 3
 --- !u!1 &6862321633324178330
 GameObject:
   m_ObjectHideFlags: 0

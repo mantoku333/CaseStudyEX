@@ -1,3 +1,4 @@
+﻿using System;
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
@@ -9,6 +10,8 @@ public class AttackHitbox : MonoBehaviour
     private Collider2D hitboxCollider;
     private ContactFilter2D overlapFilter;
     private PlayerStatsData statsData;
+
+    public event Action<Collider2D> OnHit;
 
     public int PlayerAttackDamage => statsData != null
         ? statsData.PlayerAttackDamage
@@ -74,6 +77,7 @@ public class AttackHitbox : MonoBehaviour
             if (behaviours[i] is IAttackReceiver receiver && hitReceivers.Add(behaviours[i]))
             {
                 receiver.OnAttacked(this, collision);
+                OnHit?.Invoke(collision);
             }
         }
     }
