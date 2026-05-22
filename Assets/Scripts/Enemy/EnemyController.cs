@@ -20,6 +20,8 @@ namespace GameName.Enemy
         [SerializeField, Min(0.01f)] private float edgeCheckDistance = 0.35f;
         [SerializeField, Min(0f)] private float edgeCheckForwardOffset = 0.1f;
         [SerializeField] private LayerMask stageLayerMask;
+        // シャッター壁は Default レイヤーに置かれることがあるため、通常の床レイヤーとは別に判定する。
+        [SerializeField] private bool treatShutterWallsAsWalls = true;
         [SerializeField] private bool flipSpriteOnTurn = true;
 
         [Header("Enemy Collision")]
@@ -35,6 +37,9 @@ namespace GameName.Enemy
         private EnemyDamageFlash damageFlash;
         private int currentHealth;
         private float nextEnemyCollisionTurnTime;
+        // シャッター壁の子ブロックを検出するための一時バッファ。
+        private readonly RaycastHit2D[] wallCheckHits = new RaycastHit2D[8];
+        private ContactFilter2D shutterWallContactFilter;
 
         public event Action EnemyCollisionTurned;
         /// <summary>
@@ -69,6 +74,8 @@ namespace GameName.Enemy
             {
                 stageLayerMask = BuildDefaultStageMask();
             }
+
+            BuildShutterWallContactFilter();
         }
 
         /// <summary>
@@ -227,7 +234,13 @@ namespace GameName.Enemy
             Vector2 origin = new Vector2(originX, bounds.center.y);
 
             RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.right * moveDirection, wallCheckDistance, stageLayerMask);
-            return hit.collider != null;
+            if (hit.collider != null)
+            {
+                return true;
+            }
+
+            // StageBoss と Enemy_Tackle はこの共通判定を使うため、ここでシャッター壁も壁扱いにする。
+            return treatShutterWallsAsWalls && IsShutterWallAhead(origin);
         }
 
         /// <summary>
@@ -298,6 +311,52 @@ namespace GameName.Enemy
             }
 
             return mask == 0 ? Physics2D.DefaultRaycastLayers : mask;
+        }
+
+        private void BuildShutterWallContactFilter()
+        {
+            // レイヤーに依存せず ShutterWallBlockRise 配下の非トリガーコライダーだけを後段で拾う。
+            shutterWallContactFilter = new ContactFilter2D
+            {
+                useLayerMask = true,
+                useTriggers = false
+            };
+            shutterWallContactFilter.SetLayerMask(Physics2D.DefaultRaycastLayers);
+        }
+
+        private bool IsShutterWallAhead(Vector2 origin)
+        {
+            // シャッター壁の各ブロックは子オブジェクトなので、親に ShutterWallBlockRise があるかで判定する。
+            int hitCount = Physics2D.Raycast(
+                origin,
+                Vector2.right * moveDirection,
+                shutterWallContactFilter,
+                wallCheckHits,
+                wallCheckDistance);
+
+            for (int i = 0; i < hitCount; i++)
+            {
+                Collider2D hitCollider = wallCheckHits[i].collider;
+                if (hitCollider == null || IsOwnCollider(hitCollider))
+                {
+                    continue;
+                }
+
+                if (hitCollider.GetComponentInParent<ShutterWallBlockRise>() != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsOwnCollider(Collider2D hitCollider)
+        {
+            // 自分自身や子オブジェクトのコライダーを壁として誤検出しないようにする。
+            return hitCollider == bodyCollider ||
+                   hitCollider.transform == transform ||
+                   hitCollider.transform.IsChildOf(transform);
         }
 
         /// <summary>
