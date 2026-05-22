@@ -291,6 +291,9 @@ public sealed class SaveManager : MonoBehaviour
         pendingLoadData = saveData;
         pendingLoadRequestId = loadRequestId;
         pendingLoadSlotIndex = slotIndex;
+
+        RestorePreSceneState(saveData);
+
         if (EnableLoadTrace)
         {
             Debug.Log(
@@ -570,6 +573,18 @@ public sealed class SaveManager : MonoBehaviour
                 Debug.LogError($"[SaveManager] Save module restore failed: {module.GetType().Name}. {exception}");
             }
         }
+    }
+
+    private static void RestorePreSceneState(SaveGameData saveData)
+    {
+        if (saveData == null)
+        {
+            return;
+        }
+
+        GameProgressFlags.RestoreFromSaveData(saveData);
+        GameItems.RestoreFromSaveData(saveData);
+        CurrentLocationService.RestoreFromSaveData(saveData);
     }
 
     private static List<ISaveDataModule> CollectModules()

@@ -92,13 +92,13 @@ public partial class SROptions
     }
 
     [Category("プレイヤー調整②")]
-    [DisplayName("攻撃回数/秒")]
+    [DisplayName("攻撃間隔(秒)")]
     [Sort(2)]
-    [Increment(0.1)]
-    public float AttackPerSecond
+    [Increment(0.01)]
+    public float AttackSecondsPerAttack
     {
-        get => CurrentPlayerStatsData != null ? CurrentPlayerStatsData.AttackPerSecond : 0f;
-        set => UpdateCurrentPlayerStatsData(stats => stats.SetAttackPerSecond(value));
+        get => CurrentPlayerStatsData != null ? CurrentPlayerStatsData.AttackSecondsPerAttack : 0f;
+        set => UpdateCurrentPlayerStatsData(stats => stats.SetAttackSecondsPerAttack(value));
     }
 
     [Category("プレイヤー調整②")]
@@ -112,8 +112,18 @@ public partial class SROptions
     }
 
     [Category("プレイヤー調整②")]
-    [DisplayName("銃反動")]
+    [DisplayName("Player Attack Damage")]
     [Sort(4)]
+    [Increment(1)]
+    public int PlayerAttackDamage
+    {
+        get => CurrentPlayerStatsData != null ? CurrentPlayerStatsData.PlayerAttackDamage : 0;
+        set => UpdateCurrentPlayerStatsData(stats => stats.SetPlayerAttackDamage(value));
+    }
+
+    [Category("プレイヤー調整②")]
+    [DisplayName("銃反動")]
+    [Sort(5)]
     [Increment(0.1)]
     public float GunRecoilForce
     {

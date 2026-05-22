@@ -1,24 +1,39 @@
-﻿title: Tutorial_Attack
+title: Tutorial_Attack
 ---
+<<scene_black 1 0.35>>
+<<scene_wait 0.15>>
+<<scene_black 0 0.35>>
 イリス: チュートリアル:Attack
 ===
 
 title: Tutorial_Dodge
 ---
+<<scene_black 1 0.35>>
+<<scene_wait 0.15>>
+<<scene_black 0 0.35>>
 イリス: チュートリアル:Dodge
 ===
 
 title: Tutorial_Parry
 ---
+<<scene_black 1 0.35>>
+<<scene_wait 0.15>>
+<<scene_black 0 0.35>>
 イリス: チュートリアル:Parry
 ===
 
 title: Tutorial_Gimmick
 ---
+<<scene_black 1 0.35>>
+<<scene_wait 0.15>>
+<<scene_black 0 0.35>>
 イリス: チュートリアル:Gimmick
 ===
 
 title: Tutorial_Glide
 ---
+<<scene_black 1 0.35>>
+<<scene_wait 0.15>>
+<<scene_black 0 0.35>>
 イリス: チュートリアル:Glide
 ===

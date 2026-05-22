@@ -57,6 +57,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private UmbrellaAttackController umbrellaAttackController; //傘攻撃関連のスクリプト
     private UmbrellaParryController  umbrellaParryController;  //パリィ関連のスクリプト
     private ParryHitbox parryHitbox;
+    private AttackHitbox[] attackHitboxes;
     private DodgeController dodgeController;                   //回避関連のスクリプト
     private MonoBehaviour fallThroughController;               //床すり抜け関連のスクリプト
     private PlayerAbilityController playerAbilityController;   //能力管理のスクリプト
@@ -136,6 +137,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     {
         GetInput();
         UpdateFacingDirection();
+        RefreshParryColliderFacing();
     }
 
     // 物理更新順は依存関係を持つため固定:
@@ -241,6 +243,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             Debug.LogError("ParryHitboxが見つかっていません");
         }
 
+        attackHitboxes = GetComponentsInChildren<AttackHitbox>(true);
+
         dodgeController = GetComponent<DodgeController>();
         if (dodgeController == null)
         {
@@ -270,6 +274,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
+        ApplyStatsToAttackHitboxes();
+
         if (umbrellaController != null)
         {
             umbrellaController.SetGlideMoveSpeed(playerStatsData.GlideMoveSpeed);
@@ -285,7 +291,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         if (umbrellaAttackController != null)
         {
-            umbrellaAttackController.SetAttackPerSecond(playerStatsData.AttackPerSecond);
+            umbrellaAttackController.SetAttackSecondsPerAttack(playerStatsData.AttackSecondsPerAttack);
             umbrellaAttackController.SetAttackDuration(playerStatsData.UmbrellaAttackDuration);
         }
 
@@ -299,6 +305,22 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             dodgeController.SetDodgeDistance(playerStatsData.DodgeDistance);
             dodgeController.SetDodgeDuration(playerStatsData.DodgeDuration);
+        }
+    }
+
+    private void ApplyStatsToAttackHitboxes()
+    {
+        if (attackHitboxes == null || attackHitboxes.Length == 0)
+        {
+            attackHitboxes = GetComponentsInChildren<AttackHitbox>(true);
+        }
+
+        for (int i = 0; i < attackHitboxes.Length; i++)
+        {
+            if (attackHitboxes[i] != null)
+            {
+                attackHitboxes[i].SetPlayerStatsData(playerStatsData);
+            }
         }
     }
 
@@ -316,10 +338,20 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
-        if (umbrellaController == null) { return; }
-        if (!inputActionsReady) { return; }
+        if (umbrellaController == null)
+        {
+            return;
+        }
 
-        bool isGliding = (umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open);
+        if (!inputActionsReady)
+        {
+            return;
+        }
+
+        bool isGliding =
+            umbrellaController.GetUmbrellaState() ==
+            UmbrellaController.UmbrellaState.Open;
+
         moveInput = 0.0f;
         Vector2 move = Vector2.zero;
 
@@ -330,12 +362,18 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             moveInput = Mathf.Clamp(move.x, -1.0f, 1.0f);
         }
 
+        UpdateFacingDirection();
+        RefreshParryColliderFacing();
+
         bool isDownHeld = move.y < -0.5f;
+
         if (isDownHeld && IsPressedThisFrame(fallThroughAction))
         {
             if (fallThroughController != null)
             {
-                fallThroughController.SendMessage("TryFallThrough", SendMessageOptions.DontRequireReceiver);
+                fallThroughController.SendMessage(
+                    "TryFallThrough",
+                    SendMessageOptions.DontRequireReceiver);
             }
         }
 
@@ -345,7 +383,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
-        //回避(Shift単体でその場回避 / A・D入力中なら左右回避)
+        //--------------回避関連------------------
+
         bool canUseDodge = false;
 
         if (playerAbilityController != null)
@@ -353,7 +392,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             canUseDodge = playerAbilityController.GetCanDodge();
         }
 
-        bool isDodgeTriggered = IsPressedThisFrame(dodgeAction) ||
+        bool isDodgeTriggered =
+            IsPressedThisFrame(dodgeAction) ||
             (IsPressed(dodgeAction) && IsPressedThisFrame(moveAction));
 
         if (canUseDodge)
@@ -378,105 +418,147 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             }
         }
 
-        //ジャンプ(スペースキーでジャンプ)
+        //--------------ジャンプ関連------------------
+
         if (IsPressedThisFrame(jumpAction))
         {
             jumpInput = true;
         }
 
-        //パリィor傘開閉 (右クリックでパリィ、敵の攻撃がない場合は傘の開け閉め)
+        //--------------パリィ・傘関連------------------
+
+        //--------------パリィ・傘関連------------------
+
         if (IsPressedThisFrame(umbrellaToggleAction))
         {
-            if (parryHitbox != null && parryHitbox.HasEnemyAttack())
+            bool canUseParry = false;
+
+            if (playerAbilityController != null)
             {
-                if (umbrellaController != null)
-                {
-                    umbrellaController.SetUmbrellaState(UmbrellaController.UmbrellaState.Open, false);
-                }
-
-                if (umbrellaParryController != null)
-                {
-                    umbrellaParryController.Parry();
-                }
-
-                parryHitbox.ClearEnemyAttacks();
+                canUseParry = playerAbilityController.GetCanParry();
             }
-            else
+
+            if (canUseParry)
             {
-                if (umbrellaController != null)
+                bool parrySuccess = false;
+
+                if (parryHitbox != null)
                 {
-                    umbrellaController.ToggleUmbrella();
+                    parrySuccess = parryHitbox.TryParryEnemyBullets();
+
+                    if (!parrySuccess)
+                    {
+                        parrySuccess = parryHitbox.TryParryEnemyTackleAttack();
+                    }
                 }
+
+                if (parrySuccess)
+                {
+                    if (umbrellaController != null)
+                    {
+                        umbrellaController.SetUmbrellaState(
+                            UmbrellaController.UmbrellaState.Open,
+                            false);
+                    }
+
+                    if (umbrellaParryController != null)
+                    {
+                        umbrellaParryController.Parry();
+                    }
+
+                    return;
+                }
+            }
+
+            if (umbrellaController != null)
+            {
+                umbrellaController.ToggleUmbrella();
             }
         }
 
+        //--------------攻撃関連------------------
+
         if (IsPressedThisFrame(attackAction))
         {
-            bool isUmbrellaOpen = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open;
-            bool isPlayerGliding = isUmbrellaOpen && !isGround;
+            bool isUmbrellaOpen =
+                umbrellaController.GetUmbrellaState() ==
+                UmbrellaController.UmbrellaState.Open;
 
-            if (isUmbrellaOpen)
+            bool isPlayerGliding =
+                isUmbrellaOpen &&
+                !isGround;
+
+            // 滑空中射撃
+            if (isPlayerGliding &&
+                TryGetAimScreenPosition(out var pointerPos))
             {
-                if (isPlayerGliding && TryGetAimScreenPosition(out var pointerPos))
+                Camera mainCamera = Camera.main;
+
+                if (mainCamera != null && gunController != null)
                 {
-                    Camera mainCamera = Camera.main;
-                    if (mainCamera != null && gunController != null)
+                    Vector3 mouseWorldPos =
+                        mainCamera.ScreenToWorldPoint(
+                            new Vector3(
+                                pointerPos.x,
+                                pointerPos.y,
+                                0.0f));
+
+                    mouseWorldPos.z = 0.0f;
+
+                    Vector2 shootDirection =
+                        (mouseWorldPos - transform.position).normalized;
+
+                    bool canUseGunRecoil = false;
+
+                    if (playerAbilityController != null)
                     {
-                        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(
-                            new Vector3(pointerPos.x, pointerPos.y, 0.0f)
-                        );
-                        mouseWorldPos.z = 0.0f;
+                        canUseGunRecoil =
+                            playerAbilityController.GetCanGunRecoil();
+                    }
 
-                        Vector2 shootDirection = (mouseWorldPos - transform.position).normalized;
-
-                        //アイテムを取得しているかどうかを確認し
-                        //それによって反動を使用できるかを判断する
-                        bool canUseGunRecoil = false;
-
-                        if (playerAbilityController != null)
-                        {
-                            canUseGunRecoil = playerAbilityController.GetCanGunRecoil();
-                        }
-
-                        if (canUseGunRecoil)
-                        {
-                            gunController.Shoot(shootDirection);
-                        }
+                    if (canUseGunRecoil)
+                    {
+                        gunController.Shoot(shootDirection);
                     }
                 }
 
                 return;
             }
 
+            // 傘が開いていたら閉じる
+            if (isUmbrellaOpen)
+            {
+                umbrellaController.SetUmbrellaState(
+                    UmbrellaController.UmbrellaState.Closed,
+                    false);
+            }
+
+            // 通常攻撃
             if (umbrellaAttackController != null)
             {
                 umbrellaAttackController.Attack();
             }
         }
 
+        //--------------リコイルジャンプ関連------------------
 
-        //銃での飛び上がり(空中でEキーを押すと銃の反動で飛び上がる)
         if (IsPressedThisFrame(recoilJumpAction))
         {
             if (isGround)
             {
                 if (gunController != null)
                 {
-                    //アイテムを取得しているかどうかを確認し
-                    //それによって反動を使用できるかを判断する
                     bool canUseGunRecoil = false;
 
                     if (playerAbilityController != null)
                     {
-                        canUseGunRecoil = playerAbilityController.GetCanGunRecoil();
+                        canUseGunRecoil =
+                            playerAbilityController.GetCanGunRecoil();
                     }
 
                     if (canUseGunRecoil)
                     {
-                        if (gunController != null)
-                        {
-                            gunController.JumpRecoil();
-                        }
+                        gunController.JumpRecoil();
                     }
                 }
             }
@@ -573,10 +655,33 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         if (isGround)
         {
-            rigidBody2d.linearVelocity = new Vector2(rigidBody2d.linearVelocity.x, playerStatsData.JumpForce);
+            float jumpVelocity = CreateJumpVelocity();
+            rigidBody2d.linearVelocity = new Vector2(rigidBody2d.linearVelocity.x,jumpVelocity);
         }
 
         jumpInput = false;
+    }
+
+    private float CreateJumpVelocity()
+    {
+        if(playerStatsData == null)
+        {
+            return 0.0f;
+        }
+
+        if(rigidBody2d == null)
+        {
+            return 0.0f;
+        }
+
+        float gravity = Mathf.Abs(Physics2D.gravity.y * rigidBody2d.gravityScale);
+
+        if (gravity <= 0.0f)
+        {
+            return 0.0f;
+        }
+
+        return Mathf.Sqrt(2.0f * gravity * playerStatsData.JumpForce);
     }
 
     /// <summary>
@@ -664,6 +769,14 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         else if (moveInput < 0.0f)
         {
             isFacingRight = false;
+        }
+    }
+
+    private void RefreshParryColliderFacing()
+    {
+        if (umbrellaParryController != null)
+        {
+            umbrellaParryController.RefreshParryColliderFacing();
         }
     }
 

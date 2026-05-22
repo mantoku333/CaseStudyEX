@@ -155,6 +155,8 @@ GameObject:
   - component: {fileID: 867530900123456789}
   - component: {fileID: 1141293357520890712}
   - component: {fileID: 730100000000000002}
+  - component: {fileID: 914900000000000002}
+  - component: {fileID: 820100000000000001}
   m_Layer: 0
   m_Name: Enemy_Ranged
   m_TagString: Untagged
@@ -267,8 +269,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyController2D
   moveSpeed: 0
   patrolDistance: 0
-  damageToPlayer: 10
-  maxHealth: 2
+  damageToPlayer: 5
+  maxHealth: 40
   wallCheckDistance: 0.15
   edgeCheckDistance: 0.35
   edgeCheckForwardOffset: 0.1
@@ -321,6 +323,57 @@ MonoBehaviour:
   hitInterval: 0.2
   applyDamageInPassThrough: 1
   contactDamage: 10
+--- !u!114 &730100000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05d05fb50c3947e4b8ccb0297a9be414, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyKind: 0
+  participatesInGrowls: 1
+  profile: {fileID: 11400000, guid: 74ed3802f52a405899726fdcf474de15, type: 2}
+  autoCollectRenderers: 1
+  visibilityRenderers: []
+--- !u!114 &914900000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd6e625030204ba4af013951bcafdee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyDamageFlash
+  autoCollectRenderers: 1
+  targetRenderers: []
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.14
+  flashRepeatCount: 2
+  normalDuration: 0.05
+  flashCooldownSeconds: 0.02
+--- !u!114 &820100000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ff842568c04ff9a78905b235595136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyDeathEffectSpawner
+  deathEffectPrefab: {fileID: 100000, guid: 200954b3ebad4d3cbbae01f6b2439763, type: 3}
+  spawnOffset: {x: 0, y: 1.5, z: 0}
+  useColliderCenter: 1
 --- !u!1 &1993802650959271295
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,20 +496,3 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3660086356055333866}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &730100000000000002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1421722041738095275}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05d05fb50c3947e4b8ccb0297a9be414, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyKind: 0
-  participatesInGrowls: 1
-  profile: {fileID: 11400000, guid: 74ed3802f52a405899726fdcf474de15, type: 2}
-  autoCollectRenderers: 1
-  visibilityRenderers: []

@@ -1,4 +1,5 @@
 ﻿using Player;
+using Metroidvania.Player;
 using System;
 using UnityEngine;
 
@@ -31,6 +32,7 @@ namespace GameName.Enemy
         private Rigidbody2D rigidbody2D;
         private Collider2D bodyCollider;
         private SpriteRenderer spriteRenderer;
+        private EnemyDamageFlash damageFlash;
         private int currentHealth;
         private float nextEnemyCollisionTurnTime;
 
@@ -50,6 +52,8 @@ namespace GameName.Enemy
         /// </summary>
         public float CurrentX => rigidbody2D != null ? rigidbody2D.position.x : transform.position.x;
 
+        private float ignoreContactDamageUntilTime;  //接触ダメージを無効にする時間
+
         /// <summary>
         /// 必要コンポーネントの取得と、未設定レイヤーマスクの補完を行う。
         /// </summary>
@@ -58,6 +62,7 @@ namespace GameName.Enemy
             rigidbody2D = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
+            damageFlash = GetComponentInChildren<EnemyDamageFlash>(true);
             currentHealth = Mathf.Max(1, maxHealth);
 
             if (stageLayerMask.value == 0)
@@ -406,17 +411,70 @@ namespace GameName.Enemy
         /// <param name="collision">衝突情報</param>
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
+           bool shouldIgnoreContactDamage = Time.time < ignoreContactDamageUntilTime;
+
+    if (shouldIgnoreContactDamage)
+    {
+        Debug.Log("パリィ後なので接触ダメージ無効");
+    }
+    else
+    {
+        UmbrellaParryController umbrellaParryController =
+            collision.gameObject.GetComponentInParent<UmbrellaParryController>();
+
+        if (umbrellaParryController != null && umbrellaParryController.IsParrying())
+        {
+            Debug.Log("パリィ中なので敵ダメージ無効");
+        }
+        else if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
+                 playerHealth.TryTakeDamage(damageToPlayer))
+        {
+            Debug.Log("敵接触ダメージ");
+
+            PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
+            if (damageFlash == null)
             {
-                playerHealth.TakeDamage(damageToPlayer);
+                damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
             }
 
-            TryTurnAroundFromEnemyCollision(collision);
+            damageFlash?.PlayFlashForced();
+        }
+    }
+
+    TryTurnAroundFromEnemyCollision(collision);
+
+        }
+
+        private static bool TryGetPlayerBodyCollision(Collision2D collision, out PlayerHealth playerHealth)
+        {
+            playerHealth = null;
+
+            if (collision == null)
+            {
+                return false;
+            }
+
+            // Collision2D のどちら側にプレイヤー本体が入っていても拾えるよう、両方の collider を確認する。
+            return PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
+                       collision.collider,
+                       out playerHealth,
+                       out _) ||
+                   PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
+                       collision.otherCollider,
+                       out playerHealth,
+                       out _);
         }
 
         public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
         {
-            currentHealth -= 1;
+            int damage = attacker != null ? attacker.PlayerAttackDamage : 0;
+            if (damage <= 0)
+            {
+                return;
+            }
+
+            damageFlash?.PlayFlash();
+            currentHealth = Mathf.Max(0, currentHealth - damage);
 
             if (currentHealth <= 0)
             {
@@ -425,6 +483,15 @@ namespace GameName.Enemy
                 Died?.Invoke();
                 Destroy(gameObject);
             }
+        }
+
+
+        /// <summary>
+        /// 一定時間、プレイヤーとの接触ダメージを無効化する(中江)
+        /// </summary>
+        public void IgnoreContactDamage(float duration)
+        {
+            ignoreContactDamageUntilTime = Time.time + duration;
         }
     }
 }

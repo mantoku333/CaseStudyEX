@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4333219616003735470}
   - component: {fileID: 3166498005081650208}
   - component: {fileID: 1141293357520890712}
+  - component: {fileID: 914900000000000001}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -213,6 +214,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ca530ebb1afe644491659aaea23a0c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Enemy.EnemyContact
+--- !u!114 &914900000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd6e625030204ba4af013951bcafdee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyDamageFlash
+  autoCollectRenderers: 1
+  targetRenderers: []
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.14
+  flashRepeatCount: 2
+  normalDuration: 0.05
+  flashCooldownSeconds: 0.02
 --- !u!1 &2384086904362661022
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-using Metroidvania.Player;
+﻿using Metroidvania.Player;
 using Player;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,6 +30,25 @@ namespace Metroidvania.Enemy
         [SerializeField, Min(0.05f)] private float blockedMovementProbeDistance = 0.8f;
         // 経路が塞がったとき、一時的に横へ逃げる方向を探す距離。
         [SerializeField, Min(0.05f)] private float sideSteerProbeDistance = 0.8f;
+
+        [Header("Just Parry")]
+        [SerializeField, Min(0.01f)] private float justParryWindow = 1.5f;
+        [SerializeField, Min(0.1f)] private float maxReflectDistance = 15.0f;
+
+        [Header("Parry Reflect")]
+        [SerializeField, Min(0.1f)] private float reflectedDamageMultiplier = 1.5f; //反射した弾のダメージ倍率(中江)
+
+        private bool isReflectedByPlayer;　　//Playerに跳ね返されたかの判定
+        private int reflectedDamage;　　　　 //反射後に使うダメージ値
+        public bool IsReflectedByPlayer => isReflectedByPlayer;
+
+        private float aliveTimer;
+        private float travelledDistance;
+        private float reflectedTravelDistance;
+        private float reflectedMaxDistance;
+        private bool isReflected;
+        private Vector2 previousPosition;
+
 
         // 経路再計算だけで避けられない時に試す回避角度。
         private static readonly float[] SideSteerAngles =
@@ -92,6 +111,8 @@ namespace Metroidvania.Enemy
             }
 
             obstacleMask = destroyOnHitLayers;
+
+            previousPosition = transform.position;
         }
 
         private void OnValidate()
@@ -118,6 +139,14 @@ namespace Metroidvania.Enemy
 
         private void FixedUpdate()
         {
+            CountTravelDistance();
+
+            if (isReflected)
+            {
+                CheckReflectedDistance();
+                return;
+            }
+
             if (!initialized || target == null)
             {
                 return;
@@ -222,9 +251,37 @@ namespace Metroidvania.Enemy
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (TryApplyPlayerHit(other.gameObject))
+            if (other.GetComponent<AttackHitbox>() != null)
             {
+                Debug.Log("AttackHitboxに触れたので弾は消しません");
                 return;
+            }
+
+            if (other.GetComponent<ParryHitbox>() != null)
+            {
+                Debug.Log("ParryHitboxに触れたので弾は消しません");
+                return;
+            }
+
+            if (isReflectedByPlayer)
+            {
+                if (TryApplyEnemyHit(other))
+                {
+                    return;
+                }
+
+                if (IsPlayerCollider(other))
+                {
+                    Debug.Log("反射弾なのでPlayerにはダメージを入れません");
+                    return;
+                }
+            }
+            else
+            {
+                if (TryApplyPlayerHit(other))
+                {
+                    return;
+                }
             }
 
             if (IsInLayerMask(other.gameObject.layer, destroyOnHitLayers))
@@ -233,9 +290,35 @@ namespace Metroidvania.Enemy
             }
         }
 
+
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (TryApplyPlayerHit(collision.gameObject))
+            if (collision.gameObject.GetComponent<AttackHitbox>() != null)
+            {
+                Debug.Log("AttackHitboxに衝突したので弾は消しません");
+                return;
+            }
+
+            if (collision.gameObject.GetComponent<ParryHitbox>() != null)
+            {
+                Debug.Log("ParryHitboxに衝突したので弾は消しません");
+                return;
+            }
+
+            if (isReflectedByPlayer)
+            {
+               if (TryApplyEnemyHit(collision.collider) || TryApplyEnemyHit(collision.otherCollider))
+                {
+                    return;
+                }
+
+                if (IsPlayerCollider(collision.collider) || IsPlayerCollider(collision.otherCollider))
+                {
+                    Debug.Log("反射弾なのでPlayerにはダメージを入れません");
+                    return;
+                }
+            }
+            else if (TryApplyPlayerHit(collision.collider) || TryApplyPlayerHit(collision.otherCollider))
             {
                 return;
             }
@@ -246,41 +329,38 @@ namespace Metroidvania.Enemy
             }
         }
 
-        private bool TryApplyPlayerHit(GameObject hitObject)
+        private bool TryApplyPlayerHit(Collider2D hitCollider)
         {
-            if (hitObject == null)
+            
+            if (isReflectedByPlayer)
             {
                 return false;
             }
-
-            PlayerDamageFlash damageFlash = hitObject.GetComponent<PlayerDamageFlash>();
-            if (damageFlash == null)
-            {
-                damageFlash = hitObject.GetComponentInParent<PlayerDamageFlash>();
-            }
-
-            PlayerHealth playerHealth = hitObject.GetComponent<PlayerHealth>();
-            if (playerHealth == null)
-            {
-                playerHealth = hitObject.GetComponentInParent<PlayerHealth>();
-            }
-
-            if (damageFlash == null && playerHealth == null && !hitObject.CompareTag("Player"))
+            // 弾のダメージはプレイヤー本体コライダーに当たった時だけ成立させる。
+            // 傘のパリィ判定に触れた場合は、ParryHitbox 側の検知に任せる。
+            if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
+                    hitCollider,
+                    out PlayerHealth playerHealth,
+                    out _))
             {
                 return false;
             }
+            
+            
 
-            if (damageFlash != null)
+            if (playerHealth.TryTakeDamage(damage))
             {
-                damageFlash.PlayFlash();
-            }
+                PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
+                if (damageFlash == null)
+                {
+                    damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+                }
 
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(damage);
+                damageFlash?.PlayFlashForced();
             }
 
             Destroy(gameObject);
+
             return true;
         }
 
@@ -716,6 +796,18 @@ namespace Metroidvania.Enemy
                 return null;
             }
 
+            // 追尾弾の狙い先も本体コライダーに固定し、傘の大きな判定へ吸われないようにする。
+            PlayerHealth playerHealth = targetRoot.GetComponent<PlayerHealth>();
+            if (playerHealth == null)
+            {
+                playerHealth = targetRoot.GetComponentInChildren<PlayerHealth>();
+            }
+
+            if (PlayerBodyColliderUtility.TryGetBodyCollider(playerHealth, out Collider2D playerBodyCollider))
+            {
+                return playerBodyCollider;
+            }
+
             Collider2D[] colliders = targetRoot.GetComponentsInChildren<Collider2D>();
             Collider2D bestCollider = null;
             float bestArea = -1f;
@@ -802,6 +894,109 @@ namespace Metroidvania.Enemy
             }
 
             return mask;
+        }
+
+        public bool CanJustParry()
+        {
+            return aliveTimer <= justParryWindow;
+        }
+
+        public void ReflectByJustParry(Vector2 parryPosition)
+        {
+            if (rb2D == null)
+            {
+                return;
+            }
+
+            Vector2 currentVelocity = rb2D.linearVelocity;
+
+            if (currentVelocity.sqrMagnitude <= 0.0001f)
+            {
+                currentVelocity = ((Vector2)transform.position - parryPosition).normalized * bulletSpeed;
+            }
+
+            Vector2 reflectDirection = -currentVelocity.normalized;
+
+            reflectedMaxDistance = travelledDistance;
+
+            if (reflectedMaxDistance > maxReflectDistance)
+            {
+                reflectedMaxDistance = maxReflectDistance;
+            }
+
+            reflectedTravelDistance = 0.0f;
+            isReflected = true;
+            isReflectedByPlayer = true;
+            reflectedDamage = Mathf.CeilToInt(damage * reflectedDamageMultiplier);
+
+            target = null;
+            owner = null;
+            useTerrainAvoidance = false;
+            currentPath.Clear();
+
+            SetVelocity(reflectDirection);
+
+            Debug.Log($"ジャストパリィ成功。反射ダメージ:{reflectedDamage}");
+        }
+
+        private void CountTravelDistance()
+        {
+            Vector2 currentPosition = transform.position;
+            float movedDistance = Vector2.Distance(previousPosition, currentPosition);
+
+            travelledDistance += movedDistance;
+
+            if (isReflected)
+            {
+                reflectedTravelDistance += movedDistance;
+            }
+
+            aliveTimer += Time.fixedDeltaTime;
+            previousPosition = currentPosition;
+        }
+
+        private void CheckReflectedDistance()
+        {
+            if (reflectedTravelDistance < reflectedMaxDistance)
+            {
+                return;
+            }
+
+            Destroy(gameObject);
+        }
+
+        private bool TryApplyEnemyHit(Collider2D other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            GameName.Enemy.EnemyController enemyController =
+                other.GetComponentInParent<GameName.Enemy.EnemyController>();
+
+            if (enemyController == null)
+            {
+                return false;
+            }
+
+            Debug.Log($"反射弾が敵に命中。ダメージ:{reflectedDamage}");
+
+            //enemyController.TakeDamage(reflectedDamage);
+
+            Destroy(gameObject);
+            return true;
+        }
+
+        private bool IsPlayerCollider(Collider2D other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return other.CompareTag("Player") ||
+                   other.GetComponentInParent<PlayerHealth>() != null;
         }
     }
 }

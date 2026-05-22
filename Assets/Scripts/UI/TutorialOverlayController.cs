@@ -51,6 +51,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
     private bool capturedPrePlayPanelState;
     private bool prePlayPanelActive;
     private bool hidingInternal;
+    private bool destroying;
     private int currentGifFrameIndex;
     private float gifFrameTimer;
     private float gifLoopIntervalTimer;
@@ -119,6 +120,8 @@ public sealed class TutorialOverlayController : MonoBehaviour
 
     private void OnDestroy()
     {
+        destroying = true;
+
         if (!Application.isPlaying)
         {
             return;
@@ -140,6 +143,11 @@ public sealed class TutorialOverlayController : MonoBehaviour
 
     public void Show(Action closeCallback = null)
     {
+        if (destroying || this == null)
+        {
+            return;
+        }
+
         GameObject root = ResolveViewRoot();
         if (root != null && !root.activeSelf)
         {
@@ -209,6 +217,11 @@ public sealed class TutorialOverlayController : MonoBehaviour
 
     private GameObject ResolveViewRoot()
     {
+        if (destroying || this == null)
+        {
+            return null;
+        }
+
         return viewRoot != null ? viewRoot : gameObject;
     }
 

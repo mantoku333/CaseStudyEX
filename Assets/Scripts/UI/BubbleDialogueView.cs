@@ -69,6 +69,7 @@ namespace Metroidvania.UI
         private CancellationTokenSource? _currentLineCts;
         private bool _hasLoggedAutoSizeStart;
         private bool _hasLoggedAutoSizeSkipReason;
+        private bool _lineIsVisible;
 
         private void Awake()
         {
@@ -112,6 +113,16 @@ namespace Metroidvania.UI
 
             if (_currentTarget == null || _mainCamera == null)
             {
+                return;
+            }
+
+            if (!_lineIsVisible)
+            {
+                if (bubblePanel.activeSelf)
+                {
+                    bubblePanel.SetActive(false);
+                }
+
                 return;
             }
 
@@ -180,9 +191,15 @@ namespace Metroidvania.UI
             }
 
             gameObject.SetActive(true);
+            _lineIsVisible = false;
             if (bubblePanel != null)
             {
                 bubblePanel.SetActive(false);
+            }
+
+            if (dialogueText != null)
+            {
+                dialogueText.text = string.Empty;
             }
 
             if (_currentTarget == null)
@@ -220,6 +237,13 @@ namespace Metroidvania.UI
                 bubblePanel.SetActive(false);
             }
 
+            _lineIsVisible = false;
+
+            if (dialogueText != null)
+            {
+                dialogueText.text = string.Empty;
+            }
+
             _currentTarget = null;
             _currentOffset = offset;
             gameObject.SetActive(false);
@@ -252,6 +276,7 @@ namespace Metroidvania.UI
             CancellationToken mergedToken = linkedTokenSource.Token;
 
             ApplySpeakerTarget(line.CharacterName);
+            _lineIsVisible = true;
 
             if (dialogueText != null)
             {

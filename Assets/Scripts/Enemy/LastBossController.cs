@@ -24,8 +24,6 @@ namespace GameName.Enemy
         [SerializeField, Min(0f)] private float moveSpeed = 8f;
         [SerializeField, Range(0.01f, 1f)] private float enrageHealthRate = 0.4f;
         [SerializeField, Min(1f)] private float enragedAttackMultiplier = 1.1f;
-        [SerializeField, Min(1)] private int playerAttackDamage = 1;
-
         [Header("Action Selection")]
         [SerializeField, Min(0f)] private float closeRangeDistance = 12f;
         [SerializeField, Min(0f)] private float farRangeDistance = 13f;
@@ -77,6 +75,10 @@ namespace GameName.Enemy
         [SerializeField] private Color attackColor = new Color(1f, 0.15f, 0.05f, 0.55f);
         [SerializeField] private Color enragedColor = new Color(0.6f, 0f, 0f, 1f);
         [SerializeField, Min(0f)] private float enragedPulseSpeed = 8f;
+        [SerializeField] private Color hitFlashColor = Color.red;
+        [SerializeField, Min(0.01f)] private float hitFlashDuration = 0.14f;
+        [SerializeField, Min(1)] private int hitFlashRepeatCount = 2;
+        [SerializeField, Min(0f)] private float hitFlashNormalDuration = 0.05f;
         [SerializeField] private bool drawDebugGizmos = true;
 
         // Update内の状態遷移を明示するための簡易ステート。
@@ -134,6 +136,8 @@ namespace GameName.Enemy
         private float horizontalReadyTime;
         private float verticalReadyTime;
         private float hitStopRestoreTimeScale = 1f;
+        private float hitFlashStartTime = -1f;
+        private float hitFlashEndTime = -1f;
         // 予兆中に成立したジャストパリィを、攻撃発生まで短時間だけ保持する。
         private float justParryValidUntil = -1f;
         private BossAction justParryBufferedAction = BossAction.None;
@@ -189,6 +193,9 @@ namespace GameName.Enemy
             horizontalAttackSize.y = Mathf.Max(0.1f, horizontalAttackSize.y);
             verticalAttackWidth = Mathf.Max(0.1f, verticalAttackWidth);
             justParryEffectDuration = Mathf.Max(0f, justParryEffectDuration);
+            hitFlashDuration = Mathf.Max(0.01f, hitFlashDuration);
+            hitFlashRepeatCount = Mathf.Max(1, hitFlashRepeatCount);
+            hitFlashNormalDuration = Mathf.Max(0f, hitFlashNormalDuration);
             BuildPlayerContactFilter();
         }
 
@@ -306,7 +313,14 @@ namespace GameName.Enemy
                 return;
             }
 
-            currentHealth = Mathf.Max(0, currentHealth - Mathf.Max(1, playerAttackDamage));
+            int damage = attacker != null ? attacker.PlayerAttackDamage : 0;
+            if (damage <= 0)
+            {
+                return;
+            }
+
+            PlayHitFlash();
+            currentHealth = Mathf.Max(0, currentHealth - damage);
             TryEnterEnraged();
 
             if (currentHealth <= 0)
@@ -560,20 +574,32 @@ namespace GameName.Enemy
             for (int i = 0; i < hitCount; i++)
             {
                 Collider2D hit = playerHits[i];
-                if (!IsPlayerCollider(hit))
+                // ボス攻撃も、傘やパリィ判定ではなくプレイヤー本体コライダーだけを被弾対象にする。
+                if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
+                        hit,
+                        out PlayerHealth targetHealth,
+                        out _))
                 {
                     continue;
                 }
 
-                PlayerHealth targetHealth = hit.GetComponentInParent<PlayerHealth>();
                 if (targetHealth == null || targetHealth == damagedHealth)
                 {
                     continue;
                 }
 
                 damagedHealth = targetHealth;
-                targetHealth.TakeDamage(GetAttackDamage(action));
-                hit.GetComponentInParent<PlayerDamageFlash>()?.PlayFlash();
+                if (targetHealth.TryTakeDamage(GetAttackDamage(action)))
+                {
+                    // HP クールダウンを通過した実ダメージだけ、被弾フラッシュを強制再生する。
+                    PlayerDamageFlash damageFlash = targetHealth.GetComponent<PlayerDamageFlash>();
+                    if (damageFlash == null)
+                    {
+                        damageFlash = targetHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+                    }
+
+                    damageFlash?.PlayFlashForced();
+                }
             }
         }
 
@@ -757,26 +783,6 @@ namespace GameName.Enemy
             return new AttackBox(new Vector2(centerX, bounds.center.y), size, 0f);
         }
 
-        private bool IsPlayerCollider(Collider2D hit)
-        {
-            if (hit == null)
-            {
-                return false;
-            }
-
-            if (hit.transform == transform || hit.transform.IsChildOf(transform))
-            {
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(playerTag) && hit.CompareTag(playerTag))
-            {
-                return true;
-            }
-
-            return hit.GetComponentInParent<PlayerHealth>() != null;
-        }
-
         private bool IsPlayerAvailable()
         {
             if (playerTransform != null)
@@ -948,10 +954,25 @@ namespace GameName.Enemy
             enraged = true;
         }
 
+        private void PlayHitFlash()
+        {
+            hitFlashStartTime = Time.time;
+            int repeatCount = Mathf.Max(1, hitFlashRepeatCount);
+            hitFlashEndTime = hitFlashStartTime +
+                repeatCount * Mathf.Max(0.01f, hitFlashDuration) +
+                (repeatCount - 1) * Mathf.Max(0f, hitFlashNormalDuration);
+        }
+
         private void UpdateEnragedVisual()
         {
             if (spriteRenderer == null)
             {
+                return;
+            }
+
+            if (IsHitFlashActive())
+            {
+                spriteRenderer.color = hitFlashColor;
                 return;
             }
 
@@ -963,6 +984,19 @@ namespace GameName.Enemy
 
             float pulse = enragedPulseSpeed <= 0f ? 1f : (Mathf.Sin(Time.time * enragedPulseSpeed) + 1f) * 0.5f;
             spriteRenderer.color = Color.Lerp(defaultSpriteColor, enragedColor, 0.45f + pulse * 0.35f);
+        }
+
+        private bool IsHitFlashActive()
+        {
+            if (Time.time < hitFlashStartTime || Time.time >= hitFlashEndTime)
+            {
+                return false;
+            }
+
+            float cycleDuration = Mathf.Max(0.01f, hitFlashDuration) + Mathf.Max(0f, hitFlashNormalDuration);
+            float elapsed = Time.time - hitFlashStartTime;
+            float cyclePosition = Mathf.Repeat(elapsed, cycleDuration);
+            return cyclePosition < hitFlashDuration;
         }
 
         private void Die()
