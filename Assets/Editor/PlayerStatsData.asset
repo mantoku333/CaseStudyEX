@@ -22,7 +22,7 @@ MonoBehaviour:
   umbrellaAttackDuration: 0.2
   gunRecoilForce: 30
   gunRecoilDuration: 0.1
-  reloadSeconds: 5
+  reloadSeconds: 2.5
   parryDuration: 0.1
   parryFlashDuration: 0.1
   maxHealth: 100
