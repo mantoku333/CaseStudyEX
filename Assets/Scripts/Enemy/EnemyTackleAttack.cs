@@ -11,7 +11,7 @@ namespace GameName.Enemy
     /// アタッチ／デタッチだけで攻撃挙動を差し替えられる。
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class EnemyTackleAttack : MonoBehaviour
+    public sealed class EnemyTackleAttack : MonoBehaviour, IParryableAttack
     {
         [Header("Detection")]
         [SerializeField] private string playerTag = "Player";
@@ -482,6 +482,8 @@ namespace GameName.Enemy
             Gizmos.DrawWireCube(center, size);
         }
 
+        public bool IsParryable => attackState == AttackState.Charging;
+
         /// <summary>
         /// 突進中に通常パリィされた場合の処理(中江)
         /// </summary>
@@ -502,7 +504,7 @@ namespace GameName.Enemy
                 enemyController.IgnoreContactDamage(0.3f);
 
                 int knockbackDirection = -chargeDirection;
-                float knockbackX = enemyController.CurrentX + knockbackDirection * 0.5f;
+                float knockbackX = enemyController.CurrentX + knockbackDirection * parryKnockbackDistance;
 
                 enemyController.StopHorizontalMotion();
                 enemyController.SetHorizontalPosition(knockbackX);

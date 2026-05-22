@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace GameName.Enemy
@@ -9,7 +9,7 @@ namespace GameName.Enemy
     /// 振動→突進→クールダウンをループする。
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class StageBossAttack : MonoBehaviour
+    public sealed class StageBossAttack : MonoBehaviour, IParryableAttack
     {
         [Header("Activation")]
         [SerializeField] private string playerTag = "Player";
@@ -34,6 +34,10 @@ namespace GameName.Enemy
 
         [Header("Debug")]
         [SerializeField] private bool drawDebugGizmo = true;
+
+        [Header("Parry")]//(中江)
+        [SerializeField, Min(0f)] private float parryKnockbackDistance = 0.5f;
+        [SerializeField, Min(0f)] private float parryContactDamageIgnoreDuration = 0.3f;
 
         private enum AttackState
         {
@@ -323,6 +327,30 @@ namespace GameName.Enemy
             Gizmos.color = new Color(1f, 0.3f, 0.15f, 0.9f);
             Gizmos.DrawLine(start, end);
             Gizmos.DrawWireSphere(end, 0.12f);
+        }
+
+        public bool IsParryable => attackState == AttackState.Charging;
+
+        /// <summary>
+        /// パリィされたときの処理。
+        /// 攻撃状態に関わらず呼び出される可能性があるが、突進中以外は無視する。  
+        /// </summary>
+        public void StopByParry()
+        {
+            if (attackState != AttackState.Charging)
+            {
+                return;
+            }
+
+            Debug.Log("StageBossの突進をパリィしました");
+
+            if (enemyController != null)
+            {
+                enemyController.IgnoreContactDamage(0.3f);
+                enemyController.StopHorizontalMotion();
+            }
+
+            EnterCooldownState();
         }
     }
 }
