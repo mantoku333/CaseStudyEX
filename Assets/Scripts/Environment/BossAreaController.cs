@@ -1,4 +1,6 @@
 ﻿using GameName.Enemy;
+using Metroidvania.Player;
+using Player;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -61,6 +63,10 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private Bounds confinementBounds;
     private Transform playerRoot;
     private Rigidbody2D playerRigidbody2D;
+    // プレイヤー拘束は攻撃・パリィなどの子トリガーではなく、本体コライダーだけを見る。
+    private Collider2D playerBodyCollider;
+    // 回避移動がエリア拘束と競合しないよう、DodgeController に境界を渡すための参照。
+    private DodgeController playerDodgeController;
     private Rigidbody2D bossRigidbody2D;
 
     public int Priority => 240;
@@ -88,6 +94,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void OnDisable()
     {
+        ClearActiveDodgeBounds();
         SaveManager.UnregisterModule(this);
     }
 
@@ -150,6 +157,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         CachePlayerReferences();
 
         encounterStarted = true;
+        RegisterActiveDodgeBounds();
 
         if (enableWallMechanic)
         {
@@ -190,6 +198,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
         encounterCompleted = true;
         encounterStarted = false;
+        ClearActiveDodgeBounds();
 
         if (stageBossAttack != null)
         {
@@ -248,6 +257,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
         encounterCompleted = true;
         encounterStarted = false;
+        ClearActiveDodgeBounds();
 
         if (stageBossAttack != null)
         {
@@ -385,12 +395,102 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         if (confinePlayerInsideArea)
         {
             CachePlayerReferences();
-            ConstrainTransform(playerRoot, playerRigidbody2D);
+            ConstrainPlayerBodyInsideArea();
         }
 
         if (confineBossInsideArea)
         {
             ConstrainTransform(bossRoot, bossRigidbody2D);
+        }
+    }
+
+    private void ConstrainPlayerBodyInsideArea()
+    {
+        // プレイヤーだけは本体コライダー基準で補正し、傘や攻撃判定で拘束範囲が広がらないようにする。
+        if (playerRoot == null || playerBodyCollider == null)
+        {
+            return;
+        }
+
+        Bounds bodyBounds = playerBodyCollider.bounds;
+        Vector3 current = playerRoot.position;
+        float offsetX = 0f;
+        float offsetY = 0f;
+
+        if (confineX)
+        {
+            float minX = confinementBounds.min.x;
+            float maxX = confinementBounds.max.x;
+            if (bodyBounds.min.x < minX)
+            {
+                offsetX = minX - bodyBounds.min.x;
+            }
+            else if (bodyBounds.max.x > maxX)
+            {
+                offsetX = maxX - bodyBounds.max.x;
+            }
+        }
+
+        bool canConfineY = confineY && ShouldConfineYForTarget(playerRigidbody2D);
+        if (canConfineY)
+        {
+            float minY = confinementBounds.min.y;
+            float maxY = confinementBounds.max.y;
+            if (bodyBounds.min.y < minY)
+            {
+                offsetY = minY - bodyBounds.min.y;
+            }
+            else if (bodyBounds.max.y > maxY)
+            {
+                offsetY = maxY - bodyBounds.max.y;
+            }
+        }
+
+        if (Mathf.Approximately(offsetX, 0f) && Mathf.Approximately(offsetY, 0f))
+        {
+            return;
+        }
+
+        Vector2 nextPosition = new Vector2(current.x + offsetX, current.y + offsetY);
+        if (playerRigidbody2D != null)
+        {
+            playerRigidbody2D.position = nextPosition;
+            return;
+        }
+
+        playerRoot.position = new Vector3(nextPosition.x, nextPosition.y, current.z);
+    }
+
+    private void RegisterActiveDodgeBounds()
+    {
+        // 回避開始時点で目標地点をエリア内に収め、FixedUpdate の拘束処理との振動を防ぐ。
+        if (!confineInsideArea || !confinePlayerInsideArea || !hasConfinementBounds)
+        {
+            return;
+        }
+
+        CachePlayerReferences();
+        if (playerDodgeController == null || playerBodyCollider == null)
+        {
+            return;
+        }
+
+        playerDodgeController.SetAreaDodgeBounds(
+            this,
+            confinementBounds,
+            Vector2.zero,
+            confineX,
+            confineY,
+            confineYForDynamicBodies,
+            playerBodyCollider);
+    }
+
+    private void ClearActiveDodgeBounds()
+    {
+        // このボスエリアが設定した回避制限だけを解除する。
+        if (playerDodgeController != null)
+        {
+            playerDodgeController.ClearAreaDodgeBounds(this);
         }
     }
 
@@ -511,11 +611,16 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void CachePlayerReferences()
     {
-        if (playerRoot != null)
+        if (playerRoot != null && playerBodyCollider != null)
         {
             if (playerRigidbody2D == null)
             {
                 playerRigidbody2D = playerRoot.GetComponent<Rigidbody2D>();
+            }
+
+            if (playerDodgeController == null)
+            {
+                playerDodgeController = playerRoot.GetComponent<DodgeController>();
             }
 
             return;
@@ -533,8 +638,41 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             return;
         }
 
+        PlayerHealth playerHealth = playerObject.GetComponent<PlayerHealth>();
+        if (PlayerBodyColliderUtility.TryGetBodyCollider(playerHealth, out Collider2D bodyCollider))
+        {
+            CachePlayerReferencesFromBodyCollider(bodyCollider);
+            return;
+        }
+
         playerRoot = playerObject.transform;
         playerRigidbody2D = playerObject.GetComponent<Rigidbody2D>();
+        playerBodyCollider = playerObject.GetComponent<Collider2D>();
+        playerDodgeController = playerObject.GetComponent<DodgeController>();
+    }
+
+    private void CachePlayerReferencesFromBodyCollider(Collider2D bodyCollider)
+    {
+        // PlayerHealth と同じルートにある非トリガー本体コライダーを基準に参照をそろえる。
+        if (bodyCollider == null)
+        {
+            return;
+        }
+
+        playerBodyCollider = bodyCollider;
+
+        Rigidbody2D attachedRigidbody = bodyCollider.attachedRigidbody;
+        if (attachedRigidbody != null)
+        {
+            playerRoot = attachedRigidbody.transform;
+            playerRigidbody2D = attachedRigidbody;
+            playerDodgeController = attachedRigidbody.GetComponent<DodgeController>();
+            return;
+        }
+
+        playerRoot = bodyCollider.transform;
+        playerRigidbody2D = bodyCollider.GetComponent<Rigidbody2D>();
+        playerDodgeController = bodyCollider.GetComponent<DodgeController>();
     }
 
     private void LockArea()
