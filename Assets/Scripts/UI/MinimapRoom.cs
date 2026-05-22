@@ -318,5 +318,10 @@ public sealed class MinimapRoom : MonoBehaviour
             room.EnterRoom();
             return;
         }
+
+        if (MinimapManager.Instance != null)
+        {
+            MinimapManager.Instance.ClearCurrentRoom();
+        }
     }
 }

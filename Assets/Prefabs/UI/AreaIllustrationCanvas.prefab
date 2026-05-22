@@ -132,6 +132,7 @@ MonoBehaviour:
   targetRoomId: Col_1-1,1-1
   requiredFlagKey: prologue_completed
   expectedFlagValue: 1
+  playerTag: Player
   canvas: {fileID: 100002}
   canvasGroup: {fileID: 100005}
   revealRoot: {fileID: 200001}
