@@ -1104,3 +1104,9 @@ MonoBehaviour:
   recoilDuration: 0.1
   groundCheck: {fileID: 6892740617279207138}
   player_gun_fire: {fileID: 8300000, guid: d8d757bebd64f8b48801a10d2d845f53, type: 3}
+  recoilEffectTexture: {fileID: 2800000, guid: 762334598fd09c94088ed9f9ac121b48, type: 3}
+  recoilEffectFrameSeconds: 0.025
+  recoilEffectSpawnDistance: 0.6
+  recoilEffectWorldOffset: {x: 0, y: 0, z: 0}
+  recoilEffectScale: {x: 1, y: 1, z: 1}
+  recoilEffectSortingOrderOffset: 3
