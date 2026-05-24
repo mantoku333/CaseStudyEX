@@ -267,9 +267,9 @@ namespace EditorTools
                     (int)tileEditMode,
                     new[] { "長押しペイント", "範囲選択", "選択/移動" });
 
-                EditorGUILayout.HelpBox(
-                    "Ctrl+C: コピー / Ctrl+V: ペースト / 選択範囲内ドラッグ: 移動",
-                    MessageType.None);
+                //EditorGUILayout.HelpBox(
+                //    "Ctrl+C: コピー / Ctrl+V: ペースト / 選択範囲内ドラッグ: 移動",
+                //    MessageType.None);
             }
             else if (currentPlacementType == PlacementType.Erase)
             {
@@ -281,24 +281,24 @@ namespace EditorTools
                 tileEditMode = (TileEditMode)eraseMode;
             }
 
-            EditorGUILayout.HelpBox(
-                $"現在の配置モード: {currentPlacementType}" +
-                ((currentPlacementType == PlacementType.Stage || currentPlacementType == PlacementType.Erase)
-                    ? $" / {tileEditMode}"
-                    : ""),
-                MessageType.Info);
+            //EditorGUILayout.HelpBox(
+            //    $"現在の配置モード: {currentPlacementType}" +
+            //    ((currentPlacementType == PlacementType.Stage || currentPlacementType == PlacementType.Erase)
+            //        ? $" / {tileEditMode}"
+            //        : ""),
+            //    MessageType.Info);
 
             if ((currentPlacementType == PlacementType.Stage || currentPlacementType == PlacementType.Erase) &&
                 targetStageTilemap == null)
             {
-                EditorGUILayout.HelpBox("Stage または Erase モードを使うには Stage Tilemap の設定が必要です", MessageType.Warning);
+                //EditorGUILayout.HelpBox("Stage または Erase モードを使うには Stage Tilemap の設定が必要です", MessageType.Warning);
             }
 
             if (currentPlacementType == PlacementType.Stage &&
                 !HasValidStagePaintTile())
             {
                 string requiredTileName = stagePaintTileType == StagePaintTileType.Block ? "Stage Tile" : "Slope Tile";
-                EditorGUILayout.HelpBox($"Stage モードを使うには Palette に {requiredTileName} の設定が必要です", MessageType.Warning);
+               // EditorGUILayout.HelpBox($"Stage モードを使うには Palette に {requiredTileName} の設定が必要です", MessageType.Warning);
             }
 
             if (cachedStatsEditor == null)
@@ -343,49 +343,49 @@ namespace EditorTools
             // 現在のイベント情報（マウス操作、キー入力など）を取得
             Event e = Event.current;
 
-            // SceneView 上にGUIを描画開始
-            Handles.BeginGUI();
-            //Rect内で描画の範囲を指定  (左上x座標、左上y座標、幅の大きさ、縦の大きさ)
-            GUILayout.BeginArea(new Rect(30f, 30f, 320f, 130f), GUI.skin.window);
-            GUILayout.Label($"配置モード: {currentPlacementType}");
+            //// SceneView 上にGUIを描画開始
+            //Handles.BeginGUI();
+            ////Rect内で描画の範囲を指定  (左上x座標、左上y座標、幅の大きさ、縦の大きさ)
+            //GUILayout.BeginArea(new Rect(30f, 30f, 320f, 130f), GUI.skin.window);
+            //GUILayout.Label($"配置モード: {currentPlacementType}");
 
-            // Stage / Erase の場合は、タイル編集用の説明を表示
-            if (currentPlacementType == PlacementType.Stage || currentPlacementType == PlacementType.Erase)
-            {
-                GUILayout.Label($"編集方式: {tileEditMode}");
+            //// Stage / Erase の場合は、タイル編集用の説明を表示
+            //if (currentPlacementType == PlacementType.Stage || currentPlacementType == PlacementType.Erase)
+            //{
+            //    GUILayout.Label($"編集方式: {tileEditMode}");
 
-                if (currentPlacementType == PlacementType.Stage)
-                {
-                    GUILayout.Label($"配置タイル: {GetStagePaintTileLabel()}");
-                }
+            //    if (currentPlacementType == PlacementType.Stage)
+            //    {
+            //        GUILayout.Label($"配置タイル: {GetStagePaintTileLabel()}");
+            //    }
 
-                //編集方式ごとの操作説明を表示
-                if (currentPlacementType == PlacementType.Stage && tileEditMode == TileEditMode.Select)
-                {
-                    GUILayout.Label("左ドラッグで範囲選択");
-                    GUILayout.Label("選択範囲内ドラッグで移動 / Ctrl+C / Ctrl+V");
-                }
-                else if (tileEditMode == TileEditMode.Brush)
-                {
-                    GUILayout.Label("左ドラッグで連続配置 / 削除");
-                }
-                else
-                {
-                    GUILayout.Label("左ドラッグで範囲選択して配置 / 削除");
-                }
+            //    //編集方式ごとの操作説明を表示
+            //    if (currentPlacementType == PlacementType.Stage && tileEditMode == TileEditMode.Select)
+            //    {
+            //        GUILayout.Label("左ドラッグで範囲選択");
+            //        GUILayout.Label("選択範囲内ドラッグで移動 / Ctrl+C / Ctrl+V");
+            //    }
+            //    else if (tileEditMode == TileEditMode.Brush)
+            //    {
+            //        GUILayout.Label("左ドラッグで連続配置 / 削除");
+            //    }
+            //    else
+            //    {
+            //        GUILayout.Label("左ドラッグで範囲選択して配置 / 削除");
+            //    }
 
-                GUILayout.Label("Escで終了");
-            }
-            else
-            {
-                // Player / Enemy 配置時の操作説明を表示
-                GUILayout.Label("左クリックで配置 / Escで終了");
-                GUILayout.Label("Tilemapはセル単位で配置されます");
-            }
+            //    GUILayout.Label("Escで終了");
+            //}
+            //else
+            //{
+            //    // Player / Enemy 配置時の操作説明を表示
+            //    GUILayout.Label("左クリックで配置 / Escで終了");
+            //    GUILayout.Label("Tilemapはセル単位で配置されます");
+            //}
 
-            // GUI描画終了
-            GUILayout.EndArea();
-            Handles.EndGUI();
+            //// GUI描画終了
+            //GUILayout.EndArea();
+            //Handles.EndGUI();
 
             // Escキーが押されたら現在の配置モードを終了する
             if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape)
@@ -511,7 +511,7 @@ namespace EditorTools
 
             if (cameraData == null)
             {
-                EditorGUILayout.HelpBox("Camera Data を設定すると、Y と Zoom をスライダーで調整できます。", MessageType.Info);
+                //EditorGUILayout.HelpBox("Camera Data を設定すると、Y と Zoom をスライダーで調整できます。", MessageType.Info);
                 return;
             }
 

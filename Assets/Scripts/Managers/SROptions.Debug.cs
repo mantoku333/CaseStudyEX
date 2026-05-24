@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using Metroidvania.Player;
+using Player;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,7 +15,7 @@ public partial class SROptions
     private SaveSlotMeta SelectedSlotMeta => SaveManager.GetSlotMeta(selectedSaveSlot);
 
     [Category(DebugCategory)]
-    [DisplayName("Reset Player Position (0,0,0)")]
+    [DisplayName("プレイヤー位置を原点に戻す")]
     [Sort(-100)]
     public void ResetPlayerPositionToOrigin()
     {
@@ -36,7 +37,22 @@ public partial class SROptions
     }
 
     [Category(DebugCategory)]
-    [DisplayName("Cheat Mode")]
+    [DisplayName("ガチ死亡")]
+    [Sort(-99)]
+    public void ForcePlayerDeath()
+    {
+        PlayerHealth playerHealth = ResolvePlayerHealth();
+        if (playerHealth == null)
+        {
+            Debug.LogWarning("[SROptions] PlayerHealth not found.");
+            return;
+        }
+
+        playerHealth.ForceDeath();
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("チートモード")]
     [Sort(-98)]
     public bool IsCheatMode
     {
@@ -68,7 +84,7 @@ public partial class SROptions
     }
 
     [Category(SaveCategory)]
-    [DisplayName("Save Slot")]
+    [DisplayName("セーブスロット")]
     [Sort(-99)]
     public int SaveSlot
     {
@@ -77,17 +93,17 @@ public partial class SROptions
     }
 
     [Category(SaveCategory)]
-    [DisplayName("Has Save In Slot")]
+    [DisplayName("スロットにセーブあり")]
     [Sort(-97)]
     public bool HasSaveInSelectedSlot => SelectedSlotMeta.HasSave;
 
     [Category(SaveCategory)]
-    [DisplayName("Slot Is Corrupted")]
+    [DisplayName("スロット破損")]
     [Sort(-96)]
     public bool IsSelectedSlotCorrupted => SelectedSlotMeta.IsCorrupted;
 
     [Category(SaveCategory)]
-    [DisplayName("Slot Scene")]
+    [DisplayName("保存シーン")]
     [Sort(-95)]
     public string SelectedSlotSceneName
     {
@@ -108,7 +124,7 @@ public partial class SROptions
     }
 
     [Category(SaveCategory)]
-    [DisplayName("Slot Saved At")]
+    [DisplayName("保存日時")]
     [Sort(-94)]
     public string SelectedSlotSavedAtLocal
     {
@@ -139,7 +155,7 @@ public partial class SROptions
     }
 
     [Category(SaveCategory)]
-    [DisplayName("Save Current Game")]
+    [DisplayName("現在の状態をセーブ")]
     [Sort(-93)]
     public void SaveCurrentGame()
     {
@@ -162,7 +178,7 @@ public partial class SROptions
     }
 
     [Category(SaveCategory)]
-    [DisplayName("Load Saved Game")]
+    [DisplayName("セーブをロード")]
     [Sort(-92)]
     public void LoadSavedGame()
     {
@@ -185,7 +201,7 @@ public partial class SROptions
     }
 
     [Category(SaveCategory)]
-    [DisplayName("Delete Save Data")]
+    [DisplayName("セーブデータを削除")]
     [Sort(-91)]
     public void DeleteSaveData()
     {
@@ -197,7 +213,7 @@ public partial class SROptions
     }
 
     [Category(SaveCategory)]
-    [DisplayName("Open Save File")]
+    [DisplayName("セーブファイルを開く")]
     [Sort(-90)]
     public void OpenSelectedSaveFile()
     {
@@ -249,6 +265,27 @@ public partial class SROptions
         }
 
         FullscreenDebugMessageOverlay.Show(message);
+    }
+
+    private static PlayerHealth ResolvePlayerHealth()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            PlayerHealth playerHealth = playerObject.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                return playerHealth;
+            }
+
+            playerHealth = playerObject.GetComponentInChildren<PlayerHealth>(true);
+            if (playerHealth != null)
+            {
+                return playerHealth;
+            }
+        }
+
+        return UnityEngine.Object.FindFirstObjectByType<PlayerHealth>();
     }
 
     private static string GetSavedAtTextForSlot(int slotIndex)

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4656583997417328821}
   - component: {fileID: 4365071265178462127}
-  - component: {fileID: 8672880918955565204}
+  - component: {fileID: 5261322581532133394}
   m_Layer: 0
   m_Name: ParryHitbox
   m_TagString: Untagged
@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 1455145078984213775}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.869985, y: -5.71, z: 0}
-  m_LocalScale: {x: 10.849807, y: 9.746111, z: 0.7561526}
+  m_LocalPosition: {x: 5.869985, y: -4.65, z: 0}
+  m_LocalScale: {x: 9.3, y: 5.48, z: 4.19}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2251229988448382813}
@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adab7e5b3d4b0c04c9078e8e8d2a1b60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ParryHitbox
---- !u!61 &8672880918955565204
-BoxCollider2D:
+--- !u!58 &5261322581532133394
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -61,7 +61,7 @@ BoxCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -75,22 +75,12 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Radius: 0.5
 --- !u!1 &2121947666476746337
 GameObject:
   m_ObjectHideFlags: 0
@@ -138,6 +128,120 @@ MonoBehaviour:
   _playerTransform: {fileID: 1297286252844393473}
   _maxOffsetDistance: 1.5
   _smoothTime: 0.1
+--- !u!1 &2391575767278899343
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6043330165385624681}
+  - component: {fileID: 2092095127402001769}
+  - component: {fileID: 7788990011223344556}
+  m_Layer: 0
+  m_Name: ReloadIndicator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6043330165385624681
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2391575767278899343}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.81, y: 2.51, z: 0}
+  m_LocalScale: {x: 0.52624, y: 0.52624, z: 0.52624}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1297286252844393473}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &2092095127402001769
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2391575767278899343}
+  m_Enabled: 0
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+--- !u!114 &7788990011223344556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2391575767278899343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6edb0e98917944eab593ec1435639651, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReloadIndicatorController
+  gunController: {fileID: 8928624073132878326}
+  sourceRenderer: {fileID: 2092095127402001769}
+  segmentCount: 48
+  startAngleDegrees: 90
+  clockwise: 1
+  startColor: {r: 1, g: 0, b: 0, a: 1}
+  middleColor: {r: 1, g: 0.45, b: 0, a: 1}
+  completeColor: {r: 1, g: 1, b: 1, a: 1}
+  orangeAtCompletionRatio: 0.25
+  radius: 0
 --- !u!1 &2989927398428615150
 GameObject:
   m_ObjectHideFlags: 0
@@ -267,10 +371,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UmbrellaAttackController
   attackDuration: 0.2
-  attackPerSecond: 4
+  attackSecondsPerAttack: 0.25
   attackCollider: {fileID: 4697355616983758325}
   leftFacingAttackColliderRightOffset: 5
   player_normalAttack: {fileID: 8300000, guid: 298ef99b3d24d514ba42518424f5ddf3, type: 3}
+  player_attackHit: {fileID: 8300000, guid: e696d0bdc1b833747b0eaa12f9d98789, type: 3}
   attackEffectTexture: {fileID: 2800000, guid: f2f6bacc83f7c594fb33b917d075f4c5, type: 3}
   attackEffectFrameSeconds: 0.025
   attackEffectWorldOffset: {x: 0, y: 0.1, z: 0}
@@ -288,8 +393,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed3209f302ed4e445b971987b03d652d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UmbrellaParryController
-  parryDuration: 0.1
-  parryCollider: {fileID: 8672880918955565204}
+  parryDuration: 0.5
+  parryCollider: {fileID: 5261322581532133394}
   leftFacingParryColliderRightOffset: 5
   playerSprite: {fileID: 4532821241702585450}
   parryColor: {r: 1, g: 0.9808723, b: 0.3254717, a: 1}
@@ -403,11 +508,13 @@ GameObject:
   - component: {fileID: 7949513042368536473}
   - component: {fileID: 3375801726536475401}
   - component: {fileID: 3047304842873908124}
+  - component: {fileID: 4202108349721021491}
   - component: {fileID: 2152828851043830257}
   - component: {fileID: 7711066996538408739}
   - component: {fileID: 1226412498639681019}
   - component: {fileID: 234568476194810981}
   - component: {fileID: 8257722522928208615}
+  - component: {fileID: -7701998456525910624}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -424,8 +531,8 @@ Transform:
   m_GameObject: {fileID: 4600020788520051928}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 154.02, y: 1.38, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 153.76, y: 0.10912, z: 0}
+  m_LocalScale: {x: 1.594, y: 1.594, z: 1.594}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2251229988448382813}
@@ -433,6 +540,7 @@ Transform:
   - {fileID: 6609816922747179616}
   - {fileID: 3878988826709100726}
   - {fileID: 1844776828312348601}
+  - {fileID: 6043330165385624681}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5431561428665394503
@@ -581,6 +689,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   applyNoFrictionMaterial: 1
   playerStatsData: {fileID: 11400000, guid: 828b8bd6e59a0de45ac0b6f81b0916f1, type: 2}
+--- !u!114 &4202108349721021491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18871ee1923e4884594ce7cf6cfc14d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
+  statsData: {fileID: 0}
+  damageCooldownSeconds: 3
+  maxHealthBonus: 0
 --- !u!114 &2152828851043830257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -734,9 +857,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70e6bbcaa38569d438ef3071b9923275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerAbilityController
+  useInspectorDebugAbility: 0
   canDodge: 1
   canGlide: 0
   canGunRecoil: 0
+  canParry: 0
 --- !u!114 &8257722522928208615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -757,6 +882,24 @@ MonoBehaviour:
   maxIgnoreDuration: 0.6
   restoreBelowMargin: 0.05
   forceDownSpeed: 2
+--- !u!114 &-7701998456525910624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1d7eb3aa46d7304892f17521c1d6a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Player.PlayerDamageFlash
+  targetRenderers: []
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.08
+  flashRepeatCount: 3
+  normalDuration: 0.08
+  flashCooldownSeconds: 3
 --- !u!1 &5437759847484700699
 GameObject:
   m_ObjectHideFlags: 0
@@ -866,6 +1009,12 @@ MonoBehaviour:
   recoilDuration: 0.1
   groundCheck: {fileID: 4002620521091409378}
   player_gun_fire: {fileID: 8300000, guid: d8d757bebd64f8b48801a10d2d845f53, type: 3}
+  recoilEffectTexture: {fileID: 2800000, guid: 762334598fd09c94088ed9f9ac121b48, type: 3}
+  recoilEffectFrameSeconds: 0.025
+  recoilEffectSpawnDistance: 0.6
+  recoilEffectWorldOffset: {x: 0, y: 0, z: 0}
+  recoilEffectScale: {x: 1, y: 1, z: 1}
+  recoilEffectSortingOrderOffset: 3
 --- !u!1 &6862321633324178330
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,7 +1233,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

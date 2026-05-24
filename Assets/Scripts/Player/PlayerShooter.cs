@@ -86,9 +86,9 @@ namespace Player
             // 1発消費
             currentAmmo--;
 
-            // 攻撃速度から次に撃てる時刻を計算
-            // 例: 4発/秒なら 0.25秒ごとに撃てる
-            nextFireTime = Time.time + (1f / statsData.AttackPerSecond);
+            // 攻撃間隔から次に撃てる時刻を計算
+            // 例: 0.25秒なら 0.25秒ごとに撃てる
+            nextFireTime = Time.time + statsData.AttackSecondsPerAttack;
 
             // プレイヤーの向いている方向を発射方向にする
             Vector2 fireDirection = transform.lossyScale.x >= 0f ? Vector2.right : Vector2.left;

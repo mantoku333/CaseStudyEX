@@ -30,6 +30,8 @@ namespace Metroidvania.Player
             }
 
             restoreColors = new Color[targetRenderers.Length];
+
+            CaptureCurrentColors();
         }
 
         /// <summary>
@@ -37,24 +39,31 @@ namespace Metroidvania.Player
         /// </summary>
         public void PlayFlash()
         {
+            PlayFlashInternal(false);
+        }
+
+        /// <summary>
+        /// HP 側でダメージ成立済みの時に、表示用クールダウンを無視して赤点滅を再生する。
+        /// </summary>
+        public void PlayFlashForced()
+        {
+            PlayFlashInternal(true);
+        }
+
+        private void PlayFlashInternal(bool ignoreCooldown)
+        {
             if (targetRenderers == null || targetRenderers.Length == 0)
             {
                 return;
             }
 
-            if (Time.time < nextFlashTime)
+            if (!ignoreCooldown && Time.time < nextFlashTime)
             {
                 return;
             }
 
+
             nextFlashTime = Time.time + flashCooldownSeconds;
-
-
-            // Capture the current runtime colors so we always restore the latest state.
-            if (flashCoroutine == null)
-            {
-                CaptureCurrentColors();
-            }
 
             if (flashCoroutine != null)
             {

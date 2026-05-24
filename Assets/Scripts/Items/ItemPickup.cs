@@ -2,13 +2,25 @@
 using Player;
 using UnityEngine;
 
-public class ItemPickup : MonoBehaviour
+public class ItemPickup : MonoBehaviour, ISaveDataModule
 {
     //--------------アイテムデータ関連------------------
     [SerializeField] private ItemData itemData;
 
     //--------------状態関連------------------
     private bool isPickedUp = false;
+
+    public int Priority => 250;
+
+    private void OnEnable()
+    {
+        SaveManager.RegisterModule(this);
+    }
+
+    private void OnDisable()
+    {
+        SaveManager.UnregisterModule(this);
+    }
 
     private void Start()
     {
@@ -55,13 +67,6 @@ public class ItemPickup : MonoBehaviour
             return;
         }
 
-        PlayerController playerController = other.GetComponent<PlayerController>();
-       
-        if (playerController != null)
-        {
-            playerController = other.GetComponentInParent<PlayerController>();
-        }
-
         PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
 
         if (playerHealth == null)
@@ -76,7 +81,7 @@ public class ItemPickup : MonoBehaviour
             abilityController = other.GetComponentInParent<PlayerAbilityController>();
         }
 
-        bool isApplied = ApplyItem(playerHealth, abilityController, playerController);
+        bool isApplied = ApplyItem(playerHealth, abilityController);
 
         if (!isApplied) { return; }
 
@@ -87,11 +92,10 @@ public class ItemPickup : MonoBehaviour
 
         Debug.Log($"{itemData.itemName} を取得しました！");
 
-        isPickedUp = true;
-        Destroy(gameObject);
+        CompletePickup();
     }
 
-    private bool ApplyItem(PlayerHealth playerHealth, PlayerAbilityController abilityController, PlayerController playerController)
+    private bool ApplyItem(PlayerHealth playerHealth, PlayerAbilityController abilityController)
     {
         bool isApplied = false;
 
@@ -111,26 +115,17 @@ public class ItemPickup : MonoBehaviour
             isApplied = true;
         }
 
-        if(itemData.attackhBonus > 0)
-        {
-            if(playerController == null) { return false; }
-
-            PlayerStatsData statsData = playerController.GetPlayerStatsData();
-
-            Debug.Log("Playerの変更前の攻撃力: " + statsData.PlayerAttackDamage);
-
-            statsData.SetPlayerAttackDamage(statsData.PlayerAttackDamage + itemData.attackhBonus);
-
-            Debug.Log("Playerの変更後の攻撃力: " + statsData.PlayerAttackDamage);
-
-            isApplied = true;
-        }
-
         if (itemData.abilityType != PlayerAbilityType.None)
         {
             if (abilityController == null) { return false; }
 
             UnlockAbility(abilityController);
+            isApplied = true;
+        }
+
+        if (!isApplied && IsInventoryItem())
+        {
+            GameItems.AddCount(itemData.itemId, 1);
             isApplied = true;
         }
 
@@ -142,18 +137,27 @@ public class ItemPickup : MonoBehaviour
         if (itemData.abilityType == PlayerAbilityType.Dodge)
         {
             abilityController.SetCanDodge(true);
+            GameProgressFlags.Set(GameProgressKeys.AbilityDodgeUnlocked, true);
             return;
         }
 
         if (itemData.abilityType == PlayerAbilityType.Glide)
         {
             abilityController.SetCanGlide(true);
+            GameProgressFlags.Set(GameProgressKeys.AbilityGlideUnlocked, true);
             return;
         }
 
         if (itemData.abilityType == PlayerAbilityType.GunRecoil)
         {
             abilityController.SetCanGunRecoil(true);
+            GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, true);
+            return;
+        }
+
+        if (itemData.abilityType == PlayerAbilityType.Parry)
+        {
+            abilityController.SetCanParry(true);
             return;
         }
     }
@@ -195,6 +199,48 @@ public class ItemPickup : MonoBehaviour
             return true;
         }
 
+        if (IsInventoryItem())
+        {
+            return true;
+        }
+
         return false;
+    }
+
+    private bool IsInventoryItem()
+    {
+        if (itemData == null || string.IsNullOrWhiteSpace(itemData.itemId))
+        {
+            return false;
+        }
+
+        return itemData.itemType == ItemType.KeyItem ||
+               itemData.itemType == ItemType.Equipment ||
+               itemData.itemType == ItemType.Collectible;
+    }
+
+    private void CompletePickup()
+    {
+        isPickedUp = true;
+
+        ItemEffectController effectController = GetComponent<ItemEffectController>();
+        if (effectController != null && effectController.PlayPickupEffectAndDestroy())
+        {
+            return;
+        }
+
+        Destroy(gameObject);
+    }
+
+    public void Capture(SaveGameData saveData)
+    {
+    }
+
+    public void Restore(SaveGameData saveData)
+    {
+        if (IsAlreadyPickedUp())
+        {
+            Destroy(gameObject);
+        }
     }
 }

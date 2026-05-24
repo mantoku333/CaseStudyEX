@@ -1,4 +1,5 @@
 ﻿using Player;
+using Metroidvania.Player;
 using System;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace GameName.Enemy
     /// アタッチ／デタッチだけで攻撃挙動を差し替えられる。
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class EnemyTackleAttack : MonoBehaviour
+    public sealed class EnemyTackleAttack : MonoBehaviour, IParryableAttack
     {
         [Header("Detection")]
         [SerializeField] private string playerTag = "Player";
@@ -36,6 +37,9 @@ namespace GameName.Enemy
 
         [Header("Debug")]
         [SerializeField] private bool drawViewGizmo = true;
+
+        [Header("Parry")]
+        [SerializeField, Min(0.0f)] private float parryKnockbackDistance = 0.5f;
 
         private enum AttackState
         {
@@ -408,12 +412,16 @@ namespace GameName.Enemy
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(playerTag) && hit.CompareTag(playerTag))
+            // 突進の検知・停止判定は本体コライダーだけを見る。傘に触れただけでは命中扱いにしない。
+            if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(hit, out PlayerHealth playerHealth, out _))
             {
-                return true;
+                return false;
             }
 
-            return hit.GetComponentInParent<PlayerHealth>() != null;
+            return string.IsNullOrEmpty(playerTag) ||
+                   hit.CompareTag(playerTag) ||
+                   playerHealth.CompareTag(playerTag) ||
+                   (playerHealth.transform.root != null && playerHealth.transform.root.CompareTag(playerTag));
         }
 
         /// <summary>
@@ -472,6 +480,37 @@ namespace GameName.Enemy
 
             Gizmos.color = new Color(1f, 0.85f, 0.1f, 0.9f);
             Gizmos.DrawWireCube(center, size);
+        }
+
+        public bool IsParryable => attackState == AttackState.Charging;
+
+        /// <summary>
+        /// 突進中に通常パリィされた場合の処理(中江)
+        /// </summary>
+        public void StopByParry()
+        {
+            //バグ確認ログ
+            Debug.Log($"[Tackle StopByParry] frame={Time.frameCount}, time={Time.time}");
+
+            if (attackState != AttackState.Charging)
+            {
+                return;
+            }
+
+            Debug.Log("突進敵を通常パリィしました");
+
+            if (enemyController != null)
+            {
+                enemyController.IgnoreContactDamage(0.3f);
+
+                int knockbackDirection = -chargeDirection;
+                float knockbackX = enemyController.CurrentX + knockbackDirection * parryKnockbackDistance;
+
+                enemyController.StopHorizontalMotion();
+                enemyController.SetHorizontalPosition(knockbackX);
+            }
+
+            EnterCooldownState();
         }
     }
 }

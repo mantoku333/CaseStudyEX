@@ -1,13 +1,25 @@
 ﻿using UnityEngine;
 using Player;
 
-public class AbilityPickupItem : MonoBehaviour
+public class AbilityPickupItem : MonoBehaviour, ISaveDataModule
 {
     //--------------能力関連------------------
     [SerializeField] private PlayerAbilityType abilityType = PlayerAbilityType.None;
 
     //--------------状態関連------------------
     private bool isPickedUp = false;
+
+    public int Priority => 251;
+
+    private void OnEnable()
+    {
+        SaveManager.RegisterModule(this);
+    }
+
+    private void OnDisable()
+    {
+        SaveManager.UnregisterModule(this);
+    }
 
     private void Start()
     {
@@ -55,16 +67,13 @@ public class AbilityPickupItem : MonoBehaviour
 
         if (IsAlreadyUnlocked())
         {
-            isPickedUp = true;
-            Destroy(gameObject);
+            CompletePickup();
             return;
         }
 
         UnlockAbility(abilityController);
 
-        isPickedUp = true;
-
-        Destroy(gameObject);
+        CompletePickup();
     }
 
     private bool IsAlreadyUnlocked()
@@ -111,6 +120,31 @@ public class AbilityPickupItem : MonoBehaviour
             GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, true);
             Debug.Log("銃反動能力を取得しました！");
             return;
+        }
+    }
+
+    private void CompletePickup()
+    {
+        isPickedUp = true;
+
+        ItemEffectController effectController = GetComponent<ItemEffectController>();
+        if (effectController != null && effectController.PlayPickupEffectAndDestroy())
+        {
+            return;
+        }
+
+        Destroy(gameObject);
+    }
+
+    public void Capture(SaveGameData saveData)
+    {
+    }
+
+    public void Restore(SaveGameData saveData)
+    {
+        if (IsAlreadyUnlocked())
+        {
+            Destroy(gameObject);
         }
     }
 }

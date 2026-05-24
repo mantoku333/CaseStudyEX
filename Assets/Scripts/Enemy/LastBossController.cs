@@ -12,7 +12,7 @@ namespace GameName.Enemy
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(Collider2D))]
-    public sealed class LastBossController : MonoBehaviour, IAttackReceiver
+    public sealed class LastBossController : MonoBehaviour, IAttackReceiver, IBossHealthSource
     {
         [Header("Activation")]
         [SerializeField] private string playerTag = "Player";
@@ -145,19 +145,20 @@ namespace GameName.Enemy
 
         public bool IsEncounterActive => encounterActive;
         public int CurrentHealth => currentHealth;
-        public int MaxHealth => maxHealth;
+        public int MaxHealth => Mathf.Max(1, maxHealth);
         /// <summary>
         /// LastBossがDestroyされる直前に通知する。専用死亡SEの再生に使う。
         /// System.Actionを直接書き、UnityEngine.Randomとの名前衝突を避ける。
         /// </summary>
         public event System.Action Died;
+        public event System.Action<int, int> HealthChanged;
 
         private void Awake()
         {
             rb2D = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
-            currentHealth = Mathf.Max(1, maxHealth);
+            currentHealth = MaxHealth;
 
             if (spriteRenderer != null)
             {
@@ -321,6 +322,7 @@ namespace GameName.Enemy
 
             PlayHitFlash();
             currentHealth = Mathf.Max(0, currentHealth - damage);
+            NotifyHealthChanged();
             TryEnterEnraged();
 
             if (currentHealth <= 0)
@@ -574,20 +576,32 @@ namespace GameName.Enemy
             for (int i = 0; i < hitCount; i++)
             {
                 Collider2D hit = playerHits[i];
-                if (!IsPlayerCollider(hit))
+                // ボス攻撃も、傘やパリィ判定ではなくプレイヤー本体コライダーだけを被弾対象にする。
+                if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
+                        hit,
+                        out PlayerHealth targetHealth,
+                        out _))
                 {
                     continue;
                 }
 
-                PlayerHealth targetHealth = hit.GetComponentInParent<PlayerHealth>();
                 if (targetHealth == null || targetHealth == damagedHealth)
                 {
                     continue;
                 }
 
                 damagedHealth = targetHealth;
-                targetHealth.TakeDamage(GetAttackDamage(action));
-                hit.GetComponentInParent<PlayerDamageFlash>()?.PlayFlash();
+                if (targetHealth.TryTakeDamage(GetAttackDamage(action)))
+                {
+                    // HP クールダウンを通過した実ダメージだけ、被弾フラッシュを強制再生する。
+                    PlayerDamageFlash damageFlash = targetHealth.GetComponent<PlayerDamageFlash>();
+                    if (damageFlash == null)
+                    {
+                        damageFlash = targetHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+                    }
+
+                    damageFlash?.PlayFlashForced();
+                }
             }
         }
 
@@ -771,26 +785,6 @@ namespace GameName.Enemy
             return new AttackBox(new Vector2(centerX, bounds.center.y), size, 0f);
         }
 
-        private bool IsPlayerCollider(Collider2D hit)
-        {
-            if (hit == null)
-            {
-                return false;
-            }
-
-            if (hit.transform == transform || hit.transform.IsChildOf(transform))
-            {
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(playerTag) && hit.CompareTag(playerTag))
-            {
-                return true;
-            }
-
-            return hit.GetComponentInParent<PlayerHealth>() != null;
-        }
-
         private bool IsPlayerAvailable()
         {
             if (playerTransform != null)
@@ -960,6 +954,29 @@ namespace GameName.Enemy
             }
 
             enraged = true;
+        }
+
+        public void ResetHealthToFull()
+        {
+            StopAllCoroutines();
+            RestoreHitStopTimeScale();
+            downRoutineRunning = false;
+            enraged = false;
+            downCount = 0;
+            state = BossState.Inactive;
+            encounterActive = false;
+            pendingAction = BossAction.None;
+            visibleAction = BossAction.None;
+            ClearJustParryBuffer();
+            StopMotion();
+            HideAttackVisual();
+            currentHealth = MaxHealth;
+            NotifyHealthChanged();
+        }
+
+        private void NotifyHealthChanged()
+        {
+            HealthChanged?.Invoke(currentHealth, MaxHealth);
         }
 
         private void PlayHitFlash()

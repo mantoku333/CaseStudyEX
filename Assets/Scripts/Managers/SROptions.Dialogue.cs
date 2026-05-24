@@ -12,7 +12,7 @@ public partial class SROptions
     private const string SampleDialogueNode = "SampleNPC";
 
     [Category("Dialogue")]
-    [DisplayName("Play Sample Dialogue (Bubble)")]
+    [DisplayName("サンプル会話を再生（吹き出し）")]
     [Sort(1)]
     public void PlaySampleDialogue()
     {
@@ -36,7 +36,7 @@ public partial class SROptions
     }
 
     [Category("Dialogue")]
-    [DisplayName("Play Sample Dialogue (ADV Legacy)")]
+    [DisplayName("サンプル会話を再生（ADV）")]
     [Sort(2)]
     public void PlayBubbleDialogue()
     {
@@ -58,7 +58,7 @@ public partial class SROptions
     }
 
     [Category("Dialogue")]
-    [DisplayName("Stop All Dialogues")]
+    [DisplayName("すべての会話を停止")]
     [Sort(3)]
     public void StopDialogue()
     {
