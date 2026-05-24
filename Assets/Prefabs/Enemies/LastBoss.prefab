@@ -204,13 +204,24 @@ MonoBehaviour:
   horizontalTelegraphTime: 2
   horizontalAttackVisibleTime: 0.22
   horizontalAttackRecovery: 0.6
+  groundBladePrefab: {fileID: 4517164900779311147, guid: 29a1fbc8a319c4f42a1a6af1b0e36e5c, type: 3}
+  horizontalGroundBladeSweepSpeed: 5
   verticalAttackDamage: 20
   verticalAttackWidth: 2
   verticalAttackStartHeight: 6
   verticalAttackCooldown: 18
   verticalTelegraphTime: 2
+  verticalTargetLockBeforeAttack: 0.5
   verticalAttackVisibleTime: 0.24
   verticalAttackRecovery: 0.7
+  rainBladePrefab: {fileID: 1656111132893798397, guid: b506532cc262ce047b3c598c2125d258, type: 3}
+  verticalRainBladeCount: 3
+  verticalRainPreviewSpawnInterval: 0.06
+  verticalRainDuration: 2
+  verticalRainBladeInterval: 0.4
+  rainBladeFallSpeed: 8
+  rainBladeGroundDestroyDelay: 0.3
+  bladeParryFadeDuration: 0.2
   downCountThreshold: 20
   downDuration: 10
   hitStopDuration: 0.08
