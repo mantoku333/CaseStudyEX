@@ -3,22 +3,13 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
-public enum StoryCameraTargetMode
-{
-    Marker = 0,
-    WorldPosition = 1,
-}
-
-[DisplayName("Story/Camera Move Zoom")]
-public sealed class StoryCameraClip : PlayableAsset, ITimelineClipAsset
+[DisplayName("Story/Camera Move")]
+public sealed class StoryCameraMoveClip : PlayableAsset, ITimelineClipAsset
 {
     public StoryCameraTargetMode targetMode = StoryCameraTargetMode.Marker;
     [Min(1)] public int markerNo = 1;
     public Vector3 worldPosition;
     public bool keepCurrentZ = true;
-    public bool moveCamera = true;
-    public bool zoomCamera = true;
-    [Min(0.01f)] public float orthographicSize = 5f;
     public bool smoothStep = true;
 
     public ClipCaps clipCaps => ClipCaps.Blending | ClipCaps.ClipIn;
@@ -32,9 +23,8 @@ public sealed class StoryCameraClip : PlayableAsset, ITimelineClipAsset
         behaviour.markerNo = markerNo;
         behaviour.worldPosition = worldPosition;
         behaviour.keepCurrentZ = keepCurrentZ;
-        behaviour.moveCamera = moveCamera;
-        behaviour.zoomCamera = zoomCamera;
-        behaviour.orthographicSize = orthographicSize;
+        behaviour.moveCamera = true;
+        behaviour.zoomCamera = false;
         behaviour.smoothStep = smoothStep;
         return playable;
     }
