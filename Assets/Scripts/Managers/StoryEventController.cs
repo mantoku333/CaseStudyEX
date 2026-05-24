@@ -75,6 +75,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
     private readonly Dictionary<int, StoryEventMarker> markerByNo = new Dictionary<int, StoryEventMarker>();
     private readonly Dictionary<string, StoryEventActor> actorByKey =
         new Dictionary<string, StoryEventActor>(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> firedDialogueClipKeys = new HashSet<string>(StringComparer.Ordinal);
 
     private Coroutine playRoutine;
     private Coroutine dialogueRoutine;
@@ -191,6 +192,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         RestoreCinematicState();
         directorStopped = false;
         startMutationsApplied = false;
+        firedDialogueClipKeys.Clear();
     }
 
     public Transform GetMarkerTransform(int markerNo)
@@ -247,12 +249,6 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
     public void OnNotify(Playable origin, INotification notification, object context)
     {
-        if (notification is StoryYarnDialogueMarker dialogueMarker)
-        {
-            StartDialogueFromTimeline(dialogueMarker);
-            return;
-        }
-
         if (notification is StoryAutoSaveMarker autoSaveMarker)
         {
             if (autoSaveMarker.ApplyCompleteMutationsBeforeSave)
@@ -268,6 +264,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
     {
         directorStopped = false;
         completeMutationsApplied = false;
+        firedDialogueClipKeys.Clear();
 
         StoryPauseRuntime.SetOverride(pausePolicy);
         CaptureCinematicState();
@@ -319,11 +316,27 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         return conditions == null || conditions.IsSatisfied();
     }
 
-    private void StartDialogueFromTimeline(StoryYarnDialogueMarker marker)
+    public bool TryStartDialogueFromTimeline(
+        string clipKey,
+        string nodeName,
+        bool useControllerDefaultStyle,
+        DialogueStyle dialogueStyle,
+        bool pauseTimelineUntilComplete,
+        string bubbleActorKey)
     {
-        if (marker == null)
+        string resolvedNodeName = string.IsNullOrWhiteSpace(nodeName) ? "Start" : nodeName.Trim();
+        string resolvedBubbleActorKey = string.IsNullOrWhiteSpace(bubbleActorKey) ? string.Empty : bubbleActorKey.Trim();
+        string resolvedClipKey = BuildDialogueClipKey(
+            clipKey,
+            resolvedNodeName,
+            useControllerDefaultStyle,
+            dialogueStyle,
+            pauseTimelineUntilComplete,
+            resolvedBubbleActorKey);
+
+        if (!firedDialogueClipKeys.Add(resolvedClipKey))
         {
-            return;
+            return false;
         }
 
         if (dialogueRoutine != null)
@@ -332,13 +345,61 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             UnsubscribeDialogueComplete();
         }
 
-        dialogueRoutine = StartCoroutine(PlayDialogueRoutine(marker));
+        dialogueRoutine = StartCoroutine(PlayDialogueRoutine(
+            resolvedNodeName,
+            useControllerDefaultStyle,
+            dialogueStyle,
+            pauseTimelineUntilComplete,
+            resolvedBubbleActorKey));
+        return true;
     }
 
-    private IEnumerator PlayDialogueRoutine(StoryYarnDialogueMarker marker)
+    public void StartDialogueFromTimeline(
+        string nodeName,
+        bool useControllerDefaultStyle,
+        DialogueStyle dialogueStyle,
+        bool pauseTimelineUntilComplete,
+        string bubbleActorKey)
+    {
+        TryStartDialogueFromTimeline(
+            string.Empty,
+            nodeName,
+            useControllerDefaultStyle,
+            dialogueStyle,
+            pauseTimelineUntilComplete,
+            bubbleActorKey);
+    }
+
+    private static string BuildDialogueClipKey(
+        string clipKey,
+        string nodeName,
+        bool useControllerDefaultStyle,
+        DialogueStyle dialogueStyle,
+        bool pauseTimelineUntilComplete,
+        string bubbleActorKey)
+    {
+        if (!string.IsNullOrWhiteSpace(clipKey))
+        {
+            return clipKey.Trim();
+        }
+
+        return string.Join(
+            "|",
+            nodeName,
+            useControllerDefaultStyle ? "default" : dialogueStyle.ToString(),
+            pauseTimelineUntilComplete ? "pause" : "continue",
+            bubbleActorKey);
+    }
+
+    private IEnumerator PlayDialogueRoutine(
+        string nodeName,
+        bool useControllerDefaultStyle,
+        DialogueStyle dialogueStyle,
+        bool pauseTimelineUntilComplete,
+        string bubbleActorKey)
     {
         PlayableDirector resolvedDirector = ResolveDirector();
-        bool shouldPauseTimeline = marker.PauseTimelineUntilComplete && resolvedDirector != null;
+        bool shouldPauseTimeline = pauseTimelineUntilComplete && resolvedDirector != null;
 
         if (shouldPauseTimeline)
         {
@@ -355,10 +416,10 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         }
 
         DialogueRunner runner = dialogueManager.Runner;
-        if (runner.Dialogue == null || !runner.Dialogue.NodeExists(marker.NodeName))
+        if (runner.Dialogue == null || !runner.Dialogue.NodeExists(nodeName))
         {
             Debug.LogWarning(
-                $"[StoryEventController] Dialogue node not found. eventId='{EventId}', node='{marker.NodeName}'",
+                $"[StoryEventController] Dialogue node not found. eventId='{EventId}', node='{nodeName}'",
                 this);
             ResumeDirectorIfNeeded(resolvedDirector, shouldPauseTimeline);
             dialogueRoutine = null;
@@ -370,7 +431,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             if (skipWhenDialogueRunning)
             {
                 Debug.LogWarning(
-                    $"[StoryEventController] Dialogue already running. Skip node='{marker.NodeName}', eventId='{EventId}'",
+                    $"[StoryEventController] Dialogue already running. Skip node='{nodeName}', eventId='{EventId}'",
                     this);
                 ResumeDirectorIfNeeded(resolvedDirector, shouldPauseTimeline);
                 dialogueRoutine = null;
@@ -384,9 +445,9 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         waitingDialogueCompletion = true;
         activeDialogueRunner.onDialogueComplete?.AddListener(OnDialogueComplete);
 
-        DialogueStyle style = marker.UseControllerDefaultStyle ? defaultDialogueStyle : marker.DialogueStyle;
-        Transform bubbleTarget = ResolveBubbleTarget(marker.BubbleActorKey);
-        dialogueManager.StartConversation(marker.NodeName, style, bubbleTarget);
+        DialogueStyle style = useControllerDefaultStyle ? defaultDialogueStyle : dialogueStyle;
+        Transform bubbleTarget = ResolveBubbleTarget(bubbleActorKey);
+        dialogueManager.StartConversation(nodeName, style, bubbleTarget);
 
         while (waitingDialogueCompletion)
         {
