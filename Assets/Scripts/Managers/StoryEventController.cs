@@ -94,6 +94,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
     private Coroutine letterBoxFadeRoutine;
     private bool hasCachedLetterBoxViewState;
     private CinemachineCamera activeEventCamera;
+    private CinemachineCamera runtimeEventCamera;
     private int cachedEventCameraPriorityValue;
     private bool cachedEventCameraPriorityEnabled;
     private bool hasCachedEventCameraPriority;
@@ -244,7 +245,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
     public CinemachineCamera GetEventCameraForTimeline()
     {
-        return ResolveEventCamera();
+        return activeEventCamera != null ? activeEventCamera : ResolveEventCamera();
     }
 
     public void OnNotify(Playable origin, INotification notification, object context)
@@ -893,7 +894,13 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             return;
         }
 
-        activeEventCamera = ResolveEventCamera();
+        CinemachineCamera sourceCamera = ResolveEventCamera();
+        if (sourceCamera == null)
+        {
+            return;
+        }
+
+        activeEventCamera = CreateRuntimeEventCamera(sourceCamera);
         if (activeEventCamera == null)
         {
             return;
@@ -921,21 +928,76 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
     private void RestoreEventCameraPriority()
     {
+        bool activeCameraIsRuntime = runtimeEventCamera != null && activeEventCamera == runtimeEventCamera;
+
         if (!hasCachedEventCameraPriority)
         {
+            DestroyRuntimeEventCamera();
+            activeEventCamera = null;
             return;
         }
 
-        if (activeEventCamera != null)
+        if (activeEventCamera != null && !activeCameraIsRuntime)
         {
             activeEventCamera.Priority.Value = cachedEventCameraPriorityValue;
             activeEventCamera.Priority.Enabled = cachedEventCameraPriorityEnabled;
         }
 
+        DestroyRuntimeEventCamera();
         activeEventCamera = null;
         cachedEventCameraPriorityValue = 0;
         cachedEventCameraPriorityEnabled = false;
         hasCachedEventCameraPriority = false;
+    }
+
+    private CinemachineCamera CreateRuntimeEventCamera(CinemachineCamera sourceCamera)
+    {
+        if (sourceCamera == null)
+        {
+            return null;
+        }
+
+        if (!Application.isPlaying)
+        {
+            return sourceCamera;
+        }
+
+        if (runtimeEventCamera != null)
+        {
+            return runtimeEventCamera;
+        }
+
+        GameObject runtimeCameraObject = Instantiate(sourceCamera.gameObject, sourceCamera.transform.parent);
+        runtimeCameraObject.name = $"{sourceCamera.name}_Runtime";
+        runtimeCameraObject.hideFlags = HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+        runtimeEventCamera = runtimeCameraObject.GetComponent<CinemachineCamera>();
+        if (runtimeEventCamera == null)
+        {
+            Destroy(runtimeCameraObject);
+            return null;
+        }
+
+        return runtimeEventCamera;
+    }
+
+    private void DestroyRuntimeEventCamera()
+    {
+        if (runtimeEventCamera == null)
+        {
+            return;
+        }
+
+        GameObject runtimeCameraObject = runtimeEventCamera.gameObject;
+        runtimeEventCamera = null;
+
+        if (Application.isPlaying)
+        {
+            Destroy(runtimeCameraObject);
+        }
+        else
+        {
+            DestroyImmediate(runtimeCameraObject);
+        }
     }
 
     private CinemachineCamera ResolveEventCamera()
