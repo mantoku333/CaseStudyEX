@@ -6,7 +6,8 @@ public enum StoryEventActionType
     DelayRealtime = 0,
     FadeOverlay = 1,
     SwitchCameraPriority = 2,
-    PlayTimeline = 3
+    PlayTimeline = 3,
+    PlayStoryEventTimeline = 4
 }
 
 [Serializable]
