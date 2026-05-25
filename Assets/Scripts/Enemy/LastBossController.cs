@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Metroidvania.Player;
 using Player;
 using UnityEngine;
@@ -48,6 +49,9 @@ namespace GameName.Enemy
         [SerializeField, Min(0f)] private float horizontalTelegraphTime = 2f;
         [SerializeField, Min(0.01f)] private float horizontalAttackVisibleTime = 0.22f;
         [SerializeField, Min(0f)] private float horizontalAttackRecovery = 0.6f;
+        // 横範囲攻撃は即時判定ではなく、GroundBlade prefabをボス側から順に生成して見せる。
+        [SerializeField] private GameObject groundBladePrefab;
+        [SerializeField, Min(0.1f)] private float horizontalGroundBladeSweepSpeed = 5f;
 
         [Header("Vertical Range Attack")]
         [SerializeField, Min(1)] private int verticalAttackDamage = 20;
@@ -55,8 +59,19 @@ namespace GameName.Enemy
         [SerializeField, Min(0f)] private float verticalAttackStartHeight = 6f;
         [SerializeField, Min(0f)] private float verticalAttackCooldown = 18f;
         [SerializeField, Min(0f)] private float verticalTelegraphTime = 2f;
+        [SerializeField, Min(0f)] private float verticalTargetLockBeforeAttack = 0.5f;
         [SerializeField, Min(0.01f)] private float verticalAttackVisibleTime = 0.24f;
         [SerializeField, Min(0f)] private float verticalAttackRecovery = 0.7f;
+        // 縦範囲攻撃は予兆中にRainBladeを上端へ待機させ、攻撃開始後に継続して降らせる。
+        [SerializeField] private GameObject rainBladePrefab;
+        [SerializeField, Min(1)] private int verticalRainBladeCount = 3;
+        [SerializeField, Min(0f)] private float verticalRainPreviewSpawnInterval = 0.06f;
+        [SerializeField, Min(0.01f)] private float verticalRainDuration = 2f;
+        [SerializeField, Min(0.01f)] private float verticalRainBladeInterval = 0.4f;
+        [SerializeField, Min(0.01f)] private float rainBladeFallSpeed = 8f;
+        [SerializeField, Min(0f)] private float rainBladeGroundDestroyDelay = 0.3f;
+        // パリィで中断された時だけ、この時間を使って発生中のブレードをフェードアウトする。
+        [SerializeField, Min(0f)] private float bladeParryFadeDuration = 0.2f;
 
         [Header("Down")]
         [SerializeField, Min(1)] private int downCountThreshold = 20;
@@ -105,6 +120,10 @@ namespace GameName.Enemy
         }
 
         private readonly Collider2D[] playerHits = new Collider2D[16];
+        // 発生中のブレードを、パリィ・死亡・非アクティブ化でまとめて止めるために保持する。
+        private readonly List<LastBossBladeAttack> activeBladeAttacks = new List<LastBossBladeAttack>();
+        // 予兆中に上端で待機しているRainBlade。攻撃開始後はここから順番に落とす。
+        private readonly List<LastBossBladeAttack> preparedRainBlades = new List<LastBossBladeAttack>();
 
         private Rigidbody2D rb2D;
         private Collider2D bodyCollider;
@@ -124,6 +143,8 @@ namespace GameName.Enemy
         private BossAction visibleAction = BossAction.None;
         private BossAction lastDebugAction = BossAction.None;
         private AttackBox activeAttackBox;
+        private Coroutine activeBladeAttackRoutine;
+        private Coroutine verticalRainPreviewRoutine;
         private int currentHealth;
         private int facingDirection = 1;
         private int normalChainCount;
@@ -132,6 +153,10 @@ namespace GameName.Enemy
         private bool enraged;
         private bool downRoutineRunning;
         private bool hitStopTimeScaleActive;
+        private bool prefabAttackRunning;
+        private bool horizontalBladeDamageDealt;
+        private bool verticalBladeDamageDealt;
+        private bool rangeParryProxyActive;
         private float stateTimer;
         private float horizontalReadyTime;
         private float verticalReadyTime;
@@ -192,7 +217,16 @@ namespace GameName.Enemy
             normalAttackSize.y = Mathf.Max(0.1f, normalAttackSize.y);
             horizontalAttackSize.x = Mathf.Max(0.1f, horizontalAttackSize.x);
             horizontalAttackSize.y = Mathf.Max(0.1f, horizontalAttackSize.y);
+            horizontalGroundBladeSweepSpeed = Mathf.Max(0.1f, horizontalGroundBladeSweepSpeed);
             verticalAttackWidth = Mathf.Max(0.1f, verticalAttackWidth);
+            verticalTargetLockBeforeAttack = Mathf.Max(0f, verticalTargetLockBeforeAttack);
+            verticalRainBladeCount = Mathf.Max(1, verticalRainBladeCount);
+            verticalRainPreviewSpawnInterval = Mathf.Max(0f, verticalRainPreviewSpawnInterval);
+            verticalRainDuration = Mathf.Max(0.01f, verticalRainDuration);
+            verticalRainBladeInterval = Mathf.Max(0.01f, verticalRainBladeInterval);
+            rainBladeFallSpeed = Mathf.Max(0.01f, rainBladeFallSpeed);
+            rainBladeGroundDestroyDelay = Mathf.Max(0f, rainBladeGroundDestroyDelay);
+            bladeParryFadeDuration = Mathf.Max(0f, bladeParryFadeDuration);
             justParryEffectDuration = Mathf.Max(0f, justParryEffectDuration);
             hitFlashDuration = Mathf.Max(0.01f, hitFlashDuration);
             hitFlashRepeatCount = Mathf.Max(1, hitFlashRepeatCount);
@@ -202,6 +236,7 @@ namespace GameName.Enemy
 
         private void OnDisable()
         {
+            CancelActiveBladeAttack();
             StopMotion();
             HideAttackVisual();
             RestoreHitStopTimeScale();
@@ -211,6 +246,7 @@ namespace GameName.Enemy
 
         private void OnDestroy()
         {
+            CancelActiveBladeAttack();
             RestoreHitStopTimeScale();
 
             if (telegraphObject != null)
@@ -285,6 +321,7 @@ namespace GameName.Enemy
                 return;
             }
 
+            CancelActiveBladeAttack();
             CachePlayerReferences();
             encounterActive = true;
             pendingAction = BossAction.None;
@@ -297,6 +334,7 @@ namespace GameName.Enemy
 
         public void DeactivateEncounter()
         {
+            CancelActiveBladeAttack();
             encounterActive = false;
             state = BossState.Inactive;
             pendingAction = BossAction.None;
@@ -368,6 +406,27 @@ namespace GameName.Enemy
                 return;
             }
 
+            if (pendingAction == BossAction.Horizontal || pendingAction == BossAction.Vertical)
+            {
+                // prefab式の範囲攻撃は赤箱を表示せず、透明なパリィ用判定だけ攻撃範囲に置く。
+                HideAttackVisual();
+                if (pendingAction == BossAction.Vertical)
+                {
+                    UpdateVerticalAttackTracking();
+                }
+
+                ShowRangeParryProxy(activeAttackBox, pendingAction);
+
+                stateTimer -= Time.deltaTime;
+                if (stateTimer > 0f)
+                {
+                    return;
+                }
+
+                BeginPrefabRangeAttack(pendingAction, activeAttackBox);
+                return;
+            }
+
             if (pendingAction != BossAction.Vertical)
             {
                 // 横範囲は予兆中もプレイヤーXへ追従する。縦範囲はBeginAction時点の位置で固定する。
@@ -400,6 +459,11 @@ namespace GameName.Enemy
         private void UpdateAttackVisible()
         {
             StopMotion();
+            if (prefabAttackRunning)
+            {
+                return;
+            }
+
             stateTimer -= Time.deltaTime;
 
             if (stateTimer > 0f)
@@ -508,7 +572,13 @@ namespace GameName.Enemy
             {
                 stateTimer = action == BossAction.Horizontal ? horizontalTelegraphTime : verticalTelegraphTime;
                 state = BossState.Telegraphing;
-                ShowAttackVisual(activeAttackBox, telegraphColor);
+                HideAttackVisual();
+
+                if (action == BossAction.Vertical)
+                {
+                    StartVerticalRainPreview();
+                }
+
                 return;
             }
 
@@ -567,6 +637,462 @@ namespace GameName.Enemy
             return false;
         }
 
+        private void BeginPrefabRangeAttack(BossAction action, AttackBox attackBox)
+        {
+            if (action != BossAction.Horizontal && action != BossAction.Vertical)
+            {
+                return;
+            }
+
+            // 発生から終了までをブレード用コルーチンに任せるため、通常の赤箱表示フローから切り離す。
+            HideAttackVisual();
+            SetRangeActionCooldown(action);
+            MarkActionResolved(action);
+            visibleAction = action;
+            state = BossState.AttackVisible;
+            prefabAttackRunning = true;
+            ShowRangeParryProxy(attackBox, action);
+
+            if (activeBladeAttackRoutine != null)
+            {
+                StopCoroutine(activeBladeAttackRoutine);
+                activeBladeAttackRoutine = null;
+            }
+
+            if (action == BossAction.Horizontal)
+            {
+                horizontalBladeDamageDealt = false;
+                activeBladeAttackRoutine = StartCoroutine(HorizontalGroundBladeAttackRoutine(attackBox));
+                return;
+            }
+
+            verticalBladeDamageDealt = false;
+            activeBladeAttackRoutine = StartCoroutine(VerticalRainBladeAttackRoutine());
+        }
+
+        private void UpdateVerticalAttackTracking()
+        {
+            if (stateTimer <= Mathf.Max(0f, verticalTargetLockBeforeAttack))
+            {
+                return;
+            }
+
+            // 縦範囲の狙いは攻撃開始直前までプレイヤーを追い、指定秒数前に固定する。
+            activeAttackBox = BuildAttackBox(BossAction.Vertical);
+            UpdateQueuedRainBladePreviews(activeAttackBox);
+        }
+
+        private IEnumerator HorizontalGroundBladeAttackRoutine(AttackBox attackBox)
+        {
+            if (groundBladePrefab == null)
+            {
+                Debug.LogWarning("LastBoss horizontal attack needs a GroundBlade prefab.", this);
+                FinishPrefabRangeAttack(BossAction.Horizontal);
+                yield break;
+            }
+
+            float spacing = ResolveGroundBladePrefabWidth();
+            float sweepSpeed = Mathf.Max(0.1f, horizontalGroundBladeSweepSpeed);
+            float spawnInterval = spacing / sweepSpeed;
+            int bladeCount = Mathf.Max(1, Mathf.CeilToInt(attackBox.Size.x / spacing));
+            float nearEdgeX = attackBox.Center.x - facingDirection * (attackBox.Size.x * 0.5f);
+            float groundY = attackBox.Center.y - attackBox.Size.y * 0.5f;
+
+            // GroundBladeのscaleは触らず、prefabの実幅を使ってボス側から順に敷き詰める。
+            for (int i = 0; i < bladeCount; i++)
+            {
+                float distance = spacing >= attackBox.Size.x
+                    ? attackBox.Size.x * 0.5f
+                    : Mathf.Min(attackBox.Size.x - spacing * 0.5f, spacing * 0.5f + i * spacing);
+                Vector2 spawnPosition = new Vector2(
+                    nearEdgeX + facingDirection * distance,
+                    groundY);
+
+                LastBossBladeAttack blade = SpawnBlade(groundBladePrefab, spawnPosition, Quaternion.identity);
+                if (blade != null)
+                {
+                    blade.InitializeGround(
+                        this,
+                        GetAttackDamage(BossAction.Horizontal),
+                        groundY,
+                        horizontalAttackVisibleTime);
+                }
+
+                if (i < bladeCount - 1)
+                {
+                    yield return new WaitForSeconds(spawnInterval);
+                }
+            }
+
+            yield return new WaitForSeconds(Mathf.Max(0.01f, horizontalAttackVisibleTime * 2f));
+
+            ClearBladesOfKind(LastBossBladeAttack.BladeKind.Ground);
+            FinishPrefabRangeAttack(BossAction.Horizontal);
+        }
+
+        private IEnumerator VerticalRainBladeAttackRoutine()
+        {
+            if (verticalRainPreviewRoutine != null)
+            {
+                StopCoroutine(verticalRainPreviewRoutine);
+                verticalRainPreviewRoutine = null;
+            }
+
+            EnsurePreparedRainBladeQueue(activeAttackBox);
+
+            if (preparedRainBlades.Count == 0)
+            {
+                Debug.LogWarning("LastBoss vertical attack has no prepared RainBlades.", this);
+                FinishPrefabRangeAttack(BossAction.Vertical);
+                yield break;
+            }
+
+            float endTime = Time.time + Mathf.Max(0.01f, verticalRainDuration);
+            float releaseInterval = Mathf.Max(0.01f, verticalRainBladeInterval);
+            int nextSpawnSlot = preparedRainBlades.Count;
+
+            // 待機ブレードを1本落とすたびに上端へ補充し、duration中だけ雨を継続する。
+            while (Time.time < endTime)
+            {
+                if (preparedRainBlades.Count <= 0)
+                {
+                    LastBossBladeAttack replacement = SpawnRainPreviewBlade(activeAttackBox, nextSpawnSlot);
+                    nextSpawnSlot++;
+                    if (replacement != null)
+                    {
+                        preparedRainBlades.Add(replacement);
+                    }
+                }
+
+                LastBossBladeAttack blade = preparedRainBlades[0];
+                preparedRainBlades.RemoveAt(0);
+
+                if (blade != null)
+                {
+                    blade.ReleaseRainBlade();
+                }
+
+                if (Time.time < endTime)
+                {
+                    LastBossBladeAttack replacement = SpawnRainPreviewBlade(activeAttackBox, nextSpawnSlot);
+                    nextSpawnSlot++;
+                    if (replacement != null)
+                    {
+                        preparedRainBlades.Add(replacement);
+                    }
+                }
+
+                yield return new WaitForSeconds(releaseInterval);
+            }
+
+            ClearQueuedRainBlades();
+
+            while (HasLiveBlade(LastBossBladeAttack.BladeKind.Rain))
+            {
+                yield return null;
+            }
+
+            preparedRainBlades.Clear();
+            FinishPrefabRangeAttack(BossAction.Vertical);
+        }
+
+        private void StartVerticalRainPreview()
+        {
+            if (verticalRainPreviewRoutine != null)
+            {
+                StopCoroutine(verticalRainPreviewRoutine);
+                verticalRainPreviewRoutine = null;
+            }
+
+            ClearBladesOfKind(LastBossBladeAttack.BladeKind.Rain);
+            preparedRainBlades.Clear();
+
+            if (rainBladePrefab == null)
+            {
+                Debug.LogWarning("LastBoss vertical attack needs a RainBlade prefab.", this);
+                return;
+            }
+
+            // 予兆開始時に上端へ見せブレードを素早く並べ、攻撃開始まで待機させる。
+            verticalRainPreviewRoutine = StartCoroutine(VerticalRainPreviewRoutine());
+        }
+
+        private IEnumerator VerticalRainPreviewRoutine()
+        {
+            int bladeCount = Mathf.Max(1, verticalRainBladeCount);
+            float spawnInterval = ResolveVerticalRainPreviewSpawnInterval(bladeCount);
+
+            for (int i = 0; i < bladeCount; i++)
+            {
+                LastBossBladeAttack blade = SpawnRainPreviewBlade(activeAttackBox, i);
+                if (blade != null)
+                {
+                    preparedRainBlades.Add(blade);
+                }
+
+                if (i < bladeCount - 1 && spawnInterval > 0f)
+                {
+                    yield return new WaitForSeconds(spawnInterval);
+                }
+            }
+
+            verticalRainPreviewRoutine = null;
+        }
+
+        private float ResolveVerticalRainPreviewSpawnInterval(int bladeCount)
+        {
+            if (bladeCount <= 1)
+            {
+                return 0f;
+            }
+
+            float configuredInterval = Mathf.Max(0f, verticalRainPreviewSpawnInterval);
+            float maxInterval = Mathf.Max(0f, verticalTelegraphTime - 0.01f) / (bladeCount - 1);
+            return Mathf.Min(configuredInterval, maxInterval);
+        }
+
+        private LastBossBladeAttack SpawnRainPreviewBlade(AttackBox attackBox, int slotIndex)
+        {
+            if (rainBladePrefab == null)
+            {
+                return null;
+            }
+
+            GetRainBladeSlotPoints(
+                attackBox,
+                slotIndex,
+                out Vector2 spawnPosition,
+                out Vector2 targetPoint,
+                out Vector2 previewAimPoint);
+            Quaternion rotation = Quaternion.Euler(
+                0f,
+                0f,
+                Vector2.SignedAngle(Vector2.up, previewAimPoint - spawnPosition));
+
+            LastBossBladeAttack blade = SpawnBlade(rainBladePrefab, spawnPosition, rotation);
+            if (blade != null)
+            {
+                blade.InitializeRainPreview(
+                    this,
+                    GetAttackDamage(BossAction.Vertical),
+                    targetPoint,
+                    previewAimPoint,
+                    rainBladeFallSpeed,
+                    rainBladeGroundDestroyDelay);
+            }
+
+            return blade;
+        }
+
+        private void EnsurePreparedRainBladeQueue(AttackBox attackBox)
+        {
+            for (int i = preparedRainBlades.Count - 1; i >= 0; i--)
+            {
+                if (preparedRainBlades[i] == null)
+                {
+                    preparedRainBlades.RemoveAt(i);
+                }
+            }
+
+            int bladeCount = Mathf.Max(1, verticalRainBladeCount);
+            for (int i = preparedRainBlades.Count; i < bladeCount; i++)
+            {
+                LastBossBladeAttack blade = SpawnRainPreviewBlade(attackBox, i);
+                if (blade != null)
+                {
+                    preparedRainBlades.Add(blade);
+                }
+            }
+
+            UpdateQueuedRainBladePreviews(attackBox);
+        }
+
+        private void UpdateQueuedRainBladePreviews(AttackBox attackBox)
+        {
+            for (int i = 0; i < preparedRainBlades.Count; i++)
+            {
+                LastBossBladeAttack blade = preparedRainBlades[i];
+                if (blade == null)
+                {
+                    continue;
+                }
+
+                GetRainBladeSlotPoints(
+                    attackBox,
+                    i,
+                    out Vector2 spawnPosition,
+                    out Vector2 targetPoint,
+                    out Vector2 previewAimPoint);
+                blade.UpdateRainPreview(spawnPosition, targetPoint, previewAimPoint);
+            }
+        }
+
+        private void GetRainBladeSlotPoints(
+            AttackBox attackBox,
+            int slotIndex,
+            out Vector2 spawnPosition,
+            out Vector2 targetPoint,
+            out Vector2 previewAimPoint)
+        {
+            int bladeCount = Mathf.Max(1, verticalRainBladeCount);
+            Vector2 direction = GetAttackBoxDirection(attackBox);
+            Vector2 side = GetAttackBoxSide(attackBox);
+            Vector2 topCenter = attackBox.Center - direction * (attackBox.Size.y * 0.5f);
+            Vector2 bottomCenter = attackBox.Center + direction * (attackBox.Size.y * 0.5f);
+            int normalizedSlot = bladeCount <= 0 ? 0 : Mathf.Abs(slotIndex) % bladeCount;
+            float t = bladeCount == 1 ? 0.5f : normalizedSlot / (bladeCount - 1f);
+            float sideOffset = Mathf.Lerp(-attackBox.Size.x * 0.5f, attackBox.Size.x * 0.5f, t);
+
+            // 同じスロットの上端と下端を使うので、中央一点へ集まらず赤箱内を平行に落ちる。
+            spawnPosition = topCenter + side * sideOffset;
+            targetPoint = bottomCenter + side * sideOffset;
+            previewAimPoint = bottomCenter;
+        }
+
+        private float ResolveGroundBladePrefabWidth()
+        {
+            if (groundBladePrefab == null)
+            {
+                return 1f;
+            }
+
+            // 一時ブロックのX scale調整が、見た目だけでなく生成数と間隔にも反映されるようにする。
+            Collider2D bladeCollider = groundBladePrefab.GetComponentInChildren<Collider2D>(true);
+            float colliderWidth = ResolveColliderPrefabWidth(bladeCollider);
+            if (colliderWidth > 0.001f)
+            {
+                return Mathf.Max(0.1f, colliderWidth);
+            }
+
+            SpriteRenderer bladeRenderer = groundBladePrefab.GetComponentInChildren<SpriteRenderer>(true);
+            if (bladeRenderer != null && bladeRenderer.sprite != null)
+            {
+                float scaleX = Mathf.Abs(bladeRenderer.transform.lossyScale.x);
+                float rendererWidth = bladeRenderer.sprite.bounds.size.x * Mathf.Max(0.001f, scaleX);
+                if (rendererWidth > 0.001f)
+                {
+                    return Mathf.Max(0.1f, rendererWidth);
+                }
+            }
+
+            return 1f;
+        }
+
+        private static float ResolveColliderPrefabWidth(Collider2D bladeCollider)
+        {
+            if (bladeCollider == null)
+            {
+                return 0f;
+            }
+
+            float scaleX = Mathf.Max(0.001f, Mathf.Abs(bladeCollider.transform.lossyScale.x));
+            if (bladeCollider is BoxCollider2D boxCollider)
+            {
+                return Mathf.Abs(boxCollider.size.x) * scaleX;
+            }
+
+            if (bladeCollider is CapsuleCollider2D capsuleCollider)
+            {
+                return Mathf.Abs(capsuleCollider.size.x) * scaleX;
+            }
+
+            if (bladeCollider is CircleCollider2D circleCollider)
+            {
+                return Mathf.Abs(circleCollider.radius) * 2f * scaleX;
+            }
+
+            return bladeCollider.bounds.size.x;
+        }
+
+        private LastBossBladeAttack SpawnBlade(GameObject prefab, Vector2 position, Quaternion rotation)
+        {
+            GameObject bladeObject = Instantiate(
+                prefab,
+                new Vector3(position.x, position.y, transform.position.z),
+                rotation);
+
+            Collider2D bladeCollider = bladeObject.GetComponent<Collider2D>();
+            if (bladeCollider != null)
+            {
+                bladeCollider.isTrigger = true;
+            }
+
+            LastBossBladeAttack blade = bladeObject.GetComponent<LastBossBladeAttack>();
+            if (blade == null)
+            {
+                blade = bladeObject.AddComponent<LastBossBladeAttack>();
+            }
+
+            if (!activeBladeAttacks.Contains(blade))
+            {
+                activeBladeAttacks.Add(blade);
+            }
+
+            return blade;
+        }
+
+        private bool HasLiveBlade(LastBossBladeAttack.BladeKind kindToCheck)
+        {
+            for (int i = activeBladeAttacks.Count - 1; i >= 0; i--)
+            {
+                LastBossBladeAttack blade = activeBladeAttacks[i];
+                if (blade == null)
+                {
+                    activeBladeAttacks.RemoveAt(i);
+                    continue;
+                }
+
+                if (blade.Kind == kindToCheck)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void FinishPrefabRangeAttack(BossAction action)
+        {
+            if (state == BossState.Dead || state == BossState.Downed)
+            {
+                return;
+            }
+
+            HideRangeParryProxy();
+            activeBladeAttackRoutine = null;
+            prefabAttackRunning = false;
+            visibleAction = action;
+            stateTimer = GetRecoveryTime(action);
+            state = BossState.Recovery;
+        }
+
+        private void SetRangeActionCooldown(BossAction action)
+        {
+            if (action == BossAction.Horizontal)
+            {
+                horizontalReadyTime = Time.time + horizontalAttackCooldown;
+            }
+            else if (action == BossAction.Vertical)
+            {
+                verticalReadyTime = Time.time + verticalAttackCooldown;
+            }
+        }
+
+        private void MarkActionResolved(BossAction action)
+        {
+            if (action == BossAction.Normal)
+            {
+                normalChainCount++;
+            }
+            else
+            {
+                normalChainCount = 0;
+            }
+
+            previousAction = action;
+            ClearJustParryBuffer();
+        }
+
         private void ApplyDamageToPlayersInBox(BossAction action, AttackBox attackBox)
         {
             // ダメージ判定は攻撃発生時に1回だけ行う。見た目の赤範囲表示時間とは別。
@@ -603,6 +1129,169 @@ namespace GameName.Enemy
                     damageFlash?.PlayFlashForced();
                 }
             }
+        }
+
+        public bool TryApplyBladeDamage(LastBossBladeAttack blade, PlayerHealth targetHealth, int damage)
+        {
+            if (blade == null || targetHealth == null || state == BossState.Dead || !encounterActive)
+            {
+                return false;
+            }
+
+            // ブレードは複数本出るため、横/縦それぞれ攻撃1回につきダメージは1回だけに制限する。
+            if (blade.Kind == LastBossBladeAttack.BladeKind.Ground)
+            {
+                if (horizontalBladeDamageDealt)
+                {
+                    return false;
+                }
+            }
+            else if (verticalBladeDamageDealt)
+            {
+                return false;
+            }
+
+            if (!targetHealth.TryTakeDamage(Mathf.Max(1, damage)))
+            {
+                return false;
+            }
+
+            if (blade.Kind == LastBossBladeAttack.BladeKind.Ground)
+            {
+                horizontalBladeDamageDealt = true;
+            }
+            else
+            {
+                verticalBladeDamageDealt = true;
+            }
+
+            PlayPlayerDamageFlash(targetHealth);
+            return true;
+        }
+
+        public void NotifyBladeParried(LastBossBladeAttack blade)
+        {
+            if (blade == null || state == BossState.Dead)
+            {
+                return;
+            }
+
+            BossAction action = blade.Kind == LastBossBladeAttack.BladeKind.Ground
+                ? BossAction.Horizontal
+                : BossAction.Vertical;
+
+            if (!prefabAttackRunning)
+            {
+                SetRangeActionCooldown(action);
+                MarkActionResolved(action);
+            }
+            else
+            {
+                ClearJustParryBuffer();
+            }
+
+            // パリィ成立時は通常キャンセルと違い、ブレードを指定時間でフェードアウトさせる。
+            CancelActiveBladeAttack(bladeParryFadeDuration);
+
+            bool downStarted = AddDownCount(action == BossAction.Horizontal ? 7 : 15);
+            if (downStarted)
+            {
+                HideAttackVisual();
+                return;
+            }
+
+            if (state != BossState.Dead && state != BossState.Downed)
+            {
+                visibleAction = action;
+                stateTimer = GetRecoveryTime(action);
+                state = BossState.Recovery;
+            }
+        }
+
+        public bool IsRangeParryProxyActive()
+        {
+            return rangeParryProxyActive
+                   && state != BossState.Dead
+                   && state != BossState.Downed
+                   && (pendingAction == BossAction.Horizontal
+                       || pendingAction == BossAction.Vertical
+                       || visibleAction == BossAction.Horizontal
+                       || visibleAction == BossAction.Vertical);
+        }
+
+        public void NotifyRangeParryProxyParried()
+        {
+            if (!IsRangeParryProxyActive())
+            {
+                return;
+            }
+
+            BossAction action = pendingAction == BossAction.Horizontal || pendingAction == BossAction.Vertical
+                ? pendingAction
+                : visibleAction;
+
+            if (action != BossAction.Horizontal && action != BossAction.Vertical)
+            {
+                return;
+            }
+
+            if (!prefabAttackRunning)
+            {
+                SetRangeActionCooldown(action);
+                MarkActionResolved(action);
+            }
+            else
+            {
+                ClearJustParryBuffer();
+            }
+
+            // 透明プロキシ経由のパリィでも、実体ブレード側と同じ中断処理を使う。
+            CancelActiveBladeAttack(bladeParryFadeDuration);
+
+            bool downStarted = AddDownCount(action == BossAction.Horizontal ? 7 : 15);
+            if (downStarted)
+            {
+                HideAttackVisual();
+                return;
+            }
+
+            if (state != BossState.Dead && state != BossState.Downed)
+            {
+                visibleAction = action;
+                stateTimer = GetRecoveryTime(action);
+                state = BossState.Recovery;
+            }
+        }
+
+        public void NotifyBladeLanded(LastBossBladeAttack blade)
+        {
+        }
+
+        public void NotifyBladeDestroyed(LastBossBladeAttack blade)
+        {
+            if (blade == null)
+            {
+                return;
+            }
+
+            activeBladeAttacks.Remove(blade);
+            preparedRainBlades.Remove(blade);
+        }
+
+        private void PlayPlayerDamageFlash(PlayerHealth targetHealth)
+        {
+            if (targetHealth == null)
+            {
+                return;
+            }
+
+            PlayerDamageFlash damageFlash = targetHealth.GetComponent<PlayerDamageFlash>();
+            if (damageFlash == null)
+            {
+                damageFlash = targetHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+            }
+
+            damageFlash?.PlayFlashForced();
         }
 
         private bool IsRangeAttackParried(BossAction action, AttackBox attackBox)
@@ -896,6 +1585,7 @@ namespace GameName.Enemy
         private IEnumerator EnterDownRoutine()
         {
             downRoutineRunning = true;
+            CancelActiveBladeAttack();
             // ヒットストップ前にDownedへ入れて、同フレーム以降の攻撃更新を止める。
             state = BossState.Downed;
             StopMotion();
@@ -959,6 +1649,7 @@ namespace GameName.Enemy
         public void ResetHealthToFull()
         {
             StopAllCoroutines();
+            CancelActiveBladeAttack();
             RestoreHitStopTimeScale();
             downRoutineRunning = false;
             enraged = false;
@@ -1028,11 +1719,152 @@ namespace GameName.Enemy
         {
             state = BossState.Dead;
             encounterActive = false;
+            CancelActiveBladeAttack();
             StopMotion();
             HideAttackVisual();
             // Destroy前に通知して、ボスの表示状態を参照できるようにする。
             Died?.Invoke();
             Destroy(gameObject);
+        }
+
+        private void CancelActiveBladeAttack(float bladeFadeDuration = 0f)
+        {
+            // bladeFadeDurationはパリィ演出用。0なら死亡・非アクティブ化など従来通り即破棄する。
+            if (activeBladeAttackRoutine != null)
+            {
+                StopCoroutine(activeBladeAttackRoutine);
+                activeBladeAttackRoutine = null;
+            }
+
+            if (verticalRainPreviewRoutine != null)
+            {
+                StopCoroutine(verticalRainPreviewRoutine);
+                verticalRainPreviewRoutine = null;
+            }
+
+            prefabAttackRunning = false;
+            horizontalBladeDamageDealt = false;
+            verticalBladeDamageDealt = false;
+            HideRangeParryProxy();
+
+            for (int i = activeBladeAttacks.Count - 1; i >= 0; i--)
+            {
+                LastBossBladeAttack blade = activeBladeAttacks[i];
+                if (blade == null)
+                {
+                    continue;
+                }
+
+                if (bladeFadeDuration > 0f)
+                {
+                    blade.ForceFadeOut(bladeFadeDuration);
+                }
+                else
+                {
+                    blade.ForceDestroy();
+                }
+            }
+
+            activeBladeAttacks.Clear();
+            preparedRainBlades.Clear();
+        }
+
+        private void ClearBladesOfKind(LastBossBladeAttack.BladeKind bladeKind)
+        {
+            for (int i = activeBladeAttacks.Count - 1; i >= 0; i--)
+            {
+                LastBossBladeAttack blade = activeBladeAttacks[i];
+                if (blade == null)
+                {
+                    activeBladeAttacks.RemoveAt(i);
+                    continue;
+                }
+
+                if (blade.Kind != bladeKind)
+                {
+                    continue;
+                }
+
+                blade.ForceDestroy();
+
+                activeBladeAttacks.RemoveAt(i);
+            }
+
+            if (bladeKind == LastBossBladeAttack.BladeKind.Rain)
+            {
+                preparedRainBlades.Clear();
+            }
+        }
+
+        private void ClearQueuedRainBlades()
+        {
+            for (int i = preparedRainBlades.Count - 1; i >= 0; i--)
+            {
+                LastBossBladeAttack blade = preparedRainBlades[i];
+                if (blade != null)
+                {
+                    blade.ForceDestroy();
+                }
+            }
+
+            preparedRainBlades.Clear();
+        }
+
+        private void ShowRangeParryProxy(AttackBox attackBox, BossAction action)
+        {
+            if (action != BossAction.Horizontal && action != BossAction.Vertical)
+            {
+                return;
+            }
+
+            // ブレード本体に触れていないタイミングでも範囲攻撃全体をパリィできるようにする透明判定。
+            EnsureVisualObjects();
+
+            if (telegraphObject == null || telegraphCollider == null)
+            {
+                return;
+            }
+
+            rangeParryProxyActive = true;
+            telegraphObject.transform.SetParent(null, true);
+            telegraphObject.transform.position = new Vector3(attackBox.Center.x, attackBox.Center.y, transform.position.z);
+            telegraphObject.transform.rotation = Quaternion.Euler(0f, 0f, attackBox.Angle);
+            telegraphObject.transform.localScale = new Vector3(attackBox.Size.x, attackBox.Size.y, 1f);
+            telegraphCollider.enabled = true;
+
+            if (telegraphRenderer != null)
+            {
+                telegraphRenderer.enabled = false;
+            }
+        }
+
+        private void HideRangeParryProxy()
+        {
+            rangeParryProxyActive = false;
+
+            if (telegraphRenderer != null && telegraphRenderer.enabled)
+            {
+                return;
+            }
+
+            if (telegraphCollider != null)
+            {
+                telegraphCollider.enabled = false;
+            }
+        }
+
+        private static Vector2 GetAttackBoxDirection(AttackBox attackBox)
+        {
+            Quaternion rotation = Quaternion.Euler(0f, 0f, attackBox.Angle);
+            Vector2 direction = rotation * Vector2.up;
+            return direction.sqrMagnitude <= 0.0001f ? Vector2.down : direction.normalized;
+        }
+
+        private static Vector2 GetAttackBoxSide(AttackBox attackBox)
+        {
+            Quaternion rotation = Quaternion.Euler(0f, 0f, attackBox.Angle);
+            Vector2 side = rotation * Vector2.right;
+            return side.sqrMagnitude <= 0.0001f ? Vector2.right : side.normalized;
         }
 
         private void ConfigureRigidbody()
@@ -1072,6 +1904,13 @@ namespace GameName.Enemy
         {
             if (telegraphRenderer != null)
             {
+                LastBossAttackParryTarget existingParryTarget =
+                    telegraphObject != null ? telegraphObject.GetComponent<LastBossAttackParryTarget>() : null;
+                if (existingParryTarget != null)
+                {
+                    existingParryTarget.Initialize(this);
+                }
+
                 return;
             }
 
@@ -1110,6 +1949,13 @@ namespace GameName.Enemy
                 telegraphObject.AddComponent<LastBossAttackParryTarget>();
             }
 
+            LastBossAttackParryTarget parryTarget = telegraphObject.GetComponent<LastBossAttackParryTarget>();
+            if (parryTarget == null)
+            {
+                parryTarget = telegraphObject.AddComponent<LastBossAttackParryTarget>();
+            }
+
+            parryTarget.Initialize(this);
             telegraphCollider.isTrigger = true;
             telegraphCollider.size = Vector2.one;
             telegraphCollider.enabled = false;
@@ -1186,8 +2032,28 @@ namespace GameName.Enemy
         }
     }
 
-    public sealed class LastBossAttackParryTarget : MonoBehaviour
+    public sealed class LastBossAttackParryTarget : MonoBehaviour, IParryableAttack
     {
+        private LastBossController owner;
+
+        // 赤箱は非表示でも、このプロキシが範囲攻撃のパリィ受付状態をParryHitboxへ伝える。
+        public bool IsParryable => owner != null && owner.IsRangeParryProxyActive();
+
+        public void Initialize(LastBossController targetOwner)
+        {
+            owner = targetOwner;
+        }
+
+        public void StopByParry()
+        {
+            if (!IsParryable)
+            {
+                return;
+            }
+
+            owner.NotifyRangeParryProxyParried();
+        }
+
         // LastBossの範囲攻撃予兆をParryHitboxへ知らせるためのマーカーコンポーネント。
     }
 }
