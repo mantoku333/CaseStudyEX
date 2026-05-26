@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4a43f9c20c74a64b82d20ad4fb0ba7e, type: 3}
+  m_Name: CastleSurfaceAudioProfile
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Audio.SurfaceAudioProfile
+  footstepClips:
+  - {fileID: 8300000, guid: 355ceef49cefc754bb6a9d8f7b94266a, type: 3}
+  - {fileID: 8300000, guid: e12532d630df3fd4a989a43c0d93e6f8, type: 3}
+  footstepPlaybackMode: 0
+  footstepClipOrder: 1
+  footstepIntervalOverride: 0.2
+  footstepVolume: 1
+  landingClips: []
+  landingVolume: 1
