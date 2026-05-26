@@ -313,6 +313,17 @@ public sealed class StoryEventRunner : MonoBehaviour
                     PlayTimeline(action);
                 }
                 yield break;
+
+            case StoryEventActionType.PlayStoryEventTimeline:
+                if (action.waitForCompletion)
+                {
+                    yield return PlayStoryEventTimelineAndWait(action);
+                }
+                else
+                {
+                    PlayStoryEventTimeline(action);
+                }
+                yield break;
         }
     }
 
@@ -388,6 +399,57 @@ public sealed class StoryEventRunner : MonoBehaviour
         {
             yield return null;
         }
+    }
+
+    private static void PlayStoryEventTimeline(StoryEventActionDefinition action)
+    {
+        StoryEventController controller = FindStoryEventController(action.targetName);
+        if (controller != null)
+        {
+            controller.PlayEvent();
+        }
+    }
+
+    private static IEnumerator PlayStoryEventTimelineAndWait(StoryEventActionDefinition action)
+    {
+        StoryEventController controller = FindStoryEventController(action.targetName);
+        if (controller == null || !controller.PlayEvent())
+        {
+            yield break;
+        }
+
+        while (controller.IsPlaying)
+        {
+            yield return null;
+        }
+    }
+
+    private static StoryEventController FindStoryEventController(string eventNameOrId)
+    {
+        if (string.IsNullOrWhiteSpace(eventNameOrId))
+        {
+            return null;
+        }
+
+        string trimmedName = eventNameOrId.Trim();
+        StoryEventController[] controllers =
+            Object.FindObjectsByType<StoryEventController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < controllers.Length; i++)
+        {
+            StoryEventController controller = controllers[i];
+            if (controller == null)
+            {
+                continue;
+            }
+
+            if (string.Equals(controller.EventId, trimmedName, System.StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(controller.name, trimmedName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return controller;
+            }
+        }
+
+        return null;
     }
 
     private static PlayableDirector FindDirectorByName(string directorName)

@@ -1,0 +1,228 @@
+using System.Collections;
+using UnityEngine;
+
+[DisallowMultipleComponent]
+[AddComponentMenu("CaseStudy/Story/Story Timeline Runtime")]
+public sealed class StoryTimelineRuntime : MonoBehaviour
+{
+    private const string RuntimeObjectName = "[StoryTimelineRuntime]";
+    private const string BgmVolumeKey = "MantokuStoryOptions.BgmVolume";
+    private const string SeVolumeKey = "MantokuStoryOptions.SeVolume";
+
+    private static StoryTimelineRuntime instance;
+
+    private AudioSource bgmSource;
+    private AudioSource seSource;
+    private Coroutine bgmFadeRoutine;
+    private float bgmBaseVolume = 1f;
+
+    public static StoryTimelineRuntime Instance
+    {
+        get
+        {
+            EnsureInstance();
+            return instance;
+        }
+    }
+
+    private static void EnsureInstance()
+    {
+        if (instance != null)
+        {
+            return;
+        }
+
+        var gameObject = new GameObject(RuntimeObjectName);
+        DontDestroyOnLoad(gameObject);
+        instance = gameObject.AddComponent<StoryTimelineRuntime>();
+    }
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+        BuildSources();
+    }
+
+    private void Update()
+    {
+        if (bgmFadeRoutine == null && bgmSource != null && bgmSource.isPlaying)
+        {
+            bgmSource.volume = ResolveBgmVolume(bgmBaseVolume);
+        }
+    }
+
+    public void PlayBgm(AudioClip clip, float volume, bool loop, float fadeSeconds)
+    {
+        if (clip == null)
+        {
+            return;
+        }
+
+        StageBgmController stageBgm = FindFirstObjectByType<StageBgmController>(FindObjectsInactive.Include);
+        if (stageBgm != null)
+        {
+            stageBgm.PlayTimelineBgm(clip, volume);
+            return;
+        }
+
+        BuildSources();
+
+        if (bgmFadeRoutine != null)
+        {
+            StopCoroutine(bgmFadeRoutine);
+            bgmFadeRoutine = null;
+        }
+
+        bgmBaseVolume = Mathf.Clamp01(volume);
+        bgmSource.loop = loop;
+
+        if (bgmSource.clip == clip && bgmSource.isPlaying)
+        {
+            bgmFadeRoutine = StartCoroutine(FadeBgmTo(bgmBaseVolume, fadeSeconds));
+            return;
+        }
+
+        bgmSource.clip = clip;
+        bgmSource.volume = fadeSeconds > 0f ? 0f : ResolveBgmVolume(bgmBaseVolume);
+        bgmSource.Play();
+
+        if (fadeSeconds > 0f)
+        {
+            bgmFadeRoutine = StartCoroutine(FadeBgmTo(bgmBaseVolume, fadeSeconds));
+        }
+    }
+
+    public void StopBgm(float fadeSeconds)
+    {
+        StageBgmController stageBgm = FindFirstObjectByType<StageBgmController>(FindObjectsInactive.Include);
+        if (stageBgm != null)
+        {
+            stageBgm.StopTimelineBgm(fadeSeconds);
+            return;
+        }
+
+        BuildSources();
+
+        if (bgmFadeRoutine != null)
+        {
+            StopCoroutine(bgmFadeRoutine);
+            bgmFadeRoutine = null;
+        }
+
+        if (bgmSource == null || !bgmSource.isPlaying)
+        {
+            return;
+        }
+
+        if (fadeSeconds <= 0f)
+        {
+            bgmSource.Stop();
+            bgmSource.clip = null;
+            bgmSource.volume = 0f;
+            return;
+        }
+
+        bgmFadeRoutine = StartCoroutine(FadeBgmOut(fadeSeconds));
+    }
+
+    public void PlaySe(AudioClip clip, float volume)
+    {
+        if (clip == null)
+        {
+            return;
+        }
+
+        BuildSources();
+        seSource.PlayOneShot(clip, Mathf.Clamp01(volume) * ResolveSeVolume());
+    }
+
+    private IEnumerator FadeBgmTo(float targetBaseVolume, float fadeSeconds)
+    {
+        float start = bgmSource != null ? bgmSource.volume : 0f;
+        float target = ResolveBgmVolume(targetBaseVolume);
+        float duration = Mathf.Max(0.01f, fadeSeconds);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            if (bgmSource != null)
+            {
+                bgmSource.volume = Mathf.Lerp(start, target, t);
+            }
+
+            yield return null;
+        }
+
+        if (bgmSource != null)
+        {
+            bgmSource.volume = target;
+        }
+
+        bgmFadeRoutine = null;
+    }
+
+    private IEnumerator FadeBgmOut(float fadeSeconds)
+    {
+        float start = bgmSource != null ? bgmSource.volume : 0f;
+        float duration = Mathf.Max(0.01f, fadeSeconds);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            if (bgmSource != null)
+            {
+                bgmSource.volume = Mathf.Lerp(start, 0f, t);
+            }
+
+            yield return null;
+        }
+
+        if (bgmSource != null)
+        {
+            bgmSource.Stop();
+            bgmSource.clip = null;
+            bgmSource.volume = 0f;
+        }
+
+        bgmFadeRoutine = null;
+    }
+
+    private void BuildSources()
+    {
+        if (bgmSource == null)
+        {
+            bgmSource = gameObject.AddComponent<AudioSource>();
+            bgmSource.playOnAwake = false;
+            bgmSource.spatialBlend = 0f;
+        }
+
+        if (seSource == null)
+        {
+            seSource = gameObject.AddComponent<AudioSource>();
+            seSource.playOnAwake = false;
+            seSource.loop = false;
+            seSource.spatialBlend = 0f;
+        }
+    }
+
+    private static float ResolveBgmVolume(float baseVolume)
+    {
+        return Mathf.Clamp01(baseVolume) * Mathf.Clamp01(PlayerPrefs.GetFloat(BgmVolumeKey, 1f));
+    }
+
+    private static float ResolveSeVolume()
+    {
+        return Mathf.Clamp01(PlayerPrefs.GetFloat(SeVolumeKey, 1f));
+    }
+}

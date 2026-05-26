@@ -1,15 +1,15 @@
-using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
     public static CameraManager Instance { get; private set; }
 
-    [SerializeField] private CinemachineImpulseSource _impulseSource;
+    [SerializeField] private CinemachineImpulseSource impulseSource;
 
-    private bool _isFollowCamActive = true;
-    private CinemachineCamera _followCam;
-    private CinemachineCamera _directFollowCam;
+    private bool isFollowCamActive = true;
+    private CinemachineCamera followCam;
+    private CinemachineCamera directFollowCam;
 
     private void Awake()
     {
@@ -26,11 +26,10 @@ public class CameraManager : MonoBehaviour
 
             DontDestroyOnLoad(gameObject);
             Initialize();
+            return;
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+
+        Destroy(gameObject);
     }
 
     private void OnDestroy()
@@ -43,24 +42,29 @@ public class CameraManager : MonoBehaviour
 
     private void Initialize()
     {
-        _impulseSource = GetComponent<CinemachineImpulseSource>();
-        if (_impulseSource == null)
+        impulseSource = GetComponent<CinemachineImpulseSource>();
+        if (impulseSource == null)
         {
-            // 動的に追加しておく（後でInspectorからNoise Profile等を入れる想定）
-            _impulseSource = gameObject.AddComponent<CinemachineImpulseSource>();
+            impulseSource = gameObject.AddComponent<CinemachineImpulseSource>();
         }
 
-        // カメラの初期取得
         FindCameras();
+        EnsureImpulseListeners();
     }
 
     private void FindCameras()
     {
         var cameras = Object.FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
-        foreach (var cam in cameras)
+        foreach (CinemachineCamera cam in cameras)
         {
-            if (cam.gameObject.name == "CN_FollowCam") _followCam = cam;
-            else if (cam.gameObject.name == "CN_DirectFollowCam") _directFollowCam = cam;
+            if (cam.gameObject.name == "CN_FollowCam")
+            {
+                followCam = cam;
+            }
+            else if (cam.gameObject.name == "CN_DirectFollowCam")
+            {
+                directFollowCam = cam;
+            }
         }
 
         EnsurePlayerFollowBiasComponents();
@@ -68,8 +72,8 @@ public class CameraManager : MonoBehaviour
 
     private void EnsurePlayerFollowBiasComponents()
     {
-        EnsurePlayerFollowBiasComponent(_followCam);
-        EnsurePlayerFollowBiasComponent(_directFollowCam);
+        EnsurePlayerFollowBiasComponent(followCam);
+        EnsurePlayerFollowBiasComponent(directFollowCam);
     }
 
     private static void EnsurePlayerFollowBiasComponent(CinemachineCamera camera)
@@ -82,61 +86,118 @@ public class CameraManager : MonoBehaviour
         camera.gameObject.AddComponent<FollowCameraFacingBias>();
     }
 
-    /// <summary>
-    /// SROptions等からカメラの優先度を切り替える
-    /// </summary>
     public void ToggleCamera()
     {
-        if (_followCam == null || _directFollowCam == null)
+        if (followCam == null || directFollowCam == null)
         {
             FindCameras();
         }
-        
-        if (_followCam == null || _directFollowCam == null)
+
+        if (followCam == null || directFollowCam == null)
         {
-            Debug.LogWarning("[CameraManager] 切り替え対象のカメラが見つかりません。名前が CN_FollowCam / CN_DirectFollowCam か確認してください。");
+            Debug.LogWarning("[CameraManager] Camera targets were not found. Check CN_FollowCam / CN_DirectFollowCam names.");
             return;
         }
 
-        _isFollowCamActive = !_isFollowCamActive;
+        isFollowCamActive = !isFollowCamActive;
 
-        if (_isFollowCamActive)
+        if (isFollowCamActive)
         {
-            _followCam.Priority.Value = 10;
-            _directFollowCam.Priority.Value = 0;
-            _followCam.Priority.Enabled = true;
-            _directFollowCam.Priority.Enabled = true;
-            Debug.Log("[CameraManager] カメラ切り替え → CN_FollowCam");
+            followCam.Priority.Value = 10;
+            directFollowCam.Priority.Value = 0;
+            followCam.Priority.Enabled = true;
+            directFollowCam.Priority.Enabled = true;
+            Debug.Log("[CameraManager] Camera switched to CN_FollowCam");
+            return;
         }
-        else
-        {
-            _followCam.Priority.Value = 0;
-            _directFollowCam.Priority.Value = 10;
-            _followCam.Priority.Enabled = true;
-            _directFollowCam.Priority.Enabled = true;
-            Debug.Log("[CameraManager] カメラ切り替え → CN_DirectFollowCam");
-        }
+
+        followCam.Priority.Value = 0;
+        directFollowCam.Priority.Value = 10;
+        followCam.Priority.Enabled = true;
+        directFollowCam.Priority.Enabled = true;
+        Debug.Log("[CameraManager] Camera switched to CN_DirectFollowCam");
     }
 
-    /// <summary>
-    /// 現在アクティブなカメラの名前を取得
-    /// </summary>
     public string GetActiveCameraName()
     {
-        return _isFollowCamActive ? "CN_FollowCam" : "CN_DirectFollowCam";
+        return isFollowCamActive ? "CN_FollowCam" : "CN_DirectFollowCam";
     }
 
-    /// <summary>
-    /// 画面揺れ（シェイク）を発生させる
-    /// </summary>
-    /// <param name="force">揺れの強さ</param>
     public void PlayShake(float force)
     {
-        if (_impulseSource != null)
+        PlayShake(force, impulseSource != null ? impulseSource.DefaultVelocity : Vector3.down);
+    }
+
+    public void PlayShake(float force, Vector3 direction)
+    {
+        EnsureImpulseListeners();
+
+        if (impulseSource == null)
         {
-            // デフォルトのインパルスを再生
-            _impulseSource.GenerateImpulseWithForce(force);
-            Debug.Log($"[CameraManager] PlayShake: {force}");
+            impulseSource = GetComponent<CinemachineImpulseSource>();
+        }
+
+        if (impulseSource == null)
+        {
+            impulseSource = gameObject.AddComponent<CinemachineImpulseSource>();
+        }
+
+        Vector3 impulsePosition = ResolveImpulsePosition();
+        Vector3 velocity = direction.sqrMagnitude > Mathf.Epsilon
+            ? direction.normalized * force
+            : impulseSource.DefaultVelocity * force;
+        impulseSource.GenerateImpulseAtPositionWithVelocity(
+            impulsePosition,
+            velocity);
+        Debug.Log($"[CameraManager] PlayShake: {force}, direction={velocity.normalized}");
+    }
+
+    private static Vector3 ResolveImpulsePosition()
+    {
+        CinemachineCamera[] cameras = Object.FindObjectsByType<CinemachineCamera>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        CinemachineCamera activeCamera = null;
+        int activePriority = int.MinValue;
+        foreach (CinemachineCamera camera in cameras)
+        {
+            if (camera == null || !camera.isActiveAndEnabled)
+            {
+                continue;
+            }
+
+            int priority = camera.Priority.Value;
+            if (activeCamera == null || priority > activePriority)
+            {
+                activeCamera = camera;
+                activePriority = priority;
+            }
+        }
+
+        if (activeCamera != null)
+        {
+            return activeCamera.transform.position;
+        }
+
+        Camera mainCamera = Camera.main;
+        return mainCamera != null ? mainCamera.transform.position : Vector3.zero;
+    }
+
+    private static void EnsureImpulseListeners()
+    {
+        var cameras = Object.FindObjectsByType<CinemachineCamera>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        foreach (CinemachineCamera camera in cameras)
+        {
+            if (camera == null || camera.GetComponent<CinemachineImpulseListener>() != null)
+            {
+                continue;
+            }
+
+            camera.gameObject.AddComponent<CinemachineImpulseListener>();
         }
     }
 }
