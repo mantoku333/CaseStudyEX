@@ -17,6 +17,7 @@ public class UmbrellaParryController : MonoBehaviour
 
     [Header("SE")]
     [SerializeField] private AudioClip umbrella_open;    //パリィ時SE
+    [SerializeField] private AudioClip parrySuccessClip; //パリィ成功時SE
 
     private Color defaultColor;       //プレイヤーのスプライトのデフォルトの色
     private bool isParrying = false;  //現在パリィ状態かどうかのフラグ
@@ -75,6 +76,7 @@ public class UmbrellaParryController : MonoBehaviour
 
         //傘開けるSE再生
         PlaySE(umbrella_open);
+        PlaySE(parrySuccessClip);
 
         isParrying = true;
 

@@ -400,6 +400,7 @@ MonoBehaviour:
   parryColor: {r: 1, g: 0.9808723, b: 0.3254717, a: 1}
   flashDuration: 0.1
   umbrella_open: {fileID: 8300000, guid: b23093459fc678f498899d1ceed37ba0, type: 3}
+  parrySuccessClip: {fileID: 0}
 --- !u!1 &3013482320833118052
 GameObject:
   m_ObjectHideFlags: 0
@@ -515,6 +516,7 @@ GameObject:
   - component: {fileID: 234568476194810981}
   - component: {fileID: 8257722522928208615}
   - component: {fileID: -7701998456525910624}
+  - component: {fileID: 6628913746285037194}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -900,6 +902,32 @@ MonoBehaviour:
   flashRepeatCount: 3
   normalDuration: 0.08
   flashCooldownSeconds: 3
+--- !u!114 &6628913746285037194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79c5ad8027eb464eb7e6be60b8b7b05a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerFootstepController
+  footstepClips: []
+  landingClips: []
+  landingVelocityThreshold: 2
+  surfaceLayerMask:
+    serializedVersion: 2
+    m_Bits: 192
+  surfaceProbeDistance: 1.2
+  fallbackSurfaceProfile: {fileID: 0}
+  stepInterval: 0.35
+  volume: 0.8
+  landingVolume: 0.9
+  minMoveSpeed: 0.1
+  pitchRandomRange: 0.08
+  footstepAudioSource: {fileID: 0}
 --- !u!1 &5437759847484700699
 GameObject:
   m_ObjectHideFlags: 0
