@@ -99,6 +99,16 @@ namespace Player
         /// <param name="damage">受けるダメージ量</param>
         public bool TryTakeDamage(int damage)
         {
+            return TryTakeDamage(damage, damageCooldownSeconds);
+        }
+
+        /// <summary>
+        /// 指定した秒数のクールダウンでダメージを受けた場合は true を返す。
+        /// </summary>
+        /// <param name="damage">受けるダメージ量</param>
+        /// <param name="cooldownSeconds">次にダメージを受けられるまでの秒数</param>
+        public bool TryTakeDamage(int damage, float cooldownSeconds)
+        {
             // 無効なダメージ、またはすでに死亡しているなら何もしない
             if (damage <= 0 || currentHealth <= 0)
             {
@@ -117,7 +127,7 @@ namespace Player
 
             Debug.Log($"ダメージ後 HP: {currentHealth} / {MaxHealth}");
 
-            nextDamageTime = Time.time + damageCooldownSeconds;
+            nextDamageTime = Time.time + Mathf.Max(0f, cooldownSeconds);
 
             NotifyHealthChanged();
             return true;
