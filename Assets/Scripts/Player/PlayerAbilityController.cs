@@ -10,7 +10,12 @@ namespace Player
     /// </summary>
     public class PlayerAbilityController : MonoBehaviour, ISaveDataModule
     {
+
         private const string SectionKey = "player_abilities_v1";
+        //------------------デバッグ用--------------------
+
+        [Header("デバッグ関連")]
+        [SerializeField] private bool useInspectorDebugAbility = false;
 
         //--------------能力解放判定関連------------------
         [Header("能力解放判定関連")]
@@ -23,6 +28,12 @@ namespace Player
 
         private void Awake()
         {
+            if (useInspectorDebugAbility)
+            {
+                Debug.Log("デバッグ用にInspectorの能力設定を使用します。");
+                return;
+            }
+
             LoadAbilitieItemsFlags();
         }
 

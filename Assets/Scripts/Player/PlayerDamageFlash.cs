@@ -30,6 +30,8 @@ namespace Metroidvania.Player
             }
 
             restoreColors = new Color[targetRenderers.Length];
+
+            CaptureCurrentColors();
         }
 
         /// <summary>
@@ -60,14 +62,8 @@ namespace Metroidvania.Player
                 return;
             }
 
+
             nextFlashTime = Time.time + flashCooldownSeconds;
-
-
-            // 現在の色を保存しておき、点滅後に最新の表示色へ戻せるようにする。
-            if (flashCoroutine == null)
-            {
-                CaptureCurrentColors();
-            }
 
             if (flashCoroutine != null)
             {

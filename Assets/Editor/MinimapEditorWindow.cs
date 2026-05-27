@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -47,6 +48,8 @@ public sealed class MinimapEditorWindow : EditorWindow
     private const float FramePadding = 0.8f;
     private const float ScenePlacementSpacingFactor = 1.36f;
     private static readonly Vector2 StandardRoomSize = new Vector2(1.5f, 1f);
+    private static readonly Regex GeneratedRoomIdPattern = new Regex(@"^Col_(\d+)-(\d+)$", RegexOptions.Compiled);
+    private static readonly Regex HierarchyAreaNamePattern = new Regex(@"^(\d+)-(\d+)$", RegexOptions.Compiled);
 
     [SerializeField] private float zoom = 1f;
     [SerializeField] private Vector2 panOffset = Vector2.zero;
@@ -922,6 +925,9 @@ public sealed class MinimapEditorWindow : EditorWindow
             }
         }
 
+        rooms.Sort(CompareHierarchyOrder);
+        ApplyHierarchyRoomIds();
+        EnsureUniqueRoomIds();
         rooms.Sort(CompareRooms);
         links.Sort(CompareLinks);
         RebuildAutoCorridorPreviews();
@@ -984,6 +990,234 @@ public sealed class MinimapEditorWindow : EditorWindow
         return string.Compare(a.LinkId, b.LinkId, StringComparison.Ordinal);
     }
 
+    private static int CompareHierarchyOrder(MinimapRoom a, MinimapRoom b)
+    {
+        if (ReferenceEquals(a, b))
+        {
+            return 0;
+        }
+
+        if (a == null)
+        {
+            return 1;
+        }
+
+        if (b == null)
+        {
+            return -1;
+        }
+
+        int leftSceneHandle = a.gameObject.scene.handle;
+        int rightSceneHandle = b.gameObject.scene.handle;
+        if (leftSceneHandle != rightSceneHandle)
+        {
+            return leftSceneHandle < rightSceneHandle ? -1 : 1;
+        }
+
+        return string.Compare(
+            GetHierarchyPath(a.transform),
+            GetHierarchyPath(b.transform),
+            StringComparison.Ordinal);
+    }
+
+    private static string GetHierarchyPath(Transform transform)
+    {
+        if (transform == null)
+        {
+            return string.Empty;
+        }
+
+        string path = transform.name;
+        Transform parent = transform.parent;
+        while (parent != null)
+        {
+            path = parent.name + "/" + path;
+            parent = parent.parent;
+        }
+
+        return path;
+    }
+
+    private void EnsureUniqueRoomIds()
+    {
+        HashSet<string> reservedIds = CollectUsedRoomIds();
+        var keptIds = new HashSet<string>(StringComparer.Ordinal);
+        bool changed = false;
+
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoom room = rooms[i];
+            if (room == null)
+            {
+                continue;
+            }
+
+            string roomId = string.IsNullOrWhiteSpace(room.RoomId) ? string.Empty : room.RoomId.Trim();
+            if (!string.IsNullOrEmpty(roomId) && keptIds.Add(roomId))
+            {
+                continue;
+            }
+
+            string nextRoomId = GenerateNextRoomId(reservedIds);
+            Undo.RecordObject(room, "Assign Unique Minimap Room Id");
+            room.ConfigureFreeformAuthoringFields(
+                nextRoomId,
+                nextRoomId,
+                room.AreaPosition,
+                room.AreaSize);
+            EditorUtility.SetDirty(room);
+            reservedIds.Add(nextRoomId);
+            keptIds.Add(nextRoomId);
+            changed = true;
+        }
+
+        if (!changed)
+        {
+            return;
+        }
+
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+    }
+
+    private void ApplyHierarchyRoomIds()
+    {
+        bool changed = false;
+
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoom room = rooms[i];
+            if (room == null)
+            {
+                continue;
+            }
+
+            int row;
+            int column;
+            if (!TryGetHierarchyAreaAddress(room, out row, out column))
+            {
+                continue;
+            }
+
+            string hierarchyRoomId = BuildRoomId(row, column);
+            if (string.Equals(room.RoomId, hierarchyRoomId, StringComparison.Ordinal) &&
+                string.Equals(room.DisplayName, hierarchyRoomId, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            Undo.RecordObject(room, "Sync Minimap Room Id With Hierarchy");
+            room.ConfigureFreeformAuthoringFields(
+                hierarchyRoomId,
+                hierarchyRoomId,
+                room.AreaPosition,
+                room.AreaSize);
+            EditorUtility.SetDirty(room);
+            changed = true;
+        }
+
+        if (!changed)
+        {
+            return;
+        }
+
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+    }
+
+    private static bool TryGetHierarchyAreaAddress(MinimapRoom room, out int row, out int column)
+    {
+        row = 0;
+        column = 0;
+        if (room == null)
+        {
+            return false;
+        }
+
+        string objectName = room.gameObject.name;
+        if (string.IsNullOrWhiteSpace(objectName))
+        {
+            return false;
+        }
+
+        objectName = objectName.Trim();
+        Match areaNameMatch = HierarchyAreaNamePattern.Match(objectName);
+        if (!areaNameMatch.Success)
+        {
+            areaNameMatch = GeneratedRoomIdPattern.Match(objectName);
+        }
+
+        if (!areaNameMatch.Success)
+        {
+            return false;
+        }
+
+        return int.TryParse(areaNameMatch.Groups[1].Value, out row) &&
+            int.TryParse(areaNameMatch.Groups[2].Value, out column) &&
+            row > 0 &&
+            column > 0;
+    }
+
+    private static string BuildRoomId(int row, int column)
+    {
+        return "Col_" + row + "-" + column;
+    }
+
+    private HashSet<string> CollectUsedRoomIds()
+    {
+        var usedIds = new HashSet<string>(StringComparer.Ordinal);
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoom room = rooms[i];
+            if (room == null || string.IsNullOrWhiteSpace(room.RoomId))
+            {
+                continue;
+            }
+
+            usedIds.Add(room.RoomId.Trim());
+        }
+
+        return usedIds;
+    }
+
+    private static string GenerateNextRoomId(ISet<string> usedIds)
+    {
+        int maxColumn = 0;
+        foreach (string usedId in usedIds)
+        {
+            if (string.IsNullOrWhiteSpace(usedId))
+            {
+                continue;
+            }
+
+            Match match = GeneratedRoomIdPattern.Match(usedId.Trim());
+            if (!match.Success)
+            {
+                continue;
+            }
+
+            int row;
+            int column;
+            if (!int.TryParse(match.Groups[1].Value, out row) ||
+                !int.TryParse(match.Groups[2].Value, out column) ||
+                row != 1)
+            {
+                continue;
+            }
+
+            maxColumn = Mathf.Max(maxColumn, column);
+        }
+
+        int nextColumn = Mathf.Max(1, maxColumn + 1);
+        string candidate;
+        do
+        {
+            candidate = "Col_1-" + nextColumn;
+            nextColumn++;
+        }
+        while (usedIds.Contains(candidate));
+
+        return candidate;
+    }
+
     private void HandleHierarchyChanged()
     {
         sceneDataDirty = true;
@@ -1044,6 +1278,8 @@ public sealed class MinimapEditorWindow : EditorWindow
 
     private void AttachRoomsToSelection()
     {
+        RefreshSceneDataIfNeeded();
+
         GameObject[] selectedObjects = Selection.gameObjects;
         if (selectedObjects == null || selectedObjects.Length == 0)
         {
@@ -1053,6 +1289,7 @@ public sealed class MinimapEditorWindow : EditorWindow
 
         int addedCount = 0;
         int skippedAssetCount = 0;
+        HashSet<string> usedIds = CollectUsedRoomIds();
         for (int i = 0; i < selectedObjects.Length; i++)
         {
             GameObject gameObject = selectedObjects[i];
@@ -1071,11 +1308,17 @@ public sealed class MinimapEditorWindow : EditorWindow
             if (room == null)
             {
                 room = Undo.AddComponent<MinimapRoom>(gameObject);
+                string nextRoomId = GenerateNextRoomId(usedIds);
+                room.ConfigureFreeformAuthoringFields(
+                    nextRoomId,
+                    nextRoomId,
+                    Vector2.zero,
+                    StandardRoomSize);
+                usedIds.Add(nextRoomId);
                 addedCount++;
             }
 
             Undo.RecordObject(room, "MinimapRoom を設定");
-            room.ApplyEditorFriendlyDefaults();
             EditorUtility.SetDirty(room);
         }
 
@@ -2086,6 +2329,11 @@ public sealed class MinimapEditorWindow : EditorWindow
                 LayoutRoomsFromScenePlacement();
             }
 
+            if (GUILayout.Button("Hierarchy Layout", EditorStyles.toolbarButton, GUILayout.Width(130f)))
+            {
+                LayoutRoomsFromHierarchyNames();
+            }
+
             if (GUILayout.Button("全部屋を 1.5 x 1 に統一", EditorStyles.toolbarButton, GUILayout.Width(165f)))
             {
                 NormalizeAllRoomSizes();
@@ -2130,6 +2378,63 @@ public sealed class MinimapEditorWindow : EditorWindow
                 GUILayout.Label(string.Format("部屋: {0}  線: {1}", rooms.Count, links.Count), EditorStyles.miniLabel);
             }
         }
+    }
+
+    private void LayoutRoomsFromHierarchyNames()
+    {
+        sceneDataDirty = true;
+        RefreshSceneDataIfNeeded();
+
+        const float horizontalSpacing = 2.05f;
+        const float verticalSpacing = 1.45f;
+
+        int positionedCount = 0;
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoom room = rooms[i];
+            if (room == null)
+            {
+                continue;
+            }
+
+            int row;
+            int column;
+            if (!TryGetHierarchyAreaAddress(room, out row, out column))
+            {
+                continue;
+            }
+
+            string roomId = BuildRoomId(row, column);
+            Vector2 boardPosition = new Vector2(
+                (column - 1) * horizontalSpacing,
+                (row - 1) * verticalSpacing);
+
+            Undo.RecordObject(room, "Layout Minimap Rooms From Hierarchy");
+            room.ConfigureFreeformAuthoringFields(
+                roomId,
+                roomId,
+                boardPosition,
+                StandardRoomSize);
+            EditorUtility.SetDirty(room);
+            positionedCount++;
+        }
+
+        if (positionedCount == 0)
+        {
+            EditorUtility.DisplayDialog("ミニマップエディター", "Hierarchy 名が 1-1 形式の MinimapRoom がありません。", "OK");
+            return;
+        }
+
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        sceneDataDirty = true;
+        frameAllRequested = true;
+        RefreshSceneDataIfNeeded();
+        Repaint();
+
+        EditorUtility.DisplayDialog(
+            "ミニマップエディター",
+            string.Format("{0} 個の部屋を Hierarchy 名に合わせて配置しました。", positionedCount),
+            "OK");
     }
 
     private void LayoutRoomsFromScenePlacement()

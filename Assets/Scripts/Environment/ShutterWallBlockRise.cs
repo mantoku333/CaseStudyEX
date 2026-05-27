@@ -7,7 +7,7 @@ public class ShutterWallBlockRise : MonoBehaviour
 {
     // 下から上の順で扱うブロック一覧
     [SerializeField] private List<Transform> blocksFromBottom = new List<Transform>();
-    // true のとき、子オブジェクトから一覧を再構築する
+    // オンのとき、子オブジェクトから一覧を再構築する
     [SerializeField] private bool autoCollectChildren = true;
 
     [Header("Motion")]
@@ -17,13 +17,13 @@ public class ShutterWallBlockRise : MonoBehaviour
     [SerializeField, Min(0.01f)] private float riseDurationPerBlock = 0.12f;
     // ステージ間の待機時間
     [SerializeField, Min(0f)] private float intervalBetweenBlocks = 0.06f;
-    // true の場合、開いた後は閉じない
+    // オンの場合、開いた後は閉じない
     [SerializeField] private bool lockAfterOpen = true;
 
     // 各ブロックの閉状態ローカル座標（初期値）を保持
     private readonly List<Vector3> targetLocalPositions = new List<Vector3>();
 
-    // 開閉コルーチンnull 以外なら移動中
+    // 開閉コルーチンが設定されていれば移動中
     private Coroutine openRoutine;
     // 現在の論理状態
     private bool isOpen;
@@ -81,11 +81,16 @@ public class ShutterWallBlockRise : MonoBehaviour
             return false;
         }
 
-        openRoutine = StartCoroutine(OpenRoutine());
+        openRoutine = StartCoroutine(OpenRoutine(riseDurationPerBlock, intervalBetweenBlocks));
         return true;
     }
 
     public bool TryClose()
+    {
+        return TryClose(riseDurationPerBlock, intervalBetweenBlocks);
+    }
+
+    public bool TryClose(float durationPerBlock, float intervalBetweenBlocksOverride)
     {
         InitializeIfNeeded();
 
@@ -95,25 +100,25 @@ public class ShutterWallBlockRise : MonoBehaviour
             return false;
         }
 
-        // lockAfterOpen 有効時、または閉状態時は閉じ処理を開始しない
+        // 「開いた後は閉じない」設定が有効なとき、または閉状態のときは閉じ処理を開始しない
         if (lockAfterOpen || !isOpen)
         {
             return false;
         }
 
-        openRoutine = StartCoroutine(CloseRoutine());
+        openRoutine = StartCoroutine(CloseRoutine(durationPerBlock, intervalBetweenBlocksOverride));
         return true;
     }
 
     public void Open()
     {
-        // 互換用 API結果が必要なら TryOpen を利用する
+        // 既存呼び出しとの互換用。成否が必要なら TryOpen を利用する
         TryOpen();
     }
 
     public void Close()
     {
-        // 互換用 API結果が必要なら TryClose を利用する
+        // 既存呼び出しとの互換用。成否が必要なら TryClose を利用する
         TryClose();
     }
 
@@ -142,9 +147,13 @@ public class ShutterWallBlockRise : MonoBehaviour
         }
 
         isOpen = startsOpened;
+        if (startsOpened)
+        {
+            ApplyOpenPositionImmediate();
+        }
     }
 
-    private IEnumerator OpenRoutine()
+    private IEnumerator OpenRoutine(float durationPerBlock, float intervalBetweenBlocksOverride)
     {
         int blockCount = blocksFromBottom.Count;
         if (blockCount == 0)
@@ -164,7 +173,7 @@ public class ShutterWallBlockRise : MonoBehaviour
 
         if (blockCount == 1)
         {
-            yield return MoveBlocksToY(1, openStartPositions[0].y + stepHeight);
+            yield return MoveBlocksToY(1, openStartPositions[0].y + stepHeight, durationPerBlock);
             isOpen = true;
             openRoutine = null;
             yield break;
@@ -175,23 +184,23 @@ public class ShutterWallBlockRise : MonoBehaviour
         for (int stage = 1; stage < blockCount; stage++)
         {
             float overlapY = openStartPositions[stage].y;
-            yield return MoveBlocksToY(stage, overlapY);
+            yield return MoveBlocksToY(stage, overlapY, durationPerBlock);
 
-            if (intervalBetweenBlocks > 0f)
+            if (intervalBetweenBlocksOverride > 0f)
             {
-                yield return new WaitForSeconds(intervalBetweenBlocks);
+                yield return new WaitForSeconds(intervalBetweenBlocksOverride);
             }
         }
 
         // 最終ステージ: 全段を最上段のさらに1段上まで持ち上げる
         float finalOpenY = openStartPositions[blockCount - 1].y + stepHeight;
-        yield return MoveBlocksToY(blockCount, finalOpenY);
+        yield return MoveBlocksToY(blockCount, finalOpenY, durationPerBlock);
 
         isOpen = true;
         openRoutine = null;
     }
 
-    private IEnumerator CloseRoutine()
+    private IEnumerator CloseRoutine(float durationPerBlock, float intervalBetweenBlocksOverride)
     {
         int blockCount = blocksFromBottom.Count;
         if (blockCount == 0)
@@ -208,7 +217,7 @@ public class ShutterWallBlockRise : MonoBehaviour
 
         if (blockCount == 1)
         {
-            yield return MoveBlocksToY(1, targetLocalPositions[0].y);
+            yield return MoveBlocksToY(1, targetLocalPositions[0].y, durationPerBlock);
             isOpen = false;
             openRoutine = null;
             yield break;
@@ -218,21 +227,21 @@ public class ShutterWallBlockRise : MonoBehaviour
         // 1) 全段持ち上げを戻す
         // 2) 上から順に重なりを解いて元位置へ戻す
         float topClosedY = targetLocalPositions[blockCount - 1].y;
-        yield return MoveBlocksToY(blockCount, topClosedY);
+        yield return MoveBlocksToY(blockCount, topClosedY, durationPerBlock);
 
-        if (intervalBetweenBlocks > 0f)
+        if (intervalBetweenBlocksOverride > 0f)
         {
-            yield return new WaitForSeconds(intervalBetweenBlocks);
+            yield return new WaitForSeconds(intervalBetweenBlocksOverride);
         }
 
         for (int stage = blockCount - 1; stage >= 1; stage--)
         {
             float targetY = targetLocalPositions[stage - 1].y;
-            yield return MoveBlocksToY(stage, targetY);
+            yield return MoveBlocksToY(stage, targetY, durationPerBlock);
 
-            if (stage > 1 && intervalBetweenBlocks > 0f)
+            if (stage > 1 && intervalBetweenBlocksOverride > 0f)
             {
-                yield return new WaitForSeconds(intervalBetweenBlocks);
+                yield return new WaitForSeconds(intervalBetweenBlocksOverride);
             }
         }
 
@@ -240,7 +249,7 @@ public class ShutterWallBlockRise : MonoBehaviour
         openRoutine = null;
     }
 
-    private IEnumerator MoveBlocksToY(int countFromBottom, float targetY)
+    private IEnumerator MoveBlocksToY(int countFromBottom, float targetY, float durationPerBlock)
     {
         if (countFromBottom <= 0)
         {
@@ -267,8 +276,8 @@ public class ShutterWallBlockRise : MonoBehaviour
             yield break;
         }
 
-        // SmoothStep で補間して急な動きを抑える
-        float duration = Mathf.Max(0.01f, riseDurationPerBlock);
+        // なめらかな補間で急な動きを抑える
+        float duration = Mathf.Max(0.01f, durationPerBlock);
         float elapsed = 0f;
 
         while (elapsed < duration)
@@ -291,6 +300,30 @@ public class ShutterWallBlockRise : MonoBehaviour
         {
             Vector3 start = startPositions[i];
             movingBlocks[i].localPosition = new Vector3(start.x, targetY, start.z);
+        }
+    }
+
+    private void ApplyOpenPositionImmediate()
+    {
+        int blockCount = blocksFromBottom.Count;
+        if (blockCount == 0 || targetLocalPositions.Count < blockCount)
+        {
+            return;
+        }
+
+        float stepHeight = ResolveStepHeight(targetLocalPositions);
+        float finalOpenY = targetLocalPositions[blockCount - 1].y + stepHeight;
+
+        for (int i = 0; i < blockCount; i++)
+        {
+            Transform block = blocksFromBottom[i];
+            if (block == null)
+            {
+                continue;
+            }
+
+            Vector3 localPosition = block.localPosition;
+            block.localPosition = new Vector3(localPosition.x, finalOpenY, localPosition.z);
         }
     }
 

@@ -85,7 +85,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1842100608475083546, guid: dfac8fef30dbe854b979645d46914fbe, type: 3}
-  m_Color: {r: 1, g: 0, b: 0.010752678, a: 1}
+  m_Color: {r: 0.08339405, g: 0, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -181,6 +181,6 @@ MonoBehaviour:
   waypointReachDistance: 0.12
   blockedMovementProbeDistance: 0.8
   sideSteerProbeDistance: 0.8
-  justParryWindow: 0.75
+  justParryWindow: 1
   maxReflectDistance: 15
   reflectedDamageMultiplier: 1.5

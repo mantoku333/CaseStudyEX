@@ -265,6 +265,11 @@ namespace Metroidvania.Enemy
 
             if (isReflectedByPlayer)
             {
+                if (TryBreakReflectWall(other))
+                {
+                    return;
+                }
+
                 if (TryApplyEnemyHit(other))
                 {
                     return;
@@ -307,7 +312,12 @@ namespace Metroidvania.Enemy
 
             if (isReflectedByPlayer)
             {
-               if (TryApplyEnemyHit(collision.collider) || TryApplyEnemyHit(collision.otherCollider))
+                if (TryBreakReflectWall(collision.collider) || TryBreakReflectWall(collision.otherCollider))
+                {
+                    return;
+                }
+
+                if (TryApplyEnemyHit(collision.collider) || TryApplyEnemyHit(collision.otherCollider))
                 {
                     return;
                 }
@@ -982,9 +992,32 @@ namespace Metroidvania.Enemy
 
             Debug.Log($"反射弾が敵に命中。ダメージ:{reflectedDamage}");
 
-            //enemyController.TakeDamage(reflectedDamage);
+            enemyController.TakeDamage(reflectedDamage);
 
             Destroy(gameObject);
+            return true;
+        }
+
+        private bool TryBreakReflectWall(Collider2D other)
+        {
+            if (other == null || !isReflectedByPlayer)
+            {
+                return false;
+            }
+
+            ReflectBreakableWall breakableWall = other.GetComponentInParent<ReflectBreakableWall>();
+            if (breakableWall == null)
+            {
+                return false;
+            }
+
+            breakableWall.Break();
+
+            if (breakableWall.DestroyBulletOnBreak)
+            {
+                Destroy(gameObject);
+            }
+
             return true;
         }
 

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using Metroidvania.Player;
+using Player;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -33,6 +34,21 @@ public partial class SROptions
             rigidbody2D.linearVelocity = Vector2.zero;
             rigidbody2D.angularVelocity = 0f;
         }
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("ガチ死亡")]
+    [Sort(-99)]
+    public void ForcePlayerDeath()
+    {
+        PlayerHealth playerHealth = ResolvePlayerHealth();
+        if (playerHealth == null)
+        {
+            Debug.LogWarning("[SROptions] PlayerHealth not found.");
+            return;
+        }
+
+        playerHealth.ForceDeath();
     }
 
     [Category(DebugCategory)]
@@ -249,6 +265,27 @@ public partial class SROptions
         }
 
         FullscreenDebugMessageOverlay.Show(message);
+    }
+
+    private static PlayerHealth ResolvePlayerHealth()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            PlayerHealth playerHealth = playerObject.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                return playerHealth;
+            }
+
+            playerHealth = playerObject.GetComponentInChildren<PlayerHealth>(true);
+            if (playerHealth != null)
+            {
+                return playerHealth;
+            }
+        }
+
+        return UnityEngine.Object.FindFirstObjectByType<PlayerHealth>();
     }
 
     private static string GetSavedAtTextForSlot(int slotIndex)

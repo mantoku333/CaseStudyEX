@@ -8,7 +8,7 @@ namespace GameName.Enemy
     /// <summary>
     /// シンプルな敵の巡回移動と接触ダメージを管理するクラス
     /// </summary>
-    public class EnemyController : MonoBehaviour, IAttackReceiver
+    public class EnemyController : MonoBehaviour, IAttackReceiver, IBossHealthSource
     {
         [SerializeField] private float moveSpeed = 2f;
         [SerializeField] private float patrolDistance = 2f;
@@ -20,6 +20,8 @@ namespace GameName.Enemy
         [SerializeField, Min(0.01f)] private float edgeCheckDistance = 0.35f;
         [SerializeField, Min(0f)] private float edgeCheckForwardOffset = 0.1f;
         [SerializeField] private LayerMask stageLayerMask;
+        // シャッター壁は Default レイヤーに置かれることがあるため、通常の床レイヤーとは別に判定する。
+        [SerializeField] private bool treatShutterWallsAsWalls = true;
         [SerializeField] private bool flipSpriteOnTurn = true;
 
         [Header("Enemy Collision")]
@@ -35,12 +37,16 @@ namespace GameName.Enemy
         private EnemyDamageFlash damageFlash;
         private int currentHealth;
         private float nextEnemyCollisionTurnTime;
+        // シャッター壁の子ブロックを検出するための一時バッファ。
+        private readonly RaycastHit2D[] wallCheckHits = new RaycastHit2D[8];
+        private ContactFilter2D shutterWallContactFilter;
 
         public event Action EnemyCollisionTurned;
         /// <summary>
         /// 敵がDestroyされる直前に通知する。死亡SEなど、破棄前に必要な処理で使う。
         /// </summary>
         public event Action Died;
+        public event Action<int, int> HealthChanged;
 
         /// <summary>
         /// 現在の向き。右が 1、左が -1。
@@ -51,6 +57,8 @@ namespace GameName.Enemy
         /// 現在の X 座標（Rigidbody2D がある場合は物理座標）。
         /// </summary>
         public float CurrentX => rigidbody2D != null ? rigidbody2D.position.x : transform.position.x;
+        public int CurrentHealth => currentHealth;
+        public int MaxHealth => Mathf.Max(1, maxHealth);
 
         private float ignoreContactDamageUntilTime;  //接触ダメージを無効にする時間
 
@@ -63,12 +71,14 @@ namespace GameName.Enemy
             bodyCollider = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             damageFlash = GetComponentInChildren<EnemyDamageFlash>(true);
-            currentHealth = Mathf.Max(1, maxHealth);
+            currentHealth = MaxHealth;
 
             if (stageLayerMask.value == 0)
             {
                 stageLayerMask = BuildDefaultStageMask();
             }
+
+            BuildShutterWallContactFilter();
         }
 
         /// <summary>
@@ -227,7 +237,13 @@ namespace GameName.Enemy
             Vector2 origin = new Vector2(originX, bounds.center.y);
 
             RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.right * moveDirection, wallCheckDistance, stageLayerMask);
-            return hit.collider != null;
+            if (hit.collider != null)
+            {
+                return true;
+            }
+
+            // StageBoss と Enemy_Tackle はこの共通判定を使うため、ここでシャッター壁も壁扱いにする。
+            return treatShutterWallsAsWalls && IsShutterWallAhead(origin);
         }
 
         /// <summary>
@@ -298,6 +314,52 @@ namespace GameName.Enemy
             }
 
             return mask == 0 ? Physics2D.DefaultRaycastLayers : mask;
+        }
+
+        private void BuildShutterWallContactFilter()
+        {
+            // レイヤーに依存せず ShutterWallBlockRise 配下の非トリガーコライダーだけを後段で拾う。
+            shutterWallContactFilter = new ContactFilter2D
+            {
+                useLayerMask = true,
+                useTriggers = false
+            };
+            shutterWallContactFilter.SetLayerMask(Physics2D.DefaultRaycastLayers);
+        }
+
+        private bool IsShutterWallAhead(Vector2 origin)
+        {
+            // シャッター壁の各ブロックは子オブジェクトなので、親に ShutterWallBlockRise があるかで判定する。
+            int hitCount = Physics2D.Raycast(
+                origin,
+                Vector2.right * moveDirection,
+                shutterWallContactFilter,
+                wallCheckHits,
+                wallCheckDistance);
+
+            for (int i = 0; i < hitCount; i++)
+            {
+                Collider2D hitCollider = wallCheckHits[i].collider;
+                if (hitCollider == null || IsOwnCollider(hitCollider))
+                {
+                    continue;
+                }
+
+                if (hitCollider.GetComponentInParent<ShutterWallBlockRise>() != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsOwnCollider(Collider2D hitCollider)
+        {
+            // 自分自身や子オブジェクトのコライダーを壁として誤検出しないようにする。
+            return hitCollider == bodyCollider ||
+                   hitCollider.transform == transform ||
+                   hitCollider.transform.IsChildOf(transform);
         }
 
         /// <summary>
@@ -401,7 +463,7 @@ namespace GameName.Enemy
         {
             if (spriteRenderer != null && flipSpriteOnTurn)
             {
-                spriteRenderer.flipX = moveDirection < 0;
+                spriteRenderer.flipX = moveDirection > 0;
             }
         }
 
@@ -413,35 +475,35 @@ namespace GameName.Enemy
         {
            bool shouldIgnoreContactDamage = Time.time < ignoreContactDamageUntilTime;
 
-    if (shouldIgnoreContactDamage)
-    {
-        Debug.Log("パリィ後なので接触ダメージ無効");
-    }
-    else
-    {
-        UmbrellaParryController umbrellaParryController =
-            collision.gameObject.GetComponentInParent<UmbrellaParryController>();
-
-        if (umbrellaParryController != null && umbrellaParryController.IsParrying())
-        {
-            Debug.Log("パリィ中なので敵ダメージ無効");
-        }
-        else if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
-                 playerHealth.TryTakeDamage(damageToPlayer))
-        {
-            Debug.Log("敵接触ダメージ");
-
-            PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
-            if (damageFlash == null)
+            if (shouldIgnoreContactDamage)
             {
-                damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+                Debug.Log("パリィ後なので接触ダメージ無効");
+            }
+            else
+            {
+                UmbrellaParryController umbrellaParryController =
+                    collision.gameObject.GetComponentInParent<UmbrellaParryController>();
+
+                if (umbrellaParryController != null && umbrellaParryController.IsParrying())
+                {
+                    Debug.Log("パリィ中なので敵ダメージ無効");
+                }
+                else if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
+                        playerHealth.TryTakeDamage(damageToPlayer))
+                {
+                    Debug.Log("敵接触ダメージ");
+
+                    PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
+                    if (damageFlash == null)
+                    {
+                        damageFlash = playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+                    }
+
+                    damageFlash?.PlayFlashForced();
+                }
             }
 
-            damageFlash?.PlayFlashForced();
-        }
-    }
-
-    TryTurnAroundFromEnemyCollision(collision);
+            TryTurnAroundFromEnemyCollision(collision);
 
         }
 
@@ -465,24 +527,41 @@ namespace GameName.Enemy
                        out _);
         }
 
-        public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
+        //--------------ダメージ関連------------------
+
+        public void TakeDamage(int damage)
         {
-            int damage = attacker != null ? attacker.PlayerAttackDamage : 0;
             if (damage <= 0)
             {
                 return;
             }
 
             damageFlash?.PlayFlash();
-            currentHealth = Mathf.Max(0, currentHealth - damage);
 
-            if (currentHealth <= 0)
+            currentHealth = Mathf.Max(0, currentHealth - damage);
+            NotifyHealthChanged();
+
+            Debug.Log($"敵にダメージ: {damage} / 残りHP: {currentHealth}");
+
+            if (currentHealth > 0)
             {
-                Debug.Log("敵に当たりました");
-                // Destroy前に通知して、敵の位置や表示状態を参照できるようにする。
-                Died?.Invoke();
-                Destroy(gameObject);
+                return;
             }
+
+            Died?.Invoke();
+            Destroy(gameObject);
+        }
+
+        public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
+        {
+            int damage = 0;
+
+            if (attacker != null)
+            {
+                damage = attacker.PlayerAttackDamage;
+            }
+
+            TakeDamage(damage);
         }
 
 
@@ -491,7 +570,28 @@ namespace GameName.Enemy
         /// </summary>
         public void IgnoreContactDamage(float duration)
         {
+            Debug.Log($"[IgnoreContactDamage] frame={Time.frameCount}, until={ignoreContactDamageUntilTime}");
             ignoreContactDamageUntilTime = Time.time + duration;
+        }
+
+        public void ResetHealthToFull()
+        {
+            currentHealth = MaxHealth;
+            NotifyHealthChanged();
+        }
+
+        private void NotifyHealthChanged()
+        {
+            HealthChanged?.Invoke(currentHealth, MaxHealth);
+        }
+
+        /// <summary>
+        /// 現在、接触ダメージを一時的に無効化しているかを返す。
+        /// </summary>
+        /// <returns></returns>
+        public bool IsContactDamageIgnored()
+        {
+            return Time.time < ignoreContactDamageUntilTime;
         }
     }
 }
