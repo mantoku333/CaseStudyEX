@@ -54,7 +54,7 @@ public sealed class EventPanelPresenter : MonoBehaviour
 
     private void Awake()
     {
-        SetVisible(false);
+        isVisible = panelRoot != null && panelRoot.activeSelf;
     }
 
     private void OnEnable()
