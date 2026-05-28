@@ -408,14 +408,14 @@ namespace GameName.Enemy
 
             if (pendingAction == BossAction.Horizontal || pendingAction == BossAction.Vertical)
             {
-                // prefab式の範囲攻撃は赤箱を表示せず、透明なパリィ用判定だけ攻撃範囲に置く。
+                // Prefab range attacks are parried by the blade colliders only.
                 HideAttackVisual();
                 if (pendingAction == BossAction.Vertical)
                 {
                     UpdateVerticalAttackTracking();
                 }
 
-                ShowRangeParryProxy(activeAttackBox, pendingAction);
+                HideRangeParryProxy();
 
                 stateTimer -= Time.deltaTime;
                 if (stateTimer > 0f)
@@ -651,7 +651,7 @@ namespace GameName.Enemy
             visibleAction = action;
             state = BossState.AttackVisible;
             prefabAttackRunning = true;
-            ShowRangeParryProxy(attackBox, action);
+            HideRangeParryProxy();
 
             if (activeBladeAttackRoutine != null)
             {
@@ -693,17 +693,16 @@ namespace GameName.Enemy
 
             float spacing = ResolveGroundBladePrefabWidth();
             float sweepSpeed = Mathf.Max(0.1f, horizontalGroundBladeSweepSpeed);
-            float spawnInterval = spacing / sweepSpeed;
-            int bladeCount = Mathf.Max(1, Mathf.CeilToInt(attackBox.Size.x / spacing));
+            int bladeCount = Mathf.Max(1, Mathf.FloorToInt(attackBox.Size.x / spacing));
+            float slotWidth = attackBox.Size.x / bladeCount;
+            float spawnInterval = slotWidth / sweepSpeed;
             float nearEdgeX = attackBox.Center.x - facingDirection * (attackBox.Size.x * 0.5f);
             float groundY = attackBox.Center.y - attackBox.Size.y * 0.5f;
 
             // GroundBladeのscaleは触らず、prefabの実幅を使ってボス側から順に敷き詰める。
             for (int i = 0; i < bladeCount; i++)
             {
-                float distance = spacing >= attackBox.Size.x
-                    ? attackBox.Size.x * 0.5f
-                    : Mathf.Min(attackBox.Size.x - spacing * 0.5f, spacing * 0.5f + i * spacing);
+                float distance = slotWidth * (i + 0.5f);
                 Vector2 spawnPosition = new Vector2(
                     nearEdgeX + facingDirection * distance,
                     groundY);
@@ -1543,7 +1542,7 @@ namespace GameName.Enemy
 
             if (spriteRenderer != null)
             {
-                spriteRenderer.flipX = facingDirection < 0;
+                spriteRenderer.flipX = facingDirection > 0;
             }
         }
 
