@@ -86,7 +86,7 @@ public sealed class StoryOverlayFader : MonoBehaviour
         {
             canvas = gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 9999;
+            canvas.sortingOrder = 32767;
         }
 
         if (gameObject.GetComponent<GraphicRaycaster>() == null)
