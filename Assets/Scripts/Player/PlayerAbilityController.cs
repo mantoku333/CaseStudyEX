@@ -72,7 +72,8 @@ namespace Player
         //パリィ
         public void SetCanParry(bool isEnabled)
         {
-             canParry = isEnabled;
+            canParry = isEnabled;
+            GameProgressFlags.Set(GameProgressKeys.AbilityParryUnlocked, isEnabled);
         }
 
         //--------Get関数-------
@@ -183,6 +184,7 @@ namespace Player
             GameProgressFlags.Set(GameProgressKeys.AbilityDodgeUnlocked, canDodge);
             GameProgressFlags.Set(GameProgressKeys.AbilityGlideUnlocked, canGlide);
             GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, canGunRecoil);
+            GameProgressFlags.Set(GameProgressKeys.AbilityParryUnlocked, canParry);
 
             if (saveData == null)
             {
@@ -193,7 +195,8 @@ namespace Player
             {
                 canDodge = canDodge,
                 canGlide = canGlide,
-                canGunRecoil = canGunRecoil
+                canGunRecoil = canGunRecoil,
+                canParry = canParry
             };
 
             saveData.SetCustomSectionJson(SectionKey, JsonUtility.ToJson(payload));
@@ -212,9 +215,11 @@ namespace Player
                         canDodge = payload.canDodge;
                         canGlide = payload.canGlide;
                         canGunRecoil = payload.canGunRecoil;
+                        canParry = payload.canParry;
                         GameProgressFlags.Set(GameProgressKeys.AbilityDodgeUnlocked, canDodge);
                         GameProgressFlags.Set(GameProgressKeys.AbilityGlideUnlocked, canGlide);
                         GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, canGunRecoil);
+                        GameProgressFlags.Set(GameProgressKeys.AbilityParryUnlocked, canParry);
                         return;
                     }
                     catch (Exception exception)
@@ -233,6 +238,7 @@ namespace Player
             public bool canDodge;
             public bool canGlide;
             public bool canGunRecoil;
+            public bool canParry;
         }
     }
 }

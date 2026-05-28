@@ -26,9 +26,12 @@ namespace Player
         [SerializeField] private int animatorLayer = 0;
         [SerializeField] private string idleStateName = "idle";
         [SerializeField] private string runStateName = "run";
+        [SerializeField] private string closedRunStateName = "walk_close";
         [SerializeField] private string jumpStateName = "jump";
+        [SerializeField] private string closedJumpStateName = "jump_close";
         [SerializeField] private string glideStateName = "glide";
         [SerializeField] private string landStateName = "land";
+        [SerializeField] private string closedLandStateName = "land_close";
         [SerializeField] private string dodgeStateName = "dodge";
         [SerializeField] private string parryStateName = "parry";
         [SerializeField] private string changeStateName = "change";
@@ -60,6 +63,7 @@ namespace Player
         private bool _landingLocked;
         private bool _hasPreviousGrounded;
         private bool _previousGrounded;
+        private bool _currentUmbrellaOpen;
         private string _activeLandStateName;
         private string _currentAnimatorStateName;
 
@@ -74,13 +78,14 @@ namespace Player
             _landingLocked = false;
             _hasPreviousGrounded = false;
             _previousGrounded = false;
+            _currentUmbrellaOpen = false;
             _activeLandStateName = null;
             _currentAnimatorStateName = null;
         }
 
         private void Update()
         {
-            if (!TryReadProviderState(out var isGrounded, out var isMoving, out var isGliding, out var isDodging, out var isFacingRight, out var isParrying, out var isChanging, out var isAttacking))
+            if (!TryReadProviderState(out var isGrounded, out var isMoving, out var isGliding, out var isUmbrellaOpen, out var isDodging, out var isFacingRight, out var isParrying, out var isChanging, out var isAttacking))
             {
                 if (!_warnedNoStateProvider)
                 {
@@ -114,9 +119,9 @@ namespace Player
             }
 
             var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, isParrying, isChanging, isAttacking, _landingLocked);
-            if (_currentState != nextState)
+            if (_currentState != nextState || _currentUmbrellaOpen != isUmbrellaOpen)
             {
-                SwitchState(nextState);
+                SwitchState(nextState, isUmbrellaOpen);
             }
         }
 
@@ -181,13 +186,14 @@ namespace Player
                 : EmptyRenderers;
         }
 
-        private bool TryReadProviderState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isDodging, out bool isFacingRight, out bool isParrying, out bool isChanging, out bool isAttacking)
+        private bool TryReadProviderState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isUmbrellaOpen, out bool isDodging, out bool isFacingRight, out bool isParrying, out bool isChanging, out bool isAttacking)
         {
             if (_stateProvider != null)
             {
                 isGrounded = _stateProvider.IsGrounded;
                 isMoving = _stateProvider.IsMoving;
                 isGliding = _stateProvider.IsGliding;
+                isUmbrellaOpen = _stateProvider.IsUmbrellaOpen;
                 isDodging = _stateProvider.IsDodging;
                 isFacingRight = _stateProvider.IsFacingRight;
                 isParrying = _stateProvider.IsParrying;
@@ -199,6 +205,7 @@ namespace Player
             isGrounded = false;
             isMoving = false;
             isGliding = false;
+            isUmbrellaOpen = false;
             isDodging = false;
             isFacingRight = true;
             isParrying = false;
@@ -294,11 +301,12 @@ namespace Player
                    animator.runtimeAnimatorController != null;
         }
 
-        private void SwitchState(VisualState nextState)
+        private void SwitchState(VisualState nextState, bool isUmbrellaOpen)
         {
             _currentState = nextState;
+            _currentUmbrellaOpen = isUmbrellaOpen;
 
-            var stateName = ResolveAnimatorStateName(nextState);
+            var stateName = ResolveAnimatorStateName(nextState, isUmbrellaOpen);
             _currentAnimatorStateName = stateName;
             if (nextState == VisualState.Land)
             {
@@ -346,17 +354,29 @@ namespace Player
             _activeLandStateName = null;
         }
 
-        private string GetAnimatorStateName(VisualState state)
+        private string GetAnimatorStateName(VisualState state, bool isUmbrellaOpen)
         {
             switch (state)
             {
                 case VisualState.Run:
+                    if (!isUmbrellaOpen && !string.IsNullOrEmpty(closedRunStateName))
+                    {
+                        return closedRunStateName;
+                    }
                     return runStateName;
                 case VisualState.Jump:
+                    if (!isUmbrellaOpen && !string.IsNullOrEmpty(closedJumpStateName))
+                    {
+                        return closedJumpStateName;
+                    }
                     return jumpStateName;
                 case VisualState.Glide:
                     return glideStateName;
                 case VisualState.Land:
+                    if (!isUmbrellaOpen && !string.IsNullOrEmpty(closedLandStateName))
+                    {
+                        return closedLandStateName;
+                    }
                     return landStateName;
                 case VisualState.Dodge:
                     return dodgeStateName;
@@ -371,9 +391,9 @@ namespace Player
             }
         }
 
-        private string ResolveAnimatorStateName(VisualState state)
+        private string ResolveAnimatorStateName(VisualState state, bool isUmbrellaOpen)
         {
-            var primary = GetAnimatorStateName(state);
+            var primary = GetAnimatorStateName(state, isUmbrellaOpen);
             if (state != VisualState.Parry &&
                 state != VisualState.Change &&
                 state != VisualState.Attack &&
@@ -385,10 +405,25 @@ namespace Player
             switch (state)
             {
                 case VisualState.Run:
+                    if (!isUmbrellaOpen)
+                    {
+                        if (AnimatorHasState("walk_close")) return "walk_close";
+                        if (AnimatorHasState("run_close")) return "run_close";
+                        if (AnimatorHasState("WalkClose")) return "WalkClose";
+                        if (AnimatorHasState("RunClose")) return "RunClose";
+                        if (AnimatorHasState("WalkClosed")) return "WalkClosed";
+                        if (AnimatorHasState("RunClosed")) return "RunClosed";
+                    }
                     if (AnimatorHasState("Walk")) return "Walk";
                     if (AnimatorHasState("run")) return "run";
                     break;
                 case VisualState.Jump:
+                    if (!isUmbrellaOpen)
+                    {
+                        if (AnimatorHasState("jump_close")) return "jump_close";
+                        if (AnimatorHasState("JumpClose")) return "JumpClose";
+                        if (AnimatorHasState("JumpClosed")) return "JumpClosed";
+                    }
                     if (AnimatorHasState("Jump")) return "Jump";
                     if (AnimatorHasState("jump")) return "jump";
                     break;
@@ -397,6 +432,12 @@ namespace Player
                     if (AnimatorHasState("glide")) return "glide";
                     break;
                 case VisualState.Land:
+                    if (!isUmbrellaOpen)
+                    {
+                        if (AnimatorHasState("land_close")) return "land_close";
+                        if (AnimatorHasState("LandClose")) return "LandClose";
+                        if (AnimatorHasState("LandClosed")) return "LandClosed";
+                    }
                     if (AnimatorHasState("Land")) return "Land";
                     if (AnimatorHasState("land")) return "land";
                     break;

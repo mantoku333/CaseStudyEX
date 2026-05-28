@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1538227925426135461
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1538227925426135462}
+  - component: {fileID: 1538227925426135463}
+  m_Layer: 0
+  m_Name: LastBossEndingDirector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1538227925426135462
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1538227925426135461}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1538227925426135463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1538227925426135461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ac7098a4e5c45a482393ba610d6a91f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Ending.LastBossEndingDirector
+  endingSceneName: 
+  targetLastBoss: {fileID: 0}
+  lastBossObjectName: LastBoss
+  titleSceneName: Title
+  endingCamera: {fileID: 0}
+  endingCameraName: EndingCamera
+  endingCameraPriority: 200
+  cameraStartPoint: {fileID: 0}
+  cameraSkyPoint: {fileID: 0}
+  fallbackSkyOffset: {x: 0, y: 18, z: -10}
+  fadeToBlackDuration: 1.2
+  fadeFromBlackDuration: 1.2
+  blackHoldSeconds: 1.35
+  skyRiseDuration: 5
+  endingBgmStartBeforeFadeEndSeconds: 0.5
+  skyImageSprite: {fileID: 0}
+  skyImageRenderer: {fileID: 0}
+  skyImageCanvasGroup: {fileID: 0}
+  skyImageObjectName: EndingSkyImage
+  skyImageWorldSize: {x: 18, y: 10}
+  skyImageSortingOrder: 50
+  stageBgm: {fileID: 0}
+  endingBgm: {fileID: 0}
+  endingBgmVolume: 0.35
+  stopCurrentBgmOnBlackout: 1
+  stopCurrentBgmFadeSeconds: 0
+  stopTimelineBgmOnReturn: 1
+  creditsCanvasPrefab: {fileID: 9100007, guid: 342b1d4c5da84e68a03fb43b3fbc2951, type: 3}
+  creditsCanvasPanel: {fileID: 0}
+  returnToTitleWhenCreditsEnd: 0
+  resetPlayerToWalkPoseAfterBlackout: 1
+  animatorWalkStateNames:
+  - walk
+  - Walk
+  - run
+  - Run
+  spineWalkAnimationNames:
+  - walk
+  - run
+  hideCanvasGroups: []
+  hideObjects: []
+  autoHideKnownGameplayUi: 1
