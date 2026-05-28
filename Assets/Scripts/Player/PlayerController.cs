@@ -82,6 +82,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         umbrellaController != null &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open &&
         !isGround;
+    public bool IsUmbrellaOpen =>
+        umbrellaController != null &&
+        umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open;
     public bool IsFacingRight => isFacingRight;
     public bool IsDodging => dodgeController != null && dodgeController.IsDodging();
     public bool IsParrying => umbrellaParryController != null && umbrellaParryController.IsParrying();

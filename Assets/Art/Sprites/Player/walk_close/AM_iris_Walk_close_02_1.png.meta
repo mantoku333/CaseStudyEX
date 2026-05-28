@@ -1,0 +1,535 @@
+fileFormatVersion: 2
+guid: eb3015234ba929449a76aff0ab4211bc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 777262244460323080
+    second: AM_iris_Walk_close_02_1_0
+  - first:
+      213: -5356410517430519238
+    second: AM_iris_Walk_close_02_1_1
+  - first:
+      213: -127644321659321320
+    second: AM_iris_Walk_close_02_1_2
+  - first:
+      213: -3169498599174528275
+    second: AM_iris_Walk_close_02_1_3
+  - first:
+      213: 2618935085127864168
+    second: AM_iris_Walk_close_02_1_4
+  - first:
+      213: 2192008726376548040
+    second: AM_iris_Walk_close_02_1_5
+  - first:
+      213: -7815233976899451167
+    second: AM_iris_Walk_close_02_1_6
+  - first:
+      213: 6062196483966909645
+    second: AM_iris_Walk_close_02_1_7
+  - first:
+      213: 3213728381907084378
+    second: AM_iris_Walk_close_02_1_8
+  - first:
+      213: 3986767937190804339
+    second: AM_iris_Walk_close_02_1_9
+  - first:
+      213: 7217296754161569365
+    second: AM_iris_Walk_close_02_1_10
+  - first:
+      213: 6487802830032015595
+    second: AM_iris_Walk_close_02_1_11
+  - first:
+      213: -6755942057678465145
+    second: AM_iris_Walk_close_02_1_12
+  - first:
+      213: 6810476990524500858
+    second: AM_iris_Walk_close_02_1_13
+  - first:
+      213: -2714921000498810121
+    second: AM_iris_Walk_close_02_1_14
+  - first:
+      213: 599887704811641567
+    second: AM_iris_Walk_close_02_1_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 801616aa4e369ca00800000000000000
+      internalID: 777262244460323080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_1
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3a336d83053aa5b0800000000000000
+      internalID: -5356410517430519238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_2
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81486ed6a248a3ef0800000000000000
+      internalID: -127644321659321320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_3
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de2aa1811dda304d0800000000000000
+      internalID: -3169498599174528275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86f8ade8593585420800000000000000
+      internalID: 2618935085127864168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_5
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c60b38a2549b6e10800000000000000
+      internalID: 2192008726376548040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_6
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e6485ada16ba8390800000000000000
+      internalID: -7815233976899451167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_7
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcc3871559f312450800000000000000
+      internalID: 6062196483966909645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a54a920bfe4799c20800000000000000
+      internalID: 3213728381907084378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_9
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37bbc2ae058d35730800000000000000
+      internalID: 3986767937190804339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_10
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55e4166b82df82460800000000000000
+      internalID: 7217296754161569365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_11
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be015d0dc4e490a50800000000000000
+      internalID: 6487802830032015595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78714f83e721e32a0800000000000000
+      internalID: -6755942057678465145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_13
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7b2f2b4dbca38e50800000000000000
+      internalID: 6810476990524500858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_14
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f2350cfbb9a25ad0800000000000000
+      internalID: -2714921000498810121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Walk_close_02_1_15
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fda1c6e60ba335800800000000000000
+      internalID: 599887704811641567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: a7721ca2363fe594d88e98062cc451a3
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":820.0,"y":982.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      AM_iris_Walk_close_02_1_0: 777262244460323080
+      AM_iris_Walk_close_02_1_1: -5356410517430519238
+      AM_iris_Walk_close_02_1_10: 7217296754161569365
+      AM_iris_Walk_close_02_1_11: 6487802830032015595
+      AM_iris_Walk_close_02_1_12: -6755942057678465145
+      AM_iris_Walk_close_02_1_13: 6810476990524500858
+      AM_iris_Walk_close_02_1_14: -2714921000498810121
+      AM_iris_Walk_close_02_1_15: 599887704811641567
+      AM_iris_Walk_close_02_1_2: -127644321659321320
+      AM_iris_Walk_close_02_1_3: -3169498599174528275
+      AM_iris_Walk_close_02_1_4: 2618935085127864168
+      AM_iris_Walk_close_02_1_5: 2192008726376548040
+      AM_iris_Walk_close_02_1_6: -7815233976899451167
+      AM_iris_Walk_close_02_1_7: 6062196483966909645
+      AM_iris_Walk_close_02_1_8: 3213728381907084378
+      AM_iris_Walk_close_02_1_9: 3986767937190804339
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
