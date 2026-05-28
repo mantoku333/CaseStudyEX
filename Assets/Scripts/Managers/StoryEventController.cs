@@ -14,6 +14,19 @@ using Yarn.Unity;
 [AddComponentMenu("CaseStudy/Story/Story Event Controller")]
 public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 {
+    private static readonly string[] PlayerControlBehaviourNames =
+    {
+        "PlayerController",
+        "PlayerController_ozono",
+        "PlayerPlatformerMockController",
+        "DodgeController",
+        "PlayerShooter",
+        "GunController",
+        "UmbrellaController",
+        "UmbrellaAttackController",
+        "UmbrellaParryController"
+    };
+
     [Serializable]
     private sealed class ActorBinding
     {
@@ -1301,11 +1314,16 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         private readonly List<Rigidbody2DState> rigidbodyStates = new List<Rigidbody2DState>();
         private readonly PlayerControllerState playerControllerState;
         private readonly PlayerInputState playerInputState;
+        private readonly PlayerControlBehaviourState playerControlBehaviourState;
 
-        private CinematicStateSnapshot(PlayerControllerState playerControllerState, PlayerInputState playerInputState)
+        private CinematicStateSnapshot(
+            PlayerControllerState playerControllerState,
+            PlayerInputState playerInputState,
+            PlayerControlBehaviourState playerControlBehaviourState)
         {
             this.playerControllerState = playerControllerState;
             this.playerInputState = playerInputState;
+            this.playerControlBehaviourState = playerControlBehaviourState;
         }
 
         public static CinematicStateSnapshot Capture(
@@ -1314,22 +1332,25 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             bool captureSpriteFacing,
             bool captureRigidbodyVelocity)
         {
-            PlayerController playerController =
-                FindFirstObjectByType<PlayerController>(FindObjectsInactive.Include);
-            PlayerInput playerInput = playerController != null
-                ? playerController.GetComponent<PlayerInput>()
+            GameObject playerObject = ResolvePlayerObject();
+            PlayerController playerController = playerObject != null
+                ? playerObject.GetComponent<PlayerController>()
+                : FindFirstObjectByType<PlayerController>(FindObjectsInactive.Include);
+            PlayerInput playerInput = playerObject != null
+                ? playerObject.GetComponent<PlayerInput>()
                 : FindFirstObjectByType<PlayerInput>(FindObjectsInactive.Include);
 
             var snapshot = new CinematicStateSnapshot(
                 PlayerControllerState.Capture(playerController),
-                PlayerInputState.Capture(playerInput));
+                PlayerInputState.Capture(playerInput),
+                PlayerControlBehaviourState.Capture(playerObject));
 
             var transforms = new HashSet<Transform>();
             owner.CollectEventActorTransforms(transforms);
 
-            if (playerController != null)
+            if (playerObject != null)
             {
-                transforms.Add(playerController.transform);
+                transforms.Add(playerObject.transform);
             }
 
             foreach (Transform target in transforms)
@@ -1372,6 +1393,11 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         public void ApplyCinematicLocks(bool lockPlayerControl, bool lockPlayerFacing)
         {
             playerControllerState?.ApplyCinematicLocks(lockPlayerControl, lockPlayerFacing);
+            if (lockPlayerControl)
+            {
+                playerInputState?.ApplyLock();
+                playerControlBehaviourState?.ApplyLock();
+            }
         }
 
         public void Restore()
@@ -1392,7 +1418,37 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             }
 
             playerControllerState?.Restore();
+            playerControlBehaviourState?.Restore();
             playerInputState?.Restore();
+        }
+
+        private static GameObject ResolvePlayerObject()
+        {
+            GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
+            if (taggedPlayer != null)
+            {
+                return taggedPlayer;
+            }
+
+            PlayerController playerController =
+                FindFirstObjectByType<PlayerController>(FindObjectsInactive.Include);
+            if (playerController != null)
+            {
+                return playerController.gameObject;
+            }
+
+            MonoBehaviour[] behaviours =
+                FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                MonoBehaviour behaviour = behaviours[i];
+                if (behaviour != null && IsPlayerControlBehaviourName(behaviour.GetType().Name))
+                {
+                    return behaviour.gameObject;
+                }
+            }
+
+            return null;
         }
     }
 
@@ -1583,6 +1639,14 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             return target != null ? new PlayerInputState(target) : null;
         }
 
+        public void ApplyLock()
+        {
+            if (target != null)
+            {
+                target.enabled = false;
+            }
+        }
+
         public void Restore()
         {
             if (target != null)
@@ -1590,5 +1654,101 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
                 target.enabled = enabled;
             }
         }
+    }
+
+    private sealed class PlayerControlBehaviourState
+    {
+        private readonly List<BehaviourState> behaviourStates = new List<BehaviourState>();
+        private readonly Rigidbody2D rigidbody2D;
+
+        private PlayerControlBehaviourState(GameObject playerObject)
+        {
+            if (playerObject == null)
+            {
+                return;
+            }
+
+            MonoBehaviour[] behaviours = playerObject.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                MonoBehaviour behaviour = behaviours[i];
+                if (behaviour == null || !IsPlayerControlBehaviourName(behaviour.GetType().Name))
+                {
+                    continue;
+                }
+
+                behaviourStates.Add(new BehaviourState(behaviour));
+            }
+
+            rigidbody2D = playerObject.GetComponent<Rigidbody2D>();
+        }
+
+        public static PlayerControlBehaviourState Capture(GameObject playerObject)
+        {
+            return playerObject != null ? new PlayerControlBehaviourState(playerObject) : null;
+        }
+
+        public void ApplyLock()
+        {
+            for (int i = 0; i < behaviourStates.Count; i++)
+            {
+                behaviourStates[i].ApplyLock();
+            }
+
+            if (rigidbody2D != null)
+            {
+                rigidbody2D.linearVelocity = Vector2.zero;
+                rigidbody2D.angularVelocity = 0f;
+            }
+        }
+
+        public void Restore()
+        {
+            for (int i = 0; i < behaviourStates.Count; i++)
+            {
+                behaviourStates[i].Restore();
+            }
+        }
+    }
+
+    private sealed class BehaviourState
+    {
+        private readonly Behaviour target;
+        private readonly bool enabled;
+
+        public BehaviourState(Behaviour target)
+        {
+            this.target = target;
+            enabled = target.enabled;
+        }
+
+        public void ApplyLock()
+        {
+            if (target != null)
+            {
+                target.enabled = false;
+            }
+        }
+
+        public void Restore()
+        {
+            if (target != null)
+            {
+                target.enabled = enabled;
+            }
+        }
+    }
+
+    private static bool IsPlayerControlBehaviourName(string typeName)
+    {
+        for (int i = 0; i < PlayerControlBehaviourNames.Length; i++)
+        {
+            if (PlayerControlBehaviourNames[i] == typeName)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
