@@ -38,6 +38,10 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
     [SerializeField] private Transform defaultBubbleTarget;
     [SerializeField] private bool skipWhenDialogueRunning = true;
 
+    [Header("Panels")]
+    [SerializeField] private EventPanelPresenter panelPresenter;
+    [SerializeField] private string panelPresenterName = "EventPanelPresenter";
+
     [Header("Flags")]
     [SerializeField] private string runOnceFlagKey = string.Empty;
     [SerializeField] private StoryFlagConditionSet conditions = new StoryFlagConditionSet();
@@ -76,11 +80,16 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
     private readonly Dictionary<string, StoryEventActor> actorByKey =
         new Dictionary<string, StoryEventActor>(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> firedDialogueClipKeys = new HashSet<string>(StringComparer.Ordinal);
+    private readonly HashSet<string> firedPanelClipKeys = new HashSet<string>(StringComparer.Ordinal);
 
     private Coroutine playRoutine;
     private Coroutine dialogueRoutine;
     private DialogueRunner activeDialogueRunner;
     private bool waitingDialogueCompletion;
+    private Coroutine panelRoutine;
+    private EventPanelPresenter activePanelPresenter;
+    private PlayableDirector panelPausedDirector;
+    private bool shouldResumePanelPausedDirector;
     private bool directorStopped;
     private bool startMutationsApplied;
     private bool completeMutationsApplied;
@@ -161,6 +170,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
     public void StopEvent()
     {
         StopActiveDialogue();
+        StopPanelFromTimeline(resumeDirector: false);
 
         if (dialogueRoutine != null)
         {
@@ -194,6 +204,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         directorStopped = false;
         startMutationsApplied = false;
         firedDialogueClipKeys.Clear();
+        firedPanelClipKeys.Clear();
     }
 
     public Transform GetMarkerTransform(int markerNo)
@@ -266,6 +277,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         directorStopped = false;
         completeMutationsApplied = false;
         firedDialogueClipKeys.Clear();
+        firedPanelClipKeys.Clear();
 
         StoryPauseRuntime.SetOverride(pausePolicy);
         CaptureCinematicState();
@@ -371,6 +383,25 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             bubbleActorKey);
     }
 
+    public bool TryShowPanelFromTimeline(
+        string clipKey,
+        EventPanelContent content,
+        bool pauseTimelineUntilClosed,
+        float autoCloseSecondsWhenNoButton)
+    {
+        string resolvedClipKey =
+            BuildPanelClipKey(clipKey, content, pauseTimelineUntilClosed, autoCloseSecondsWhenNoButton);
+        if (!firedPanelClipKeys.Add(resolvedClipKey))
+        {
+            return false;
+        }
+
+        StopPanelFromTimeline(resumeDirector: true);
+        panelRoutine = StartCoroutine(
+            ShowPanelRoutine(content, pauseTimelineUntilClosed, autoCloseSecondsWhenNoButton));
+        return true;
+    }
+
     private static string BuildDialogueClipKey(
         string clipKey,
         string nodeName,
@@ -390,6 +421,125 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             useControllerDefaultStyle ? "default" : dialogueStyle.ToString(),
             pauseTimelineUntilComplete ? "pause" : "continue",
             bubbleActorKey);
+    }
+
+    private static string BuildPanelClipKey(
+        string clipKey,
+        EventPanelContent content,
+        bool pauseTimelineUntilClosed,
+        float autoCloseSecondsWhenNoButton)
+    {
+        if (!string.IsNullOrWhiteSpace(clipKey))
+        {
+            return clipKey.Trim();
+        }
+
+        string title = content != null && !string.IsNullOrWhiteSpace(content.title)
+            ? content.title.Trim()
+            : string.Empty;
+        string body = content != null && !string.IsNullOrWhiteSpace(content.body)
+            ? content.body.Trim()
+            : string.Empty;
+        EventPanelKind kind = content != null ? content.kind : EventPanelKind.Custom;
+
+        return string.Join(
+            "|",
+            kind.ToString(),
+            title,
+            body,
+            pauseTimelineUntilClosed ? "pause" : "continue",
+            autoCloseSecondsWhenNoButton.ToString("0.###"));
+    }
+
+    private IEnumerator ShowPanelRoutine(
+        EventPanelContent content,
+        bool pauseTimelineUntilClosed,
+        float autoCloseSecondsWhenNoButton)
+    {
+        PlayableDirector resolvedDirector = ResolveDirector();
+        bool shouldPauseTimeline = pauseTimelineUntilClosed && resolvedDirector != null;
+        if (shouldPauseTimeline)
+        {
+            resolvedDirector.Pause();
+            panelPausedDirector = resolvedDirector;
+            shouldResumePanelPausedDirector = true;
+        }
+
+        EventPanelPresenter presenter = ResolvePanelPresenter();
+        if (presenter == null)
+        {
+            ResumePanelPausedDirectorIfNeeded();
+            panelRoutine = null;
+            yield break;
+        }
+
+        activePanelPresenter = presenter;
+        bool panelClosed = false;
+        bool panelShown = presenter.Show(
+            content,
+            () =>
+            {
+                panelClosed = true;
+                if (activePanelPresenter == presenter)
+                {
+                    activePanelPresenter = null;
+                }
+            },
+            autoCloseSecondsWhenNoButton);
+
+        if (!panelShown)
+        {
+            activePanelPresenter = null;
+            ResumePanelPausedDirectorIfNeeded();
+            panelRoutine = null;
+            yield break;
+        }
+
+        if (shouldPauseTimeline)
+        {
+            while (!panelClosed)
+            {
+                yield return null;
+            }
+
+            ResumePanelPausedDirectorIfNeeded();
+        }
+
+        panelRoutine = null;
+    }
+
+    private void StopPanelFromTimeline(bool resumeDirector)
+    {
+        if (panelRoutine != null)
+        {
+            StopCoroutine(panelRoutine);
+            panelRoutine = null;
+        }
+
+        if (activePanelPresenter != null)
+        {
+            activePanelPresenter.HideWithoutCallback();
+            activePanelPresenter = null;
+        }
+
+        if (resumeDirector)
+        {
+            ResumePanelPausedDirectorIfNeeded();
+            return;
+        }
+
+        panelPausedDirector = null;
+        shouldResumePanelPausedDirector = false;
+    }
+
+    private void ResumePanelPausedDirectorIfNeeded()
+    {
+        PlayableDirector resolvedDirector = panelPausedDirector;
+        bool shouldResume = shouldResumePanelPausedDirector;
+        panelPausedDirector = null;
+        shouldResumePanelPausedDirector = false;
+
+        ResumeDirectorIfNeeded(resolvedDirector, shouldResume);
     }
 
     private IEnumerator PlayDialogueRoutine(
@@ -1071,6 +1221,41 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         {
             dialogueManager = FindFirstObjectByType<DialogueManager>(FindObjectsInactive.Include);
         }
+    }
+
+    private EventPanelPresenter ResolvePanelPresenter()
+    {
+        if (panelPresenter != null)
+        {
+            return panelPresenter;
+        }
+
+        if (!string.IsNullOrWhiteSpace(panelPresenterName))
+        {
+            string targetName = panelPresenterName.Trim();
+            EventPanelPresenter[] presenters =
+                FindObjectsByType<EventPanelPresenter>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < presenters.Length; i++)
+            {
+                EventPanelPresenter candidate = presenters[i];
+                if (candidate != null && string.Equals(candidate.name, targetName, StringComparison.OrdinalIgnoreCase))
+                {
+                    panelPresenter = candidate;
+                    return panelPresenter;
+                }
+            }
+        }
+
+        panelPresenter = FindFirstObjectByType<EventPanelPresenter>(FindObjectsInactive.Include);
+        if (panelPresenter == null)
+        {
+            Debug.LogError($"[StoryEventController] EventPanelPresenter not found. eventId='{EventId}'", this);
+#if UNITY_EDITOR
+            Debug.Break();
+#endif
+        }
+
+        return panelPresenter;
     }
 
     private void RebuildLookupCache()
