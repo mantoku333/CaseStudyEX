@@ -48,6 +48,7 @@ namespace GameName.UI
         private Material fogRevealMaterialInstance;
         private Coroutine revealCoroutine;
         private bool isVisible;
+        private bool hitStopExternalPauseRegistered;
 
         private void Awake()
         {
@@ -83,6 +84,7 @@ namespace GameName.UI
             UnregisterButtonListeners();
             ReleaseFogMaterialInstance();
             Time.timeScale = 1f;
+            ReleaseHitStopExternalPause();
         }
 
         private void ResolveReferences()
@@ -280,6 +282,7 @@ namespace GameName.UI
                 playerRigidbody.Sleep();
             }
 
+            RegisterHitStopExternalPause();
             Time.timeScale = 0f;
         }
 
@@ -296,6 +299,7 @@ namespace GameName.UI
 
             PrepareForSceneTransition();
             Time.timeScale = 1f;
+            ReleaseHitStopExternalPause();
 
             string activeSceneName = SceneManager.GetActiveScene().name;
             if (!SaveManager.TryLoadGame(latestSlotIndex, activeSceneName, reloadCurrentScene: true))
@@ -311,7 +315,30 @@ namespace GameName.UI
         {
             PrepareForSceneTransition();
             Time.timeScale = 1f;
+            ReleaseHitStopExternalPause();
             SceneManager.LoadScene(titleSceneName);
+        }
+
+        private void RegisterHitStopExternalPause()
+        {
+            if (hitStopExternalPauseRegistered)
+            {
+                return;
+            }
+
+            HitStopController.BeginExternalPause();
+            hitStopExternalPauseRegistered = true;
+        }
+
+        private void ReleaseHitStopExternalPause()
+        {
+            if (!hitStopExternalPauseRegistered)
+            {
+                return;
+            }
+
+            HitStopController.EndExternalPause();
+            hitStopExternalPauseRegistered = false;
         }
 
         private void BeginRevealAnimation()

@@ -76,6 +76,7 @@ namespace Metroidvania.Managers
                     if (!timeScalePaused)
                     {
                         timeScalePaused = true;
+                        HitStopController.BeginExternalPause();
                         previousTimeScale = Time.timeScale;
                         Time.timeScale = 0f;
                     }
@@ -92,6 +93,7 @@ namespace Metroidvania.Managers
             {
                 timeScalePaused = false;
                 Time.timeScale = previousTimeScale;
+                HitStopController.EndExternalPause();
             }
 
             ResumeGameplay();

@@ -171,6 +171,7 @@ namespace GameName.Enemy
         public bool IsEncounterActive => encounterActive;
         public int CurrentHealth => currentHealth;
         public int MaxHealth => Mathf.Max(1, maxHealth);
+        private static bool UseLegacyBossHitStop => false;
         /// <summary>
         /// LastBossがDestroyされる直前に通知する。専用死亡SEの再生に使う。
         /// System.Actionを直接書き、UnityEngine.Randomとの名前衝突を避ける。
@@ -239,7 +240,6 @@ namespace GameName.Enemy
             CancelActiveBladeAttack();
             StopMotion();
             HideAttackVisual();
-            RestoreHitStopTimeScale();
             encounterActive = false;
             state = BossState.Inactive;
         }
@@ -247,7 +247,6 @@ namespace GameName.Enemy
         private void OnDestroy()
         {
             CancelActiveBladeAttack();
-            RestoreHitStopTimeScale();
 
             if (telegraphObject != null)
             {
@@ -361,6 +360,7 @@ namespace GameName.Enemy
             PlayHitFlash();
             currentHealth = Mathf.Max(0, currentHealth - damage);
             NotifyHealthChanged();
+            HitStopController.RequestPlayerToEnemy();
             TryEnterEnraged();
 
             if (currentHealth <= 0)
@@ -1119,6 +1119,8 @@ namespace GameName.Enemy
                 damagedHealth = targetHealth;
                 if (targetHealth.TryTakeDamage(GetAttackDamage(action)))
                 {
+                    HitStopController.RequestEnemyToPlayer();
+
                     // HP クールダウンを通過した実ダメージだけ、被弾フラッシュを強制再生する。
                     PlayerDamageFlash damageFlash = targetHealth.GetComponent<PlayerDamageFlash>();
                     if (damageFlash == null)
@@ -1166,6 +1168,7 @@ namespace GameName.Enemy
             }
 
             PlayPlayerDamageFlash(targetHealth);
+            HitStopController.RequestEnemyToPlayer();
             return true;
         }
 
@@ -1307,7 +1310,13 @@ namespace GameName.Enemy
                 return true;
             }
 
-            return IsPlayerCurrentlyParryingInBox(attackBox);
+            if (!IsPlayerCurrentlyParryingInBox(attackBox))
+            {
+                return false;
+            }
+
+            HitStopController.RequestParry();
+            return true;
         }
 
         private void UpdateJustParryBuffer(BossAction action, AttackBox attackBox)
@@ -1323,8 +1332,13 @@ namespace GameName.Enemy
                 return;
             }
 
+            bool alreadyBuffered = IsBufferedJustParryValid(action);
             justParryBufferedAction = action;
             justParryValidUntil = Time.time + justParryEffectDuration;
+            if (!alreadyBuffered)
+            {
+                HitStopController.RequestParry();
+            }
         }
 
         private bool IsBufferedJustParryValid(BossAction action)
@@ -1594,8 +1608,9 @@ namespace GameName.Enemy
             visibleAction = BossAction.None;
             ClearJustParryBuffer();
 
+            HitStopController.Request(hitStopDuration);
             float previousTimeScale = Time.timeScale;
-            if (useGlobalHitStop && hitStopDuration > 0f)
+            if (UseLegacyBossHitStop && useGlobalHitStop && hitStopDuration > 0f)
             {
                 // 全体停止のヒットストップ。終了時は必ず元のtimeScaleへ戻す。
                 hitStopRestoreTimeScale = previousTimeScale;
