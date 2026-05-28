@@ -89,6 +89,12 @@ namespace EditorTools
 
         //最小数値の座標を無効座標と指定
         private static readonly Vector3Int invalidCell = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
+        private static readonly string[][] manualBlockFaceLabelRows =
+        {
+            new[] { "左上", "上床", "右上" },
+            new[] { "左壁", "真ん中", "右壁" },
+            new[] { "左下", "下天井", "右下" }
+        };
 
         [SerializeField] private StageEditorPalette palette;
         [SerializeField] private PlayerStatsData playerStatsData;
@@ -266,9 +272,7 @@ namespace EditorTools
                 if (stageBlockPaintMode == StageBlockPaintMode.ManualFace)
                 {
                     EditorGUILayout.LabelField("Manual Face", EditorStyles.boldLabel);
-                    manualBlockFace = (StageBlockFace)GUILayout.Toolbar(
-                        (int)manualBlockFace,
-                        new[] { "左上", "上床", "右上", "左壁", "真ん中", "右壁", "左下", "下天井", "右下" });
+                    manualBlockFace = DrawManualBlockFaceGrid(manualBlockFace);
                 }
 
                 EditorGUILayout.Space();
@@ -922,6 +926,27 @@ namespace EditorTools
             }
 
             return labels;
+        }
+
+        private static StageBlockFace DrawManualBlockFaceGrid(StageBlockFace selectedFace)
+        {
+            int selectedIndex = (int)selectedFace;
+
+            for (int row = 0; row < manualBlockFaceLabelRows.Length; row++)
+            {
+                int rowStartIndex = row * 3;
+                int rowSelection = selectedIndex >= rowStartIndex && selectedIndex < rowStartIndex + 3
+                    ? selectedIndex - rowStartIndex
+                    : -1;
+                int newRowSelection = GUILayout.Toolbar(rowSelection, manualBlockFaceLabelRows[row]);
+
+                if (newRowSelection >= 0 && newRowSelection != rowSelection)
+                {
+                    selectedIndex = rowStartIndex + newRowSelection;
+                }
+            }
+
+            return (StageBlockFace)selectedIndex;
         }
 
         private StageBlockTileSet GetSelectedStageBlockTileSet()
