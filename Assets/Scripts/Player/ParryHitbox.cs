@@ -66,6 +66,7 @@ public class ParryHitbox : MonoBehaviour
             Debug.Log("弾を通常パリィしました");
 
             enemyBullet.DestroyByParry();
+            HitStopController.RequestParry();
             return;
         }
 
@@ -84,6 +85,7 @@ public class ParryHitbox : MonoBehaviour
             Debug.Log("突進攻撃をパリィしました");
 
             parryableAttack.StopByParry();
+            HitStopController.RequestParry();
         }
     }
 
@@ -269,6 +271,11 @@ public class ParryHitbox : MonoBehaviour
             enemyAttacks.Remove(parriedAttacks[i]);
         }
 
+        if (parried)
+        {
+            HitStopController.RequestParry();
+        }
+
         return parried;
     }
 
@@ -311,6 +318,7 @@ public class ParryHitbox : MonoBehaviour
             }
 
             parryableAttack.StopByParry();
+            HitStopController.RequestParry();
             return true;
         }
 

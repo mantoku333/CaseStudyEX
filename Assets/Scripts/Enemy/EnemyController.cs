@@ -492,6 +492,7 @@ namespace GameName.Enemy
                         playerHealth.TryTakeDamage(damageToPlayer))
                 {
                     Debug.Log("敵接触ダメージ");
+                    HitStopController.RequestEnemyToPlayer();
 
                     PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
                     if (damageFlash == null)
@@ -562,6 +563,7 @@ namespace GameName.Enemy
             }
 
             TakeDamage(damage);
+            HitStopController.RequestPlayerToEnemy();
         }
 
 
