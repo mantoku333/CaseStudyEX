@@ -110,12 +110,25 @@ namespace CaseStudy.EditorTools
                 return;
             }
 
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                EditorGUILayout.LabelField("Event ID", currentController.EventId);
-                EditorGUILayout.LabelField("Object", currentController.name);
-                EditorGUILayout.LabelField("State", currentController.IsPlaying ? "Playing" : "Idle");
-            }
+            DrawSelectedControllerInfo(currentController);
+        }
+
+        private static void DrawSelectedControllerInfo(StoryEventController currentController)
+        {
+            Rect boxRect = EditorGUILayout.GetControlRect(false, 64f);
+            GUI.Box(boxRect, GUIContent.none, EditorStyles.helpBox);
+
+            Rect lineRect = new Rect(
+                boxRect.x + 8f,
+                boxRect.y + 6f,
+                boxRect.width - 16f,
+                EditorGUIUtility.singleLineHeight);
+
+            EditorGUI.LabelField(lineRect, "Event ID", currentController.EventId);
+            lineRect.y += EditorGUIUtility.singleLineHeight + 2f;
+            EditorGUI.LabelField(lineRect, "Object", currentController.name);
+            lineRect.y += EditorGUIUtility.singleLineHeight + 2f;
+            EditorGUI.LabelField(lineRect, "State", currentController.IsPlaying ? "Playing" : "Idle");
         }
 
         private void DrawPlaybackButtons()

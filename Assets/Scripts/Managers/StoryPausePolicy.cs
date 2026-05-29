@@ -12,6 +12,7 @@ public static class StoryPauseRuntime
     private static StoryPausePolicy overridePolicy = StoryPausePolicy.UseDialogueDefault;
 
     public static StoryPausePolicy DialogueDefaultPolicy { get; set; } = StoryPausePolicy.TimeScaleZero;
+    public static bool HasOverride => hasOverride;
 
     public static StoryPausePolicy EffectivePolicy
     {

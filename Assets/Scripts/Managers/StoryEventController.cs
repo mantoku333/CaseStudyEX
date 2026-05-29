@@ -300,11 +300,27 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
         if (notification is EventPanelMarker panelMarker)
         {
-            TryShowPanelFromTimeline(
-                panelMarker.TriggerKey,
-                panelMarker.BuildContent(),
-                panelMarker.PauseTimelineUntilClosed,
-                panelMarker.AutoCloseSecondsWhenNoButton);
+            EventPanelPresenter panelPresenterOverride = panelMarker.ResolvePanelPresenter(origin);
+            if (panelMarker.UsesExistingPanel)
+            {
+                TryShowExistingPanelFromTimeline(
+                    panelMarker.TriggerKey,
+                    panelMarker.PanelPresenterName,
+                    panelPresenterOverride,
+                    panelMarker.PauseTimelineUntilClosed,
+                    panelMarker.AutoCloseSecondsWhenNoButton);
+            }
+            else
+            {
+                TryShowPanelFromTimeline(
+                    panelMarker.TriggerKey,
+                    panelMarker.BuildContent(),
+                    panelMarker.PauseTimelineUntilClosed,
+                    panelMarker.AutoCloseSecondsWhenNoButton,
+                    panelMarker.PanelPresenterName,
+                    panelPresenterOverride);
+            }
+
             return;
         }
 
@@ -500,7 +516,9 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         string clipKey,
         EventPanelContent content,
         bool pauseTimelineUntilClosed,
-        float autoCloseSecondsWhenNoButton)
+        float autoCloseSecondsWhenNoButton,
+        string panelPresenterNameOverride = null,
+        EventPanelPresenter panelPresenterOverride = null)
     {
         string resolvedClipKey =
             BuildPanelClipKey(clipKey, content, pauseTimelineUntilClosed, autoCloseSecondsWhenNoButton);
@@ -511,7 +529,36 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
         StopPanelFromTimeline(resumeDirector: true);
         panelRoutine = StartCoroutine(
-            ShowPanelRoutine(content, pauseTimelineUntilClosed, autoCloseSecondsWhenNoButton));
+            ShowPanelRoutine(
+                content,
+                pauseTimelineUntilClosed,
+                autoCloseSecondsWhenNoButton,
+                panelPresenterNameOverride,
+                panelPresenterOverride));
+        return true;
+    }
+
+    public bool TryShowExistingPanelFromTimeline(
+        string clipKey,
+        string panelPresenterNameOverride,
+        EventPanelPresenter panelPresenterOverride,
+        bool pauseTimelineUntilClosed,
+        float autoCloseSecondsWhenNoButton)
+    {
+        string resolvedClipKey =
+            BuildPanelClipKey(clipKey, null, pauseTimelineUntilClosed, autoCloseSecondsWhenNoButton);
+        if (!firedPanelClipKeys.Add(resolvedClipKey))
+        {
+            return false;
+        }
+
+        StopPanelFromTimeline(resumeDirector: true);
+        panelRoutine = StartCoroutine(
+            ShowExistingPanelRoutine(
+                pauseTimelineUntilClosed,
+                autoCloseSecondsWhenNoButton,
+                panelPresenterNameOverride,
+                panelPresenterOverride));
         return true;
     }
 
@@ -567,7 +614,9 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
     private IEnumerator ShowPanelRoutine(
         EventPanelContent content,
         bool pauseTimelineUntilClosed,
-        float autoCloseSecondsWhenNoButton)
+        float autoCloseSecondsWhenNoButton,
+        string panelPresenterNameOverride,
+        EventPanelPresenter panelPresenterOverride)
     {
         PlayableDirector resolvedDirector = ResolveDirector();
         bool shouldPauseTimeline = pauseTimelineUntilClosed && resolvedDirector != null;
@@ -578,7 +627,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             shouldResumePanelPausedDirector = true;
         }
 
-        EventPanelPresenter presenter = ResolvePanelPresenter();
+        EventPanelPresenter presenter = ResolvePanelPresenter(panelPresenterNameOverride, panelPresenterOverride);
         if (presenter == null)
         {
             ResumePanelPausedDirectorIfNeeded();
@@ -590,6 +639,63 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         bool panelClosed = false;
         bool panelShown = presenter.Show(
             content,
+            () =>
+            {
+                panelClosed = true;
+                if (activePanelPresenter == presenter)
+                {
+                    activePanelPresenter = null;
+                }
+            },
+            autoCloseSecondsWhenNoButton);
+
+        if (!panelShown)
+        {
+            activePanelPresenter = null;
+            ResumePanelPausedDirectorIfNeeded();
+            panelRoutine = null;
+            yield break;
+        }
+
+        if (shouldPauseTimeline)
+        {
+            while (!panelClosed)
+            {
+                yield return null;
+            }
+
+            ResumePanelPausedDirectorIfNeeded();
+        }
+
+        panelRoutine = null;
+    }
+
+    private IEnumerator ShowExistingPanelRoutine(
+        bool pauseTimelineUntilClosed,
+        float autoCloseSecondsWhenNoButton,
+        string panelPresenterNameOverride,
+        EventPanelPresenter panelPresenterOverride)
+    {
+        PlayableDirector resolvedDirector = ResolveDirector();
+        bool shouldPauseTimeline = pauseTimelineUntilClosed && resolvedDirector != null;
+        if (shouldPauseTimeline)
+        {
+            resolvedDirector.Pause();
+            panelPausedDirector = resolvedDirector;
+            shouldResumePanelPausedDirector = true;
+        }
+
+        EventPanelPresenter presenter = ResolvePanelPresenter(panelPresenterNameOverride, panelPresenterOverride);
+        if (presenter == null)
+        {
+            ResumePanelPausedDirectorIfNeeded();
+            panelRoutine = null;
+            yield break;
+        }
+
+        activePanelPresenter = presenter;
+        bool panelClosed = false;
+        bool panelShown = presenter.ShowExisting(
             () =>
             {
                 panelClosed = true;
@@ -1336,8 +1442,32 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         }
     }
 
-    private EventPanelPresenter ResolvePanelPresenter()
+    private EventPanelPresenter ResolvePanelPresenter(
+        string panelPresenterNameOverride = null,
+        EventPanelPresenter panelPresenterOverride = null)
     {
+        if (panelPresenterOverride != null)
+        {
+            return panelPresenterOverride;
+        }
+
+        if (!string.IsNullOrWhiteSpace(panelPresenterNameOverride))
+        {
+            EventPanelPresenter namedPresenter = FindPanelPresenterByName(panelPresenterNameOverride.Trim());
+            if (namedPresenter != null)
+            {
+                return namedPresenter;
+            }
+
+            Debug.LogError(
+                $"[StoryEventController] EventPanelPresenter '{panelPresenterNameOverride.Trim()}' not found. eventId='{EventId}'",
+                this);
+#if UNITY_EDITOR
+            Debug.Break();
+#endif
+            return null;
+        }
+
         if (panelPresenter != null)
         {
             return panelPresenter;
@@ -1345,17 +1475,10 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
         if (!string.IsNullOrWhiteSpace(panelPresenterName))
         {
-            string targetName = panelPresenterName.Trim();
-            EventPanelPresenter[] presenters =
-                FindObjectsByType<EventPanelPresenter>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            for (int i = 0; i < presenters.Length; i++)
+            panelPresenter = FindPanelPresenterByName(panelPresenterName.Trim());
+            if (panelPresenter != null)
             {
-                EventPanelPresenter candidate = presenters[i];
-                if (candidate != null && string.Equals(candidate.name, targetName, StringComparison.OrdinalIgnoreCase))
-                {
-                    panelPresenter = candidate;
-                    return panelPresenter;
-                }
+                return panelPresenter;
             }
         }
 
@@ -1369,6 +1492,27 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         }
 
         return panelPresenter;
+    }
+
+    private static EventPanelPresenter FindPanelPresenterByName(string targetName)
+    {
+        if (string.IsNullOrWhiteSpace(targetName))
+        {
+            return null;
+        }
+
+        EventPanelPresenter[] presenters =
+            FindObjectsByType<EventPanelPresenter>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < presenters.Length; i++)
+        {
+            EventPanelPresenter candidate = presenters[i];
+            if (candidate != null && string.Equals(candidate.name, targetName, StringComparison.OrdinalIgnoreCase))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
     }
 
     private void RebuildLookupCache()

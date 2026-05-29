@@ -89,6 +89,20 @@ public sealed class EventPanelMarkerEditor : MarkerEditor
             return new MarkerDrawOptions { tooltip = "Panel", errorText = string.Empty };
         }
 
+        if (panelMarker.UsesExistingPanel)
+        {
+            string targetName = panelMarker.HasPanelReference
+                ? "Reference"
+                : string.IsNullOrWhiteSpace(panelMarker.PanelPresenterName)
+                ? "Default"
+                : panelMarker.PanelPresenterName;
+            return new MarkerDrawOptions
+            {
+                tooltip = $"Panel: Existing Panel ({targetName})",
+                errorText = string.Empty,
+            };
+        }
+
         string title = string.IsNullOrWhiteSpace(panelMarker.ResolvedTitle)
             ? panelMarker.PanelKind.ToString()
             : panelMarker.ResolvedTitle;
