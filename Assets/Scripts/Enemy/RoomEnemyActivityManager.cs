@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GameName.Enemy;
+using Metroidvania.Enemy;
 using Player;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,6 +12,9 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
     private static RoomEnemyActivityManager instance;
 
+    [SerializeField, Min(1)] private int maxEnemyStateChangesPerFrame = 8;
+    [SerializeField] private bool debugLogging;
+
     private readonly List<ManagedEnemy> managedEnemies = new List<ManagedEnemy>();
     private RoomCameraTrigger[] roomTriggers = new RoomCameraTrigger[0];
     private Scene managedScene;
@@ -18,7 +22,10 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
     private bool gatingActive;
     private Transform playerTransform;
     private RoomCameraTrigger inferredActiveRoom;
+    private RoomCameraTrigger lastResolvedActiveRoom;
     private float nextPlayerRoomRefreshTime;
+    private bool hasPendingEnemyStateChanges;
+    private int nextEnemyStateChangeIndex;
 
     private sealed class ManagedEnemy
     {
@@ -26,6 +33,12 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         public GameObject Root;
         public RoomCameraTrigger Room;
         public bool InitialActiveSelf;
+        public bool DesiredGameplayActive;
+        public bool AppliedGameplayActive;
+        public MonoBehaviour[] GameplayBehaviours;
+        public bool[] InitialBehaviourEnabled;
+        public Rigidbody2D[] Rigidbodies;
+        public bool[] InitialRigidbodySimulated;
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -104,6 +117,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         {
             ApplyEnemyActivity();
         }
+
+        ProcessPendingEnemyStateChanges(maxEnemyStateChangesPerFrame);
     }
 
     private void RefreshForCurrentScene()
@@ -113,7 +128,10 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         roomTriggers = FindRoomTriggers(managedScene);
         playerTransform = null;
         inferredActiveRoom = ResolveActiveRoomFromPlayer();
+        lastResolvedActiveRoom = inferredActiveRoom;
         nextPlayerRoomRefreshTime = Time.unscaledTime + PlayerRoomRefreshInterval;
+        hasPendingEnemyStateChanges = false;
+        nextEnemyStateChangeIndex = 0;
 
         managedEnemies.Clear();
         EnemyController[] enemies = FindObjectsByType<EnemyController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
@@ -125,13 +143,27 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 continue;
             }
 
+            RoomCameraTrigger enemyRoom = ResolveRoomForPosition(enemy.transform.position);
+            if (enemyRoom == null)
+            {
+                continue;
+            }
+
             managedEnemies.Add(new ManagedEnemy
             {
                 Enemy = enemy,
                 Root = enemy.gameObject,
-                Room = ResolveRoomForPosition(enemy.transform.position),
-                InitialActiveSelf = enemy.gameObject.activeSelf
+                Room = enemyRoom,
+                InitialActiveSelf = enemy.gameObject.activeSelf,
+                DesiredGameplayActive = enemy.gameObject.activeSelf,
+                AppliedGameplayActive = enemy.gameObject.activeSelf,
+                GameplayBehaviours = CollectGameplayBehaviours(enemy.gameObject),
+                Rigidbodies = enemy.GetComponentsInChildren<Rigidbody2D>(true)
             });
+
+            ManagedEnemy managedEnemy = managedEnemies[managedEnemies.Count - 1];
+            managedEnemy.InitialBehaviourEnabled = CaptureBehaviourEnabledStates(managedEnemy.GameplayBehaviours);
+            managedEnemy.InitialRigidbodySimulated = CaptureRigidbodySimulatedStates(managedEnemy.Rigidbodies);
         }
 
         gatingActive = ShouldGateCurrentScene();
@@ -140,7 +172,21 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
     private void HandleActiveRoomChanged(RoomCameraTrigger activeRoom)
     {
-        inferredActiveRoom = activeRoom == null ? ResolveActiveRoomFromPlayer() : null;
+        if (activeRoom != null)
+        {
+            RememberResolvedActiveRoom(activeRoom);
+            inferredActiveRoom = null;
+        }
+        else
+        {
+            RoomCameraTrigger roomFromPlayer = ResolveActiveRoomFromPlayer();
+            if (roomFromPlayer != null)
+            {
+                inferredActiveRoom = roomFromPlayer;
+                RememberResolvedActiveRoom(roomFromPlayer);
+            }
+        }
+
         ApplyEnemyActivity();
     }
 
@@ -163,14 +209,14 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
     {
         if (!gatingActive)
         {
-            RestoreInitialEnemyActivity();
+            QueueInitialEnemyActivityRestore();
             return;
         }
 
         RoomCameraTrigger activeRoom = ResolveActiveRoom();
         if (activeRoom == null)
         {
-            RestoreInitialEnemyActivity();
+            LogDebug("No active room resolved; keeping current enemy activity states.");
             return;
         }
 
@@ -183,10 +229,11 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 continue;
             }
 
-            bool shouldBeActive = managedEnemy.Room == null ||
-                                  managedEnemy.Room == activeRoom;
-            managedEnemy.Root.SetActive(managedEnemy.InitialActiveSelf && shouldBeActive);
+            bool shouldRunGameplay = managedEnemy.Room == activeRoom;
+            managedEnemy.DesiredGameplayActive = managedEnemy.InitialActiveSelf && shouldRunGameplay;
         }
+
+        QueueEnemyStateApplication();
     }
 
     private void RefreshInferredActiveRoomIfNeeded(ref bool shouldApply)
@@ -198,6 +245,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 inferredActiveRoom = null;
             }
 
+            RememberResolvedActiveRoom(RoomCameraTrigger.ActiveRoom);
             return;
         }
 
@@ -208,12 +256,18 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
         nextPlayerRoomRefreshTime = Time.unscaledTime + PlayerRoomRefreshInterval;
         RoomCameraTrigger activeRoom = ResolveActiveRoomFromPlayer();
+        if (activeRoom == null)
+        {
+            return;
+        }
+
         if (activeRoom == inferredActiveRoom)
         {
             return;
         }
 
         inferredActiveRoom = activeRoom;
+        RememberResolvedActiveRoom(activeRoom);
         shouldApply = true;
     }
 
@@ -221,10 +275,19 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
     {
         if (RoomCameraTrigger.ActiveRoom != null)
         {
+            RememberResolvedActiveRoom(RoomCameraTrigger.ActiveRoom);
             return RoomCameraTrigger.ActiveRoom;
         }
 
-        return inferredActiveRoom != null && inferredActiveRoom.isActiveAndEnabled ? inferredActiveRoom : null;
+        if (inferredActiveRoom != null && inferredActiveRoom.isActiveAndEnabled)
+        {
+            RememberResolvedActiveRoom(inferredActiveRoom);
+            return inferredActiveRoom;
+        }
+
+        return lastResolvedActiveRoom != null && lastResolvedActiveRoom.isActiveAndEnabled
+            ? lastResolvedActiveRoom
+            : null;
     }
 
     private RoomCameraTrigger ResolveActiveRoomFromPlayer()
@@ -272,7 +335,17 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         return false;
     }
 
-    private void RestoreInitialEnemyActivity()
+    private void RememberResolvedActiveRoom(RoomCameraTrigger room)
+    {
+        if (room == null || !room.isActiveAndEnabled)
+        {
+            return;
+        }
+
+        lastResolvedActiveRoom = room;
+    }
+
+    private void QueueInitialEnemyActivityRestore()
     {
         for (int i = managedEnemies.Count - 1; i >= 0; i--)
         {
@@ -283,7 +356,147 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 continue;
             }
 
-            managedEnemy.Root.SetActive(managedEnemy.InitialActiveSelf);
+            managedEnemy.DesiredGameplayActive = managedEnemy.InitialActiveSelf;
+        }
+
+        QueueEnemyStateApplication();
+    }
+
+    private void QueueEnemyStateApplication()
+    {
+        hasPendingEnemyStateChanges = true;
+        nextEnemyStateChangeIndex = Mathf.Clamp(nextEnemyStateChangeIndex, 0, Mathf.Max(0, managedEnemies.Count - 1));
+    }
+
+    private void ProcessPendingEnemyStateChanges(int maxStateChanges)
+    {
+        if (!hasPendingEnemyStateChanges || managedEnemies.Count == 0)
+        {
+            return;
+        }
+
+        int budget = Mathf.Max(1, maxStateChanges);
+        int changedCount = 0;
+        int checkedCount = 0;
+
+        while (managedEnemies.Count > 0 &&
+               checkedCount < managedEnemies.Count &&
+               changedCount < budget)
+        {
+            if (nextEnemyStateChangeIndex >= managedEnemies.Count)
+            {
+                nextEnemyStateChangeIndex = 0;
+            }
+
+            ManagedEnemy managedEnemy = managedEnemies[nextEnemyStateChangeIndex];
+            if (!IsManagedEnemyValid(managedEnemy))
+            {
+                managedEnemies.RemoveAt(nextEnemyStateChangeIndex);
+                continue;
+            }
+
+            if (managedEnemy.AppliedGameplayActive != managedEnemy.DesiredGameplayActive)
+            {
+                SetManagedEnemyGameplayActive(managedEnemy, managedEnemy.DesiredGameplayActive);
+                changedCount++;
+            }
+
+            nextEnemyStateChangeIndex++;
+            checkedCount++;
+        }
+
+        hasPendingEnemyStateChanges = HasPendingEnemyStateChanges();
+    }
+
+    private bool HasPendingEnemyStateChanges()
+    {
+        for (int i = managedEnemies.Count - 1; i >= 0; i--)
+        {
+            ManagedEnemy managedEnemy = managedEnemies[i];
+            if (!IsManagedEnemyValid(managedEnemy))
+            {
+                managedEnemies.RemoveAt(i);
+                continue;
+            }
+
+            if (managedEnemy.AppliedGameplayActive != managedEnemy.DesiredGameplayActive)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void SetManagedEnemyGameplayActive(ManagedEnemy managedEnemy, bool active)
+    {
+        if (!IsManagedEnemyValid(managedEnemy))
+        {
+            return;
+        }
+
+        if (active)
+        {
+            SetRigidbodiesActive(managedEnemy, true);
+            SetBehavioursActive(managedEnemy, true);
+        }
+        else
+        {
+            managedEnemy.Enemy.StopHorizontalMotion();
+            SetBehavioursActive(managedEnemy, false);
+            SetRigidbodiesActive(managedEnemy, false);
+        }
+
+        managedEnemy.AppliedGameplayActive = active;
+        LogDebug($"{managedEnemy.Root.name} gameplay {(active ? "resumed" : "slept")}.");
+    }
+
+    private static void SetBehavioursActive(ManagedEnemy managedEnemy, bool active)
+    {
+        MonoBehaviour[] behaviours = managedEnemy.GameplayBehaviours;
+        bool[] initialEnabled = managedEnemy.InitialBehaviourEnabled;
+        if (behaviours == null || initialEnabled == null)
+        {
+            return;
+        }
+
+        if (active)
+        {
+            for (int i = 0; i < behaviours.Length && i < initialEnabled.Length; i++)
+            {
+                if (behaviours[i] != null)
+                {
+                    behaviours[i].enabled = initialEnabled[i];
+                }
+            }
+
+            return;
+        }
+
+        for (int i = behaviours.Length - 1; i >= 0; i--)
+        {
+            if (behaviours[i] != null)
+            {
+                behaviours[i].enabled = false;
+            }
+        }
+    }
+
+    private static void SetRigidbodiesActive(ManagedEnemy managedEnemy, bool active)
+    {
+        Rigidbody2D[] rigidbodies = managedEnemy.Rigidbodies;
+        bool[] initialSimulated = managedEnemy.InitialRigidbodySimulated;
+        if (rigidbodies == null || initialSimulated == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < rigidbodies.Length && i < initialSimulated.Length; i++)
+        {
+            if (rigidbodies[i] != null)
+            {
+                rigidbodies[i].simulated = active && initialSimulated[i];
+            }
         }
     }
 
@@ -351,5 +564,77 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         return managedEnemy != null &&
                managedEnemy.Enemy != null &&
                managedEnemy.Root != null;
+    }
+
+    private static MonoBehaviour[] CollectGameplayBehaviours(GameObject root)
+    {
+        List<MonoBehaviour> behaviours = new List<MonoBehaviour>();
+        AddUniqueBehaviours(root.GetComponentsInChildren<EnemyController>(true), behaviours);
+        AddUniqueBehaviours(root.GetComponentsInChildren<EnemyTackleAttack>(true), behaviours);
+        AddUniqueBehaviours(root.GetComponentsInChildren<EnemyRangedAttack>(true), behaviours);
+        AddUniqueBehaviours(root.GetComponentsInChildren<EnemyShooter>(true), behaviours);
+        AddUniqueBehaviours(root.GetComponentsInChildren<EnemyContact>(true), behaviours);
+        AddUniqueBehaviours(root.GetComponentsInChildren<EnemySpriteAnimator>(true), behaviours);
+        return behaviours.ToArray();
+    }
+
+    private static void AddUniqueBehaviours<T>(T[] components, List<MonoBehaviour> behaviours)
+        where T : MonoBehaviour
+    {
+        if (components == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < components.Length; i++)
+        {
+            MonoBehaviour behaviour = components[i];
+            if (behaviour == null || behaviours.Contains(behaviour))
+            {
+                continue;
+            }
+
+            behaviours.Add(behaviour);
+        }
+    }
+
+    private static bool[] CaptureBehaviourEnabledStates(MonoBehaviour[] behaviours)
+    {
+        if (behaviours == null)
+        {
+            return new bool[0];
+        }
+
+        bool[] states = new bool[behaviours.Length];
+        for (int i = 0; i < behaviours.Length; i++)
+        {
+            states[i] = behaviours[i] != null && behaviours[i].enabled;
+        }
+
+        return states;
+    }
+
+    private static bool[] CaptureRigidbodySimulatedStates(Rigidbody2D[] rigidbodies)
+    {
+        if (rigidbodies == null)
+        {
+            return new bool[0];
+        }
+
+        bool[] states = new bool[rigidbodies.Length];
+        for (int i = 0; i < rigidbodies.Length; i++)
+        {
+            states[i] = rigidbodies[i] != null && rigidbodies[i].simulated;
+        }
+
+        return states;
+    }
+
+    private void LogDebug(string message)
+    {
+        if (debugLogging)
+        {
+            Debug.Log($"[RoomEnemyActivityManager] {message}", this);
+        }
     }
 }
