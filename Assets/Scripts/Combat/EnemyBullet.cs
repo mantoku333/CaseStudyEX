@@ -90,6 +90,9 @@ namespace Metroidvania.Enemy
         private LayerMask obstacleMask;
         private float nextPathRefreshTime;
         private int currentPathIndex;
+        private bool isTerminalImpacting;
+        private float terminalImpactTravelDistance;
+        private float terminalImpactMaxDistance;
 
         private sealed class PathNode
         {
@@ -168,9 +171,20 @@ namespace Metroidvania.Enemy
                 return;
             }
 
+            if (isTerminalImpacting)
+            {
+                CheckTerminalImpactDistance();
+                return;
+            }
+
             if (useTerrainAvoidance && Time.time >= nextPathRefreshTime)
             {
-                RefreshTerrainPath();
+                if (!RefreshTerrainPath())
+                {
+                    TryEnterTerminalImpact(transform.position, out Vector2 terminalDirection);
+                    SetVelocity(terminalDirection);
+                    return;
+                }
             }
 
             Vector2 direction = ResolveHomingDirection();
@@ -192,6 +206,9 @@ namespace Metroidvania.Enemy
             owner = null;
             ownerDetectionRadius = 0f;
             useTerrainAvoidance = false;
+            isTerminalImpacting = false;
+            terminalImpactTravelDistance = 0f;
+            terminalImpactMaxDistance = 0f;
             currentPath.Clear();
             currentPathIndex = 0;
             bulletSpeed = Mathf.Max(0.1f, speed);
@@ -224,9 +241,18 @@ namespace Metroidvania.Enemy
             this.useTerrainAvoidance = useTerrainAvoidance;
             this.obstacleMask = obstacleMask.value != 0 ? obstacleMask : BuildDefaultObstacleMask();
             destroyOnHitLayers = this.obstacleMask;
+            isTerminalImpacting = false;
+            terminalImpactTravelDistance = 0f;
+            terminalImpactMaxDistance = 0f;
             initialized = true;
 
-            RefreshTerrainPath();
+            if (this.useTerrainAvoidance && !RefreshTerrainPath())
+            {
+                TryEnterTerminalImpact(transform.position, out Vector2 terminalDirection);
+                SetVelocity(terminalDirection);
+                return;
+            }
+
             SetVelocity(ResolveHomingDirection());
         }
 
@@ -390,7 +416,12 @@ namespace Metroidvania.Enemy
                     return pathDirection;
                 }
 
-                RefreshTerrainPath();
+                if (!RefreshTerrainPath())
+                {
+                    TryEnterTerminalImpact(currentPosition, out Vector2 terminalDirection);
+                    return terminalDirection;
+                }
+
                 if (TryGetPathDirection(currentPosition, out pathDirection) &&
                     !IsMovementDirectionBlocked(currentPosition, pathDirection, pathDirection.magnitude))
                 {
@@ -413,7 +444,12 @@ namespace Metroidvania.Enemy
                 // 経路が使えない場合でも、直進先が壁なら短い横回避を試す。
                 if (Time.time >= nextPathRefreshTime)
                 {
-                    RefreshTerrainPath();
+                    if (!RefreshTerrainPath())
+                    {
+                        TryEnterTerminalImpact(currentPosition, out Vector2 terminalDirection);
+                        return terminalDirection;
+                    }
+
                     if (TryGetPathDirection(currentPosition, out pathDirection) &&
                         !IsMovementDirectionBlocked(currentPosition, pathDirection, pathDirection.magnitude))
                     {
@@ -541,19 +577,24 @@ namespace Metroidvania.Enemy
             return true;
         }
 
-        private void RefreshTerrainPath()
+        private bool RefreshTerrainPath()
         {
             nextPathRefreshTime = Time.time + pathRefreshInterval;
             currentPath.Clear();
             currentPathIndex = 0;
 
-            if (!useTerrainAvoidance || target == null || owner == null)
+            if (!useTerrainAvoidance)
             {
-                return;
+                return true;
+            }
+
+            if (target == null || owner == null)
+            {
+                return false;
             }
 
             // 経路探索のゴールもプレイヤー中心にすることで、壁際の足元を狙い続ける動きを避ける。
-            TryBuildTerrainPath(transform.position, GetTargetAimPosition(), currentPath);
+            return TryBuildTerrainPath(transform.position, GetTargetAimPosition(), currentPath);
         }
 
         private bool TryBuildTerrainPath(Vector2 start, Vector2 goal, List<Vector2> path)
@@ -771,6 +812,100 @@ namespace Metroidvania.Enemy
             return IsMovementSegmentBlocked(from, to);
         }
 
+        private bool TryEnterTerminalImpact(Vector2 currentPosition, out Vector2 direction)
+        {
+            direction = Vector2.zero;
+
+            if (isTerminalImpacting)
+            {
+                if (rb2D == null || rb2D.linearVelocity.sqrMagnitude <= 0.0001f)
+                {
+                    return false;
+                }
+
+                direction = rb2D.linearVelocity.normalized;
+                return true;
+            }
+
+            currentPath.Clear();
+            currentPathIndex = 0;
+            useTerrainAvoidance = false;
+            isTerminalImpacting = true;
+            terminalImpactTravelDistance = 0f;
+            terminalImpactMaxDistance = 0f;
+            nextPathRefreshTime = float.PositiveInfinity;
+
+            if (IsObstacleAt(currentPosition))
+            {
+                Destroy(gameObject);
+                return false;
+            }
+
+            direction = ResolveTerminalImpactDirection(currentPosition);
+            if (direction.sqrMagnitude <= 0.0001f)
+            {
+                Destroy(gameObject);
+                return false;
+            }
+
+            float probeDistance = Mathf.Max(
+                blockedMovementProbeDistance,
+                target != null ? Vector2.Distance(currentPosition, GetTargetAimPosition()) : blockedMovementProbeDistance);
+
+            if (!TryGetObstacleHit(currentPosition, direction, probeDistance, out RaycastHit2D obstacleHit))
+            {
+                Destroy(gameObject);
+                return false;
+            }
+
+            terminalImpactMaxDistance = Mathf.Max(
+                0.05f,
+                obstacleHit.distance + GetEffectiveObstacleClearanceRadius() + 0.1f);
+
+            return true;
+        }
+
+        private Vector2 ResolveTerminalImpactDirection(Vector2 currentPosition)
+        {
+            Vector2 directDirection = target != null
+                ? GetTargetAimPosition() - currentPosition
+                : Vector2.zero;
+
+            if (directDirection.sqrMagnitude > 0.0001f)
+            {
+                return directDirection.normalized;
+            }
+
+            if (rb2D != null && rb2D.linearVelocity.sqrMagnitude > 0.0001f)
+            {
+                return rb2D.linearVelocity.normalized;
+            }
+
+            return Vector2.left;
+        }
+
+        private bool TryGetObstacleHit(
+            Vector2 from,
+            Vector2 direction,
+            float maxDistance,
+            out RaycastHit2D hit)
+        {
+            hit = default(RaycastHit2D);
+            if (obstacleMask.value == 0 || direction.sqrMagnitude <= 0.0001f)
+            {
+                return false;
+            }
+
+            hit = Physics2D.CircleCast(
+                from,
+                GetEffectiveObstacleClearanceRadius(),
+                direction.normalized,
+                Mathf.Max(0.05f, maxDistance),
+                obstacleMask);
+
+            return hit.collider != null;
+        }
+
         /// <summary>
         /// 追尾先の基準点を返す。プレイヤーの足元ではなく、当たり判定の中心を優先する。
         /// </summary>
@@ -946,6 +1081,9 @@ namespace Metroidvania.Enemy
             target = null;
             owner = null;
             useTerrainAvoidance = false;
+            isTerminalImpacting = false;
+            terminalImpactTravelDistance = 0f;
+            terminalImpactMaxDistance = 0f;
             currentPath.Clear();
 
             SetVelocity(reflectDirection);
@@ -965,6 +1103,11 @@ namespace Metroidvania.Enemy
                 reflectedTravelDistance += movedDistance;
             }
 
+            if (isTerminalImpacting)
+            {
+                terminalImpactTravelDistance += movedDistance;
+            }
+
             aliveTimer += Time.fixedDeltaTime;
             previousPosition = currentPosition;
         }
@@ -977,6 +1120,21 @@ namespace Metroidvania.Enemy
             }
 
             DestroySilently();
+        }
+
+        private void CheckTerminalImpactDistance()
+        {
+            if (!isTerminalImpacting || terminalImpactMaxDistance <= 0f)
+            {
+                return;
+            }
+
+            if (terminalImpactTravelDistance < terminalImpactMaxDistance)
+            {
+                return;
+            }
+
+            Destroy(gameObject);
         }
 
         private bool TryApplyEnemyHit(Collider2D other)

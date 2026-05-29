@@ -33,7 +33,7 @@ namespace Metroidvania.Enemy
 
         private void Awake()
         {
-            enemyColliders = GetComponents<Collider2D>();
+            RefreshEnemyColliders();
             enemyController = GetComponent<GameName.Enemy.EnemyController>();
             CachePlayerReferences();
 
@@ -41,6 +41,18 @@ namespace Metroidvania.Enemy
             {
                 IgnorePhysicalCollisionWithPlayer();
             }
+        }
+
+        private void OnEnable()
+        {
+            if (!passThroughPlayer)
+            {
+                return;
+            }
+
+            RefreshEnemyColliders();
+            CachePlayerReferences();
+            IgnorePhysicalCollisionWithPlayer();
         }
 
         private void Start()
@@ -105,6 +117,11 @@ namespace Metroidvania.Enemy
             return playerColliders != null && playerColliders.Length > 0 &&
                    playerBodyCollider != null &&
                    (cachedPlayerFlash != null || cachedPlayerHealth != null);
+        }
+
+        private void RefreshEnemyColliders()
+        {
+            enemyColliders = GetComponents<Collider2D>();
         }
 
         private void CachePlayerReferences()

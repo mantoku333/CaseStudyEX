@@ -25,7 +25,6 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         public const string Dodge = "Dodge";
         public const string UmbrellaToggle = "UmbrellaToggle";
         public const string RecoilJump = "RecoilJump";
-        public const string FallThrough = "FallThrough";
     }
 
     private Rigidbody2D rigidBody2d;
@@ -70,8 +69,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private InputAction dodgeAction;
     private InputAction recoilJumpAction;
     private InputAction umbrellaToggleAction;
-    private InputAction fallThroughAction;
     private bool inputActionsReady;
+    private bool wasDownHeld;
 
     //-------View向け状態公開--------
     // Animator/View が参照する読み取り専用状態。
@@ -338,16 +337,19 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             moveInput = 0.0f;
             jumpInput = false;
+            wasDownHeld = false;
             return;
         }
 
         if (umbrellaController == null)
         {
+            wasDownHeld = false;
             return;
         }
 
         if (!inputActionsReady)
         {
+            wasDownHeld = false;
             return;
         }
 
@@ -369,8 +371,10 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         RefreshParryColliderFacing();
 
         bool isDownHeld = move.y < -0.5f;
+        bool isDownPressedThisFrame = isDownHeld && !wasDownHeld;
+        wasDownHeld = isDownHeld;
 
-        if (isDownHeld && IsPressedThisFrame(fallThroughAction))
+        if (isDownPressedThisFrame)
         {
             if (fallThroughController != null)
             {
@@ -492,40 +496,36 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                 !isGround;
 
             // 滑空中射撃
-            if (isPlayerGliding &&
-                TryGetAimScreenPosition(out var pointerPos))
+            if (isPlayerGliding)
             {
+                bool handledGlideShot = false;
                 Camera mainCamera = Camera.main;
+                bool canUseGunRecoil =
+                    playerAbilityController != null &&
+                    playerAbilityController.GetCanGunRecoil();
+
+                if (!canUseGunRecoil)
+                {
+                    return;
+                }
 
                 if (mainCamera != null && gunController != null)
                 {
-                    Vector3 mouseWorldPos =
-                        mainCamera.ScreenToWorldPoint(
-                            new Vector3(
-                                pointerPos.x,
-                                pointerPos.y,
-                                0.0f));
-
-                    mouseWorldPos.z = 0.0f;
-
-                    Vector2 shootDirection =
-                        (mouseWorldPos - transform.position).normalized;
-
-                    bool canUseGunRecoil = false;
-
-                    if (playerAbilityController != null)
+                    if (TryGetAimWorldPosition(mainCamera, out Vector3 aimWorldPosition))
                     {
-                        canUseGunRecoil =
-                            playerAbilityController.GetCanGunRecoil();
-                    }
+                        handledGlideShot = true;
 
-                    if (canUseGunRecoil)
-                    {
+                        Vector2 shootDirection =
+                            (aimWorldPosition - transform.position).normalized;
+
                         gunController.Shoot(shootDirection);
                     }
                 }
 
-                return;
+                if (handledGlideShot)
+                {
+                    return;
+                }
             }
 
             // 傘が開いていたら閉じる
@@ -853,7 +853,6 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.Dodge, ref dodgeAction);
         allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.UmbrellaToggle, ref umbrellaToggleAction);
         allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.RecoilJump, ref recoilJumpAction);
-        allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.FallThrough, ref fallThroughAction);
 
         inputActionsReady = allBound;
     }
@@ -878,6 +877,31 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         position = Vector2.zero;
         return false;
+    }
+
+    private bool TryGetAimWorldPosition(Camera mainCamera, out Vector3 worldPosition)
+    {
+        if (GameCursorController.TryGetClampedAimWorldPosition(
+                transform,
+                mainCamera,
+                out worldPosition))
+        {
+            return true;
+        }
+
+        if (!TryGetAimScreenPosition(out Vector2 pointerPos))
+        {
+            worldPosition = Vector3.zero;
+            return false;
+        }
+
+        worldPosition = mainCamera.ScreenToWorldPoint(
+            new Vector3(
+                pointerPos.x,
+                pointerPos.y,
+                Mathf.Abs(mainCamera.transform.position.z - transform.position.z)));
+        worldPosition.z = transform.position.z;
+        return true;
     }
 
     // 必須Actionの取得+有効化ヘルパー。

@@ -4,7 +4,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class HitStopController : MonoBehaviour
 {
-    private const float DefaultDuration = 0.3f;
+    private const float DefaultDuration = 0.15f;
 
     private static HitStopController instance;
     private static int externalPauseDepth;

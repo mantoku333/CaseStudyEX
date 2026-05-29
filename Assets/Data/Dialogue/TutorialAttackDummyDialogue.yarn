@@ -37,3 +37,19 @@ title: Tutorial_Glide
 <<scene_black 0 0.35>>
 イリス: チュートリアル:Glide
 ===
+
+title: Tutorial_BasicMove
+---
+<<scene_black 1 0.35>>
+<<scene_wait 0.15>>
+<<scene_black 0 0.35>>
+イリス: チュートリアル:移動
+===
+
+title: Tutorial_Gun
+---
+<<scene_black 1 0.35>>
+<<scene_wait 0.15>>
+<<scene_black 0 0.35>>
+イリス: チュートリアル:反動移動
+===
