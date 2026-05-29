@@ -10,6 +10,7 @@ namespace GameName.UI
     [DisallowMultipleComponent]
     public sealed class BossHpCanvasController : MonoBehaviour
     {
+        private const string BossHpCanvasRootName = "BossHPCanvas";
         private const string BossHpRootName = "Boss HP";
         private const string BossNameObjectName = "Boss_Name";
         private const string FireLeftObjectName = "Boss_fireLeft";
@@ -19,6 +20,8 @@ namespace GameName.UI
         private const string HpDamagedObjectName = "Boss_Damaged";
 
         [Header("References")]
+        [SerializeField] private Canvas rootCanvas;
+        [SerializeField] private GraphicRaycaster graphicRaycaster;
         [SerializeField] private CanvasGroup canvasGroup;
         [SerializeField] private TextMeshProUGUI bossNameText;
         [SerializeField] private RectTransform fireLeft;
@@ -71,7 +74,12 @@ namespace GameName.UI
                 return;
             }
 
-            GameObject root = GameObject.Find(BossHpRootName);
+            GameObject root = GameObject.Find(BossHpCanvasRootName);
+            if (root == null)
+            {
+                root = GameObject.Find(BossHpRootName);
+            }
+
             if (root == null)
             {
                 return;
@@ -157,6 +165,7 @@ namespace GameName.UI
 
             ApplyBossName(bossArea.BossDisplayName);
             ShowFullBarState();
+            SetCanvasRenderingEnabled(true);
 
             if (activeHealthSource != null)
             {
@@ -324,6 +333,7 @@ namespace GameName.UI
 
             ShowFullBarState();
             SetCanvasAlpha(0f);
+            SetCanvasRenderingEnabled(false);
         }
 
         private void SetCanvasAlpha(float alpha)
@@ -378,6 +388,11 @@ namespace GameName.UI
 
         private void AutoBindReferences()
         {
+            rootCanvas ??= GetComponent<Canvas>();
+            rootCanvas ??= GetComponentInParent<Canvas>(true);
+            graphicRaycaster ??= GetComponent<GraphicRaycaster>();
+            graphicRaycaster ??= GetComponentInParent<GraphicRaycaster>(true);
+
             if (canvasGroup == null)
             {
                 if (!TryGetComponent(out canvasGroup))
@@ -419,6 +434,19 @@ namespace GameName.UI
             hpFullBar.Bind(hpFullObject);
             hpReducedBar.Bind(hpReducedObject);
             hpDamagedBar.Bind(hpDamagedObject);
+        }
+
+        private void SetCanvasRenderingEnabled(bool visible)
+        {
+            if (rootCanvas != null)
+            {
+                rootCanvas.enabled = visible;
+            }
+
+            if (graphicRaycaster != null)
+            {
+                graphicRaycaster.enabled = visible;
+            }
         }
 
         private GameObject FindNamedGameObject(string childName)
