@@ -29,6 +29,7 @@ namespace GameName.Enemy
         private int damage = 1;
         private float rainFallSpeed = 8f;
         private float rainGroundDestroyDelay = 0.3f;
+        [SerializeField] private float rainAimRotationOffsetDegrees = 180f;
         private bool initialized;
         private bool canDamage;
         private bool rainReleased;
@@ -302,7 +303,7 @@ namespace GameName.Enemy
                 return;
             }
 
-            float angle = Vector2.SignedAngle(Vector2.up, direction);
+            float angle = Vector2.SignedAngle(Vector2.up, direction) + rainAimRotationOffsetDegrees;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
         }
 

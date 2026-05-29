@@ -863,12 +863,7 @@ namespace GameName.Enemy
                 out Vector2 spawnPosition,
                 out Vector2 targetPoint,
                 out Vector2 previewAimPoint);
-            Quaternion rotation = Quaternion.Euler(
-                0f,
-                0f,
-                Vector2.SignedAngle(Vector2.up, previewAimPoint - spawnPosition));
-
-            LastBossBladeAttack blade = SpawnBlade(rainBladePrefab, spawnPosition, rotation);
+            LastBossBladeAttack blade = SpawnBlade(rainBladePrefab, spawnPosition, Quaternion.identity);
             if (blade != null)
             {
                 blade.InitializeRainPreview(
