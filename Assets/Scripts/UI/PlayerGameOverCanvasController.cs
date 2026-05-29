@@ -243,6 +243,8 @@ namespace GameName.UI
             {
                 panelRoot.SetActive(false);
             }
+
+            SetCanvasRenderingEnabled(false);
         }
 
         private void PrepareForSceneTransition()

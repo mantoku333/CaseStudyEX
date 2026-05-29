@@ -47,20 +47,34 @@ namespace Metroidvania.UI
 
         // 進行管理用のCancellationTokenSource
         private CancellationTokenSource? _currentLineCts;
+        private bool _presentationEnabled = true;
 
         private void Awake()
         {
-            if (dialoguePanel != null) dialoguePanel.SetActive(false);
-            if (optionsPanel != null) optionsPanel.SetActive(false);
-            if (nextIndicator != null) nextIndicator.SetActive(false);
-            if (speakerNameText != null) speakerNameText.text = "";
-            if (dialogueText != null) dialogueText.text = "";
-            if (portraitImage != null) portraitImage.gameObject.SetActive(false);
+            HideView();
+        }
+
+        public bool IsPresentationEnabled => _presentationEnabled;
+
+        public void SetPresentationEnabled(bool enabled)
+        {
+            _presentationEnabled = enabled;
+
+            if (!enabled)
+            {
+                _currentLineCts?.Cancel();
+                _onOptionSelected = null;
+                HideView();
+            }
         }
 
         public override YarnTask OnDialogueStartedAsync()
         {
-            if (!gameObject.activeSelf) return YarnTask.CompletedTask;
+            if (!_presentationEnabled)
+            {
+                HideView();
+                return YarnTask.CompletedTask;
+            }
 
             gameObject.SetActive(true);
             if (dialoguePanel != null) dialoguePanel.SetActive(true);
@@ -73,19 +87,16 @@ namespace Metroidvania.UI
 
         public override YarnTask OnDialogueCompleteAsync()
         {
-            if (dialoguePanel != null) dialoguePanel.SetActive(false);
-            if (optionsPanel != null) optionsPanel.SetActive(false);
-            if (speakerNameText != null) speakerNameText.text = "";
-            if (dialogueText != null) dialogueText.text = "";
-            if (nextIndicator != null) nextIndicator.SetActive(false);
-            if (portraitImage != null) portraitImage.gameObject.SetActive(false);
-            gameObject.SetActive(false);
+            HideView();
             return YarnTask.CompletedTask;
         }
 
         public override YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
         {
-            if (!gameObject.activeSelf) return YarnTask.CompletedTask;
+            if (!_presentationEnabled)
+            {
+                return YarnTask.CompletedTask;
+            }
 
             var taskCompletionSource = new YarnTaskCompletionSource();
             RunLineInternalAsync(line, token, taskCompletionSource).Forget();
@@ -217,7 +228,10 @@ namespace Metroidvania.UI
 
         public override YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions, LineCancellationToken cancellationToken)
         {
-            if (!gameObject.activeSelf) return YarnTask.FromResult<DialogueOption?>(dialogueOptions.Length > 0 ? dialogueOptions[0] : null);
+            if (!_presentationEnabled)
+            {
+                return YarnTask.FromResult<DialogueOption?>(dialogueOptions.Length > 0 ? dialogueOptions[0] : null);
+            }
 
             var taskCompletionSource = new YarnTaskCompletionSource<DialogueOption?>();
             RunOptionsInternalAsync(dialogueOptions, cancellationToken, taskCompletionSource).Forget();
@@ -277,6 +291,16 @@ namespace Metroidvania.UI
 
             var result = await tcs.Task;
             outTcs.TrySetResult(result);
+        }
+
+        private void HideView()
+        {
+            if (dialoguePanel != null) dialoguePanel.SetActive(false);
+            if (optionsPanel != null) optionsPanel.SetActive(false);
+            if (speakerNameText != null) speakerNameText.text = "";
+            if (dialogueText != null) dialogueText.text = "";
+            if (nextIndicator != null) nextIndicator.SetActive(false);
+            if (portraitImage != null) portraitImage.gameObject.SetActive(false);
         }
     }
 }

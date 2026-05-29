@@ -99,8 +99,8 @@ namespace Metroidvania.Managers
             {
                 if (view.gameObject.activeInHierarchy)
                 {
-                    if (view is DialogueView dv) dv.OnContinueClicked();
-                    if (view is BubbleDialogueView bv) bv.OnContinueClicked();
+                    if (view is DialogueView dv && dv.IsPresentationEnabled) dv.OnContinueClicked();
+                    if (view is BubbleDialogueView bv && bv.IsPresentationEnabled) bv.OnContinueClicked();
                 }
             }
         }
@@ -144,15 +144,30 @@ namespace Metroidvania.Managers
 
             if (style == DialogueStyle.ADV)
             {
-                if (advView != null) advView.gameObject.SetActive(true);
-                if (bubbleView != null) bubbleView.gameObject.SetActive(false);
-            }
-            else if (style == DialogueStyle.Bubble)
-            {
-                if (advView != null) advView.gameObject.SetActive(false);
+                if (advView != null)
+                {
+                    advView.gameObject.SetActive(true);
+                    advView.SetPresentationEnabled(true);
+                }
+
                 if (bubbleView != null)
                 {
                     bubbleView.gameObject.SetActive(true);
+                    bubbleView.SetPresentationEnabled(false);
+                }
+            }
+            else if (style == DialogueStyle.Bubble)
+            {
+                if (advView != null)
+                {
+                    advView.gameObject.SetActive(true);
+                    advView.SetPresentationEnabled(false);
+                }
+
+                if (bubbleView != null)
+                {
+                    bubbleView.gameObject.SetActive(true);
+                    bubbleView.SetPresentationEnabled(true);
                     bubbleView.SetTarget(target);
                 }
             }
