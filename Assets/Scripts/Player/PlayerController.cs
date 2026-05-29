@@ -94,6 +94,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         umbrellaAttackController.IsAttacking() &&
         umbrellaController != null &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Closed;
+    public bool IsRecoilBoosting => gunController != null && gunController.GetRecoiling() && !isGround;
     public bool IsExternalControlLocked => externalControlLocked;
     public bool IsExternalFacingLocked => externalFacingLocked;
 

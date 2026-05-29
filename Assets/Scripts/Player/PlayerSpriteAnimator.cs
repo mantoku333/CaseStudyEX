@@ -37,8 +37,7 @@ namespace Player
         [SerializeField] private string parryStateName = "parry";
         [SerializeField] private string changeStateName = "change";
         [SerializeField] private string attackStateName = "attack";
-        [SerializeField] private string recoilBoostStateName = "RecoilBoost";
-        [SerializeField] private string recoilBoostDuringStateName = "RecoilBoost_during";
+        [SerializeField] private string recoilBoostSkyStateName = "recoilboost_sky";
 
         [Header("Debug")]
         [SerializeField] private bool logCurrentSpriteEveryFrame = true;
@@ -54,8 +53,7 @@ namespace Player
             Parry,
             Change,
             Attack,
-            RecoilBoost,
-            RecoilBoostDuring
+            RecoilBoostSky
         }
 
         private static readonly SpriteRenderer[] EmptyRenderers = new SpriteRenderer[0];
@@ -90,7 +88,7 @@ namespace Player
 
         private void Update()
         {
-            if (!TryReadProviderState(out var isGrounded, out var isMoving, out var isGliding, out var isUmbrellaOpen, out var isDodging, out var isFacingRight, out var isParrying, out var isChanging, out var isAttacking))
+            if (!TryReadProviderState(out var isGrounded, out var isMoving, out var isGliding, out var isUmbrellaOpen, out var isDodging, out var isFacingRight, out var isParrying, out var isChanging, out var isAttacking, out var isRecoilBoosting))
             {
                 if (!_warnedNoStateProvider)
                 {
@@ -123,7 +121,7 @@ namespace Player
                 _landingLocked = false;
             }
 
-            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, isParrying, isChanging, isAttacking, _landingLocked);
+            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, isParrying, isChanging, isAttacking, isRecoilBoosting, _landingLocked);
             if (_currentState != nextState || _currentUmbrellaOpen != isUmbrellaOpen)
             {
                 SwitchState(nextState, isUmbrellaOpen);
@@ -191,7 +189,7 @@ namespace Player
                 : EmptyRenderers;
         }
 
-        private bool TryReadProviderState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isUmbrellaOpen, out bool isDodging, out bool isFacingRight, out bool isParrying, out bool isChanging, out bool isAttacking)
+        private bool TryReadProviderState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isUmbrellaOpen, out bool isDodging, out bool isFacingRight, out bool isParrying, out bool isChanging, out bool isAttacking, out bool isRecoilBoosting)
         {
             if (_stateProvider != null)
             {
@@ -204,6 +202,7 @@ namespace Player
                 isParrying = _stateProvider.IsParrying;
                 isChanging = _stateProvider.IsUmbrellaChanging;
                 isAttacking = _stateProvider.IsAttacking;
+                isRecoilBoosting = _stateProvider.IsRecoilBoosting;
                 return true;
             }
 
@@ -216,10 +215,11 @@ namespace Player
             isParrying = false;
             isChanging = false;
             isAttacking = false;
+            isRecoilBoosting = false;
             return false;
         }
 
-        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool isParrying, bool isChanging, bool isAttacking, bool hasLandingLock)
+        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool isParrying, bool isChanging, bool isAttacking, bool isRecoilBoosting, bool hasLandingLock)
         {
             if (isParrying)
             {
@@ -239,6 +239,11 @@ namespace Player
             if (isDodging)
             {
                 return VisualState.Dodge;
+            }
+
+            if (isRecoilBoosting)
+            {
+                return VisualState.RecoilBoostSky;
             }
 
             if (hasLandingLock)
@@ -391,10 +396,8 @@ namespace Player
                     return changeStateName;
                 case VisualState.Attack:
                     return attackStateName;
-                case VisualState.RecoilBoost:
-                    return recoilBoostStateName;
-                case VisualState.RecoilBoostDuring:
-                    return recoilBoostDuringStateName;
+                case VisualState.RecoilBoostSky:
+                    return recoilBoostSkyStateName;
                 default:
                     if (!isUmbrellaOpen && !string.IsNullOrEmpty(closedIdleStateName))
                     {
@@ -410,8 +413,7 @@ namespace Player
             if (state != VisualState.Parry &&
                 state != VisualState.Change &&
                 state != VisualState.Attack &&
-                state != VisualState.RecoilBoost &&
-                state != VisualState.RecoilBoostDuring &&
+                state != VisualState.RecoilBoostSky &&
                 AnimatorHasState(primary))
             {
                 return primary;
@@ -478,18 +480,13 @@ namespace Player
                     if (AnimatorHasState("Attack")) return "Attack";
                     if (AnimatorHasState("attack")) return "attack";
                     break;
-                case VisualState.RecoilBoost:
+                case VisualState.RecoilBoostSky:
                     if (AnimatorHasState(primary)) return primary;
-                    if (AnimatorHasState("RecoilBoost")) return "RecoilBoost";
-                    if (AnimatorHasState("recoilBoost")) return "recoilBoost";
-                    if (AnimatorHasState("recoil_boost")) return "recoil_boost";
-                    break;
-                case VisualState.RecoilBoostDuring:
-                    if (AnimatorHasState(primary)) return primary;
-                    if (AnimatorHasState("RecoilBoost_during")) return "RecoilBoost_during";
-                    if (AnimatorHasState("RecoilBoostDuring")) return "RecoilBoostDuring";
-                    if (AnimatorHasState("recoilBoost_during")) return "recoilBoost_during";
-                    if (AnimatorHasState("recoil_boost_during")) return "recoil_boost_during";
+                    if (AnimatorHasState("RecoilBoost_sky")) return "RecoilBoost_sky";
+                    if (AnimatorHasState("RecoilBoostSky")) return "RecoilBoostSky";
+                    if (AnimatorHasState("recoilBoost_sky")) return "recoilBoost_sky";
+                    if (AnimatorHasState("recoilboost_sky")) return "recoilboost_sky";
+                    if (AnimatorHasState("recoil_boost_sky")) return "recoil_boost_sky";
                     break;
                 default:
                     if (!isUmbrellaOpen)
