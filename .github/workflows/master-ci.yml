@@ -43,7 +43,7 @@ jobs:
       - name: Check for merge conflict markers
         shell: bash
         run: |
-          if grep -RInE "^(<<<<<<<|=======|>>>>>>>)" Assets Packages ProjectSettings \
+          if grep -RInE "^(<{7}( .*)?|={7}|>{7}( .*)?)$" Assets Packages ProjectSettings \
             --exclude='*.png' --exclude='*.jpg' --exclude='*.dll' --binary-files=without-match; then
             echo "::error::Merge conflict markers were found."
             exit 1
