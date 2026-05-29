@@ -153,6 +153,7 @@ GameObject:
   - component: {fileID: 2188640119789683485}
   - component: {fileID: 4333219616003735470}
   - component: {fileID: 867530900123456789}
+  - component: {fileID: 650200000000000001}
   - component: {fileID: 1141293357520890712}
   - component: {fileID: 730100000000000002}
   - component: {fileID: 914900000000000002}
@@ -293,7 +294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyRangedAttack
   playerTag: Player
   detectionRadius: 15
-  windupDuration: 3
+  windupDuration: 2
   vibrationAmplitude: 0.05
   vibrationFrequency: 70
   bulletPrefab: {fileID: 3964884202035495257, guid: 1c8b7d39b307fd6428103c491f952059, type: 3}
@@ -306,6 +307,29 @@ MonoBehaviour:
     m_Bits: 192
   fireVisualDuration: 1
   drawDetectionGizmo: 1
+--- !u!114 &650200000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cde4b0a4e4f84f609e9e8b7e5dcf7b12, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyRangedWindupEffectPlayer
+  inSpriteSheet: {fileID: 2800000, guid: 7754464a816ef9b4c9d8fb355c685ba8, type: 3}
+  frameColumns: 5
+  frameRows: 12
+  frameCount: 60
+  pixelsPerUnit: 100
+  localOffset: {x: 0, y: 0, z: 0}
+  forwardOffset: 1
+  effectScale: {x: 2, y: 2, z: 1}
+  parentToFirePoint: 1
+  sortingOrderOffset: 3
+  copyEnemyMaterial: 1
 --- !u!114 &1141293357520890712
 MonoBehaviour:
   m_ObjectHideFlags: 0

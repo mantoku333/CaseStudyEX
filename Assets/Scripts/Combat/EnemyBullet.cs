@@ -78,6 +78,7 @@ namespace Metroidvania.Enemy
         private Rigidbody2D rb2D;
         // 弾自身の大きさを見て、壁からどれくらい離れて経路探索するかを決める。
         private Collider2D bulletCollider;
+        private EnemyBulletEffectPlayer effectPlayer;
         // プレイヤーの Transform 位置ではなく、当たり判定の中心を狙うために使う。
         private Collider2D targetCollider;
         private bool initialized;
@@ -104,6 +105,7 @@ namespace Metroidvania.Enemy
         {
             rb2D = GetComponent<Rigidbody2D>();
             bulletCollider = GetComponent<Collider2D>();
+            effectPlayer = GetComponent<EnemyBulletEffectPlayer>();
 
             if (destroyOnHitLayers.value == 0)
             {
@@ -132,14 +134,14 @@ namespace Metroidvania.Enemy
             }
         }
 
-        private void Start()
-        {
-            Destroy(gameObject, lifeTime);
-        }
-
         private void FixedUpdate()
         {
             CountTravelDistance();
+            if (aliveTimer >= lifeTime)
+            {
+                DestroyWithOutEffect();
+                return;
+            }
 
             if (isReflected)
             {
@@ -154,7 +156,7 @@ namespace Metroidvania.Enemy
 
             if (owner == null)
             {
-                Destroy(gameObject);
+                DestroySilently();
                 return;
             }
 
@@ -162,7 +164,7 @@ namespace Metroidvania.Enemy
             Vector2 targetPosition = GetTargetAimPosition();
             if (IsOutsideOwnerRadius(targetPosition) || IsOutsideOwnerRadius(transform.position))
             {
-                Destroy(gameObject);
+                DestroyWithOutEffect();
                 return;
             }
 
@@ -230,7 +232,7 @@ namespace Metroidvania.Enemy
 
         public void DestroyByParry()
         {
-            Destroy(gameObject);
+            DestroySilently();
         }
 
         private void SetVelocity(Vector2 direction)
@@ -291,7 +293,7 @@ namespace Metroidvania.Enemy
 
             if (IsInLayerMask(other.gameObject.layer, destroyOnHitLayers))
             {
-                Destroy(gameObject);
+                DestroySilently();
             }
         }
 
@@ -335,7 +337,7 @@ namespace Metroidvania.Enemy
 
             if (IsInLayerMask(collision.gameObject.layer, destroyOnHitLayers))
             {
-                Destroy(gameObject);
+                DestroySilently();
             }
         }
 
@@ -371,7 +373,7 @@ namespace Metroidvania.Enemy
                 damageFlash?.PlayFlashForced();
             }
 
-            Destroy(gameObject);
+            DestroyWithImpactEffect(hitCollider);
 
             return true;
         }
@@ -974,7 +976,7 @@ namespace Metroidvania.Enemy
                 return;
             }
 
-            Destroy(gameObject);
+            DestroySilently();
         }
 
         private bool TryApplyEnemyHit(Collider2D other)
@@ -996,7 +998,7 @@ namespace Metroidvania.Enemy
 
             enemyController.TakeDamage(reflectedDamage);
 
-            Destroy(gameObject);
+            DestroySilently();
             return true;
         }
 
@@ -1017,7 +1019,7 @@ namespace Metroidvania.Enemy
 
             if (breakableWall.DestroyBulletOnBreak)
             {
-                Destroy(gameObject);
+                DestroySilently();
             }
 
             return true;
@@ -1032,6 +1034,50 @@ namespace Metroidvania.Enemy
 
             return other.CompareTag("Player") ||
                    other.GetComponentInParent<PlayerHealth>() != null;
+        }
+
+        private void DestroyWithOutEffect()
+        {
+            if (effectPlayer != null && effectPlayer.PlayOutThenDestroy())
+            {
+                DisableBulletDuringFinishEffect();
+                return;
+            }
+
+            DestroySilently();
+        }
+
+        private void DestroyWithImpactEffect(Collider2D hitCollider)
+        {
+            if (effectPlayer != null && effectPlayer.PlayImpactThenDestroy(hitCollider))
+            {
+                DisableBulletDuringFinishEffect();
+                return;
+            }
+
+            DestroySilently();
+        }
+
+        private void DisableBulletDuringFinishEffect()
+        {
+            if (rb2D != null)
+            {
+                rb2D.linearVelocity = Vector2.zero;
+                rb2D.angularVelocity = 0f;
+                rb2D.simulated = false;
+            }
+
+            if (bulletCollider != null)
+            {
+                bulletCollider.enabled = false;
+            }
+
+            enabled = false;
+        }
+
+        private void DestroySilently()
+        {
+            Destroy(gameObject);
         }
     }
 }
