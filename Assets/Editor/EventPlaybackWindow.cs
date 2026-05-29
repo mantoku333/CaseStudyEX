@@ -103,7 +103,8 @@ namespace CaseStudy.EditorTools
                 }
             }
 
-            if (selectedController == null)
+            StoryEventController currentController = selectedController;
+            if (currentController == null)
             {
                 EditorGUILayout.HelpBox("再生するイベントを選んでください。", MessageType.Warning);
                 return;
@@ -111,9 +112,9 @@ namespace CaseStudy.EditorTools
 
             using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
-                EditorGUILayout.LabelField("Event ID", selectedController.EventId);
-                EditorGUILayout.LabelField("Object", selectedController.name);
-                EditorGUILayout.LabelField("State", selectedController.IsPlaying ? "Playing" : "Idle");
+                EditorGUILayout.LabelField("Event ID", currentController.EventId);
+                EditorGUILayout.LabelField("Object", currentController.name);
+                EditorGUILayout.LabelField("State", currentController.IsPlaying ? "Playing" : "Idle");
             }
         }
 
