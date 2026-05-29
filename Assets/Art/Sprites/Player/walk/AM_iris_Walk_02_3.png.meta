@@ -1,13 +1,13 @@
 fileFormatVersion: 2
-guid: 52c88ba9a73ca4f43bdf2b61795ba096
+guid: 124d095d7a238bb46915da40333cfb8d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4120590881632394656
-    second: AM_iris_Walk_close_02_3_0
+      213: -6543849932132092652
+    second: AM_iris_Walk_02_3_0
   - first:
-      213: 8550902852856723701
-    second: AM_iris_Walk_close_02_3_1
+      213: 5777544750550582848
+    second: AM_iris_Walk_02_3_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -103,7 +103,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_3_0
+      name: AM_iris_Walk_02_3_0
       rect:
         serializedVersion: 2
         x: 0
@@ -118,14 +118,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 062669bcc68b0d6c0800000000000000
-      internalID: -4120590881632394656
+      spriteID: 4157dc358239f25a0800000000000000
+      internalID: -6543849932132092652
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_3_1
+      name: AM_iris_Walk_02_3_1
       rect:
         serializedVersion: 2
         x: 821
@@ -140,8 +140,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5f8366d07d8eaa670800000000000000
-      internalID: 8550902852856723701
+      spriteID: 0468d720756fd2050800000000000000
+      internalID: 5777544750550582848
       vertices: []
       indices: 
       edges: []
@@ -150,7 +150,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 0364c131d41377a4992234e0858873e9
+    spriteID: f5c6eba4bcf1ffb45ac6bb30472f8034
     internalID: 0
     vertices: []
     indices: 
@@ -162,8 +162,8 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":2.0,"y":1.0},"gridSpriteSize":{"x":821.0,"y":984.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      AM_iris_Walk_close_02_3_0: -4120590881632394656
-      AM_iris_Walk_close_02_3_1: 8550902852856723701
+      AM_iris_Walk_02_3_0: -6543849932132092652
+      AM_iris_Walk_02_3_1: 5777544750550582848
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

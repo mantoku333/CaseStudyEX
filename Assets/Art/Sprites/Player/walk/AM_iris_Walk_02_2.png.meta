@@ -1,55 +1,55 @@
 fileFormatVersion: 2
-guid: 3e4fbf03dde62cd41b98846b5fd52f92
+guid: f7bad9c43e263334fa7f44ca4ca48ddd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5777049840875951998
-    second: AM_iris_Walk_close_02_2_0
+      213: 7751243706917133060
+    second: AM_iris_Walk_02_2_0
   - first:
-      213: 8596057208132949990
-    second: AM_iris_Walk_close_02_2_1
+      213: 2386590582845220302
+    second: AM_iris_Walk_02_2_1
   - first:
-      213: -6024755055521224972
-    second: AM_iris_Walk_close_02_2_2
+      213: 7249213566131619120
+    second: AM_iris_Walk_02_2_2
   - first:
-      213: 1915163331172276967
-    second: AM_iris_Walk_close_02_2_3
+      213: -2140271512663395778
+    second: AM_iris_Walk_02_2_3
   - first:
-      213: 7268800765380699756
-    second: AM_iris_Walk_close_02_2_4
+      213: 319129087459315901
+    second: AM_iris_Walk_02_2_4
   - first:
-      213: 7966424909564004147
-    second: AM_iris_Walk_close_02_2_5
+      213: 1397463788328757490
+    second: AM_iris_Walk_02_2_5
   - first:
-      213: 1737907354154748924
-    second: AM_iris_Walk_close_02_2_6
+      213: 2583514614861889108
+    second: AM_iris_Walk_02_2_6
   - first:
-      213: -4930989135517228286
-    second: AM_iris_Walk_close_02_2_7
+      213: -4861002917284439977
+    second: AM_iris_Walk_02_2_7
   - first:
-      213: -1250207059875569623
-    second: AM_iris_Walk_close_02_2_8
+      213: -4566626048823620595
+    second: AM_iris_Walk_02_2_8
   - first:
-      213: -6274488692025479799
-    second: AM_iris_Walk_close_02_2_9
+      213: 39378299357675283
+    second: AM_iris_Walk_02_2_9
   - first:
-      213: 6439806078210330024
-    second: AM_iris_Walk_close_02_2_10
+      213: 4847100886032294013
+    second: AM_iris_Walk_02_2_10
   - first:
-      213: -6548194268913191575
-    second: AM_iris_Walk_close_02_2_11
+      213: -5836486648425556378
+    second: AM_iris_Walk_02_2_11
   - first:
-      213: -353158610553158183
-    second: AM_iris_Walk_close_02_2_12
+      213: 4035714067099897558
+    second: AM_iris_Walk_02_2_12
   - first:
-      213: 7514438660041222757
-    second: AM_iris_Walk_close_02_2_13
+      213: 980366382651412403
+    second: AM_iris_Walk_02_2_13
   - first:
-      213: 2269742560526780551
-    second: AM_iris_Walk_close_02_2_14
+      213: 4812535090449535965
+    second: AM_iris_Walk_02_2_14
   - first:
-      213: -5537419728158993125
-    second: AM_iris_Walk_close_02_2_15
+      213: -841088488919189343
+    second: AM_iris_Walk_02_2_15
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -145,7 +145,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_0
+      name: AM_iris_Walk_02_2_0
       rect:
         serializedVersion: 2
         x: 0
@@ -160,14 +160,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e77532fd8343c2050800000000000000
-      internalID: 5777049840875951998
+      spriteID: 40b17466513f19b60800000000000000
+      internalID: 7751243706917133060
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_1
+      name: AM_iris_Walk_02_2_1
       rect:
         serializedVersion: 2
         x: 820
@@ -182,14 +182,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6e753b7ac745b4770800000000000000
-      internalID: 8596057208132949990
+      spriteID: ec528ca8d7fde1120800000000000000
+      internalID: 2386590582845220302
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_2
+      name: AM_iris_Walk_02_2_2
       rect:
         serializedVersion: 2
         x: 1640
@@ -204,14 +204,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4f62be09235c36ca0800000000000000
-      internalID: -6024755055521224972
+      spriteID: 035c73694516a9460800000000000000
+      internalID: 7249213566131619120
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_3
+      name: AM_iris_Walk_02_2_3
       rect:
         serializedVersion: 2
         x: 2460
@@ -226,14 +226,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7ea906917e6049a10800000000000000
-      internalID: 1915163331172276967
+      spriteID: e327fcc166a3c42e0800000000000000
+      internalID: -2140271512663395778
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_4
+      name: AM_iris_Walk_02_2_4
       rect:
         serializedVersion: 2
         x: 0
@@ -248,14 +248,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c66aa9bc8c7ffd460800000000000000
-      internalID: 7268800765380699756
+      spriteID: db0d187d636cd6400800000000000000
+      internalID: 319129087459315901
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_5
+      name: AM_iris_Walk_02_2_5
       rect:
         serializedVersion: 2
         x: 820
@@ -270,14 +270,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 337c2605f3d6e8e60800000000000000
-      internalID: 7966424909564004147
+      spriteID: 2f8aec159e9c46310800000000000000
+      internalID: 1397463788328757490
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_6
+      name: AM_iris_Walk_02_2_6
       rect:
         serializedVersion: 2
         x: 1640
@@ -292,14 +292,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cfbcee0e7894e1810800000000000000
-      internalID: 1737907354154748924
+      spriteID: 45e7fdaaadc7ad320800000000000000
+      internalID: 2583514614861889108
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_7
+      name: AM_iris_Walk_02_2_7
       rect:
         serializedVersion: 2
         x: 2460
@@ -314,14 +314,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2036f2ab18b919bb0800000000000000
-      internalID: -4930989135517228286
+      spriteID: 7589f17f99f3a8cb0800000000000000
+      internalID: -4861002917284439977
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_8
+      name: AM_iris_Walk_02_2_8
       rect:
         serializedVersion: 2
         x: 0
@@ -336,14 +336,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9206e6c8d4f56aee0800000000000000
-      internalID: -1250207059875569623
+      spriteID: d0c82d9bdc510a0c0800000000000000
+      internalID: -4566626048823620595
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_9
+      name: AM_iris_Walk_02_2_9
       rect:
         serializedVersion: 2
         x: 820
@@ -358,14 +358,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 98dad9c37c98ce8a0800000000000000
-      internalID: -6274488692025479799
+      spriteID: 31fb219ca56eb8000800000000000000
+      internalID: 39378299357675283
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_10
+      name: AM_iris_Walk_02_2_10
       rect:
         serializedVersion: 2
         x: 1640
@@ -380,14 +380,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8adc0223289ce5950800000000000000
-      internalID: 6439806078210330024
+      spriteID: d70af66239c544340800000000000000
+      internalID: 4847100886032294013
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_11
+      name: AM_iris_Walk_02_2_11
       rect:
         serializedVersion: 2
         x: 2460
@@ -402,14 +402,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9653e2991042025a0800000000000000
-      internalID: -6548194268913191575
+      spriteID: 666d848f052a00fa0800000000000000
+      internalID: -5836486648425556378
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_12
+      name: AM_iris_Walk_02_2_12
       rect:
         serializedVersion: 2
         x: 0
@@ -424,14 +424,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9d5cb946d14591bf0800000000000000
-      internalID: -353158610553158183
+      spriteID: 6de4988df8cb10830800000000000000
+      internalID: 4035714067099897558
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_13
+      name: AM_iris_Walk_02_2_13
       rect:
         serializedVersion: 2
         x: 820
@@ -446,14 +446,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 56a283ae526a84860800000000000000
-      internalID: 7514438660041222757
+      spriteID: 3bf0ca3e706fa9d00800000000000000
+      internalID: 980366382651412403
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_14
+      name: AM_iris_Walk_02_2_14
       rect:
         serializedVersion: 2
         x: 1640
@@ -468,14 +468,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 788c8cb45debf7f10800000000000000
-      internalID: 2269742560526780551
+      spriteID: dd3d857ba2f89c240800000000000000
+      internalID: 4812535090449535965
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_2_15
+      name: AM_iris_Walk_02_2_15
       rect:
         serializedVersion: 2
         x: 2460
@@ -490,8 +490,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b15d7d288122723b0800000000000000
-      internalID: -5537419728158993125
+      spriteID: 1a83d41c97ad354f0800000000000000
+      internalID: -841088488919189343
       vertices: []
       indices: 
       edges: []
@@ -500,7 +500,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f0b3542e1e10b7c42b87385f7d328465
+    spriteID: fa0b26f82753fce4e8dc5991207b5841
     internalID: 0
     vertices: []
     indices: 
@@ -512,22 +512,22 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":820.0,"y":982.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      AM_iris_Walk_close_02_2_0: 5777049840875951998
-      AM_iris_Walk_close_02_2_1: 8596057208132949990
-      AM_iris_Walk_close_02_2_10: 6439806078210330024
-      AM_iris_Walk_close_02_2_11: -6548194268913191575
-      AM_iris_Walk_close_02_2_12: -353158610553158183
-      AM_iris_Walk_close_02_2_13: 7514438660041222757
-      AM_iris_Walk_close_02_2_14: 2269742560526780551
-      AM_iris_Walk_close_02_2_15: -5537419728158993125
-      AM_iris_Walk_close_02_2_2: -6024755055521224972
-      AM_iris_Walk_close_02_2_3: 1915163331172276967
-      AM_iris_Walk_close_02_2_4: 7268800765380699756
-      AM_iris_Walk_close_02_2_5: 7966424909564004147
-      AM_iris_Walk_close_02_2_6: 1737907354154748924
-      AM_iris_Walk_close_02_2_7: -4930989135517228286
-      AM_iris_Walk_close_02_2_8: -1250207059875569623
-      AM_iris_Walk_close_02_2_9: -6274488692025479799
+      AM_iris_Walk_02_2_0: 7751243706917133060
+      AM_iris_Walk_02_2_1: 2386590582845220302
+      AM_iris_Walk_02_2_10: 4847100886032294013
+      AM_iris_Walk_02_2_11: -5836486648425556378
+      AM_iris_Walk_02_2_12: 4035714067099897558
+      AM_iris_Walk_02_2_13: 980366382651412403
+      AM_iris_Walk_02_2_14: 4812535090449535965
+      AM_iris_Walk_02_2_15: -841088488919189343
+      AM_iris_Walk_02_2_2: 7249213566131619120
+      AM_iris_Walk_02_2_3: -2140271512663395778
+      AM_iris_Walk_02_2_4: 319129087459315901
+      AM_iris_Walk_02_2_5: 1397463788328757490
+      AM_iris_Walk_02_2_6: 2583514614861889108
+      AM_iris_Walk_02_2_7: -4861002917284439977
+      AM_iris_Walk_02_2_8: -4566626048823620595
+      AM_iris_Walk_02_2_9: 39378299357675283
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
