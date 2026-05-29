@@ -298,6 +298,16 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             return;
         }
 
+        if (notification is EventPanelMarker panelMarker)
+        {
+            TryShowPanelFromTimeline(
+                panelMarker.TriggerKey,
+                panelMarker.BuildContent(),
+                panelMarker.PauseTimelineUntilClosed,
+                panelMarker.AutoCloseSecondsWhenNoButton);
+            return;
+        }
+
         if (notification is StoryAutoSaveMarker autoSaveMarker)
         {
             if (autoSaveMarker.ApplyCompleteMutationsBeforeSave)
