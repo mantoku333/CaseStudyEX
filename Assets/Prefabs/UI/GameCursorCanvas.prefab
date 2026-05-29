@@ -105,8 +105,8 @@ MonoBehaviour:
   reloadImage: {fileID: 400003}
   cursorHotspotOffset: {x: 0, y: 0}
   cursorSize: {x: 100, y: 100}
-  cursorOpenSprite: {fileID: 6554736390298987251, guid: 3dd42e4d616030f448a9894cf584e579, type: 3}
-  cursorClosedSprite: {fileID: 0}
+  cursorOpenSprite: {fileID: -3899580865589661713, guid: 6079f7233ade1604db62ff18790f2e83, type: 3}
+  cursorClosedSprite: {fileID: 9061039131553754492, guid: 6079f7233ade1604db62ff18790f2e83, type: 3}
   cursorBlinkPattern: 0100000000111111100000
   cursorBlinkMinIntervalSeconds: 10
   cursorBlinkMaxIntervalSeconds: 20
@@ -184,7 +184,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 6554736390298987251, guid: 3dd42e4d616030f448a9894cf584e579, type: 3}
+  m_Sprite: {fileID: -3899580865589661713, guid: 6079f7233ade1604db62ff18790f2e83, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
