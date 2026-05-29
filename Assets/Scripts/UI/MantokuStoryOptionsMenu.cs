@@ -53,6 +53,9 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
     private GameObject soundContentPanel;
     private GameObject keyboardContentPanel;
 
+    private Canvas rootCanvas;
+    private GraphicRaycaster graphicRaycaster;
+
     private Button resumeButton;
     private Button saveButton;
     private Button mapButton;
@@ -198,6 +201,9 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         {
             return;
         }
+
+        rootCanvas = GetComponent<Canvas>();
+        graphicRaycaster = GetComponent<GraphicRaycaster>();
 
         menuRoot = FindChildObject("MenuRoot");
         optionPanel = FindChildObject("MenuRoot/OptionPanel");
@@ -1603,9 +1609,24 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
     private void SetMenuVisible(bool visible)
     {
+        SetCanvasRenderingEnabled(visible);
+
         if (menuRoot != null && menuRoot.activeSelf != visible)
         {
             menuRoot.SetActive(visible);
+        }
+    }
+
+    private void SetCanvasRenderingEnabled(bool visible)
+    {
+        if (rootCanvas != null)
+        {
+            rootCanvas.enabled = visible;
+        }
+
+        if (graphicRaycaster != null)
+        {
+            graphicRaycaster.enabled = visible;
         }
     }
 

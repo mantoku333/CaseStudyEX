@@ -70,6 +70,7 @@ namespace Metroidvania.UI
         private bool _hasLoggedAutoSizeStart;
         private bool _hasLoggedAutoSizeSkipReason;
         private bool _lineIsVisible;
+        private bool _presentationEnabled = true;
 
         private void Awake()
         {
@@ -80,16 +81,12 @@ namespace Metroidvania.UI
             _textRectTransform = dialogueText != null ? dialogueText.rectTransform : null;
             _currentOffset = offset;
 
-            if (bubblePanel != null)
-            {
-                bubblePanel.SetActive(false);
-            }
-
             if (dialogueText != null)
             {
                 ApplyTextLayoutDefaults();
-                dialogueText.text = string.Empty;
             }
+
+            HideView();
         }
 
         public void SetTarget(Transform? target)
@@ -99,10 +96,33 @@ namespace Metroidvania.UI
             _currentOffset = offset;
         }
 
+        public bool IsPresentationEnabled => _presentationEnabled;
+
+        public void SetPresentationEnabled(bool enabled)
+        {
+            _presentationEnabled = enabled;
+
+            if (!enabled)
+            {
+                _currentLineCts?.Cancel();
+                HideView();
+            }
+        }
+
         private void LateUpdate()
         {
             if (bubblePanel == null)
             {
+                return;
+            }
+
+            if (!_presentationEnabled)
+            {
+                if (bubblePanel.activeSelf)
+                {
+                    bubblePanel.SetActive(false);
+                }
+
                 return;
             }
 
@@ -179,8 +199,9 @@ namespace Metroidvania.UI
 
         public override YarnTask OnDialogueStartedAsync()
         {
-            if (!gameObject.activeSelf)
+            if (!_presentationEnabled)
             {
+                HideView();
                 return YarnTask.CompletedTask;
             }
 
@@ -232,27 +253,13 @@ namespace Metroidvania.UI
 
         public override YarnTask OnDialogueCompleteAsync()
         {
-            if (bubblePanel != null)
-            {
-                bubblePanel.SetActive(false);
-            }
-
-            _lineIsVisible = false;
-
-            if (dialogueText != null)
-            {
-                dialogueText.text = string.Empty;
-            }
-
-            _currentTarget = null;
-            _currentOffset = offset;
-            gameObject.SetActive(false);
+            HideView();
             return YarnTask.CompletedTask;
         }
 
         public override YarnTask RunLineAsync(LocalizedLine line, LineCancellationToken token)
         {
-            if (!gameObject.activeSelf)
+            if (!_presentationEnabled)
             {
                 return YarnTask.CompletedTask;
             }
@@ -353,6 +360,24 @@ namespace Metroidvania.UI
         public override YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions, LineCancellationToken cancellationToken)
         {
             return YarnTask.FromResult<DialogueOption?>(dialogueOptions.Length > 0 ? dialogueOptions[0] : null);
+        }
+
+        private void HideView()
+        {
+            if (bubblePanel != null)
+            {
+                bubblePanel.SetActive(false);
+            }
+
+            _lineIsVisible = false;
+
+            if (dialogueText != null)
+            {
+                dialogueText.text = string.Empty;
+            }
+
+            _currentTarget = null;
+            _currentOffset = offset;
         }
 
         private void ApplySpeakerTarget(string? characterName)
