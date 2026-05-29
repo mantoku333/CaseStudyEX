@@ -32,8 +32,20 @@ public sealed class TutorialOverlayController : MonoBehaviour
     [SerializeField] private Image backgroundImage;
 
     private Sprite backgroundSprite;
+    private Image.Type backgroundImageType = Image.Type.Simple;
+    private bool backgroundPreserveAspect;
     private bool overrideBackgroundImageSize;
     private Vector2 backgroundImageSize;
+    private bool overrideBackgroundImagePosition;
+    private Vector2 backgroundImagePosition;
+    private bool overrideAnimationImageSize;
+    private Vector2 animationImageSize;
+    private bool overrideAnimationImagePosition;
+    private Vector2 animationImagePosition;
+    private bool overrideCloseButtonSize;
+    private Vector2 closeButtonSize;
+    private bool overrideCloseButtonPosition;
+    private Vector2 closeButtonPosition;
 
     private static readonly string[] PlayerControlBehaviourNames =
     {
@@ -63,6 +75,18 @@ public sealed class TutorialOverlayController : MonoBehaviour
     private float gifFrameTimer;
     private float gifLoopIntervalTimer;
     private Image resolvedGifImage;
+    private Image resolvedBackgroundImage;
+    private RectTransformSnapshot backgroundDefaultRect;
+    private RectTransformSnapshot animationDefaultRect;
+    private RectTransformSnapshot closeButtonDefaultRect;
+
+    private struct RectTransformSnapshot
+    {
+        public bool Captured;
+        public Vector2 SizeDelta;
+        public Vector2 AnchoredPosition;
+        public Vector3 LocalScale;
+    }
 
     public void ConfigureContent(
     string text,
@@ -70,19 +94,24 @@ public sealed class TutorialOverlayController : MonoBehaviour
     float framesPerSecond,
     float loopIntervalSeconds,
     Sprite background,
+    Image.Type backgroundType,
+    bool preserveBackgroundAspect,
     bool overrideBackgroundSize,
-    Vector2 backgroundSize
+    Vector2 backgroundSize,
+    bool overrideBackgroundPosition,
+    Vector2 backgroundPosition,
+    bool overrideAnimationSize,
+    Vector2 animationSize,
+    bool overrideAnimationPosition,
+    Vector2 animationPosition,
+    bool overrideButtonSize,
+    Vector2 buttonSize,
+    bool overrideButtonPosition,
+    Vector2 buttonPosition
 )
     {
-        if (!string.IsNullOrWhiteSpace(text))
-        {
-            promptText = text;
-        }
-
-        if (frames != null && frames.Length > 0)
-        {
-            gifFrames = frames;
-        }
+        promptText = text ?? string.Empty;
+        gifFrames = frames ?? Array.Empty<Sprite>();
 
         if (framesPerSecond > 0f)
         {
@@ -95,8 +124,20 @@ public sealed class TutorialOverlayController : MonoBehaviour
         }
 
         backgroundSprite = background;
+        backgroundImageType = backgroundType;
+        backgroundPreserveAspect = preserveBackgroundAspect;
         overrideBackgroundImageSize = overrideBackgroundSize;
         backgroundImageSize = backgroundSize;
+        overrideBackgroundImagePosition = overrideBackgroundPosition;
+        backgroundImagePosition = backgroundPosition;
+        overrideAnimationImageSize = overrideAnimationSize;
+        animationImageSize = animationSize;
+        overrideAnimationImagePosition = overrideAnimationPosition;
+        animationImagePosition = animationPosition;
+        overrideCloseButtonSize = overrideButtonSize;
+        closeButtonSize = buttonSize;
+        overrideCloseButtonPosition = overrideButtonPosition;
+        closeButtonPosition = buttonPosition;
     }
 
     private void Awake()
@@ -182,6 +223,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
 
         RefreshPromptText();
         RefreshBackgroundImage();
+        RefreshTutorialLayout();
         RestartGifAnimation();
         RestartLoopAnimation();
         PauseGame();
@@ -580,23 +622,192 @@ public sealed class TutorialOverlayController : MonoBehaviour
     //中江5/22
     private void RefreshBackgroundImage()
     {
-        if (backgroundImage == null)
+        Image targetImage = ResolveBackgroundImage();
+        if (targetImage == null)
         {
             return;
         }
 
-        backgroundImage.sprite = backgroundSprite;
-        backgroundImage.enabled = backgroundSprite != null;
+        CaptureRectTransform(targetImage.rectTransform, ref backgroundDefaultRect);
 
-        if (backgroundSprite == null)
+        bool hasBackground = backgroundSprite != null;
+        targetImage.gameObject.SetActive(hasBackground);
+        targetImage.sprite = backgroundSprite;
+        targetImage.enabled = hasBackground;
+        targetImage.color = Color.white;
+        targetImage.type = backgroundImageType;
+        targetImage.preserveAspect = backgroundPreserveAspect;
+
+        if (!hasBackground)
         {
             return;
         }
 
         if (overrideBackgroundImageSize)
         {
-            RectTransform rectTransform = backgroundImage.rectTransform;
-            rectTransform.sizeDelta = backgroundImageSize;
+            ApplyRectTransformSize(targetImage.rectTransform, backgroundImageSize, resetScale: true);
+        }
+        else
+        {
+            RestoreRectTransform(targetImage.rectTransform, ref backgroundDefaultRect, restoreSize: true, restorePosition: false);
+        }
+
+        if (overrideBackgroundImagePosition)
+        {
+            targetImage.rectTransform.anchoredPosition = backgroundImagePosition;
+        }
+        else
+        {
+            RestoreRectTransform(targetImage.rectTransform, ref backgroundDefaultRect, restoreSize: false, restorePosition: true);
+        }
+    }
+
+    private Image ResolveBackgroundImage()
+    {
+        if (backgroundImage != null)
+        {
+            resolvedBackgroundImage = backgroundImage;
+            return resolvedBackgroundImage;
+        }
+
+        if (resolvedBackgroundImage != null)
+        {
+            return resolvedBackgroundImage;
+        }
+
+        Image[] images = GetComponentsInChildren<Image>(includeInactive: true);
+        for (int i = 0; i < images.Length; i++)
+        {
+            Image image = images[i];
+            if (image == null)
+            {
+                continue;
+            }
+
+            if (string.Equals(image.name, "EXbackground", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(image.name, "TutorialBackground", StringComparison.OrdinalIgnoreCase))
+            {
+                resolvedBackgroundImage = image;
+                return resolvedBackgroundImage;
+            }
+        }
+
+        return null;
+    }
+
+    private void RefreshTutorialLayout()
+    {
+        Image targetImage = ResolveGifImage();
+        if (targetImage != null)
+        {
+            RectTransform rectTransform = targetImage.rectTransform;
+            CaptureRectTransform(rectTransform, ref animationDefaultRect);
+            if (overrideAnimationImageSize)
+            {
+                ApplyRectTransformSize(rectTransform, animationImageSize, resetScale: true);
+            }
+            else
+            {
+                RestoreRectTransform(rectTransform, ref animationDefaultRect, restoreSize: true, restorePosition: false);
+            }
+
+            if (overrideAnimationImagePosition)
+            {
+                rectTransform.anchoredPosition = animationImagePosition;
+            }
+            else
+            {
+                RestoreRectTransform(rectTransform, ref animationDefaultRect, restoreSize: false, restorePosition: true);
+            }
+        }
+
+        if (closeButton == null)
+        {
+            return;
+        }
+
+        RectTransform closeButtonTransform = closeButton.GetComponent<RectTransform>();
+        if (closeButtonTransform == null)
+        {
+            return;
+        }
+
+        CaptureRectTransform(closeButtonTransform, ref closeButtonDefaultRect);
+
+        if (overrideCloseButtonSize)
+        {
+            ApplyRectTransformSize(closeButtonTransform, closeButtonSize, resetScale: true);
+        }
+        else
+        {
+            RestoreRectTransform(closeButtonTransform, ref closeButtonDefaultRect, restoreSize: true, restorePosition: false);
+        }
+
+        if (overrideCloseButtonPosition)
+        {
+            closeButtonTransform.anchoredPosition = closeButtonPosition;
+        }
+        else
+        {
+            RestoreRectTransform(closeButtonTransform, ref closeButtonDefaultRect, restoreSize: false, restorePosition: true);
+        }
+    }
+
+    private static void CaptureRectTransform(RectTransform rectTransform, ref RectTransformSnapshot snapshot)
+    {
+        if (rectTransform == null || snapshot.Captured)
+        {
+            return;
+        }
+
+        snapshot.Captured = true;
+        snapshot.SizeDelta = rectTransform.sizeDelta;
+        snapshot.AnchoredPosition = rectTransform.anchoredPosition;
+        snapshot.LocalScale = rectTransform.localScale;
+    }
+
+    private static void ApplyRectTransformSize(RectTransform rectTransform, Vector2 size, bool resetScale)
+    {
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        rectTransform.sizeDelta = size;
+        if (resetScale)
+        {
+            rectTransform.localScale = Vector3.one;
+        }
+    }
+
+    private static void RestoreRectTransform(
+        RectTransform rectTransform,
+        ref RectTransformSnapshot snapshot,
+        bool restoreSize,
+        bool restorePosition)
+    {
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        if (!snapshot.Captured)
+        {
+            snapshot.Captured = true;
+            snapshot.SizeDelta = rectTransform.sizeDelta;
+            snapshot.AnchoredPosition = rectTransform.anchoredPosition;
+            snapshot.LocalScale = rectTransform.localScale;
+        }
+
+        if (restoreSize)
+        {
+            rectTransform.sizeDelta = snapshot.SizeDelta;
+            rectTransform.localScale = snapshot.LocalScale;
+        }
+
+        if (restorePosition)
+        {
+            rectTransform.anchoredPosition = snapshot.AnchoredPosition;
         }
     }
 }

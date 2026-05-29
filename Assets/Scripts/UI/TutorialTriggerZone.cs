@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Yarn.Unity;
 
 [DisallowMultipleComponent]
@@ -76,8 +77,24 @@ public sealed class TutorialTriggerZone : MonoBehaviour
 
     [Header("Background(中江5/22)")]
     [SerializeField] private Sprite backgroundSprite;
+    [SerializeField] private Image.Type backgroundImageType = Image.Type.Simple;
+    [SerializeField] private bool preserveBackgroundAspect;
     [SerializeField] private Vector2 backgroundImageSize = new Vector2(800f, 450f);
     [SerializeField] private bool overrideBackgroundImageSize;
+    [SerializeField] private Vector2 backgroundImagePosition;
+    [SerializeField] private bool overrideBackgroundImagePosition;
+
+    [Header("Tutorial Animation Layout")]
+    [SerializeField] private Vector2 animationImageSize = new Vector2(160f, 180f);
+    [SerializeField] private bool overrideAnimationImageSize = true;
+    [SerializeField] private Vector2 animationImagePosition = new Vector2(-200f, -20f);
+    [SerializeField] private bool overrideAnimationImagePosition = true;
+
+    [Header("Close Button Layout")]
+    [SerializeField] private Vector2 closeButtonSize = new Vector2(280f, 60f);
+    [SerializeField] private bool overrideCloseButtonSize = true;
+    [SerializeField] private Vector2 closeButtonPosition = new Vector2(0f, -280f);
+    [SerializeField] private bool overrideCloseButtonPosition = true;
 
     private static readonly string[] PlayerControlBehaviourNames =
     {
@@ -453,15 +470,29 @@ public sealed class TutorialTriggerZone : MonoBehaviour
         string resolvedPromptText =
             hidePromptTextAfterDialogue && showAfterDialogue && !string.IsNullOrWhiteSpace(dialogueNodeName)
                 ? string.Empty
-                : promptText; tutorialOverlay.ConfigureContent(
-    resolvedPromptText,
-    gifFrames,
-    gifFramesPerSecond,
-    gifLoopIntervalSeconds,
-    backgroundSprite,
-    overrideBackgroundImageSize,
-    backgroundImageSize
-);//中江変更5/22
+                : promptText;
+
+        tutorialOverlay.ConfigureContent(
+            resolvedPromptText,
+            gifFrames,
+            gifFramesPerSecond,
+            gifLoopIntervalSeconds,
+            backgroundSprite,
+            backgroundImageType,
+            preserveBackgroundAspect,
+            overrideBackgroundImageSize,
+            backgroundImageSize,
+            overrideBackgroundImagePosition,
+            backgroundImagePosition,
+            overrideAnimationImageSize,
+            animationImageSize,
+            overrideAnimationImagePosition,
+            animationImagePosition,
+            overrideCloseButtonSize,
+            closeButtonSize,
+            overrideCloseButtonPosition,
+            closeButtonPosition);
+
         tutorialOverlay.Show(OnTutorialClosed);
     }
 
