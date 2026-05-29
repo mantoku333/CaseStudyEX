@@ -2,6 +2,7 @@
 using Metroidvania.Player;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GameName.Enemy
 {
@@ -24,6 +25,10 @@ namespace GameName.Enemy
         [SerializeField] private bool treatShutterWallsAsWalls = true;
         [SerializeField] private bool flipSpriteOnTurn = true;
 
+        [Header("Performance")]
+        [SerializeField, Min(0.02f)] private float turnCheckInterval = 0.08f;
+        [SerializeField] private bool staggerTurnChecks = true;
+
         [Header("Enemy Collision")]
         [SerializeField, Min(0f)] private float enemyCollisionTurnCooldown = 0.15f;
 
@@ -37,9 +42,12 @@ namespace GameName.Enemy
         private EnemyDamageFlash damageFlash;
         private int currentHealth;
         private float nextEnemyCollisionTurnTime;
-        // シャッター壁の子ブロックを検出するための一時バッファ。
-        private readonly RaycastHit2D[] wallCheckHits = new RaycastHit2D[8];
-        private ContactFilter2D shutterWallContactFilter;
+        private float nextTurnCheckTime;
+        private bool turnCheckScheduled;
+
+        private static readonly System.Collections.Generic.List<Collider2D> ShutterWallColliders = new System.Collections.Generic.List<Collider2D>();
+        private static Scene cachedShutterWallScene;
+        private static bool shutterWallCacheValid;
 
         public event Action EnemyCollisionTurned;
         /// <summary>
@@ -77,8 +85,11 @@ namespace GameName.Enemy
             {
                 stageLayerMask = BuildDefaultStageMask();
             }
+        }
 
-            BuildShutterWallContactFilter();
+        private void OnEnable()
+        {
+            ScheduleInitialTurnCheck();
         }
 
         /// <summary>
@@ -95,7 +106,7 @@ namespace GameName.Enemy
         /// </summary>
         private void FixedUpdate()
         {
-            if (movementPaused)
+            if (movementPaused || moveSpeed <= 0f)
             {
                 // 自動巡回のみ停止し、速度制御は攻撃側スクリプトに委譲する
                 return;
@@ -103,7 +114,7 @@ namespace GameName.Enemy
 
             bool turnedByEnvironment = false;
 
-            if (ShouldTurnAround())
+            if (ShouldRunTurnCheck() && ShouldTurnAround())
             {
                 TurnAround();
                 turnedByEnvironment = true;
@@ -122,6 +133,47 @@ namespace GameName.Enemy
                     TurnAround();
                 }
             }
+        }
+
+        private void ScheduleInitialTurnCheck()
+        {
+            float interval = GetTurnCheckInterval();
+            float offset = 0f;
+            if (staggerTurnChecks)
+            {
+                int bucketCount = Mathf.Max(1, Mathf.CeilToInt(interval / Mathf.Max(0.001f, Time.fixedDeltaTime)));
+                offset = (Mathf.Abs(GetInstanceID()) % bucketCount) * Time.fixedDeltaTime;
+            }
+
+            nextTurnCheckTime = Time.fixedTime + offset;
+            turnCheckScheduled = true;
+        }
+
+        private bool ShouldRunTurnCheck()
+        {
+            if (!turnCheckScheduled)
+            {
+                ScheduleInitialTurnCheck();
+            }
+
+            if (Time.fixedTime + 0.0001f < nextTurnCheckTime)
+            {
+                return false;
+            }
+
+            float interval = GetTurnCheckInterval();
+            do
+            {
+                nextTurnCheckTime += interval;
+            }
+            while (nextTurnCheckTime <= Time.fixedTime);
+
+            return true;
+        }
+
+        private float GetTurnCheckInterval()
+        {
+            return Mathf.Max(Time.fixedDeltaTime, turnCheckInterval);
         }
 
         /// <summary>
@@ -316,36 +368,33 @@ namespace GameName.Enemy
             return mask == 0 ? Physics2D.DefaultRaycastLayers : mask;
         }
 
-        private void BuildShutterWallContactFilter()
-        {
-            // レイヤーに依存せず ShutterWallBlockRise 配下の非トリガーコライダーだけを後段で拾う。
-            shutterWallContactFilter = new ContactFilter2D
-            {
-                useLayerMask = true,
-                useTriggers = false
-            };
-            shutterWallContactFilter.SetLayerMask(Physics2D.DefaultRaycastLayers);
-        }
-
         private bool IsShutterWallAhead(Vector2 origin)
         {
-            // シャッター壁の各ブロックは子オブジェクトなので、親に ShutterWallBlockRise があるかで判定する。
-            int hitCount = Physics2D.Raycast(
-                origin,
-                Vector2.right * moveDirection,
-                shutterWallContactFilter,
-                wallCheckHits,
-                wallCheckDistance);
-
-            for (int i = 0; i < hitCount; i++)
+            EnsureShutterWallCache(gameObject.scene);
+            if (ShutterWallColliders.Count == 0)
             {
-                Collider2D hitCollider = wallCheckHits[i].collider;
-                if (hitCollider == null || IsOwnCollider(hitCollider))
+                return false;
+            }
+
+            float probeLength = Mathf.Max(0.01f, wallCheckDistance);
+            float probeCenterX = origin.x + (moveDirection * probeLength * 0.5f);
+            float probeHeight = bodyCollider != null ? Mathf.Max(0.1f, bodyCollider.bounds.size.y * 0.8f) : 0.1f;
+            Bounds probeBounds = new Bounds(
+                new Vector3(probeCenterX, origin.y, 0f),
+                new Vector3(probeLength + 0.04f, probeHeight, 1f));
+
+            for (int i = ShutterWallColliders.Count - 1; i >= 0; i--)
+            {
+                Collider2D shutterCollider = ShutterWallColliders[i];
+                if (shutterCollider == null)
                 {
+                    ShutterWallColliders.RemoveAt(i);
                     continue;
                 }
 
-                if (hitCollider.GetComponentInParent<ShutterWallBlockRise>() != null)
+                if (shutterCollider.enabled &&
+                    shutterCollider.gameObject.activeInHierarchy &&
+                    shutterCollider.bounds.Intersects(probeBounds))
                 {
                     return true;
                 }
@@ -354,12 +403,36 @@ namespace GameName.Enemy
             return false;
         }
 
-        private bool IsOwnCollider(Collider2D hitCollider)
+        private static void EnsureShutterWallCache(Scene scene)
         {
-            // 自分自身や子オブジェクトのコライダーを壁として誤検出しないようにする。
-            return hitCollider == bodyCollider ||
-                   hitCollider.transform == transform ||
-                   hitCollider.transform.IsChildOf(transform);
+            if (shutterWallCacheValid && cachedShutterWallScene == scene)
+            {
+                return;
+            }
+
+            ShutterWallColliders.Clear();
+            ShutterWallBlockRise[] shutterWalls = FindObjectsByType<ShutterWallBlockRise>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < shutterWalls.Length; i++)
+            {
+                ShutterWallBlockRise shutterWall = shutterWalls[i];
+                if (shutterWall == null || shutterWall.gameObject.scene != scene)
+                {
+                    continue;
+                }
+
+                Collider2D[] colliders = shutterWall.GetComponentsInChildren<Collider2D>(true);
+                for (int j = 0; j < colliders.Length; j++)
+                {
+                    Collider2D collider = colliders[j];
+                    if (collider != null && !collider.isTrigger)
+                    {
+                        ShutterWallColliders.Add(collider);
+                    }
+                }
+            }
+
+            cachedShutterWallScene = scene;
+            shutterWallCacheValid = true;
         }
 
         /// <summary>

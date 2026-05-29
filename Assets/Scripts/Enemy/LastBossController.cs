@@ -193,7 +193,7 @@ namespace GameName.Enemy
 
             if (playerDetectionMask.value == 0)
             {
-                playerDetectionMask = Physics2D.DefaultRaycastLayers;
+                playerDetectionMask = PlayerBodyColliderUtility.GetPlayerBodyLayerMask();
             }
 
             BuildPlayerContactFilter();
@@ -1911,7 +1911,7 @@ namespace GameName.Enemy
                 useLayerMask = true,
                 useTriggers = true
             };
-            playerContactFilter.SetLayerMask(playerDetectionMask.value == 0 ? Physics2D.DefaultRaycastLayers : playerDetectionMask);
+            playerContactFilter.SetLayerMask(playerDetectionMask.value == 0 ? PlayerBodyColliderUtility.GetPlayerBodyLayerMask() : playerDetectionMask);
         }
 
         private void EnsureVisualObjects()

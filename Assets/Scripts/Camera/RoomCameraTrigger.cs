@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Cinemachine;
@@ -11,6 +12,8 @@ public class RoomCameraTrigger : MonoBehaviour
     private static RoomCameraTrigger _activeTrigger;
     private static readonly List<RoomCameraTrigger> _occupiedRoomTriggers = new();
     private static int _defaultTriggerOverlapCount;
+
+    public static event Action<RoomCameraTrigger> ActiveRoomChanged;
 
     [Header("Camera Settings")]
     [SerializeField]
@@ -33,6 +36,10 @@ public class RoomCameraTrigger : MonoBehaviour
 
     private bool IsDefaultTrigger => _useDefaultCameraWhenEntered;
     private bool HasRoomCamera => _roomCamera != null;
+
+    public static RoomCameraTrigger ActiveRoom => _activeTrigger;
+    public bool UsesDefaultCameraWhenEntered => IsDefaultTrigger;
+    public bool HasAssignedRoomCamera => HasRoomCamera;
 
     private void Awake()
     {
@@ -62,6 +69,7 @@ public class RoomCameraTrigger : MonoBehaviour
         if (_activeTrigger == this)
         {
             _activeTrigger = null;
+            NotifyActiveRoomChanged();
         }
 
         _overlapCount = 0;
@@ -91,7 +99,12 @@ public class RoomCameraTrigger : MonoBehaviour
             _activeTrigger.DeactivateOwnCamera();
         }
 
-        _activeTrigger = this;
+        if (_activeTrigger != this)
+        {
+            _activeTrigger = this;
+            NotifyActiveRoomChanged();
+        }
+
         _roomCamera.Priority.Value = _activePriority;
         _roomCamera.Priority.Enabled = true;
     }
@@ -106,6 +119,7 @@ public class RoomCameraTrigger : MonoBehaviour
         if (_activeTrigger == this)
         {
             _activeTrigger = null;
+            NotifyActiveRoomChanged();
         }
 
         DeactivateOwnCamera();
@@ -131,7 +145,13 @@ public class RoomCameraTrigger : MonoBehaviour
 
         RoomCameraTrigger previousTrigger = _activeTrigger;
         _activeTrigger = null;
+        NotifyActiveRoomChanged();
         previousTrigger.DeactivateOwnCamera();
+    }
+
+    private static void NotifyActiveRoomChanged()
+    {
+        ActiveRoomChanged?.Invoke(_activeTrigger);
     }
 
     private static void ActivateBestAvailableRoomTrigger()
@@ -213,9 +233,36 @@ public class RoomCameraTrigger : MonoBehaviour
         if (_activeTrigger == this)
         {
             _activeTrigger = null;
+            NotifyActiveRoomChanged();
             DeactivateOwnCamera();
             ActivateBestAvailableRoomTrigger();
         }
+    }
+
+    public bool ContainsPoint(Vector3 worldPosition)
+    {
+        Vector2 point2D = new Vector2(worldPosition.x, worldPosition.y);
+        Collider2D[] colliders2D = GetComponents<Collider2D>();
+        for (int i = 0; i < colliders2D.Length; i++)
+        {
+            Collider2D roomCollider = colliders2D[i];
+            if (roomCollider != null && roomCollider.enabled && roomCollider.OverlapPoint(point2D))
+            {
+                return true;
+            }
+        }
+
+        Collider[] colliders = GetComponents<Collider>();
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Collider roomCollider = colliders[i];
+            if (roomCollider != null && roomCollider.enabled && roomCollider.bounds.Contains(worldPosition))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

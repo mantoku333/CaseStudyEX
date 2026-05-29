@@ -229,7 +229,7 @@ MonoBehaviour:
   justParryEffectDuration: 1
   playerDetectionMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   telegraphColor: {r: 1, g: 0, b: 0, a: 0.35}
   attackColor: {r: 1, g: 0.15, b: 0.05, a: 0.55}
   enragedColor: {r: 0.6, g: 0, b: 0, a: 1}
