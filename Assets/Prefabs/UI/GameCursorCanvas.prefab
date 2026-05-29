@@ -113,6 +113,7 @@ MonoBehaviour:
   cursorBlinkStepSeconds: 0.08
   reticleSize: {x: 64, y: 64}
   reloadSize: {x: 64, y: 64}
+  clampReticleToPlayerRadius: 0
   reticleWorldRadius: 5
   reloadStartColor: {r: 1, g: 0, b: 0, a: 1}
   reloadMiddleColor: {r: 1, g: 0.45, b: 0, a: 1}
