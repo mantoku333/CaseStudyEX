@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -17,6 +18,7 @@ public sealed class GameCursorController : MonoBehaviour
     private const int ReloadCircleTextureSize = 128;
 
     private static GameCursorController instance;
+    private static readonly HashSet<object> menuCursorModeOwners = new HashSet<object>();
 
     [SerializeField] private Canvas canvas;
     [SerializeField] private Image cursorImage;
@@ -81,6 +83,22 @@ public sealed class GameCursorController : MonoBehaviour
             camera,
             screenPosition,
             out worldPosition);
+    }
+
+    public static void SetMenuCursorModeActive(object owner, bool active)
+    {
+        if (owner == null)
+        {
+            return;
+        }
+
+        if (active)
+        {
+            menuCursorModeOwners.Add(owner);
+            return;
+        }
+
+        menuCursorModeOwners.Remove(owner);
     }
 
     private static GameCursorController EnsureInstance()
@@ -178,6 +196,12 @@ public sealed class GameCursorController : MonoBehaviour
             activeGun != null &&
             activeGun.IsReloading;
         Vector2 displayPosition = rawScreenPosition;
+
+        if (menuCursorModeOwners.Count > 0)
+        {
+            ShowCursor(rawScreenPosition);
+            return;
+        }
 
         // Reticle の制限は「銃アビリティあり + 傘オープン」の時だけ。通常カーソルは制限しない。
         if (hasGunAbility &&
