@@ -928,6 +928,8 @@ MonoBehaviour:
   minMoveSpeed: 0.1
   pitchRandomRange: 0.08
   footstepAudioSource: {fileID: 0}
+  logFootstepDebug: 0
+  debugLogInterval: 0.5
 --- !u!1 &5437759847484700699
 GameObject:
   m_ObjectHideFlags: 0
@@ -1032,7 +1034,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c007f56cecae97b4c9baa22a084c5528, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunController
-  coolTime: 3
+  firstRecoilCoolTime: 0.5
+  secondRecoilCoolTime: 5
+  secondRecoilPowerMultiplier: 0.5
   airRecoilPower: 25
   recoilDuration: 0.1
   groundCheck: {fileID: 4002620521091409378}
@@ -1071,7 +1075,7 @@ Transform:
   m_GameObject: {fileID: 6862321633324178330}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 0, z: 0}
+  m_LocalPosition: {x: -0.5, y: -1.5, z: 0}
   m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1177,15 +1181,19 @@ MonoBehaviour:
   animator: {fileID: 6106619156735840989}
   animatorLayer: 0
   idleStateName: idle
+  closedIdleStateName: idle_close
   runStateName: run
+  closedRunStateName: walk_close
   jumpStateName: jump
+  closedJumpStateName: jump_close
   glideStateName: glide
   landStateName: land
+  closedLandStateName: land_close
   dodgeStateName: dodge
   parryStateName: parry
   changeStateName: change
   attackStateName: attack
-  logCurrentSpriteEveryFrame: 1
+  logCurrentSpriteEveryFrame: 0
 --- !u!1 &7408946771973873088
 GameObject:
   m_ObjectHideFlags: 0

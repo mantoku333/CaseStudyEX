@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 52c88ba9a73ca4f43bdf2b61795ba096
+guid: 719f7294647a3d646a13efdea4a8c163
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4120590881632394656
-    second: AM_iris_Walk_close_02_3_0
-  - first:
-      213: 8550902852856723701
-    second: AM_iris_Walk_close_02_3_1
+      213: 7743196175398253249
+    second: BG_Ombre4_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -103,45 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: AM_iris_Walk_close_02_3_0
+      name: BG_Ombre4_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 821
-        height: 984
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        y: 38
+        width: 4486
+        height: 2276
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 062669bcc68b0d6c0800000000000000
-      internalID: -4120590881632394656
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_iris_Walk_close_02_3_1
-      rect:
-        serializedVersion: 2
-        x: 821
-        y: 0
-        width: 821
-        height: 984
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5f8366d07d8eaa670800000000000000
-      internalID: 8550902852856723701
+      spriteID: 1c2b6c475eb557b60800000000000000
+      internalID: 7743196175398253249
       vertices: []
       indices: 
       edges: []
@@ -150,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 0364c131d41377a4992234e0858873e9
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -158,12 +133,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":2.0,"y":1.0},"gridSpriteSize":{"x":821.0,"y":984.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      AM_iris_Walk_close_02_3_0: -4120590881632394656
-      AM_iris_Walk_close_02_3_1: 8550902852856723701
+      BG_Ombre4_0: 7743196175398253249
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
