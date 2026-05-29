@@ -57,7 +57,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 256
@@ -114,7 +114,7 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 255
+        width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -134,9 +134,9 @@ TextureImporter:
       name: cursorComp_2
       rect:
         serializedVersion: 2
-        x: 255
+        x: 256
         y: 0
-        width: 257
+        width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -156,7 +156,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 13a87091a89cd0248a2a3b48a5210faa
+    spriteID: 7fd4bff8473097744872039023789726
     internalID: 0
     vertices: []
     indices: 

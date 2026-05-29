@@ -35,6 +35,8 @@ public class WindRiseZone : MonoBehaviour
     [SerializeField, Min(0f)] private float bobAmplitude = 0.2f;
     // 浮遊中の上下揺れの速さ。
     [SerializeField, Min(0f)] private float bobFrequency = 1.5f;
+    [SerializeField, Min(0f)] private float recoilRiseWindIgnoreSeconds = 0.6f;
+    [SerializeField, Min(0f)] private float recoilRiseMinUpwardSpeed = 0.05f;
 
     // Rigidbody2D ごとに、風エリア内にいるプレイヤー情報をキャッシュする。
     private readonly Dictionary<Rigidbody2D, PlayerWindTarget> targets = new Dictionary<Rigidbody2D, PlayerWindTarget>();
@@ -64,6 +66,8 @@ public class WindRiseZone : MonoBehaviour
         hoverDamping = Mathf.Max(0f, hoverDamping);
         bobAmplitude = Mathf.Max(0f, bobAmplitude);
         bobFrequency = Mathf.Max(0f, bobFrequency);
+        recoilRiseWindIgnoreSeconds = Mathf.Max(0f, recoilRiseWindIgnoreSeconds);
+        recoilRiseMinUpwardSpeed = Mathf.Max(0f, recoilRiseMinUpwardSpeed);
 
         Collider2D targetCollider = GetComponent<Collider2D>();
         if (targetCollider != null)
@@ -243,13 +247,42 @@ public class WindRiseZone : MonoBehaviour
 
         if (target.GunController != null && target.GunController.GetRecoiling())
         {
-            // 銃反動中は反動の動きを優先する。
+            StartRecoilRiseWindSuppression(target);
+            return false;
+        }
+
+        if (ShouldSkipWindForRecoilRise(target))
+        {
             return false;
         }
 
         if (target.DodgeController != null && target.DodgeController.IsDodging())
         {
             // 回避中は WindRise が横移動/無敵挙動を邪魔しないようにする。
+            return false;
+        }
+
+        return true;
+    }
+
+    private void StartRecoilRiseWindSuppression(PlayerWindTarget target)
+    {
+        target.IsRecoilRiseWindSuppressed = true;
+        target.RecoilRiseWindIgnoreUntil = Time.time + recoilRiseWindIgnoreSeconds;
+    }
+
+    private bool ShouldSkipWindForRecoilRise(PlayerWindTarget target)
+    {
+        if (!target.IsRecoilRiseWindSuppressed)
+        {
+            return false;
+        }
+
+        if (target.Rigidbody == null ||
+            Time.time > target.RecoilRiseWindIgnoreUntil ||
+            target.Rigidbody.linearVelocity.y <= recoilRiseMinUpwardSpeed)
+        {
+            target.IsRecoilRiseWindSuppressed = false;
             return false;
         }
 
@@ -308,6 +341,8 @@ public class WindRiseZone : MonoBehaviour
         public GroundCheck GroundCheck;
         public GunController GunController;
         public DodgeController DodgeController;
+        public bool IsRecoilRiseWindSuppressed;
+        public float RecoilRiseWindIgnoreUntil;
         public readonly HashSet<Collider2D> OverlappingColliders = new HashSet<Collider2D>();
     }
 }
