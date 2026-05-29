@@ -1195,6 +1195,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2872472093536943389}
   - component: {fileID: 5083422479060007190}
+  - component: {fileID: 7129365047701654321}
   - component: {fileID: 4697355616983758325}
   m_Layer: 0
   m_Name: AttackHitbox
@@ -1230,6 +1231,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7edd7569fb719334182586f503610334, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackHitbox
+--- !u!114 &7129365047701654321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7408946771973873088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4fbb44d667f44dd8e382cf192a3a1dd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttackHitEffectPlayer
+  hitSpriteSheet: {fileID: 2800000, guid: 636a6156a26cead4ba83a00037b1ba45, type: 3}
+  frameColumns: 5
+  frameRows: 3
+  frameCount: 15
+  frameSeconds: 0.033
+  pixelsPerUnit: 100
+  worldOffset: {x: 0, y: 0, z: 0}
+  effectScale: {x: 1, y: 1, z: 1}
+  playOnlyOnEnemies: 1
+  sortingOrderOffset: 4
+  minimumSortingOrder: 20
+  copyHitTargetMaterial: 1
 --- !u!61 &4697355616983758325
 BoxCollider2D:
   m_ObjectHideFlags: 0

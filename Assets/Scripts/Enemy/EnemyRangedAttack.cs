@@ -43,6 +43,7 @@ namespace GameName.Enemy
         }
 
         private EnemyController enemyController;
+        private EnemyRangedWindupEffectPlayer windupEffectPlayer;
         private Collider2D bodyCollider;
         private Transform playerTransform;
 
@@ -55,6 +56,8 @@ namespace GameName.Enemy
         /// 弾の生成に成功したタイミングで通知する。遠距離攻撃SEの再生に使う。
         /// </summary>
         public event Action ProjectileFired;
+        public event Action<Transform, float> WindupStarted;
+        public event Action WindupEnded;
 
         public bool IsWindingUp => attackState == AttackState.Windup;
         public bool IsFiring => attackState == AttackState.Fire;
@@ -62,6 +65,7 @@ namespace GameName.Enemy
         private void Awake()
         {
             enemyController = GetComponent<EnemyController>();
+            windupEffectPlayer = GetComponent<EnemyRangedWindupEffectPlayer>();
             bodyCollider = GetComponent<Collider2D>();
 
             if (enemyController == null)
@@ -108,6 +112,11 @@ namespace GameName.Enemy
 
             enemyController.PauseMovement(false);
             enemyController.StopHorizontalMotion();
+            if (attackState == AttackState.Windup)
+            {
+                WindupEnded?.Invoke();
+            }
+
             attackState = AttackState.Idle;
             stateTimer = 0f;
         }
@@ -159,6 +168,7 @@ namespace GameName.Enemy
             stateTimer = windupDuration;
             vibrationElapsed = 0f;
             vibrationBaseX = enemyController.CurrentX;
+            WindupStarted?.Invoke(firePoint != null ? firePoint : transform, windupDuration);
         }
 
         private void UpdateWindupState()
@@ -189,6 +199,7 @@ namespace GameName.Enemy
             FacePlayer();
             enemyController.SetHorizontalPosition(vibrationBaseX);
             enemyController.StopHorizontalMotion();
+            WindupEnded?.Invoke();
 
             FireProjectile();
 
@@ -222,6 +233,7 @@ namespace GameName.Enemy
             if (attackState == AttackState.Windup)
             {
                 enemyController.SetHorizontalPosition(vibrationBaseX);
+                WindupEnded?.Invoke();
             }
 
             attackState = AttackState.Idle;
@@ -236,9 +248,7 @@ namespace GameName.Enemy
                 return;
             }
 
-            Vector3 spawnPosition = firePoint != null
-                ? firePoint.position
-                : GetBodyCenter();
+            Vector3 spawnPosition = ResolveProjectileSpawnPosition();
 
             GameObject bulletObject = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
             EnemyBullet bullet = bulletObject.GetComponent<EnemyBullet>();
@@ -273,6 +283,17 @@ namespace GameName.Enemy
         private Vector3 GetBodyCenter()
         {
             return bodyCollider != null ? bodyCollider.bounds.center : transform.position;
+        }
+
+        private Vector3 ResolveProjectileSpawnPosition()
+        {
+            Transform spawnAnchor = firePoint != null ? firePoint : transform;
+            if (windupEffectPlayer != null)
+            {
+                return windupEffectPlayer.ResolveEffectWorldPosition(spawnAnchor);
+            }
+
+            return firePoint != null ? firePoint.position : GetBodyCenter();
         }
 
         private bool IsPlayerInDetectionRadius()

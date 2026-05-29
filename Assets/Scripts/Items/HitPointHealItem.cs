@@ -40,6 +40,16 @@ public class HitPointHealItem : MonoBehaviour
         //取得判定をtrueにする
         isPickedUp = true;
 
+        ItemEffectController effectController = GetComponent<ItemEffectController>();
+        if (effectController != null)
+        {
+            effectController.PlayHealEffectOnPlayer(playerHealth);
+            if (effectController.PlayPickupEffectAndDestroy())
+            {
+                return;
+            }
+        }
+
         //アイテム削除
         Destroy(gameObject);
     }

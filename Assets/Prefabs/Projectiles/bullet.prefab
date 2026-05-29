@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -2988171857744944468}
   - component: {fileID: -9056477180293243365}
   - component: {fileID: -1672026058775243411}
+  - component: {fileID: 650300000000000001}
   m_Layer: 0
   m_Name: bullet
   m_TagString: Untagged
@@ -85,7 +86,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1842100608475083546, guid: dfac8fef30dbe854b979645d46914fbe, type: 3}
-  m_Color: {r: 0.08339405, g: 0, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -184,3 +185,37 @@ MonoBehaviour:
   justParryWindow: 1
   maxReflectDistance: 15
   reflectedDamageMultiplier: 1.5
+--- !u!114 &650300000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3964884202035495257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab7c9e44e7b8424c86a78d5f302e6579, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Enemy.EnemyBulletEffectPlayer
+  loopSpriteSheet: {fileID: 2800000, guid: 1d6acb5c3d3bc92498c8f39c1117adce, type: 3}
+  loopColumns: 5
+  loopRows: 6
+  loopFrameCount: 30
+  loopFrameSeconds: 0.033
+  outSpriteSheet: {fileID: 2800000, guid: 49f004f500bf7ec44929d1460b066985, type: 3}
+  outColumns: 5
+  outRows: 3
+  outFrameCount: 15
+  outFrameSeconds: 0.033
+  impactSpriteSheet: {fileID: 2800000, guid: 1eac5165945a4004b81d34270988dfbd, type: 3}
+  impactColumns: 5
+  impactRows: 3
+  impactFrameCount: 15
+  impactFrameSeconds: 0.033
+  pixelsPerUnit: 100
+  loopScale: {x: 0.9, y: 0.9, z: 1}
+  outScale: {x: 0.75, y: 0.75, z: 1}
+  impactScale: {x: 1, y: 1, z: 1}
+  oneShotOffset: {x: 0, y: 0, z: 0}
+  sortingOrder: 10
+  forceWhiteColor: 1
