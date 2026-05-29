@@ -294,7 +294,7 @@ MonoBehaviour:
   playerTag: Player
   playerDetectionMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 256
   viewHitboxSize: {x: 12.49, y: 2.74}
   viewForwardOffset: -1.76
   viewVerticalOffset: 0

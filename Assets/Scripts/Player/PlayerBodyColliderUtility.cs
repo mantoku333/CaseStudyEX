@@ -9,6 +9,14 @@ namespace Metroidvania.Player
     /// </summary>
     public static class PlayerBodyColliderUtility
     {
+        private const string PlayerLayerName = "Player";
+
+        public static LayerMask GetPlayerBodyLayerMask()
+        {
+            int playerLayer = LayerMask.NameToLayer(PlayerLayerName);
+            return playerLayer >= 0 ? 1 << playerLayer : Physics2D.DefaultRaycastLayers;
+        }
+
         /// <summary>
         /// PlayerHealth が付いているルート上の非トリガー Collider2D を、本体コライダーとして取得する。
         /// </summary>
