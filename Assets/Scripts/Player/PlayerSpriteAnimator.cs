@@ -37,6 +37,8 @@ namespace Player
         [SerializeField] private string parryStateName = "parry";
         [SerializeField] private string changeStateName = "change";
         [SerializeField] private string attackStateName = "attack";
+        [SerializeField] private string recoilBoostStateName = "RecoilBoost";
+        [SerializeField] private string recoilBoostDuringStateName = "RecoilBoost_during";
 
         [Header("Debug")]
         [SerializeField] private bool logCurrentSpriteEveryFrame = true;
@@ -51,7 +53,9 @@ namespace Player
             Dodge,
             Parry,
             Change,
-            Attack
+            Attack,
+            RecoilBoost,
+            RecoilBoostDuring
         }
 
         private static readonly SpriteRenderer[] EmptyRenderers = new SpriteRenderer[0];
@@ -387,6 +391,10 @@ namespace Player
                     return changeStateName;
                 case VisualState.Attack:
                     return attackStateName;
+                case VisualState.RecoilBoost:
+                    return recoilBoostStateName;
+                case VisualState.RecoilBoostDuring:
+                    return recoilBoostDuringStateName;
                 default:
                     if (!isUmbrellaOpen && !string.IsNullOrEmpty(closedIdleStateName))
                     {
@@ -402,6 +410,8 @@ namespace Player
             if (state != VisualState.Parry &&
                 state != VisualState.Change &&
                 state != VisualState.Attack &&
+                state != VisualState.RecoilBoost &&
+                state != VisualState.RecoilBoostDuring &&
                 AnimatorHasState(primary))
             {
                 return primary;
@@ -467,6 +477,19 @@ namespace Player
                     if (AnimatorHasState(primary)) return primary;
                     if (AnimatorHasState("Attack")) return "Attack";
                     if (AnimatorHasState("attack")) return "attack";
+                    break;
+                case VisualState.RecoilBoost:
+                    if (AnimatorHasState(primary)) return primary;
+                    if (AnimatorHasState("RecoilBoost")) return "RecoilBoost";
+                    if (AnimatorHasState("recoilBoost")) return "recoilBoost";
+                    if (AnimatorHasState("recoil_boost")) return "recoil_boost";
+                    break;
+                case VisualState.RecoilBoostDuring:
+                    if (AnimatorHasState(primary)) return primary;
+                    if (AnimatorHasState("RecoilBoost_during")) return "RecoilBoost_during";
+                    if (AnimatorHasState("RecoilBoostDuring")) return "RecoilBoostDuring";
+                    if (AnimatorHasState("recoilBoost_during")) return "recoilBoost_during";
+                    if (AnimatorHasState("recoil_boost_during")) return "recoil_boost_during";
                     break;
                 default:
                     if (!isUmbrellaOpen)
