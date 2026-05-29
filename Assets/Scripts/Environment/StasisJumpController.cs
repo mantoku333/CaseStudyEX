@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class StasisJumpController : MonoBehaviour
 {
@@ -82,12 +81,12 @@ public class StasisJumpController : MonoBehaviour
             return;
         }
 
-        if (!TryGetStandingPlayer(out var playerController, out var playerRigidbody, out var umbrellaController, out var jumpAction))
+        if (!TryGetStandingPlayer(out var playerController, out var playerRigidbody, out var umbrellaController, out var playerCollider))
         {
             return;
         }
 
-        if (jumpAction.WasPressedThisFrame())
+        if (HasPassedPlatformMiddle(playerCollider.bounds))
         {
             jumpRoutine = StartCoroutine(RunJumpSequence(playerController, playerRigidbody, umbrellaController));
         }
@@ -247,12 +246,12 @@ public class StasisJumpController : MonoBehaviour
         out PlayerController playerController,
         out Rigidbody2D playerRigidbody,
         out UmbrellaController umbrellaController,
-        out InputAction jumpAction)
+        out Collider2D playerCollider)
     {
         playerController = null;
         playerRigidbody = null;
         umbrellaController = null;
-        jumpAction = null;
+        playerCollider = null;
 
         Bounds bounds = jumpPlatformCollider.bounds;
         Vector2 probeSize = new Vector2(
@@ -287,12 +286,7 @@ public class StasisJumpController : MonoBehaviour
             }
 
             Rigidbody2D candidateRigidbody = candidatePlayer.GetComponent<Rigidbody2D>();
-            PlayerInput candidateInput = candidatePlayer.GetComponent<PlayerInput>();
-            InputAction candidateJumpAction = candidateInput != null && candidateInput.actions != null
-                ? candidateInput.actions.FindAction("Jump", false)
-                : null;
-
-            if (candidateRigidbody == null || candidateJumpAction == null)
+            if (candidateRigidbody == null)
             {
                 continue;
             }
@@ -300,11 +294,29 @@ public class StasisJumpController : MonoBehaviour
             playerController = candidatePlayer;
             playerRigidbody = candidateRigidbody;
             umbrellaController = candidatePlayer.GetComponentInChildren<UmbrellaController>();
-            jumpAction = candidateJumpAction;
+            playerCollider = candidateCollider;
             return true;
         }
 
         return false;
+    }
+
+    private bool HasPassedPlatformMiddle(Bounds playerBounds)
+    {
+        if (jumpPlatformCollider == null || jumpDestination == null)
+        {
+            return false;
+        }
+
+        float platformCenterX = jumpPlatformCollider.bounds.center.x;
+        float destinationDirectionX = jumpDestination.position.x - platformCenterX;
+
+        if (destinationDirectionX >= 0f)
+        {
+            return playerBounds.center.x >= platformCenterX;
+        }
+
+        return playerBounds.center.x <= platformCenterX;
     }
 
     private bool IsStandingOnPlatformTop(Bounds playerBounds, Bounds platformBounds)
