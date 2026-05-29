@@ -108,6 +108,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
     private bool hasMinimapVisibleBeforeMenuMap;
     private bool gameplayPaused;
     private bool isOpen;
+    private bool cursorMenuModeActive;
     private bool listenersRegistered;
     private bool referencesResolved;
     private bool isRebinding;
@@ -154,6 +155,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
     private void OnDisable()
     {
+        SetCursorMenuModeActive(false);
         DisposeActiveRebindOperation();
         activeVolumeBar = ActiveVolumeBar.None;
         isDraggingKeyboardScrollbar = false;
@@ -162,6 +164,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
     private void OnDestroy()
     {
+        SetCursorMenuModeActive(false);
         DisposeActiveRebindOperation();
         UnregisterListeners();
         RestoreGameplayState();
@@ -466,6 +469,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         ResetKeyboardScroll();
         ClearKeyboardStatus();
         ShowMainMenu();
+        SetCursorMenuModeActive(true);
         SetMenuVisible(true);
         isOpen = true;
 
@@ -487,6 +491,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         }
 
         SetMenuVisible(false);
+        SetCursorMenuModeActive(false);
         isOpen = false;
         activeVolumeBar = ActiveVolumeBar.None;
         isDraggingKeyboardScrollbar = false;
@@ -1615,6 +1620,17 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         {
             menuRoot.SetActive(visible);
         }
+    }
+
+    private void SetCursorMenuModeActive(bool active)
+    {
+        if (cursorMenuModeActive == active)
+        {
+            return;
+        }
+
+        cursorMenuModeActive = active;
+        GameCursorController.SetMenuCursorModeActive(this, active);
     }
 
     private void SetCanvasRenderingEnabled(bool visible)

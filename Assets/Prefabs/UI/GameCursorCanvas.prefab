@@ -108,11 +108,12 @@ MonoBehaviour:
   cursorOpenSprite: {fileID: -3899580865589661713, guid: 6079f7233ade1604db62ff18790f2e83, type: 3}
   cursorClosedSprite: {fileID: 9061039131553754492, guid: 6079f7233ade1604db62ff18790f2e83, type: 3}
   cursorBlinkPattern: 0100000000111111100000
-  cursorBlinkMinIntervalSeconds: 30
-  cursorBlinkMaxIntervalSeconds: 180
+  cursorBlinkMinIntervalSeconds: 10
+  cursorBlinkMaxIntervalSeconds: 20
   cursorBlinkStepSeconds: 0.08
   reticleSize: {x: 64, y: 64}
   reloadSize: {x: 64, y: 64}
+  clampReticleToPlayerRadius: 0
   reticleWorldRadius: 5
   reloadStartColor: {r: 1, g: 0, b: 0, a: 1}
   reloadMiddleColor: {r: 1, g: 0.45, b: 0, a: 1}

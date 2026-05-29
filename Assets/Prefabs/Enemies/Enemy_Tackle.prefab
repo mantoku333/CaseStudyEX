@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 4333219616003735470}
   - component: {fileID: 867530900123456789}
   - component: {fileID: 1141293357520890712}
+  - component: {fileID: 6194872500186642142}
   - component: {fileID: 730100000000000001}
   - component: {fileID: 914900000000000003}
   - component: {fileID: 820100000000000002}
@@ -277,7 +278,10 @@ MonoBehaviour:
   stageLayerMask:
     serializedVersion: 2
     m_Bits: 192
+  treatShutterWallsAsWalls: 1
   flipSpriteOnTurn: 1
+  turnCheckInterval: 0.08
+  staggerTurnChecks: 1
   enemyCollisionTurnCooldown: 0.15
 --- !u!114 &867530900123456789
 MonoBehaviour:
@@ -328,6 +332,31 @@ MonoBehaviour:
   hitInterval: 0.2
   applyDamageInPassThrough: 1
   contactDamage: 10
+--- !u!114 &6194872500186642142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2c37b5592494a83a7d5ab2a9b1f6e91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyContactHitEffectPlayer
+  normalHitSpriteSheet: {fileID: 2800000, guid: 6f94c3abd6d8b014c9d43f470ab046df, type: 3}
+  fatalHitSpriteSheet: {fileID: 2800000, guid: 36a3d19ac11512248a5b986c41ee8b8d, type: 3}
+  frameColumns: 5
+  frameRows: 3
+  frameCount: 15
+  frameSeconds: 0.033
+  pixelsPerUnit: 100
+  worldOffset: {x: 0, y: -1.36, z: 0}
+  effectScale: {x: 2, y: 2, z: 2}
+  parentToPlayer: 1
+  sortingOrderOffset: 3
+  copyPlayerMaterial: 1
+  chargingGraceSeconds: 0.15
 --- !u!114 &730100000000000001
 MonoBehaviour:
   m_ObjectHideFlags: 0

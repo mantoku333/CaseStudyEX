@@ -1,0 +1,5031 @@
+fileFormatVersion: 2
+guid: a72a53c0ea44d8d43aeedd2f5145c887
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5565078909523109706
+    second: eff_heal_back_0
+  - first:
+      213: 9022341358149741461
+    second: eff_heal_back_1
+  - first:
+      213: -777313523844894031
+    second: eff_heal_back_2
+  - first:
+      213: 451006871840141686
+    second: eff_heal_back_3
+  - first:
+      213: -7635176951475987157
+    second: eff_heal_back_4
+  - first:
+      213: -2398379952198231167
+    second: eff_heal_back_5
+  - first:
+      213: -8067204107162049602
+    second: eff_heal_back_6
+  - first:
+      213: 49370477423192069
+    second: eff_heal_back_7
+  - first:
+      213: -7549682206878531401
+    second: eff_heal_back_8
+  - first:
+      213: -6349956405001049987
+    second: eff_heal_back_9
+  - first:
+      213: 6127260012427323413
+    second: eff_heal_back_10
+  - first:
+      213: 1385200129364535445
+    second: eff_heal_back_11
+  - first:
+      213: 5574862202728038363
+    second: eff_heal_back_12
+  - first:
+      213: 6708386983209814805
+    second: eff_heal_back_13
+  - first:
+      213: 7209681335364395245
+    second: eff_heal_back_14
+  - first:
+      213: -2153405433886168507
+    second: eff_heal_back_15
+  - first:
+      213: 1560057391271996530
+    second: eff_heal_back_16
+  - first:
+      213: -3389345833117283225
+    second: eff_heal_back_17
+  - first:
+      213: 5822732498108329883
+    second: eff_heal_back_18
+  - first:
+      213: -5818892172296746728
+    second: eff_heal_back_19
+  - first:
+      213: -1934132139251559164
+    second: eff_heal_back_20
+  - first:
+      213: 1436642371336127222
+    second: eff_heal_back_21
+  - first:
+      213: -1095454684141396962
+    second: eff_heal_back_22
+  - first:
+      213: -803541445941800193
+    second: eff_heal_back_23
+  - first:
+      213: -6268167718967019437
+    second: eff_heal_back_24
+  - first:
+      213: 7854183315016624633
+    second: eff_heal_back_25
+  - first:
+      213: -2952859688933244411
+    second: eff_heal_back_26
+  - first:
+      213: -2895640953664034314
+    second: eff_heal_back_27
+  - first:
+      213: -3029208501079309323
+    second: eff_heal_back_28
+  - first:
+      213: -1297404701907311089
+    second: eff_heal_back_29
+  - first:
+      213: 4891300383644375524
+    second: eff_heal_back_30
+  - first:
+      213: -8591989038656957680
+    second: eff_heal_back_31
+  - first:
+      213: 1438670790693180833
+    second: eff_heal_back_32
+  - first:
+      213: 488100984641181529
+    second: eff_heal_back_33
+  - first:
+      213: -7833770493656957332
+    second: eff_heal_back_34
+  - first:
+      213: -8847882502763414410
+    second: eff_heal_back_35
+  - first:
+      213: -802018993997079538
+    second: eff_heal_back_36
+  - first:
+      213: -4790673277758941418
+    second: eff_heal_back_37
+  - first:
+      213: -8318584044882931278
+    second: eff_heal_back_38
+  - first:
+      213: -7544985647992100695
+    second: eff_heal_back_39
+  - first:
+      213: 2239921494219675839
+    second: eff_heal_back_40
+  - first:
+      213: -1944507641266835960
+    second: eff_heal_back_41
+  - first:
+      213: 6148877337092605357
+    second: eff_heal_back_42
+  - first:
+      213: 2869077167880424375
+    second: eff_heal_back_43
+  - first:
+      213: 3872491774091448318
+    second: eff_heal_back_44
+  - first:
+      213: 4526437560100437952
+    second: eff_heal_back_45
+  - first:
+      213: -5614195937692795427
+    second: eff_heal_back_46
+  - first:
+      213: -7319454566848443907
+    second: eff_heal_back_47
+  - first:
+      213: 1810245883175037154
+    second: eff_heal_back_48
+  - first:
+      213: 545731574009528639
+    second: eff_heal_back_49
+  - first:
+      213: 8774544662686993797
+    second: eff_heal_back_50
+  - first:
+      213: -362211188407937346
+    second: eff_heal_back_51
+  - first:
+      213: 1446535808666612424
+    second: eff_heal_back_52
+  - first:
+      213: -5169951762528722146
+    second: eff_heal_back_53
+  - first:
+      213: 4216218364324177114
+    second: eff_heal_back_54
+  - first:
+      213: 6800252659734203259
+    second: eff_heal_back_55
+  - first:
+      213: -8297621300782784960
+    second: eff_heal_back_56
+  - first:
+      213: 50673758205090849
+    second: eff_heal_back_57
+  - first:
+      213: 7637059035929455119
+    second: eff_heal_back_58
+  - first:
+      213: -2407262202829304414
+    second: eff_heal_back_59
+  - first:
+      213: 6899574032622200497
+    second: eff_heal_back_60
+  - first:
+      213: 6725986647154038147
+    second: eff_heal_back_61
+  - first:
+      213: -3371292095162887643
+    second: eff_heal_back_62
+  - first:
+      213: -5384743448286818842
+    second: eff_heal_back_63
+  - first:
+      213: 1212124418543535134
+    second: eff_heal_back_64
+  - first:
+      213: -7104811624020683851
+    second: eff_heal_back_65
+  - first:
+      213: -6806712619445249738
+    second: eff_heal_back_66
+  - first:
+      213: 5395285725614933945
+    second: eff_heal_back_67
+  - first:
+      213: -356905137676200740
+    second: eff_heal_back_68
+  - first:
+      213: 6682169365019766464
+    second: eff_heal_back_69
+  - first:
+      213: -4913336889666168944
+    second: eff_heal_back_70
+  - first:
+      213: 7852290178601307747
+    second: eff_heal_back_71
+  - first:
+      213: -3189468526746810656
+    second: eff_heal_back_72
+  - first:
+      213: 686941583126025579
+    second: eff_heal_back_73
+  - first:
+      213: -2969622335356185151
+    second: eff_heal_back_74
+  - first:
+      213: 6846802369728356869
+    second: eff_heal_back_75
+  - first:
+      213: 5400409255693811695
+    second: eff_heal_back_76
+  - first:
+      213: -8771809174626803511
+    second: eff_heal_back_77
+  - first:
+      213: 5002592790615760685
+    second: eff_heal_back_78
+  - first:
+      213: 930295168153490357
+    second: eff_heal_back_79
+  - first:
+      213: -1866652451361109871
+    second: eff_heal_back_80
+  - first:
+      213: 7108846969876321530
+    second: eff_heal_back_81
+  - first:
+      213: 7703382270957871930
+    second: eff_heal_back_82
+  - first:
+      213: -3219075189834923489
+    second: eff_heal_back_83
+  - first:
+      213: -5243271128638471441
+    second: eff_heal_back_84
+  - first:
+      213: 5784293174730542782
+    second: eff_heal_back_85
+  - first:
+      213: 5874626756580978199
+    second: eff_heal_back_86
+  - first:
+      213: 7155513758855558168
+    second: eff_heal_back_87
+  - first:
+      213: -1806502308966816892
+    second: eff_heal_back_88
+  - first:
+      213: -5710058392947174737
+    second: eff_heal_back_89
+  - first:
+      213: -166121512294304995
+    second: eff_heal_back_90
+  - first:
+      213: -5758121071765402008
+    second: eff_heal_back_91
+  - first:
+      213: -3966979319359501661
+    second: eff_heal_back_92
+  - first:
+      213: -1736762096842753169
+    second: eff_heal_back_93
+  - first:
+      213: 5041546258788287209
+    second: eff_heal_back_94
+  - first:
+      213: 8513874882160697793
+    second: eff_heal_back_95
+  - first:
+      213: 7780440830970657875
+    second: eff_heal_back_96
+  - first:
+      213: 8747414243901956610
+    second: eff_heal_back_97
+  - first:
+      213: -939710136512397853
+    second: eff_heal_back_98
+  - first:
+      213: 2376465542886224001
+    second: eff_heal_back_99
+  - first:
+      213: -3235128335930401799
+    second: eff_heal_back_100
+  - first:
+      213: -8075333877019982078
+    second: eff_heal_back_101
+  - first:
+      213: 8133809060702645216
+    second: eff_heal_back_102
+  - first:
+      213: 5333041734089882926
+    second: eff_heal_back_103
+  - first:
+      213: -3509535370370958732
+    second: eff_heal_back_104
+  - first:
+      213: -2332916038584715632
+    second: eff_heal_back_105
+  - first:
+      213: 8985230293277500720
+    second: eff_heal_back_106
+  - first:
+      213: -7956420549941067558
+    second: eff_heal_back_107
+  - first:
+      213: 6493492244476332190
+    second: eff_heal_back_108
+  - first:
+      213: -3715070599407254505
+    second: eff_heal_back_109
+  - first:
+      213: 1991060505065327315
+    second: eff_heal_back_110
+  - first:
+      213: 4268429346538763147
+    second: eff_heal_back_111
+  - first:
+      213: 7439507901435543783
+    second: eff_heal_back_112
+  - first:
+      213: -5577537001843025376
+    second: eff_heal_back_113
+  - first:
+      213: 5505529146183214707
+    second: eff_heal_back_114
+  - first:
+      213: -2017209683967408686
+    second: eff_heal_back_115
+  - first:
+      213: -6780446881563362721
+    second: eff_heal_back_116
+  - first:
+      213: 1219819609381114733
+    second: eff_heal_back_117
+  - first:
+      213: -4286722601474980031
+    second: eff_heal_back_118
+  - first:
+      213: -8323339712556983211
+    second: eff_heal_back_119
+  - first:
+      213: -1842302607339097619
+    second: eff_heal_back_120
+  - first:
+      213: -4310353146682617333
+    second: eff_heal_back_121
+  - first:
+      213: 6210489687938133974
+    second: eff_heal_back_122
+  - first:
+      213: -6682121931087841100
+    second: eff_heal_back_123
+  - first:
+      213: -63318495332723845
+    second: eff_heal_back_124
+  - first:
+      213: -8545526751543880294
+    second: eff_heal_back_125
+  - first:
+      213: -5016048544448581054
+    second: eff_heal_back_126
+  - first:
+      213: 5109625889680053720
+    second: eff_heal_back_127
+  - first:
+      213: 7281614792533179432
+    second: eff_heal_back_128
+  - first:
+      213: 7098776757272899029
+    second: eff_heal_back_129
+  - first:
+      213: 1139246859782711409
+    second: eff_heal_back_130
+  - first:
+      213: 5370122546490119770
+    second: eff_heal_back_131
+  - first:
+      213: -4424828113502771424
+    second: eff_heal_back_132
+  - first:
+      213: 5793274280698387230
+    second: eff_heal_back_133
+  - first:
+      213: 7389834043975078421
+    second: eff_heal_back_134
+  - first:
+      213: -5590396852589441920
+    second: eff_heal_back_135
+  - first:
+      213: 5323786709777737124
+    second: eff_heal_back_136
+  - first:
+      213: -6862882579562291058
+    second: eff_heal_back_137
+  - first:
+      213: -137786209025359264
+    second: eff_heal_back_138
+  - first:
+      213: 5061923100815242298
+    second: eff_heal_back_139
+  - first:
+      213: -6599207421624344795
+    second: eff_heal_back_140
+  - first:
+      213: -4800918401685766760
+    second: eff_heal_back_141
+  - first:
+      213: 1433018705617490203
+    second: eff_heal_back_142
+  - first:
+      213: -5244751034162874279
+    second: eff_heal_back_143
+  - first:
+      213: 4068787129207338172
+    second: eff_heal_back_144
+  - first:
+      213: -4450887599720307017
+    second: eff_heal_back_145
+  - first:
+      213: -893705715032537101
+    second: eff_heal_back_146
+  - first:
+      213: -7866613416688049368
+    second: eff_heal_back_147
+  - first:
+      213: -8121759585028289133
+    second: eff_heal_back_148
+  - first:
+      213: 7888973034449452097
+    second: eff_heal_back_149
+  - first:
+      213: 8875967847218679005
+    second: eff_heal_back_150
+  - first:
+      213: -5891988330204828176
+    second: eff_heal_back_151
+  - first:
+      213: 3770656265649875156
+    second: eff_heal_back_152
+  - first:
+      213: 2668105550711448360
+    second: eff_heal_back_153
+  - first:
+      213: 1959940388733658254
+    second: eff_heal_back_154
+  - first:
+      213: -2319192564950801474
+    second: eff_heal_back_155
+  - first:
+      213: -3740819833116610110
+    second: eff_heal_back_156
+  - first:
+      213: -302218862187313191
+    second: eff_heal_back_157
+  - first:
+      213: -4679107530175396569
+    second: eff_heal_back_158
+  - first:
+      213: 4317761741719299251
+    second: eff_heal_back_159
+  - first:
+      213: 544342945224342622
+    second: eff_heal_back_160
+  - first:
+      213: -1159284842762578789
+    second: eff_heal_back_161
+  - first:
+      213: 9168942740894614054
+    second: eff_heal_back_162
+  - first:
+      213: -6405914198729064210
+    second: eff_heal_back_163
+  - first:
+      213: 273217333859000276
+    second: eff_heal_back_164
+  - first:
+      213: -3399901801744488406
+    second: eff_heal_back_165
+  - first:
+      213: 885267476829061103
+    second: eff_heal_back_166
+  - first:
+      213: -8102585699781016460
+    second: eff_heal_back_167
+  - first:
+      213: -6160517962283910401
+    second: eff_heal_back_168
+  - first:
+      213: 1894815943295843722
+    second: eff_heal_back_169
+  - first:
+      213: 2327363747714028337
+    second: eff_heal_back_170
+  - first:
+      213: -2828272311093638466
+    second: eff_heal_back_171
+  - first:
+      213: -6321137047098689877
+    second: eff_heal_back_172
+  - first:
+      213: 4430460322428187200
+    second: eff_heal_back_173
+  - first:
+      213: -2270042997175167543
+    second: eff_heal_back_174
+  - first:
+      213: -5045205714460857329
+    second: eff_heal_back_175
+  - first:
+      213: 1323227037363386928
+    second: eff_heal_back_176
+  - first:
+      213: 6924368025577382175
+    second: eff_heal_back_177
+  - first:
+      213: 753894147962117852
+    second: eff_heal_back_178
+  - first:
+      213: 342724099023545980
+    second: eff_heal_back_179
+  - first:
+      213: 6969935468822605829
+    second: eff_heal_back_180
+  - first:
+      213: 7955653065839158895
+    second: eff_heal_back_181
+  - first:
+      213: -345697842713982112
+    second: eff_heal_back_182
+  - first:
+      213: 8520368705405681595
+    second: eff_heal_back_183
+  - first:
+      213: 3229419939276736070
+    second: eff_heal_back_184
+  - first:
+      213: -5992691145639268511
+    second: eff_heal_back_185
+  - first:
+      213: -1314996274162412194
+    second: eff_heal_back_186
+  - first:
+      213: 4389481507239943503
+    second: eff_heal_back_187
+  - first:
+      213: -3170542963821237602
+    second: eff_heal_back_188
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_heal_back_0
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 5286
+        width: 17
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a47a42d78c12b3d40800000000000000
+      internalID: 5565078909523109706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_1
+      rect:
+        serializedVersion: 2
+        x: 1428
+        y: 5241
+        width: 17
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59ba4dea9abc53d70800000000000000
+      internalID: 9022341358149741461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_2
+      rect:
+        serializedVersion: 2
+        x: 1469
+        y: 5227
+        width: 27
+        height: 196
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b23e1ce77d6635f0800000000000000
+      internalID: -777313523844894031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_3
+      rect:
+        serializedVersion: 2
+        x: 1511
+        y: 5214
+        width: 50
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 671ba434c5c424600800000000000000
+      internalID: 451006871840141686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_4
+      rect:
+        serializedVersion: 2
+        x: 1595
+        y: 5210
+        width: 46
+        height: 231
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2d160af3076a0690800000000000000
+      internalID: -7635176951475987157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_5
+      rect:
+        serializedVersion: 2
+        x: 1641
+        y: 5225
+        width: 23
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18b5ec0042e37bed0800000000000000
+      internalID: -2398379952198231167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_6
+      rect:
+        serializedVersion: 2
+        x: 2432
+        y: 5286
+        width: 17
+        height: 165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb3a80e3b988b0090800000000000000
+      internalID: -8067204107162049602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_7
+      rect:
+        serializedVersion: 2
+        x: 2451
+        y: 5236
+        width: 21
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 508633900366fa000800000000000000
+      internalID: 49370477423192069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_8
+      rect:
+        serializedVersion: 2
+        x: 2492
+        y: 5221
+        width: 29
+        height: 263
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b00be368042a3790800000000000000
+      internalID: -7549682206878531401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_9
+      rect:
+        serializedVersion: 2
+        x: 2535
+        y: 5210
+        width: 50
+        height: 307
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7822bc0b4c60e7a0800000000000000
+      internalID: -6349956405001049987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_10
+      rect:
+        serializedVersion: 2
+        x: 2619
+        y: 5209
+        width: 69
+        height: 294
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 518af278486680550800000000000000
+      internalID: 6127260012427323413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_11
+      rect:
+        serializedVersion: 2
+        x: 3456
+        y: 5227
+        width: 40
+        height: 300
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5982995bd28393310800000000000000
+      internalID: 1385200129364535445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_12
+      rect:
+        serializedVersion: 2
+        x: 3515
+        y: 5221
+        width: 30
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdf3b51f2a3ed5d40800000000000000
+      internalID: 5574862202728038363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_13
+      rect:
+        serializedVersion: 2
+        x: 3558
+        y: 5210
+        width: 51
+        height: 368
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51b431e2b6af81d50800000000000000
+      internalID: 6708386983209814805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_14
+      rect:
+        serializedVersion: 2
+        x: 3643
+        y: 5209
+        width: 70
+        height: 354
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de0a82ad9feed0460800000000000000
+      internalID: 7209681335364395245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_15
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 5228
+        width: 42
+        height: 366
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54aa1d7ca219d12e0800000000000000
+      internalID: -2153405433886168507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_16
+      rect:
+        serializedVersion: 2
+        x: 4539
+        y: 5222
+        width: 30
+        height: 374
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27c6dfb8eef66a510800000000000000
+      internalID: 1560057391271996530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_17
+      rect:
+        serializedVersion: 2
+        x: 4576
+        y: 5210
+        width: 57
+        height: 421
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76c081c1cef96f0d0800000000000000
+      internalID: -3389345833117283225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_18
+      rect:
+        serializedVersion: 2
+        x: 4667
+        y: 5209
+        width: 70
+        height: 406
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9faedb5b508ec050800000000000000
+      internalID: 5822732498108329883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_19
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 4262
+        width: 6
+        height: 349
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81983fb26642f3fa0800000000000000
+      internalID: -5818892172296746728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_20
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 4205
+        width: 30
+        height: 417
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4059e3b11159825e0800000000000000
+      internalID: -1934132139251559164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_21
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 4489
+        width: 6
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f2c3c400aaffe310800000000000000
+      internalID: 1436642371336127222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_22
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 4198
+        width: 37
+        height: 422
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1cd63cc4c92cc0f0800000000000000
+      internalID: -1095454684141396962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_23
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 4186
+        width: 58
+        height: 467
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff2d550ff4f39d4f0800000000000000
+      internalID: -803541445941800193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_24
+      rect:
+        serializedVersion: 2
+        x: 571
+        y: 4185
+        width: 70
+        height: 453
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35876667baef209a0800000000000000
+      internalID: -6268167718967019437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_25
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 4262
+        width: 6
+        height: 393
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f9ad5c9c1aaffc60800000000000000
+      internalID: 7854183315016624633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_26
+      rect:
+        serializedVersion: 2
+        x: 1420
+        y: 4203
+        width: 32
+        height: 464
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 502409102c55507d0800000000000000
+      internalID: -2952859688933244411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_27
+      rect:
+        serializedVersion: 2
+        x: 1466
+        y: 4197
+        width: 38
+        height: 460
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f928c7f4ed90d7d0800000000000000
+      internalID: -2895640953664034314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_28
+      rect:
+        serializedVersion: 2
+        x: 1503
+        y: 4186
+        width: 59
+        height: 509
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f3039eeae616f5d0800000000000000
+      internalID: -3029208501079309323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_29
+      rect:
+        serializedVersion: 2
+        x: 1594
+        y: 4186
+        width: 71
+        height: 493
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f06a4ec2c41befde0800000000000000
+      internalID: -1297404701907311089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_30
+      rect:
+        serializedVersion: 2
+        x: 2432
+        y: 4270
+        width: 6
+        height: 422
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e9dad0a8c361e340800000000000000
+      internalID: 4891300383644375524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_31
+      rect:
+        serializedVersion: 2
+        x: 2443
+        y: 4196
+        width: 33
+        height: 511
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0135dccdd7f13c880800000000000000
+      internalID: -8591989038656957680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_32
+      rect:
+        serializedVersion: 2
+        x: 2490
+        y: 4201
+        width: 39
+        height: 494
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a55ff3367f27f310800000000000000
+      internalID: 1438670790693180833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_33
+      rect:
+        serializedVersion: 2
+        x: 2528
+        y: 4186
+        width: 58
+        height: 546
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9575e0c624516c600800000000000000
+      internalID: 488100984641181529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_34
+      rect:
+        serializedVersion: 2
+        x: 2618
+        y: 4186
+        width: 71
+        height: 531
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6ef3a9bd3bd84390800000000000000
+      internalID: -7833770493656957332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_35
+      rect:
+        serializedVersion: 2
+        x: 3456
+        y: 4315
+        width: 6
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67c7468edb1063580800000000000000
+      internalID: -8847882502763414410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_36
+      rect:
+        serializedVersion: 2
+        x: 3467
+        y: 4190
+        width: 32
+        height: 553
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0c10b769f7aed4f0800000000000000
+      internalID: -802018993997079538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_37
+      rect:
+        serializedVersion: 2
+        x: 3514
+        y: 4194
+        width: 39
+        height: 541
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 617d834390c148db0800000000000000
+      internalID: -4790673277758941418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_38
+      rect:
+        serializedVersion: 2
+        x: 3557
+        y: 4186
+        width: 53
+        height: 578
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b1558a82e37e8c80800000000000000
+      internalID: -8318584044882931278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_39
+      rect:
+        serializedVersion: 2
+        x: 3642
+        y: 4186
+        width: 71
+        height: 566
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a8a2083783da4790800000000000000
+      internalID: -7544985647992100695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_40
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 4190
+        width: 38
+        height: 590
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb8d9bb3bbcc51f10800000000000000
+      internalID: 2239921494219675839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_41
+      rect:
+        serializedVersion: 2
+        x: 4538
+        y: 4194
+        width: 39
+        height: 575
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80ee14b4a98b305e0800000000000000
+      internalID: -1944507641266835960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_42
+      rect:
+        serializedVersion: 2
+        x: 4577
+        y: 4189
+        width: 57
+        height: 605
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da5cad42c53355550800000000000000
+      internalID: 6148877337092605357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_43
+      rect:
+        serializedVersion: 2
+        x: 4666
+        y: 4186
+        width: 71
+        height: 598
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bb42b0bb7201d720800000000000000
+      internalID: 2869077167880424375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_44
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 3165
+        width: 37
+        height: 625
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: effc75e40caddb530800000000000000
+      internalID: 3872491774091448318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_45
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 3170
+        width: 38
+        height: 606
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cfb5c39af221de30800000000000000
+      internalID: 4526437560100437952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_46
+      rect:
+        serializedVersion: 2
+        x: 478
+        y: 3166
+        width: 60
+        height: 631
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddd316a3a8e5612b0800000000000000
+      internalID: -5614195937692795427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_47
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 3166
+        width: 71
+        height: 624
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df943610ad21c6a90800000000000000
+      internalID: -7319454566848443907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_48
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 3162
+        width: 38
+        height: 635
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e8e2c62a094f1910800000000000000
+      internalID: 1810245883175037154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_49
+      rect:
+        serializedVersion: 2
+        x: 1467
+        y: 3168
+        width: 37
+        height: 629
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f318d83a9f3d29700800000000000000
+      internalID: 545731574009528639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_50
+      rect:
+        serializedVersion: 2
+        x: 1500
+        y: 3168
+        width: 37
+        height: 636
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58d024591e175c970800000000000000
+      internalID: 8774544662686993797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_51
+      rect:
+        serializedVersion: 2
+        x: 1532
+        y: 3251
+        width: 30
+        height: 547
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb6d54dd7da29faf0800000000000000
+      internalID: -362211188407937346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_52
+      rect:
+        serializedVersion: 2
+        x: 1594
+        y: 3165
+        width: 71
+        height: 632
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c2b47667a0231410800000000000000
+      internalID: 1446535808666612424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_53
+      rect:
+        serializedVersion: 2
+        x: 2432
+        y: 3162
+        width: 38
+        height: 658
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1322987344a048b0800000000000000
+      internalID: -5169951762528722146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_54
+      rect:
+        serializedVersion: 2
+        x: 2492
+        y: 3170
+        width: 69
+        height: 653
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad4650d8344038a30800000000000000
+      internalID: 4216218364324177114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_55
+      rect:
+        serializedVersion: 2
+        x: 2556
+        y: 3326
+        width: 30
+        height: 496
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7bcc56c3c95f5e50800000000000000
+      internalID: 6800252659734203259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_56
+      rect:
+        serializedVersion: 2
+        x: 2618
+        y: 3165
+        width: 71
+        height: 648
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04e902eb36de8dc80800000000000000
+      internalID: -8297621300782784960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_57
+      rect:
+        serializedVersion: 2
+        x: 3456
+        y: 3162
+        width: 68
+        height: 664
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12c9f3db38704b000800000000000000
+      internalID: 50673758205090849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_58
+      rect:
+        serializedVersion: 2
+        x: 3519
+        y: 3755
+        width: 7
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0a2345fab84cf960800000000000000
+      internalID: 7637059035929455119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_59
+      rect:
+        serializedVersion: 2
+        x: 3525
+        y: 3168
+        width: 60
+        height: 666
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ad822fd7cfa79ed0800000000000000
+      internalID: -2407262202829304414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_60
+      rect:
+        serializedVersion: 2
+        x: 3580
+        y: 3404
+        width: 33
+        height: 427
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b6a4f3f60630cf50800000000000000
+      internalID: 6899574032622200497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_61
+      rect:
+        serializedVersion: 2
+        x: 3642
+        y: 3211
+        width: 27
+        height: 612
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38513a34831875d50800000000000000
+      internalID: 6725986647154038147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_62
+      rect:
+        serializedVersion: 2
+        x: 3669
+        y: 3166
+        width: 44
+        height: 657
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 522dbb983b3c631d0800000000000000
+      internalID: -3371292095162887643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_63
+      rect:
+        serializedVersion: 2
+        x: 4480
+        y: 3161
+        width: 68
+        height: 673
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ed80460d5c8545b0800000000000000
+      internalID: -5384743448286818842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_64
+      rect:
+        serializedVersion: 2
+        x: 4549
+        y: 3165
+        width: 60
+        height: 676
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e144dde8cb452d010800000000000000
+      internalID: 1212124418543535134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_65
+      rect:
+        serializedVersion: 2
+        x: 4605
+        y: 3488
+        width: 33
+        height: 353
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b35e2a8873a66d90800000000000000
+      internalID: -7104811624020683851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_66
+      rect:
+        serializedVersion: 2
+        x: 4666
+        y: 3277
+        width: 27
+        height: 557
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6391cc5afe2b981a0800000000000000
+      internalID: -6806712619445249738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_67
+      rect:
+        serializedVersion: 2
+        x: 4693
+        y: 3173
+        width: 44
+        height: 650
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b7830138c7efda40800000000000000
+      internalID: 5395285725614933945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_68
+      rect:
+        serializedVersion: 2
+        x: 2469
+        y: 3166
+        width: 31
+        height: 297
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd45c421ba40c0bf0800000000000000
+      internalID: -356905137676200740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_69
+      rect:
+        serializedVersion: 2
+        x: 3621
+        y: 3384
+        width: 16
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ce200342a5dbbc50800000000000000
+      internalID: 6682169365019766464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_70
+      rect:
+        serializedVersion: 2
+        x: 4644
+        y: 3444
+        width: 17
+        height: 173
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09710ad712250dbb0800000000000000
+      internalID: -4913336889666168944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_71
+      rect:
+        serializedVersion: 2
+        x: 1446
+        y: 3177
+        width: 30
+        height: 208
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36ec1d07050f8fc60800000000000000
+      internalID: 7852290178601307747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_72
+      rect:
+        serializedVersion: 2
+        x: 1574
+        y: 3261
+        width: 14
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e6c7f0064bbcb3d0800000000000000
+      internalID: -3189468526746810656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_73
+      rect:
+        serializedVersion: 2
+        x: 2597
+        y: 3322
+        width: 15
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b65dba3fab1888900800000000000000
+      internalID: 686941583126025579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_74
+      rect:
+        serializedVersion: 2
+        x: 4637
+        y: 3179
+        width: 20
+        height: 244
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c557004838c9c6d0800000000000000
+      internalID: -2969622335356185151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_75
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 3238
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50226f6ba7ab40f50800000000000000
+      internalID: 6846802369728356869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_76
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 3211
+        width: 11
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fef7c5ffa9b12fa40800000000000000
+      internalID: 5400409255693811695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_77
+      rect:
+        serializedVersion: 2
+        x: 552
+        y: 3238
+        width: 9
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c06bdcd706444680800000000000000
+      internalID: -8771809174626803511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_78
+      rect:
+        serializedVersion: 2
+        x: 3620
+        y: 3211
+        width: 12
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2f159063a7cc6540800000000000000
+      internalID: 5002592790615760685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_79
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 3211
+        width: 6
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b31d0ac68219ec00800000000000000
+      internalID: 930295168153490357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_80
+      rect:
+        serializedVersion: 2
+        x: 388
+        y: 2137
+        width: 64
+        height: 680
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19842854c715816e0800000000000000
+      internalID: -1866652451361109871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_81
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 2141
+        width: 61
+        height: 681
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af41712a7a2b7a260800000000000000
+      internalID: 7108846969876321530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_82
+      rect:
+        serializedVersion: 2
+        x: 510
+        y: 2554
+        width: 33
+        height: 268
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a336c757c59e7ea60800000000000000
+      internalID: 7703382270957871930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_83
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 2333
+        width: 26
+        height: 482
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f12cd949b2c8353d0800000000000000
+      internalID: -3219075189834923489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_84
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 2157
+        width: 43
+        height: 653
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe2417440b82c37b0800000000000000
+      internalID: -5243271128638471441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_85
+      rect:
+        serializedVersion: 2
+        x: 1412
+        y: 2141
+        width: 64
+        height: 681
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebec784feffe54050800000000000000
+      internalID: 5784293174730542782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_86
+      rect:
+        serializedVersion: 2
+        x: 1476
+        y: 2144
+        width: 61
+        height: 681
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71ea306f8edd68150800000000000000
+      internalID: 5874626756580978199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_87
+      rect:
+        serializedVersion: 2
+        x: 1541
+        y: 2640
+        width: 26
+        height: 182
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81471062add7d4360800000000000000
+      internalID: 7155513758855558168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_88
+      rect:
+        serializedVersion: 2
+        x: 1564
+        y: 2148
+        width: 25
+        height: 605
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4832c14a8b30ee6e0800000000000000
+      internalID: -1806502308966816892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_89
+      rect:
+        serializedVersion: 2
+        x: 1594
+        y: 2413
+        width: 24
+        height: 404
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa255a1152cc1c0b0800000000000000
+      internalID: -5710058392947174737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_90
+      rect:
+        serializedVersion: 2
+        x: 1624
+        y: 2153
+        width: 41
+        height: 669
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d13b52e5d51d1bdf0800000000000000
+      internalID: -166121512294304995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_91
+      rect:
+        serializedVersion: 2
+        x: 2436
+        y: 2149
+        width: 64
+        height: 679
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86e4bbf946b0710b0800000000000000
+      internalID: -5758121071765402008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_92
+      rect:
+        serializedVersion: 2
+        x: 2499
+        y: 2149
+        width: 62
+        height: 676
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3aa8146b35572f8c0800000000000000
+      internalID: -3966979319359501661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_93
+      rect:
+        serializedVersion: 2
+        x: 2566
+        y: 2704
+        width: 24
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6b335e1318c5e7e0800000000000000
+      internalID: -1736762096842753169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_94
+      rect:
+        serializedVersion: 2
+        x: 2588
+        y: 2151
+        width: 25
+        height: 648
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e286c17c9b27f540800000000000000
+      internalID: 5041546258788287209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_95
+      rect:
+        serializedVersion: 2
+        x: 2616
+        y: 2493
+        width: 21
+        height: 330
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c12f4dc81c572670800000000000000
+      internalID: 8513874882160697793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_96
+      rect:
+        serializedVersion: 2
+        x: 2648
+        y: 2157
+        width: 41
+        height: 675
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35c73f596bda9fb60800000000000000
+      internalID: 7780440830970657875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_97
+      rect:
+        serializedVersion: 2
+        x: 3459
+        y: 2164
+        width: 65
+        height: 668
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 202e7f6b8ee056970800000000000000
+      internalID: 8747414243901956610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_98
+      rect:
+        serializedVersion: 2
+        x: 3523
+        y: 2157
+        width: 61
+        height: 671
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ed38511c9a75f2f0800000000000000
+      internalID: -939710136512397853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_99
+      rect:
+        serializedVersion: 2
+        x: 3606
+        y: 2164
+        width: 30
+        height: 653
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18070b8f1d6eaf020800000000000000
+      internalID: 2376465542886224001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_100
+      rect:
+        serializedVersion: 2
+        x: 3639
+        y: 2570
+        width: 22
+        height: 255
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fb511e3be38a13d0800000000000000
+      internalID: -3235128335930401799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_101
+      rect:
+        serializedVersion: 2
+        x: 3672
+        y: 2167
+        width: 41
+        height: 670
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 207cb81bf96aeef80800000000000000
+      internalID: -8075333877019982078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_102
+      rect:
+        serializedVersion: 2
+        x: 4484
+        y: 2185
+        width: 64
+        height: 650
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ebe806fe3811e070800000000000000
+      internalID: 8133809060702645216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_103
+      rect:
+        serializedVersion: 2
+        x: 4538
+        y: 2169
+        width: 48
+        height: 663
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2db2c49335c20a40800000000000000
+      internalID: 5333041734089882926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_104
+      rect:
+        serializedVersion: 2
+        x: 4587
+        y: 2428
+        width: 21
+        height: 382
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47abe5acc20ab4fc0800000000000000
+      internalID: -3509535370370958732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_105
+      rect:
+        serializedVersion: 2
+        x: 4623
+        y: 2175
+        width: 37
+        height: 598
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 096b8552931df9fd0800000000000000
+      internalID: -2332916038584715632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_106
+      rect:
+        serializedVersion: 2
+        x: 4663
+        y: 2648
+        width: 22
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03562ef8853f1bc70800000000000000
+      internalID: 8985230293277500720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_107
+      rect:
+        serializedVersion: 2
+        x: 4696
+        y: 2184
+        width: 41
+        height: 656
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad0052d2aad159190800000000000000
+      internalID: -7956420549941067558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_108
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 2149
+        width: 24
+        height: 529
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9804c7dac48d1a50800000000000000
+      internalID: 6493492244476332190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_109
+      rect:
+        serializedVersion: 2
+        x: 3600
+        y: 2523
+        width: 9
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71445de19fa617cc0800000000000000
+      internalID: -3715070599407254505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_110
+      rect:
+        serializedVersion: 2
+        x: 4664
+        y: 2197
+        width: 16
+        height: 378
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3da8ab2fafaa1ab10800000000000000
+      internalID: 1991060505065327315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_111
+      rect:
+        serializedVersion: 2
+        x: 1594
+        y: 2259
+        width: 11
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b83bb4520e18c3b30800000000000000
+      internalID: 4268429346538763147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_112
+      rect:
+        serializedVersion: 2
+        x: 2616
+        y: 2321
+        width: 14
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e007c825017e3760800000000000000
+      internalID: 7439507901435543783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_113
+      rect:
+        serializedVersion: 2
+        x: 3573
+        y: 2214
+        width: 12
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02a9c8bd5ab9892b0800000000000000
+      internalID: -5577537001843025376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_114
+      rect:
+        serializedVersion: 2
+        x: 3590
+        y: 2202
+        width: 13
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3766fc2c691976c40800000000000000
+      internalID: 5505529146183214707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_115
+      rect:
+        serializedVersion: 2
+        x: 3640
+        y: 2187
+        width: 16
+        height: 313
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d505a5ea7e6104e0800000000000000
+      internalID: -2017209683967408686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_116
+      rect:
+        serializedVersion: 2
+        x: 4594
+        y: 2269
+        width: 14
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5ab20e4c7307e1a0800000000000000
+      internalID: -6780446881563362721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_117
+      rect:
+        serializedVersion: 2
+        x: 4613
+        y: 2237
+        width: 14
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d63973bc87bade010800000000000000
+      internalID: 1219819609381114733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_118
+      rect:
+        serializedVersion: 2
+        x: 2566
+        y: 2176
+        width: 12
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 147027881808284c0800000000000000
+      internalID: -4286722601474980031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_119
+      rect:
+        serializedVersion: 2
+        x: 2619
+        y: 2214
+        width: 11
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55c932061ae8d7c80800000000000000
+      internalID: -8323339712556983211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_120
+      rect:
+        serializedVersion: 2
+        x: 4600
+        y: 2220
+        width: 7
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de1f6c02a83de66e0800000000000000
+      internalID: -1842302607339097619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_121
+      rect:
+        serializedVersion: 2
+        x: 388
+        y: 1190
+        width: 64
+        height: 625
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b02de7b76ac8e24c0800000000000000
+      internalID: -4310353146682617333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_122
+      rect:
+        serializedVersion: 2
+        x: 441
+        y: 1165
+        width: 49
+        height: 646
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6df67c27777103650800000000000000
+      internalID: 6210489687938133974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_123
+      rect:
+        serializedVersion: 2
+        x: 491
+        y: 1471
+        width: 20
+        height: 315
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b879afc1855443a0800000000000000
+      internalID: -6682121931087841100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_124
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 1166
+        width: 37
+        height: 583
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b731bf9f92c0f1ff0800000000000000
+      internalID: -63318495332723845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_125
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 1698
+        width: 18
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9511a312b0386980800000000000000
+      internalID: -8545526751543880294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_126
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 1475
+        width: 28
+        height: 345
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 242f60ccc6a636ab0800000000000000
+      internalID: -5016048544448581054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_127
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 1190
+        width: 11
+        height: 596
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d5d489bca909e640800000000000000
+      internalID: 5109625889680053720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_128
+      rect:
+        serializedVersion: 2
+        x: 1412
+        y: 1219
+        width: 63
+        height: 596
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82c7b2cf21e7d0560800000000000000
+      internalID: 7281614792533179432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_129
+      rect:
+        serializedVersion: 2
+        x: 1464
+        y: 1200
+        width: 50
+        height: 608
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ddec0d89dbe38260800000000000000
+      internalID: 7098776757272899029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_130
+      rect:
+        serializedVersion: 2
+        x: 1515
+        y: 1534
+        width: 17
+        height: 252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 178e3d4abfa6fcf00800000000000000
+      internalID: 1139246859782711409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_131
+      rect:
+        serializedVersion: 2
+        x: 1551
+        y: 1198
+        width: 37
+        height: 580
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a561cdff002868a40800000000000000
+      internalID: 5370122546490119770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_132
+      rect:
+        serializedVersion: 2
+        x: 1624
+        y: 1553
+        width: 28
+        height: 267
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0276186464ad792c0800000000000000
+      internalID: -4424828113502771424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_133
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 1225
+        width: 26
+        height: 573
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1b1f63a348d56050800000000000000
+      internalID: 5793274280698387230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_134
+      rect:
+        serializedVersion: 2
+        x: 2437
+        y: 1285
+        width: 62
+        height: 535
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5121934f8e6fd8660800000000000000
+      internalID: 7389834043975078421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_135
+      rect:
+        serializedVersion: 2
+        x: 2462
+        y: 950
+        width: 76
+        height: 865
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08cc1f78eabea62b0800000000000000
+      internalID: -5590396852589441920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_136
+      rect:
+        serializedVersion: 2
+        x: 2539
+        y: 1594
+        width: 15
+        height: 155
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a56f305ec3e1e940800000000000000
+      internalID: 5323786709777737124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_137
+      rect:
+        serializedVersion: 2
+        x: 2575
+        y: 1264
+        width: 37
+        height: 529
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8029fda7a422c0a0800000000000000
+      internalID: -6862882579562291058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_138
+      rect:
+        serializedVersion: 2
+        x: 2616
+        y: 1305
+        width: 30
+        height: 434
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06288144c2c761ef0800000000000000
+      internalID: -137786209025359264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_139
+      rect:
+        serializedVersion: 2
+        x: 2648
+        y: 1634
+        width: 27
+        height: 182
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a34bf60bd309f3640800000000000000
+      internalID: 5061923100815242298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_140
+      rect:
+        serializedVersion: 2
+        x: 2677
+        y: 1294
+        width: 13
+        height: 512
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52f95fa60d7ea64a0800000000000000
+      internalID: -6599207421624344795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_141
+      rect:
+        serializedVersion: 2
+        x: 3461
+        y: 1345
+        width: 101
+        height: 477
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89d32e76626bf5db0800000000000000
+      internalID: -4800918401685766760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_142
+      rect:
+        serializedVersion: 2
+        x: 3563
+        y: 1646
+        width: 15
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1112d89bea13e310800000000000000
+      internalID: 1433018705617490203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_143
+      rect:
+        serializedVersion: 2
+        x: 3599
+        y: 1344
+        width: 37
+        height: 457
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 958fb59e8b6e637b0800000000000000
+      internalID: -5244751034162874279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_144
+      rect:
+        serializedVersion: 2
+        x: 3640
+        y: 1394
+        width: 30
+        height: 381
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb4b51f265c377830800000000000000
+      internalID: 4068787129207338172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_145
+      rect:
+        serializedVersion: 2
+        x: 3673
+        y: 1700
+        width: 11
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b6ea735f454b32c0800000000000000
+      internalID: -4450887599720307017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_146
+      rect:
+        serializedVersion: 2
+        x: 3683
+        y: 1725
+        width: 14
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f7cfb1236be893f0800000000000000
+      internalID: -893705715032537101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_147
+      rect:
+        serializedVersion: 2
+        x: 3701
+        y: 1374
+        width: 13
+        height: 427
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 823acf0d6cc24d290800000000000000
+      internalID: -7866613416688049368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_148
+      rect:
+        serializedVersion: 2
+        x: 4486
+        y: 1436
+        width: 100
+        height: 386
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39dc34730b6b94f80800000000000000
+      internalID: -8121759585028289133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_149
+      rect:
+        serializedVersion: 2
+        x: 4587
+        y: 1696
+        width: 14
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14cbef06d234b7d60800000000000000
+      internalID: 7888973034449452097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_150
+      rect:
+        serializedVersion: 2
+        x: 4624
+        y: 1434
+        width: 34
+        height: 369
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddc024beab5cd2b70800000000000000
+      internalID: 8875967847218679005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_151
+      rect:
+        serializedVersion: 2
+        x: 4664
+        y: 1538
+        width: 30
+        height: 248
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fde46da4d37b3ea0800000000000000
+      internalID: -5891988330204828176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_152
+      rect:
+        serializedVersion: 2
+        x: 4725
+        y: 1458
+        width: 12
+        height: 346
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d8692455ef045430800000000000000
+      internalID: 3770656265649875156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_153
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 1190
+        width: 17
+        height: 429
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8236765bcd3070520800000000000000
+      internalID: 2668105550711448360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_154
+      rect:
+        serializedVersion: 2
+        x: 1591
+        y: 1234
+        width: 17
+        height: 447
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e84296b366b133b10800000000000000
+      internalID: 1959940388733658254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_155
+      rect:
+        serializedVersion: 2
+        x: 1607
+        y: 1404
+        width: 13
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb3616856a290dfd0800000000000000
+      internalID: -2319192564950801474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_156
+      rect:
+        serializedVersion: 2
+        x: 2565
+        y: 1408
+        width: 14
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c139567e20f51cc0800000000000000
+      internalID: -3740819833116610110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_157
+      rect:
+        serializedVersion: 2
+        x: 3590
+        y: 1469
+        width: 13
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d707eacb8d4ecbf0800000000000000
+      internalID: -302218862187313191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_158
+      rect:
+        serializedVersion: 2
+        x: 4594
+        y: 1562
+        width: 6
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7254a060e78701fb0800000000000000
+      internalID: -4679107530175396569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_159
+      rect:
+        serializedVersion: 2
+        x: 4614
+        y: 1531
+        width: 12
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b463f77d65cbeb30800000000000000
+      internalID: 4317761741719299251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_160
+      rect:
+        serializedVersion: 2
+        x: 1541
+        y: 1345
+        width: 14
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5c361e4605ed8700800000000000000
+      internalID: 544342945224342622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_161
+      rect:
+        serializedVersion: 2
+        x: 3568
+        y: 1503
+        width: 10
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9454a1e39469efe0800000000000000
+      internalID: -1159284842762578789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_162
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 1279
+        width: 14
+        height: 168
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6228becf7d0ae3f70800000000000000
+      internalID: 9168942740894614054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_163
+      rect:
+        serializedVersion: 2
+        x: 585
+        y: 1375
+        width: 10
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee08f1be9fe9917a0800000000000000
+      internalID: -6405914198729064210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_164
+      rect:
+        serializedVersion: 2
+        x: 612
+        y: 1406
+        width: 10
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4df1523b7b9aac300800000000000000
+      internalID: 273217333859000276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_165
+      rect:
+        serializedVersion: 2
+        x: 2544
+        y: 1444
+        width: 10
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a282fc3235f11d0d0800000000000000
+      internalID: -3399901801744488406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_166
+      rect:
+        serializedVersion: 2
+        x: 497
+        y: 1321
+        width: 13
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fef3a9f641a194c00800000000000000
+      internalID: 885267476829061103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_167
+      rect:
+        serializedVersion: 2
+        x: 1520
+        y: 1383
+        width: 10
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47484624c35dd8f80800000000000000
+      internalID: -8102585699781016460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_168
+      rect:
+        serializedVersion: 2
+        x: 2549
+        y: 1327
+        width: 6
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffa77a99d81718aa0800000000000000
+      internalID: -6160517962283910401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_169
+      rect:
+        serializedVersion: 2
+        x: 614
+        y: 1192
+        width: 8
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8d35eeaf0dbb4a10800000000000000
+      internalID: 1894815943295843722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_170
+      rect:
+        serializedVersion: 2
+        x: 1523
+        y: 1255
+        width: 8
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 133dd956ff47c4020800000000000000
+      internalID: 2327363747714028337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_171
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 1195
+        width: 7
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebac0316155ffb8d0800000000000000
+      internalID: -2828272311093638466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_172
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 515
+        width: 109
+        height: 438
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba6fe13b85fc648a0800000000000000
+      internalID: -6321137047098689877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_173
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 732
+        width: 7
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0427bcd80382c7d30800000000000000
+      internalID: 4430460322428187200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_174
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 514
+        width: 31
+        height: 263
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c5d288dbef2f70e0800000000000000
+      internalID: -2270042997175167543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_175
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 581
+        width: 30
+        height: 188
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0c2ac22224dbf9b0800000000000000
+      internalID: -5045205714460857329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_176
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 525
+        width: 10
+        height: 259
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03abc3fcafb0d5210800000000000000
+      internalID: 1323227037363386928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_177
+      rect:
+        serializedVersion: 2
+        x: 1427
+        y: 636
+        width: 36
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f11ec9a480c481060800000000000000
+      internalID: 6924368025577382175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_178
+      rect:
+        serializedVersion: 2
+        x: 1431
+        y: 640
+        width: 82
+        height: 313
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cde1787bbbe567a00800000000000000
+      internalID: 753894147962117852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_179
+      rect:
+        serializedVersion: 2
+        x: 1477
+        y: 638
+        width: 20
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c76a34290c991c400800000000000000
+      internalID: 342724099023545980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_180
+      rect:
+        serializedVersion: 2
+        x: 1556
+        y: 649
+        width: 12
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 500319e616f2ab060800000000000000
+      internalID: 6969935468822605829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_181
+      rect:
+        serializedVersion: 2
+        x: 1572
+        y: 633
+        width: 12
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6627910058286e60800000000000000
+      internalID: 7955653065839158895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_182
+      rect:
+        serializedVersion: 2
+        x: 1606
+        y: 660
+        width: 15
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06b0a65c4a5d33bf0800000000000000
+      internalID: -345697842713982112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_183
+      rect:
+        serializedVersion: 2
+        x: 1657
+        y: 636
+        width: 7
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbf7f09d13e6e3670800000000000000
+      internalID: 8520368705405681595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_184
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 714
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6464727135431dc20800000000000000
+      internalID: 3229419939276736070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_185
+      rect:
+        serializedVersion: 2
+        x: 1418
+        y: 710
+        width: 6
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16fea87572fa5dca0800000000000000
+      internalID: -5992691145639268511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_186
+      rect:
+        serializedVersion: 2
+        x: 1466
+        y: 708
+        width: 7
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5556951bd130cde0800000000000000
+      internalID: -1314996274162412194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_187
+      rect:
+        serializedVersion: 2
+        x: 1595
+        y: 683
+        width: 9
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4dde23ac229aec30800000000000000
+      internalID: 4389481507239943503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_heal_back_188
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 589
+        width: 8
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9a225009f7fff3d0800000000000000
+      internalID: -3170542963821237602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_heal_back_0: 5565078909523109706
+      eff_heal_back_1: 9022341358149741461
+      eff_heal_back_10: 6127260012427323413
+      eff_heal_back_100: -3235128335930401799
+      eff_heal_back_101: -8075333877019982078
+      eff_heal_back_102: 8133809060702645216
+      eff_heal_back_103: 5333041734089882926
+      eff_heal_back_104: -3509535370370958732
+      eff_heal_back_105: -2332916038584715632
+      eff_heal_back_106: 8985230293277500720
+      eff_heal_back_107: -7956420549941067558
+      eff_heal_back_108: 6493492244476332190
+      eff_heal_back_109: -3715070599407254505
+      eff_heal_back_11: 1385200129364535445
+      eff_heal_back_110: 1991060505065327315
+      eff_heal_back_111: 4268429346538763147
+      eff_heal_back_112: 7439507901435543783
+      eff_heal_back_113: -5577537001843025376
+      eff_heal_back_114: 5505529146183214707
+      eff_heal_back_115: -2017209683967408686
+      eff_heal_back_116: -6780446881563362721
+      eff_heal_back_117: 1219819609381114733
+      eff_heal_back_118: -4286722601474980031
+      eff_heal_back_119: -8323339712556983211
+      eff_heal_back_12: 5574862202728038363
+      eff_heal_back_120: -1842302607339097619
+      eff_heal_back_121: -4310353146682617333
+      eff_heal_back_122: 6210489687938133974
+      eff_heal_back_123: -6682121931087841100
+      eff_heal_back_124: -63318495332723845
+      eff_heal_back_125: -8545526751543880294
+      eff_heal_back_126: -5016048544448581054
+      eff_heal_back_127: 5109625889680053720
+      eff_heal_back_128: 7281614792533179432
+      eff_heal_back_129: 7098776757272899029
+      eff_heal_back_13: 6708386983209814805
+      eff_heal_back_130: 1139246859782711409
+      eff_heal_back_131: 5370122546490119770
+      eff_heal_back_132: -4424828113502771424
+      eff_heal_back_133: 5793274280698387230
+      eff_heal_back_134: 7389834043975078421
+      eff_heal_back_135: -5590396852589441920
+      eff_heal_back_136: 5323786709777737124
+      eff_heal_back_137: -6862882579562291058
+      eff_heal_back_138: -137786209025359264
+      eff_heal_back_139: 5061923100815242298
+      eff_heal_back_14: 7209681335364395245
+      eff_heal_back_140: -6599207421624344795
+      eff_heal_back_141: -4800918401685766760
+      eff_heal_back_142: 1433018705617490203
+      eff_heal_back_143: -5244751034162874279
+      eff_heal_back_144: 4068787129207338172
+      eff_heal_back_145: -4450887599720307017
+      eff_heal_back_146: -893705715032537101
+      eff_heal_back_147: -7866613416688049368
+      eff_heal_back_148: -8121759585028289133
+      eff_heal_back_149: 7888973034449452097
+      eff_heal_back_15: -2153405433886168507
+      eff_heal_back_150: 8875967847218679005
+      eff_heal_back_151: -5891988330204828176
+      eff_heal_back_152: 3770656265649875156
+      eff_heal_back_153: 2668105550711448360
+      eff_heal_back_154: 1959940388733658254
+      eff_heal_back_155: -2319192564950801474
+      eff_heal_back_156: -3740819833116610110
+      eff_heal_back_157: -302218862187313191
+      eff_heal_back_158: -4679107530175396569
+      eff_heal_back_159: 4317761741719299251
+      eff_heal_back_16: 1560057391271996530
+      eff_heal_back_160: 544342945224342622
+      eff_heal_back_161: -1159284842762578789
+      eff_heal_back_162: 9168942740894614054
+      eff_heal_back_163: -6405914198729064210
+      eff_heal_back_164: 273217333859000276
+      eff_heal_back_165: -3399901801744488406
+      eff_heal_back_166: 885267476829061103
+      eff_heal_back_167: -8102585699781016460
+      eff_heal_back_168: -6160517962283910401
+      eff_heal_back_169: 1894815943295843722
+      eff_heal_back_17: -3389345833117283225
+      eff_heal_back_170: 2327363747714028337
+      eff_heal_back_171: -2828272311093638466
+      eff_heal_back_172: -6321137047098689877
+      eff_heal_back_173: 4430460322428187200
+      eff_heal_back_174: -2270042997175167543
+      eff_heal_back_175: -5045205714460857329
+      eff_heal_back_176: 1323227037363386928
+      eff_heal_back_177: 6924368025577382175
+      eff_heal_back_178: 753894147962117852
+      eff_heal_back_179: 342724099023545980
+      eff_heal_back_18: 5822732498108329883
+      eff_heal_back_180: 6969935468822605829
+      eff_heal_back_181: 7955653065839158895
+      eff_heal_back_182: -345697842713982112
+      eff_heal_back_183: 8520368705405681595
+      eff_heal_back_184: 3229419939276736070
+      eff_heal_back_185: -5992691145639268511
+      eff_heal_back_186: -1314996274162412194
+      eff_heal_back_187: 4389481507239943503
+      eff_heal_back_188: -3170542963821237602
+      eff_heal_back_19: -5818892172296746728
+      eff_heal_back_2: -777313523844894031
+      eff_heal_back_20: -1934132139251559164
+      eff_heal_back_21: 1436642371336127222
+      eff_heal_back_22: -1095454684141396962
+      eff_heal_back_23: -803541445941800193
+      eff_heal_back_24: -6268167718967019437
+      eff_heal_back_25: 7854183315016624633
+      eff_heal_back_26: -2952859688933244411
+      eff_heal_back_27: -2895640953664034314
+      eff_heal_back_28: -3029208501079309323
+      eff_heal_back_29: -1297404701907311089
+      eff_heal_back_3: 451006871840141686
+      eff_heal_back_30: 4891300383644375524
+      eff_heal_back_31: -8591989038656957680
+      eff_heal_back_32: 1438670790693180833
+      eff_heal_back_33: 488100984641181529
+      eff_heal_back_34: -7833770493656957332
+      eff_heal_back_35: -8847882502763414410
+      eff_heal_back_36: -802018993997079538
+      eff_heal_back_37: -4790673277758941418
+      eff_heal_back_38: -8318584044882931278
+      eff_heal_back_39: -7544985647992100695
+      eff_heal_back_4: -7635176951475987157
+      eff_heal_back_40: 2239921494219675839
+      eff_heal_back_41: -1944507641266835960
+      eff_heal_back_42: 6148877337092605357
+      eff_heal_back_43: 2869077167880424375
+      eff_heal_back_44: 3872491774091448318
+      eff_heal_back_45: 4526437560100437952
+      eff_heal_back_46: -5614195937692795427
+      eff_heal_back_47: -7319454566848443907
+      eff_heal_back_48: 1810245883175037154
+      eff_heal_back_49: 545731574009528639
+      eff_heal_back_5: -2398379952198231167
+      eff_heal_back_50: 8774544662686993797
+      eff_heal_back_51: -362211188407937346
+      eff_heal_back_52: 1446535808666612424
+      eff_heal_back_53: -5169951762528722146
+      eff_heal_back_54: 4216218364324177114
+      eff_heal_back_55: 6800252659734203259
+      eff_heal_back_56: -8297621300782784960
+      eff_heal_back_57: 50673758205090849
+      eff_heal_back_58: 7637059035929455119
+      eff_heal_back_59: -2407262202829304414
+      eff_heal_back_6: -8067204107162049602
+      eff_heal_back_60: 6899574032622200497
+      eff_heal_back_61: 6725986647154038147
+      eff_heal_back_62: -3371292095162887643
+      eff_heal_back_63: -5384743448286818842
+      eff_heal_back_64: 1212124418543535134
+      eff_heal_back_65: -7104811624020683851
+      eff_heal_back_66: -6806712619445249738
+      eff_heal_back_67: 5395285725614933945
+      eff_heal_back_68: -356905137676200740
+      eff_heal_back_69: 6682169365019766464
+      eff_heal_back_7: 49370477423192069
+      eff_heal_back_70: -4913336889666168944
+      eff_heal_back_71: 7852290178601307747
+      eff_heal_back_72: -3189468526746810656
+      eff_heal_back_73: 686941583126025579
+      eff_heal_back_74: -2969622335356185151
+      eff_heal_back_75: 6846802369728356869
+      eff_heal_back_76: 5400409255693811695
+      eff_heal_back_77: -8771809174626803511
+      eff_heal_back_78: 5002592790615760685
+      eff_heal_back_79: 930295168153490357
+      eff_heal_back_8: -7549682206878531401
+      eff_heal_back_80: -1866652451361109871
+      eff_heal_back_81: 7108846969876321530
+      eff_heal_back_82: 7703382270957871930
+      eff_heal_back_83: -3219075189834923489
+      eff_heal_back_84: -5243271128638471441
+      eff_heal_back_85: 5784293174730542782
+      eff_heal_back_86: 5874626756580978199
+      eff_heal_back_87: 7155513758855558168
+      eff_heal_back_88: -1806502308966816892
+      eff_heal_back_89: -5710058392947174737
+      eff_heal_back_9: -6349956405001049987
+      eff_heal_back_90: -166121512294304995
+      eff_heal_back_91: -5758121071765402008
+      eff_heal_back_92: -3966979319359501661
+      eff_heal_back_93: -1736762096842753169
+      eff_heal_back_94: 5041546258788287209
+      eff_heal_back_95: 8513874882160697793
+      eff_heal_back_96: 7780440830970657875
+      eff_heal_back_97: 8747414243901956610
+      eff_heal_back_98: -939710136512397853
+      eff_heal_back_99: 2376465542886224001
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

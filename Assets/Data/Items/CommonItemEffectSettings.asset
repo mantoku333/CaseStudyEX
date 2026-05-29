@@ -87,3 +87,15 @@ MonoBehaviour:
   visualOffset: {x: 0, y: 0.2, z: 0}
   pickupVisualOffset: {x: 0, y: 0.17, z: 0}
   sortingOrder: 0
+  playHealEffectOnPlayer: 1
+  healBackSpriteSheet: {fileID: 2800000, guid: a72a53c0ea44d8d43aeedd2f5145c887, type: 3}
+  healFrontSpriteSheet: {fileID: 2800000, guid: 6584dafc6cd56d94abd31ede043c2fd3, type: 3}
+  healColumns: 5
+  healRows: 6
+  healFrameCount: 30
+  healFrameSeconds: 0.033
+  healPixelsPerUnit: 100
+  healVisualScale: {x: 1, y: 1, z: 1}
+  healVisualOffset: {x: 0, y: 0.2, z: 0}
+  healBackSortingOrderOffset: -1
+  healFrontSortingOrderOffset: 1

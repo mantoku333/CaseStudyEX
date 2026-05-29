@@ -31,4 +31,18 @@ public class ItemEffectSettings : ScriptableObject
     public Vector3 visualOffset = new Vector3(0f, 0.2f, 0f);
     public Vector3 pickupVisualOffset = new Vector3(0f, 0.08f, 0f);
     public int sortingOrder = 0;
+
+    [Header("Heal Pickup")]
+    public bool playHealEffectOnPlayer = true;
+    public Texture2D healBackSpriteSheet;
+    public Texture2D healFrontSpriteSheet;
+    [Min(1)] public int healColumns = 5;
+    [Min(1)] public int healRows = 6;
+    [Min(1)] public int healFrameCount = 30;
+    [Min(0.01f)] public float healFrameSeconds = 0.033f;
+    [Min(1f)] public float healPixelsPerUnit = 100f;
+    public Vector3 healVisualScale = Vector3.one;
+    public Vector3 healVisualOffset = new Vector3(0f, 0.2f, 0f);
+    public int healBackSortingOrderOffset = -1;
+    public int healFrontSortingOrderOffset = 1;
 }

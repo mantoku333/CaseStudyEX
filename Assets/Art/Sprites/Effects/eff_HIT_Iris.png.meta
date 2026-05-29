@@ -1,0 +1,2977 @@
+fileFormatVersion: 2
+guid: 636a6156a26cead4ba83a00037b1ba45
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4707926168066637766
+    second: eff_HIT_Iris_0
+  - first:
+      213: -3880365994920815765
+    second: eff_HIT_Iris_1
+  - first:
+      213: 3423484012978056077
+    second: eff_HIT_Iris_2
+  - first:
+      213: -2694761243418530211
+    second: eff_HIT_Iris_3
+  - first:
+      213: -8441056771743308716
+    second: eff_HIT_Iris_4
+  - first:
+      213: -4616783454201005433
+    second: eff_HIT_Iris_5
+  - first:
+      213: 8441619402346199642
+    second: eff_HIT_Iris_6
+  - first:
+      213: -4445051202426052759
+    second: eff_HIT_Iris_7
+  - first:
+      213: 4056973512857957982
+    second: eff_HIT_Iris_8
+  - first:
+      213: 6358212798464956789
+    second: eff_HIT_Iris_9
+  - first:
+      213: -1871904151360381197
+    second: eff_HIT_Iris_10
+  - first:
+      213: 3606010580243710650
+    second: eff_HIT_Iris_11
+  - first:
+      213: 1711020453264839258
+    second: eff_HIT_Iris_12
+  - first:
+      213: -6174432406206196668
+    second: eff_HIT_Iris_13
+  - first:
+      213: 5564624278119621021
+    second: eff_HIT_Iris_14
+  - first:
+      213: 7842728043005422011
+    second: eff_HIT_Iris_15
+  - first:
+      213: -4317732163515558417
+    second: eff_HIT_Iris_16
+  - first:
+      213: 2725653539503585791
+    second: eff_HIT_Iris_17
+  - first:
+      213: -2067450341458237877
+    second: eff_HIT_Iris_18
+  - first:
+      213: 8770929166307554227
+    second: eff_HIT_Iris_19
+  - first:
+      213: 6745167279085266078
+    second: eff_HIT_Iris_20
+  - first:
+      213: -3782942379830672877
+    second: eff_HIT_Iris_21
+  - first:
+      213: 6713715913149581789
+    second: eff_HIT_Iris_22
+  - first:
+      213: -5334373683434691621
+    second: eff_HIT_Iris_23
+  - first:
+      213: -7491144986143972606
+    second: eff_HIT_Iris_24
+  - first:
+      213: 6757979128036526523
+    second: eff_HIT_Iris_25
+  - first:
+      213: 7326216772061297977
+    second: eff_HIT_Iris_26
+  - first:
+      213: -8391133007336911081
+    second: eff_HIT_Iris_27
+  - first:
+      213: -3755242267647900514
+    second: eff_HIT_Iris_28
+  - first:
+      213: -3178166829105791862
+    second: eff_HIT_Iris_29
+  - first:
+      213: -1179596635739749820
+    second: eff_HIT_Iris_30
+  - first:
+      213: 224718549310862889
+    second: eff_HIT_Iris_31
+  - first:
+      213: 7993134637402595351
+    second: eff_HIT_Iris_32
+  - first:
+      213: 6337358253267837187
+    second: eff_HIT_Iris_33
+  - first:
+      213: -3171221380404585122
+    second: eff_HIT_Iris_34
+  - first:
+      213: -1500885313286887803
+    second: eff_HIT_Iris_35
+  - first:
+      213: -6011154237241543328
+    second: eff_HIT_Iris_36
+  - first:
+      213: -5983772737323274685
+    second: eff_HIT_Iris_37
+  - first:
+      213: -7173379604500871311
+    second: eff_HIT_Iris_38
+  - first:
+      213: 3669244314970845996
+    second: eff_HIT_Iris_39
+  - first:
+      213: 3476741602402490364
+    second: eff_HIT_Iris_40
+  - first:
+      213: 8403157830394318665
+    second: eff_HIT_Iris_41
+  - first:
+      213: -6381759186443223684
+    second: eff_HIT_Iris_42
+  - first:
+      213: 912775645073289107
+    second: eff_HIT_Iris_43
+  - first:
+      213: 3091040742210961982
+    second: eff_HIT_Iris_44
+  - first:
+      213: 1256856649719397621
+    second: eff_HIT_Iris_45
+  - first:
+      213: -4561397869060730436
+    second: eff_HIT_Iris_46
+  - first:
+      213: -123881801593657307
+    second: eff_HIT_Iris_47
+  - first:
+      213: 5411947512004755285
+    second: eff_HIT_Iris_48
+  - first:
+      213: 6490646316928518564
+    second: eff_HIT_Iris_49
+  - first:
+      213: 2972274803992566115
+    second: eff_HIT_Iris_50
+  - first:
+      213: -1912131635365490630
+    second: eff_HIT_Iris_51
+  - first:
+      213: -288432634804921290
+    second: eff_HIT_Iris_52
+  - first:
+      213: -372502177734125726
+    second: eff_HIT_Iris_53
+  - first:
+      213: 3668866158549372142
+    second: eff_HIT_Iris_54
+  - first:
+      213: 7956075118329499609
+    second: eff_HIT_Iris_55
+  - first:
+      213: -3134612711079875898
+    second: eff_HIT_Iris_56
+  - first:
+      213: 7854258191370440365
+    second: eff_HIT_Iris_57
+  - first:
+      213: -803342464347672771
+    second: eff_HIT_Iris_58
+  - first:
+      213: -6087999542431414358
+    second: eff_HIT_Iris_59
+  - first:
+      213: 3114877208370772573
+    second: eff_HIT_Iris_60
+  - first:
+      213: -5757264365631807320
+    second: eff_HIT_Iris_61
+  - first:
+      213: -4574071485710549710
+    second: eff_HIT_Iris_62
+  - first:
+      213: -2956630039083415145
+    second: eff_HIT_Iris_63
+  - first:
+      213: -4373736348443106492
+    second: eff_HIT_Iris_64
+  - first:
+      213: 2860799668280395912
+    second: eff_HIT_Iris_65
+  - first:
+      213: -5948300212340832378
+    second: eff_HIT_Iris_66
+  - first:
+      213: 1028376409191148456
+    second: eff_HIT_Iris_67
+  - first:
+      213: -5047958811622052228
+    second: eff_HIT_Iris_68
+  - first:
+      213: 5205953131751209260
+    second: eff_HIT_Iris_69
+  - first:
+      213: -5522068710437120992
+    second: eff_HIT_Iris_70
+  - first:
+      213: -8141387626784152622
+    second: eff_HIT_Iris_71
+  - first:
+      213: -7257568268491023184
+    second: eff_HIT_Iris_72
+  - first:
+      213: 6809091099616561202
+    second: eff_HIT_Iris_73
+  - first:
+      213: 6058595346390911134
+    second: eff_HIT_Iris_74
+  - first:
+      213: 8571471239363274975
+    second: eff_HIT_Iris_75
+  - first:
+      213: -9217935459699065038
+    second: eff_HIT_Iris_76
+  - first:
+      213: -8151905038115531482
+    second: eff_HIT_Iris_77
+  - first:
+      213: 771364968702414145
+    second: eff_HIT_Iris_78
+  - first:
+      213: 2202234814748190054
+    second: eff_HIT_Iris_79
+  - first:
+      213: -7433344158728975618
+    second: eff_HIT_Iris_80
+  - first:
+      213: 3295315344496186067
+    second: eff_HIT_Iris_81
+  - first:
+      213: -1132832688363434545
+    second: eff_HIT_Iris_82
+  - first:
+      213: -658217647314174863
+    second: eff_HIT_Iris_83
+  - first:
+      213: 5294361540339362424
+    second: eff_HIT_Iris_84
+  - first:
+      213: -4348622080516014719
+    second: eff_HIT_Iris_85
+  - first:
+      213: -5714893303481094181
+    second: eff_HIT_Iris_86
+  - first:
+      213: -6202496017055858351
+    second: eff_HIT_Iris_87
+  - first:
+      213: -1362322159157566150
+    second: eff_HIT_Iris_88
+  - first:
+      213: 9001874214917787721
+    second: eff_HIT_Iris_89
+  - first:
+      213: 7528241239461667233
+    second: eff_HIT_Iris_90
+  - first:
+      213: 7468672633258623850
+    second: eff_HIT_Iris_91
+  - first:
+      213: 3585504343653141615
+    second: eff_HIT_Iris_92
+  - first:
+      213: -3388697825954578357
+    second: eff_HIT_Iris_93
+  - first:
+      213: 3564111461190041754
+    second: eff_HIT_Iris_94
+  - first:
+      213: 4676230365666822937
+    second: eff_HIT_Iris_95
+  - first:
+      213: -2282302346863477415
+    second: eff_HIT_Iris_96
+  - first:
+      213: 6946325023413341952
+    second: eff_HIT_Iris_97
+  - first:
+      213: 2825603307016643811
+    second: eff_HIT_Iris_98
+  - first:
+      213: -1911235451410981219
+    second: eff_HIT_Iris_99
+  - first:
+      213: -6275486125170943170
+    second: eff_HIT_Iris_100
+  - first:
+      213: 504000016452316295
+    second: eff_HIT_Iris_101
+  - first:
+      213: -31059973541550980
+    second: eff_HIT_Iris_102
+  - first:
+      213: -3316856826993645322
+    second: eff_HIT_Iris_103
+  - first:
+      213: -5556797225266430214
+    second: eff_HIT_Iris_104
+  - first:
+      213: 6897292624840944718
+    second: eff_HIT_Iris_105
+  - first:
+      213: 6938873138273132852
+    second: eff_HIT_Iris_106
+  - first:
+      213: 3784745730376425696
+    second: eff_HIT_Iris_107
+  - first:
+      213: 8281278771672870707
+    second: eff_HIT_Iris_108
+  - first:
+      213: -3072819845670092849
+    second: eff_HIT_Iris_109
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_HIT_Iris_0
+      rect:
+        serializedVersion: 2
+        x: 2626
+        y: 3028
+        width: 8
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cfb06cf7e9e55140800000000000000
+      internalID: 4707926168066637766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_1
+      rect:
+        serializedVersion: 2
+        x: 1591
+        y: 2975
+        width: 14
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b635d3acfab262ac0800000000000000
+      internalID: -3880365994920815765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_2
+      rect:
+        serializedVersion: 2
+        x: 1331
+        y: 2237
+        width: 430
+        height: 646
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8b29c74298a28f20800000000000000
+      internalID: 3423484012978056077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_3
+      rect:
+        serializedVersion: 2
+        x: 2478
+        y: 2879
+        width: 13
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5e6c833de84a9ad0800000000000000
+      internalID: -2694761243418530211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_4
+      rect:
+        serializedVersion: 2
+        x: 3311
+        y: 2286
+        width: 537
+        height: 628
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 454a557b6975bda80800000000000000
+      internalID: -8441056771743308716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_5
+      rect:
+        serializedVersion: 2
+        x: 2649
+        y: 2858
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78ab27fb8e3edefb0800000000000000
+      internalID: -4616783454201005433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_6
+      rect:
+        serializedVersion: 2
+        x: 2299
+        y: 2272
+        width: 513
+        height: 576
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5af3edee18a62570800000000000000
+      internalID: 8441619402346199642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_7
+      rect:
+        serializedVersion: 2
+        x: 4743
+        y: 2825
+        width: 12
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96fd8f67b710052c0800000000000000
+      internalID: -4445051202426052759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_8
+      rect:
+        serializedVersion: 2
+        x: 4775
+        y: 2840
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5631194ae34d4830800000000000000
+      internalID: 4056973512857957982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_9
+      rect:
+        serializedVersion: 2
+        x: 1320
+        y: 2819
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57998da5ad8ec3850800000000000000
+      internalID: 6358212798464956789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_10
+      rect:
+        serializedVersion: 2
+        x: 2875
+        y: 2723
+        width: 94
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fed5949719a506e0800000000000000
+      internalID: -1871904151360381197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_11
+      rect:
+        serializedVersion: 2
+        x: 4324
+        y: 2287
+        width: 557
+        height: 546
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab20abb648f1b0230800000000000000
+      internalID: 3606010580243710650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_12
+      rect:
+        serializedVersion: 2
+        x: 370
+        y: 2322
+        width: 284
+        height: 476
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5257407904ceb710800000000000000
+      internalID: 1711020453264839258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_13
+      rect:
+        serializedVersion: 2
+        x: 1875
+        y: 2790
+        width: 37
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4445b6aa072005aa0800000000000000
+      internalID: -6174432406206196668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_14
+      rect:
+        serializedVersion: 2
+        x: 1328
+        y: 2720
+        width: 37
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d91a5dd5c44893d40800000000000000
+      internalID: 5564624278119621021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_15
+      rect:
+        serializedVersion: 2
+        x: 1823
+        y: 2749
+        width: 35
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb925514a97f6dc60800000000000000
+      internalID: 7842728043005422011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_16
+      rect:
+        serializedVersion: 2
+        x: 1809
+        y: 2700
+        width: 30
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe5506e39755414c0800000000000000
+      internalID: -4317732163515558417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_17
+      rect:
+        serializedVersion: 2
+        x: 1325
+        y: 2562
+        width: 42
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff9b5eaf37773d520800000000000000
+      internalID: 2725653539503585791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_18
+      rect:
+        serializedVersion: 2
+        x: 4322
+        y: 2554
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b462f964ed0fe43e0800000000000000
+      internalID: -2067450341458237877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_19
+      rect:
+        serializedVersion: 2
+        x: 3290
+        y: 2486
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b3ffdb3b9998b970800000000000000
+      internalID: 8770929166307554227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_20
+      rect:
+        serializedVersion: 2
+        x: 4296
+        y: 2485
+        width: 27
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e94277427e5ab9d50800000000000000
+      internalID: 6745167279085266078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_21
+      rect:
+        serializedVersion: 2
+        x: 1282
+        y: 2454
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3120c6cc2f9408bc0800000000000000
+      internalID: -3782942379830672877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_22
+      rect:
+        serializedVersion: 2
+        x: 1324
+        y: 2466
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd90b2e5d09eb2d50800000000000000
+      internalID: 6713715913149581789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_23
+      rect:
+        serializedVersion: 2
+        x: 1991
+        y: 2450
+        width: 50
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd3eeabc56f78f5b0800000000000000
+      internalID: -5334373683434691621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_24
+      rect:
+        serializedVersion: 2
+        x: 1763
+        y: 2393
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 203a0fb235b1a0890800000000000000
+      internalID: -7491144986143972606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_25
+      rect:
+        serializedVersion: 2
+        x: 1099
+        y: 2271
+        width: 104
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb90f1e263a29cd50800000000000000
+      internalID: 6757979128036526523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_26
+      rect:
+        serializedVersion: 2
+        x: 1271
+        y: 2312
+        width: 42
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93df8369653fba560800000000000000
+      internalID: 7326216772061297977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_27
+      rect:
+        serializedVersion: 2
+        x: 1275
+        y: 2289
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71fc0aaecf4bc8b80800000000000000
+      internalID: -8391133007336911081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_28
+      rect:
+        serializedVersion: 2
+        x: 2252
+        y: 2276
+        width: 32
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e94805fbd03b2ebc0800000000000000
+      internalID: -3755242267647900514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_29
+      rect:
+        serializedVersion: 2
+        x: 1805
+        y: 2272
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8c383a8b12e4e3d0800000000000000
+      internalID: -3178166829105791862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_30
+      rect:
+        serializedVersion: 2
+        x: 3252
+        y: 2256
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4428c7c0c1b31afe0800000000000000
+      internalID: -1179596635739749820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_31
+      rect:
+        serializedVersion: 2
+        x: 4262
+        y: 2245
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9267d1a745c5e1300800000000000000
+      internalID: 224718549310862889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_32
+      rect:
+        serializedVersion: 2
+        x: 1618
+        y: 2214
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 710a0407a915dee60800000000000000
+      internalID: 7993134637402595351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_33
+      rect:
+        serializedVersion: 2
+        x: 1650
+        y: 2200
+        width: 8
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3016b6c21c1d2f750800000000000000
+      internalID: 6337358253267837187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_34
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 1260
+        width: 573
+        height: 552
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5d5cd4d4fe8df3d0800000000000000
+      internalID: -3171221380404585122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_35
+      rect:
+        serializedVersion: 2
+        x: 1263
+        y: 1263
+        width: 546
+        height: 546
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5862fe472c8cb2be0800000000000000
+      internalID: -1500885313286887803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_36
+      rect:
+        serializedVersion: 2
+        x: 2294
+        y: 1270
+        width: 532
+        height: 532
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0653227d117149ca0800000000000000
+      internalID: -6011154237241543328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_37
+      rect:
+        serializedVersion: 2
+        x: 3327
+        y: 1279
+        width: 514
+        height: 514
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34eed27166e55fca0800000000000000
+      internalID: -5983772737323274685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_38
+      rect:
+        serializedVersion: 2
+        x: 4487
+        y: 1694
+        width: 65
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17781b28149037c90800000000000000
+      internalID: -7173379604500871311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_39
+      rect:
+        serializedVersion: 2
+        x: 4541
+        y: 1702
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2375f39346cbe230800000000000000
+      internalID: 3669244314970845996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_40
+      rect:
+        serializedVersion: 2
+        x: 4577
+        y: 1694
+        width: 92
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf7d50b111edf3030800000000000000
+      internalID: 3476741602402490364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_41
+      rect:
+        serializedVersion: 2
+        x: 4680
+        y: 1651
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94f023066830e9470800000000000000
+      internalID: 8403157830394318665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_42
+      rect:
+        serializedVersion: 2
+        x: 4417
+        y: 1664
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7d37f9f4df6f67a0800000000000000
+      internalID: -6381759186443223684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_43
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 1462
+        width: 20
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39fa834fc94daac00800000000000000
+      internalID: 912775645073289107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_44
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 1453
+        width: 29
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e328eb19d2595ea20800000000000000
+      internalID: 3091040742210961982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_45
+      rect:
+        serializedVersion: 2
+        x: 1191
+        y: 1464
+        width: 13
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fcbc1cb670417110800000000000000
+      internalID: 1256856649719397621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_46
+      rect:
+        serializedVersion: 2
+        x: 1210
+        y: 1447
+        width: 27
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb1596f2ec8a2b0c0800000000000000
+      internalID: -4561397869060730436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_47
+      rect:
+        serializedVersion: 2
+        x: 1246
+        y: 1572
+        width: 18
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 528efd56822e74ef0800000000000000
+      internalID: -123881801593657307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_48
+      rect:
+        serializedVersion: 2
+        x: 2215
+        y: 1441
+        width: 22
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55f3a14a6991b1b40800000000000000
+      internalID: 5411947512004755285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_49
+      rect:
+        serializedVersion: 2
+        x: 2253
+        y: 1577
+        width: 17
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a9c833bf68631a50800000000000000
+      internalID: 6490646316928518564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_50
+      rect:
+        serializedVersion: 2
+        x: 3220
+        y: 1437
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36912dabf24af3920800000000000000
+      internalID: 2972274803992566115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_51
+      rect:
+        serializedVersion: 2
+        x: 3261
+        y: 1583
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a30d046986eb675e0800000000000000
+      internalID: -1912131635365490630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_52
+      rect:
+        serializedVersion: 2
+        x: 4230
+        y: 1433
+        width: 51
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63c92dcfb084ffbf0800000000000000
+      internalID: -288432634804921290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_53
+      rect:
+        serializedVersion: 2
+        x: 4431
+        y: 1412
+        width: 29
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26719123e3b94daf0800000000000000
+      internalID: -372502177734125726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_54
+      rect:
+        serializedVersion: 2
+        x: 4435
+        y: 1586
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eec89cc255e6ae230800000000000000
+      internalID: 3668866158549372142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_55
+      rect:
+        serializedVersion: 2
+        x: 4755
+        y: 1463
+        width: 74
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9df8a52ca28a96e60800000000000000
+      internalID: 7956075118329499609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_56
+      rect:
+        serializedVersion: 2
+        x: 4847
+        y: 1427
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cae8afd85e9f74d0800000000000000
+      internalID: -3134612711079875898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_57
+      rect:
+        serializedVersion: 2
+        x: 4482
+        y: 1344
+        width: 73
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dae46de163eeffc60800000000000000
+      internalID: 7854258191370440365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_58
+      rect:
+        serializedVersion: 2
+        x: 4521
+        y: 1338
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3fe193f844f9d4f0800000000000000
+      internalID: -803342464347672771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_59
+      rect:
+        serializedVersion: 2
+        x: 4627
+        y: 1287
+        width: 103
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa782a8fba4138ba0800000000000000
+      internalID: -6087999542431414358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_60
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 1211
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5a76e351544a3b20800000000000000
+      internalID: 3114877208370772573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_61
+      rect:
+        serializedVersion: 2
+        x: 1163
+        y: 1201
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a0608010961a10b0800000000000000
+      internalID: -5757264365631807320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_62
+      rect:
+        serializedVersion: 2
+        x: 2175
+        y: 1192
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23dbafcd732a580c0800000000000000
+      internalID: -4574071485710549710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_63
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 650
+        width: 123
+        height: 145
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7990f24f4a0f7f6d0800000000000000
+      internalID: -2956630039083415145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_64
+      rect:
+        serializedVersion: 2
+        x: 1511
+        y: 686
+        width: 93
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 443a5d1d6fd5d43c0800000000000000
+      internalID: -4373736348443106492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_65
+      rect:
+        serializedVersion: 2
+        x: 2543
+        y: 674
+        width: 89
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8888861242a93b720800000000000000
+      internalID: 2860799668280395912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_66
+      rect:
+        serializedVersion: 2
+        x: 3442
+        y: 670
+        width: 125
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6874b0ae874637da0800000000000000
+      internalID: -5948300212340832378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_67
+      rect:
+        serializedVersion: 2
+        x: 3589
+        y: 759
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8abea3545e6854e00800000000000000
+      internalID: 1028376409191148456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_68
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 678
+        width: 59
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7ee670c43c02f9b0800000000000000
+      internalID: -5047958811622052228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_69
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 729
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c29fc5f7ac24f3840800000000000000
+      internalID: 5205953131751209260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_70
+      rect:
+        serializedVersion: 2
+        x: 1425
+        y: 683
+        width: 75
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0249819d3cbad53b0800000000000000
+      internalID: -5522068710437120992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_71
+      rect:
+        serializedVersion: 2
+        x: 2428
+        y: 672
+        width: 111
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d325ce961bf30f80800000000000000
+      internalID: -8141387626784152622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_72
+      rect:
+        serializedVersion: 2
+        x: 3586
+        y: 733
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bc127fac10f74b90800000000000000
+      internalID: -7257568268491023184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_73
+      rect:
+        serializedVersion: 2
+        x: 3586
+        y: 698
+        width: 38
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2384beb6740ce7e50800000000000000
+      internalID: 6809091099616561202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_74
+      rect:
+        serializedVersion: 2
+        x: 3616
+        y: 719
+        width: 35
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9807732e54741450800000000000000
+      internalID: 6058595346390911134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_75
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 619
+        width: 81
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd8a9b8bdabf3f670800000000000000
+      internalID: 8571471239363274975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_76
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 693
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23ff822c980531080800000000000000
+      internalID: -9217935459699065038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_77
+      rect:
+        serializedVersion: 2
+        x: 597
+        y: 640
+        width: 59
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6251868fe8d9ede80800000000000000
+      internalID: -8151905038115531482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_78
+      rect:
+        serializedVersion: 2
+        x: 1629
+        y: 649
+        width: 49
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14d00b72a5074ba00800000000000000
+      internalID: 771364968702414145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_79
+      rect:
+        serializedVersion: 2
+        x: 2326
+        y: 623
+        width: 89
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 665601565e8ef8e10800000000000000
+      internalID: 2202234814748190054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_80
+      rect:
+        serializedVersion: 2
+        x: 2661
+        y: 659
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efa0cb50fd477d890800000000000000
+      internalID: -7433344158728975618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_81
+      rect:
+        serializedVersion: 2
+        x: 3353
+        y: 635
+        width: 74
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d2d693b8df4bbd20800000000000000
+      internalID: 3295315344496186067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_82
+      rect:
+        serializedVersion: 2
+        x: 3666
+        y: 639
+        width: 84
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcd85240cae5740f0800000000000000
+      internalID: -1132832688363434545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_83
+      rect:
+        serializedVersion: 2
+        x: 4545
+        y: 462
+        width: 283
+        height: 262
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17cf1f2898a8dd6f0800000000000000
+      internalID: -658217647314174863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_84
+      rect:
+        serializedVersion: 2
+        x: 1320
+        y: 634
+        width: 60
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87aea6c25c9597940800000000000000
+      internalID: 5294361540339362424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_85
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 538
+        width: 86
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18d3c6cf14796a3c0800000000000000
+      internalID: -4348622080516014719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_86
+      rect:
+        serializedVersion: 2
+        x: 1336
+        y: 551
+        width: 62
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdf20ccb1de90b0b0800000000000000
+      internalID: -5714893303481094181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_87
+      rect:
+        serializedVersion: 2
+        x: 2349
+        y: 547
+        width: 75
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1514c961cbe4ce9a0800000000000000
+      internalID: -6202496017055858351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_88
+      rect:
+        serializedVersion: 2
+        x: 3388
+        y: 568
+        width: 37
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3525c1d63f081de0800000000000000
+      internalID: -1362322159157566150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_89
+      rect:
+        serializedVersion: 2
+        x: 678
+        y: 400
+        width: 96
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9405cec87e41dec70800000000000000
+      internalID: 9001874214917787721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_90
+      rect:
+        serializedVersion: 2
+        x: 1707
+        y: 447
+        width: 52
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a12f8d558fa97860800000000000000
+      internalID: 7528241239461667233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_91
+      rect:
+        serializedVersion: 2
+        x: 2754
+        y: 463
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a63cf01703e06a760800000000000000
+      internalID: 7468672633258623850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_92
+      rect:
+        serializedVersion: 2
+        x: 3743
+        y: 420
+        width: 97
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6cc018243542c130800000000000000
+      internalID: 3585504343653141615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_93
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 366
+        width: 65
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b40c6d8084de8f0d0800000000000000
+      internalID: -3388697825954578357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_94
+      rect:
+        serializedVersion: 2
+        x: 1343
+        y: 375
+        width: 39
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9081209d74467130800000000000000
+      internalID: 3564111461190041754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_95
+      rect:
+        serializedVersion: 2
+        x: 1401
+        y: 287
+        width: 78
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91b4779edbe45e040800000000000000
+      internalID: 4676230365666822937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_96
+      rect:
+        serializedVersion: 2
+        x: 2341
+        y: 351
+        width: 82
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95d79219b12a350e0800000000000000
+      internalID: -2282302346863477415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_97
+      rect:
+        serializedVersion: 2
+        x: 3374
+        y: 361
+        width: 56
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00f85fa3ecd466060800000000000000
+      internalID: 6946325023413341952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_98
+      rect:
+        serializedVersion: 2
+        x: 4421
+        y: 290
+        width: 100
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e465eeac3f863720800000000000000
+      internalID: 2825603307016643811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_99
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 341
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9ed38cab7de975e0800000000000000
+      internalID: -1911235451410981219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_100
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 264
+        width: 79
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3b1b4c3e9ef8e8a0800000000000000
+      internalID: -6275486125170943170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_101
+      rect:
+        serializedVersion: 2
+        x: 2439
+        y: 318
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78c6e6b38519ef600800000000000000
+      internalID: 504000016452316295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_102
+      rect:
+        serializedVersion: 2
+        x: 2613
+        y: 294
+        width: 56
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c74a25e5e17a19ff0800000000000000
+      internalID: -31059973541550980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_103
+      rect:
+        serializedVersion: 2
+        x: 3450
+        y: 256
+        width: 88
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f8e6301a4828f1d0800000000000000
+      internalID: -3316856826993645322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_104
+      rect:
+        serializedVersion: 2
+        x: 3624
+        y: 276
+        width: 86
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afe3e136d5a42e2b0800000000000000
+      internalID: -5556797225266430214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_105
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 299
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4ce09f491b18bf50800000000000000
+      internalID: 6897292624840944718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_106
+      rect:
+        serializedVersion: 2
+        x: 1569
+        y: 263
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43125440b54db4060800000000000000
+      internalID: 6938873138273132852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_107
+      rect:
+        serializedVersion: 2
+        x: 1606
+        y: 319
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e06348703e168430800000000000000
+      internalID: 3784745730376425696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_108
+      rect:
+        serializedVersion: 2
+        x: 2455
+        y: 286
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33f6b8faa230de270800000000000000
+      internalID: 8281278771672870707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_Iris_109
+      rect:
+        serializedVersion: 2
+        x: 2604
+        y: 268
+        width: 47
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcf301081a62b55d0800000000000000
+      internalID: -3072819845670092849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_HIT_Iris_0: 4707926168066637766
+      eff_HIT_Iris_1: -3880365994920815765
+      eff_HIT_Iris_10: -1871904151360381197
+      eff_HIT_Iris_100: -6275486125170943170
+      eff_HIT_Iris_101: 504000016452316295
+      eff_HIT_Iris_102: -31059973541550980
+      eff_HIT_Iris_103: -3316856826993645322
+      eff_HIT_Iris_104: -5556797225266430214
+      eff_HIT_Iris_105: 6897292624840944718
+      eff_HIT_Iris_106: 6938873138273132852
+      eff_HIT_Iris_107: 3784745730376425696
+      eff_HIT_Iris_108: 8281278771672870707
+      eff_HIT_Iris_109: -3072819845670092849
+      eff_HIT_Iris_11: 3606010580243710650
+      eff_HIT_Iris_12: 1711020453264839258
+      eff_HIT_Iris_13: -6174432406206196668
+      eff_HIT_Iris_14: 5564624278119621021
+      eff_HIT_Iris_15: 7842728043005422011
+      eff_HIT_Iris_16: -4317732163515558417
+      eff_HIT_Iris_17: 2725653539503585791
+      eff_HIT_Iris_18: -2067450341458237877
+      eff_HIT_Iris_19: 8770929166307554227
+      eff_HIT_Iris_2: 3423484012978056077
+      eff_HIT_Iris_20: 6745167279085266078
+      eff_HIT_Iris_21: -3782942379830672877
+      eff_HIT_Iris_22: 6713715913149581789
+      eff_HIT_Iris_23: -5334373683434691621
+      eff_HIT_Iris_24: -7491144986143972606
+      eff_HIT_Iris_25: 6757979128036526523
+      eff_HIT_Iris_26: 7326216772061297977
+      eff_HIT_Iris_27: -8391133007336911081
+      eff_HIT_Iris_28: -3755242267647900514
+      eff_HIT_Iris_29: -3178166829105791862
+      eff_HIT_Iris_3: -2694761243418530211
+      eff_HIT_Iris_30: -1179596635739749820
+      eff_HIT_Iris_31: 224718549310862889
+      eff_HIT_Iris_32: 7993134637402595351
+      eff_HIT_Iris_33: 6337358253267837187
+      eff_HIT_Iris_34: -3171221380404585122
+      eff_HIT_Iris_35: -1500885313286887803
+      eff_HIT_Iris_36: -6011154237241543328
+      eff_HIT_Iris_37: -5983772737323274685
+      eff_HIT_Iris_38: -7173379604500871311
+      eff_HIT_Iris_39: 3669244314970845996
+      eff_HIT_Iris_4: -8441056771743308716
+      eff_HIT_Iris_40: 3476741602402490364
+      eff_HIT_Iris_41: 8403157830394318665
+      eff_HIT_Iris_42: -6381759186443223684
+      eff_HIT_Iris_43: 912775645073289107
+      eff_HIT_Iris_44: 3091040742210961982
+      eff_HIT_Iris_45: 1256856649719397621
+      eff_HIT_Iris_46: -4561397869060730436
+      eff_HIT_Iris_47: -123881801593657307
+      eff_HIT_Iris_48: 5411947512004755285
+      eff_HIT_Iris_49: 6490646316928518564
+      eff_HIT_Iris_5: -4616783454201005433
+      eff_HIT_Iris_50: 2972274803992566115
+      eff_HIT_Iris_51: -1912131635365490630
+      eff_HIT_Iris_52: -288432634804921290
+      eff_HIT_Iris_53: -372502177734125726
+      eff_HIT_Iris_54: 3668866158549372142
+      eff_HIT_Iris_55: 7956075118329499609
+      eff_HIT_Iris_56: -3134612711079875898
+      eff_HIT_Iris_57: 7854258191370440365
+      eff_HIT_Iris_58: -803342464347672771
+      eff_HIT_Iris_59: -6087999542431414358
+      eff_HIT_Iris_6: 8441619402346199642
+      eff_HIT_Iris_60: 3114877208370772573
+      eff_HIT_Iris_61: -5757264365631807320
+      eff_HIT_Iris_62: -4574071485710549710
+      eff_HIT_Iris_63: -2956630039083415145
+      eff_HIT_Iris_64: -4373736348443106492
+      eff_HIT_Iris_65: 2860799668280395912
+      eff_HIT_Iris_66: -5948300212340832378
+      eff_HIT_Iris_67: 1028376409191148456
+      eff_HIT_Iris_68: -5047958811622052228
+      eff_HIT_Iris_69: 5205953131751209260
+      eff_HIT_Iris_7: -4445051202426052759
+      eff_HIT_Iris_70: -5522068710437120992
+      eff_HIT_Iris_71: -8141387626784152622
+      eff_HIT_Iris_72: -7257568268491023184
+      eff_HIT_Iris_73: 6809091099616561202
+      eff_HIT_Iris_74: 6058595346390911134
+      eff_HIT_Iris_75: 8571471239363274975
+      eff_HIT_Iris_76: -9217935459699065038
+      eff_HIT_Iris_77: -8151905038115531482
+      eff_HIT_Iris_78: 771364968702414145
+      eff_HIT_Iris_79: 2202234814748190054
+      eff_HIT_Iris_8: 4056973512857957982
+      eff_HIT_Iris_80: -7433344158728975618
+      eff_HIT_Iris_81: 3295315344496186067
+      eff_HIT_Iris_82: -1132832688363434545
+      eff_HIT_Iris_83: -658217647314174863
+      eff_HIT_Iris_84: 5294361540339362424
+      eff_HIT_Iris_85: -4348622080516014719
+      eff_HIT_Iris_86: -5714893303481094181
+      eff_HIT_Iris_87: -6202496017055858351
+      eff_HIT_Iris_88: -1362322159157566150
+      eff_HIT_Iris_89: 9001874214917787721
+      eff_HIT_Iris_9: 6358212798464956789
+      eff_HIT_Iris_90: 7528241239461667233
+      eff_HIT_Iris_91: 7468672633258623850
+      eff_HIT_Iris_92: 3585504343653141615
+      eff_HIT_Iris_93: -3388697825954578357
+      eff_HIT_Iris_94: 3564111461190041754
+      eff_HIT_Iris_95: 4676230365666822937
+      eff_HIT_Iris_96: -2282302346863477415
+      eff_HIT_Iris_97: 6946325023413341952
+      eff_HIT_Iris_98: 2825603307016643811
+      eff_HIT_Iris_99: -1911235451410981219
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

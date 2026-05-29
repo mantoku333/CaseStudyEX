@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -17,6 +18,7 @@ public sealed class GameCursorController : MonoBehaviour
     private const int ReloadCircleTextureSize = 128;
 
     private static GameCursorController instance;
+    private static readonly HashSet<object> menuCursorModeOwners = new HashSet<object>();
 
     [SerializeField] private Canvas canvas;
     [SerializeField] private Image cursorImage;
@@ -38,6 +40,7 @@ public sealed class GameCursorController : MonoBehaviour
     // 銃アビリティ取得後、傘を開いている時だけ使う Reticle / Reload 表示設定。
     [SerializeField] private Vector2 reticleSize = new Vector2(64.0f, 64.0f);
     [SerializeField] private Vector2 reloadSize = new Vector2(64.0f, 64.0f);
+    [SerializeField] private bool clampReticleToPlayerRadius = true;
     [SerializeField, Min(0.0f)] private float reticleWorldRadius = 1.5f;
     [SerializeField] private Color reloadStartColor = Color.red;
     [SerializeField] private Color reloadMiddleColor = new Color(1.0f, 0.45f, 0.0f, 1.0f);
@@ -70,6 +73,7 @@ public sealed class GameCursorController : MonoBehaviour
         if (controller == null ||
             player == null ||
             camera == null ||
+            !controller.clampReticleToPlayerRadius ||
             !controller.TryGetPointerScreenPosition(out Vector2 screenPosition))
         {
             worldPosition = Vector3.zero;
@@ -81,6 +85,22 @@ public sealed class GameCursorController : MonoBehaviour
             camera,
             screenPosition,
             out worldPosition);
+    }
+
+    public static void SetMenuCursorModeActive(object owner, bool active)
+    {
+        if (owner == null)
+        {
+            return;
+        }
+
+        if (active)
+        {
+            menuCursorModeOwners.Add(owner);
+            return;
+        }
+
+        menuCursorModeOwners.Remove(owner);
     }
 
     private static GameCursorController EnsureInstance()
@@ -186,9 +206,16 @@ public sealed class GameCursorController : MonoBehaviour
             activeGun.IsReloading;
         Vector2 displayPosition = rawScreenPosition;
 
+        if (menuCursorModeOwners.Count > 0)
+        {
+            ShowCursor(rawScreenPosition);
+            return;
+        }
+
         // Reticle の制限は「銃アビリティあり + 傘オープン」の時だけ。通常カーソルは制限しない。
         if (hasGunAbility &&
             umbrellaOpen &&
+            clampReticleToPlayerRadius &&
             activePlayer != null &&
             Camera.main != null &&
             TryGetClampedAimWorldPosition(
@@ -404,6 +431,12 @@ public sealed class GameCursorController : MonoBehaviour
         out Vector3 worldPosition)
     {
         if (player == null || camera == null)
+        {
+            worldPosition = Vector3.zero;
+            return false;
+        }
+
+        if (!clampReticleToPlayerRadius)
         {
             worldPosition = Vector3.zero;
             return false;
