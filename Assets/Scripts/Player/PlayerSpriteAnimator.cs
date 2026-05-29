@@ -25,6 +25,7 @@ namespace Player
         [SerializeField] private Animator animator;
         [SerializeField] private int animatorLayer = 0;
         [SerializeField] private string idleStateName = "idle";
+        [SerializeField] private string closedIdleStateName = "idle_close";
         [SerializeField] private string runStateName = "run";
         [SerializeField] private string closedRunStateName = "walk_close";
         [SerializeField] private string jumpStateName = "jump";
@@ -387,6 +388,10 @@ namespace Player
                 case VisualState.Attack:
                     return attackStateName;
                 default:
+                    if (!isUmbrellaOpen && !string.IsNullOrEmpty(closedIdleStateName))
+                    {
+                        return closedIdleStateName;
+                    }
                     return idleStateName;
             }
         }
@@ -464,6 +469,12 @@ namespace Player
                     if (AnimatorHasState("attack")) return "attack";
                     break;
                 default:
+                    if (!isUmbrellaOpen)
+                    {
+                        if (AnimatorHasState("idle_close")) return "idle_close";
+                        if (AnimatorHasState("IdleClose")) return "IdleClose";
+                        if (AnimatorHasState("IdleClosed")) return "IdleClosed";
+                    }
                     if (AnimatorHasState("Idle")) return "Idle";
                     if (AnimatorHasState("idle")) return "idle";
                     break;
