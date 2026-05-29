@@ -1,10 +1,11 @@
-﻿{
+{
   "projectFileVersion": 3,
   "sourceFiles": [
     "Data/Dialogue/DebugSampleDialogue.yarn",
     "Data/Dialogue/PrologueDialogue.yarn",
     "Data/Dialogue/PrologueTimelineDialogue.yarn",
-    "Data/Dialogue/TutorialAttackDummyDialogue.yarn"
+    "Data/Dialogue/TutorialAttackDummyDialogue.yarn",
+    "Assets/Data/Dialogue/a.yarn"
   ],
   "excludeFiles": [
     "**/*~/*",
