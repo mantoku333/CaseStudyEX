@@ -103,7 +103,7 @@ MonoBehaviour:
   cursorImage: {fileID: 400001}
   reticleImage: {fileID: 400002}
   reloadImage: {fileID: 400003}
-  cursorHotspotOffset: {x: 0, y: 100}
+  cursorHotspotOffset: {x: 0, y: 1000}
   reticleSize: {x: 64, y: 64}
   reloadSize: {x: 64, y: 64}
   reticleWorldRadius: 5
