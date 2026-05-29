@@ -274,6 +274,30 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
     public void OnNotify(Playable origin, INotification notification, object context)
     {
+        if (notification is StoryYarnDialogueMarker dialogueMarker)
+        {
+            TryStartDialogueFromTimeline(
+                dialogueMarker.TriggerKey,
+                dialogueMarker.NodeName,
+                dialogueMarker.UseControllerDefaultStyle,
+                dialogueMarker.DialogueStyle,
+                dialogueMarker.PauseTimelineUntilComplete,
+                dialogueMarker.BubbleActorKey);
+            return;
+        }
+
+        if (notification is StoryAudioMarker audioMarker)
+        {
+            PlayAudioMarker(audioMarker);
+            return;
+        }
+
+        if (notification is StoryCameraShakeMarker shakeMarker)
+        {
+            PlayCameraShakeMarker(shakeMarker);
+            return;
+        }
+
         if (notification is StoryAutoSaveMarker autoSaveMarker)
         {
             if (autoSaveMarker.ApplyCompleteMutationsBeforeSave)
@@ -283,6 +307,72 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
             SaveManager.TrySaveCurrentGame();
         }
+    }
+
+    private static void PlayAudioMarker(StoryAudioMarker marker)
+    {
+        if (marker == null || !Application.isPlaying)
+        {
+            return;
+        }
+
+        if (marker.AudioKind == StoryTimelineAudioKind.Bgm)
+        {
+            if (marker.Action == StoryTimelineAudioAction.Stop)
+            {
+                StoryTimelineRuntime.Instance.StopBgm(marker.FadeSeconds);
+                return;
+            }
+
+            StoryTimelineRuntime.Instance.PlayBgm(marker.AudioClip, marker.Volume, marker.Loop, marker.FadeSeconds);
+            return;
+        }
+
+        if (marker.Action == StoryTimelineAudioAction.Play)
+        {
+            StoryTimelineRuntime.Instance.PlaySe(marker.AudioClip, marker.Volume);
+        }
+    }
+
+    private static void PlayCameraShakeMarker(StoryCameraShakeMarker marker)
+    {
+        if (marker == null || !Application.isPlaying)
+        {
+            return;
+        }
+
+        CameraManager cameraManager = CameraManager.Instance;
+        if (cameraManager == null)
+        {
+            cameraManager = FindFirstObjectByType<CameraManager>(FindObjectsInactive.Include);
+        }
+
+        if (cameraManager != null)
+        {
+            cameraManager.PlayShake(marker.Force, ResolveShakeDirection(marker.Direction, marker.CustomDirection));
+            return;
+        }
+
+        Debug.LogWarning("[StoryEventController] CameraManager was not found. Shake marker was skipped.");
+    }
+
+    private static Vector3 ResolveShakeDirection(StoryCameraShakeDirection direction, Vector2 customDirection)
+    {
+        Vector2 resolved = direction switch
+        {
+            StoryCameraShakeDirection.Vertical => Vector2.up,
+            StoryCameraShakeDirection.Diagonal => new Vector2(1f, 1f),
+            StoryCameraShakeDirection.Custom => customDirection,
+            _ => Vector2.right,
+        };
+
+        if (resolved.sqrMagnitude <= Mathf.Epsilon)
+        {
+            resolved = Vector2.right;
+        }
+
+        resolved.Normalize();
+        return new Vector3(resolved.x, resolved.y, 0f);
     }
 
     private IEnumerator PlayEventRoutine(PlayableDirector resolvedDirector)
