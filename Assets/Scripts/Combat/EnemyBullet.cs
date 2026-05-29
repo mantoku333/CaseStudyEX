@@ -48,6 +48,7 @@ namespace Metroidvania.Enemy
         private float reflectedMaxDistance;
         private bool isReflected;
         private Vector2 previousPosition;
+        private Vector2 lastMoveDirection;
 
 
         // 経路再計算だけで避けられない時に試す回避角度。
@@ -242,6 +243,7 @@ namespace Metroidvania.Enemy
 
             Vector2 normalizedDirection = direction.normalized;
             rb2D.linearVelocity = normalizedDirection * Mathf.Max(0.1f, bulletSpeed);
+            lastMoveDirection = normalizedDirection;
             // Enemy_Ranged の弾は回転させず、必要な弾だけ Inspector で有効化する。
             if (rotateToVelocity)
             {
@@ -920,14 +922,7 @@ namespace Metroidvania.Enemy
                 return;
             }
 
-            Vector2 currentVelocity = rb2D.linearVelocity;
-
-            if (currentVelocity.sqrMagnitude <= 0.0001f)
-            {
-                currentVelocity = ((Vector2)transform.position - parryPosition).normalized * bulletSpeed;
-            }
-
-            Vector2 reflectDirection = -currentVelocity.normalized;
+            Vector2 reflectDirection = -ResolveIncomingDirection(parryPosition);
 
             reflectedMaxDistance = travelledDistance;
 
@@ -951,12 +946,38 @@ namespace Metroidvania.Enemy
             Debug.Log($"ジャストパリィ成功。反射ダメージ:{reflectedDamage}");
         }
 
+        private Vector2 ResolveIncomingDirection(Vector2 parryPosition)
+        {
+            if (lastMoveDirection.sqrMagnitude > 0.0001f)
+            {
+                return lastMoveDirection.normalized;
+            }
+
+            if (rb2D != null && rb2D.linearVelocity.sqrMagnitude > 0.0001f)
+            {
+                return rb2D.linearVelocity.normalized;
+            }
+
+            Vector2 directionToParry = parryPosition - (Vector2)transform.position;
+            if (directionToParry.sqrMagnitude > 0.0001f)
+            {
+                return directionToParry.normalized;
+            }
+
+            return Vector2.left;
+        }
+
         private void CountTravelDistance()
         {
             Vector2 currentPosition = transform.position;
             float movedDistance = Vector2.Distance(previousPosition, currentPosition);
 
             travelledDistance += movedDistance;
+
+            if (movedDistance > 0.0001f)
+            {
+                lastMoveDirection = (currentPosition - previousPosition) / movedDistance;
+            }
 
             if (isReflected)
             {
