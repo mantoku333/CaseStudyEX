@@ -412,6 +412,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
                 if (!timeScalePaused)
                 {
                     timeScalePaused = true;
+                    HitStopController.BeginExternalPause();
                     previousTimeScale = Time.timeScale;
                     Time.timeScale = 0f;
                 }
@@ -439,6 +440,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
         {
             timeScalePaused = false;
             Time.timeScale = previousTimeScale;
+            HitStopController.EndExternalPause();
         }
 
         ResumeGameplay();

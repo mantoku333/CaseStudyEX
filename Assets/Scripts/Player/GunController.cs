@@ -24,7 +24,9 @@ public class GunController : MonoBehaviour
     };
 
     [Header("銃の設定")]
-    [SerializeField] private float coolTime = 3.0f;           //銃のクールタイム
+    [SerializeField] private float firstRecoilCoolTime = 0.5f;
+    [SerializeField] private float secondRecoilCoolTime = 5.0f;
+    [SerializeField] private float secondRecoilPowerMultiplier = 0.5f;
     [SerializeField] private float airRecoilPower  = 25.0f;   //銃反動/リコイルジャンプ共通の反動量
     [SerializeField] private float recoilDuration = 0.1f;      //反動状態の時間
 
@@ -44,6 +46,8 @@ public class GunController : MonoBehaviour
 
     private bool isRecoiling = false;   　//反動が起きているかどうか
     private float currentCoolTime = 0.0f; //クールタイムの残り時間    
+    private float currentCoolTimeDuration = 0.0f;
+    private bool isSecondRecoilNext = false;
     private Rigidbody2D rigidBody2d;      //反動を加えるためのRigidbody2D
     private float defaultLinearDamping = 0.0f;
 
@@ -52,10 +56,12 @@ public class GunController : MonoBehaviour
     private Sprite[] recoilEffectSprites;
 
     public float CurrentCoolTime => Mathf.Max(0.0f, currentCoolTime);
-    public float ReloadDuration => Mathf.Max(0.0f, coolTime);
+    public float ReloadDuration => Mathf.Max(0.0f, currentCoolTimeDuration);
     public float ReloadRemainingRatio =>
-        coolTime > 0.0f ? Mathf.Clamp01(currentCoolTime / coolTime) : 0.0f;
-    public bool IsReloading => currentCoolTime > 0.0f && coolTime > 0.0f;
+        currentCoolTimeDuration > 0.0f
+            ? Mathf.Clamp01(currentCoolTime / currentCoolTimeDuration)
+            : 0.0f;
+    public bool IsReloading => currentCoolTime > 0.0f && currentCoolTimeDuration > 0.0f;
 
     void Start()
     {
@@ -76,7 +82,7 @@ public class GunController : MonoBehaviour
         //クールタイムの更新
         if (currentCoolTime > 0)
         {
-            currentCoolTime -= Time.deltaTime;
+            currentCoolTime = Mathf.Max(0.0f, currentCoolTime - Time.deltaTime);
         }
     }
 
@@ -112,12 +118,23 @@ public class GunController : MonoBehaviour
 
     public void SetCoolTime(float time)
     {
-        coolTime = time;
+        secondRecoilCoolTime = Mathf.Max(0.0f, time);
     }
 
     public float GetCoolTime()
     {
-        return coolTime;
+        return secondRecoilCoolTime;
+    }
+
+    public void SetRecoilCoolTimes(float firstCoolTime, float secondCoolTime)
+    {
+        firstRecoilCoolTime = Mathf.Max(0.0f, firstCoolTime);
+        secondRecoilCoolTime = Mathf.Max(0.0f, secondCoolTime);
+    }
+
+    public void ResetRecoilCycle()
+    {
+        isSecondRecoilNext = false;
     }
 
 
@@ -130,10 +147,15 @@ public class GunController : MonoBehaviour
     {
         if (currentCoolTime > 0) { return; }
 
-        //銃の反動を適用
-        ApplyRecoil(direction);
+        float recoilPowerMultiplier = GetCurrentRecoilPowerMultiplier();
 
-        currentCoolTime = coolTime;
+        //銃の反動を適用
+        if (!TryApplyRecoil(direction, recoilPowerMultiplier))
+        {
+            return;
+        }
+
+        StartRecoilCoolTime();
 
         PlayRecoilEffect(direction);
 
@@ -146,11 +168,11 @@ public class GunController : MonoBehaviour
     /// 銃の反動を適用する関数
     /// </summary>
     /// <param name="direction">反動の方向</param>
-    void ApplyRecoil(Vector2 direction)
+    private bool TryApplyRecoil(Vector2 direction, float powerMultiplier)
     {
-        if (rigidBody2d == null){ return; }
+        if (rigidBody2d == null){ return false; }
 
-        if (direction == Vector2.zero){ return; }
+        if (direction == Vector2.zero){ return false; }
 
         isRecoiling = true;
 
@@ -158,10 +180,11 @@ public class GunController : MonoBehaviour
         rigidBody2d.linearDamping = 2.0f;
 
         //現在の速度を取得
-        Vector2 recoil = -direction.normalized * airRecoilPower;
+        Vector2 recoil = -direction.normalized * airRecoilPower * powerMultiplier;
         rigidBody2d.AddForce(recoil, ForceMode2D.Impulse);
 
         BeginRecoil(recoilDuration);
+        return true;
     }
 
     /// <summary>
@@ -173,15 +196,17 @@ public class GunController : MonoBehaviour
 
         if (rigidBody2d == null){ return; }
 
+        float recoilPowerMultiplier = GetCurrentRecoilPowerMultiplier();
+
         // リコイルジャンプ中は移動入力と混ざらないように速度をリセットしてからインパルスを与える
         Vector2 velocity = rigidBody2d.linearVelocity;
         velocity.x = 0.0f;
         velocity.y = 0.0f;
         rigidBody2d.linearVelocity = velocity;
-        rigidBody2d.AddForce(Vector2.up * airRecoilPower, ForceMode2D.Impulse);
+        rigidBody2d.AddForce(Vector2.up * airRecoilPower * recoilPowerMultiplier, ForceMode2D.Impulse);
         BeginRecoil(recoilDuration);
 
-        currentCoolTime = coolTime;
+        StartRecoilCoolTime();
         PlayRecoilEffect(Vector2.down);
 
         //Debug.Log("Jump Recoil!");
@@ -198,6 +223,20 @@ public class GunController : MonoBehaviour
 
         CancelInvoke(nameof(EndRecoil));
         Invoke(nameof(EndRecoil), duration);
+    }
+
+    private float GetCurrentRecoilPowerMultiplier()
+    {
+        return isSecondRecoilNext ? secondRecoilPowerMultiplier : 1.0f;
+    }
+
+    private void StartRecoilCoolTime()
+    {
+        currentCoolTimeDuration = isSecondRecoilNext
+            ? secondRecoilCoolTime
+            : firstRecoilCoolTime;
+        currentCoolTime = currentCoolTimeDuration;
+        isSecondRecoilNext = !isSecondRecoilNext;
     }
 
     /// <summary>

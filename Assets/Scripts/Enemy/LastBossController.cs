@@ -171,6 +171,7 @@ namespace GameName.Enemy
         public bool IsEncounterActive => encounterActive;
         public int CurrentHealth => currentHealth;
         public int MaxHealth => Mathf.Max(1, maxHealth);
+        private static bool UseLegacyBossHitStop => false;
         /// <summary>
         /// LastBossがDestroyされる直前に通知する。専用死亡SEの再生に使う。
         /// System.Actionを直接書き、UnityEngine.Randomとの名前衝突を避ける。
@@ -239,7 +240,6 @@ namespace GameName.Enemy
             CancelActiveBladeAttack();
             StopMotion();
             HideAttackVisual();
-            RestoreHitStopTimeScale();
             encounterActive = false;
             state = BossState.Inactive;
         }
@@ -247,7 +247,6 @@ namespace GameName.Enemy
         private void OnDestroy()
         {
             CancelActiveBladeAttack();
-            RestoreHitStopTimeScale();
 
             if (telegraphObject != null)
             {
@@ -361,6 +360,7 @@ namespace GameName.Enemy
             PlayHitFlash();
             currentHealth = Mathf.Max(0, currentHealth - damage);
             NotifyHealthChanged();
+            HitStopController.RequestPlayerToEnemy();
             TryEnterEnraged();
 
             if (currentHealth <= 0)
@@ -408,14 +408,14 @@ namespace GameName.Enemy
 
             if (pendingAction == BossAction.Horizontal || pendingAction == BossAction.Vertical)
             {
-                // prefab式の範囲攻撃は赤箱を表示せず、透明なパリィ用判定だけ攻撃範囲に置く。
+                // Prefab range attacks are parried by the blade colliders only.
                 HideAttackVisual();
                 if (pendingAction == BossAction.Vertical)
                 {
                     UpdateVerticalAttackTracking();
                 }
 
-                ShowRangeParryProxy(activeAttackBox, pendingAction);
+                HideRangeParryProxy();
 
                 stateTimer -= Time.deltaTime;
                 if (stateTimer > 0f)
@@ -651,7 +651,7 @@ namespace GameName.Enemy
             visibleAction = action;
             state = BossState.AttackVisible;
             prefabAttackRunning = true;
-            ShowRangeParryProxy(attackBox, action);
+            HideRangeParryProxy();
 
             if (activeBladeAttackRoutine != null)
             {
@@ -693,17 +693,16 @@ namespace GameName.Enemy
 
             float spacing = ResolveGroundBladePrefabWidth();
             float sweepSpeed = Mathf.Max(0.1f, horizontalGroundBladeSweepSpeed);
-            float spawnInterval = spacing / sweepSpeed;
-            int bladeCount = Mathf.Max(1, Mathf.CeilToInt(attackBox.Size.x / spacing));
+            int bladeCount = Mathf.Max(1, Mathf.FloorToInt(attackBox.Size.x / spacing));
+            float slotWidth = attackBox.Size.x / bladeCount;
+            float spawnInterval = slotWidth / sweepSpeed;
             float nearEdgeX = attackBox.Center.x - facingDirection * (attackBox.Size.x * 0.5f);
             float groundY = attackBox.Center.y - attackBox.Size.y * 0.5f;
 
             // GroundBladeのscaleは触らず、prefabの実幅を使ってボス側から順に敷き詰める。
             for (int i = 0; i < bladeCount; i++)
             {
-                float distance = spacing >= attackBox.Size.x
-                    ? attackBox.Size.x * 0.5f
-                    : Mathf.Min(attackBox.Size.x - spacing * 0.5f, spacing * 0.5f + i * spacing);
+                float distance = slotWidth * (i + 0.5f);
                 Vector2 spawnPosition = new Vector2(
                     nearEdgeX + facingDirection * distance,
                     groundY);
@@ -1119,6 +1118,8 @@ namespace GameName.Enemy
                 damagedHealth = targetHealth;
                 if (targetHealth.TryTakeDamage(GetAttackDamage(action)))
                 {
+                    HitStopController.RequestEnemyToPlayer();
+
                     // HP クールダウンを通過した実ダメージだけ、被弾フラッシュを強制再生する。
                     PlayerDamageFlash damageFlash = targetHealth.GetComponent<PlayerDamageFlash>();
                     if (damageFlash == null)
@@ -1166,6 +1167,7 @@ namespace GameName.Enemy
             }
 
             PlayPlayerDamageFlash(targetHealth);
+            HitStopController.RequestEnemyToPlayer();
             return true;
         }
 
@@ -1307,7 +1309,13 @@ namespace GameName.Enemy
                 return true;
             }
 
-            return IsPlayerCurrentlyParryingInBox(attackBox);
+            if (!IsPlayerCurrentlyParryingInBox(attackBox))
+            {
+                return false;
+            }
+
+            HitStopController.RequestParry();
+            return true;
         }
 
         private void UpdateJustParryBuffer(BossAction action, AttackBox attackBox)
@@ -1323,8 +1331,13 @@ namespace GameName.Enemy
                 return;
             }
 
+            bool alreadyBuffered = IsBufferedJustParryValid(action);
             justParryBufferedAction = action;
             justParryValidUntil = Time.time + justParryEffectDuration;
+            if (!alreadyBuffered)
+            {
+                HitStopController.RequestParry();
+            }
         }
 
         private bool IsBufferedJustParryValid(BossAction action)
@@ -1529,7 +1542,7 @@ namespace GameName.Enemy
 
             if (spriteRenderer != null)
             {
-                spriteRenderer.flipX = facingDirection < 0;
+                spriteRenderer.flipX = facingDirection > 0;
             }
         }
 
@@ -1594,8 +1607,9 @@ namespace GameName.Enemy
             visibleAction = BossAction.None;
             ClearJustParryBuffer();
 
+            HitStopController.Request(hitStopDuration);
             float previousTimeScale = Time.timeScale;
-            if (useGlobalHitStop && hitStopDuration > 0f)
+            if (UseLegacyBossHitStop && useGlobalHitStop && hitStopDuration > 0f)
             {
                 // 全体停止のヒットストップ。終了時は必ず元のtimeScaleへ戻す。
                 hitStopRestoreTimeScale = previousTimeScale;

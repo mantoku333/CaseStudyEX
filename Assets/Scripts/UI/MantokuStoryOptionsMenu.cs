@@ -535,6 +535,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         }
 
         gameplayPaused = true;
+        HitStopController.BeginExternalPause();
         previousTimeScale = Time.timeScale;
         Time.timeScale = 0f;
         openFullMapAfterClose = false;
@@ -603,6 +604,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
 
         gameplayPaused = false;
         Time.timeScale = previousTimeScale;
+        HitStopController.EndExternalPause();
 
         if (cachedMinimapManager != null)
         {

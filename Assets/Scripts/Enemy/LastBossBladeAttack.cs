@@ -37,7 +37,7 @@ namespace GameName.Enemy
         private bool destroying;
 
         public BladeKind Kind => kind;
-        public bool IsParryable => initialized && !parried && !destroying;
+        public bool IsParryable => initialized && canDamage && !parried && !destroying;
 
         private void Awake()
         {

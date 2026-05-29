@@ -360,6 +360,8 @@ namespace Metroidvania.Enemy
 
             if (playerHealth.TryTakeDamage(damage))
             {
+                HitStopController.RequestEnemyToPlayer();
+
                 PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
                 if (damageFlash == null)
                 {

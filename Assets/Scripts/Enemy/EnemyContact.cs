@@ -204,9 +204,10 @@ namespace Metroidvania.Enemy
             }
 
             // フラッシュは HP クールダウンを通過して、実際にダメージが入った時だけ再生する。
-            if (didDamage && cachedPlayerFlash != null)
+            if (didDamage)
             {
-                cachedPlayerFlash.PlayFlashForced();
+                HitStopController.RequestEnemyToPlayer();
+                cachedPlayerFlash?.PlayFlashForced();
             }
 
             nextHitTime = Time.time + hitInterval;
