@@ -22,7 +22,20 @@ public sealed class GameCursorController : MonoBehaviour
     [SerializeField] private Image cursorImage;
     [SerializeField] private Image reticleImage;
     [SerializeField] private Image reloadImage;
+
+    // 通常カーソルの見た目と位置調整。Prefab 側でサイズやホットスポットを調整できる。
     [SerializeField] private Vector2 cursorHotspotOffset = Vector2.zero;
+    [SerializeField] private Vector2 cursorSize = new Vector2(20.0f, 36.0f);
+
+    // 通常カーソル専用のまばたき設定。Reticle や Reload 表示中は使わない。
+    [SerializeField] private Sprite cursorOpenSprite;
+    [SerializeField] private Sprite cursorClosedSprite;
+    [SerializeField] private string cursorBlinkPattern = "010000000010100000";
+    [SerializeField, Min(0.0f)] private float cursorBlinkMinIntervalSeconds = 30.0f;
+    [SerializeField, Min(0.0f)] private float cursorBlinkMaxIntervalSeconds = 180.0f;
+    [SerializeField, Min(0.01f)] private float cursorBlinkStepSeconds = 0.08f;
+
+    // 銃アビリティ取得後、傘を開いている時だけ使う Reticle / Reload 表示設定。
     [SerializeField] private Vector2 reticleSize = new Vector2(64.0f, 64.0f);
     [SerializeField] private Vector2 reloadSize = new Vector2(64.0f, 64.0f);
     [SerializeField, Min(0.0f)] private float reticleWorldRadius = 1.5f;
@@ -37,6 +50,10 @@ public sealed class GameCursorController : MonoBehaviour
     private Player.PlayerAbilityController activeAbility;
     private Sprite reloadCircleSprite;
     private Texture2D reloadCircleTexture;
+    private float cursorBlinkTimer;
+    private float cursorBlinkDelaySeconds;
+    private int cursorBlinkPatternIndex;
+    private bool cursorBlinkPlaying;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
@@ -129,12 +146,14 @@ public sealed class GameCursorController : MonoBehaviour
         ResolveReferences();
         ConfigureCanvas();
         ConfigureImages();
+        ResetCursorBlink();
         SetSystemCursorVisible(false);
         HideAllImages();
     }
 
     private void OnEnable()
     {
+        ResetCursorBlink();
         SetSystemCursorVisible(false);
     }
 
@@ -160,6 +179,7 @@ public sealed class GameCursorController : MonoBehaviour
             activeGun.IsReloading;
         Vector2 displayPosition = rawScreenPosition;
 
+        // Reticle の制限は「銃アビリティあり + 傘オープン」の時だけ。通常カーソルは制限しない。
         if (hasGunAbility &&
             umbrellaOpen &&
             activePlayer != null &&
@@ -173,6 +193,7 @@ public sealed class GameCursorController : MonoBehaviour
             displayPosition = Camera.main.WorldToScreenPoint(clampedWorldPosition);
         }
 
+        // Reload 中は Reticle を隠し、同じ制限済み位置に Reload 円を出す。
         if (reloading)
         {
             ShowReload(displayPosition);
@@ -261,9 +282,16 @@ public sealed class GameCursorController : MonoBehaviour
 
     private void ConfigureImages()
     {
+        // 開き目スプライトが未設定なら、現在の CursorImage をフォールバックとして使う。
+        if (cursorOpenSprite == null && cursorImage != null)
+        {
+            cursorOpenSprite = cursorImage.sprite;
+        }
+
         ConfigureImage(cursorImage, Vector2.zero, ResolveCursorSize(), new Vector2(0.0f, 1.0f));
         ConfigureImage(reticleImage, Vector2.zero, reticleSize, new Vector2(0.5f, 0.5f));
         ConfigureImage(reloadImage, Vector2.zero, reloadSize, new Vector2(0.5f, 0.5f));
+        SetCursorOpenSprite();
 
         if (reloadImage != null)
         {
@@ -296,6 +324,11 @@ public sealed class GameCursorController : MonoBehaviour
 
     private Vector2 ResolveCursorSize()
     {
+        if (cursorSize.x > 0.0f && cursorSize.y > 0.0f)
+        {
+            return cursorSize;
+        }
+
         if (cursorImage != null && cursorImage.sprite != null)
         {
             Rect spriteRect = cursorImage.sprite.rect;
@@ -375,6 +408,7 @@ public sealed class GameCursorController : MonoBehaviour
             return false;
         }
 
+        // ポインターをプレイヤー平面のワールド座標に変換し、プレイヤー中心の円内へ丸める。
         Vector3 pointerWorldPosition = ScreenToPlayerPlaneWorld(
             camera,
             screenPosition,
@@ -443,11 +477,14 @@ public sealed class GameCursorController : MonoBehaviour
         SetImageVisible(cursorImage, true);
         SetImageVisible(reticleImage, false);
         SetImageVisible(reloadImage, false);
+        UpdateCursorBlink();
         MoveImage(cursorImage, screenPosition, cursorHotspotOffset);
     }
 
     private void ShowReticle(Vector2 screenPosition)
     {
+        // Reticle 表示中は通常カーソルのまばたきを止め、戻った時は開き目から始める。
+        ResetCursorBlink();
         SetImageVisible(cursorImage, false);
         SetImageVisible(reticleImage, true);
         SetImageVisible(reloadImage, false);
@@ -456,6 +493,8 @@ public sealed class GameCursorController : MonoBehaviour
 
     private void ShowReload(Vector2 screenPosition)
     {
+        // Reload 表示中も通常カーソルのまばたきは止めておく。
+        ResetCursorBlink();
         SetImageVisible(cursorImage, false);
         SetImageVisible(reticleImage, false);
         SetImageVisible(reloadImage, true);
@@ -493,9 +532,116 @@ public sealed class GameCursorController : MonoBehaviour
 
     private void HideAllImages()
     {
+        ResetCursorBlink();
         SetImageVisible(cursorImage, false);
         SetImageVisible(reticleImage, false);
         SetImageVisible(reloadImage, false);
+    }
+
+    private void UpdateCursorBlink()
+    {
+        if (cursorImage == null)
+        {
+            return;
+        }
+
+        if (cursorOpenSprite == null)
+        {
+            cursorOpenSprite = cursorImage.sprite;
+        }
+
+        // 閉じ目スプライトがない場合は、古い通常カーソルとして静止表示にする。
+        if (cursorClosedSprite == null || string.IsNullOrEmpty(cursorBlinkPattern))
+        {
+            SetCursorOpenSprite();
+            return;
+        }
+
+        float stepSeconds = Mathf.Max(0.01f, cursorBlinkStepSeconds);
+
+        if (!cursorBlinkPlaying)
+        {
+            cursorBlinkTimer += Time.unscaledDeltaTime;
+            SetCursorOpenSprite();
+
+            if (cursorBlinkTimer < cursorBlinkDelaySeconds)
+            {
+                return;
+            }
+
+            cursorBlinkPlaying = true;
+            cursorBlinkTimer = 0.0f;
+            cursorBlinkPatternIndex = 0;
+        }
+
+        // パターン文字の 0 は開き目、1 は閉じ目として 1 ステップずつ再生する。
+        ApplyCursorBlinkPatternFrame();
+        cursorBlinkTimer += Time.unscaledDeltaTime;
+
+        while (cursorBlinkTimer >= stepSeconds && cursorBlinkPlaying)
+        {
+            cursorBlinkTimer -= stepSeconds;
+            cursorBlinkPatternIndex++;
+
+            if (cursorBlinkPatternIndex >= cursorBlinkPattern.Length)
+            {
+                ResetCursorBlink();
+                return;
+            }
+
+            ApplyCursorBlinkPatternFrame();
+        }
+    }
+
+    private void ApplyCursorBlinkPatternFrame()
+    {
+        if (cursorImage == null || cursorBlinkPatternIndex >= cursorBlinkPattern.Length)
+        {
+            return;
+        }
+
+        cursorImage.sprite =
+            cursorBlinkPattern[cursorBlinkPatternIndex] == '1'
+                ? cursorClosedSprite
+                : cursorOpenSprite;
+    }
+
+    private void ResetCursorBlink()
+    {
+        cursorBlinkTimer = 0.0f;
+        // まばたきが終わるたびに次の待ち時間をランダムに取り直す。
+        cursorBlinkDelaySeconds = GetRandomCursorBlinkDelaySeconds();
+        cursorBlinkPatternIndex = 0;
+        cursorBlinkPlaying = false;
+        SetCursorOpenSprite();
+    }
+
+    private float GetRandomCursorBlinkDelaySeconds()
+    {
+        float minSeconds = Mathf.Max(0.0f, cursorBlinkMinIntervalSeconds);
+        float maxSeconds = Mathf.Max(0.0f, cursorBlinkMaxIntervalSeconds);
+
+        if (maxSeconds < minSeconds)
+        {
+            float tempSeconds = minSeconds;
+            minSeconds = maxSeconds;
+            maxSeconds = tempSeconds;
+        }
+
+        if (Mathf.Approximately(minSeconds, maxSeconds))
+        {
+            return minSeconds;
+        }
+
+        return Random.Range(minSeconds, maxSeconds);
+    }
+
+    private void SetCursorOpenSprite()
+    {
+        if (cursorImage != null && cursorOpenSprite != null && cursorImage.sprite != cursorOpenSprite)
+        {
+            cursorImage.sprite = cursorOpenSprite;
+        }
     }
 
     private static void SetImageVisible(Image image, bool visible)
