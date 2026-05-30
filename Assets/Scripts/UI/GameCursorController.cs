@@ -167,18 +167,25 @@ public sealed class GameCursorController : MonoBehaviour
         ConfigureCanvas();
         ConfigureImages();
         ResetCursorBlink();
-        SetSystemCursorVisible(false);
+        ApplySystemCursorVisibility();
         HideAllImages();
     }
 
     private void OnEnable()
     {
         ResetCursorBlink();
-        SetSystemCursorVisible(false);
+        ApplySystemCursorVisibility();
     }
 
     private void Update()
     {
+        if (ShouldUseSystemCursor())
+        {
+            SetSystemCursorVisible(true);
+            HideAllImages();
+            return;
+        }
+
         SetSystemCursorVisible(false);
         ResolvePlayerReferences();
 
@@ -240,7 +247,7 @@ public sealed class GameCursorController : MonoBehaviour
     {
         if (hasFocus)
         {
-            SetSystemCursorVisible(false);
+            ApplySystemCursorVisibility();
         }
     }
 
@@ -752,5 +759,16 @@ public sealed class GameCursorController : MonoBehaviour
     {
         Cursor.visible = visible;
         Cursor.lockState = CursorLockMode.None;
+    }
+
+    private static void ApplySystemCursorVisibility()
+    {
+        SetSystemCursorVisible(ShouldUseSystemCursor());
+    }
+
+    private static bool ShouldUseSystemCursor()
+    {
+        return StoryPauseRuntime.HasOverride &&
+               StoryPauseRuntime.EffectivePolicy != StoryPausePolicy.None;
     }
 }
