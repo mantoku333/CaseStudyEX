@@ -25,7 +25,7 @@ public class GunController : MonoBehaviour
 
     [Header("銃の設定")]
     [SerializeField] private float firstRecoilCoolTime = 0.5f;
-    [SerializeField] private float secondRecoilCoolTime = 5.0f;
+    [SerializeField] private float secondRecoilCoolTime = 2.5f;
     [SerializeField] private float secondRecoilPowerMultiplier = 0.5f;
     [SerializeField] private float airRecoilPower  = 25.0f;   //銃反動/リコイルジャンプ共通の反動量
     [SerializeField] private float recoilDuration = 0.1f;      //反動状態の時間
