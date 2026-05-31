@@ -11,6 +11,7 @@ namespace Player
         private const string SectionKey = "player_health_v1";
 
         [SerializeField] private PlayerStatsData statsData;
+        [SerializeField] private global::DodgeController dodgeController;
         [SerializeField, Min(0f)] private float damageCooldownSeconds = 3f;
         [SerializeField] private int maxHealthBonus = 0;
 
@@ -56,6 +57,7 @@ namespace Player
         private void Awake()
         {
             TryResolveStatsData();
+            TryResolveDodgeController();
         }
 
         private void OnEnable()
@@ -111,6 +113,12 @@ namespace Player
         {
             // 無効なダメージ、またはすでに死亡しているなら何もしない
             if (damage <= 0 || currentHealth <= 0)
+            {
+                return false;
+            }
+
+            TryResolveDodgeController();
+            if (dodgeController != null && dodgeController.IsDodging())
             {
                 return false;
             }
@@ -276,6 +284,25 @@ namespace Player
             if (playerController != null)
             {
                 statsData = playerController.GetPlayerStatsData();
+            }
+        }
+
+        private void TryResolveDodgeController()
+        {
+            if (dodgeController != null)
+            {
+                return;
+            }
+
+            dodgeController = GetComponent<global::DodgeController>();
+            if (dodgeController == null)
+            {
+                dodgeController = GetComponentInParent<global::DodgeController>();
+            }
+
+            if (dodgeController == null)
+            {
+                dodgeController = GetComponentInChildren<global::DodgeController>(true);
             }
         }
 
