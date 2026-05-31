@@ -16,7 +16,7 @@ MonoBehaviour:
   glideMoveSpeed: 10
   fallSpeed: 3
   jumpForce: 3
-  dodgeDistance: 3
+  dodgeDistance: 6
   dodgeDuration: 0.5
   attackSecondsPerAttack: 0.5
   umbrellaAttackDuration: 0.3
