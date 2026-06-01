@@ -154,6 +154,13 @@ namespace Player
             NotifyHealthChanged();
         }
 
+        public void RestoreFullHealth()
+        {
+            currentHealth = MaxHealth;
+            nextDamageTime = 0f;
+            NotifyHealthChanged();
+        }
+
         public void ForceDeath()
         {
             if (currentHealth <= 0)
