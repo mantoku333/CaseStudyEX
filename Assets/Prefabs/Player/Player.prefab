@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: adab7e5b3d4b0c04c9078e8e8d2a1b60, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ParryHitbox
 --- !u!58 &5261322581532133394
 CircleCollider2D:
@@ -517,6 +517,7 @@ GameObject:
   - component: {fileID: 8257722522928208615}
   - component: {fileID: -7701998456525910624}
   - component: {fileID: 6628913746285037194}
+  - component: {fileID: 1661112223334445556}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -629,7 +630,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!70 &3375801726536475401
 CapsuleCollider2D:
@@ -711,6 +712,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DodgeController
   dodgeDistance: 5
   dodgeDuration: 0.3
+--- !u!114 &1661112223334445556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df4d3b9e35f4df4ab3f6e7af0e2a8c1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCollisionMover2D
+  solidLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  skinWidth: 0.03
+  slideIterations: 2
+  maxOverlapResolveDistance: 0.2
+  overlapResolveIterations: 2
 --- !u!82 &7711066996538408739
 AudioSource:
   m_ObjectHideFlags: 0
