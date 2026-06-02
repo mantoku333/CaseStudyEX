@@ -6,7 +6,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
-using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Yarn.Unity;
 
 [DisallowMultipleComponent]
@@ -37,7 +37,8 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
     [Header("Identity")]
     [SerializeField] private string eventId = "story_event";
-    [SerializeField] private string sceneName = string.Empty;
+    [SerializeField, FormerlySerializedAs("sceneName"), InspectorName("メモ")]
+    private string memoName = string.Empty;
     [SerializeField] private bool playOnStart;
 
     [Header("Timeline")]
@@ -122,6 +123,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
     private bool hasCachedEventCameraPriority;
 
     public string EventId => string.IsNullOrWhiteSpace(eventId) ? name : eventId.Trim();
+    public string MemoName => string.IsNullOrWhiteSpace(memoName) ? string.Empty : memoName.Trim();
     public bool IsPlaying => playRoutine != null;
     public PlayableDirector Director => ResolveDirector();
 
@@ -444,12 +446,6 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
     private bool CanRun()
     {
-        if (!string.IsNullOrWhiteSpace(sceneName) &&
-            !StoryEventDefinition.MatchesConfiguredScene(sceneName, SceneManager.GetActiveScene().name))
-        {
-            return false;
-        }
-
         if (!string.IsNullOrWhiteSpace(runOnceFlagKey) && GameProgressFlags.Get(runOnceFlagKey.Trim()))
         {
             return false;

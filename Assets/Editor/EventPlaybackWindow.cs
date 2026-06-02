@@ -115,7 +115,8 @@ namespace CaseStudy.EditorTools
 
         private static void DrawSelectedControllerInfo(StoryEventController currentController)
         {
-            Rect boxRect = EditorGUILayout.GetControlRect(false, 64f);
+            bool hasMemoName = !string.IsNullOrWhiteSpace(currentController.MemoName);
+            Rect boxRect = EditorGUILayout.GetControlRect(false, hasMemoName ? 44f : 24f);
             GUI.Box(boxRect, GUIContent.none, EditorStyles.helpBox);
 
             Rect lineRect = new Rect(
@@ -126,9 +127,10 @@ namespace CaseStudy.EditorTools
 
             EditorGUI.LabelField(lineRect, "Event ID", currentController.EventId);
             lineRect.y += EditorGUIUtility.singleLineHeight + 2f;
-            EditorGUI.LabelField(lineRect, "Object", currentController.name);
-            lineRect.y += EditorGUIUtility.singleLineHeight + 2f;
-            EditorGUI.LabelField(lineRect, "State", currentController.IsPlaying ? "Playing" : "Idle");
+            if (hasMemoName)
+            {
+                EditorGUI.LabelField(lineRect, "メモ", currentController.MemoName);
+            }
         }
 
         private void DrawPlaybackButtons()
@@ -205,8 +207,10 @@ namespace CaseStudy.EditorTools
 
         private static string BuildControllerLabel(StoryEventController controller)
         {
-            string state = controller.IsPlaying ? "Playing" : "Idle";
-            return $"{controller.EventId}  ({controller.name})  [{state}]";
+            string memoName = controller.MemoName;
+            return string.IsNullOrWhiteSpace(memoName)
+                ? controller.EventId
+                : $"{controller.EventId} / {memoName}";
         }
 
         private void TryUseSelection()

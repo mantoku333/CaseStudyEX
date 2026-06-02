@@ -131,7 +131,7 @@ namespace CaseStudy.EditorTools
 
             var serializedController = new SerializedObject(controller);
             SetString(serializedController, "eventId", EventId);
-            SetString(serializedController, "sceneName", "Event_IkedaEX");
+            SetString(serializedController, "memoName", "Event_IkedaEX");
             SetBool(serializedController, "playOnStart", false);
             SetObject(serializedController, "director", director);
             SetObject(

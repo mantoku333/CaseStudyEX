@@ -9,13 +9,13 @@ public sealed class StoryEventControllerEditor : Editor
 {
     private SerializedProperty eventIdProperty;
     private SerializedProperty runOnceFlagKeyProperty;
-    private SerializedProperty sceneNameProperty;
+    private SerializedProperty memoNameProperty;
 
     private void OnEnable()
     {
         eventIdProperty = serializedObject.FindProperty("eventId");
         runOnceFlagKeyProperty = serializedObject.FindProperty("runOnceFlagKey");
-        sceneNameProperty = serializedObject.FindProperty("sceneName");
+        memoNameProperty = serializedObject.FindProperty("memoName");
     }
 
     public override void OnInspectorGUI()
@@ -41,12 +41,12 @@ public sealed class StoryEventControllerEditor : Editor
 
         string eventId = eventIdProperty != null ? eventIdProperty.stringValue : string.Empty;
         string runOnceFlag = runOnceFlagKeyProperty != null ? runOnceFlagKeyProperty.stringValue : string.Empty;
-        string sceneName = sceneNameProperty != null ? sceneNameProperty.stringValue : string.Empty;
+        string memoName = memoNameProperty != null ? memoNameProperty.stringValue : string.Empty;
 
         using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
         {
             EditorGUILayout.LabelField("Event ID", string.IsNullOrWhiteSpace(eventId) ? "(empty)" : eventId);
-            EditorGUILayout.LabelField("Scene", string.IsNullOrWhiteSpace(sceneName) ? "(any scene)" : sceneName);
+            EditorGUILayout.LabelField("メモ", string.IsNullOrWhiteSpace(memoName) ? "(none)" : memoName);
             EditorGUILayout.LabelField("Run Once Flag", string.IsNullOrWhiteSpace(runOnceFlag) ? "(none)" : runOnceFlag);
         }
     }
