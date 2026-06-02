@@ -107,6 +107,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             Debug.LogError("Rigidbody2Dが見つかっていません");
         }
+        else
+        {
+            // 高速な回避やリコイル時に接触判定を落としにくくする。
+            rigidBody2d.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        }
 
         if (applyNoFrictionMaterial && playerCollider != null)
         {
