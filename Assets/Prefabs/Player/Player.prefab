@@ -1045,8 +1045,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c007f56cecae97b4c9baa22a084c5528, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunController
-  firstRecoilCoolTime: 0.5
-  secondRecoilCoolTime: 5
   secondRecoilPowerMultiplier: 0.5
   airRecoilPower: 25
   recoilDuration: 0.1

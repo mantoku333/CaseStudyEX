@@ -294,6 +294,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             gunController.SetAirRecoilPower(playerStatsData.GunRecoilForce);
             gunController.SetRecoilDuration(playerStatsData.GunRecoilDuration);
+            gunController.SetRecoilCoolTimes(
+                playerStatsData.FirstRecoilCoolTime,
+                playerStatsData.SecondRecoilCoolTime);
         }
 
         if (umbrellaAttackController != null)

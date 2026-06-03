@@ -24,8 +24,6 @@ public class GunController : MonoBehaviour
     };
 
     [Header("銃の設定")]
-    [SerializeField] private float firstRecoilCoolTime = 0.5f;
-    [SerializeField] private float secondRecoilCoolTime = 2.5f;
     [SerializeField] private float secondRecoilPowerMultiplier = 0.5f;
     [SerializeField] private float airRecoilPower  = 25.0f;   //銃反動/リコイルジャンプ共通の反動量
     [SerializeField] private float recoilDuration = 0.1f;      //反動状態の時間
@@ -45,6 +43,8 @@ public class GunController : MonoBehaviour
     [SerializeField] private int recoilEffectSortingOrderOffset = 3;
 
     private bool isRecoiling = false;   　//反動が起きているかどうか
+    private float firstRecoilCoolTime = 0.5f;
+    private float secondRecoilCoolTime = 2.5f;
     private float currentCoolTime = 0.0f; //クールタイムの残り時間    
     private float currentCoolTimeDuration = 0.0f;
     private bool isSecondRecoilNext = false;
@@ -123,16 +123,6 @@ public class GunController : MonoBehaviour
         return recoilDuration;
     }
 
-
-    public void SetCoolTime(float time)
-    {
-        secondRecoilCoolTime = Mathf.Max(0.0f, time);
-    }
-
-    public float GetCoolTime()
-    {
-        return secondRecoilCoolTime;
-    }
 
     public void SetRecoilCoolTimes(float firstCoolTime, float secondCoolTime)
     {

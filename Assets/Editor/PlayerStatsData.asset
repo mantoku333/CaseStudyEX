@@ -22,6 +22,8 @@ MonoBehaviour:
   umbrellaAttackDuration: 0.3
   gunRecoilForce: 20
   gunRecoilDuration: 0.1
+  firstRecoilCoolTime: 0.5
+  secondRecoilCoolTime: 2.5
   reloadSeconds: 1.5
   parryDuration: 0.1
   parryFlashDuration: 0.1
