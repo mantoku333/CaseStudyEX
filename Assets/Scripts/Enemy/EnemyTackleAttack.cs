@@ -134,6 +134,17 @@ namespace GameName.Enemy
         /// </summary>
         private void FixedUpdate()
         {
+            // 帰還中はタックルの再検知や突進継続で、さらに別ルーム側へ進まないようにする。
+            if (enemyController != null && enemyController.IsReturningHome)
+            {
+                if (attackState != AttackState.Idle)
+                {
+                    CancelForLeashReturn();
+                }
+
+                return;
+            }
+
             switch (attackState)
             {
                 case AttackState.Idle:
@@ -483,6 +494,23 @@ namespace GameName.Enemy
         }
 
         public bool IsParryable => attackState == AttackState.Charging;
+
+        /// <summary>
+        /// ルーム帰還へ切り替えるため、予備動作・突進・クールダウンを即座に通常待機へ戻す。
+        /// </summary>
+        public void CancelForLeashReturn()
+        {
+            if (enemyController != null)
+            {
+                enemyController.PauseMovement(false);
+                enemyController.StopHorizontalMotion();
+            }
+
+            attackState = AttackState.Idle;
+            stateTimer = 0f;
+            vibrationElapsed = 0f;
+            blockedTimer = 0f;
+        }
 
         /// <summary>
         /// 突進中に通常パリィされた場合の処理(中江)
