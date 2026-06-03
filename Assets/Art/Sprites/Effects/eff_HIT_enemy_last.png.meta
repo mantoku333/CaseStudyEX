@@ -1,0 +1,3237 @@
+fileFormatVersion: 2
+guid: 36a3d19ac11512248a5b986c41ee8b8d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7644198363535353087
+    second: eff_HIT_enemy_last_0
+  - first:
+      213: -7760703736253487408
+    second: eff_HIT_enemy_last_1
+  - first:
+      213: 3226787703532399372
+    second: eff_HIT_enemy_last_2
+  - first:
+      213: -6521938457239145755
+    second: eff_HIT_enemy_last_3
+  - first:
+      213: -5963030850984896159
+    second: eff_HIT_enemy_last_4
+  - first:
+      213: 5951334465926893243
+    second: eff_HIT_enemy_last_5
+  - first:
+      213: 8886767407236341645
+    second: eff_HIT_enemy_last_6
+  - first:
+      213: 2697897693285300536
+    second: eff_HIT_enemy_last_7
+  - first:
+      213: -3164728783342704556
+    second: eff_HIT_enemy_last_8
+  - first:
+      213: 3300096477637911537
+    second: eff_HIT_enemy_last_9
+  - first:
+      213: -4132480319235136443
+    second: eff_HIT_enemy_last_10
+  - first:
+      213: -4945138708113887474
+    second: eff_HIT_enemy_last_11
+  - first:
+      213: -2508727903085341339
+    second: eff_HIT_enemy_last_12
+  - first:
+      213: -3683173262913178799
+    second: eff_HIT_enemy_last_13
+  - first:
+      213: 720597575782636174
+    second: eff_HIT_enemy_last_14
+  - first:
+      213: 3135411555845539257
+    second: eff_HIT_enemy_last_15
+  - first:
+      213: -977129243277300038
+    second: eff_HIT_enemy_last_16
+  - first:
+      213: 7422187905412397349
+    second: eff_HIT_enemy_last_17
+  - first:
+      213: 4927873585668746674
+    second: eff_HIT_enemy_last_18
+  - first:
+      213: 4184455133580422902
+    second: eff_HIT_enemy_last_19
+  - first:
+      213: 3475318407655738857
+    second: eff_HIT_enemy_last_20
+  - first:
+      213: -8314219538360900826
+    second: eff_HIT_enemy_last_21
+  - first:
+      213: 7394800194615178669
+    second: eff_HIT_enemy_last_22
+  - first:
+      213: 5299882718916311664
+    second: eff_HIT_enemy_last_23
+  - first:
+      213: -6514586841276603137
+    second: eff_HIT_enemy_last_24
+  - first:
+      213: 6306376418783577482
+    second: eff_HIT_enemy_last_25
+  - first:
+      213: 758915862054684098
+    second: eff_HIT_enemy_last_26
+  - first:
+      213: -1765149773013874981
+    second: eff_HIT_enemy_last_27
+  - first:
+      213: -5521209227154588618
+    second: eff_HIT_enemy_last_28
+  - first:
+      213: -4159200033160679687
+    second: eff_HIT_enemy_last_29
+  - first:
+      213: 3640245584606178265
+    second: eff_HIT_enemy_last_30
+  - first:
+      213: -2001303629672527877
+    second: eff_HIT_enemy_last_31
+  - first:
+      213: 714566672097369313
+    second: eff_HIT_enemy_last_32
+  - first:
+      213: 3281429701637050856
+    second: eff_HIT_enemy_last_33
+  - first:
+      213: 5418200515841039207
+    second: eff_HIT_enemy_last_34
+  - first:
+      213: -6155404306512714582
+    second: eff_HIT_enemy_last_35
+  - first:
+      213: 7486836322528870461
+    second: eff_HIT_enemy_last_36
+  - first:
+      213: -8140191717406196434
+    second: eff_HIT_enemy_last_37
+  - first:
+      213: -4604085321072862880
+    second: eff_HIT_enemy_last_38
+  - first:
+      213: 7008198742788330983
+    second: eff_HIT_enemy_last_39
+  - first:
+      213: -5855342145011670137
+    second: eff_HIT_enemy_last_40
+  - first:
+      213: -1729227459147060002
+    second: eff_HIT_enemy_last_41
+  - first:
+      213: -4663823377693249346
+    second: eff_HIT_enemy_last_42
+  - first:
+      213: -5515707511688887899
+    second: eff_HIT_enemy_last_43
+  - first:
+      213: -5890156440060377462
+    second: eff_HIT_enemy_last_44
+  - first:
+      213: 7840426566604711005
+    second: eff_HIT_enemy_last_45
+  - first:
+      213: -3090520769635969910
+    second: eff_HIT_enemy_last_46
+  - first:
+      213: -3215824990392468778
+    second: eff_HIT_enemy_last_47
+  - first:
+      213: -12879306487894543
+    second: eff_HIT_enemy_last_48
+  - first:
+      213: 507036008114298759
+    second: eff_HIT_enemy_last_49
+  - first:
+      213: -2710530060892264909
+    second: eff_HIT_enemy_last_50
+  - first:
+      213: 3377348868314486839
+    second: eff_HIT_enemy_last_51
+  - first:
+      213: -4415725597020076437
+    second: eff_HIT_enemy_last_52
+  - first:
+      213: -7636899460706897501
+    second: eff_HIT_enemy_last_53
+  - first:
+      213: 8410481733194831408
+    second: eff_HIT_enemy_last_54
+  - first:
+      213: -6726208504861490755
+    second: eff_HIT_enemy_last_55
+  - first:
+      213: -2403906549437885527
+    second: eff_HIT_enemy_last_56
+  - first:
+      213: 8360837608637066673
+    second: eff_HIT_enemy_last_57
+  - first:
+      213: 6092520107327740683
+    second: eff_HIT_enemy_last_58
+  - first:
+      213: -9031576584378127831
+    second: eff_HIT_enemy_last_59
+  - first:
+      213: 1978928418284302234
+    second: eff_HIT_enemy_last_60
+  - first:
+      213: -6627749433296377756
+    second: eff_HIT_enemy_last_61
+  - first:
+      213: -5325803889476016635
+    second: eff_HIT_enemy_last_62
+  - first:
+      213: -7275952102032776707
+    second: eff_HIT_enemy_last_63
+  - first:
+      213: -3971819251682213547
+    second: eff_HIT_enemy_last_64
+  - first:
+      213: 160453492442190651
+    second: eff_HIT_enemy_last_65
+  - first:
+      213: 5687531752055237279
+    second: eff_HIT_enemy_last_66
+  - first:
+      213: -300391814897611845
+    second: eff_HIT_enemy_last_67
+  - first:
+      213: 4870747702789204521
+    second: eff_HIT_enemy_last_68
+  - first:
+      213: 4845874087425329929
+    second: eff_HIT_enemy_last_69
+  - first:
+      213: 7435920280880427570
+    second: eff_HIT_enemy_last_70
+  - first:
+      213: 4991341454405845819
+    second: eff_HIT_enemy_last_71
+  - first:
+      213: 4362421266224704489
+    second: eff_HIT_enemy_last_72
+  - first:
+      213: 8563770279573630408
+    second: eff_HIT_enemy_last_73
+  - first:
+      213: 2090451987672042080
+    second: eff_HIT_enemy_last_74
+  - first:
+      213: 1052003294616531468
+    second: eff_HIT_enemy_last_75
+  - first:
+      213: -6494948823793769292
+    second: eff_HIT_enemy_last_76
+  - first:
+      213: 306501599497351295
+    second: eff_HIT_enemy_last_77
+  - first:
+      213: 4788272128584949237
+    second: eff_HIT_enemy_last_78
+  - first:
+      213: -1584927764931134834
+    second: eff_HIT_enemy_last_79
+  - first:
+      213: -6653782878412105178
+    second: eff_HIT_enemy_last_80
+  - first:
+      213: -8506487261122336183
+    second: eff_HIT_enemy_last_81
+  - first:
+      213: -5022595254253881049
+    second: eff_HIT_enemy_last_82
+  - first:
+      213: -8522745795239823957
+    second: eff_HIT_enemy_last_83
+  - first:
+      213: -158123530808449084
+    second: eff_HIT_enemy_last_84
+  - first:
+      213: 1002922873066224969
+    second: eff_HIT_enemy_last_85
+  - first:
+      213: 5802863385880017526
+    second: eff_HIT_enemy_last_86
+  - first:
+      213: -8641600793299315645
+    second: eff_HIT_enemy_last_87
+  - first:
+      213: -7560127275558395582
+    second: eff_HIT_enemy_last_88
+  - first:
+      213: 2618657932248086408
+    second: eff_HIT_enemy_last_89
+  - first:
+      213: 1202211634460907382
+    second: eff_HIT_enemy_last_90
+  - first:
+      213: -8140952921243000216
+    second: eff_HIT_enemy_last_91
+  - first:
+      213: 265738292119083220
+    second: eff_HIT_enemy_last_92
+  - first:
+      213: -6442824257765892920
+    second: eff_HIT_enemy_last_93
+  - first:
+      213: -3369160816288374269
+    second: eff_HIT_enemy_last_94
+  - first:
+      213: 7625750025384978931
+    second: eff_HIT_enemy_last_95
+  - first:
+      213: -1911123171703829845
+    second: eff_HIT_enemy_last_96
+  - first:
+      213: -3569084030047527309
+    second: eff_HIT_enemy_last_97
+  - first:
+      213: 7772272553868399616
+    second: eff_HIT_enemy_last_98
+  - first:
+      213: 3933208863227573621
+    second: eff_HIT_enemy_last_99
+  - first:
+      213: 7217762130570659951
+    second: eff_HIT_enemy_last_100
+  - first:
+      213: 1246006494630423836
+    second: eff_HIT_enemy_last_101
+  - first:
+      213: -6508305499678546609
+    second: eff_HIT_enemy_last_102
+  - first:
+      213: -9174295442934569006
+    second: eff_HIT_enemy_last_103
+  - first:
+      213: 6080714085950163621
+    second: eff_HIT_enemy_last_104
+  - first:
+      213: -4998332094701966774
+    second: eff_HIT_enemy_last_105
+  - first:
+      213: 1585466105361047601
+    second: eff_HIT_enemy_last_106
+  - first:
+      213: -5950971713826884769
+    second: eff_HIT_enemy_last_107
+  - first:
+      213: 3312690197449395468
+    second: eff_HIT_enemy_last_108
+  - first:
+      213: -5699966760774898213
+    second: eff_HIT_enemy_last_109
+  - first:
+      213: 3052291076656140990
+    second: eff_HIT_enemy_last_110
+  - first:
+      213: -7603056961533994889
+    second: eff_HIT_enemy_last_111
+  - first:
+      213: -7710507482246327320
+    second: eff_HIT_enemy_last_112
+  - first:
+      213: -7336905906855682398
+    second: eff_HIT_enemy_last_113
+  - first:
+      213: -3460610091030351380
+    second: eff_HIT_enemy_last_114
+  - first:
+      213: 4514506333167339102
+    second: eff_HIT_enemy_last_115
+  - first:
+      213: 4490513547061689258
+    second: eff_HIT_enemy_last_116
+  - first:
+      213: 6142668677137814297
+    second: eff_HIT_enemy_last_117
+  - first:
+      213: 1368531596285153857
+    second: eff_HIT_enemy_last_118
+  - first:
+      213: -3241111003897263552
+    second: eff_HIT_enemy_last_119
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_0
+      rect:
+        serializedVersion: 2
+        x: 453
+        y: 2505
+        width: 111
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff4a52339e5a51a60800000000000000
+      internalID: 7644198363535353087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_1
+      rect:
+        serializedVersion: 2
+        x: 1419
+        y: 2443
+        width: 234
+        height: 234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d66091e1117c4490800000000000000
+      internalID: -7760703736253487408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_2
+      rect:
+        serializedVersion: 2
+        x: 2374
+        y: 2374
+        width: 372
+        height: 372
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0ba5a2f15ad7cc20800000000000000
+      internalID: 3226787703532399372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_3
+      rect:
+        serializedVersion: 2
+        x: 3350
+        y: 2326
+        width: 468
+        height: 477
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e23d41278b6d75a0800000000000000
+      internalID: -6521938457239145755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_4
+      rect:
+        serializedVersion: 2
+        x: 4391
+        y: 2329
+        width: 434
+        height: 501
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1699956d80f0f3da0800000000000000
+      internalID: -5963030850984896159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_5
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 1280
+        width: 438
+        height: 543
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbe8c1d4a23679250800000000000000
+      internalID: 5951334465926893243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_6
+      rect:
+        serializedVersion: 2
+        x: 1290
+        y: 1264
+        width: 478
+        height: 566
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8f57dd6fd3245b70800000000000000
+      internalID: 8886767407236341645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_7
+      rect:
+        serializedVersion: 2
+        x: 2302
+        y: 1254
+        width: 499
+        height: 543
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 839bd9078abd07520800000000000000
+      internalID: 2697897693285300536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_8
+      rect:
+        serializedVersion: 2
+        x: 3326
+        y: 1254
+        width: 499
+        height: 543
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 458676260ff9414d0800000000000000
+      internalID: -3164728783342704556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_9
+      rect:
+        serializedVersion: 2
+        x: 4441
+        y: 1357
+        width: 334
+        height: 346
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f32022034c4ccd20800000000000000
+      internalID: 3300096477637911537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_10
+      rect:
+        serializedVersion: 2
+        x: 4655
+        y: 1696
+        width: 23
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54462b26b0b76a6c0800000000000000
+      internalID: -4132480319235136443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_11
+      rect:
+        serializedVersion: 2
+        x: 4435
+        y: 1644
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0f66d1ab865f5bb0800000000000000
+      internalID: -4945138708113887474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_12
+      rect:
+        serializedVersion: 2
+        x: 4614
+        y: 1347
+        width: 21
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 565dc7293453f2dd0800000000000000
+      internalID: -2508727903085341339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_13
+      rect:
+        serializedVersion: 2
+        x: 561
+        y: 678
+        width: 22
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 153f7d18e6db2ecc0800000000000000
+      internalID: -3683173262913178799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_14
+      rect:
+        serializedVersion: 2
+        x: 1588
+        y: 683
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8a18826da3100a00800000000000000
+      internalID: 720597575782636174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_15
+      rect:
+        serializedVersion: 2
+        x: 2614
+        y: 631
+        width: 68
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b504daa238338b20800000000000000
+      internalID: 3135411555845539257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_16
+      rect:
+        serializedVersion: 2
+        x: 3641
+        y: 694
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abe6fca512a8072f0800000000000000
+      internalID: -977129243277300038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_17
+      rect:
+        serializedVersion: 2
+        x: 4669
+        y: 701
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5297e465398e00760800000000000000
+      internalID: 7422187905412397349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_18
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 658
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bde0dbcae2536440800000000000000
+      internalID: 4927873585668746674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_19
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 666
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6feee9716cb221a30800000000000000
+      internalID: 4184455133580422902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_20
+      rect:
+        serializedVersion: 2
+        x: 2419
+        y: 639
+        width: 17
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ed42b1cdafca3030800000000000000
+      internalID: 3475318407655738857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_21
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 625
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 623e2676165fd9c80800000000000000
+      internalID: -8314219538360900826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_22
+      rect:
+        serializedVersion: 2
+        x: 359
+        y: 572
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da5f601099b9f9660800000000000000
+      internalID: 7394800194615178669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_23
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 625
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07afc3cb047fc8940800000000000000
+      internalID: 5299882718916311664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_24
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 633
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff4264b98c98795a0800000000000000
+      internalID: -6514586841276603137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_25
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 567
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a85ce75b0ffb48750800000000000000
+      internalID: 6306376418783577482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_26
+      rect:
+        serializedVersion: 2
+        x: 616
+        y: 618
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c5cd24a4f5388a00800000000000000
+      internalID: 758915862054684098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_27
+      rect:
+        serializedVersion: 2
+        x: 625
+        y: 579
+        width: 19
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd6852432ade087e0800000000000000
+      internalID: -1765149773013874981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_28
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 587
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63c77d4e579b063b0800000000000000
+      internalID: -5521209227154588618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_29
+      rect:
+        serializedVersion: 2
+        x: 1358
+        y: 630
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fe2aa13b9d8746c0800000000000000
+      internalID: -4159200033160679687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_30
+      rect:
+        serializedVersion: 2
+        x: 1381
+        y: 575
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9dba2a58210c48230800000000000000
+      internalID: 3640245584606178265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_31
+      rect:
+        serializedVersion: 2
+        x: 1395
+        y: 632
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf74ba1c3f0f934e0800000000000000
+      internalID: -2001303629672527877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_32
+      rect:
+        serializedVersion: 2
+        x: 1442
+        y: 637
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ec52b23a96aae900800000000000000
+      internalID: 714566672097369313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_33
+      rect:
+        serializedVersion: 2
+        x: 1550
+        y: 570
+        width: 21
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e11e798deaf98d20800000000000000
+      internalID: 3281429701637050856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_34
+      rect:
+        serializedVersion: 2
+        x: 1647
+        y: 625
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76b1b8c89a0513b40800000000000000
+      internalID: 5418200515841039207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_35
+      rect:
+        serializedVersion: 2
+        x: 1656
+        y: 583
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa4666d556c939aa0800000000000000
+      internalID: -6155404306512714582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_36
+      rect:
+        serializedVersion: 2
+        x: 1695
+        y: 592
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3043d7e7f596e760800000000000000
+      internalID: 7486836322528870461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_37
+      rect:
+        serializedVersion: 2
+        x: 2380
+        y: 637
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2d3d68f2ca380f80800000000000000
+      internalID: -8140191717406196434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_38
+      rect:
+        serializedVersion: 2
+        x: 2406
+        y: 580
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0699cd14bc00b10c0800000000000000
+      internalID: -4604085321072862880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_39
+      rect:
+        serializedVersion: 2
+        x: 2466
+        y: 642
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e5dc3320af124160800000000000000
+      internalID: 7008198742788330983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_40
+      rect:
+        serializedVersion: 2
+        x: 2575
+        y: 572
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 783a4309755adbea0800000000000000
+      internalID: -5855342145011670137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_41
+      rect:
+        serializedVersion: 2
+        x: 2686
+        y: 526
+        width: 48
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edc20b9a9cc8008e0800000000000000
+      internalID: -1729227459147060002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_42
+      rect:
+        serializedVersion: 2
+        x: 3403
+        y: 584
+        width: 97
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb07e651955c64fb0800000000000000
+      internalID: -4663823377693249346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_43
+      rect:
+        serializedVersion: 2
+        x: 3601
+        y: 527
+        width: 68
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a184d8dd354473b0800000000000000
+      internalID: -5515707511688887899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_44
+      rect:
+        serializedVersion: 2
+        x: 3714
+        y: 528
+        width: 46
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a86c8b6dce5f14ea0800000000000000
+      internalID: -5890156440060377462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_45
+      rect:
+        serializedVersion: 2
+        x: 4441
+        y: 531
+        width: 231
+        height: 127
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5462060c6acecc60800000000000000
+      internalID: 7840426566604711005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_46
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 546
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8491eafbb34c15d0800000000000000
+      internalID: -3090520769635969910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_47
+      rect:
+        serializedVersion: 2
+        x: 1587
+        y: 549
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6da35db95381f53d0800000000000000
+      internalID: -3215824990392468778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_48
+      rect:
+        serializedVersion: 2
+        x: 2616
+        y: 553
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fde5d7c65e32dff0800000000000000
+      internalID: -12879306487894543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_49
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 521
+        width: 39
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78f1cff109a590700800000000000000
+      internalID: 507036008114298759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_50
+      rect:
+        serializedVersion: 2
+        x: 579
+        y: 517
+        width: 32
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 336af774543426ad0800000000000000
+      internalID: -2710530060892264909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_51
+      rect:
+        serializedVersion: 2
+        x: 638
+        y: 524
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 738d37ad6e0cede20800000000000000
+      internalID: 3377348868314486839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_52
+      rect:
+        serializedVersion: 2
+        x: 1371
+        y: 523
+        width: 35
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b66c40c07f038b2c0800000000000000
+      internalID: -4415725597020076437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_53
+      rect:
+        serializedVersion: 2
+        x: 1667
+        y: 525
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a1713b0768440690800000000000000
+      internalID: -7636899460706897501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_54
+      rect:
+        serializedVersion: 2
+        x: 2395
+        y: 526
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0365df0639808b470800000000000000
+      internalID: 8410481733194831408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_55
+      rect:
+        serializedVersion: 2
+        x: 2407
+        y: 537
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db105867005b7a2a0800000000000000
+      internalID: -6726208504861490755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_56
+      rect:
+        serializedVersion: 2
+        x: 3418
+        y: 483
+        width: 51
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a3158fcabb93aed0800000000000000
+      internalID: -2403906549437885527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_57
+      rect:
+        serializedVersion: 2
+        x: 4754
+        y: 530
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bde987e189a70470800000000000000
+      internalID: 8360837608637066673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_58
+      rect:
+        serializedVersion: 2
+        x: 1607
+        y: 519
+        width: 29
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0bd13012cafc8450800000000000000
+      internalID: 6092520107327740683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_59
+      rect:
+        serializedVersion: 2
+        x: 2638
+        y: 525
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92ae766a2f469a280800000000000000
+      internalID: -9031576584378127831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_60
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 483
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9fe2cf59e0967b10800000000000000
+      internalID: 1978928418284302234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_61
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 499
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 468a21871018504a0800000000000000
+      internalID: -6627749433296377756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_62
+      rect:
+        serializedVersion: 2
+        x: 491
+        y: 480
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50663607491f616b0800000000000000
+      internalID: -5325803889476016635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_63
+      rect:
+        serializedVersion: 2
+        x: 1384
+        y: 483
+        width: 54
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df16493ec10a60b90800000000000000
+      internalID: -7275952102032776707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_64
+      rect:
+        serializedVersion: 2
+        x: 1515
+        y: 480
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5518c672f6341e8c0800000000000000
+      internalID: -3971819251682213547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_65
+      rect:
+        serializedVersion: 2
+        x: 2426
+        y: 483
+        width: 24
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b33dcfbe99b0a3200800000000000000
+      internalID: 160453492442190651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_66
+      rect:
+        serializedVersion: 2
+        x: 2539
+        y: 480
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9ae102aefb2eee40800000000000000
+      internalID: 5687531752055237279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_67
+      rect:
+        serializedVersion: 2
+        x: 3564
+        y: 480
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbbc7936c3bc4dbf0800000000000000
+      internalID: -300391814897611845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_68
+      rect:
+        serializedVersion: 2
+        x: 4471
+        y: 484
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92aec47ba3f589340800000000000000
+      internalID: 4870747702789204521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_69
+      rect:
+        serializedVersion: 2
+        x: 4589
+        y: 481
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90bc147dec0004340800000000000000
+      internalID: 4845874087425329929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_70
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 483
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23230082912b13760800000000000000
+      internalID: 7435920280880427570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_71
+      rect:
+        serializedVersion: 2
+        x: 639
+        y: 470
+        width: 43
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b33ca868b9ec44540800000000000000
+      internalID: 4991341454405845819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_72
+      rect:
+        serializedVersion: 2
+        x: 1668
+        y: 469
+        width: 41
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ebeeed470f6a8c30800000000000000
+      internalID: 4362421266224704489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_73
+      rect:
+        serializedVersion: 2
+        x: 2698
+        y: 478
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cda80c42bf98d670800000000000000
+      internalID: 8563770279573630408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_74
+      rect:
+        serializedVersion: 2
+        x: 2710
+        y: 469
+        width: 27
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06a8331d107c20d10800000000000000
+      internalID: 2090451987672042080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_75
+      rect:
+        serializedVersion: 2
+        x: 3728
+        y: 469
+        width: 36
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c02b8263c67799e00800000000000000
+      internalID: 1052003294616531468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_76
+      rect:
+        serializedVersion: 2
+        x: 4755
+        y: 470
+        width: 34
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b46e6bd47e4dd5a0800000000000000
+      internalID: -6494948823793769292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_77
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 456
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f70f021b499e04400800000000000000
+      internalID: 306501599497351295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_78
+      rect:
+        serializedVersion: 2
+        x: 1579
+        y: 455
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fd9530b12c537240800000000000000
+      internalID: 4788272128584949237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_79
+      rect:
+        serializedVersion: 2
+        x: 2605
+        y: 455
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8a30a85894310ae0800000000000000
+      internalID: -1584927764931134834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_80
+      rect:
+        serializedVersion: 2
+        x: 3632
+        y: 455
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62a9bafa9b309a3a0800000000000000
+      internalID: -6653782878412105178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_81
+      rect:
+        serializedVersion: 2
+        x: 4659
+        y: 455
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94aea62c7e2e2f980800000000000000
+      internalID: -8506487261122336183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_82
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 413
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72972a32a382c4ab0800000000000000
+      internalID: -5022595254253881049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_83
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 421
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba5b6cbcadf19b980800000000000000
+      internalID: -8522745795239823957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_84
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 393
+        width: 46
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c7288b8c7b3ecdf0800000000000000
+      internalID: -158123530808449084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_85
+      rect:
+        serializedVersion: 2
+        x: 628
+        y: 405
+        width: 26
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94df9321a091bed00800000000000000
+      internalID: 1002922873066224969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_86
+      rect:
+        serializedVersion: 2
+        x: 1402
+        y: 373
+        width: 36
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67abf7b2189e78050800000000000000
+      internalID: 5802863385880017526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_87
+      rect:
+        serializedVersion: 2
+        x: 1597
+        y: 389
+        width: 23
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34419a81dddd21880800000000000000
+      internalID: -8641600793299315645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_88
+      rect:
+        serializedVersion: 2
+        x: 1619
+        y: 412
+        width: 23
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 241a9935c48051790800000000000000
+      internalID: -7560127275558395582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_89
+      rect:
+        serializedVersion: 2
+        x: 1656
+        y: 403
+        width: 23
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 887f7efd387575420800000000000000
+      internalID: 2618657932248086408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_90
+      rect:
+        serializedVersion: 2
+        x: 2647
+        y: 410
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67752e8ac1d1fa010800000000000000
+      internalID: 1202211634460907382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_91
+      rect:
+        serializedVersion: 2
+        x: 2684
+        y: 401
+        width: 22
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 862e1246376850f80800000000000000
+      internalID: -8140952921243000216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_92
+      rect:
+        serializedVersion: 2
+        x: 3674
+        y: 409
+        width: 18
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d81af8919710b300800000000000000
+      internalID: 265738292119083220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_93
+      rect:
+        serializedVersion: 2
+        x: 4702
+        y: 409
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cc189d197d7696a0800000000000000
+      internalID: -6442824257765892920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_94
+      rect:
+        serializedVersion: 2
+        x: 2621
+        y: 324
+        width: 27
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30267f196165e31d0800000000000000
+      internalID: -3369160816288374269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_95
+      rect:
+        serializedVersion: 2
+        x: 3586
+        y: 313
+        width: 85
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f96ff0ce3b14d960800000000000000
+      internalID: 7625750025384978931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_96
+      rect:
+        serializedVersion: 2
+        x: 3713
+        y: 399
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baa4394d9935a75e0800000000000000
+      internalID: -1911123171703829845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_97
+      rect:
+        serializedVersion: 2
+        x: 4680
+        y: 383
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37e5f770cf0187ec0800000000000000
+      internalID: -3569084030047527309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_98
+      rect:
+        serializedVersion: 2
+        x: 4741
+        y: 399
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00418de55b8acdb60800000000000000
+      internalID: 7772272553868399616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_99
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 373
+        width: 60
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 575f8104f90959630800000000000000
+      internalID: 3933208863227573621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_100
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 362
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f684ee99a64aa2460800000000000000
+      internalID: 7217762130570659951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_101
+      rect:
+        serializedVersion: 2
+        x: 506
+        y: 361
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1da6442e44ba4110800000000000000
+      internalID: 1246006494630423836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_102
+      rect:
+        serializedVersion: 2
+        x: 1457
+        y: 353
+        width: 31
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4560f961aadda5a0800000000000000
+      internalID: -6508305499678546609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_103
+      rect:
+        serializedVersion: 2
+        x: 1531
+        y: 358
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d76663f6ea5ea080800000000000000
+      internalID: -9174295442934569006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_104
+      rect:
+        serializedVersion: 2
+        x: 2445
+        y: 373
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5aa06c18e39036450800000000000000
+      internalID: 6080714085950163621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_105
+      rect:
+        serializedVersion: 2
+        x: 2480
+        y: 336
+        width: 41
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4aead1317b52aab0800000000000000
+      internalID: -4998332094701966774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_106
+      rect:
+        serializedVersion: 2
+        x: 3469
+        y: 352
+        width: 51
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 130a77dc505b00610800000000000000
+      internalID: 1585466105361047601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_107
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 355
+        width: 24
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5373f081c6e96da0800000000000000
+      internalID: -5950971713826884769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_108
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 333
+        width: 20
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0dc3e5ee2a09fd20800000000000000
+      internalID: 3312690197449395468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_109
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 319
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdd6a784e66a5e0b0800000000000000
+      internalID: -5699966760774898213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_110
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 329
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb21f2fff8aeb5a20800000000000000
+      internalID: 3052291076656140990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_111
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 340
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77894b8e9f38c7690800000000000000
+      internalID: -7603056961533994889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_112
+      rect:
+        serializedVersion: 2
+        x: 643
+        y: 352
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e357b20c46cef490800000000000000
+      internalID: -7710507482246327320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_113
+      rect:
+        serializedVersion: 2
+        x: 1491
+        y: 330
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2aed66743f21e2a90800000000000000
+      internalID: -7336905906855682398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_114
+      rect:
+        serializedVersion: 2
+        x: 1548
+        y: 317
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce1f002157179ffc0800000000000000
+      internalID: -3460610091030351380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_115
+      rect:
+        serializedVersion: 2
+        x: 1591
+        y: 326
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e56c0b4579fb6ae30800000000000000
+      internalID: 4514506333167339102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_116
+      rect:
+        serializedVersion: 2
+        x: 1611
+        y: 339
+        width: 13
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aabf0bf7742815e30800000000000000
+      internalID: 4490513547061689258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_117
+      rect:
+        serializedVersion: 2
+        x: 1673
+        y: 351
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 913d7b9dd942f3550800000000000000
+      internalID: 6142668677137814297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_118
+      rect:
+        serializedVersion: 2
+        x: 2557
+        y: 314
+        width: 22
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 142997c6c300ef210800000000000000
+      internalID: 1368531596285153857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_HIT_enemy_last_119
+      rect:
+        serializedVersion: 2
+        x: 4528
+        y: 351
+        width: 86
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04a081fc6b24503d0800000000000000
+      internalID: -3241111003897263552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_HIT_enemy_last_0: 7644198363535353087
+      eff_HIT_enemy_last_1: -7760703736253487408
+      eff_HIT_enemy_last_10: -4132480319235136443
+      eff_HIT_enemy_last_100: 7217762130570659951
+      eff_HIT_enemy_last_101: 1246006494630423836
+      eff_HIT_enemy_last_102: -6508305499678546609
+      eff_HIT_enemy_last_103: -9174295442934569006
+      eff_HIT_enemy_last_104: 6080714085950163621
+      eff_HIT_enemy_last_105: -4998332094701966774
+      eff_HIT_enemy_last_106: 1585466105361047601
+      eff_HIT_enemy_last_107: -5950971713826884769
+      eff_HIT_enemy_last_108: 3312690197449395468
+      eff_HIT_enemy_last_109: -5699966760774898213
+      eff_HIT_enemy_last_11: -4945138708113887474
+      eff_HIT_enemy_last_110: 3052291076656140990
+      eff_HIT_enemy_last_111: -7603056961533994889
+      eff_HIT_enemy_last_112: -7710507482246327320
+      eff_HIT_enemy_last_113: -7336905906855682398
+      eff_HIT_enemy_last_114: -3460610091030351380
+      eff_HIT_enemy_last_115: 4514506333167339102
+      eff_HIT_enemy_last_116: 4490513547061689258
+      eff_HIT_enemy_last_117: 6142668677137814297
+      eff_HIT_enemy_last_118: 1368531596285153857
+      eff_HIT_enemy_last_119: -3241111003897263552
+      eff_HIT_enemy_last_12: -2508727903085341339
+      eff_HIT_enemy_last_13: -3683173262913178799
+      eff_HIT_enemy_last_14: 720597575782636174
+      eff_HIT_enemy_last_15: 3135411555845539257
+      eff_HIT_enemy_last_16: -977129243277300038
+      eff_HIT_enemy_last_17: 7422187905412397349
+      eff_HIT_enemy_last_18: 4927873585668746674
+      eff_HIT_enemy_last_19: 4184455133580422902
+      eff_HIT_enemy_last_2: 3226787703532399372
+      eff_HIT_enemy_last_20: 3475318407655738857
+      eff_HIT_enemy_last_21: -8314219538360900826
+      eff_HIT_enemy_last_22: 7394800194615178669
+      eff_HIT_enemy_last_23: 5299882718916311664
+      eff_HIT_enemy_last_24: -6514586841276603137
+      eff_HIT_enemy_last_25: 6306376418783577482
+      eff_HIT_enemy_last_26: 758915862054684098
+      eff_HIT_enemy_last_27: -1765149773013874981
+      eff_HIT_enemy_last_28: -5521209227154588618
+      eff_HIT_enemy_last_29: -4159200033160679687
+      eff_HIT_enemy_last_3: -6521938457239145755
+      eff_HIT_enemy_last_30: 3640245584606178265
+      eff_HIT_enemy_last_31: -2001303629672527877
+      eff_HIT_enemy_last_32: 714566672097369313
+      eff_HIT_enemy_last_33: 3281429701637050856
+      eff_HIT_enemy_last_34: 5418200515841039207
+      eff_HIT_enemy_last_35: -6155404306512714582
+      eff_HIT_enemy_last_36: 7486836322528870461
+      eff_HIT_enemy_last_37: -8140191717406196434
+      eff_HIT_enemy_last_38: -4604085321072862880
+      eff_HIT_enemy_last_39: 7008198742788330983
+      eff_HIT_enemy_last_4: -5963030850984896159
+      eff_HIT_enemy_last_40: -5855342145011670137
+      eff_HIT_enemy_last_41: -1729227459147060002
+      eff_HIT_enemy_last_42: -4663823377693249346
+      eff_HIT_enemy_last_43: -5515707511688887899
+      eff_HIT_enemy_last_44: -5890156440060377462
+      eff_HIT_enemy_last_45: 7840426566604711005
+      eff_HIT_enemy_last_46: -3090520769635969910
+      eff_HIT_enemy_last_47: -3215824990392468778
+      eff_HIT_enemy_last_48: -12879306487894543
+      eff_HIT_enemy_last_49: 507036008114298759
+      eff_HIT_enemy_last_5: 5951334465926893243
+      eff_HIT_enemy_last_50: -2710530060892264909
+      eff_HIT_enemy_last_51: 3377348868314486839
+      eff_HIT_enemy_last_52: -4415725597020076437
+      eff_HIT_enemy_last_53: -7636899460706897501
+      eff_HIT_enemy_last_54: 8410481733194831408
+      eff_HIT_enemy_last_55: -6726208504861490755
+      eff_HIT_enemy_last_56: -2403906549437885527
+      eff_HIT_enemy_last_57: 8360837608637066673
+      eff_HIT_enemy_last_58: 6092520107327740683
+      eff_HIT_enemy_last_59: -9031576584378127831
+      eff_HIT_enemy_last_6: 8886767407236341645
+      eff_HIT_enemy_last_60: 1978928418284302234
+      eff_HIT_enemy_last_61: -6627749433296377756
+      eff_HIT_enemy_last_62: -5325803889476016635
+      eff_HIT_enemy_last_63: -7275952102032776707
+      eff_HIT_enemy_last_64: -3971819251682213547
+      eff_HIT_enemy_last_65: 160453492442190651
+      eff_HIT_enemy_last_66: 5687531752055237279
+      eff_HIT_enemy_last_67: -300391814897611845
+      eff_HIT_enemy_last_68: 4870747702789204521
+      eff_HIT_enemy_last_69: 4845874087425329929
+      eff_HIT_enemy_last_7: 2697897693285300536
+      eff_HIT_enemy_last_70: 7435920280880427570
+      eff_HIT_enemy_last_71: 4991341454405845819
+      eff_HIT_enemy_last_72: 4362421266224704489
+      eff_HIT_enemy_last_73: 8563770279573630408
+      eff_HIT_enemy_last_74: 2090451987672042080
+      eff_HIT_enemy_last_75: 1052003294616531468
+      eff_HIT_enemy_last_76: -6494948823793769292
+      eff_HIT_enemy_last_77: 306501599497351295
+      eff_HIT_enemy_last_78: 4788272128584949237
+      eff_HIT_enemy_last_79: -1584927764931134834
+      eff_HIT_enemy_last_8: -3164728783342704556
+      eff_HIT_enemy_last_80: -6653782878412105178
+      eff_HIT_enemy_last_81: -8506487261122336183
+      eff_HIT_enemy_last_82: -5022595254253881049
+      eff_HIT_enemy_last_83: -8522745795239823957
+      eff_HIT_enemy_last_84: -158123530808449084
+      eff_HIT_enemy_last_85: 1002922873066224969
+      eff_HIT_enemy_last_86: 5802863385880017526
+      eff_HIT_enemy_last_87: -8641600793299315645
+      eff_HIT_enemy_last_88: -7560127275558395582
+      eff_HIT_enemy_last_89: 2618657932248086408
+      eff_HIT_enemy_last_9: 3300096477637911537
+      eff_HIT_enemy_last_90: 1202211634460907382
+      eff_HIT_enemy_last_91: -8140952921243000216
+      eff_HIT_enemy_last_92: 265738292119083220
+      eff_HIT_enemy_last_93: -6442824257765892920
+      eff_HIT_enemy_last_94: -3369160816288374269
+      eff_HIT_enemy_last_95: 7625750025384978931
+      eff_HIT_enemy_last_96: -1911123171703829845
+      eff_HIT_enemy_last_97: -3569084030047527309
+      eff_HIT_enemy_last_98: 7772272553868399616
+      eff_HIT_enemy_last_99: 3933208863227573621
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

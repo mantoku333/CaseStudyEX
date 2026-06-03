@@ -1,0 +1,2041 @@
+fileFormatVersion: 2
+guid: 7292c93f50bccbd4aa23a1c53d16345d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8898371606943769163
+    second: eff_wind_0
+  - first:
+      213: -194776566980256142
+    second: eff_wind_1
+  - first:
+      213: -7307694173872653900
+    second: eff_wind_2
+  - first:
+      213: -3686617061158765425
+    second: eff_wind_3
+  - first:
+      213: -4729320169787754761
+    second: eff_wind_4
+  - first:
+      213: 3664894269191820292
+    second: eff_wind_5
+  - first:
+      213: 1174871725043496918
+    second: eff_wind_6
+  - first:
+      213: 7329409297291955523
+    second: eff_wind_7
+  - first:
+      213: 1588426758212438712
+    second: eff_wind_8
+  - first:
+      213: -6862592587181970174
+    second: eff_wind_9
+  - first:
+      213: 1862861964023087803
+    second: eff_wind_10
+  - first:
+      213: -1166145060155623990
+    second: eff_wind_11
+  - first:
+      213: -7265926139406639051
+    second: eff_wind_12
+  - first:
+      213: -1505603902267080078
+    second: eff_wind_13
+  - first:
+      213: -1538711862201125578
+    second: eff_wind_14
+  - first:
+      213: 5441671274297902558
+    second: eff_wind_15
+  - first:
+      213: -1162347117265108042
+    second: eff_wind_16
+  - first:
+      213: 5937870235191351751
+    second: eff_wind_17
+  - first:
+      213: -2559196786450547421
+    second: eff_wind_18
+  - first:
+      213: -249317053115409885
+    second: eff_wind_19
+  - first:
+      213: 3229002883852676662
+    second: eff_wind_20
+  - first:
+      213: -8316261110350389154
+    second: eff_wind_21
+  - first:
+      213: 7613369260640845994
+    second: eff_wind_22
+  - first:
+      213: -148106853211136750
+    second: eff_wind_23
+  - first:
+      213: 3684948285242818184
+    second: eff_wind_24
+  - first:
+      213: 5314927437521596701
+    second: eff_wind_25
+  - first:
+      213: -3855404856237296338
+    second: eff_wind_26
+  - first:
+      213: 8385523133474529135
+    second: eff_wind_27
+  - first:
+      213: 1051646113612490260
+    second: eff_wind_28
+  - first:
+      213: 3374955256795244732
+    second: eff_wind_29
+  - first:
+      213: 202160971152502876
+    second: eff_wind_30
+  - first:
+      213: 5876070456280364086
+    second: eff_wind_31
+  - first:
+      213: -1139351114350021787
+    second: eff_wind_32
+  - first:
+      213: 8553286195827687842
+    second: eff_wind_33
+  - first:
+      213: 288009131877811526
+    second: eff_wind_34
+  - first:
+      213: -7888508895041102576
+    second: eff_wind_35
+  - first:
+      213: -6613810274770535414
+    second: eff_wind_36
+  - first:
+      213: -7948201687085697974
+    second: eff_wind_37
+  - first:
+      213: 4665305116172995013
+    second: eff_wind_38
+  - first:
+      213: 6831416041811080270
+    second: eff_wind_39
+  - first:
+      213: -8481582219291000461
+    second: eff_wind_40
+  - first:
+      213: -6157397788746859934
+    second: eff_wind_41
+  - first:
+      213: -719277831145583707
+    second: eff_wind_42
+  - first:
+      213: -6774637777918596640
+    second: eff_wind_43
+  - first:
+      213: -1779902220631733376
+    second: eff_wind_44
+  - first:
+      213: -561850163783882849
+    second: eff_wind_45
+  - first:
+      213: -8574375687018458289
+    second: eff_wind_46
+  - first:
+      213: 6159292410505526417
+    second: eff_wind_47
+  - first:
+      213: -6343661659516307524
+    second: eff_wind_48
+  - first:
+      213: -5835680533216766262
+    second: eff_wind_49
+  - first:
+      213: 2866109476448377919
+    second: eff_wind_50
+  - first:
+      213: 4010119092968408467
+    second: eff_wind_51
+  - first:
+      213: 5472591853738027523
+    second: eff_wind_52
+  - first:
+      213: -2691478914336326673
+    second: eff_wind_53
+  - first:
+      213: -8874245040498099292
+    second: eff_wind_54
+  - first:
+      213: 3960620081101114359
+    second: eff_wind_55
+  - first:
+      213: -7002874094969086009
+    second: eff_wind_56
+  - first:
+      213: -383166471361065992
+    second: eff_wind_57
+  - first:
+      213: 2098763049808712799
+    second: eff_wind_58
+  - first:
+      213: 3281436531672930365
+    second: eff_wind_59
+  - first:
+      213: 2934218914950994101
+    second: eff_wind_60
+  - first:
+      213: 7793270437706486499
+    second: eff_wind_61
+  - first:
+      213: 4546876582816498940
+    second: eff_wind_62
+  - first:
+      213: 2981725575841714392
+    second: eff_wind_63
+  - first:
+      213: -1078665467518260934
+    second: eff_wind_64
+  - first:
+      213: 432057466342230801
+    second: eff_wind_65
+  - first:
+      213: -1078840901813520011
+    second: eff_wind_66
+  - first:
+      213: 2903028609016155532
+    second: eff_wind_67
+  - first:
+      213: 7448827002866827444
+    second: eff_wind_68
+  - first:
+      213: 2877010789417848583
+    second: eff_wind_69
+  - first:
+      213: -8697121963681106628
+    second: eff_wind_70
+  - first:
+      213: -427576215651639185
+    second: eff_wind_71
+  - first:
+      213: 7832683073393975135
+    second: eff_wind_72
+  - first:
+      213: 7649523630844732766
+    second: eff_wind_73
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_wind_0
+      rect:
+        serializedVersion: 2
+        x: 3105
+        y: 10239
+        width: 886
+        height: 1971
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b422e47b4dd5d7b70800000000000000
+      internalID: 8898371606943769163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_1
+      rect:
+        serializedVersion: 2
+        x: 4322
+        y: 12199
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27e529a8eb30c4df0800000000000000
+      internalID: -194776566980256142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_2
+      rect:
+        serializedVersion: 2
+        x: 4323
+        y: 12206
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b9f02fdddad59a90800000000000000
+      internalID: -7307694173872653900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_3
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 10239
+        width: 270
+        height: 1960
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8cbcbeb05186dcc0800000000000000
+      internalID: -3686617061158765425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_4
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 10243
+        width: 103
+        height: 1906
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f6f5b2dc541e5eb0800000000000000
+      internalID: -4729320169787754761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_5
+      rect:
+        serializedVersion: 2
+        x: 428
+        y: 10239
+        width: 501
+        height: 1942
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4041b8e9be15cd230800000000000000
+      internalID: 3664894269191820292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_6
+      rect:
+        serializedVersion: 2
+        x: 1052
+        y: 10239
+        width: 285
+        height: 1963
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d73ed3fb9bfd4010800000000000000
+      internalID: 1174871725043496918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_7
+      rect:
+        serializedVersion: 2
+        x: 1333
+        y: 10239
+        width: 617
+        height: 1965
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34d488a4cea47b560800000000000000
+      internalID: 7329409297291955523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_8
+      rect:
+        serializedVersion: 2
+        x: 2076
+        y: 10239
+        width: 895
+        height: 1964
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ba4af288b93b0610800000000000000
+      internalID: 1588426758212438712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_9
+      rect:
+        serializedVersion: 2
+        x: 4138
+        y: 10239
+        width: 874
+        height: 1965
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20d2acac66c23c0a0800000000000000
+      internalID: -6862592587181970174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_10
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 8191
+        width: 859
+        height: 1969
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb2ce2f16173ad910800000000000000
+      internalID: 1862861964023087803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_11
+      rect:
+        serializedVersion: 2
+        x: 1091
+        y: 8191
+        width: 844
+        height: 1957
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac5f8dc0f3501dfe0800000000000000
+      internalID: -1166145060155623990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_12
+      rect:
+        serializedVersion: 2
+        x: 2129
+        y: 8191
+        width: 830
+        height: 1953
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53021783cae3a2b90800000000000000
+      internalID: -7265926139406639051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_13
+      rect:
+        serializedVersion: 2
+        x: 3166
+        y: 8191
+        width: 246
+        height: 1959
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 272cde85a350b1be0800000000000000
+      internalID: -1505603902267080078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_14
+      rect:
+        serializedVersion: 2
+        x: 3227
+        y: 10132
+        width: 14
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63572d9b6b565aae0800000000000000
+      internalID: -1538711862201125578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_15
+      rect:
+        serializedVersion: 2
+        x: 3415
+        y: 8191
+        width: 570
+        height: 1948
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed549f85133b48b40800000000000000
+      internalID: 5441671274297902558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_16
+      rect:
+        serializedVersion: 2
+        x: 3558
+        y: 10133
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b3c6b984738edfe0800000000000000
+      internalID: -1162347117265108042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_17
+      rect:
+        serializedVersion: 2
+        x: 3699
+        y: 10133
+        width: 26
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c912fac48d876250800000000000000
+      internalID: 5937870235191351751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_18
+      rect:
+        serializedVersion: 2
+        x: 4200
+        y: 8191
+        width: 218
+        height: 1979
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32d3b49f418eb7cd0800000000000000
+      internalID: -2559196786450547421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_19
+      rect:
+        serializedVersion: 2
+        x: 4446
+        y: 8191
+        width: 563
+        height: 1950
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32adb9c067f3a8cf0800000000000000
+      internalID: -249317053115409885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_20
+      rect:
+        serializedVersion: 2
+        x: 4734
+        y: 10134
+        width: 25
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63e20cec309bfcc20800000000000000
+      internalID: 3229002883852676662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_21
+      rect:
+        serializedVersion: 2
+        x: 4969
+        y: 10134
+        width: 7
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e506b22e494b69c80800000000000000
+      internalID: -8316261110350389154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_22
+      rect:
+        serializedVersion: 2
+        x: 4384
+        y: 8656
+        width: 44
+        height: 342
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa04064510f18a960800000000000000
+      internalID: 7613369260640845994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_23
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 6143
+        width: 219
+        height: 1975
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21d9c890a91d1fdf0800000000000000
+      internalID: -148106853211136750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_24
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 6143
+        width: 566
+        height: 1963
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88e359511f0932330800000000000000
+      internalID: 3684948285242818184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_25
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 8095
+        width: 25
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d11b370485a62c940800000000000000
+      internalID: 5314927437521596701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_26
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 8101
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e25f8a6c5b9de7ac0800000000000000
+      internalID: -3855404856237296338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_27
+      rect:
+        serializedVersion: 2
+        x: 1132
+        y: 6143
+        width: 226
+        height: 1965
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6fd19a8cdc5f5470800000000000000
+      internalID: 8385523133474529135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_28
+      rect:
+        serializedVersion: 2
+        x: 1359
+        y: 6143
+        width: 571
+        height: 1968
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 416ea478192389e00800000000000000
+      internalID: 1051646113612490260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_29
+      rect:
+        serializedVersion: 2
+        x: 2374
+        y: 6143
+        width: 583
+        height: 1968
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb82e1ebcef36de20800000000000000
+      internalID: 3374955256795244732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_30
+      rect:
+        serializedVersion: 2
+        x: 3184
+        y: 6143
+        width: 205
+        height: 1965
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c503ef805583ec200800000000000000
+      internalID: 202160971152502876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_31
+      rect:
+        serializedVersion: 2
+        x: 3391
+        y: 6143
+        width: 586
+        height: 1975
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63432cd72fefb8150800000000000000
+      internalID: 5876070456280364086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_32
+      rect:
+        serializedVersion: 2
+        x: 4409
+        y: 6143
+        width: 595
+        height: 1972
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 563b8b2b2363030f0800000000000000
+      internalID: -1139351114350021787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_33
+      rect:
+        serializedVersion: 2
+        x: 2157
+        y: 6143
+        width: 212
+        height: 1953
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a1cf845a7063b670800000000000000
+      internalID: 8553286195827687842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_34
+      rect:
+        serializedVersion: 2
+        x: 2361
+        y: 6539
+        width: 20
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64545ad87c63ff300800000000000000
+      internalID: 288009131877811526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_35
+      rect:
+        serializedVersion: 2
+        x: 4204
+        y: 6143
+        width: 206
+        height: 1953
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01dd09f74f2668290800000000000000
+      internalID: -7888508895041102576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_36
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 4095
+        width: 601
+        height: 1980
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0c3978b8960734a0800000000000000
+      internalID: -6613810274770535414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_37
+      rect:
+        serializedVersion: 2
+        x: 1335
+        y: 4095
+        width: 604
+        height: 1969
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a44b81e4da052b190800000000000000
+      internalID: -7948201687085697974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_38
+      rect:
+        serializedVersion: 2
+        x: 2133
+        y: 4095
+        width: 220
+        height: 1984
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c9cd4a094e7eb040800000000000000
+      internalID: 4665305116172995013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_39
+      rect:
+        serializedVersion: 2
+        x: 3153
+        y: 4095
+        width: 233
+        height: 1970
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e44fd0512b01ece50800000000000000
+      internalID: 6831416041811080270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_40
+      rect:
+        serializedVersion: 2
+        x: 3277
+        y: 6063
+        width: 6
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37104eda8ed5b4a80800000000000000
+      internalID: -8481582219291000461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_41
+      rect:
+        serializedVersion: 2
+        x: 4176
+        y: 4095
+        width: 240
+        height: 1982
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26ab7fc95578c8aa0800000000000000
+      internalID: -6157397788746859934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_42
+      rect:
+        serializedVersion: 2
+        x: 4516
+        y: 4095
+        width: 508
+        height: 1968
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ab01cb9f9c9406f0800000000000000
+      internalID: -719277831145583707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_43
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 4095
+        width: 206
+        height: 1965
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e96835a5d6abf1a0800000000000000
+      internalID: -6774637777918596640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_44
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 6041
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08b01545c548c47e0800000000000000
+      internalID: -1779902220631733376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_45
+      rect:
+        serializedVersion: 2
+        x: 1115
+        y: 4095
+        width: 206
+        height: 1966
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f97aaaab048e338f0800000000000000
+      internalID: -561850163783882849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_46
+      rect:
+        serializedVersion: 2
+        x: 2352
+        y: 4095
+        width: 616
+        height: 1955
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f43d48cddb2b10980800000000000000
+      internalID: -8574375687018458289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_47
+      rect:
+        serializedVersion: 2
+        x: 3372
+        y: 4095
+        width: 625
+        height: 1963
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19cf0f360d33a7550800000000000000
+      internalID: 6159292410505526417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_48
+      rect:
+        serializedVersion: 2
+        x: 905
+        y: 5224
+        width: 6
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb7f341b459c6f7a0800000000000000
+      internalID: -6343661659516307524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_49
+      rect:
+        serializedVersion: 2
+        x: 4388
+        y: 4095
+        width: 171
+        height: 1911
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac6d3fa497f730fa0800000000000000
+      internalID: -5835680533216766262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_50
+      rect:
+        serializedVersion: 2
+        x: 905
+        y: 5032
+        width: 6
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3c161f226776c720800000000000000
+      internalID: 2866109476448377919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_51
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 2047
+        width: 244
+        height: 1985
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 395c46b811ec6a730800000000000000
+      internalID: 4010119092968408467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_52
+      rect:
+        serializedVersion: 2
+        x: 1109
+        y: 2047
+        width: 353
+        height: 1986
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30a60c2cb4d82fb40800000000000000
+      internalID: 5472591853738027523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_53
+      rect:
+        serializedVersion: 2
+        x: 1230
+        y: 4032
+        width: 11
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: feb778eff22f5aad0800000000000000
+      internalID: -2691478914336326673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_54
+      rect:
+        serializedVersion: 2
+        x: 2140
+        y: 2047
+        width: 335
+        height: 1990
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4abb657472958d480800000000000000
+      internalID: -8874245040498099292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_55
+      rect:
+        serializedVersion: 2
+        x: 3174
+        y: 2047
+        width: 317
+        height: 1986
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fb8f40caf2f6f630800000000000000
+      internalID: 3960620081101114359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_56
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 2047
+        width: 513
+        height: 1975
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cf159a0d1bc0de90800000000000000
+      internalID: -7002874094969086009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_57
+      rect:
+        serializedVersion: 2
+        x: 753
+        y: 4008
+        width: 26
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fb0fa8df18beaaf0800000000000000
+      internalID: -383166471361065992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_58
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 2047
+        width: 519
+        height: 1976
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f545093cfdd402d10800000000000000
+      internalID: 2098763049808712799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_59
+      rect:
+        serializedVersion: 2
+        x: 2459
+        y: 2047
+        width: 527
+        height: 1974
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d38da57c3210a8d20800000000000000
+      internalID: 3281436531672930365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_60
+      rect:
+        serializedVersion: 2
+        x: 4194
+        y: 2047
+        width: 838
+        height: 1981
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b8d2e69e8078b820800000000000000
+      internalID: 2934218914950994101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_61
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 2047
+        width: 166
+        height: 1912
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e25c0e2c22472c60800000000000000
+      internalID: 7793270437706486499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_62
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 3948
+        width: 37
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf4c1546920c91f30800000000000000
+      internalID: 4546876582816498940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_63
+      rect:
+        serializedVersion: 2
+        x: 3476
+        y: 2047
+        width: 535
+        height: 1957
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d01eb50d97316920800000000000000
+      internalID: 2981725575841714392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_64
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 0
+        width: 843
+        height: 1964
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a39e719e87fc701f0800000000000000
+      internalID: -1078665467518260934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_65
+      rect:
+        serializedVersion: 2
+        x: 1098
+        y: 0
+        width: 337
+        height: 1967
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11b42ebf9f9fef500800000000000000
+      internalID: 432057466342230801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_66
+      rect:
+        serializedVersion: 2
+        x: 1438
+        y: 0
+        width: 512
+        height: 1928
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5793e3e6aef2701f0800000000000000
+      internalID: -1078840901813520011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_67
+      rect:
+        serializedVersion: 2
+        x: 1698
+        y: 1910
+        width: 42
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8d44359321a94820800000000000000
+      internalID: 2903028609016155532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_68
+      rect:
+        serializedVersion: 2
+        x: 2108
+        y: 0
+        width: 356
+        height: 1980
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b0073b81bc8f5760800000000000000
+      internalID: 7448827002866827444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_69
+      rect:
+        serializedVersion: 2
+        x: 2468
+        y: 0
+        width: 510
+        height: 1938
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70f8736e1123de720800000000000000
+      internalID: 2877010789417848583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_70
+      rect:
+        serializedVersion: 2
+        x: 3120
+        y: 0
+        width: 262
+        height: 1964
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c353a8247ad9d4780800000000000000
+      internalID: -8697121963681106628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_71
+      rect:
+        serializedVersion: 2
+        x: 3371
+        y: 0
+        width: 634
+        height: 1945
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f60adaf72b1f01af0800000000000000
+      internalID: -427576215651639185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_72
+      rect:
+        serializedVersion: 2
+        x: 4135
+        y: 0
+        width: 260
+        height: 1962
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5fdcd381c743bc60800000000000000
+      internalID: 7832683073393975135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_wind_73
+      rect:
+        serializedVersion: 2
+        x: 4408
+        y: 0
+        width: 620
+        height: 1940
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e55e47d9631982a60800000000000000
+      internalID: 7649523630844732766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_wind_0: 8898371606943769163
+      eff_wind_1: -194776566980256142
+      eff_wind_10: 1862861964023087803
+      eff_wind_11: -1166145060155623990
+      eff_wind_12: -7265926139406639051
+      eff_wind_13: -1505603902267080078
+      eff_wind_14: -1538711862201125578
+      eff_wind_15: 5441671274297902558
+      eff_wind_16: -1162347117265108042
+      eff_wind_17: 5937870235191351751
+      eff_wind_18: -2559196786450547421
+      eff_wind_19: -249317053115409885
+      eff_wind_2: -7307694173872653900
+      eff_wind_20: 3229002883852676662
+      eff_wind_21: -8316261110350389154
+      eff_wind_22: 7613369260640845994
+      eff_wind_23: -148106853211136750
+      eff_wind_24: 3684948285242818184
+      eff_wind_25: 5314927437521596701
+      eff_wind_26: -3855404856237296338
+      eff_wind_27: 8385523133474529135
+      eff_wind_28: 1051646113612490260
+      eff_wind_29: 3374955256795244732
+      eff_wind_3: -3686617061158765425
+      eff_wind_30: 202160971152502876
+      eff_wind_31: 5876070456280364086
+      eff_wind_32: -1139351114350021787
+      eff_wind_33: 8553286195827687842
+      eff_wind_34: 288009131877811526
+      eff_wind_35: -7888508895041102576
+      eff_wind_36: -6613810274770535414
+      eff_wind_37: -7948201687085697974
+      eff_wind_38: 4665305116172995013
+      eff_wind_39: 6831416041811080270
+      eff_wind_4: -4729320169787754761
+      eff_wind_40: -8481582219291000461
+      eff_wind_41: -6157397788746859934
+      eff_wind_42: -719277831145583707
+      eff_wind_43: -6774637777918596640
+      eff_wind_44: -1779902220631733376
+      eff_wind_45: -561850163783882849
+      eff_wind_46: -8574375687018458289
+      eff_wind_47: 6159292410505526417
+      eff_wind_48: -6343661659516307524
+      eff_wind_49: -5835680533216766262
+      eff_wind_5: 3664894269191820292
+      eff_wind_50: 2866109476448377919
+      eff_wind_51: 4010119092968408467
+      eff_wind_52: 5472591853738027523
+      eff_wind_53: -2691478914336326673
+      eff_wind_54: -8874245040498099292
+      eff_wind_55: 3960620081101114359
+      eff_wind_56: -7002874094969086009
+      eff_wind_57: -383166471361065992
+      eff_wind_58: 2098763049808712799
+      eff_wind_59: 3281436531672930365
+      eff_wind_6: 1174871725043496918
+      eff_wind_60: 2934218914950994101
+      eff_wind_61: 7793270437706486499
+      eff_wind_62: 4546876582816498940
+      eff_wind_63: 2981725575841714392
+      eff_wind_64: -1078665467518260934
+      eff_wind_65: 432057466342230801
+      eff_wind_66: -1078840901813520011
+      eff_wind_67: 2903028609016155532
+      eff_wind_68: 7448827002866827444
+      eff_wind_69: 2877010789417848583
+      eff_wind_7: 7329409297291955523
+      eff_wind_70: -8697121963681106628
+      eff_wind_71: -427576215651639185
+      eff_wind_72: 7832683073393975135
+      eff_wind_73: 7649523630844732766
+      eff_wind_8: 1588426758212438712
+      eff_wind_9: -6862592587181970174
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

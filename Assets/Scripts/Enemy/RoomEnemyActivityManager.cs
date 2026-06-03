@@ -32,9 +32,13 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         public EnemyController Enemy;
         public GameObject Root;
         public RoomCameraTrigger Room;
+        // 所属ルームは変えず、ルーム外へ出たときの帰還先だけを固定する。
+        public Vector3 OriginalStartPosition;
         public bool InitialActiveSelf;
         public bool DesiredGameplayActive;
         public bool AppliedGameplayActive;
+        // 帰還開始時にタックル状態を止めるため、事前に参照を保持しておく。
+        public EnemyTackleAttack[] TackleAttacks;
         public MonoBehaviour[] GameplayBehaviours;
         public bool[] InitialBehaviourEnabled;
         public Rigidbody2D[] Rigidbodies;
@@ -154,9 +158,11 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 Enemy = enemy,
                 Root = enemy.gameObject,
                 Room = enemyRoom,
+                OriginalStartPosition = enemy.OriginalStartPosition,
                 InitialActiveSelf = enemy.gameObject.activeSelf,
                 DesiredGameplayActive = enemy.gameObject.activeSelf,
                 AppliedGameplayActive = enemy.gameObject.activeSelf,
+                TackleAttacks = enemy.GetComponentsInChildren<EnemyTackleAttack>(true),
                 GameplayBehaviours = CollectGameplayBehaviours(enemy.gameObject),
                 Rigidbodies = enemy.GetComponentsInChildren<Rigidbody2D>(true)
             });
@@ -213,12 +219,10 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             return;
         }
 
+        bool hasPlayerPosition = TryGetPlayerPosition(out Vector3 playerPosition);
+        // カメラ用のアクティブルームは、敵の所属変更ではなく重なり部から戻す判定にだけ使う。
         RoomCameraTrigger activeRoom = ResolveActiveRoom();
-        if (activeRoom == null)
-        {
-            LogDebug("No active room resolved; keeping current enemy activity states.");
-            return;
-        }
+        bool shouldQueueStateApplication = false;
 
         for (int i = managedEnemies.Count - 1; i >= 0; i--)
         {
@@ -229,15 +233,39 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 continue;
             }
 
-            bool shouldRunGameplay = managedEnemy.Room == activeRoom;
-            managedEnemy.DesiredGameplayActive = managedEnemy.InitialActiveSelf && shouldRunGameplay;
+            if (!managedEnemy.InitialActiveSelf)
+            {
+                shouldQueueStateApplication |= SetDesiredGameplayActive(managedEnemy, false);
+                shouldQueueStateApplication |= managedEnemy.AppliedGameplayActive != managedEnemy.DesiredGameplayActive;
+                continue;
+            }
+
+            bool shouldRunGameplay = ShouldRunManagedEnemyGameplay(
+                managedEnemy,
+                activeRoom,
+                hasPlayerPosition,
+                playerPosition);
+
+            shouldQueueStateApplication |= SetDesiredGameplayActive(managedEnemy, shouldRunGameplay);
+            shouldQueueStateApplication |= managedEnemy.AppliedGameplayActive != managedEnemy.DesiredGameplayActive;
         }
 
-        QueueEnemyStateApplication();
+        if (shouldQueueStateApplication)
+        {
+            QueueEnemyStateApplication();
+        }
     }
 
     private void RefreshInferredActiveRoomIfNeeded(ref bool shouldApply)
     {
+        if (Time.unscaledTime < nextPlayerRoomRefreshTime)
+        {
+            return;
+        }
+
+        nextPlayerRoomRefreshTime = Time.unscaledTime + PlayerRoomRefreshInterval;
+        shouldApply = true;
+
         if (RoomCameraTrigger.ActiveRoom != null)
         {
             if (inferredActiveRoom != null)
@@ -249,12 +277,6 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             return;
         }
 
-        if (Time.unscaledTime < nextPlayerRoomRefreshTime)
-        {
-            return;
-        }
-
-        nextPlayerRoomRefreshTime = Time.unscaledTime + PlayerRoomRefreshInterval;
         RoomCameraTrigger activeRoom = ResolveActiveRoomFromPlayer();
         if (activeRoom == null)
         {
@@ -268,7 +290,91 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
         inferredActiveRoom = activeRoom;
         RememberResolvedActiveRoom(activeRoom);
-        shouldApply = true;
+    }
+
+    private bool SetDesiredGameplayActive(ManagedEnemy managedEnemy, bool active)
+    {
+        if (managedEnemy.DesiredGameplayActive == active)
+        {
+            return false;
+        }
+
+        managedEnemy.DesiredGameplayActive = active;
+        return true;
+    }
+
+    private bool ShouldRunManagedEnemyGameplay(
+        ManagedEnemy managedEnemy,
+        RoomCameraTrigger activeRoom,
+        bool hasPlayerPosition,
+        Vector3 playerPosition)
+    {
+        bool enemyInsideHomeRoom = IsEnemyInsideHomeRoom(managedEnemy);
+        bool enemyReturningHome = managedEnemy.Enemy.IsReturningHome;
+        bool enemyInsideOtherActiveRoom = IsEnemyInsideOtherActiveRoom(managedEnemy, activeRoom);
+
+        // 所属ルーム外、帰還中、または別カメラの重なり領域にいる間は眠らせずに帰還させる。
+        if (!enemyInsideHomeRoom || enemyReturningHome || enemyInsideOtherActiveRoom)
+        {
+            StartEnemyReturnHomeIfNeeded(managedEnemy);
+            return true;
+        }
+
+        if (hasPlayerPosition)
+        {
+            // 敵の起床判定はアクティブカメラではなく、プレイヤーが敵の所属ルーム内にいるかで決める。
+            return IsPointInRoom(managedEnemy.Room, playerPosition);
+        }
+
+        return managedEnemy.DesiredGameplayActive;
+    }
+
+    private bool IsEnemyInsideOtherActiveRoom(ManagedEnemy managedEnemy, RoomCameraTrigger activeRoom)
+    {
+        // ルームが重なっている場所で別カメラがアクティブなら、敵をその場に残さず初期位置へ戻す。
+        return activeRoom != null &&
+               activeRoom != managedEnemy.Room &&
+               IsPointInRoom(activeRoom, managedEnemy.Enemy.transform.position);
+    }
+
+    private bool IsEnemyInsideHomeRoom(ManagedEnemy managedEnemy)
+    {
+        return managedEnemy.Room == null ||
+               IsPointInRoom(managedEnemy.Room, managedEnemy.Enemy.transform.position);
+    }
+
+    private static bool IsPointInRoom(RoomCameraTrigger room, Vector3 position)
+    {
+        return room != null && room.ContainsPoint(position);
+    }
+
+    private static void StartEnemyReturnHomeIfNeeded(ManagedEnemy managedEnemy)
+    {
+        if (managedEnemy.Enemy.IsReturningHome)
+        {
+            return;
+        }
+
+        // タックルの速度制御を止めてから帰還へ切り替える。
+        CancelTackleAttacks(managedEnemy);
+        managedEnemy.Enemy.StartReturnHome();
+    }
+
+    private static void CancelTackleAttacks(ManagedEnemy managedEnemy)
+    {
+        EnemyTackleAttack[] tackleAttacks = managedEnemy.TackleAttacks;
+        if (tackleAttacks == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < tackleAttacks.Length; i++)
+        {
+            if (tackleAttacks[i] != null)
+            {
+                tackleAttacks[i].CancelForLeashReturn();
+            }
+        }
     }
 
     private RoomCameraTrigger ResolveActiveRoom()

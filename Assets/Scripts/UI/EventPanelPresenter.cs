@@ -52,10 +52,28 @@ public sealed class EventPanelPresenter : MonoBehaviour
 
     public bool IsVisible => isVisible;
 
+    private void Reset()
+    {
+        panelRoot = gameObject;
+    }
+
     private void Awake()
     {
-        HideWithoutCallback();
+        if (!isVisible)
+        {
+            HideWithoutCallback();
+        }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (panelRoot == null)
+        {
+            panelRoot = gameObject;
+        }
+    }
+#endif
 
     private void OnEnable()
     {
@@ -90,6 +108,25 @@ public sealed class EventPanelPresenter : MonoBehaviour
         StopAutoCloseRoutine();
         onClosed = closeCallback;
         ApplyContent(content);
+        SetVisible(true);
+
+        if (closeButton == null)
+        {
+            autoCloseRoutine = StartCoroutine(AutoClose(autoCloseSecondsWhenNoButton));
+        }
+
+        return true;
+    }
+
+    public bool ShowExisting(Action closeCallback = null, float autoCloseSecondsWhenNoButton = 0f)
+    {
+        if (!ValidateRequiredReferences(autoCloseSecondsWhenNoButton))
+        {
+            return false;
+        }
+
+        StopAutoCloseRoutine();
+        onClosed = closeCallback;
         SetVisible(true);
 
         if (closeButton == null)

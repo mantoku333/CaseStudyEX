@@ -110,11 +110,26 @@ namespace CaseStudy.EditorTools
                 return;
             }
 
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            DrawSelectedControllerInfo(currentController);
+        }
+
+        private static void DrawSelectedControllerInfo(StoryEventController currentController)
+        {
+            bool hasMemoName = !string.IsNullOrWhiteSpace(currentController.MemoName);
+            Rect boxRect = EditorGUILayout.GetControlRect(false, hasMemoName ? 44f : 24f);
+            GUI.Box(boxRect, GUIContent.none, EditorStyles.helpBox);
+
+            Rect lineRect = new Rect(
+                boxRect.x + 8f,
+                boxRect.y + 6f,
+                boxRect.width - 16f,
+                EditorGUIUtility.singleLineHeight);
+
+            EditorGUI.LabelField(lineRect, "Event ID", currentController.EventId);
+            lineRect.y += EditorGUIUtility.singleLineHeight + 2f;
+            if (hasMemoName)
             {
-                EditorGUILayout.LabelField("Event ID", currentController.EventId);
-                EditorGUILayout.LabelField("Object", currentController.name);
-                EditorGUILayout.LabelField("State", currentController.IsPlaying ? "Playing" : "Idle");
+                EditorGUI.LabelField(lineRect, "メモ", currentController.MemoName);
             }
         }
 
@@ -192,8 +207,10 @@ namespace CaseStudy.EditorTools
 
         private static string BuildControllerLabel(StoryEventController controller)
         {
-            string state = controller.IsPlaying ? "Playing" : "Idle";
-            return $"{controller.EventId}  ({controller.name})  [{state}]";
+            string memoName = controller.MemoName;
+            return string.IsNullOrWhiteSpace(memoName)
+                ? controller.EventId
+                : $"{controller.EventId} / {memoName}";
         }
 
         private void TryUseSelection()

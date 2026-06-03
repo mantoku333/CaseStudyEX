@@ -16,12 +16,14 @@ MonoBehaviour:
   glideMoveSpeed: 10
   fallSpeed: 3
   jumpForce: 3
-  dodgeDistance: 3
+  dodgeDistance: 6
   dodgeDuration: 0.5
   attackSecondsPerAttack: 0.5
-  umbrellaAttackDuration: 0.2
+  umbrellaAttackDuration: 0.3
   gunRecoilForce: 20
   gunRecoilDuration: 0.1
+  firstRecoilCoolTime: 0.5
+  secondRecoilCoolTime: 2.5
   reloadSeconds: 1.5
   parryDuration: 0.1
   parryFlashDuration: 0.1

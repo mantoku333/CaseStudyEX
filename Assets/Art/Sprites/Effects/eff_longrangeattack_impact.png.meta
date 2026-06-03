@@ -1,0 +1,5109 @@
+fileFormatVersion: 2
+guid: 1eac5165945a4004b81d34270988dfbd
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6899589864214934478
+    second: eff_longrangeattack_impact_0
+  - first:
+      213: 4332981555620711621
+    second: eff_longrangeattack_impact_1
+  - first:
+      213: -3607917775678097177
+    second: eff_longrangeattack_impact_2
+  - first:
+      213: 4451998172946885986
+    second: eff_longrangeattack_impact_3
+  - first:
+      213: 8748842540438181436
+    second: eff_longrangeattack_impact_4
+  - first:
+      213: 5635802379652937936
+    second: eff_longrangeattack_impact_5
+  - first:
+      213: 8886799825040216816
+    second: eff_longrangeattack_impact_6
+  - first:
+      213: -3486526850263407049
+    second: eff_longrangeattack_impact_7
+  - first:
+      213: -426856639529439268
+    second: eff_longrangeattack_impact_8
+  - first:
+      213: -6394740548118279323
+    second: eff_longrangeattack_impact_9
+  - first:
+      213: 3631950775296842432
+    second: eff_longrangeattack_impact_10
+  - first:
+      213: -3270918798667750983
+    second: eff_longrangeattack_impact_11
+  - first:
+      213: 1010163898810933375
+    second: eff_longrangeattack_impact_12
+  - first:
+      213: -2787549217141871410
+    second: eff_longrangeattack_impact_13
+  - first:
+      213: 7242744511531973065
+    second: eff_longrangeattack_impact_14
+  - first:
+      213: -5043305325572165727
+    second: eff_longrangeattack_impact_15
+  - first:
+      213: 4740147284346532782
+    second: eff_longrangeattack_impact_16
+  - first:
+      213: -7869031255170986580
+    second: eff_longrangeattack_impact_17
+  - first:
+      213: 7229185724949607646
+    second: eff_longrangeattack_impact_18
+  - first:
+      213: 681134702393957230
+    second: eff_longrangeattack_impact_19
+  - first:
+      213: 101292605531418985
+    second: eff_longrangeattack_impact_20
+  - first:
+      213: 3231611497595351616
+    second: eff_longrangeattack_impact_21
+  - first:
+      213: 5303456666292519501
+    second: eff_longrangeattack_impact_22
+  - first:
+      213: -5591344606329768333
+    second: eff_longrangeattack_impact_23
+  - first:
+      213: -4997676873034077465
+    second: eff_longrangeattack_impact_24
+  - first:
+      213: -8086247759701479581
+    second: eff_longrangeattack_impact_25
+  - first:
+      213: 4072910122957509327
+    second: eff_longrangeattack_impact_26
+  - first:
+      213: -6498045577168585639
+    second: eff_longrangeattack_impact_27
+  - first:
+      213: 7509268892755195668
+    second: eff_longrangeattack_impact_28
+  - first:
+      213: -1067540350469541316
+    second: eff_longrangeattack_impact_29
+  - first:
+      213: 2450871951848825195
+    second: eff_longrangeattack_impact_30
+  - first:
+      213: -5083618858711880212
+    second: eff_longrangeattack_impact_31
+  - first:
+      213: 5392162634509169013
+    second: eff_longrangeattack_impact_32
+  - first:
+      213: 4881437677705450377
+    second: eff_longrangeattack_impact_33
+  - first:
+      213: 4383357565619464413
+    second: eff_longrangeattack_impact_34
+  - first:
+      213: -2246804766706948962
+    second: eff_longrangeattack_impact_35
+  - first:
+      213: 3552243136541568925
+    second: eff_longrangeattack_impact_36
+  - first:
+      213: -5440771283629590160
+    second: eff_longrangeattack_impact_37
+  - first:
+      213: 8164506549308547398
+    second: eff_longrangeattack_impact_38
+  - first:
+      213: -6373275189375335774
+    second: eff_longrangeattack_impact_39
+  - first:
+      213: -8667457708933520420
+    second: eff_longrangeattack_impact_40
+  - first:
+      213: 7862856156247907471
+    second: eff_longrangeattack_impact_41
+  - first:
+      213: -8692155200061738357
+    second: eff_longrangeattack_impact_42
+  - first:
+      213: 9115989562033935946
+    second: eff_longrangeattack_impact_43
+  - first:
+      213: 7639982178506137675
+    second: eff_longrangeattack_impact_44
+  - first:
+      213: 7455411775336614894
+    second: eff_longrangeattack_impact_45
+  - first:
+      213: -8463205026310386299
+    second: eff_longrangeattack_impact_46
+  - first:
+      213: -1358160374983736207
+    second: eff_longrangeattack_impact_47
+  - first:
+      213: -4447325895688627073
+    second: eff_longrangeattack_impact_48
+  - first:
+      213: -3584068602022993973
+    second: eff_longrangeattack_impact_49
+  - first:
+      213: 6835904177662136625
+    second: eff_longrangeattack_impact_50
+  - first:
+      213: 8554929480900846421
+    second: eff_longrangeattack_impact_51
+  - first:
+      213: 3549069919639883015
+    second: eff_longrangeattack_impact_52
+  - first:
+      213: -1281205553236720908
+    second: eff_longrangeattack_impact_53
+  - first:
+      213: -4598131969543612139
+    second: eff_longrangeattack_impact_54
+  - first:
+      213: -5874246197804722896
+    second: eff_longrangeattack_impact_55
+  - first:
+      213: 7207686902715843901
+    second: eff_longrangeattack_impact_56
+  - first:
+      213: -7225412551614722278
+    second: eff_longrangeattack_impact_57
+  - first:
+      213: 2691300561013840503
+    second: eff_longrangeattack_impact_58
+  - first:
+      213: 5508832620191313566
+    second: eff_longrangeattack_impact_59
+  - first:
+      213: -1549961208914360022
+    second: eff_longrangeattack_impact_60
+  - first:
+      213: -1949931121201891699
+    second: eff_longrangeattack_impact_61
+  - first:
+      213: 821795678251000802
+    second: eff_longrangeattack_impact_62
+  - first:
+      213: -459062530349405384
+    second: eff_longrangeattack_impact_63
+  - first:
+      213: -3096002443554808673
+    second: eff_longrangeattack_impact_64
+  - first:
+      213: -5902239452933866979
+    second: eff_longrangeattack_impact_65
+  - first:
+      213: 4504975353479553433
+    second: eff_longrangeattack_impact_66
+  - first:
+      213: -2094021903533048294
+    second: eff_longrangeattack_impact_67
+  - first:
+      213: 5560734617160987078
+    second: eff_longrangeattack_impact_68
+  - first:
+      213: 4893239245254226333
+    second: eff_longrangeattack_impact_69
+  - first:
+      213: -4052825887750421243
+    second: eff_longrangeattack_impact_70
+  - first:
+      213: 4963558561656236677
+    second: eff_longrangeattack_impact_71
+  - first:
+      213: -7820355022497853079
+    second: eff_longrangeattack_impact_72
+  - first:
+      213: -3540806971149040051
+    second: eff_longrangeattack_impact_73
+  - first:
+      213: -424638528730046992
+    second: eff_longrangeattack_impact_74
+  - first:
+      213: -8201917981121817970
+    second: eff_longrangeattack_impact_75
+  - first:
+      213: -1760627313835709448
+    second: eff_longrangeattack_impact_76
+  - first:
+      213: -2449753584050069574
+    second: eff_longrangeattack_impact_77
+  - first:
+      213: 2827335396614886441
+    second: eff_longrangeattack_impact_78
+  - first:
+      213: 1935270357851857511
+    second: eff_longrangeattack_impact_79
+  - first:
+      213: -1803288657448991773
+    second: eff_longrangeattack_impact_80
+  - first:
+      213: 8534834415361318591
+    second: eff_longrangeattack_impact_81
+  - first:
+      213: 6538375820430556081
+    second: eff_longrangeattack_impact_82
+  - first:
+      213: -7110043200420659658
+    second: eff_longrangeattack_impact_83
+  - first:
+      213: 6692931538185836919
+    second: eff_longrangeattack_impact_84
+  - first:
+      213: -5163742710209367500
+    second: eff_longrangeattack_impact_85
+  - first:
+      213: -5632807839389678233
+    second: eff_longrangeattack_impact_86
+  - first:
+      213: 4439424450698943362
+    second: eff_longrangeattack_impact_87
+  - first:
+      213: 7850489524585406341
+    second: eff_longrangeattack_impact_88
+  - first:
+      213: -5889716784422256341
+    second: eff_longrangeattack_impact_89
+  - first:
+      213: 8877074990618071396
+    second: eff_longrangeattack_impact_90
+  - first:
+      213: 7857452950033646913
+    second: eff_longrangeattack_impact_91
+  - first:
+      213: 2451396818997634291
+    second: eff_longrangeattack_impact_92
+  - first:
+      213: 6880721704200294416
+    second: eff_longrangeattack_impact_93
+  - first:
+      213: 7678857437397767910
+    second: eff_longrangeattack_impact_94
+  - first:
+      213: -7591743243049131595
+    second: eff_longrangeattack_impact_95
+  - first:
+      213: 8391336781793006359
+    second: eff_longrangeattack_impact_96
+  - first:
+      213: -4542264513194066751
+    second: eff_longrangeattack_impact_97
+  - first:
+      213: 6049346669235077798
+    second: eff_longrangeattack_impact_98
+  - first:
+      213: 3133808663927880946
+    second: eff_longrangeattack_impact_99
+  - first:
+      213: 3799266166269549417
+    second: eff_longrangeattack_impact_100
+  - first:
+      213: 8601784586860778885
+    second: eff_longrangeattack_impact_101
+  - first:
+      213: -5440470242376891186
+    second: eff_longrangeattack_impact_102
+  - first:
+      213: -3501786220366780666
+    second: eff_longrangeattack_impact_103
+  - first:
+      213: 6542524924142493086
+    second: eff_longrangeattack_impact_104
+  - first:
+      213: -3847377550150549904
+    second: eff_longrangeattack_impact_105
+  - first:
+      213: -461036330265826730
+    second: eff_longrangeattack_impact_106
+  - first:
+      213: -474467496673586270
+    second: eff_longrangeattack_impact_107
+  - first:
+      213: 3468205611003350720
+    second: eff_longrangeattack_impact_108
+  - first:
+      213: 2816103779017811706
+    second: eff_longrangeattack_impact_109
+  - first:
+      213: 4648877933275616285
+    second: eff_longrangeattack_impact_110
+  - first:
+      213: -983098176315335746
+    second: eff_longrangeattack_impact_111
+  - first:
+      213: -2789364636776383855
+    second: eff_longrangeattack_impact_112
+  - first:
+      213: 2660022423732049550
+    second: eff_longrangeattack_impact_113
+  - first:
+      213: 3160912070615616102
+    second: eff_longrangeattack_impact_114
+  - first:
+      213: -8454190414258666169
+    second: eff_longrangeattack_impact_115
+  - first:
+      213: 9082164008005962433
+    second: eff_longrangeattack_impact_116
+  - first:
+      213: -2426921272646076176
+    second: eff_longrangeattack_impact_117
+  - first:
+      213: 2632259810609842482
+    second: eff_longrangeattack_impact_118
+  - first:
+      213: 4838785034020656831
+    second: eff_longrangeattack_impact_119
+  - first:
+      213: 3907419033370943520
+    second: eff_longrangeattack_impact_120
+  - first:
+      213: -5446607965629305897
+    second: eff_longrangeattack_impact_121
+  - first:
+      213: 9106665436149406593
+    second: eff_longrangeattack_impact_122
+  - first:
+      213: -1737938830007575263
+    second: eff_longrangeattack_impact_123
+  - first:
+      213: 5303105170990761625
+    second: eff_longrangeattack_impact_124
+  - first:
+      213: -7548678863721438319
+    second: eff_longrangeattack_impact_125
+  - first:
+      213: 6397839559578997444
+    second: eff_longrangeattack_impact_126
+  - first:
+      213: -5226452829939055125
+    second: eff_longrangeattack_impact_127
+  - first:
+      213: -6693928061989025749
+    second: eff_longrangeattack_impact_128
+  - first:
+      213: -4975174775272509816
+    second: eff_longrangeattack_impact_129
+  - first:
+      213: -1302166525273167
+    second: eff_longrangeattack_impact_130
+  - first:
+      213: -3974583598036562497
+    second: eff_longrangeattack_impact_131
+  - first:
+      213: 8649025293861961354
+    second: eff_longrangeattack_impact_132
+  - first:
+      213: -4186365873026182793
+    second: eff_longrangeattack_impact_133
+  - first:
+      213: -2580253701742642335
+    second: eff_longrangeattack_impact_134
+  - first:
+      213: 2855341372806533725
+    second: eff_longrangeattack_impact_135
+  - first:
+      213: 3852132262282276313
+    second: eff_longrangeattack_impact_136
+  - first:
+      213: 4082567162961047464
+    second: eff_longrangeattack_impact_137
+  - first:
+      213: 3042686343521093014
+    second: eff_longrangeattack_impact_138
+  - first:
+      213: -6116750069066828679
+    second: eff_longrangeattack_impact_139
+  - first:
+      213: 5286315376363202865
+    second: eff_longrangeattack_impact_140
+  - first:
+      213: -7904599338762729701
+    second: eff_longrangeattack_impact_141
+  - first:
+      213: -4577217466880024198
+    second: eff_longrangeattack_impact_142
+  - first:
+      213: 7481331291029211087
+    second: eff_longrangeattack_impact_143
+  - first:
+      213: -1019930647440452674
+    second: eff_longrangeattack_impact_144
+  - first:
+      213: 2847438283861952056
+    second: eff_longrangeattack_impact_145
+  - first:
+      213: 2641675690271854905
+    second: eff_longrangeattack_impact_146
+  - first:
+      213: 820763121332413808
+    second: eff_longrangeattack_impact_147
+  - first:
+      213: -4036827673099093998
+    second: eff_longrangeattack_impact_148
+  - first:
+      213: 2401406073681997518
+    second: eff_longrangeattack_impact_149
+  - first:
+      213: 580188629477501753
+    second: eff_longrangeattack_impact_150
+  - first:
+      213: 4316231037141870901
+    second: eff_longrangeattack_impact_151
+  - first:
+      213: -8573979583829042834
+    second: eff_longrangeattack_impact_152
+  - first:
+      213: -5585986177978874609
+    second: eff_longrangeattack_impact_153
+  - first:
+      213: 4142469435486468419
+    second: eff_longrangeattack_impact_154
+  - first:
+      213: -5792409589227759642
+    second: eff_longrangeattack_impact_155
+  - first:
+      213: 3000337689025853317
+    second: eff_longrangeattack_impact_156
+  - first:
+      213: -7094652591653720731
+    second: eff_longrangeattack_impact_157
+  - first:
+      213: 6871407268068495963
+    second: eff_longrangeattack_impact_158
+  - first:
+      213: 7958001101327425434
+    second: eff_longrangeattack_impact_159
+  - first:
+      213: -655173903778478915
+    second: eff_longrangeattack_impact_160
+  - first:
+      213: 9035725893299315541
+    second: eff_longrangeattack_impact_161
+  - first:
+      213: 8111993183647903371
+    second: eff_longrangeattack_impact_162
+  - first:
+      213: 9018752101692650553
+    second: eff_longrangeattack_impact_163
+  - first:
+      213: -3630369279776755931
+    second: eff_longrangeattack_impact_164
+  - first:
+      213: -4956694757624588653
+    second: eff_longrangeattack_impact_165
+  - first:
+      213: -4354019568756273311
+    second: eff_longrangeattack_impact_166
+  - first:
+      213: 8328246502765652263
+    second: eff_longrangeattack_impact_167
+  - first:
+      213: -1357682604302553258
+    second: eff_longrangeattack_impact_168
+  - first:
+      213: 5849961057225615222
+    second: eff_longrangeattack_impact_169
+  - first:
+      213: 2375444622502077396
+    second: eff_longrangeattack_impact_170
+  - first:
+      213: -4444336095431599253
+    second: eff_longrangeattack_impact_171
+  - first:
+      213: 2852444811113286443
+    second: eff_longrangeattack_impact_172
+  - first:
+      213: 5702791475464734702
+    second: eff_longrangeattack_impact_173
+  - first:
+      213: -7764031878702306997
+    second: eff_longrangeattack_impact_174
+  - first:
+      213: 7834400707934291305
+    second: eff_longrangeattack_impact_175
+  - first:
+      213: -647702954039430523
+    second: eff_longrangeattack_impact_176
+  - first:
+      213: -6015687654423153347
+    second: eff_longrangeattack_impact_177
+  - first:
+      213: -2598697792694824797
+    second: eff_longrangeattack_impact_178
+  - first:
+      213: -6349782263543558553
+    second: eff_longrangeattack_impact_179
+  - first:
+      213: -1211931917987735852
+    second: eff_longrangeattack_impact_180
+  - first:
+      213: -8525085466248870232
+    second: eff_longrangeattack_impact_181
+  - first:
+      213: 500746125778248377
+    second: eff_longrangeattack_impact_182
+  - first:
+      213: -1625621148078591476
+    second: eff_longrangeattack_impact_183
+  - first:
+      213: 3390292784879738213
+    second: eff_longrangeattack_impact_184
+  - first:
+      213: -1083885510753588242
+    second: eff_longrangeattack_impact_185
+  - first:
+      213: 7832061921885394364
+    second: eff_longrangeattack_impact_186
+  - first:
+      213: -8510209064763175287
+    second: eff_longrangeattack_impact_187
+  - first:
+      213: -5398685040408075997
+    second: eff_longrangeattack_impact_188
+  - first:
+      213: -3867410092149858539
+    second: eff_longrangeattack_impact_189
+  - first:
+      213: 1695392168301967562
+    second: eff_longrangeattack_impact_190
+  - first:
+      213: 2233594490258184378
+    second: eff_longrangeattack_impact_191
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_0
+      rect:
+        serializedVersion: 2
+        x: 1215
+        y: 2239
+        width: 642
+        height: 642
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec3ba680d6440cf50800000000000000
+      internalID: 6899589864214934478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_1
+      rect:
+        serializedVersion: 2
+        x: 2193
+        y: 2193
+        width: 734
+        height: 734
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cc871984c7d12c30800000000000000
+      internalID: 4332981555620711621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_2
+      rect:
+        serializedVersion: 2
+        x: 3203
+        y: 2179
+        width: 762
+        height: 762
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e8b3e906e91eedc0800000000000000
+      internalID: -3607917775678097177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_3
+      rect:
+        serializedVersion: 2
+        x: 4432
+        y: 2816
+        width: 31
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26def2720cca8cd30800000000000000
+      internalID: 4451998172946885986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_4
+      rect:
+        serializedVersion: 2
+        x: 4695
+        y: 2839
+        width: 23
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c36d4aaefe12a6970800000000000000
+      internalID: 8748842540438181436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_5
+      rect:
+        serializedVersion: 2
+        x: 4719
+        y: 2830
+        width: 30
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d8b38f8764663e40800000000000000
+      internalID: 5635802379652937936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_6
+      rect:
+        serializedVersion: 2
+        x: 4867
+        y: 2790
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f296894b51445b70800000000000000
+      internalID: 8886799825040216816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_7
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 2335
+        width: 446
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73620365d4e5d9fc0800000000000000
+      internalID: -3486526850263407049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_8
+      rect:
+        serializedVersion: 2
+        x: 4307
+        y: 2755
+        width: 30
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdfa4ded520831af0800000000000000
+      internalID: -426856639529439268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_9
+      rect:
+        serializedVersion: 2
+        x: 4703
+        y: 2719
+        width: 45
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56b8f9e2a515147a0800000000000000
+      internalID: -6394740548118279323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_10
+      rect:
+        serializedVersion: 2
+        x: 4809
+        y: 2724
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cad54bbcf7476230800000000000000
+      internalID: 3631950775296842432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_11
+      rect:
+        serializedVersion: 2
+        x: 4491
+        y: 2666
+        width: 30
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b1e244ceac5b92d0800000000000000
+      internalID: -3270918798667750983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_12
+      rect:
+        serializedVersion: 2
+        x: 4539
+        y: 2687
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f70ac81c6b2d40e00800000000000000
+      internalID: 1010163898810933375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_13
+      rect:
+        serializedVersion: 2
+        x: 4669
+        y: 2684
+        width: 21
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecc275e81c2a059d0800000000000000
+      internalID: -2787549217141871410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_14
+      rect:
+        serializedVersion: 2
+        x: 4558
+        y: 2656
+        width: 21
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c9f5c072c5638460800000000000000
+      internalID: 7242744511531973065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_15
+      rect:
+        serializedVersion: 2
+        x: 4226
+        y: 2618
+        width: 38
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1af6f67e684920ab0800000000000000
+      internalID: -5043305325572165727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_16
+      rect:
+        serializedVersion: 2
+        x: 4294
+        y: 2623
+        width: 30
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea3f18a37d268c140800000000000000
+      internalID: 4740147284346532782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_17
+      rect:
+        serializedVersion: 2
+        x: 4673
+        y: 2606
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cad461de3c59bc290800000000000000
+      internalID: -7869031255170986580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_18
+      rect:
+        serializedVersion: 2
+        x: 4375
+        y: 2573
+        width: 37
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed432fe6d1a335460800000000000000
+      internalID: 7229185724949607646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_19
+      rect:
+        serializedVersion: 2
+        x: 4687
+        y: 2534
+        width: 29
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6b126c2760e37900800000000000000
+      internalID: 681134702393957230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_20
+      rect:
+        serializedVersion: 2
+        x: 4775
+        y: 2512
+        width: 36
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 961f21b861dd76100800000000000000
+      internalID: 101292605531418985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_21
+      rect:
+        serializedVersion: 2
+        x: 4730
+        y: 2490
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0423d36098df8dc20800000000000000
+      internalID: 3231611497595351616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_22
+      rect:
+        serializedVersion: 2
+        x: 4342
+        y: 2371
+        width: 27
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d420b043db9a99940800000000000000
+      internalID: 5303456666292519501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_23
+      rect:
+        serializedVersion: 2
+        x: 4456
+        y: 2385
+        width: 29
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 376faea64bd8762b0800000000000000
+      internalID: -5591344606329768333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_24
+      rect:
+        serializedVersion: 2
+        x: 4683
+        y: 2341
+        width: 25
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ea6e90ec5fa4aab0800000000000000
+      internalID: -4997676873034077465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_25
+      rect:
+        serializedVersion: 2
+        x: 4629
+        y: 2271
+        width: 27
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36fe13d5180e7cf80800000000000000
+      internalID: -8086247759701479581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_26
+      rect:
+        serializedVersion: 2
+        x: 4826
+        y: 2281
+        width: 30
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc299f87d22e58830800000000000000
+      internalID: 4072910122957509327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_27
+      rect:
+        serializedVersion: 2
+        x: 4523
+        y: 2241
+        width: 27
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95c7196c9fd42d5a0800000000000000
+      internalID: -6498045577168585639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_28
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 1824
+        width: 20
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 417709ba548463860800000000000000
+      internalID: 7509268892755195668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_29
+      rect:
+        serializedVersion: 2
+        x: 630
+        y: 1818
+        width: 25
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c32fdd215b55f21f0800000000000000
+      internalID: -1067540350469541316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_30
+      rect:
+        serializedVersion: 2
+        x: 1631
+        y: 1832
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b61eaef0e0f330220800000000000000
+      internalID: 2450871951848825195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_31
+      rect:
+        serializedVersion: 2
+        x: 1659
+        y: 1829
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ced6009059b5379b0800000000000000
+      internalID: -5083618858711880212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_32
+      rect:
+        serializedVersion: 2
+        x: 2658
+        y: 1839
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 571bd01e85fc4da40800000000000000
+      internalID: 5392162634509169013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_33
+      rect:
+        serializedVersion: 2
+        x: 2688
+        y: 1838
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98357d474b95eb340800000000000000
+      internalID: 4881437677705450377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_34
+      rect:
+        serializedVersion: 2
+        x: 3400
+        y: 1830
+        width: 13
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd8e44e5b70d4dc30800000000000000
+      internalID: 4383357565619464413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_35
+      rect:
+        serializedVersion: 2
+        x: 3685
+        y: 1844
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9427c008feb1d0e0800000000000000
+      internalID: -2246804766706948962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_36
+      rect:
+        serializedVersion: 2
+        x: 3717
+        y: 1846
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9f2165ef4a1c4130800000000000000
+      internalID: 3552243136541568925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_37
+      rect:
+        serializedVersion: 2
+        x: 4424
+        y: 1830
+        width: 13
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 079bc1f085f7e74b0800000000000000
+      internalID: -5440771283629590160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_38
+      rect:
+        serializedVersion: 2
+        x: 4709
+        y: 1844
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 641e2edf2772e4170800000000000000
+      internalID: 8164506549308547398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_39
+      rect:
+        serializedVersion: 2
+        x: 4741
+        y: 1846
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a209797bf39d87a0800000000000000
+      internalID: -6373275189375335774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_40
+      rect:
+        serializedVersion: 2
+        x: 333
+        y: 1804
+        width: 26
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd3eb49c22107b780800000000000000
+      internalID: -8667457708933520420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_41
+      rect:
+        serializedVersion: 2
+        x: 1355
+        y: 1814
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8c5621d30a7e1d60800000000000000
+      internalID: 7862856156247907471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_42
+      rect:
+        serializedVersion: 2
+        x: 2377
+        y: 1823
+        width: 18
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8271c706e24f5780800000000000000
+      internalID: -8692155200061738357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_43
+      rect:
+        serializedVersion: 2
+        x: 779
+        y: 1774
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4693354530828e70800000000000000
+      internalID: 9115989562033935946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_44
+      rect:
+        serializedVersion: 2
+        x: 1809
+        y: 1780
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b406c20205ba60a60800000000000000
+      internalID: 7639982178506137675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_45
+      rect:
+        serializedVersion: 2
+        x: 2839
+        y: 1785
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eeb043b5281f67760800000000000000
+      internalID: 7455411775336614894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_46
+      rect:
+        serializedVersion: 2
+        x: 3868
+        y: 1790
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58d08795ed7ac8a80800000000000000
+      internalID: -8463205026310386299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_47
+      rect:
+        serializedVersion: 2
+        x: 4892
+        y: 1790
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1744515b558d62de0800000000000000
+      internalID: -1358160374983736207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_48
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 1739
+        width: 25
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7c551b29ace742c0800000000000000
+      internalID: -4447325895688627073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_49
+      rect:
+        serializedVersion: 2
+        x: 1226
+        y: 1746
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcfd9cd7894d24ec0800000000000000
+      internalID: -3584068602022993973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_50
+      rect:
+        serializedVersion: 2
+        x: 2246
+        y: 1752
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1311924a1a20ede50800000000000000
+      internalID: 6835904177662136625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_51
+      rect:
+        serializedVersion: 2
+        x: 3267
+        y: 1757
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 553ac93790739b670800000000000000
+      internalID: 8554929480900846421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_52
+      rect:
+        serializedVersion: 2
+        x: 4291
+        y: 1757
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70dc823c944d04130800000000000000
+      internalID: 3549069919639883015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_53
+      rect:
+        serializedVersion: 2
+        x: 614
+        y: 1705
+        width: 41
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f24113665e383ee0800000000000000
+      internalID: -1281205553236720908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_54
+      rect:
+        serializedVersion: 2
+        x: 1643
+        y: 1713
+        width: 39
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5195cfce5572030c0800000000000000
+      internalID: -4598131969543612139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_55
+      rect:
+        serializedVersion: 2
+        x: 2672
+        y: 1723
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03519a8c43c7a7ea0800000000000000
+      internalID: -5874246197804722896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_56
+      rect:
+        serializedVersion: 2
+        x: 2691
+        y: 1721
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d350d90dc09d60460800000000000000
+      internalID: 7207686902715843901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_57
+      rect:
+        serializedVersion: 2
+        x: 3701
+        y: 1730
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1f0b51f09d2abb90800000000000000
+      internalID: -7225412551614722278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_58
+      rect:
+        serializedVersion: 2
+        x: 3720
+        y: 1728
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77a1a03e99b695520800000000000000
+      internalID: 2691300561013840503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_59
+      rect:
+        serializedVersion: 2
+        x: 3808
+        y: 1720
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9e669db41e437c40800000000000000
+      internalID: 5508832620191313566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_60
+      rect:
+        serializedVersion: 2
+        x: 4725
+        y: 1730
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2946071e7e6d7ae0800000000000000
+      internalID: -1549961208914360022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_61
+      rect:
+        serializedVersion: 2
+        x: 4744
+        y: 1728
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d863848f9f370f4e0800000000000000
+      internalID: -1949931121201891699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_62
+      rect:
+        serializedVersion: 2
+        x: 4832
+        y: 1720
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e32a18b0da976b00800000000000000
+      internalID: 821795678251000802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_63
+      rect:
+        serializedVersion: 2
+        x: 720
+        y: 1706
+        width: 22
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83be4d49f0511a9f0800000000000000
+      internalID: -459062530349405384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_64
+      rect:
+        serializedVersion: 2
+        x: 1750
+        y: 1711
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9c9c205e2ac805d0800000000000000
+      internalID: -3096002443554808673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_65
+      rect:
+        serializedVersion: 2
+        x: 2780
+        y: 1716
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1ab49c2d78071ea0800000000000000
+      internalID: -5902239452933866979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_66
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 1672
+        width: 24
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 991e9023733e48e30800000000000000
+      internalID: 4504975353479553433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_67
+      rect:
+        serializedVersion: 2
+        x: 1466
+        y: 1680
+        width: 20
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1e76006c2a80f2e0800000000000000
+      internalID: -2094021903533048294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_68
+      rect:
+        serializedVersion: 2
+        x: 2490
+        y: 1686
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c1391a1ca2bb2d40800000000000000
+      internalID: 5560734617160987078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_69
+      rect:
+        serializedVersion: 2
+        x: 3514
+        y: 1692
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d91f0660b2748e340800000000000000
+      internalID: 4893239245254226333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_70
+      rect:
+        serializedVersion: 2
+        x: 4538
+        y: 1692
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5050120f35871c7c0800000000000000
+      internalID: -4052825887750421243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_71
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 1666
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58a6e59b63a12e440800000000000000
+      internalID: 4963558561656236677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_72
+      rect:
+        serializedVersion: 2
+        x: 1604
+        y: 1671
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 961d2928a84887390800000000000000
+      internalID: -7820355022497853079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_73
+      rect:
+        serializedVersion: 2
+        x: 2631
+        y: 1675
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d464f6ad1d68cdec0800000000000000
+      internalID: -3540806971149040051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_74
+      rect:
+        serializedVersion: 2
+        x: 3658
+        y: 1679
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fdd91902816b1af0800000000000000
+      internalID: -424638528730046992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_75
+      rect:
+        serializedVersion: 2
+        x: 4682
+        y: 1679
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8258524d0fec2e80800000000000000
+      internalID: -8201917981121817970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_76
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 1649
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fbe8f849cef097e0800000000000000
+      internalID: -1760627313835709448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_77
+      rect:
+        serializedVersion: 2
+        x: 1417
+        y: 1655
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abf947b381ab00ed0800000000000000
+      internalID: -2449753584050069574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_78
+      rect:
+        serializedVersion: 2
+        x: 2440
+        y: 1660
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9245e183096bc3720800000000000000
+      internalID: 2827335396614886441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_79
+      rect:
+        serializedVersion: 2
+        x: 3464
+        y: 1665
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7626a1013267bda10800000000000000
+      internalID: 1935270357851857511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_80
+      rect:
+        serializedVersion: 2
+        x: 4488
+        y: 1665
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e30341358e69f6e0800000000000000
+      internalID: -1803288657448991773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_81
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 1637
+        width: 18
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbed3686ea2d17670800000000000000
+      internalID: 8534834415361318591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_82
+      rect:
+        serializedVersion: 2
+        x: 1486
+        y: 1642
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bb34c8ba2afcba50800000000000000
+      internalID: 6538375820430556081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_83
+      rect:
+        serializedVersion: 2
+        x: 2511
+        y: 1645
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63ebe3d316d045d90800000000000000
+      internalID: -7110043200420659658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_84
+      rect:
+        serializedVersion: 2
+        x: 3535
+        y: 1649
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7795397f5c112ec50800000000000000
+      internalID: 6692931538185836919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_85
+      rect:
+        serializedVersion: 2
+        x: 4559
+        y: 1649
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 432357e1d53b658b0800000000000000
+      internalID: -5163742710209367500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_86
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 1599
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 765842d2d1f34d1b0800000000000000
+      internalID: -5632807839389678233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_87
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 1602
+        width: 24
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28b181f44010c9d30800000000000000
+      internalID: 4439424450698943362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_88
+      rect:
+        serializedVersion: 2
+        x: 1140
+        y: 1603
+        width: 27
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58f96d101aa82fc60800000000000000
+      internalID: 7850489524585406341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_89
+      rect:
+        serializedVersion: 2
+        x: 1214
+        y: 1606
+        width: 20
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b210bd42ac5834ea0800000000000000
+      internalID: -5889716784422256341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_90
+      rect:
+        serializedVersion: 2
+        x: 2159
+        y: 1606
+        width: 22
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4615b44dba4b13b70800000000000000
+      internalID: 8877074990618071396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_91
+      rect:
+        serializedVersion: 2
+        x: 2235
+        y: 1608
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 145c916d3d74b0d60800000000000000
+      internalID: 7857452950033646913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_92
+      rect:
+        serializedVersion: 2
+        x: 3179
+        y: 1609
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f460e73b6c150220800000000000000
+      internalID: 2451396818997634291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_93
+      rect:
+        serializedVersion: 2
+        x: 3256
+        y: 1611
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 010dd213feb3d7f50800000000000000
+      internalID: 6880721704200294416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_94
+      rect:
+        serializedVersion: 2
+        x: 4203
+        y: 1609
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e6d5fca728c09a60800000000000000
+      internalID: 7678857437397767910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_95
+      rect:
+        serializedVersion: 2
+        x: 4280
+        y: 1611
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b1a5144eb5b4a690800000000000000
+      internalID: -7591743243049131595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_96
+      rect:
+        serializedVersion: 2
+        x: 581
+        y: 1586
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71311750854047470800000000000000
+      internalID: 8391336781793006359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_97
+      rect:
+        serializedVersion: 2
+        x: 1608
+        y: 1589
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cc743fbd72a6f0c0800000000000000
+      internalID: -4542264513194066751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_98
+      rect:
+        serializedVersion: 2
+        x: 2636
+        y: 1591
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a203feaeb893f350800000000000000
+      internalID: 6049346669235077798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_99
+      rect:
+        serializedVersion: 2
+        x: 3662
+        y: 1594
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fc767f40668d7b20800000000000000
+      internalID: 3133808663927880946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_100
+      rect:
+        serializedVersion: 2
+        x: 4686
+        y: 1594
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96b18a7e274b9b430800000000000000
+      internalID: 3799266166269549417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_101
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 1552
+        width: 31
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 585544ee18daf5770800000000000000
+      internalID: 8601784586860778885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_102
+      rect:
+        serializedVersion: 2
+        x: 1294
+        y: 1555
+        width: 26
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec4ca00b3219f74b0800000000000000
+      internalID: -5440470242376891186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_103
+      rect:
+        serializedVersion: 2
+        x: 2315
+        y: 1558
+        width: 21
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6072eaf5cf7276fc0800000000000000
+      internalID: -3501786220366780666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_104
+      rect:
+        serializedVersion: 2
+        x: 3336
+        y: 1561
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9d17a531c7bbca50800000000000000
+      internalID: 6542524924142493086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_105
+      rect:
+        serializedVersion: 2
+        x: 4360
+        y: 1561
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07eb67e908e5b9ac0800000000000000
+      internalID: -3847377550150549904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_106
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 1511
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65aa4f976e11a99f0800000000000000
+      internalID: -461036330265826730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_107
+      rect:
+        serializedVersion: 2
+        x: 1628
+        y: 1512
+        width: 20
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a35d4b535a5a69f0800000000000000
+      internalID: -474467496673586270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_108
+      rect:
+        serializedVersion: 2
+        x: 2657
+        y: 1514
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ce0fdbb0aa812030800000000000000
+      internalID: 3468205611003350720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_109
+      rect:
+        serializedVersion: 2
+        x: 3686
+        y: 1515
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af6edf6777fc41720800000000000000
+      internalID: 2816103779017811706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_110
+      rect:
+        serializedVersion: 2
+        x: 4710
+        y: 1515
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d149b0979d1248040800000000000000
+      internalID: 4648877933275616285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_111
+      rect:
+        serializedVersion: 2
+        x: 690
+        y: 1488
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebbd365da655b52f0800000000000000
+      internalID: -983098176315335746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_112
+      rect:
+        serializedVersion: 2
+        x: 1724
+        y: 1488
+        width: 25
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19a38eb34af2a49d0800000000000000
+      internalID: -2789364636776383855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_113
+      rect:
+        serializedVersion: 2
+        x: 2756
+        y: 1489
+        width: 21
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e865f1d0d4c4ae420800000000000000
+      internalID: 2660022423732049550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_114
+      rect:
+        serializedVersion: 2
+        x: 3788
+        y: 1489
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66ac94fe7c0dddb20800000000000000
+      internalID: 3160912070615616102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_115
+      rect:
+        serializedVersion: 2
+        x: 4812
+        y: 1489
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74589964c9eacaa80800000000000000
+      internalID: -8454190414258666169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_116
+      rect:
+        serializedVersion: 2
+        x: 638
+        y: 1466
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ca8801cb045a0e70800000000000000
+      internalID: 9082164008005962433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_117
+      rect:
+        serializedVersion: 2
+        x: 1666
+        y: 1467
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f8771ef5f7d15ed0800000000000000
+      internalID: -2426921272646076176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_118
+      rect:
+        serializedVersion: 2
+        x: 2693
+        y: 1467
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 239cfe7f95aa78420800000000000000
+      internalID: 2632259810609842482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_119
+      rect:
+        serializedVersion: 2
+        x: 3720
+        y: 1468
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb61749f951d62340800000000000000
+      internalID: 4838785034020656831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_120
+      rect:
+        serializedVersion: 2
+        x: 4744
+        y: 1468
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 020eca098e0f93630800000000000000
+      internalID: 3907419033370943520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_121
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 1345
+        width: 23
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7db2ad1a9e2c964b0800000000000000
+      internalID: -5446607965629305897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_122
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 1357
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18b530a07ff516e70800000000000000
+      internalID: 9106665436149406593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_123
+      rect:
+        serializedVersion: 2
+        x: 1263
+        y: 1343
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12d5a0497d991e7e0800000000000000
+      internalID: -1737938830007575263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_124
+      rect:
+        serializedVersion: 2
+        x: 1379
+        y: 1354
+        width: 20
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99601735e0a689940800000000000000
+      internalID: 5303105170990761625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_125
+      rect:
+        serializedVersion: 2
+        x: 2401
+        y: 1352
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 193626c6194bd3790800000000000000
+      internalID: -7548678863721438319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_126
+      rect:
+        serializedVersion: 2
+        x: 3423
+        y: 1349
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c2d5a6ae21b9c850800000000000000
+      internalID: 6397839559578997444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_127
+      rect:
+        serializedVersion: 2
+        x: 4447
+        y: 1349
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be5c52497d8e777b0800000000000000
+      internalID: -5226452829939055125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_128
+      rect:
+        serializedVersion: 2
+        x: 2284
+        y: 1342
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b280021c4e36a13a0800000000000000
+      internalID: -6693928061989025749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_129
+      rect:
+        serializedVersion: 2
+        x: 3307
+        y: 1341
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88ee568c6e0a4fab0800000000000000
+      internalID: -4975174775272509816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_130
+      rect:
+        serializedVersion: 2
+        x: 4331
+        y: 1341
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bb92dabfaf5bfff0800000000000000
+      internalID: -1302166525273167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_131
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 1313
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbdcfec964177d8c0800000000000000
+      internalID: -3974583598036562497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_132
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 1310
+        width: 18
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8eb2062ea2870870800000000000000
+      internalID: 8649025293861961354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_133
+      rect:
+        serializedVersion: 2
+        x: 2648
+        y: 1307
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 771d4763b6a07e5c0800000000000000
+      internalID: -4186365873026182793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_134
+      rect:
+        serializedVersion: 2
+        x: 3675
+        y: 1305
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16b3e35dde8113cd0800000000000000
+      internalID: -2580253701742642335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_135
+      rect:
+        serializedVersion: 2
+        x: 4699
+        y: 1305
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d521c9ea9d530a720800000000000000
+      internalID: 2855341372806533725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_136
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 1240
+        width: 23
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9dd282112e5857530800000000000000
+      internalID: 3852132262282276313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_137
+      rect:
+        serializedVersion: 2
+        x: 739
+        y: 1252
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8afa7ff443138a830800000000000000
+      internalID: 4082567162961047464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_138
+      rect:
+        serializedVersion: 2
+        x: 1563
+        y: 1234
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 695c18ccb1bc93a20800000000000000
+      internalID: 3042686343521093014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_139
+      rect:
+        serializedVersion: 2
+        x: 1771
+        y: 1248
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 974fc695830fc1ba0800000000000000
+      internalID: -6116750069066828679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_140
+      rect:
+        serializedVersion: 2
+        x: 2802
+        y: 1245
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13960d2a3d3cc5940800000000000000
+      internalID: 5286315376363202865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_141
+      rect:
+        serializedVersion: 2
+        x: 3832
+        y: 1242
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b17824128c83d4290800000000000000
+      internalID: -7904599338762729701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_142
+      rect:
+        serializedVersion: 2
+        x: 4856
+        y: 1242
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7127ea07f47a70c0800000000000000
+      internalID: -4577217466880024198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_143
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 1210
+        width: 23
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc78fc0eb2703d760800000000000000
+      internalID: 7481331291029211087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_144
+      rect:
+        serializedVersion: 2
+        x: 1450
+        y: 1204
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb317cfda7a78d1f0800000000000000
+      internalID: -1019930647440452674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_145
+      rect:
+        serializedVersion: 2
+        x: 2590
+        y: 1229
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83680756802248720800000000000000
+      internalID: 2847438283861952056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_146
+      rect:
+        serializedVersion: 2
+        x: 3617
+        y: 1225
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 931507a4b0e19a420800000000000000
+      internalID: 2641675690271854905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_147
+      rect:
+        serializedVersion: 2
+        x: 4641
+        y: 1225
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07562c3d5bfe36b00800000000000000
+      internalID: 820763121332413808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_148
+      rect:
+        serializedVersion: 2
+        x: 2474
+        y: 1199
+        width: 16
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 218367d8e9e4af7c0800000000000000
+      internalID: -4036827673099093998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_149
+      rect:
+        serializedVersion: 2
+        x: 3498
+        y: 1195
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecee74fc912835120800000000000000
+      internalID: 2401406073681997518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_150
+      rect:
+        serializedVersion: 2
+        x: 4522
+        y: 1195
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93b2aba0c7e3d0800800000000000000
+      internalID: 580188629477501753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_151
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 588
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5396b59824556eb30800000000000000
+      internalID: 4316231037141870901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_152
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 590
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e691b62defa130980800000000000000
+      internalID: -8573979583829042834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_153
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 738
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f05c35dba279a72b0800000000000000
+      internalID: -5585986177978874609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_154
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 539
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 349751bf0020d7930800000000000000
+      internalID: 4142469435486468419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_155
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 813
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e753880b2a3d9fa0800000000000000
+      internalID: -5792409589227759642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_156
+      rect:
+        serializedVersion: 2
+        x: 392
+        y: 646
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5873a905b3753a920800000000000000
+      internalID: 3000337689025853317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_157
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 674
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56deca59e0bba8d90800000000000000
+      internalID: -7094652591653720731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_158
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 628
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b52924801842c5f50800000000000000
+      internalID: 6871407268068495963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_159
+      rect:
+        serializedVersion: 2
+        x: 588
+        y: 659
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9fd9ce96df707e60800000000000000
+      internalID: 7958001101327425434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_160
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 572
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db48d274eca58e6f0800000000000000
+      internalID: -655173903778478915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_161
+      rect:
+        serializedVersion: 2
+        x: 616
+        y: 826
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 553a7ed93d8556d70800000000000000
+      internalID: 9035725893299315541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_162
+      rect:
+        serializedVersion: 2
+        x: 618
+        y: 493
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8e29b342d6939070800000000000000
+      internalID: 8111993183647903371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_163
+      rect:
+        serializedVersion: 2
+        x: 634
+        y: 712
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 934b2bac04b092d70800000000000000
+      internalID: 9018752101692650553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_164
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 829
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52f6a63ef565e9dc0800000000000000
+      internalID: -3630369279776755931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_165
+      rect:
+        serializedVersion: 2
+        x: 650
+        y: 444
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 396debf2168463bb0800000000000000
+      internalID: -4956694757624588653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_166
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 710
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16fce23554a6393c0800000000000000
+      internalID: -4354019568756273311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_167
+      rect:
+        serializedVersion: 2
+        x: 723
+        y: 466
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7296c3fb110e39370800000000000000
+      internalID: 8328246502765652263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_168
+      rect:
+        serializedVersion: 2
+        x: 741
+        y: 700
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65fa1dc5dda882de0800000000000000
+      internalID: -1357682604302553258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_169
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 770
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6772dcd469c3f2150800000000000000
+      internalID: 5849961057225615222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_170
+      rect:
+        serializedVersion: 2
+        x: 1126
+        y: 591
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d329db6c4647f020800000000000000
+      internalID: 2375444622502077396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_171
+      rect:
+        serializedVersion: 2
+        x: 1205
+        y: 592
+        width: 288
+        height: 234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6b5a594edb8252c0800000000000000
+      internalID: -4444336095431599253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_172
+      rect:
+        serializedVersion: 2
+        x: 1285
+        y: 542
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2b40db517be59720800000000000000
+      internalID: 2852444811113286443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_173
+      rect:
+        serializedVersion: 2
+        x: 1615
+        y: 445
+        width: 218
+        height: 399
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee7833bd1a2642f40800000000000000
+      internalID: 5702791475464734702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_174
+      rect:
+        serializedVersion: 2
+        x: 1753
+        y: 467
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b49e325542e904490800000000000000
+      internalID: -7764031878702306997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_175
+      rect:
+        serializedVersion: 2
+        x: 2150
+        y: 591
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9650e787fe169bc60800000000000000
+      internalID: 7834400707934291305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_176
+      rect:
+        serializedVersion: 2
+        x: 2229
+        y: 592
+        width: 288
+        height: 234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58232805895e207f0800000000000000
+      internalID: -647702954039430523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_177
+      rect:
+        serializedVersion: 2
+        x: 2309
+        y: 542
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d35b76663fbf38ca0800000000000000
+      internalID: -6015687654423153347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_178
+      rect:
+        serializedVersion: 2
+        x: 2639
+        y: 445
+        width: 218
+        height: 399
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a055d340229febd0800000000000000
+      internalID: -2598697792694824797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_179
+      rect:
+        serializedVersion: 2
+        x: 2777
+        y: 467
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76e09648caa01e7a0800000000000000
+      internalID: -6349782263543558553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_180
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 316
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d61268775a5e2fe0800000000000000
+      internalID: -1211931917987735852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_181
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 324
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a60460bfefc0b980800000000000000
+      internalID: -8525085466248870232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_182
+      rect:
+        serializedVersion: 2
+        x: 1257
+        y: 316
+        width: 123
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b26aa5c2f103f600800000000000000
+      internalID: 500746125778248377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_183
+      rect:
+        serializedVersion: 2
+        x: 2281
+        y: 316
+        width: 123
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c02b961cd22a079e0800000000000000
+      internalID: -1625621148078591476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_184
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 279
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56d9357435dbc0f20800000000000000
+      internalID: 3390292784879738213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_185
+      rect:
+        serializedVersion: 2
+        x: 1633
+        y: 216
+        width: 166
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eebe652eed345f0f0800000000000000
+      internalID: -1083885510753588242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_186
+      rect:
+        serializedVersion: 2
+        x: 2657
+        y: 216
+        width: 166
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb597d862d211bc60800000000000000
+      internalID: 7832061921885394364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_187
+      rect:
+        serializedVersion: 2
+        x: 766
+        y: 216
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98e4b72d1f9a5e980800000000000000
+      internalID: -8510209064763175287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_188
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 198
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 321e2482f840415b0800000000000000
+      internalID: -5398685040408075997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_189
+      rect:
+        serializedVersion: 2
+        x: 1451
+        y: 166
+        width: 129
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51f95a8f203345ac0800000000000000
+      internalID: -3867410092149858539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_190
+      rect:
+        serializedVersion: 2
+        x: 2475
+        y: 166
+        width: 129
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac83e9ac13e378710800000000000000
+      internalID: 1695392168301967562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_longrangeattack_impact_191
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 168
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab8db14da525ffe10800000000000000
+      internalID: 2233594490258184378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_longrangeattack_impact_0: 6899589864214934478
+      eff_longrangeattack_impact_1: 4332981555620711621
+      eff_longrangeattack_impact_10: 3631950775296842432
+      eff_longrangeattack_impact_100: 3799266166269549417
+      eff_longrangeattack_impact_101: 8601784586860778885
+      eff_longrangeattack_impact_102: -5440470242376891186
+      eff_longrangeattack_impact_103: -3501786220366780666
+      eff_longrangeattack_impact_104: 6542524924142493086
+      eff_longrangeattack_impact_105: -3847377550150549904
+      eff_longrangeattack_impact_106: -461036330265826730
+      eff_longrangeattack_impact_107: -474467496673586270
+      eff_longrangeattack_impact_108: 3468205611003350720
+      eff_longrangeattack_impact_109: 2816103779017811706
+      eff_longrangeattack_impact_11: -3270918798667750983
+      eff_longrangeattack_impact_110: 4648877933275616285
+      eff_longrangeattack_impact_111: -983098176315335746
+      eff_longrangeattack_impact_112: -2789364636776383855
+      eff_longrangeattack_impact_113: 2660022423732049550
+      eff_longrangeattack_impact_114: 3160912070615616102
+      eff_longrangeattack_impact_115: -8454190414258666169
+      eff_longrangeattack_impact_116: 9082164008005962433
+      eff_longrangeattack_impact_117: -2426921272646076176
+      eff_longrangeattack_impact_118: 2632259810609842482
+      eff_longrangeattack_impact_119: 4838785034020656831
+      eff_longrangeattack_impact_12: 1010163898810933375
+      eff_longrangeattack_impact_120: 3907419033370943520
+      eff_longrangeattack_impact_121: -5446607965629305897
+      eff_longrangeattack_impact_122: 9106665436149406593
+      eff_longrangeattack_impact_123: -1737938830007575263
+      eff_longrangeattack_impact_124: 5303105170990761625
+      eff_longrangeattack_impact_125: -7548678863721438319
+      eff_longrangeattack_impact_126: 6397839559578997444
+      eff_longrangeattack_impact_127: -5226452829939055125
+      eff_longrangeattack_impact_128: -6693928061989025749
+      eff_longrangeattack_impact_129: -4975174775272509816
+      eff_longrangeattack_impact_13: -2787549217141871410
+      eff_longrangeattack_impact_130: -1302166525273167
+      eff_longrangeattack_impact_131: -3974583598036562497
+      eff_longrangeattack_impact_132: 8649025293861961354
+      eff_longrangeattack_impact_133: -4186365873026182793
+      eff_longrangeattack_impact_134: -2580253701742642335
+      eff_longrangeattack_impact_135: 2855341372806533725
+      eff_longrangeattack_impact_136: 3852132262282276313
+      eff_longrangeattack_impact_137: 4082567162961047464
+      eff_longrangeattack_impact_138: 3042686343521093014
+      eff_longrangeattack_impact_139: -6116750069066828679
+      eff_longrangeattack_impact_14: 7242744511531973065
+      eff_longrangeattack_impact_140: 5286315376363202865
+      eff_longrangeattack_impact_141: -7904599338762729701
+      eff_longrangeattack_impact_142: -4577217466880024198
+      eff_longrangeattack_impact_143: 7481331291029211087
+      eff_longrangeattack_impact_144: -1019930647440452674
+      eff_longrangeattack_impact_145: 2847438283861952056
+      eff_longrangeattack_impact_146: 2641675690271854905
+      eff_longrangeattack_impact_147: 820763121332413808
+      eff_longrangeattack_impact_148: -4036827673099093998
+      eff_longrangeattack_impact_149: 2401406073681997518
+      eff_longrangeattack_impact_15: -5043305325572165727
+      eff_longrangeattack_impact_150: 580188629477501753
+      eff_longrangeattack_impact_151: 4316231037141870901
+      eff_longrangeattack_impact_152: -8573979583829042834
+      eff_longrangeattack_impact_153: -5585986177978874609
+      eff_longrangeattack_impact_154: 4142469435486468419
+      eff_longrangeattack_impact_155: -5792409589227759642
+      eff_longrangeattack_impact_156: 3000337689025853317
+      eff_longrangeattack_impact_157: -7094652591653720731
+      eff_longrangeattack_impact_158: 6871407268068495963
+      eff_longrangeattack_impact_159: 7958001101327425434
+      eff_longrangeattack_impact_16: 4740147284346532782
+      eff_longrangeattack_impact_160: -655173903778478915
+      eff_longrangeattack_impact_161: 9035725893299315541
+      eff_longrangeattack_impact_162: 8111993183647903371
+      eff_longrangeattack_impact_163: 9018752101692650553
+      eff_longrangeattack_impact_164: -3630369279776755931
+      eff_longrangeattack_impact_165: -4956694757624588653
+      eff_longrangeattack_impact_166: -4354019568756273311
+      eff_longrangeattack_impact_167: 8328246502765652263
+      eff_longrangeattack_impact_168: -1357682604302553258
+      eff_longrangeattack_impact_169: 5849961057225615222
+      eff_longrangeattack_impact_17: -7869031255170986580
+      eff_longrangeattack_impact_170: 2375444622502077396
+      eff_longrangeattack_impact_171: -4444336095431599253
+      eff_longrangeattack_impact_172: 2852444811113286443
+      eff_longrangeattack_impact_173: 5702791475464734702
+      eff_longrangeattack_impact_174: -7764031878702306997
+      eff_longrangeattack_impact_175: 7834400707934291305
+      eff_longrangeattack_impact_176: -647702954039430523
+      eff_longrangeattack_impact_177: -6015687654423153347
+      eff_longrangeattack_impact_178: -2598697792694824797
+      eff_longrangeattack_impact_179: -6349782263543558553
+      eff_longrangeattack_impact_18: 7229185724949607646
+      eff_longrangeattack_impact_180: -1211931917987735852
+      eff_longrangeattack_impact_181: -8525085466248870232
+      eff_longrangeattack_impact_182: 500746125778248377
+      eff_longrangeattack_impact_183: -1625621148078591476
+      eff_longrangeattack_impact_184: 3390292784879738213
+      eff_longrangeattack_impact_185: -1083885510753588242
+      eff_longrangeattack_impact_186: 7832061921885394364
+      eff_longrangeattack_impact_187: -8510209064763175287
+      eff_longrangeattack_impact_188: -5398685040408075997
+      eff_longrangeattack_impact_189: -3867410092149858539
+      eff_longrangeattack_impact_19: 681134702393957230
+      eff_longrangeattack_impact_190: 1695392168301967562
+      eff_longrangeattack_impact_191: 2233594490258184378
+      eff_longrangeattack_impact_2: -3607917775678097177
+      eff_longrangeattack_impact_20: 101292605531418985
+      eff_longrangeattack_impact_21: 3231611497595351616
+      eff_longrangeattack_impact_22: 5303456666292519501
+      eff_longrangeattack_impact_23: -5591344606329768333
+      eff_longrangeattack_impact_24: -4997676873034077465
+      eff_longrangeattack_impact_25: -8086247759701479581
+      eff_longrangeattack_impact_26: 4072910122957509327
+      eff_longrangeattack_impact_27: -6498045577168585639
+      eff_longrangeattack_impact_28: 7509268892755195668
+      eff_longrangeattack_impact_29: -1067540350469541316
+      eff_longrangeattack_impact_3: 4451998172946885986
+      eff_longrangeattack_impact_30: 2450871951848825195
+      eff_longrangeattack_impact_31: -5083618858711880212
+      eff_longrangeattack_impact_32: 5392162634509169013
+      eff_longrangeattack_impact_33: 4881437677705450377
+      eff_longrangeattack_impact_34: 4383357565619464413
+      eff_longrangeattack_impact_35: -2246804766706948962
+      eff_longrangeattack_impact_36: 3552243136541568925
+      eff_longrangeattack_impact_37: -5440771283629590160
+      eff_longrangeattack_impact_38: 8164506549308547398
+      eff_longrangeattack_impact_39: -6373275189375335774
+      eff_longrangeattack_impact_4: 8748842540438181436
+      eff_longrangeattack_impact_40: -8667457708933520420
+      eff_longrangeattack_impact_41: 7862856156247907471
+      eff_longrangeattack_impact_42: -8692155200061738357
+      eff_longrangeattack_impact_43: 9115989562033935946
+      eff_longrangeattack_impact_44: 7639982178506137675
+      eff_longrangeattack_impact_45: 7455411775336614894
+      eff_longrangeattack_impact_46: -8463205026310386299
+      eff_longrangeattack_impact_47: -1358160374983736207
+      eff_longrangeattack_impact_48: -4447325895688627073
+      eff_longrangeattack_impact_49: -3584068602022993973
+      eff_longrangeattack_impact_5: 5635802379652937936
+      eff_longrangeattack_impact_50: 6835904177662136625
+      eff_longrangeattack_impact_51: 8554929480900846421
+      eff_longrangeattack_impact_52: 3549069919639883015
+      eff_longrangeattack_impact_53: -1281205553236720908
+      eff_longrangeattack_impact_54: -4598131969543612139
+      eff_longrangeattack_impact_55: -5874246197804722896
+      eff_longrangeattack_impact_56: 7207686902715843901
+      eff_longrangeattack_impact_57: -7225412551614722278
+      eff_longrangeattack_impact_58: 2691300561013840503
+      eff_longrangeattack_impact_59: 5508832620191313566
+      eff_longrangeattack_impact_6: 8886799825040216816
+      eff_longrangeattack_impact_60: -1549961208914360022
+      eff_longrangeattack_impact_61: -1949931121201891699
+      eff_longrangeattack_impact_62: 821795678251000802
+      eff_longrangeattack_impact_63: -459062530349405384
+      eff_longrangeattack_impact_64: -3096002443554808673
+      eff_longrangeattack_impact_65: -5902239452933866979
+      eff_longrangeattack_impact_66: 4504975353479553433
+      eff_longrangeattack_impact_67: -2094021903533048294
+      eff_longrangeattack_impact_68: 5560734617160987078
+      eff_longrangeattack_impact_69: 4893239245254226333
+      eff_longrangeattack_impact_7: -3486526850263407049
+      eff_longrangeattack_impact_70: -4052825887750421243
+      eff_longrangeattack_impact_71: 4963558561656236677
+      eff_longrangeattack_impact_72: -7820355022497853079
+      eff_longrangeattack_impact_73: -3540806971149040051
+      eff_longrangeattack_impact_74: -424638528730046992
+      eff_longrangeattack_impact_75: -8201917981121817970
+      eff_longrangeattack_impact_76: -1760627313835709448
+      eff_longrangeattack_impact_77: -2449753584050069574
+      eff_longrangeattack_impact_78: 2827335396614886441
+      eff_longrangeattack_impact_79: 1935270357851857511
+      eff_longrangeattack_impact_8: -426856639529439268
+      eff_longrangeattack_impact_80: -1803288657448991773
+      eff_longrangeattack_impact_81: 8534834415361318591
+      eff_longrangeattack_impact_82: 6538375820430556081
+      eff_longrangeattack_impact_83: -7110043200420659658
+      eff_longrangeattack_impact_84: 6692931538185836919
+      eff_longrangeattack_impact_85: -5163742710209367500
+      eff_longrangeattack_impact_86: -5632807839389678233
+      eff_longrangeattack_impact_87: 4439424450698943362
+      eff_longrangeattack_impact_88: 7850489524585406341
+      eff_longrangeattack_impact_89: -5889716784422256341
+      eff_longrangeattack_impact_9: -6394740548118279323
+      eff_longrangeattack_impact_90: 8877074990618071396
+      eff_longrangeattack_impact_91: 7857452950033646913
+      eff_longrangeattack_impact_92: 2451396818997634291
+      eff_longrangeattack_impact_93: 6880721704200294416
+      eff_longrangeattack_impact_94: 7678857437397767910
+      eff_longrangeattack_impact_95: -7591743243049131595
+      eff_longrangeattack_impact_96: 8391336781793006359
+      eff_longrangeattack_impact_97: -4542264513194066751
+      eff_longrangeattack_impact_98: 6049346669235077798
+      eff_longrangeattack_impact_99: 3133808663927880946
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

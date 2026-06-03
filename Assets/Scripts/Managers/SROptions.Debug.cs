@@ -12,11 +12,13 @@ public partial class SROptions
     private const string SaveCategory = "Save";
     private static readonly bool EnableSaveLoadTrace = false;
     private int selectedSaveSlot = SaveManager.DefaultSlotIndex;
+    private int selectedDebugTeleportPointIndex;
+    private string debugTeleportStageId = string.Empty;
     private SaveSlotMeta SelectedSlotMeta => SaveManager.GetSlotMeta(selectedSaveSlot);
 
     [Category(DebugCategory)]
     [DisplayName("プレイヤー位置を原点に戻す")]
-    [Sort(-100)]
+    [Sort(-101)]
     public void ResetPlayerPositionToOrigin()
     {
         var player = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
@@ -34,6 +36,21 @@ public partial class SROptions
             rigidbody2D.linearVelocity = Vector2.zero;
             rigidbody2D.angularVelocity = 0f;
         }
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("全回復")]
+    [Sort(-100)]
+    public void RestorePlayerFullHealth()
+    {
+        PlayerHealth playerHealth = ResolvePlayerHealth();
+        if (playerHealth == null)
+        {
+            Debug.LogWarning("[SROptions] PlayerHealth not found.");
+            return;
+        }
+
+        playerHealth.RestoreFullHealth();
     }
 
     [Category(DebugCategory)]
@@ -81,6 +98,83 @@ public partial class SROptions
                 }
             }
         }
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("テレポート先ステージID")]
+    [Sort(-95)]
+    public string DebugTeleportStageId
+    {
+        get => debugTeleportStageId;
+        set => debugTeleportStageId = value ?? string.Empty;
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("テレポート先番号")]
+    [Sort(-94)]
+    [Increment(1)]
+    public int DebugTeleportPointIndex
+    {
+        get => selectedDebugTeleportPointIndex;
+        set => selectedDebugTeleportPointIndex = Mathf.Max(0, value);
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("テレポート先一覧")]
+    [Sort(-93)]
+    public string DebugTeleportPointList
+    {
+        get
+        {
+            DebugTeleportPoint2D[] points = CollectDebugTeleportPoints();
+            if (points.Length == 0)
+            {
+                return "(none)";
+            }
+
+            string result = string.Empty;
+            for (int i = 0; i < points.Length; i++)
+            {
+                DebugTeleportPoint2D point = points[i];
+                Vector3 position = point.TeleportPosition;
+                string line = $"{i}: {point.Label} ({position.x:0.##}, {position.y:0.##})";
+                result = string.IsNullOrEmpty(result) ? line : $"{result}\n{line}";
+            }
+
+            return result;
+        }
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("次のテレポート先")]
+    [Sort(-92)]
+    public void SelectNextDebugTeleportPoint()
+    {
+        DebugTeleportPoint2D[] points = CollectDebugTeleportPoints();
+        if (points.Length == 0)
+        {
+            selectedDebugTeleportPointIndex = 0;
+            Debug.LogWarning("[SROptions] DebugTeleportPoint2D not found in the active scene.");
+            return;
+        }
+
+        selectedDebugTeleportPointIndex = (selectedDebugTeleportPointIndex + 1) % points.Length;
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("選択先へテレポート")]
+    [Sort(-91)]
+    public void TeleportPlayerToSelectedDebugPoint()
+    {
+        DebugTeleportPoint2D[] points = CollectDebugTeleportPoints();
+        if (points.Length == 0)
+        {
+            Debug.LogWarning("[SROptions] DebugTeleportPoint2D not found in the active scene.");
+            return;
+        }
+
+        selectedDebugTeleportPointIndex = Mathf.Clamp(selectedDebugTeleportPointIndex, 0, points.Length - 1);
+        TeleportPlayer(points[selectedDebugTeleportPointIndex]);
     }
 
     [Category(SaveCategory)]
@@ -286,6 +380,115 @@ public partial class SROptions
         }
 
         return UnityEngine.Object.FindFirstObjectByType<PlayerHealth>();
+    }
+
+    private DebugTeleportPoint2D[] CollectDebugTeleportPoints()
+    {
+        DebugTeleportPoint2D[] allPoints = UnityEngine.Object.FindObjectsByType<DebugTeleportPoint2D>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+        string stageFilter = debugTeleportStageId != null ? debugTeleportStageId.Trim() : string.Empty;
+        Scene activeScene = SceneManager.GetActiveScene();
+
+        int count = 0;
+        for (int i = 0; i < allPoints.Length; i++)
+        {
+            DebugTeleportPoint2D point = allPoints[i];
+            if (point == null || point.gameObject.scene != activeScene)
+            {
+                continue;
+            }
+
+            if (!string.IsNullOrEmpty(stageFilter) &&
+                !string.Equals(point.StageId, stageFilter, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            count++;
+        }
+
+        if (count == 0)
+        {
+            return Array.Empty<DebugTeleportPoint2D>();
+        }
+
+        DebugTeleportPoint2D[] filteredPoints = new DebugTeleportPoint2D[count];
+        int writeIndex = 0;
+        for (int i = 0; i < allPoints.Length; i++)
+        {
+            DebugTeleportPoint2D point = allPoints[i];
+            if (point == null || point.gameObject.scene != activeScene)
+            {
+                continue;
+            }
+
+            if (!string.IsNullOrEmpty(stageFilter) &&
+                !string.Equals(point.StageId, stageFilter, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            filteredPoints[writeIndex] = point;
+            writeIndex++;
+        }
+
+        Array.Sort(
+            filteredPoints,
+            (left, right) => string.Compare(left.Label, right.Label, StringComparison.OrdinalIgnoreCase));
+
+        return filteredPoints;
+    }
+
+    private static void TeleportPlayer(DebugTeleportPoint2D point)
+    {
+        if (point == null)
+        {
+            return;
+        }
+
+        global::PlayerController player = ResolvePlayerController();
+        if (player == null)
+        {
+            Debug.LogWarning("[SROptions] PlayerController not found.");
+            return;
+        }
+
+        Vector3 destination = point.TeleportPosition;
+        Rigidbody2D rigidbody2D = player.GetComponent<Rigidbody2D>();
+        if (rigidbody2D != null)
+        {
+            rigidbody2D.position = new Vector2(destination.x, destination.y);
+            rigidbody2D.linearVelocity = Vector2.zero;
+            rigidbody2D.angularVelocity = 0f;
+            rigidbody2D.Sleep();
+        }
+
+        player.transform.position = destination;
+        Physics2D.SyncTransforms();
+
+        Debug.Log($"[SROptions] Teleported player to '{point.Label}' at {destination}.");
+    }
+
+    private static global::PlayerController ResolvePlayerController()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            global::PlayerController player = playerObject.GetComponent<global::PlayerController>();
+            if (player != null)
+            {
+                return player;
+            }
+
+            player = playerObject.GetComponentInChildren<global::PlayerController>(true);
+            if (player != null)
+            {
+                return player;
+            }
+        }
+
+        return UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
     }
 
     private static string GetSavedAtTextForSlot(int slotIndex)

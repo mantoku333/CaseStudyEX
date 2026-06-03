@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Player;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -85,6 +86,11 @@ public class ItemEffectController : MonoBehaviour
 
         playbackRoutine = StartCoroutine(PlayPickupAndDestroyRoutine());
         return true;
+    }
+
+    public bool PlayHealEffectOnPlayer(PlayerHealth playerHealth)
+    {
+        return LayeredHealEffectPlayer.Play(playerHealth, settings);
     }
 
     private void StartLoopPlayback()

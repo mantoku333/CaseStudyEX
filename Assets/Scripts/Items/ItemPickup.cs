@@ -92,7 +92,7 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
 
         Debug.Log($"{itemData.itemName} を取得しました！");
 
-        CompletePickup();
+        CompletePickup(playerHealth);
     }
 
     private bool ApplyItem(PlayerHealth playerHealth, PlayerAbilityController abilityController)
@@ -219,14 +219,22 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
                itemData.itemType == ItemType.Collectible;
     }
 
-    private void CompletePickup()
+    private void CompletePickup(PlayerHealth playerHealth)
     {
         isPickedUp = true;
 
         ItemEffectController effectController = GetComponent<ItemEffectController>();
-        if (effectController != null && effectController.PlayPickupEffectAndDestroy())
+        if (effectController != null)
         {
-            return;
+            if (itemData != null && itemData.healAmount > 0)
+            {
+                effectController.PlayHealEffectOnPlayer(playerHealth);
+            }
+
+            if (effectController.PlayPickupEffectAndDestroy())
+            {
+                return;
+            }
         }
 
         Destroy(gameObject);

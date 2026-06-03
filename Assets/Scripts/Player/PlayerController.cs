@@ -25,7 +25,6 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         public const string Dodge = "Dodge";
         public const string UmbrellaToggle = "UmbrellaToggle";
         public const string RecoilJump = "RecoilJump";
-        public const string FallThrough = "FallThrough";
     }
 
     private Rigidbody2D rigidBody2d;
@@ -70,8 +69,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private InputAction dodgeAction;
     private InputAction recoilJumpAction;
     private InputAction umbrellaToggleAction;
-    private InputAction fallThroughAction;
     private bool inputActionsReady;
+    private bool wasDownHeld;
 
     //-------View向け状態公開--------
     // Animator/View が参照する読み取り専用状態。
@@ -94,6 +93,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         umbrellaAttackController.IsAttacking() &&
         umbrellaController != null &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Closed;
+    public bool IsRecoilBoosting => gunController != null && gunController.GetRecoiling() && !isGround;
     public bool IsExternalControlLocked => externalControlLocked;
     public bool IsExternalFacingLocked => externalFacingLocked;
 
@@ -106,6 +106,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         if (rigidBody2d == null)
         {
             Debug.LogError("Rigidbody2Dが見つかっていません");
+        }
+        else
+        {
+            // 高速な回避やリコイル時に接触判定を落としにくくする。
+            rigidBody2d.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         }
 
         if (applyNoFrictionMaterial && playerCollider != null)
@@ -289,7 +294,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             gunController.SetAirRecoilPower(playerStatsData.GunRecoilForce);
             gunController.SetRecoilDuration(playerStatsData.GunRecoilDuration);
-            gunController.SetRecoilCoolTimes(0.5f, 5.0f);
+            gunController.SetRecoilCoolTimes(
+                playerStatsData.FirstRecoilCoolTime,
+                playerStatsData.SecondRecoilCoolTime);
         }
 
         if (umbrellaAttackController != null)
@@ -338,16 +345,19 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             moveInput = 0.0f;
             jumpInput = false;
+            wasDownHeld = false;
             return;
         }
 
         if (umbrellaController == null)
         {
+            wasDownHeld = false;
             return;
         }
 
         if (!inputActionsReady)
         {
+            wasDownHeld = false;
             return;
         }
 
@@ -369,8 +379,10 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         RefreshParryColliderFacing();
 
         bool isDownHeld = move.y < -0.5f;
+        bool isDownPressedThisFrame = isDownHeld && !wasDownHeld;
+        wasDownHeld = isDownHeld;
 
-        if (isDownHeld && IsPressedThisFrame(fallThroughAction))
+        if (isDownPressedThisFrame)
         {
             if (fallThroughController != null)
             {
@@ -849,7 +861,6 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.Dodge, ref dodgeAction);
         allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.UmbrellaToggle, ref umbrellaToggleAction);
         allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.RecoilJump, ref recoilJumpAction);
-        allBound &= TryBindRequiredAction(playerActionMap, InputActionNames.FallThrough, ref fallThroughAction);
 
         inputActionsReady = allBound;
     }

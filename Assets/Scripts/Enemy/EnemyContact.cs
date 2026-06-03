@@ -1,5 +1,6 @@
 ﻿using Metroidvania.Player;
 using Player;
+using System;
 using UnityEngine;
 
 namespace Metroidvania.Enemy
@@ -27,6 +28,8 @@ namespace Metroidvania.Enemy
         private float nextHitTime;
 
         private GameName.Enemy.EnemyController enemyController;　　//(中江)
+
+        public event Action<PlayerHealth, Collider2D> ContactDamageApplied;
 
         private void Awake()
         {
@@ -225,6 +228,7 @@ namespace Metroidvania.Enemy
             {
                 HitStopController.RequestEnemyToPlayer();
                 cachedPlayerFlash?.PlayFlashForced();
+                ContactDamageApplied?.Invoke(cachedPlayerHealth, playerBodyCollider);
             }
 
             nextHitTime = Time.time + hitInterval;
