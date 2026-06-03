@@ -5,10 +5,27 @@ using UnityEngine;
 
 public class AttackHitbox : MonoBehaviour
 {
+    private const string GroundLayerName = "Ground";
+    private const string FallThroughFloorLayerName = "FallThroughFloor";
+
     private readonly HashSet<MonoBehaviour> hitReceivers = new HashSet<MonoBehaviour>();
     private readonly Collider2D[] overlapResults = new Collider2D[16];
+    private readonly RaycastHit2D[] wallProbeResults = new RaycastHit2D[16];
+
+    [Header("Wall Blocking")]
+    [SerializeField] private bool blockHitsThroughVerticalWalls = true;
+    [SerializeField] private LayerMask verticalWallLayerMask;
+    [SerializeField] private bool includeShutterWalls = true;
+    [SerializeField, Range(0f, 1f)] private float verticalWallNormalMinX = 0.5f;
+
     private Collider2D hitboxCollider;
+    private Rigidbody2D ownerRigidbody;
+    private Collider2D ownerBodyCollider;
+    private Collider2D[] ownerColliders = Array.Empty<Collider2D>();
     private ContactFilter2D overlapFilter;
+    private ContactFilter2D wallProbeFilter;
+    private int cachedWallMaskValue = int.MinValue;
+    private int fallThroughFloorLayer = -1;
     private PlayerStatsData statsData;
 
     public event Action<Collider2D> OnHit;
@@ -20,6 +37,11 @@ public class AttackHitbox : MonoBehaviour
     private void Awake()
     {
         hitboxCollider = GetComponent<Collider2D>();
+        CacheOwnerColliders();
+        EnsureWallLayerMask();
+        RebuildWallProbeFilterIfNeeded();
+        fallThroughFloorLayer = LayerMask.NameToLayer(FallThroughFloorLayerName);
+
         overlapFilter = new ContactFilter2D
         {
             useLayerMask = true,
@@ -27,6 +49,19 @@ public class AttackHitbox : MonoBehaviour
         };
         overlapFilter.SetLayerMask(Physics2D.AllLayers);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (verticalWallLayerMask.value == 0)
+        {
+            verticalWallLayerMask = BuildDefaultVerticalWallLayerMask();
+        }
+
+        verticalWallNormalMinX = Mathf.Clamp01(verticalWallNormalMinX);
+        cachedWallMaskValue = int.MinValue;
+    }
+#endif
 
     public void ResetHitState()
     {
@@ -70,6 +105,11 @@ public class AttackHitbox : MonoBehaviour
             return;
         }
 
+        if (IsHitBlockedByVerticalWall(collision))
+        {
+            return;
+        }
+
         MonoBehaviour[] behaviours = collision.GetComponentsInParent<MonoBehaviour>();
 
         for (int i = 0; i < behaviours.Length; i++)
@@ -79,6 +119,174 @@ public class AttackHitbox : MonoBehaviour
                 receiver.OnAttacked(this, collision);
                 OnHit?.Invoke(collision);
             }
+        }
+    }
+
+    private bool IsHitBlockedByVerticalWall(Collider2D targetCollider)
+    {
+        if (!blockHitsThroughVerticalWalls || targetCollider == null)
+        {
+            return false;
+        }
+
+        Vector2 origin = ResolveAttackOrigin();
+        Vector2 target = targetCollider.bounds.center;
+        Vector2 direction = target - origin;
+        float distance = direction.magnitude;
+        if (distance <= Mathf.Epsilon)
+        {
+            return false;
+        }
+
+        EnsureWallLayerMask();
+        RebuildWallProbeFilterIfNeeded();
+
+        int hitCount = Physics2D.Raycast(origin, direction / distance, wallProbeFilter, wallProbeResults, distance);
+        for (int i = 0; i < hitCount; i++)
+        {
+            RaycastHit2D hit = wallProbeResults[i];
+            wallProbeResults[i] = default;
+
+            if (IsBlockingVerticalWallHit(hit, targetCollider))
+            {
+                ClearWallProbeResults(0);
+                return true;
+            }
+        }
+
+        ClearWallProbeResults(hitCount);
+        return false;
+    }
+
+    private Vector2 ResolveAttackOrigin()
+    {
+        if (ownerBodyCollider != null)
+        {
+            return ownerBodyCollider.bounds.center;
+        }
+
+        if (ownerRigidbody != null)
+        {
+            return ownerRigidbody.position;
+        }
+
+        return transform.position;
+    }
+
+    private bool IsBlockingVerticalWallHit(RaycastHit2D hit, Collider2D targetCollider)
+    {
+        Collider2D hitCollider = hit.collider;
+        if (hitCollider == null ||
+            hitCollider == hitboxCollider ||
+            hitCollider == targetCollider ||
+            hitCollider.isTrigger ||
+            IsOwnerCollider(hitCollider) ||
+            IsFallThroughFloor(hitCollider) ||
+            hitCollider.GetComponent<PlatformEffector2D>() != null ||
+            hitCollider.GetComponentInParent<PlatformEffector2D>() != null)
+        {
+            return false;
+        }
+
+        bool isConfiguredLayerWall = IsInLayerMask(hitCollider.gameObject.layer, verticalWallLayerMask);
+        bool isShutterWall = includeShutterWalls && hitCollider.GetComponentInParent<ShutterWallBlockRise>() != null;
+        if (!isConfiguredLayerWall && !isShutterWall)
+        {
+            return false;
+        }
+
+        return Mathf.Abs(hit.normal.x) >= verticalWallNormalMinX;
+    }
+
+    private void CacheOwnerColliders()
+    {
+        ownerRigidbody = GetComponentInParent<Rigidbody2D>();
+        if (ownerRigidbody == null)
+        {
+            return;
+        }
+
+        ownerColliders = ownerRigidbody.GetComponentsInChildren<Collider2D>(true);
+        for (int i = 0; i < ownerColliders.Length; i++)
+        {
+            Collider2D candidate = ownerColliders[i];
+            if (candidate != null && candidate.enabled && !candidate.isTrigger && candidate.attachedRigidbody == ownerRigidbody)
+            {
+                ownerBodyCollider = candidate;
+                return;
+            }
+        }
+    }
+
+    private bool IsOwnerCollider(Collider2D candidate)
+    {
+        if (candidate == null)
+        {
+            return false;
+        }
+
+        if (candidate.attachedRigidbody != null && candidate.attachedRigidbody == ownerRigidbody)
+        {
+            return true;
+        }
+
+        for (int i = 0; i < ownerColliders.Length; i++)
+        {
+            if (ownerColliders[i] == candidate)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsFallThroughFloor(Collider2D candidate)
+    {
+        return fallThroughFloorLayer >= 0 && candidate != null && candidate.gameObject.layer == fallThroughFloorLayer;
+    }
+
+    private void EnsureWallLayerMask()
+    {
+        if (verticalWallLayerMask.value == 0)
+        {
+            verticalWallLayerMask = BuildDefaultVerticalWallLayerMask();
+        }
+    }
+
+    private void RebuildWallProbeFilterIfNeeded()
+    {
+        LayerMask wallMask = includeShutterWalls ? Physics2D.AllLayers : verticalWallLayerMask;
+        if (cachedWallMaskValue == wallMask.value)
+        {
+            return;
+        }
+
+        wallProbeFilter = new ContactFilter2D
+        {
+            useLayerMask = true,
+            useTriggers = false
+        };
+        wallProbeFilter.SetLayerMask(wallMask);
+        cachedWallMaskValue = wallMask.value;
+    }
+
+    private static LayerMask BuildDefaultVerticalWallLayerMask()
+    {
+        int groundLayer = LayerMask.NameToLayer(GroundLayerName);
+        return groundLayer >= 0 ? 1 << groundLayer : Physics2D.DefaultRaycastLayers;
+    }
+
+    private static bool IsInLayerMask(int layer, LayerMask layerMask)
+    {
+        return (layerMask.value & (1 << layer)) != 0;
+    }
+
+    private void ClearWallProbeResults(int usedCount)
+    {
+        for (int i = usedCount; i < wallProbeResults.Length; i++)
+        {
+            wallProbeResults[i] = default;
         }
     }
 }
