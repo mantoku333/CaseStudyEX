@@ -316,6 +316,11 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
         ResolveBossReferences(logIssues: false);
 
+        if (bossRoot != null)
+        {
+            bossRoot.gameObject.SetActive(true);
+        }
+
         if (stageBossAttack != null)
         {
             stageBossAttack.DeactivateEncounter();

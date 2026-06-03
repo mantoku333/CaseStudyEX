@@ -37,6 +37,7 @@ namespace Metroidvania.Enemy
 
         [Header("Parry Reflect")]
         [SerializeField, Min(0.1f)] private float reflectedDamageMultiplier = 1.5f; //反射した弾のダメージ倍率(中江)
+        [SerializeField, Min(0f)] private float reflectedHitGraceDistance = 2.0f;
 
         private bool isReflectedByPlayer;　　//Playerに跳ね返されたかの判定
         private int reflectedDamage;　　　　 //反射後に使うダメージ値
@@ -1062,6 +1063,7 @@ namespace Metroidvania.Enemy
             Vector2 reflectDirection = -ResolveIncomingDirection(parryPosition);
 
             reflectedMaxDistance = travelledDistance;
+            reflectedMaxDistance += reflectedHitGraceDistance;
 
             if (reflectedMaxDistance > maxReflectDistance)
             {
@@ -1165,10 +1167,7 @@ namespace Metroidvania.Enemy
                 return false;
             }
 
-            GameName.Enemy.EnemyController enemyController =
-                other.GetComponentInParent<GameName.Enemy.EnemyController>();
-
-            if (enemyController == null)
+            if (!TryGetEnemyController(other, out GameName.Enemy.EnemyController enemyController))
             {
                 return false;
             }
@@ -1179,6 +1178,48 @@ namespace Metroidvania.Enemy
 
             DestroySilently();
             return true;
+        }
+
+        private static bool TryGetEnemyController(
+            Collider2D hitCollider,
+            out GameName.Enemy.EnemyController enemyController)
+        {
+            enemyController = null;
+
+            if (hitCollider == null)
+            {
+                return false;
+            }
+
+            enemyController = hitCollider.GetComponentInParent<GameName.Enemy.EnemyController>();
+            if (enemyController != null)
+            {
+                return true;
+            }
+
+            Rigidbody2D attachedRigidbody = hitCollider.attachedRigidbody;
+            if (attachedRigidbody != null)
+            {
+                enemyController = attachedRigidbody.GetComponent<GameName.Enemy.EnemyController>();
+                if (enemyController != null)
+                {
+                    return true;
+                }
+
+                enemyController = attachedRigidbody.GetComponentInParent<GameName.Enemy.EnemyController>();
+                if (enemyController != null)
+                {
+                    return true;
+                }
+            }
+
+            Transform root = hitCollider.transform.root;
+            if (root != null)
+            {
+                enemyController = root.GetComponentInChildren<GameName.Enemy.EnemyController>();
+            }
+
+            return enemyController != null;
         }
 
         private bool TryBreakReflectWall(Collider2D other)

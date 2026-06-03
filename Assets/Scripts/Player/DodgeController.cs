@@ -11,6 +11,7 @@ public class DodgeController : MonoBehaviour
 
     private bool isDodging = false;   //回避中かどうかのフラグ
     private Rigidbody2D rigidBody2d;  //Rigidbody2Dコンポーネント
+    private PlayerCollisionMover2D collisionMover;
 
     // ロック中のエリアから渡される、回避移動専用の境界情報。
     // 回避の目標地点を先に切り詰めることで、エリア拘束との押し戻し競合を防ぐ。
@@ -26,6 +27,13 @@ public class DodgeController : MonoBehaviour
     private void Awake()
     {
         rigidBody2d = GetComponent<Rigidbody2D>();
+        collisionMover = GetComponent<PlayerCollisionMover2D>();
+
+        if (collisionMover == null)
+        {
+            // プレハブに付け忘れても、回避移動だけは必ず物理Sweep経由にする。
+            collisionMover = gameObject.AddComponent<PlayerCollisionMover2D>();
+        }
     }
 
     public void SetDodgeDistance(float distance)
@@ -131,14 +139,13 @@ public class DodgeController : MonoBehaviour
         {
             float t = elapsedTime / dodgeDuration;
 
-            Vector2 newPos = ClampPositionToAreaDodgeBounds(Vector2.Lerp(startPos, targetPos, t));
-            rigidBody2d.MovePosition(newPos);
+            MoveToDodgePosition(Vector2.Lerp(startPos, targetPos, t));
 
             await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
             elapsedTime += Time.fixedDeltaTime;
         }
 
-        rigidBody2d.MovePosition(ClampPositionToAreaDodgeBounds(targetPos));
+        MoveToDodgePosition(targetPos);
 
         isDodging = false;
     }
@@ -150,6 +157,27 @@ public class DodgeController : MonoBehaviour
     public bool IsDodging()
     {
         return isDodging;
+    }
+
+    private void MoveToDodgePosition(Vector2 targetPosition)
+    {
+        if (rigidBody2d == null)
+        {
+            return;
+        }
+
+        Vector2 clampedTargetPosition = ClampPositionToAreaDodgeBounds(targetPosition);
+        Vector2 desiredDelta = clampedTargetPosition - rigidBody2d.position;
+
+        if (collisionMover != null)
+        {
+            // 回避は距離が大きく壁抜けしやすいため、直接MovePositionせず壁沿いスライド計算を通す。
+            collisionMover.MoveWithSlide(desiredDelta);
+            return;
+        }
+
+        // 保険用のフォールバック。通常は Awake で collisionMover が用意される。
+        rigidBody2d.MovePosition(clampedTargetPosition);
     }
 
     private Vector2 ClampPositionToAreaDodgeBounds(Vector2 position)

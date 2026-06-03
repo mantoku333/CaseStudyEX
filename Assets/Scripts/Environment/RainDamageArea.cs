@@ -17,6 +17,14 @@ public sealed class RainDamageArea : MonoBehaviour
     private readonly Collider2D[] overlapHits = new Collider2D[HitCapacity];
     private ContactFilter2D overlapFilter;
     private BoxCollider2D areaCollider;
+    private bool isRainActive;
+
+    public bool IsRainActive => isRainActive;
+
+    public void SetRainActive(bool active)
+    {
+        isRainActive = active;
+    }
 
     private void Reset()
     {
@@ -31,6 +39,11 @@ public sealed class RainDamageArea : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!isRainActive)
+        {
+            return;
+        }
+
         DamagePlayersInArea();
     }
 
@@ -55,7 +68,13 @@ public sealed class RainDamageArea : MonoBehaviour
         if (!TryResolvePlayer(
                 other,
                 out PlayerHealth playerHealth,
-                out PlayerDamageFlash playerDamageFlash))
+                out PlayerDamageFlash playerDamageFlash,
+                out UmbrellaController umbrellaController))
+        {
+            return;
+        }
+
+        if (IsProtectedByUmbrella(umbrellaController))
         {
             return;
         }
@@ -69,10 +88,12 @@ public sealed class RainDamageArea : MonoBehaviour
     private bool TryResolvePlayer(
         Collider2D candidate,
         out PlayerHealth playerHealth,
-        out PlayerDamageFlash playerDamageFlash)
+        out PlayerDamageFlash playerDamageFlash,
+        out UmbrellaController umbrellaController)
     {
         playerHealth = null;
         playerDamageFlash = null;
+        umbrellaController = null;
 
         if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(candidate, out playerHealth, out Collider2D bodyCollider))
         {
@@ -85,7 +106,14 @@ public sealed class RainDamageArea : MonoBehaviour
         }
 
         playerDamageFlash = ResolvePlayerDamageFlash(bodyCollider, playerHealth);
+        umbrellaController = ResolveUmbrellaController(bodyCollider, playerHealth);
         return true;
+    }
+
+    private static bool IsProtectedByUmbrella(UmbrellaController umbrellaController)
+    {
+        return umbrellaController != null &&
+            umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open;
     }
 
     private static PlayerDamageFlash ResolvePlayerDamageFlash(Collider2D playerCollider, PlayerHealth playerHealth)
@@ -115,6 +143,38 @@ public sealed class RainDamageArea : MonoBehaviour
         }
 
         return playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+    }
+
+    private static UmbrellaController ResolveUmbrellaController(Collider2D playerCollider, PlayerHealth playerHealth)
+    {
+        UmbrellaController umbrellaController = playerCollider.GetComponent<UmbrellaController>();
+        if (umbrellaController != null)
+        {
+            return umbrellaController;
+        }
+
+        umbrellaController = playerCollider.GetComponentInParent<UmbrellaController>();
+        if (umbrellaController != null)
+        {
+            return umbrellaController;
+        }
+
+        umbrellaController = playerHealth.GetComponent<UmbrellaController>();
+        if (umbrellaController != null)
+        {
+            return umbrellaController;
+        }
+
+        umbrellaController = playerHealth.GetComponentInChildren<UmbrellaController>(true);
+        if (umbrellaController != null)
+        {
+            return umbrellaController;
+        }
+
+        Transform playerRoot = playerHealth.transform.root;
+        return playerRoot != null
+            ? playerRoot.GetComponentInChildren<UmbrellaController>(true)
+            : null;
     }
 
     private bool MatchesPlayerTag(GameObject hitObject, PlayerHealth playerHealth)
@@ -157,7 +217,7 @@ public sealed class RainDamageArea : MonoBehaviour
             useLayerMask = true,
             useTriggers = true
         };
-        overlapFilter.SetLayerMask(Physics2D.AllLayers);
+        overlapFilter.SetLayerMask(PlayerBodyColliderUtility.GetPlayerBodyLayerMask());
     }
 
 #if UNITY_EDITOR

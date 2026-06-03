@@ -93,6 +93,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         umbrellaAttackController.IsAttacking() &&
         umbrellaController != null &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Closed;
+    public bool IsRecoilBoosting => gunController != null && gunController.GetRecoiling() && !isGround;
     public bool IsExternalControlLocked => externalControlLocked;
     public bool IsExternalFacingLocked => externalFacingLocked;
 
@@ -105,6 +106,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         if (rigidBody2d == null)
         {
             Debug.LogError("Rigidbody2Dが見つかっていません");
+        }
+        else
+        {
+            // 高速な回避やリコイル時に接触判定を落としにくくする。
+            rigidBody2d.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         }
 
         if (applyNoFrictionMaterial && playerCollider != null)
@@ -288,7 +294,6 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             gunController.SetAirRecoilPower(playerStatsData.GunRecoilForce);
             gunController.SetRecoilDuration(playerStatsData.GunRecoilDuration);
-            gunController.SetRecoilCoolTimes(0.5f, 5.0f);
         }
 
         if (umbrellaAttackController != null)
