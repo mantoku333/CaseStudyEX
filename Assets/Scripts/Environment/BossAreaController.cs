@@ -34,6 +34,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     [Header("Camera")]
     [SerializeField] private CinemachineCamera fixedBossCamera;
+    [SerializeField] private DualTargetCameraTarget dualTargetCameraTarget;
     [SerializeField] private int activeCameraPriority = 50;
     [SerializeField] private int inactiveCameraPriority = 0;
 
@@ -832,6 +833,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             return;
         }
 
+        ConfigureDualTargetCamera();
         fixedBossCamera.Priority.Value = activeCameraPriority;
         fixedBossCamera.Priority.Enabled = true;
     }
@@ -845,6 +847,24 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
         fixedBossCamera.Priority.Value = inactiveCameraPriority;
         fixedBossCamera.Priority.Enabled = true;
+    }
+
+    private void ConfigureDualTargetCamera()
+    {
+        if (dualTargetCameraTarget == null)
+        {
+            return;
+        }
+
+        Transform primary = playerRoot != null ? playerRoot : ResolvePlayerRoot();
+        Transform secondary = bossRoot;
+        dualTargetCameraTarget.Configure(primary, secondary, fixedBossCamera, GetComponent<Collider2D>());
+    }
+
+    private Transform ResolvePlayerRoot()
+    {
+        CachePlayerReferences();
+        return playerRoot;
     }
 
     private void DisableTriggerComponents()

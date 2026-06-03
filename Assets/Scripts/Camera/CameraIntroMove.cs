@@ -15,6 +15,10 @@ public class CameraIntroMove : MonoBehaviour
     [SerializeField] private float switchDelay = 0.1f;
     [SerializeField] private bool switchToFollowCameraOnComplete = true;
 
+    [Header("Room Camera Handoff")]
+    [SerializeField] private bool switchToCurrentRoomCameraOnComplete = true;
+    [SerializeField] private bool fallbackToFollowCameraWhenCurrentRoomMissing = true;
+
     [Header("Manual Intro Start")]
     [SerializeField] private bool useCustomStartPose;
     [SerializeField] private Vector3 introStartPosition = new Vector3(0f, 0f, -30f);
@@ -317,7 +321,13 @@ public class CameraIntroMove : MonoBehaviour
             introCamera.Lens = restoredLens;
         }
 
-        if (switchToFollowCameraOnComplete && followCamera != null)
+        bool switchedCamera = false;
+        if (switchToCurrentRoomCameraOnComplete)
+        {
+            switchedCamera = TrySwitchToCurrentRoomCamera();
+        }
+
+        if (!switchedCamera && switchToFollowCameraOnComplete && followCamera != null)
         {
             introCamera.Priority.Value = 0;
             followCamera.Priority.Value = 100;
@@ -339,5 +349,31 @@ public class CameraIntroMove : MonoBehaviour
             elapsed += Time.unscaledDeltaTime;
             yield return null;
         }
+    }
+
+    private bool TrySwitchToCurrentRoomCamera()
+    {
+        if (player == null)
+        {
+            return false;
+        }
+
+        introCamera.Priority.Value = 0;
+        if (RoomCameraTrigger.TryActivateRoomAtPosition(player.position, out _))
+        {
+            return true;
+        }
+
+        Debug.LogWarning(
+            $"[CameraIntroMove] Could not find a RoomCameraTrigger containing player position {player.position}.",
+            this);
+
+        if (fallbackToFollowCameraWhenCurrentRoomMissing && followCamera != null)
+        {
+            followCamera.Priority.Value = 100;
+            return true;
+        }
+
+        return false;
     }
 }
