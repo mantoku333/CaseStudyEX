@@ -14,6 +14,7 @@ public static class RoomCameraHierarchyTools
     private const string GatePrefix = "Gate_";
     private const string PortalPrefix = "Portal_";
     private const string FallPortalPrefix = "FallPortal_";
+    private const string VerticalPortalPrefix = "VerticalPortal_";
     private const string BossCameraSuffix = "_Boss";
     private const string BossCameraTargetName = "BossCameraTarget";
 
@@ -141,7 +142,65 @@ public static class RoomCameraHierarchyTools
         Debug.Log($"[RoomCameraHierarchyTools] {action} camera portal {portalObject.name}. Place it between the two areas.");
     }
 
-    [MenuItem("GameObject/Camera Area/Create Fall Camera Portal", false, 13)]
+    [MenuItem("GameObject/Camera Area/Create Vertical Camera Portal", false, 13)]
+    private static void CreateVerticalCameraPortal()
+    {
+        Transform upperRoom = null;
+        Transform lowerRoom = null;
+
+        if (Selection.gameObjects != null && Selection.gameObjects.Length >= 2)
+        {
+            upperRoom = ResolveSelectedAreaTransform(Selection.gameObjects[0].transform);
+            lowerRoom = ResolveSelectedAreaTransform(Selection.gameObjects[1].transform);
+        }
+
+        Transform areaRoot = ResolveAreaRoot(upperRoom != null ? upperRoom : Selection.activeTransform);
+        bool createdPortal = false;
+        GameObject portalObject = ResolveOrCreateVerticalCameraPortal(areaRoot, upperRoom, lowerRoom, out createdPortal);
+        if (createdPortal)
+        {
+            portalObject.transform.position = CreatePortalPosition(upperRoom, lowerRoom);
+        }
+
+        BoxCollider2D portalCollider = portalObject.GetComponent<BoxCollider2D>();
+        if (portalCollider == null)
+        {
+            portalCollider = Undo.AddComponent<BoxCollider2D>(portalObject);
+        }
+
+        portalCollider.isTrigger = true;
+        if (createdPortal)
+        {
+            portalCollider.size = new Vector2(6f, 1.5f);
+        }
+
+        VerticalRoomCameraPortal portal = portalObject.GetComponent<VerticalRoomCameraPortal>();
+        if (portal == null)
+        {
+            portal = Undo.AddComponent<VerticalRoomCameraPortal>(portalObject);
+        }
+
+        SerializedObject serializedPortal = new SerializedObject(portal);
+        SetObject(serializedPortal, "upperRoom", upperRoom != null ? ResolveRoomTrigger(upperRoom.gameObject) : null);
+        SetObject(serializedPortal, "lowerRoom", lowerRoom != null ? ResolveRoomTrigger(lowerRoom.gameObject) : null);
+        SetInt(serializedPortal, "transitionPriority", 30);
+        SetEnum(serializedPortal, "direction", 0);
+        SetFloat(serializedPortal, "startTargetRoomWeight", 0.35f);
+        SetFloat(serializedPortal, "targetTargetRoomWeight", 1f);
+        SetFloat(serializedPortal, "previewDuration", 0.75f);
+        SetFloat(serializedPortal, "smoothTime", 0.12f);
+        SetFloat(serializedPortal, "playerPadding", 2.5f);
+        SetBool(serializedPortal, "commitWhenPlayerFullyInsideTargetRoom", false);
+        SetBool(serializedPortal, "commitByPortalExitSide", true);
+        SetString(serializedPortal, "playerTag", "Player");
+        serializedPortal.ApplyModifiedPropertiesWithoutUndo();
+
+        Selection.activeObject = portalObject;
+        string action = createdPortal ? "Created" : "Repaired";
+        Debug.Log($"[RoomCameraHierarchyTools] {action} vertical camera portal {portalObject.name}. Place it on the boundary between the upper and lower areas.");
+    }
+
+    [MenuItem("GameObject/Camera Area/Create Fall Camera Portal", false, 14)]
     private static void CreateFallCameraPortal()
     {
         Transform upperRoom = null;
@@ -198,8 +257,19 @@ public static class RoomCameraHierarchyTools
         Debug.Log($"[RoomCameraHierarchyTools] {action} fall camera portal {portalObject.name}. Move it slightly below the drop opening.");
     }
 
+    [MenuItem("GameObject/Camera Area/Create Vertical Camera Portal", true)]
+    private static bool ValidateCreateVerticalCameraPortal()
+    {
+        return CanCreateVerticalCameraPortal();
+    }
+
     [MenuItem("GameObject/Camera Area/Create Fall Camera Portal", true)]
     private static bool ValidateCreateFallCameraPortal()
+    {
+        return CanCreateVerticalCameraPortal();
+    }
+
+    private static bool CanCreateVerticalCameraPortal()
     {
         if (Selection.gameObjects == null || Selection.gameObjects.Length < 2)
         {
@@ -590,6 +660,20 @@ public static class RoomCameraHierarchyTools
         return CreateUniqueChildName(areaRoot, baseName);
     }
 
+    private static string CreateVerticalPortalName(Transform areaRoot, Transform upperRoom, Transform lowerRoom)
+    {
+        string baseName = upperRoom != null && lowerRoom != null
+            ? $"{VerticalPortalPrefix}{upperRoom.name}_{lowerRoom.name}"
+            : $"{VerticalPortalPrefix}Upper_Lower";
+
+        if (areaRoot == null || areaRoot.Find(baseName) == null)
+        {
+            return baseName;
+        }
+
+        return CreateUniqueChildName(areaRoot, baseName);
+    }
+
     private static GameObject ResolveOrCreateCameraPortal(
         Transform areaRoot,
         Transform roomA,
@@ -627,6 +711,27 @@ public static class RoomCameraHierarchyTools
         string portalName = CreateFallPortalName(areaRoot, upperRoom, lowerRoom);
         GameObject portalObject = new GameObject(portalName);
         Undo.RegisterCreatedObjectUndo(portalObject, "Create Fall Camera Portal");
+        portalObject.transform.SetParent(areaRoot, false);
+        createdPortal = true;
+        return portalObject;
+    }
+
+    private static GameObject ResolveOrCreateVerticalCameraPortal(
+        Transform areaRoot,
+        Transform upperRoom,
+        Transform lowerRoom,
+        out bool createdPortal)
+    {
+        createdPortal = false;
+        Transform existingPortal = FindExistingVerticalPortal(areaRoot, upperRoom, lowerRoom);
+        if (existingPortal != null)
+        {
+            return existingPortal.gameObject;
+        }
+
+        string portalName = CreateVerticalPortalName(areaRoot, upperRoom, lowerRoom);
+        GameObject portalObject = new GameObject(portalName);
+        Undo.RegisterCreatedObjectUndo(portalObject, "Create Vertical Camera Portal");
         portalObject.transform.SetParent(areaRoot, false);
         createdPortal = true;
         return portalObject;
@@ -708,6 +813,54 @@ public static class RoomCameraHierarchyTools
                 serializedPortal.FindProperty("lowerRoom")?.objectReferenceValue as RoomCameraTrigger;
 
             if (portalUpperRoom == upperTrigger && portalLowerRoom == lowerTrigger)
+            {
+                return child;
+            }
+        }
+
+        return null;
+    }
+
+    private static Transform FindExistingVerticalPortal(Transform areaRoot, Transform upperRoom, Transform lowerRoom)
+    {
+        if (areaRoot == null || upperRoom == null || lowerRoom == null)
+        {
+            return null;
+        }
+
+        Transform direct = areaRoot.Find($"{VerticalPortalPrefix}{upperRoom.name}_{lowerRoom.name}");
+        if (direct != null)
+        {
+            return direct;
+        }
+
+        Transform reverse = areaRoot.Find($"{VerticalPortalPrefix}{lowerRoom.name}_{upperRoom.name}");
+        if (reverse != null)
+        {
+            return reverse;
+        }
+
+        RoomCameraTrigger upperTrigger = ResolveRoomTrigger(upperRoom.gameObject);
+        RoomCameraTrigger lowerTrigger = ResolveRoomTrigger(lowerRoom.gameObject);
+        for (int i = 0; i < areaRoot.childCount; i++)
+        {
+            Transform child = areaRoot.GetChild(i);
+            VerticalRoomCameraPortal portal = child.GetComponent<VerticalRoomCameraPortal>();
+            if (portal == null)
+            {
+                continue;
+            }
+
+            SerializedObject serializedPortal = new SerializedObject(portal);
+            RoomCameraTrigger portalUpperRoom =
+                serializedPortal.FindProperty("upperRoom")?.objectReferenceValue as RoomCameraTrigger;
+            RoomCameraTrigger portalLowerRoom =
+                serializedPortal.FindProperty("lowerRoom")?.objectReferenceValue as RoomCameraTrigger;
+
+            bool isSamePair =
+                portalUpperRoom == upperTrigger && portalLowerRoom == lowerTrigger ||
+                portalUpperRoom == lowerTrigger && portalLowerRoom == upperTrigger;
+            if (isSamePair)
             {
                 return child;
             }
@@ -1234,8 +1387,10 @@ public static class RoomCameraHierarchyTools
                child.name.StartsWith("Camera", System.StringComparison.OrdinalIgnoreCase) ||
                child.name.StartsWith(PortalPrefix, System.StringComparison.OrdinalIgnoreCase) ||
                child.name.StartsWith(FallPortalPrefix, System.StringComparison.OrdinalIgnoreCase) ||
+               child.name.StartsWith(VerticalPortalPrefix, System.StringComparison.OrdinalIgnoreCase) ||
                child.GetComponent<RoomCameraPortal>() != null ||
-               child.GetComponent<FallRoomCameraPortal>() != null;
+               child.GetComponent<FallRoomCameraPortal>() != null ||
+               child.GetComponent<VerticalRoomCameraPortal>() != null;
     }
 
     private static List<Transform> GetSortedAreaChildren(Transform root)
