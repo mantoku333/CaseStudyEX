@@ -15,6 +15,7 @@ namespace GameName.Enemy
         [SerializeField] private float patrolDistance = 2f;
         [SerializeField] private int damageToPlayer = 1;
         [SerializeField, Min(1)] private int maxHealth = 1;
+        [SerializeField, Min(1f)] private float backAttackDamageMultiplier = 2f;
 
         [Header("Turn Check")]
         [SerializeField, Min(0.01f)] private float wallCheckDistance = 0.15f;
@@ -33,6 +34,7 @@ namespace GameName.Enemy
         [SerializeField, Min(0f)] private float enemyCollisionTurnCooldown = 0.15f;
 
         private const float EnemyCollisionSideNormalThreshold = 0.35f;
+        private const float BackAttackMinHorizontalDelta = 0.05f;
         private const float ReturnHomeArrivalDistance = 0.03f;
         // 巡回基準は攻撃後に更新されるため、帰還先として使う初期位置は別に保持する。
         private Vector3 originalStartPosition;
@@ -54,6 +56,12 @@ namespace GameName.Enemy
         private static readonly System.Collections.Generic.List<Collider2D> ShutterWallColliders = new System.Collections.Generic.List<Collider2D>();
         private static Scene cachedShutterWallScene;
         private static bool shutterWallCacheValid;
+
+        private void OnValidate()
+        {
+            maxHealth = Mathf.Max(1, maxHealth);
+            backAttackDamageMultiplier = Mathf.Max(1f, backAttackDamageMultiplier);
+        }
 
         public event Action EnemyCollisionTurned;
         /// <summary>
@@ -743,15 +751,44 @@ namespace GameName.Enemy
 
         public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
         {
-            int damage = 0;
-
-            if (attacker != null)
-            {
-                damage = attacker.PlayerAttackDamage;
-            }
+            int damage = CalculatePlayerAttackDamage(attacker);
 
             TakeDamage(damage);
             HitStopController.RequestPlayerToEnemy();
+        }
+
+        private int CalculatePlayerAttackDamage(AttackHitbox attacker)
+        {
+            if (attacker == null)
+            {
+                return 0;
+            }
+
+            int baseDamage = attacker.PlayerAttackDamage;
+            if (baseDamage <= 0 || !IsBackAttack(attacker))
+            {
+                return baseDamage;
+            }
+
+            return Mathf.CeilToInt(baseDamage * Mathf.Max(1f, backAttackDamageMultiplier));
+        }
+
+        private bool IsBackAttack(AttackHitbox attacker)
+        {
+            if (attacker == null)
+            {
+                return false;
+            }
+
+            float attackDeltaX = attacker.AttackOriginPosition.x - transform.position.x;
+            if (Mathf.Abs(attackDeltaX) <= BackAttackMinHorizontalDelta)
+            {
+                return false;
+            }
+
+            int attackerSide = attackDeltaX >= 0f ? 1 : -1;
+            int facingDirection = moveDirection >= 0 ? 1 : -1;
+            return attackerSide != facingDirection;
         }
 
 

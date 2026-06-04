@@ -34,6 +34,8 @@ public class AttackHitbox : MonoBehaviour
         ? statsData.PlayerAttackDamage
         : 0;
 
+    public Vector2 AttackOriginPosition => ResolveAttackOrigin();
+
     private void Awake()
     {
         hitboxCollider = GetComponent<Collider2D>();

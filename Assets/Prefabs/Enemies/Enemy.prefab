@@ -186,6 +186,7 @@ MonoBehaviour:
   moveSpeed: 2
   patrolDistance: 2
   damageToPlayer: 1
+  backAttackDamageMultiplier: 2
 --- !u!114 &3166498005081650208
 MonoBehaviour:
   m_ObjectHideFlags: 0
