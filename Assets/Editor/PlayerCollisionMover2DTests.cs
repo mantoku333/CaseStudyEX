@@ -1,0 +1,172 @@
+using System.Collections.Generic;
+using NUnit.Framework;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
+public sealed class PlayerCollisionMover2DTests
+{
+    private readonly List<GameObject> objectsToDestroy = new List<GameObject>();
+
+    [TearDown]
+    public void TearDown()
+    {
+        for (int i = objectsToDestroy.Count - 1; i >= 0; i--)
+        {
+            if (objectsToDestroy[i] != null)
+            {
+                Object.DestroyImmediate(objectsToDestroy[i]);
+            }
+        }
+
+        objectsToDestroy.Clear();
+    }
+
+    [Test]
+    public void CalculateSlideDelta_WhenMovingIntoVerticalWall_StopsBeforeWall()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(Vector2.zero, out _, out _);
+        CreateGroundBox("Wall", new Vector2(2f, 0f), new Vector2(1f, 5f));
+        Physics2D.SyncTransforms();
+
+        Vector2 appliedDelta = mover.CalculateSlideDelta(new Vector2(3f, 0f));
+
+        Assert.That(appliedDelta.x, Is.GreaterThan(0.9f));
+        Assert.That(appliedDelta.x, Is.LessThanOrEqualTo(0.971f));
+        Assert.That(Mathf.Abs(appliedDelta.y), Is.LessThan(0.001f));
+    }
+
+    [Test]
+    public void CalculateSlideDelta_WhenMovingDiagonallyIntoWall_SlidesAlongWall()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(Vector2.zero, out _, out _);
+        CreateGroundBox("Wall", new Vector2(2f, 0f), new Vector2(1f, 5f));
+        Physics2D.SyncTransforms();
+
+        Vector2 appliedDelta = mover.CalculateSlideDelta(new Vector2(3f, 1f));
+
+        Assert.That(appliedDelta.x, Is.GreaterThan(0.9f));
+        Assert.That(appliedDelta.x, Is.LessThanOrEqualTo(0.971f));
+        Assert.That(appliedDelta.y, Is.GreaterThan(0.9f));
+    }
+
+    [Test]
+    public void CalculateSlideDelta_WhenMovingIntoCShape_DoesNotEndOverlapped()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(Vector2.zero, out Rigidbody2D rigidbody2D, out Collider2D playerCollider);
+        CreateGroundBox("RightWall", new Vector2(2f, 0f), new Vector2(0.2f, 2.4f));
+        CreateGroundBox("TopWall", new Vector2(1f, 1f), new Vector2(2.2f, 0.2f));
+        CreateGroundBox("BottomWall", new Vector2(1f, -1f), new Vector2(2.2f, 0.2f));
+        Physics2D.SyncTransforms();
+
+        Vector2 appliedDelta = mover.CalculateSlideDelta(new Vector2(3f, 0.7f));
+        rigidbody2D.position += appliedDelta;
+        Physics2D.SyncTransforms();
+
+        Assert.That(CountGroundOverlaps(playerCollider), Is.EqualTo(0));
+    }
+
+    [Test]
+    public void ProjectVelocityForNextFixedStep_WhenRecoilingIntoWall_RemovesWallVelocity()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(new Vector2(0.98f, 0f), out _, out _);
+        CreateGroundBox("Wall", new Vector2(2f, 0f), new Vector2(1f, 5f));
+        Physics2D.SyncTransforms();
+
+        Vector2 projectedVelocity = mover.ProjectVelocityForNextFixedStep(new Vector2(10f, 5f));
+
+        Assert.That(Mathf.Abs(projectedVelocity.x), Is.LessThan(0.01f));
+        Assert.That(projectedVelocity.y, Is.GreaterThan(4.9f));
+    }
+
+    [Test]
+    public void CalculateSlideDelta_WhenOnlyFallThroughFloorInPath_DoesNotBlock()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(Vector2.zero, out _, out _);
+        CreateFallThroughBox("FallThroughFloor", new Vector2(2f, 0f), new Vector2(1f, 5f));
+        Physics2D.SyncTransforms();
+
+        Vector2 desiredDelta = new Vector2(3f, 0f);
+        Vector2 appliedDelta = mover.CalculateSlideDelta(desiredDelta);
+
+        Assert.That(appliedDelta.x, Is.EqualTo(desiredDelta.x).Within(0.001f));
+        Assert.That(appliedDelta.y, Is.EqualTo(desiredDelta.y).Within(0.001f));
+    }
+
+    private PlayerCollisionMover2D CreatePlayer(
+        Vector2 position,
+        out Rigidbody2D rigidbody2D,
+        out Collider2D collider2D)
+    {
+        GameObject playerObject = CreateObject("Player", position);
+        rigidbody2D = playerObject.AddComponent<Rigidbody2D>();
+        rigidbody2D.gravityScale = 0f;
+        rigidbody2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
+        CapsuleCollider2D capsule = playerObject.AddComponent<CapsuleCollider2D>();
+        capsule.size = Vector2.one;
+        capsule.direction = CapsuleDirection2D.Vertical;
+        collider2D = capsule;
+
+        PlayerCollisionMover2D mover = playerObject.AddComponent<PlayerCollisionMover2D>();
+        mover.SetSolidLayerMask(GroundMask());
+        mover.SetSkinWidth(0.03f);
+        return mover;
+    }
+
+    private GameObject CreateGroundBox(string name, Vector2 position, Vector2 size)
+    {
+        GameObject box = CreateObject(name, position);
+        box.layer = GroundLayer();
+        BoxCollider2D collider = box.AddComponent<BoxCollider2D>();
+        collider.size = size;
+        return box;
+    }
+
+    private GameObject CreateFallThroughBox(string name, Vector2 position, Vector2 size)
+    {
+        GameObject box = CreateObject(name, position);
+        box.layer = FallThroughFloorLayer();
+        BoxCollider2D collider = box.AddComponent<BoxCollider2D>();
+        collider.size = size;
+        return box;
+    }
+
+    private int CountGroundOverlaps(Collider2D playerCollider)
+    {
+        Collider2D[] overlaps = new Collider2D[8];
+        ContactFilter2D filter = new ContactFilter2D
+        {
+            useLayerMask = true,
+            useTriggers = false
+        };
+        filter.SetLayerMask(GroundMask());
+        return playerCollider.Overlap(filter, overlaps);
+    }
+
+    private GameObject CreateObject(string name, Vector2 position)
+    {
+        GameObject gameObject = new GameObject(name);
+        gameObject.transform.position = position;
+        objectsToDestroy.Add(gameObject);
+        return gameObject;
+    }
+
+    private static LayerMask GroundMask()
+    {
+        return 1 << GroundLayer();
+    }
+
+    private static int GroundLayer()
+    {
+        int groundLayer = LayerMask.NameToLayer("Ground");
+        Assert.GreaterOrEqual(groundLayer, 0, "Ground layer must exist for player collision mover tests.");
+        return groundLayer;
+    }
+
+    private static int FallThroughFloorLayer()
+    {
+        int layer = LayerMask.NameToLayer("FallThroughFloor");
+        Assert.GreaterOrEqual(layer, 0, "FallThroughFloor layer must exist for player collision mover tests.");
+        return layer;
+    }
+}

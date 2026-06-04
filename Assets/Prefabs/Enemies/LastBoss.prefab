@@ -184,6 +184,7 @@ MonoBehaviour:
   initialActionDelay: 2
   startActiveOnPlay: 0
   maxHealth: 100
+  backAttackDamageMultiplier: 2
   moveSpeed: 8
   enrageHealthRate: 0.4
   enragedAttackMultiplier: 1.1

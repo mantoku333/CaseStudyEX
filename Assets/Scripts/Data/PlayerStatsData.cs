@@ -31,6 +31,8 @@ namespace Player
         [BoxGroup("体力"), Label("最大HP"), Tooltip("最大HP"), SerializeField, Min(1)] private int maxHealth = 3;
 
         [SerializeField, Min(1)] private int playerAttackDamage = 1;
+        [BoxGroup("戦闘"), Label("反動クールタイム1回目"), Tooltip("1回目の射撃/リコイル後の待ち時間(秒)"), SerializeField, Min(0f)] private float firstRecoilCoolTime = 0.5f;
+        [BoxGroup("戦闘"), Label("反動クールタイム2回目"), Tooltip("2回目の射撃/リコイル後の待ち時間(秒)"), SerializeField, Min(0f)] private float secondRecoilCoolTime = 2.5f;
 
         public float MoveSpeed => moveSpeed;
         public float GlideMoveSpeed => glideMoveSpeed;
@@ -43,6 +45,8 @@ namespace Player
         public int PlayerAttackDamage => playerAttackDamage;
         public float GunRecoilForce => gunRecoilForce;
         public float GunRecoilDuration => gunRecoilDuration;
+        public float FirstRecoilCoolTime => firstRecoilCoolTime;
+        public float SecondRecoilCoolTime => secondRecoilCoolTime;
         public float ReloadSeconds => reloadSeconds;
         public float ParryDuration => parryDuration;
         public float ParryFlashDuration => parryFlashDuration;
@@ -114,6 +118,18 @@ namespace Player
             ClampValues();
         }
 
+        public void SetFirstRecoilCoolTime(float value)
+        {
+            firstRecoilCoolTime = value;
+            ClampValues();
+        }
+
+        public void SetSecondRecoilCoolTime(float value)
+        {
+            secondRecoilCoolTime = value;
+            ClampValues();
+        }
+
         public void SetReloadSeconds(float value)
         {
             reloadSeconds = value;
@@ -157,6 +173,8 @@ namespace Player
             umbrellaAttackDuration = Mathf.Max(MinDuration, umbrellaAttackDuration);
             gunRecoilForce = Mathf.Max(0f, gunRecoilForce);
             gunRecoilDuration = Mathf.Max(MinDuration, gunRecoilDuration);
+            firstRecoilCoolTime = Mathf.Max(0f, firstRecoilCoolTime);
+            secondRecoilCoolTime = Mathf.Max(0f, secondRecoilCoolTime);
             reloadSeconds = Mathf.Max(0f, reloadSeconds);
 
             parryDuration = Mathf.Max(MinDuration, parryDuration);

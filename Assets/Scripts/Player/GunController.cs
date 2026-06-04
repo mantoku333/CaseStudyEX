@@ -24,8 +24,6 @@ public class GunController : MonoBehaviour
     };
 
     [Header("銃の設定")]
-    [SerializeField] private float firstRecoilCoolTime = 0.5f;
-    [SerializeField] private float secondRecoilCoolTime = 2.5f;
     [SerializeField] private float secondRecoilPowerMultiplier = 0.5f;
     [SerializeField] private float airRecoilPower  = 25.0f;   //銃反動/リコイルジャンプ共通の反動量
     [SerializeField] private float recoilDuration = 0.1f;      //反動状態の時間
@@ -45,10 +43,13 @@ public class GunController : MonoBehaviour
     [SerializeField] private int recoilEffectSortingOrderOffset = 3;
 
     private bool isRecoiling = false;   　//反動が起きているかどうか
+    private float firstRecoilCoolTime = 0.5f;
+    private float secondRecoilCoolTime = 2.5f;
     private float currentCoolTime = 0.0f; //クールタイムの残り時間    
     private float currentCoolTimeDuration = 0.0f;
     private bool isSecondRecoilNext = false;
     private Rigidbody2D rigidBody2d;      //反動を加えるためのRigidbody2D
+    private PlayerCollisionMover2D collisionMover;
     private float defaultLinearDamping = 0.0f;
 
     private AudioSource audioSource;      //AudioSource
@@ -70,6 +71,7 @@ public class GunController : MonoBehaviour
         if (rigidBody2d != null)
         {
             defaultLinearDamping = rigidBody2d.linearDamping;
+            collisionMover = rigidBody2d.GetComponent<PlayerCollisionMover2D>();
         }
 
         //AudioSourceの取得
@@ -84,6 +86,12 @@ public class GunController : MonoBehaviour
         {
             currentCoolTime = Mathf.Max(0.0f, currentCoolTime - Time.deltaTime);
         }
+    }
+
+    void FixedUpdate()
+    {
+        // 反動中は毎FixedUpdateで壁向きの速度を削り、壁に押し込まれず沿って流れるようにする。
+        ProjectRecoilVelocityForNextFixedStep();
     }
 
 
@@ -115,16 +123,6 @@ public class GunController : MonoBehaviour
         return recoilDuration;
     }
 
-
-    public void SetCoolTime(float time)
-    {
-        secondRecoilCoolTime = Mathf.Max(0.0f, time);
-    }
-
-    public float GetCoolTime()
-    {
-        return secondRecoilCoolTime;
-    }
 
     public void SetRecoilCoolTimes(float firstCoolTime, float secondCoolTime)
     {
@@ -184,6 +182,8 @@ public class GunController : MonoBehaviour
         rigidBody2d.AddForce(recoil, ForceMode2D.Impulse);
 
         BeginRecoil(recoilDuration);
+        // AddForce直後にも補正して、次の物理ステップ前に壁方向の速度が残らないようにする。
+        ProjectRecoilVelocityForNextFixedStep();
         return true;
     }
 
@@ -205,6 +205,8 @@ public class GunController : MonoBehaviour
         rigidBody2d.linearVelocity = velocity;
         rigidBody2d.AddForce(Vector2.up * airRecoilPower * recoilPowerMultiplier, ForceMode2D.Impulse);
         BeginRecoil(recoilDuration);
+        // リコイルジャンプも同じ補正を通し、天井や角で押し込まれないようにする。
+        ProjectRecoilVelocityForNextFixedStep();
 
         StartRecoilCoolTime();
         PlayRecoilEffect(Vector2.down);
@@ -223,6 +225,29 @@ public class GunController : MonoBehaviour
 
         CancelInvoke(nameof(EndRecoil));
         Invoke(nameof(EndRecoil), duration);
+    }
+
+    private void ProjectRecoilVelocityForNextFixedStep()
+    {
+        if (!isRecoiling || rigidBody2d == null)
+        {
+            return;
+        }
+
+        if (collisionMover == null)
+        {
+            // 銃は子オブジェクトに付いているため、親Rigidbody側の移動ヘルパーを遅延取得する。
+            collisionMover = rigidBody2d.GetComponent<PlayerCollisionMover2D>();
+        }
+
+        if (collisionMover == null)
+        {
+            return;
+        }
+
+        // 現在速度を「次のFixedUpdateで移動する距離」としてSweepし、壁法線方向だけを取り除く。
+        rigidBody2d.linearVelocity =
+            collisionMover.ProjectVelocityForNextFixedStep(rigidBody2d.linearVelocity);
     }
 
     private float GetCurrentRecoilPowerMultiplier()

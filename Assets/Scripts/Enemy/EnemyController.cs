@@ -15,6 +15,7 @@ namespace GameName.Enemy
         [SerializeField] private float patrolDistance = 2f;
         [SerializeField] private int damageToPlayer = 1;
         [SerializeField, Min(1)] private int maxHealth = 1;
+        [SerializeField, Min(1f)] private float backAttackDamageMultiplier = 2f;
 
         [Header("Turn Check")]
         [SerializeField, Min(0.01f)] private float wallCheckDistance = 0.15f;
@@ -33,7 +34,14 @@ namespace GameName.Enemy
         [SerializeField, Min(0f)] private float enemyCollisionTurnCooldown = 0.15f;
 
         private const float EnemyCollisionSideNormalThreshold = 0.35f;
+        private const float BackAttackMinHorizontalDelta = 0.05f;
+        private const float ReturnHomeArrivalDistance = 0.03f;
+        // 巡回基準は攻撃後に更新されるため、帰還先として使う初期位置は別に保持する。
+        private Vector3 originalStartPosition;
         private Vector3 startPosition;
+        private bool hasOriginalStartPosition;
+        // true の間は通常巡回や敵同士の押し返しより、初期位置への帰還を優先する。
+        private bool returningHome;
         private int moveDirection = 1;
         private bool movementPaused;
         private Rigidbody2D rigidbody2D;
@@ -48,6 +56,12 @@ namespace GameName.Enemy
         private static readonly System.Collections.Generic.List<Collider2D> ShutterWallColliders = new System.Collections.Generic.List<Collider2D>();
         private static Scene cachedShutterWallScene;
         private static bool shutterWallCacheValid;
+
+        private void OnValidate()
+        {
+            maxHealth = Mathf.Max(1, maxHealth);
+            backAttackDamageMultiplier = Mathf.Max(1f, backAttackDamageMultiplier);
+        }
 
         public event Action EnemyCollisionTurned;
         /// <summary>
@@ -67,6 +81,19 @@ namespace GameName.Enemy
         public float CurrentX => rigidbody2D != null ? rigidbody2D.position.x : transform.position.x;
         public int CurrentHealth => currentHealth;
         public int MaxHealth => Mathf.Max(1, maxHealth);
+        public bool IsReturningHome => returningHome;
+
+        /// <summary>
+        /// 敵が最初に配置された位置。タックル後の巡回基準リセットでは変更しない。
+        /// </summary>
+        public Vector3 OriginalStartPosition
+        {
+            get
+            {
+                CaptureOriginalStartPositionIfNeeded();
+                return originalStartPosition;
+            }
+        }
 
         private float ignoreContactDamageUntilTime;  //接触ダメージを無効にする時間
 
@@ -80,6 +107,8 @@ namespace GameName.Enemy
             spriteRenderer = GetComponent<SpriteRenderer>();
             damageFlash = GetComponentInChildren<EnemyDamageFlash>(true);
             currentHealth = MaxHealth;
+            CaptureOriginalStartPositionIfNeeded();
+            startPosition = originalStartPosition;
 
             if (stageLayerMask.value == 0)
             {
@@ -97,7 +126,8 @@ namespace GameName.Enemy
         /// </summary>
         private void Start()
         {
-            startPosition = transform.position;
+            CaptureOriginalStartPositionIfNeeded();
+            startPosition = originalStartPosition;
             ApplyFacing();
         }
 
@@ -106,6 +136,12 @@ namespace GameName.Enemy
         /// </summary>
         private void FixedUpdate()
         {
+            if (returningHome)
+            {
+                UpdateReturnHome();
+                return;
+            }
+
             if (movementPaused || moveSpeed <= 0f)
             {
                 // 自動巡回のみ停止し、速度制御は攻撃側スクリプトに委譲する
@@ -177,6 +213,20 @@ namespace GameName.Enemy
         }
 
         /// <summary>
+        /// Awake 前後どちらから参照されても、初期配置位置を一度だけ保存する。
+        /// </summary>
+        private void CaptureOriginalStartPositionIfNeeded()
+        {
+            if (hasOriginalStartPosition)
+            {
+                return;
+            }
+
+            originalStartPosition = transform.position;
+            hasOriginalStartPosition = true;
+        }
+
+        /// <summary>
         /// 外部スクリプトから移動を一時停止／再開する。
         /// </summary>
         /// <param name="paused">true で停止、false で再開。</param>
@@ -205,6 +255,73 @@ namespace GameName.Enemy
         public void ResetPatrolOrigin()
         {
             startPosition = transform.position;
+        }
+
+        /// <summary>
+        /// 帰還完了後、通常巡回を元の開始位置基準に戻す。
+        /// </summary>
+        public void ResetPatrolOriginToOriginalStart()
+        {
+            CaptureOriginalStartPositionIfNeeded();
+            startPosition = originalStartPosition;
+        }
+
+        /// <summary>
+        /// ルーム外へ出た敵を、戦闘判定を残したまま初期位置へ戻す。
+        /// </summary>
+        public void StartReturnHome()
+        {
+            CaptureOriginalStartPositionIfNeeded();
+            movementPaused = false;
+
+            if (HasReachedOriginalStartX())
+            {
+                CompleteReturnHome();
+                return;
+            }
+
+            returningHome = true;
+            FaceDirection(originalStartPosition.x >= CurrentX ? 1 : -1);
+            StopHorizontalMotion();
+        }
+
+        /// <summary>
+        /// 通常の巡回速度で初期位置の X 座標へ戻る。
+        /// </summary>
+        private void UpdateReturnHome()
+        {
+            CaptureOriginalStartPositionIfNeeded();
+
+            if (moveSpeed <= 0f || HasReachedOriginalStartX())
+            {
+                CompleteReturnHome();
+                return;
+            }
+
+            FaceDirection(originalStartPosition.x >= CurrentX ? 1 : -1);
+            Move(moveSpeed);
+        }
+
+        /// <summary>
+        /// FixedUpdate の移動幅を考慮して、初期位置付近で確実に停止できるようにする。
+        /// </summary>
+        private bool HasReachedOriginalStartX()
+        {
+            CaptureOriginalStartPositionIfNeeded();
+            float arrivalDistance = Mathf.Max(ReturnHomeArrivalDistance, Mathf.Abs(moveSpeed) * Time.fixedDeltaTime * 0.5f);
+            return Mathf.Abs(CurrentX - originalStartPosition.x) <= arrivalDistance;
+        }
+
+        /// <summary>
+        /// 帰還終了時は初期位置に吸着し、次の巡回もそこを中心に再開する。
+        /// </summary>
+        private void CompleteReturnHome()
+        {
+            returningHome = false;
+            movementPaused = false;
+            SetHorizontalPosition(originalStartPosition.x);
+            StopHorizontalMotion();
+            startPosition = new Vector3(originalStartPosition.x, transform.position.y, transform.position.z);
         }
 
         /// <summary>
@@ -451,6 +568,12 @@ namespace GameName.Enemy
 
         private bool TryTurnAroundFromEnemyCollision(Collision2D collision)
         {
+            // 帰還中に他の敵へ触れても、目的地から離れる方向転換はさせない。
+            if (returningHome)
+            {
+                return false;
+            }
+
             if (!TryGetEnemyCollisionTurnDirection(collision, out int turnDirection))
             {
                 return false;
@@ -628,15 +751,44 @@ namespace GameName.Enemy
 
         public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
         {
-            int damage = 0;
-
-            if (attacker != null)
-            {
-                damage = attacker.PlayerAttackDamage;
-            }
+            int damage = CalculatePlayerAttackDamage(attacker);
 
             TakeDamage(damage);
             HitStopController.RequestPlayerToEnemy();
+        }
+
+        private int CalculatePlayerAttackDamage(AttackHitbox attacker)
+        {
+            if (attacker == null)
+            {
+                return 0;
+            }
+
+            int baseDamage = attacker.PlayerAttackDamage;
+            if (baseDamage <= 0 || !IsBackAttack(attacker))
+            {
+                return baseDamage;
+            }
+
+            return Mathf.CeilToInt(baseDamage * Mathf.Max(1f, backAttackDamageMultiplier));
+        }
+
+        private bool IsBackAttack(AttackHitbox attacker)
+        {
+            if (attacker == null)
+            {
+                return false;
+            }
+
+            float attackDeltaX = attacker.AttackOriginPosition.x - transform.position.x;
+            if (Mathf.Abs(attackDeltaX) <= BackAttackMinHorizontalDelta)
+            {
+                return false;
+            }
+
+            int attackerSide = attackDeltaX >= 0f ? 1 : -1;
+            int facingDirection = moveDirection >= 0 ? 1 : -1;
+            return attackerSide != facingDirection;
         }
 
 

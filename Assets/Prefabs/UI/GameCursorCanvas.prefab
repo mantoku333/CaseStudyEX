@@ -104,7 +104,7 @@ MonoBehaviour:
   reticleImage: {fileID: 400002}
   reloadImage: {fileID: 400003}
   cursorHotspotOffset: {x: 0, y: 0}
-  cursorSize: {x: 100, y: 100}
+  cursorSize: {x: 50, y: 50}
   cursorOpenSprite: {fileID: 6554736390298987251, guid: 3dd42e4d616030f448a9894cf584e579, type: 3}
   cursorClosedSprite: {fileID: 0}
   cursorBlinkPattern: 0100000000111111100000

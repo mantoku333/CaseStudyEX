@@ -22,6 +22,7 @@ namespace GameName.Enemy
 
         [Header("Stats")]
         [SerializeField, Min(1)] private int maxHealth = 100;
+        [SerializeField, Min(1f)] private float backAttackDamageMultiplier = 2f;
         [SerializeField, Min(0f)] private float moveSpeed = 8f;
         [SerializeField, Range(0.01f, 1f)] private float enrageHealthRate = 0.4f;
         [SerializeField, Min(1f)] private float enragedAttackMultiplier = 1.1f;
@@ -119,6 +120,8 @@ namespace GameName.Enemy
             Vertical
         }
 
+        private const float BackAttackMinHorizontalDelta = 0.05f;
+
         private readonly Collider2D[] playerHits = new Collider2D[16];
         // 発生中のブレードを、パリィ・死亡・非アクティブ化でまとめて止めるために保持する。
         private readonly List<LastBossBladeAttack> activeBladeAttacks = new List<LastBossBladeAttack>();
@@ -214,6 +217,7 @@ namespace GameName.Enemy
         private void OnValidate()
         {
             maxHealth = Mathf.Max(1, maxHealth);
+            backAttackDamageMultiplier = Mathf.Max(1f, backAttackDamageMultiplier);
             normalAttackSize.x = Mathf.Max(0.1f, normalAttackSize.x);
             normalAttackSize.y = Mathf.Max(0.1f, normalAttackSize.y);
             horizontalAttackSize.x = Mathf.Max(0.1f, horizontalAttackSize.x);
@@ -351,7 +355,8 @@ namespace GameName.Enemy
                 return;
             }
 
-            int damage = attacker != null ? attacker.PlayerAttackDamage : 0;
+            bool isBackAttack = IsBackAttack(attacker);
+            int damage = CalculatePlayerAttackDamage(attacker, isBackAttack);
             if (damage <= 0)
             {
                 return;
@@ -369,7 +374,7 @@ namespace GameName.Enemy
                 return;
             }
 
-            AddDownCount(IsBackAttack(attacker) ? 2 : 1);
+            AddDownCount(isBackAttack ? 2 : 1);
         }
 
         private void UpdateInitialDelay()
@@ -1563,14 +1568,30 @@ namespace GameName.Enemy
                 return false;
             }
 
-            float attackDeltaX = attacker.transform.position.x - transform.position.x;
-            if (Mathf.Abs(attackDeltaX) <= 0.05f)
+            float attackDeltaX = attacker.AttackOriginPosition.x - transform.position.x;
+            if (Mathf.Abs(attackDeltaX) <= BackAttackMinHorizontalDelta)
             {
                 return false;
             }
 
             int attackerSide = attackDeltaX >= 0f ? 1 : -1;
             return attackerSide != facingDirection;
+        }
+
+        private int CalculatePlayerAttackDamage(AttackHitbox attacker, bool isBackAttack)
+        {
+            if (attacker == null)
+            {
+                return 0;
+            }
+
+            int baseDamage = attacker.PlayerAttackDamage;
+            if (baseDamage <= 0 || !isBackAttack)
+            {
+                return baseDamage;
+            }
+
+            return Mathf.CeilToInt(baseDamage * Mathf.Max(1f, backAttackDamageMultiplier));
         }
 
         private bool AddDownCount(int amount)
