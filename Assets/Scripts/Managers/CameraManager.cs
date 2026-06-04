@@ -88,34 +88,104 @@ public class CameraManager : MonoBehaviour
 
     public void ToggleCamera()
     {
-        if (followCam == null || directFollowCam == null)
+        if (!EnsureCameraTargets())
         {
-            FindCameras();
-        }
-
-        if (followCam == null || directFollowCam == null)
-        {
-            Debug.LogWarning("[CameraManager] Camera targets were not found. Check CN_FollowCam / CN_DirectFollowCam names.");
             return;
         }
-
-        isFollowCamActive = !isFollowCamActive;
 
         if (isFollowCamActive)
         {
-            followCam.Priority.Value = 10;
-            directFollowCam.Priority.Value = 0;
-            followCam.Priority.Enabled = true;
-            directFollowCam.Priority.Enabled = true;
-            Debug.Log("[CameraManager] Camera switched to CN_FollowCam");
+            SwitchToDirectFollowCamera();
             return;
         }
 
+        SwitchToFollowCamera();
+    }
+
+    public bool SwitchToFollowCamera()
+    {
+        if (!EnsureCameraTargets())
+        {
+            return false;
+        }
+
+        isFollowCamActive = true;
+        followCam.Priority.Value = 10;
+        directFollowCam.Priority.Value = 0;
+        followCam.Priority.Enabled = true;
+        directFollowCam.Priority.Enabled = true;
+        Debug.Log("[CameraManager] Camera switched to CN_FollowCam");
+        return true;
+    }
+
+    public bool SwitchToDirectFollowCamera()
+    {
+        if (!EnsureCameraTargets())
+        {
+            return false;
+        }
+
+        isFollowCamActive = false;
         followCam.Priority.Value = 0;
         directFollowCam.Priority.Value = 10;
         followCam.Priority.Enabled = true;
         directFollowCam.Priority.Enabled = true;
         Debug.Log("[CameraManager] Camera switched to CN_DirectFollowCam");
+        return true;
+    }
+
+    public bool TryGetFollowCameraPose(out Vector3 position, out float orthographicSize)
+    {
+        if (followCam == null)
+        {
+            FindCameras();
+        }
+
+        if (followCam == null)
+        {
+            position = Vector3.zero;
+            orthographicSize = 0f;
+            return false;
+        }
+
+        position = followCam.transform.position;
+        orthographicSize = followCam.Lens.OrthographicSize;
+        return true;
+    }
+
+    public bool TrySetFollowCameraPose(Vector3 position, float orthographicSize)
+    {
+        if (followCam == null)
+        {
+            FindCameras();
+        }
+
+        if (followCam == null)
+        {
+            return false;
+        }
+
+        followCam.transform.position = position;
+        LensSettings lens = followCam.Lens;
+        lens.OrthographicSize = orthographicSize;
+        followCam.Lens = lens;
+        return true;
+    }
+
+    private bool EnsureCameraTargets()
+    {
+        if (followCam == null || directFollowCam == null)
+        {
+            FindCameras();
+        }
+
+        if (followCam != null && directFollowCam != null)
+        {
+            return true;
+        }
+
+        Debug.LogWarning("[CameraManager] Camera targets were not found. Check CN_FollowCam / CN_DirectFollowCam names.");
+        return false;
     }
 
     public string GetActiveCameraName()
