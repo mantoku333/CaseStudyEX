@@ -188,6 +188,7 @@ MonoBehaviour:
   patrolDistance: 0
   damageToPlayer: 1
   maxHealth: 3
+  backAttackDamageMultiplier: 2
   wallCheckDistance: 0.15
   edgeCheckDistance: 0.35
   edgeCheckForwardOffset: 0.1
