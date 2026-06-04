@@ -45,6 +45,13 @@ namespace Metroidvania.Data
         
         [Tooltip("取得時の効果音")]
         public AudioClip pickupSound;
+
+        [Header("装備")]
+        [Tooltip("装備アイテムとして使う場合の効果一覧")]
+        public EquipmentAbilityData[] equipmentAbility;
+
+        [Tooltip("装備時にPlayerへ表示する画像レイヤー一覧")]
+        public EquipmentVisualLayerData[] equipmentVisualLayers;
     }
 
     /// <summary>
@@ -56,5 +63,64 @@ namespace Metroidvania.Data
         KeyItem,       // 重要アイテム
         Equipment,     // 装備
         Collectible    // 収集品
+    }
+
+    public enum EquipmentAbilityType
+    {
+        AttackPowerMultiplier,  //攻撃力倍率
+        HealPercentOnEnemyKill, //敵撃破時HP回復
+        GunRecoilForceBonus     //銃反動量をマス単位で追加
+    }
+
+    public enum EquipmentVisualParent
+    {
+        Back,
+        Front
+    }
+
+    [System.Serializable]
+
+    ///装備時の能力効果を示すデータ
+    public sealed class EquipmentAbilityData
+    {
+        [Tooltip("装備効果の種類")]
+        public EquipmentAbilityType abilityType;
+
+        [Tooltip("効果値。攻撃力5%アップなら1.05、撃破時HP2%回復なら0.02、銃反動+1マスなら1")]
+        public float value = 1f;
+    }
+
+
+    //装備時に表示する画像情報を示すデータ
+    //画像によってサイズや配置を決められるようにする
+    [System.Serializable]
+    public sealed class EquipmentVisualLayerData
+    {
+        [Tooltip("管理用の名前。空でも動作します")]
+        public string layerName;
+
+        [Tooltip("装備時に表示するSprite")]
+        public Sprite sprite;
+
+        [Tooltip("Playerの後ろ/前どちらの子オブジェクトへ置くか")]
+        public EquipmentVisualParent parent = EquipmentVisualParent.Back;
+
+        [Tooltip("親から見た位置")]
+        public Vector3 localPosition;
+
+        [Tooltip("左向き時だけ別の位置を使う")]
+        public bool useLeftFacingLocalPosition;
+
+        [Tooltip("左向き時の親から見た位置")]
+        public Vector3 leftFacingLocalPosition;
+
+        [Tooltip("親から見た回転")]
+        public Vector3 localEulerAngles;
+
+        [Tooltip("親から見た拡大率")]
+        public Vector3 localScale = Vector3.one;
+
+        [Tooltip("PlayerのSpriteRendererを基準にした描画順の差。後ろ側は-1、前側は+1から調整する想定")]
+        public int sortingOrderOffset;
     }
 }

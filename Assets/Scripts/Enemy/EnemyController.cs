@@ -752,8 +752,17 @@ namespace GameName.Enemy
         public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
         {
             int damage = CalculatePlayerAttackDamage(attacker);
+            bool wasAlive = currentHealth > 0;
 
             TakeDamage(damage);
+            if (wasAlive && currentHealth <= 0)
+            {
+                PlayerEquipmentController equipmentController = attacker != null
+                    ? attacker.GetComponentInParent<PlayerEquipmentController>()
+                    : null;
+                equipmentController?.NotifyEnemyKilledByPlayerAttack();
+            }
+
             HitStopController.RequestPlayerToEnemy();
         }
 

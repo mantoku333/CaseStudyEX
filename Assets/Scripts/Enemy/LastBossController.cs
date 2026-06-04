@@ -362,6 +362,8 @@ namespace GameName.Enemy
                 return;
             }
 
+            bool wasAlive = currentHealth > 0;
+
             PlayHitFlash();
             currentHealth = Mathf.Max(0, currentHealth - damage);
             NotifyHealthChanged();
@@ -370,6 +372,13 @@ namespace GameName.Enemy
 
             if (currentHealth <= 0)
             {
+                if (wasAlive && attacker != null)
+                {
+                    PlayerEquipmentController equipmentController =
+                        attacker.GetComponentInParent<PlayerEquipmentController>();
+                    equipmentController?.NotifyEnemyKilledByPlayerAttack();
+                }
+
                 Die();
                 return;
             }
