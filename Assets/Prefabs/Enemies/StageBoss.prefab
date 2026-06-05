@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 1141293357520890712}
   - component: {fileID: 730100000000000003}
   - component: {fileID: 914900000000000004}
+  - component: {fileID: 910500000000000004}
   m_Layer: 0
   m_Name: StageBoss
   m_TagString: Untagged
@@ -218,7 +219,7 @@ MonoBehaviour:
   chargeSpeed: 16
   chargeDistance: 10
   chargeCooldown: 0.4
-  stopChargeOnWall: 0
+  stopChargeOnWall: 1
   stopChargeByDistance: 1
   stopChargeWhenBlocked: 1
   blockedMoveThreshold: 0.01
@@ -277,6 +278,25 @@ MonoBehaviour:
   flashRepeatCount: 2
   normalDuration: 0.05
   flashCooldownSeconds: 0.02
+--- !u!114 &910500000000000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1b0b655e6484e4282a77c9dcbb96331, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.RandomUniqueItemDropOnDeath
+  dropTable: {fileID: 11400000, guid: af752883cf3d496c9332e526fb1ad237, type: 2}
+  dropPoint: {fileID: 0}
+  dropOffset: {x: 0, y: 0, z: 0}
+  randomHorizontalOffsetRange: {x: -3, y: 3}
+  hopHeight: 3
+  hopDuration: 0.35
+  disablePickupDuringHop: 1
 --- !u!1 &2384086904362661022
 GameObject:
   m_ObjectHideFlags: 0

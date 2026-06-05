@@ -91,7 +91,7 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
             overlappingPlayerColliders.Remove(collision);
             if (overlappingPlayerColliders.Count == 0)
             {
-                CommitExit(player.position);
+                CommitExit(ResolvePlayerCommitPoint(player, player.position));
                 playerTransform = null;
                 pendingFromRoom = null;
                 pendingToRoom = null;
@@ -113,16 +113,17 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
             return;
         }
 
-        BeginTransition(player.position);
-        StartTransitionCamera(player.position);
+        Vector3 playerCommitPoint = ResolvePlayerCommitPoint(player, player.position);
+        BeginTransition(playerCommitPoint);
+        StartTransitionCamera(playerCommitPoint);
     }
 
     private void BeginTransition(Vector3 playerPosition)
     {
         pendingFromRoom = ResolveCurrentRoom(playerPosition);
         pendingToRoom = ResolveDestinationRoom(pendingFromRoom);
-        fromPoseAtEntry = ResolveRoomPose(pendingFromRoom, playerPosition);
-        toPoseAtEntry = ResolveRoomPose(pendingToRoom, playerPosition);
+        fromPoseAtEntry = ResolveRoomPose(pendingFromRoom, playerPosition, true);
+        toPoseAtEntry = ResolveRoomPose(pendingToRoom, playerPosition, false);
         followOffsetAtEntry = ResolveFollowOffsetAtEntry(playerPosition);
     }
 
@@ -148,14 +149,17 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
             }
         }
 
-        if (lowerRoom != null && lowerRoom.ContainsPoint(playerPosition))
+        RoomCameraTrigger resolvedLowerRoom = ResolveLowerRoom();
+        RoomCameraTrigger resolvedUpperRoom = ResolveUpperRoom();
+
+        if (resolvedLowerRoom != null && resolvedLowerRoom.ContainsPoint(playerPosition))
         {
-            return lowerRoom;
+            return resolvedLowerRoom;
         }
 
-        if (upperRoom != null && upperRoom.ContainsPoint(playerPosition))
+        if (resolvedUpperRoom != null && resolvedUpperRoom.ContainsPoint(playerPosition))
         {
-            return upperRoom;
+            return resolvedUpperRoom;
         }
 
         return pendingFromRoom;
@@ -208,7 +212,8 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         }
 
         transitionElapsed += Time.deltaTime;
-        CameraPose targetPose = BuildTransitionPose(playerTransform.position);
+        Vector3 playerPosition = ResolvePlayerCommitPoint(playerTransform, playerTransform.position);
+        CameraPose targetPose = BuildTransitionPose(playerPosition);
         if (smoothTime <= 0f)
         {
             camera.transform.position = targetPose.Position;
@@ -232,8 +237,18 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private CameraPose BuildTransitionPose(Vector3 playerPosition)
     {
-        CameraPose fromPose = ResolveTransitionPose(pendingFromRoom, fromPoseAtEntry, playerPosition, false);
-        CameraPose toPose = ResolveTransitionPose(pendingToRoom, toPoseAtEntry, playerPosition, false);
+        CameraPose fromPose = ResolveTransitionPose(
+            pendingFromRoom,
+            fromPoseAtEntry,
+            playerPosition,
+            false,
+            true);
+        CameraPose toPose = ResolveTransitionPose(
+            pendingToRoom,
+            toPoseAtEntry,
+            playerPosition,
+            false,
+            false);
 
         CameraPose pose;
         float targetWeight = ResolveTargetRoomWeight();
@@ -257,9 +272,17 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         return Mathf.SmoothStep(startTargetRoomWeight, targetTargetRoomWeight, t);
     }
 
-    private CameraPose ResolveRoomPose(RoomCameraTrigger room, Vector3 fallbackPosition)
+    private CameraPose ResolveRoomPose(
+        RoomCameraTrigger room,
+        Vector3 fallbackPosition,
+        bool preferCurrentViewForDefaultRoom)
     {
         CameraPose pose;
+        if (room != null && room.UsesDefaultCameraWhenEntered)
+        {
+            return ResolveDefaultRoomBasePose(room, fallbackPosition, preferCurrentViewForDefaultRoom);
+        }
+
         if (room != null && room.TryGetCameraPose(out pose.Position, out pose.OrthographicSize))
         {
             return pose;
@@ -279,45 +302,97 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         return pose;
     }
 
+    private CameraPose ResolveDefaultRoomBasePose(
+        RoomCameraTrigger room,
+        Vector3 fallbackPosition,
+        bool preferCurrentView)
+    {
+        if (preferCurrentView && TryGetCurrentCameraPose(out CameraPose pose))
+        {
+            return pose;
+        }
+
+        if (TryResolveDefaultFollowPose(fallbackPosition, out pose))
+        {
+            return pose;
+        }
+
+        if (TryGetCurrentCameraPose(out pose))
+        {
+            return pose;
+        }
+
+        if (room != null && room.TryGetAreaBounds(out Bounds bounds))
+        {
+            float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+            pose.Position = bounds.center;
+            pose.Position.z = Camera.main != null ? Camera.main.transform.position.z : transform.position.z;
+            pose.OrthographicSize = Mathf.Max(bounds.extents.y, bounds.extents.x / aspect);
+            return pose;
+        }
+
+        pose.Position = fallbackPosition;
+        pose.Position.z = -10f;
+        pose.OrthographicSize = 10f;
+        return pose;
+    }
+
     private CameraPose ResolveCurrentViewPose(Vector3 fallbackPosition)
+    {
+        if (TryGetCurrentCameraPose(out CameraPose pose))
+        {
+            return pose;
+        }
+
+        return ResolveTransitionPose(pendingFromRoom, fromPoseAtEntry, fallbackPosition, false, true);
+    }
+
+    private bool TryGetCurrentCameraPose(out CameraPose pose)
     {
         Camera mainCamera = Camera.main;
         if (mainCamera != null)
         {
-            CameraPose pose;
             pose.Position = mainCamera.transform.position;
             pose.OrthographicSize = mainCamera.orthographic
                 ? mainCamera.orthographicSize
                 : Mathf.Max(fromPoseAtEntry.OrthographicSize, minimumOrthographicSize);
-            return pose;
+            return true;
         }
 
         CinemachineCamera camera = GetTransitionCamera(false);
         if (camera != null)
         {
-            CameraPose pose;
             pose.Position = camera.transform.position;
             pose.OrthographicSize = camera.Lens.OrthographicSize;
-            return pose;
+            return true;
         }
 
-        return ResolveTransitionPose(pendingFromRoom, fromPoseAtEntry, fallbackPosition, false);
+        pose = default;
+        return false;
     }
 
     private CameraPose ResolveTransitionPose(
         RoomCameraTrigger room,
         CameraPose poseAtEntry,
         Vector3 playerPosition,
-        bool allowDefaultAreaPreview)
+        bool allowDefaultAreaPreview,
+        bool preserveDefaultOffset)
     {
         if (room == null || !room.UsesDefaultCameraWhenEntered)
         {
             return poseAtEntry;
         }
 
-        Vector3 followPosition = playerPosition + followOffsetAtEntry;
-        poseAtEntry.Position.x = followPosition.x;
-        poseAtEntry.Position.y = followPosition.y;
+        if (preserveDefaultOffset)
+        {
+            Vector3 followPosition = playerPosition + followOffsetAtEntry;
+            poseAtEntry.Position.x = followPosition.x;
+            poseAtEntry.Position.y = followPosition.y;
+        }
+        else if (TryResolveDefaultFollowPose(playerPosition, out CameraPose followPose))
+        {
+            poseAtEntry = followPose;
+        }
 
         if (!allowDefaultAreaPreview ||
             !room.PreviewDefaultCameraByAreaBounds ||
@@ -327,7 +402,7 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         }
 
         Vector3 previewCenter = Vector3.Lerp(
-            followPosition,
+            poseAtEntry.Position,
             bounds.center,
             room.DefaultCameraPreviewWeight);
         previewCenter.z = poseAtEntry.Position.z;
@@ -352,8 +427,100 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         return poseAtEntry;
     }
 
+    private bool TryResolveDefaultFollowPose(Vector3 playerPosition, out CameraPose pose)
+    {
+        if (!TryFindFollowCamera(out CinemachineCamera followCamera))
+        {
+            pose = default;
+            return false;
+        }
+
+        pose.Position = playerPosition;
+        pose.Position.z = followCamera.transform.position.z;
+        pose.OrthographicSize = Mathf.Max(minimumOrthographicSize, followCamera.Lens.OrthographicSize);
+
+        if (TryApplyPositionComposerPose(followCamera, playerPosition, ref pose))
+        {
+            return true;
+        }
+
+        if (TryApplyDirectFollowPose(followCamera, playerPosition, ref pose))
+        {
+            return true;
+        }
+
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            pose.Position.z = mainCamera.transform.position.z;
+        }
+
+        return true;
+    }
+
+    private static bool TryFindFollowCamera(out CinemachineCamera followCamera)
+    {
+        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            CinemachineCamera camera = cameras[i];
+            if (camera != null && camera.gameObject.name == "CN_FollowCam")
+            {
+                followCamera = camera;
+                return true;
+            }
+        }
+
+        followCamera = null;
+        return false;
+    }
+
+    private static bool TryApplyPositionComposerPose(
+        CinemachineCamera followCamera,
+        Vector3 playerPosition,
+        ref CameraPose pose)
+    {
+        CinemachinePositionComposer composer = followCamera.GetComponent<CinemachinePositionComposer>();
+        if (composer == null)
+        {
+            return false;
+        }
+
+        float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+        Vector3 trackedPosition = playerPosition + composer.TargetOffset;
+        Vector2 screenPosition = composer.Composition.ScreenPosition;
+        pose.Position.x = trackedPosition.x - screenPosition.x * pose.OrthographicSize * aspect * 2f;
+        pose.Position.y = trackedPosition.y - screenPosition.y * pose.OrthographicSize * 2f;
+        return true;
+    }
+
+    private static bool TryApplyDirectFollowPose(
+        CinemachineCamera followCamera,
+        Vector3 playerPosition,
+        ref CameraPose pose)
+    {
+        CinemachineFollow directFollow = followCamera.GetComponent<CinemachineFollow>();
+        if (directFollow == null)
+        {
+            return false;
+        }
+
+        Vector3 followOffset = directFollow.FollowOffset;
+        pose.Position.x = playerPosition.x + followOffset.x;
+        pose.Position.y = playerPosition.y + followOffset.y;
+        return true;
+    }
+
     private Vector3 ResolveFollowOffsetAtEntry(Vector3 playerPosition)
     {
+        if (TryGetCurrentCameraPose(out CameraPose currentPose))
+        {
+            return currentPose.Position - playerPosition;
+        }
+
         if (CameraManager.Instance != null &&
             CameraManager.Instance.TryGetFollowCameraPose(out Vector3 followPosition, out _))
         {
@@ -530,35 +697,57 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private RoomCameraTrigger ResolveCurrentRoom(Vector3 playerPosition)
     {
+        RoomCameraTrigger resolvedUpperRoom = ResolveUpperRoom();
+        RoomCameraTrigger resolvedLowerRoom = ResolveLowerRoom();
+        bool upperContainsPlayer = resolvedUpperRoom != null && resolvedUpperRoom.ContainsPoint(playerPosition);
+        bool lowerContainsPlayer = resolvedLowerRoom != null && resolvedLowerRoom.ContainsPoint(playerPosition);
         RoomCameraTrigger activeRoom = RoomCameraTrigger.ActiveRoom;
-        if (activeRoom == upperRoom || activeRoom == lowerRoom)
+
+        if ((activeRoom == resolvedUpperRoom && upperContainsPlayer) ||
+            (activeRoom == resolvedLowerRoom && lowerContainsPlayer))
         {
             return activeRoom;
         }
 
-        if (upperRoom != null && upperRoom.ContainsPoint(playerPosition))
+        if (upperContainsPlayer && !lowerContainsPlayer)
         {
-            return upperRoom;
+            return resolvedUpperRoom;
         }
 
-        if (lowerRoom != null && lowerRoom.ContainsPoint(playerPosition))
+        if (lowerContainsPlayer && !upperContainsPlayer)
         {
-            return lowerRoom;
+            return resolvedLowerRoom;
         }
 
-        return ResolveRoomOnPortalSide(playerPosition);
+        RoomCameraTrigger sideRoom = ResolveRoomOnPortalSide(playerPosition);
+        if (activeRoom == sideRoom)
+        {
+            return activeRoom;
+        }
+
+        if (sideRoom != null)
+        {
+            return sideRoom;
+        }
+
+        return activeRoom == resolvedUpperRoom || activeRoom == resolvedLowerRoom
+            ? activeRoom
+            : null;
     }
 
     private RoomCameraTrigger ResolveDestinationRoom(RoomCameraTrigger fromRoom)
     {
-        if (fromRoom == upperRoom && direction != PortalDirection.LowerToUpperOnly)
+        RoomCameraTrigger resolvedUpperRoom = ResolveUpperRoom();
+        RoomCameraTrigger resolvedLowerRoom = ResolveLowerRoom();
+
+        if (fromRoom == resolvedUpperRoom && direction != PortalDirection.LowerToUpperOnly)
         {
-            return lowerRoom;
+            return resolvedLowerRoom;
         }
 
-        if (fromRoom == lowerRoom && direction != PortalDirection.UpperToLowerOnly)
+        if (fromRoom == resolvedLowerRoom && direction != PortalDirection.UpperToLowerOnly)
         {
-            return upperRoom;
+            return resolvedUpperRoom;
         }
 
         return null;
@@ -566,8 +755,27 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private RoomCameraTrigger ResolveRoomOnPortalSide(Vector3 playerPosition)
     {
-        Vector3 upperCenter = ResolveRoomCenter(upperRoom, transform.position + Vector3.up);
-        Vector3 lowerCenter = ResolveRoomCenter(lowerRoom, transform.position + Vector3.down);
+        if (pendingFromRoom != null && pendingToRoom != null)
+        {
+            Vector3 fromCenter = ResolveRoomCenter(pendingFromRoom, transform.position);
+            Vector3 toCenter = ResolveRoomCenter(pendingToRoom, transform.position);
+            Vector3 fromToTarget = toCenter - fromCenter;
+            fromToTarget.z = 0f;
+
+            if (fromToTarget.sqrMagnitude > 0.001f)
+            {
+                Vector3 portalToPlayerTowardTarget = playerPosition - transform.position;
+                portalToPlayerTowardTarget.z = 0f;
+                return Vector3.Dot(portalToPlayerTowardTarget, fromToTarget) >= 0f
+                    ? pendingToRoom
+                    : pendingFromRoom;
+            }
+        }
+
+        RoomCameraTrigger resolvedUpperRoom = ResolveUpperRoom();
+        RoomCameraTrigger resolvedLowerRoom = ResolveLowerRoom();
+        Vector3 upperCenter = ResolveRoomCenter(resolvedUpperRoom, transform.position + Vector3.up);
+        Vector3 lowerCenter = ResolveRoomCenter(resolvedLowerRoom, transform.position + Vector3.down);
         Vector3 lowerToUpper = upperCenter - lowerCenter;
         lowerToUpper.z = 0f;
 
@@ -578,7 +786,84 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
         Vector3 portalToPlayer = playerPosition - transform.position;
         portalToPlayer.z = 0f;
-        return Vector3.Dot(portalToPlayer, lowerToUpper) >= 0f ? upperRoom : lowerRoom;
+        return Vector3.Dot(portalToPlayer, lowerToUpper) >= 0f ? resolvedUpperRoom : resolvedLowerRoom;
+    }
+
+    private RoomCameraTrigger ResolveUpperRoom()
+    {
+        if (upperRoom == null || lowerRoom == null)
+        {
+            return upperRoom;
+        }
+
+        Vector3 upperCenter = ResolveRoomCenter(upperRoom, upperRoom.transform.position);
+        Vector3 lowerCenter = ResolveRoomCenter(lowerRoom, lowerRoom.transform.position);
+        return upperCenter.y >= lowerCenter.y ? upperRoom : lowerRoom;
+    }
+
+    private RoomCameraTrigger ResolveLowerRoom()
+    {
+        if (upperRoom == null || lowerRoom == null)
+        {
+            return lowerRoom;
+        }
+
+        Vector3 upperCenter = ResolveRoomCenter(upperRoom, upperRoom.transform.position);
+        Vector3 lowerCenter = ResolveRoomCenter(lowerRoom, lowerRoom.transform.position);
+        return upperCenter.y >= lowerCenter.y ? lowerRoom : upperRoom;
+    }
+
+    private static Vector3 ResolvePlayerCommitPoint(Transform player, Vector3 fallbackPosition)
+    {
+        if (player == null)
+        {
+            return fallbackPosition;
+        }
+
+        Collider2D[] colliders = player.GetComponentsInChildren<Collider2D>();
+        if (TryResolveBoundsCenter(colliders, false, out Vector3 center) ||
+            TryResolveBoundsCenter(colliders, true, out center))
+        {
+            return center;
+        }
+
+        return fallbackPosition;
+    }
+
+    private static bool TryResolveBoundsCenter(
+        Collider2D[] colliders,
+        bool includeTriggers,
+        out Vector3 center)
+    {
+        bool hasBounds = false;
+        Bounds bounds = default;
+
+        if (colliders != null)
+        {
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Collider2D collider = colliders[i];
+                if (collider == null ||
+                    !collider.enabled ||
+                    !includeTriggers && collider.isTrigger)
+                {
+                    continue;
+                }
+
+                if (!hasBounds)
+                {
+                    bounds = collider.bounds;
+                    hasBounds = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(collider.bounds);
+                }
+            }
+        }
+
+        center = hasBounds ? bounds.center : Vector3.zero;
+        return hasBounds;
     }
 
     private static Vector3 ResolveRoomCenter(RoomCameraTrigger room, Vector3 fallback)
