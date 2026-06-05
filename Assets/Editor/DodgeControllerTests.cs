@@ -87,6 +87,33 @@ public sealed class DodgeControllerTests
         Assert.That(CountGroundOverlaps(playerCollider), Is.EqualTo(0));
     }
 
+    [Test]
+    public void ResolveReachableDodgeTarget_WhenStartedAtFarStageCoordinatesAndWallIsNearby_StopsBeforeWall()
+    {
+        Vector2 startPosition = new Vector2(600f, 100f);
+        DodgeController dodgeController = CreatePlayer(startPosition, out Rigidbody2D rigidbody2D);
+        Collider2D playerCollider = rigidbody2D.GetComponent<Collider2D>();
+        dodgeController.SetDodgeDistance(4f);
+
+        CreateGroundBox("FarCoordinateThickWall", startPosition + new Vector2(2.5f, 0f), new Vector2(3f, 5f));
+        Physics2D.SyncTransforms();
+
+        InvokePrivate(dodgeController, "EnsureComponents");
+        Vector2 targetPosition = (Vector2)InvokePrivate(
+            dodgeController,
+            "ResolveReachableDodgeTarget",
+            rigidbody2D.position,
+            Vector2.right * dodgeController.GetDodgeDistance());
+
+        Assert.That(targetPosition.x, Is.GreaterThan(startPosition.x + 0.4f));
+        Assert.That(targetPosition.x, Is.LessThanOrEqualTo(startPosition.x + 0.5f));
+
+        rigidbody2D.position = targetPosition;
+        rigidbody2D.transform.position = targetPosition;
+        Physics2D.SyncTransforms();
+        Assert.That(CountGroundOverlaps(playerCollider), Is.EqualTo(0));
+    }
+
     private DodgeController CreatePlayer(Vector2 position, out Rigidbody2D rigidbody2D)
     {
         GameObject playerObject = new GameObject("Player");

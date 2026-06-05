@@ -205,16 +205,8 @@ public class DodgeController : MonoBehaviour
         }
 
         Vector2 clampedTargetPosition = ClampPositionToAreaDodgeBounds(targetPosition);
-        Vector2 desiredDelta = clampedTargetPosition - rigidBody2d.position;
-
-        if (collisionMover != null)
-        {
-            // 回避は距離が大きく壁抜けしやすいため、直接MovePositionせず壁沿いスライド計算を通す。
-            collisionMover.MoveWithSlide(desiredDelta);
-            return;
-        }
-
-        // 保険用のフォールバック。通常は Awake で collisionMover が用意される。
+        // 衝突を考慮した最終目標は回避開始時に一度だけ解決する。
+        // 毎FixedUpdateでSweepし直すと、大きなステージ座標や重いTilemap付近でFPS低下を起こしやすい。
         rigidBody2d.MovePosition(clampedTargetPosition);
     }
 
