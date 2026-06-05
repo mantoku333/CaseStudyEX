@@ -27,6 +27,11 @@ public class DodgeController : MonoBehaviour
 
     private void Awake()
     {
+        EnsureComponents();
+    }
+
+    private void EnsureComponents()
+    {
         rigidBody2d = GetComponent<Rigidbody2D>();
         collisionMover = GetComponent<PlayerCollisionMover2D>();
 
@@ -125,6 +130,8 @@ public class DodgeController : MonoBehaviour
     {
         if (isDodging) { return; }
 
+        EnsureComponents();
+
         if (rigidBody2d == null) { return; }
 
         isDodging = true;
@@ -139,7 +146,7 @@ public class DodgeController : MonoBehaviour
 
         if (direction != Vector2.zero)
         {
-            targetPos = startPos + direction.normalized * dodgeDistance;
+            targetPos = ResolveReachableDodgeTarget(startPos, direction.normalized * dodgeDistance);
         }
 
         // 回避アニメーションは通常通り再生しつつ、移動先だけをロック範囲内に収める。
@@ -170,6 +177,19 @@ public class DodgeController : MonoBehaviour
     public bool IsDodging()
     {
         return isDodging;
+    }
+
+    private Vector2 ResolveReachableDodgeTarget(Vector2 startPosition, Vector2 desiredDelta)
+    {
+        Vector2 clampedDesiredTarget = ClampPositionToAreaDodgeBounds(startPosition + desiredDelta);
+        Vector2 clampedDesiredDelta = clampedDesiredTarget - startPosition;
+
+        if (collisionMover == null || clampedDesiredDelta.sqrMagnitude <= 0f)
+        {
+            return clampedDesiredTarget;
+        }
+
+        return startPosition + collisionMover.CalculateSlideDelta(clampedDesiredDelta);
     }
 
     private void MoveToDodgePosition(Vector2 targetPosition)
