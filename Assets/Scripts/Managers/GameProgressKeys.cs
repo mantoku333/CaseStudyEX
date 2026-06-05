@@ -21,4 +21,9 @@
     public const string AbilityGlideUnlocked = "ability_glide_unlocked";
     public const string AbilityGunRecoilUnlocked = "ability_gun_recoil_unlocked";
     public const string AbilityParryUnlocked = "ability_parry_unlocked";
+
+    //--------------デコレーション関連------------
+    public const string EquipmentBlueAuraUnlocked = "Equipment_BlueAura_Unlock";
+    public const string EquipmentRedAuraUnlocked = "Equipment_RedAura_Unlock";
+    public const string EquipmentArcancielUnlocked = "Equipment_Arcanciel_Unlock";
 }

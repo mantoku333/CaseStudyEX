@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8e1623b60364f78958a83bfbbe8fdb7, type: 3}
+  m_Name: EnemyUniqueDropTable
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyUniqueDropTable
+  dropChance: 0.3
+  includeStageBoss: 0
+  entries:
+  - itemPrefab: {fileID: 4671800122229995490, guid: b54baaa93e1fe1b45bf8cbe441320d22, type: 3}
+    progressFlagKey: Equipment_RedAura_Unlock
+  - itemPrefab: {fileID: 61547262103135006, guid: 506a89311cf625b4185cebb56a3f482c, type: 3}
+    progressFlagKey: Equipment_BlueAura_Unlock
+  - itemPrefab: {fileID: 1408326291324731804, guid: bfaea832a19db6e4f8828befa2c101db, type: 3}
+    progressFlagKey: Equipment_Arcanciel_Unlock
