@@ -26,6 +26,7 @@ public class UmbrellaParryController : MonoBehaviour
     [SerializeField, Min(1f)] private float parryEffectPixelsPerUnit = 100f;
     [SerializeField] private Vector2 parryEffectSpritePivot = new Vector2(0.5f, 0.5f);
     [SerializeField] private Vector3 parryEffectWorldOffset = Vector3.zero;
+    [SerializeField, Min(0f)] private float parryEffectDistanceFromPlayer = 0.7f;
     [SerializeField] private Vector3 parryEffectScale = Vector3.one;
     [SerializeField] private int parryEffectSortingOrderOffset = 4;
     [SerializeField] private bool copyPlayerMaterial = true;
@@ -167,18 +168,20 @@ public class UmbrellaParryController : MonoBehaviour
 
         StopAndDestroyParryEffect();
 
-        Vector3 effectPosition = ResolveParryEffectPosition();
-        Vector2 direction = hitWorldPosition - (Vector2)effectPosition;
+        Vector3 playerCenter = ResolveParryEffectPosition();
+        Vector2 direction = hitWorldPosition - (Vector2)playerCenter;
         if (direction.sqrMagnitude <= Mathf.Epsilon)
         {
             direction = IsFacingLeft() ? Vector2.left : Vector2.right;
         }
 
+        Vector2 normalizedDirection = direction.normalized;
         bool effectFacesLeft = ResolveParryEffectFacingLeft(direction);
+        Vector3 effectPosition = playerCenter + (Vector3)(normalizedDirection * parryEffectDistanceFromPlayer);
 
         parryEffectObject = new GameObject("ParrySuccessEffect");
         parryEffectObject.transform.position = effectPosition;
-        parryEffectObject.transform.rotation = ResolveParryEffectRotation(direction.normalized, effectFacesLeft);
+        parryEffectObject.transform.rotation = ResolveParryEffectRotation(normalizedDirection, effectFacesLeft);
         parryEffectObject.transform.localScale = parryEffectScale;
         parryEffectObject.transform.SetParent(transform, true);
 

@@ -346,6 +346,7 @@ MonoBehaviour:
   parryEffectPixelsPerUnit: 100
   parryEffectSpritePivot: {x: 0.5, y: 0.5}
   parryEffectWorldOffset: {x: 0, y: 0, z: 0}
+  parryEffectDistanceFromPlayer: 0.7
   parryEffectScale: {x: 1, y: 1, z: 1}
   parryEffectSortingOrderOffset: 4
   copyPlayerMaterial: 1

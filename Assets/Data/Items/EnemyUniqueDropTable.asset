@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8e1623b60364f78958a83bfbbe8fdb7, type: 3}
   m_Name: EnemyUniqueDropTable
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyUniqueDropTable
-  dropChance: 0.3
+  dropChance: 0.1
   includeStageBoss: 0
   entries:
   - itemPrefab: {fileID: 4671800122229995490, guid: b54baaa93e1fe1b45bf8cbe441320d22, type: 3}

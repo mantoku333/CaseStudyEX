@@ -24,9 +24,9 @@ MonoBehaviour:
   stackable: 0
   maxStackSize: 99
   pickupSound: {fileID: 0}
-  equipmentEffects:
-  - effectType: 0
-    value: 0.2
+  equipmentAbility:
+  - abilityType: 1
+    value: 0.02
   equipmentVisualLayers:
   - layerName: 
     sprite: {fileID: -6279402175740039742, guid: 7237b620ecc2ecc458859a0da09f70fd, type: 3}
