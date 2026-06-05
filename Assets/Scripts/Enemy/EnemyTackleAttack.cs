@@ -34,6 +34,7 @@ namespace GameName.Enemy
         [SerializeField] private bool stopChargeWhenBlocked = true;
         [SerializeField, Min(0.001f)] private float blockedMoveThreshold = 0.01f;
         [SerializeField, Min(0.02f)] private float blockedStopDelay = 0.1f;
+        [SerializeField, Min(0f)] private float chargeEndingLeadDistance = 1.2f;
 
         [Header("Debug")]
         [SerializeField] private bool drawViewGizmo = true;
@@ -63,11 +64,17 @@ namespace GameName.Enemy
         private float chargeStartX;
         private float previousChargeX;
         private float blockedTimer;
+        private bool chargeEndingNotified;
 
         /// <summary>
         /// 予備動作ではなく、実際に突進状態へ入った瞬間に通知する。
         /// </summary>
         public event Action ChargeStarted;
+
+        /// <summary>
+        /// 実際の突進状態が終わる少し前、または即時終了の直前に通知する。
+        /// </summary>
+        public event Action ChargeEnding;
 
         public bool IsWindingUp => attackState == AttackState.Vibration;
         public bool IsCharging => attackState == AttackState.Charging;
@@ -127,6 +134,7 @@ namespace GameName.Enemy
             enemyController.StopHorizontalMotion();
             attackState = AttackState.Idle;
             stateTimer = 0f;
+            chargeEndingNotified = false;
         }
 
         /// <summary>
@@ -218,6 +226,7 @@ namespace GameName.Enemy
             chargeStartX = enemyController.CurrentX;
             previousChargeX = chargeStartX;
             blockedTimer = 0f;
+            chargeEndingNotified = false;
 
             attackState = AttackState.Charging;
             // 突進開始SEはこのタイミングで1回だけ鳴らす。
@@ -255,6 +264,8 @@ namespace GameName.Enemy
                 EnterCooldownState();
                 return;
             }
+
+            NotifyChargeEndingIfCloseToDistanceLimit();
 
             if (HasReachedChargeDistance())
             {
@@ -300,11 +311,54 @@ namespace GameName.Enemy
             return traveledDistance >= targetDistance;
         }
 
+        private void NotifyChargeEndingIfCloseToDistanceLimit()
+        {
+            if (chargeEndingNotified)
+            {
+                return;
+            }
+
+            float leadDistance = Mathf.Max(0f, chargeEndingLeadDistance);
+            if (leadDistance <= 0f)
+            {
+                return;
+            }
+
+            float targetDistance = Mathf.Max(0f, chargeDistance);
+            if (targetDistance <= leadDistance)
+            {
+                return;
+            }
+
+            float traveledDistance = Mathf.Abs(enemyController.CurrentX - chargeStartX);
+            if (traveledDistance >= targetDistance - leadDistance)
+            {
+                NotifyChargeEnding();
+            }
+        }
+
+        private void NotifyChargeEnding()
+        {
+            if (chargeEndingNotified)
+            {
+                return;
+            }
+
+            chargeEndingNotified = true;
+            ChargeEnding?.Invoke();
+        }
+
         /// <summary>
         /// クールダウン状態へ遷移し、その場で停止する。
         /// </summary>
         private void EnterCooldownState()
         {
+            bool wasCharging = attackState == AttackState.Charging;
+            if (wasCharging)
+            {
+                NotifyChargeEnding();
+            }
+
             attackState = AttackState.Cooldown;
             stateTimer = chargeCooldown;
             enemyController.StopHorizontalMotion();
@@ -510,6 +564,7 @@ namespace GameName.Enemy
             stateTimer = 0f;
             vibrationElapsed = 0f;
             blockedTimer = 0f;
+            chargeEndingNotified = false;
         }
 
         /// <summary>
