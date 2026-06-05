@@ -12,6 +12,8 @@ public class ParryHitbox : MonoBehaviour
     private readonly Collider2D[] overlapResults = new Collider2D[16];
     private Collider2D hitboxCollider;
     private ContactFilter2D overlapFilter;
+    private Vector2 lastParryHitPosition;
+    private bool hasLastParryHitPosition;
 
     //--------------パリィ関連------------------
     private UmbrellaParryController umbrellaParryController;
@@ -65,7 +67,9 @@ public class ParryHitbox : MonoBehaviour
 
             Debug.Log("弾を通常パリィしました");
 
+            RecordParryHit(collision);
             enemyBullet.DestroyByParry();
+            umbrellaParryController.PlayParrySuccessEffect(lastParryHitPosition);
             HitStopController.RequestParry();
             return;
         }
@@ -84,7 +88,9 @@ public class ParryHitbox : MonoBehaviour
 
             Debug.Log("突進攻撃をパリィしました");
 
+            RecordParryHit(collision);
             parryableAttack.StopByParry();
+            umbrellaParryController.PlayParrySuccessEffect(lastParryHitPosition);
             HitStopController.RequestParry();
         }
     }
@@ -136,6 +142,12 @@ public class ParryHitbox : MonoBehaviour
         }
 
         return false;
+    }
+
+    public bool TryGetLastParryHitPosition(out Vector2 hitPosition)
+    {
+        hitPosition = lastParryHitPosition;
+        return hasLastParryHitPosition;
     }
 
     /// <summary>
@@ -254,6 +266,7 @@ public class ParryHitbox : MonoBehaviour
             if (enemyBullet.CanJustParry())
             {
                 Debug.Log("ジャストパリィです");
+                RecordParryHit(attackObject);
                 enemyBullet.ReflectByJustParry(transform.position);
                 parriedAttacks.Add(attackObject);
                 parried = true;
@@ -261,6 +274,7 @@ public class ParryHitbox : MonoBehaviour
             }
 
             Debug.Log("通常パリィです");
+            RecordParryHit(attackObject);
             enemyBullet.DestroyByParry();
             parriedAttacks.Add(attackObject);
             parried = true;
@@ -317,12 +331,42 @@ public class ParryHitbox : MonoBehaviour
                 continue;
             }
 
+            RecordParryHit(hitCollider);
             parryableAttack.StopByParry();
             HitStopController.RequestParry();
             return true;
         }
 
         return false;
+    }
+
+    private void RecordParryHit(GameObject attackObject)
+    {
+        if (attackObject == null)
+        {
+            return;
+        }
+
+        Collider2D attackCollider = attackObject.GetComponent<Collider2D>();
+        if (attackCollider != null)
+        {
+            RecordParryHit(attackCollider);
+            return;
+        }
+
+        lastParryHitPosition = attackObject.transform.position;
+        hasLastParryHitPosition = true;
+    }
+
+    private void RecordParryHit(Collider2D hitCollider)
+    {
+        if (hitCollider == null)
+        {
+            return;
+        }
+
+        lastParryHitPosition = hitCollider.bounds.center;
+        hasLastParryHitPosition = true;
     }
 
     private static bool TryGetParryableAttack(
