@@ -1,4 +1,4 @@
-using GameName.Audio;
+﻿using GameName.Audio;
 using UnityEngine;
 
 namespace Player
@@ -31,6 +31,8 @@ namespace Player
         [SerializeField] private bool logFootstepDebug;
         [SerializeField, Min(0.1f)] private float debugLogInterval = 0.5f;
 
+        [SerializeField] private bool useAnimationEventsForFootsteps = true;
+
         private Rigidbody2D rigidBody2d;
         private IPlayerViewStateProvider stateProvider;
         private float stepTimer;
@@ -56,6 +58,12 @@ namespace Player
         private void Update()
         {
             UpdateLandingSound();
+
+            if (useAnimationEventsForFootsteps)
+            {
+                StopLoopingFootstep();
+                return;
+            }
 
             if (!ShouldPlayFootsteps())
             {
@@ -471,6 +479,16 @@ namespace Player
             nextDebugLogTime = Time.time + debugLogInterval;
             Debug.Log($"[PlayerFootstepController] {message}", this);
         }
+        public void PlayFootstepFromAnimationEvent()
+        {
+            if (!ShouldPlayFootsteps())
+            {
+                return;
+            }
+
+            SurfaceAudioProfile surfaceProfile = ResolveCurrentSurfaceProfile();
+            PlayFootstep(surfaceProfile);
+        }
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -483,4 +501,5 @@ namespace Player
         }
 #endif
     }
+
 }
