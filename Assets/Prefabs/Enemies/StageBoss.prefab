@@ -218,7 +218,7 @@ MonoBehaviour:
   chargeSpeed: 16
   chargeDistance: 10
   chargeCooldown: 0.4
-  stopChargeOnWall: 0
+  stopChargeOnWall: 1
   stopChargeByDistance: 1
   stopChargeWhenBlocked: 1
   blockedMoveThreshold: 0.01

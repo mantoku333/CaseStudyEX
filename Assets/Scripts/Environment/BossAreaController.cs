@@ -83,6 +83,17 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     public LastBossController LastBossController => lastBossController;
     public IBossHealthSource BossHealthSource => ResolveBossHealthSource();
 
+    public bool TryGetActiveBossHorizontalConfinementBounds(out Bounds bounds)
+    {
+        bounds = confinementBounds;
+        return encounterStarted &&
+               !encounterCompleted &&
+               confineInsideArea &&
+               confineBossInsideArea &&
+               confineX &&
+               hasConfinementBounds;
+    }
+
     private void Awake()
     {
         // 後でトリガーを無効化しても拘束範囲を使えるよう、起動時に bounds を確定しておく。
