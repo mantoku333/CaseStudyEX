@@ -48,8 +48,9 @@ public class CameraManager : MonoBehaviour
             impulseSource = gameObject.AddComponent<CinemachineImpulseSource>();
         }
 
+        EnsureImpulseSourceConfigured();
         FindCameras();
-        EnsureImpulseListeners();
+        EnsureImpulseListeners(ResolveImpulseChannel());
     }
 
     private void FindCameras()
@@ -200,7 +201,36 @@ public class CameraManager : MonoBehaviour
 
     public void PlayShake(float force, Vector3 direction)
     {
-        EnsureImpulseListeners();
+        if (impulseSource == null)
+        {
+            impulseSource = GetComponent<CinemachineImpulseSource>();
+        }
+
+        if (impulseSource == null)
+        {
+            impulseSource = gameObject.AddComponent<CinemachineImpulseSource>();
+        }
+
+        EnsureImpulseSourceConfigured();
+        EnsureImpulseListeners(ResolveImpulseChannel());
+
+        Vector3 impulsePosition = ResolveImpulsePosition();
+        Vector3 velocity = direction.sqrMagnitude > Mathf.Epsilon
+            ? direction.normalized * force
+            : impulseSource.DefaultVelocity * force;
+        impulseSource.GenerateImpulseAtPositionWithVelocity(
+            impulsePosition,
+            velocity);
+        Debug.Log($"[CameraManager] PlayShake: {force}, direction={velocity.normalized}");
+    }
+
+    public void PlayShakePulses(float force, Vector3 direction, int pulseCount)
+    {
+        if (pulseCount <= 1)
+        {
+            PlayShake(force, direction);
+            return;
+        }
 
         if (impulseSource == null)
         {
@@ -212,14 +242,105 @@ public class CameraManager : MonoBehaviour
             impulseSource = gameObject.AddComponent<CinemachineImpulseSource>();
         }
 
+        EnsureImpulseSourceConfigured();
+        int impulseChannel = ResolveImpulseChannel();
+        EnsureImpulseListeners(impulseChannel);
+
         Vector3 impulsePosition = ResolveImpulsePosition();
         Vector3 velocity = direction.sqrMagnitude > Mathf.Epsilon
             ? direction.normalized * force
             : impulseSource.DefaultVelocity * force;
-        impulseSource.GenerateImpulseAtPositionWithVelocity(
-            impulsePosition,
-            velocity);
-        Debug.Log($"[CameraManager] PlayShake: {force}, direction={velocity.normalized}");
+
+        CinemachineImpulseDefinition pulseDefinition = CreatePulseImpulseDefinition(
+            impulseSource.ImpulseDefinition,
+            impulseChannel,
+            pulseCount);
+        pulseDefinition.CreateEvent(impulsePosition, velocity);
+        Debug.Log($"[CameraManager] PlayShakePulses: {force}, direction={velocity.normalized}, count={pulseCount}");
+    }
+
+    private static CinemachineImpulseDefinition CreatePulseImpulseDefinition(
+        CinemachineImpulseDefinition sourceDefinition,
+        int impulseChannel,
+        int pulseCount)
+    {
+        float impulseDuration = sourceDefinition != null
+            ? Mathf.Max(0.01f, sourceDefinition.ImpulseDuration)
+            : 0.2f;
+
+        return new CinemachineImpulseDefinition
+        {
+            ImpulseChannel = impulseChannel != 0 ? impulseChannel : 1,
+            ImpulseShape = CinemachineImpulseDefinition.ImpulseShapes.Custom,
+            CustomImpulseShape = CreateAlternatingPulseCurve(pulseCount),
+            ImpulseDuration = impulseDuration,
+            ImpulseType = CinemachineImpulseDefinition.ImpulseTypes.Uniform,
+            DissipationDistance = sourceDefinition != null ? sourceDefinition.DissipationDistance : 100f,
+            DissipationRate = sourceDefinition != null ? sourceDefinition.DissipationRate : 0.25f,
+            PropagationSpeed = sourceDefinition != null ? sourceDefinition.PropagationSpeed : 343f,
+            ImpactRadius = sourceDefinition != null ? sourceDefinition.ImpactRadius : 100f,
+            DirectionMode = sourceDefinition != null
+                ? sourceDefinition.DirectionMode
+                : CinemachineImpulseManager.ImpulseEvent.DirectionModes.Fixed,
+            DissipationMode = sourceDefinition != null
+                ? sourceDefinition.DissipationMode
+                : CinemachineImpulseManager.ImpulseEvent.DissipationModes.ExponentialDecay
+        };
+    }
+
+    private static AnimationCurve CreateAlternatingPulseCurve(int pulseCount)
+    {
+        pulseCount = Mathf.Max(1, pulseCount);
+        Keyframe[] keys = new Keyframe[(pulseCount * 2) + 1];
+        keys[0] = new Keyframe(0f, 0f);
+
+        for (int i = 0; i < pulseCount; i++)
+        {
+            float sign = i % 2 == 0 ? 1f : -1f;
+            keys[(i * 2) + 1] = new Keyframe((i + 0.5f) / pulseCount, sign);
+            keys[(i * 2) + 2] = new Keyframe((i + 1f) / pulseCount, 0f);
+        }
+
+        return new AnimationCurve(keys);
+    }
+
+    private void EnsureImpulseSourceConfigured()
+    {
+        if (impulseSource == null)
+        {
+            return;
+        }
+
+        CinemachineImpulseDefinition definition = impulseSource.ImpulseDefinition;
+        if (definition == null)
+        {
+            definition = new CinemachineImpulseDefinition();
+            impulseSource.ImpulseDefinition = definition;
+        }
+
+        if (definition.ImpulseChannel == 0)
+        {
+            definition.ImpulseChannel = 1;
+        }
+
+        if (definition.ImpulseType == CinemachineImpulseDefinition.ImpulseTypes.Legacy &&
+            definition.RawSignal == null)
+        {
+            definition.ImpulseShape = CinemachineImpulseDefinition.ImpulseShapes.Bump;
+            definition.ImpulseDuration = 0.2f;
+            definition.ImpulseType = CinemachineImpulseDefinition.ImpulseTypes.Uniform;
+            definition.DissipationDistance = 100f;
+            definition.DissipationRate = 0.25f;
+            definition.PropagationSpeed = 343f;
+        }
+    }
+
+    private int ResolveImpulseChannel()
+    {
+        int channel = impulseSource != null && impulseSource.ImpulseDefinition != null
+            ? impulseSource.ImpulseDefinition.ImpulseChannel
+            : 1;
+        return channel != 0 ? channel : 1;
     }
 
     private static Vector3 ResolveImpulsePosition()
@@ -254,7 +375,7 @@ public class CameraManager : MonoBehaviour
         return mainCamera != null ? mainCamera.transform.position : Vector3.zero;
     }
 
-    private static void EnsureImpulseListeners()
+    private static void EnsureImpulseListeners(int channelMask)
     {
         var cameras = Object.FindObjectsByType<CinemachineCamera>(
             FindObjectsInactive.Include,
@@ -262,12 +383,35 @@ public class CameraManager : MonoBehaviour
 
         foreach (CinemachineCamera camera in cameras)
         {
-            if (camera == null || camera.GetComponent<CinemachineImpulseListener>() != null)
+            if (camera == null)
             {
                 continue;
             }
 
-            camera.gameObject.AddComponent<CinemachineImpulseListener>();
+            CinemachineImpulseListener listener = camera.GetComponent<CinemachineImpulseListener>();
+            if (listener == null)
+            {
+                listener = camera.gameObject.AddComponent<CinemachineImpulseListener>();
+            }
+
+            ConfigureImpulseListener(listener, channelMask);
         }
+    }
+
+    private static void ConfigureImpulseListener(CinemachineImpulseListener listener, int channelMask)
+    {
+        if (listener == null)
+        {
+            return;
+        }
+
+        listener.ChannelMask |= channelMask != 0 ? channelMask : 1;
+
+        if (listener.Gain <= 0f)
+        {
+            listener.Gain = 1f;
+        }
+
+        listener.UseCameraSpace = true;
     }
 }

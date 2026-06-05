@@ -253,7 +253,7 @@ public class GunController : MonoBehaviour
 
         // 現在速度を「次のFixedUpdateで移動する距離」としてSweepし、壁法線方向だけを取り除く。
         rigidBody2d.linearVelocity =
-            collisionMover.ProjectVelocityForNextFixedStep(rigidBody2d.linearVelocity);
+            collisionMover.ProjectRecoilVelocityForNextFixedStep(rigidBody2d.linearVelocity);
     }
 
     private float GetCurrentRecoilPowerMultiplier()
