@@ -116,6 +116,10 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
     private bool activeRebindAllowsMouse;
     private bool openFullMapAfterClose;
     private float previousTimeScale = 1f;
+    private Rigidbody2D pausedPlayerRigidbody;
+    private Vector2 pausedPlayerLinearVelocity;
+    private float pausedPlayerAngularVelocity;
+    private bool hasPausedPlayerVelocity;
     private float nextAudioRefreshTime;
     private float statusHideAt;
     private float keyboardScrollNormalized;
@@ -598,12 +602,7 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             pausedBehaviours.Add(behaviour);
         }
 
-        Rigidbody2D body = playerObject.GetComponent<Rigidbody2D>();
-        if (body != null)
-        {
-            body.linearVelocity = Vector2.zero;
-            body.angularVelocity = 0f;
-        }
+        CapturePausedPlayerVelocity(playerObject);
     }
 
     private void RestoreGameplayState()
@@ -660,6 +659,8 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
             pausedPlayerInput = null;
         }
 
+        RestorePausedPlayerVelocity();
+
         for (int i = 0; i < pausedBehaviours.Count; i++)
         {
             if (pausedBehaviours[i] != null)
@@ -677,6 +678,44 @@ public sealed class MantokuStoryOptionsMenu : MonoBehaviour
         ShowStatus(saved
             ? "\u30BB\u30FC\u30D6\u3057\u307E\u3057\u305F"
             : "\u30BB\u30FC\u30D6\u306B\u5931\u6557\u3057\u307E\u3057\u305F");
+    }
+
+    private void CapturePausedPlayerVelocity(GameObject playerObject)
+    {
+        pausedPlayerRigidbody = null;
+        pausedPlayerLinearVelocity = Vector2.zero;
+        pausedPlayerAngularVelocity = 0f;
+        hasPausedPlayerVelocity = false;
+
+        if (playerObject == null)
+        {
+            return;
+        }
+
+        Rigidbody2D body = playerObject.GetComponent<Rigidbody2D>();
+        if (body == null)
+        {
+            return;
+        }
+
+        pausedPlayerRigidbody = body;
+        pausedPlayerLinearVelocity = body.linearVelocity;
+        pausedPlayerAngularVelocity = body.angularVelocity;
+        hasPausedPlayerVelocity = true;
+    }
+
+    private void RestorePausedPlayerVelocity()
+    {
+        if (hasPausedPlayerVelocity && pausedPlayerRigidbody != null)
+        {
+            pausedPlayerRigidbody.linearVelocity = pausedPlayerLinearVelocity;
+            pausedPlayerRigidbody.angularVelocity = pausedPlayerAngularVelocity;
+        }
+
+        pausedPlayerRigidbody = null;
+        pausedPlayerLinearVelocity = Vector2.zero;
+        pausedPlayerAngularVelocity = 0f;
+        hasPausedPlayerVelocity = false;
     }
 
     public void OpenMap()
