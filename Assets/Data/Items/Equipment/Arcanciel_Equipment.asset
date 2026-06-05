@@ -24,8 +24,8 @@ MonoBehaviour:
   stackable: 0
   maxStackSize: 99
   pickupSound: {fileID: 0}
-  equipmentEffects:
-  - effectType: 2
+  equipmentAbility:
+  - abilityType: 2
     value: 5
   equipmentVisualLayers:
   - layerName: 

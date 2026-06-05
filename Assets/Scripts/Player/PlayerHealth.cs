@@ -15,10 +15,14 @@ namespace Player
         [SerializeField, Min(0f)] private float damageCooldownSeconds = 3f;
         [SerializeField] private int maxHealthBonus = 0;
 
+        [Header("SE")]
+        [SerializeField] private AudioClip playerDamageClip;
+
         private int currentHealth;
         private float nextDamageTime;
         private bool deathNotified;
         private bool restoredFromSave;
+        private AudioSource audioSource;
 
         public int Priority => 230;
 
@@ -58,6 +62,7 @@ namespace Player
         {
             TryResolveStatsData();
             TryResolveDodgeController();
+            TryResolveAudioSource();
         }
 
         private void OnEnable()
@@ -137,6 +142,7 @@ namespace Player
 
             nextDamageTime = Time.time + Mathf.Max(0f, cooldownSeconds);
 
+            PlaySE(playerDamageClip);
             NotifyHealthChanged();
             return true;
         }
@@ -310,6 +316,39 @@ namespace Player
             if (dodgeController == null)
             {
                 dodgeController = GetComponentInChildren<global::DodgeController>(true);
+            }
+        }
+
+        private void TryResolveAudioSource()
+        {
+            if (audioSource != null)
+            {
+                return;
+            }
+
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = GetComponentInParent<AudioSource>();
+            }
+
+            if (audioSource == null)
+            {
+                audioSource = GetComponentInChildren<AudioSource>(true);
+            }
+        }
+
+        private void PlaySE(AudioClip clip)
+        {
+            if (clip == null)
+            {
+                return;
+            }
+
+            TryResolveAudioSource();
+            if (audioSource != null)
+            {
+                audioSource.PlayOneShot(clip);
             }
         }
 
