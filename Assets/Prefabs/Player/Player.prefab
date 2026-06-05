@@ -375,7 +375,7 @@ MonoBehaviour:
   attackCollider: {fileID: 4697355616983758325}
   leftFacingAttackColliderRightOffset: 5
   player_normalAttack: {fileID: 8300000, guid: 298ef99b3d24d514ba42518424f5ddf3, type: 3}
-  player_attackHit: {fileID: 8300000, guid: e696d0bdc1b833747b0eaa12f9d98789, type: 3}
+  player_attackHit: {fileID: 8300000, guid: c8714f28fa2c0094c92f7434e053645c, type: 3}
   attackEffectTexture: {fileID: 2800000, guid: f2f6bacc83f7c594fb33b917d075f4c5, type: 3}
   attackEffectFrameSeconds: 0.025
   attackEffectWorldOffset: {x: 0, y: 0.1, z: 0}
@@ -411,7 +411,7 @@ MonoBehaviour:
   parryEffectSortingOrderOffset: 4
   copyPlayerMaterial: 1
   umbrella_open: {fileID: 8300000, guid: b23093459fc678f498899d1ceed37ba0, type: 3}
-  parrySuccessClip: {fileID: 0}
+  parrySuccessClip: {fileID: 8300000, guid: 8f6922e4da234c34c942ae55fa1e8462, type: 3}
 --- !u!1 &3013482320833118052
 GameObject:
   m_ObjectHideFlags: 0
@@ -711,6 +711,7 @@ MonoBehaviour:
   dodgeController: {fileID: 0}
   damageCooldownSeconds: 3
   maxHealthBonus: 0
+  playerDamageClip: {fileID: 8300000, guid: 5d07316111d5d54458cae5d7e4158754, type: 3}
 --- !u!114 &2152828851043830257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -935,6 +936,7 @@ MonoBehaviour:
   footstepAudioSource: {fileID: 0}
   logFootstepDebug: 0
   debugLogInterval: 0.5
+  useAnimationEventsForFootsteps: 1
 --- !u!114 &1661112223334445556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -968,6 +970,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerEquipmentController
   equipmentCatalog:
   - {fileID: 11400000, guid: 6c949d385be7b974e80518772677af58, type: 2}
+  visualAnchor: {fileID: 0}
   backVisualRoot: {fileID: 0}
   frontVisualRoot: {fileID: 0}
 --- !u!1 &5437759847484700699
@@ -1097,6 +1100,7 @@ GameObject:
   - component: {fileID: 4532821241702585450}
   - component: {fileID: 6106619156735840989}
   - component: {fileID: 5707541942677514976}
+  - component: {fileID: 5649830263680809920}
   m_Layer: 0
   m_Name: SpriteView
   m_TagString: Untagged
@@ -1233,6 +1237,29 @@ MonoBehaviour:
   attackStateName: attack
   recoilBoostSkyStateName: recoilboost_sky
   logCurrentSpriteEveryFrame: 0
+--- !u!114 &5649830263680809920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6862321633324178330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51f5b61ce4fb24340a7a775c4c507ae6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFootstepSpriteEventRelay
+  spriteRenderer: {fileID: 0}
+  footstepController: {fileID: 6628913746285037194}
+  footstepSprites:
+  - {fileID: -127644321659321320, guid: eb3015234ba929449a76aff0ab4211bc, type: 3}
+  - {fileID: 6487802830032015595, guid: eb3015234ba929449a76aff0ab4211bc, type: 3}
+  - {fileID: -6024755055521224972, guid: 4e2f308aedbf1c24bb42a8b10d8e5409, type: 3}
+  - {fileID: 7514438660041222757, guid: 4e2f308aedbf1c24bb42a8b10d8e5409, type: 3}
+  - {fileID: 3048683466449391814, guid: d2b25dbd30751324fb76122eb047627d, type: 3}
+  - {fileID: -3976302733274222075, guid: d2b25dbd30751324fb76122eb047627d, type: 3}
+  - {fileID: 7249213566131619120, guid: f7bad9c43e263334fa7f44ca4ca48ddd, type: 3}
+  - {fileID: 980366382651412403, guid: f7bad9c43e263334fa7f44ca4ca48ddd, type: 3}
 --- !u!1 &7408946771973873088
 GameObject:
   m_ObjectHideFlags: 0
@@ -1279,6 +1306,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7edd7569fb719334182586f503610334, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackHitbox
+  blockHitsThroughVerticalWalls: 1
+  verticalWallLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  includeShutterWalls: 1
+  verticalWallNormalMinX: 0.5
 --- !u!114 &7129365047701654321
 MonoBehaviour:
   m_ObjectHideFlags: 0

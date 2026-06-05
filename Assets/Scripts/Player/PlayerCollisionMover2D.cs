@@ -11,6 +11,7 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
 {
     private const string GroundLayerName = "Ground";
     private const float MinMoveDistance = 0.0001f;
+    private const float BlockingNormalDotThreshold = -0.0001f;
 
     // 基本は Ground レイヤーのみを固い壁として扱う。FallThroughFloor やトリガーは移動阻害に使わない。
     [SerializeField] private LayerMask solidLayerMask;
@@ -117,6 +118,30 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
         return CalculateSlideDelta(desiredDelta) / fixedDeltaTime;
     }
 
+    public Vector2 ProjectRecoilVelocityForNextFixedStep(Vector2 velocity)
+    {
+        if (!CanMove())
+        {
+            return velocity;
+        }
+
+        ResolveInitialOverlaps();
+
+        float fixedDeltaTime = Time.fixedDeltaTime;
+        if (fixedDeltaTime <= 0f)
+        {
+            return velocity;
+        }
+
+        Vector2 desiredDelta = velocity * fixedDeltaTime;
+        if (desiredDelta.sqrMagnitude <= MinMoveDistance * MinMoveDistance)
+        {
+            return velocity;
+        }
+
+        return CalculateRecoilSlideDelta(desiredDelta) / fixedDeltaTime;
+    }
+
     public Vector2 CalculateSlideDelta(Vector2 desiredDelta)
     {
         if (!CanMove())
@@ -165,6 +190,57 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
 
             Vector2 leftoverDelta = direction * leftoverDistance;
             remainingDelta = ProjectOntoSurface(leftoverDelta, hit.normal);
+        }
+
+        rigidBody2d.position = startPosition;
+        Physics2D.SyncTransforms();
+        return totalDelta;
+    }
+
+    private Vector2 CalculateRecoilSlideDelta(Vector2 desiredDelta)
+    {
+        if (!CanMove())
+        {
+            return Vector2.zero;
+        }
+
+        RebuildFilterIfNeeded();
+
+        Vector2 startPosition = rigidBody2d.position;
+        Vector2 totalDelta = Vector2.zero;
+        Vector2 remainingDelta = desiredDelta;
+
+        for (int i = 0; i < slideIterations; i++)
+        {
+            float remainingDistance = remainingDelta.magnitude;
+            if (remainingDistance <= MinMoveDistance)
+            {
+                break;
+            }
+
+            rigidBody2d.position = startPosition + totalDelta;
+            Physics2D.SyncTransforms();
+
+            Vector2 direction = remainingDelta / remainingDistance;
+            if (!TryCast(direction, remainingDistance + skinWidth, out RaycastHit2D hit))
+            {
+                totalDelta += remainingDelta;
+                break;
+            }
+
+            float safeDistance = Mathf.Max(0f, hit.distance - skinWidth);
+            Vector2 safeDelta = direction * Mathf.Min(safeDistance, remainingDistance);
+            totalDelta += safeDelta;
+
+            float consumedDistance = safeDelta.magnitude;
+            float leftoverDistance = Mathf.Max(0f, remainingDistance - consumedDistance);
+            if (leftoverDistance <= MinMoveDistance)
+            {
+                break;
+            }
+
+            Vector2 leftoverDelta = direction * leftoverDistance;
+            remainingDelta = ProjectRecoilOntoSurface(leftoverDelta, hit);
         }
 
         rigidBody2d.position = startPosition;
@@ -283,6 +359,11 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
                 continue;
             }
 
+            if (!IsBlockingHit(direction, hit))
+            {
+                continue;
+            }
+
             if (hit.distance < closestDistance)
             {
                 closestDistance = hit.distance;
@@ -307,6 +388,66 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
         // 自分自身や子コライダーを壁として扱わない。
         Rigidbody2D hitRigidbody = hitCollider.attachedRigidbody;
         return hitRigidbody == null || hitRigidbody != rigidBody2d;
+    }
+
+    private bool IsBlockingHit(Vector2 direction, RaycastHit2D hit)
+    {
+        if (IsVerticalSideContact(hit))
+        {
+            return IsMovingIntoVerticalSide(direction, hit.collider);
+        }
+
+        Vector2 normal = hit.normal;
+        if (normal.sqrMagnitude <= MinMoveDistance * MinMoveDistance)
+        {
+            return true;
+        }
+
+        normal.Normalize();
+        return Vector2.Dot(direction, normal) < BlockingNormalDotThreshold;
+    }
+
+    private bool IsVerticalSideContact(RaycastHit2D hit)
+    {
+        if (hit.collider == null || bodyCollider == null)
+        {
+            return false;
+        }
+
+        Bounds bodyBounds = bodyCollider.bounds;
+        Bounds hitBounds = hit.collider.bounds;
+        float verticalOverlap =
+            Mathf.Min(bodyBounds.max.y, hitBounds.max.y) -
+            Mathf.Max(bodyBounds.min.y, hitBounds.min.y);
+
+        if (verticalOverlap <= MinMoveDistance)
+        {
+            return false;
+        }
+
+        float rightSideGap = Mathf.Abs(bodyBounds.max.x - hitBounds.min.x);
+        float leftSideGap = Mathf.Abs(hitBounds.max.x - bodyBounds.min.x);
+        float sideContactTolerance = skinWidth + 0.01f;
+
+        if (Mathf.Min(rightSideGap, leftSideGap) <= sideContactTolerance)
+        {
+            return true;
+        }
+
+        return Mathf.Abs(hit.normal.x) > Mathf.Abs(hit.normal.y);
+    }
+
+    private bool IsMovingIntoVerticalSide(Vector2 direction, Collider2D hitCollider)
+    {
+        if (hitCollider == null || bodyCollider == null)
+        {
+            return false;
+        }
+
+        bool wallIsRight = hitCollider.bounds.center.x >= bodyCollider.bounds.center.x;
+        return wallIsRight
+            ? direction.x > MinMoveDistance
+            : direction.x < -MinMoveDistance;
     }
 
     private void RebuildFilterIfNeeded()
@@ -345,6 +486,21 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
 
         normal.Normalize();
         return delta - normal * Vector2.Dot(delta, normal);
+    }
+
+    private Vector2 ProjectRecoilOntoSurface(Vector2 delta, RaycastHit2D hit)
+    {
+        if (IsVerticalSideContact(hit))
+        {
+            if (!IsMovingIntoVerticalSide(delta, hit.collider))
+            {
+                return delta;
+            }
+
+            return new Vector2(0f, delta.y);
+        }
+
+        return ProjectOntoSurface(delta, hit.normal);
     }
 
     private void ClearCastBuffer(int usedCount)

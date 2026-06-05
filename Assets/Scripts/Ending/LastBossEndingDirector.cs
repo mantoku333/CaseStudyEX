@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using GameName.Enemy;
 using GameName.UI;
+using Metroidvania.Data;
 using Player;
 using Spine;
 using Spine.Unity;
@@ -40,6 +41,17 @@ namespace GameName.Ending
         [SerializeField, Min(0f)] private float blackHoldSeconds = 1.35f;
         [SerializeField, Min(0f)] private float skyRiseDuration = 5f;
         [SerializeField, Min(0f)] private float endingBgmStartBeforeFadeEndSeconds = 0.5f;
+
+        [Header("Arcanciel Reward")]
+        [SerializeField] private bool grantArcancielReward = true;
+        [SerializeField] private ItemData arcancielRewardItemData;
+        [SerializeField] private string arcancielRewardProgressFlagKey = GameProgressKeys.EquipmentArcancielUnlocked;
+        [SerializeField] private Sprite arcancielRewardNotificationSprite;
+        [SerializeField] private Vector2 arcancielRewardNotificationSize = new Vector2(512f, 130f);
+        [SerializeField] private Vector2 arcancielRewardNotificationBottomLeftOffset = new Vector2(32f, 32f);
+        [SerializeField, Min(0f)] private float arcancielRewardSlideInDuration = 0.45f;
+        [SerializeField, Min(0f)] private float arcancielRewardHoldSeconds = 1.2f;
+        [SerializeField, Min(0f)] private float arcancielRewardSlideOutDuration = 0.35f;
 
         [Header("Sky Image")]
         [SerializeField] private Sprite skyImageSprite;
@@ -84,11 +96,15 @@ namespace GameName.Ending
         private bool returningToTitle;
         private bool runtimeSkyImageCreated;
         private bool runtimeCreditsCanvasCreated;
+        private bool runtimeRewardNotificationCanvasCreated;
         private float skipInputIgnoreUntil;
         private int originalCameraPriority;
         private bool originalCameraPriorityEnabled;
         private bool hasOriginalCameraPriority;
         private global::PlayerController endingPlayerController;
+        private CanvasGroup arcancielRewardNotificationCanvasGroup;
+        private RectTransform arcancielRewardNotificationRect;
+        private Image arcancielRewardNotificationImage;
 
         private void Awake()
         {
@@ -119,6 +135,11 @@ namespace GameName.Ending
             if (runtimeCreditsCanvasCreated && creditsCanvasPanel != null)
             {
                 Destroy(creditsCanvasPanel.gameObject);
+            }
+
+            if (runtimeRewardNotificationCanvasCreated && arcancielRewardNotificationCanvasGroup != null)
+            {
+                Destroy(arcancielRewardNotificationCanvasGroup.gameObject);
             }
         }
 
@@ -175,16 +196,38 @@ namespace GameName.Ending
                 StopCoroutine(endingRoutine);
             }
 
-            endingRoutine = StartCoroutine(PlayEndingRoutine());
+            endingRoutine = StartCoroutine(PlayArcancielRewardThenEndingRoutine());
         }
 
-        private IEnumerator PlayEndingRoutine()
+        private IEnumerator PlayArcancielRewardThenEndingRoutine()
+        {
+            endingStarted = true;
+            skipInputIgnoreUntil = float.PositiveInfinity;
+
+            ResolveSceneReferences();
+            DisableGameplayControls();
+
+            bool rewardGranted = grantArcancielReward &&
+                TryGrantArcancielReward(arcancielRewardItemData, arcancielRewardProgressFlagKey);
+
+            if (rewardGranted)
+            {
+                yield return PlayArcancielRewardNotification();
+            }
+
+            yield return PlayEndingRoutine(true);
+        }
+
+        private IEnumerator PlayEndingRoutine(bool gameplayControlsAlreadyDisabled = false)
         {
             endingStarted = true;
             skipInputIgnoreUntil = Time.unscaledTime + 0.25f;
 
             ResolveSceneReferences();
-            DisableGameplayControls();
+            if (!gameplayControlsAlreadyDisabled)
+            {
+                DisableGameplayControls();
+            }
 
             // Other death subscribers may start coroutines, so wait one frame before hiding their GameObjects.
             yield return null;
@@ -221,6 +264,136 @@ namespace GameName.Ending
             {
                 ReturnToTitle();
             }
+        }
+
+        public static bool TryGrantArcancielReward(ItemData rewardItemData, string fallbackProgressFlagKey)
+        {
+            string itemId = ResolveArcancielRewardItemId(rewardItemData, fallbackProgressFlagKey);
+            if (string.IsNullOrWhiteSpace(itemId) || GameProgressFlags.Get(itemId))
+            {
+                return false;
+            }
+
+            GameProgressFlags.Set(itemId, true);
+            GameItems.SetCount(itemId, 1);
+            return true;
+        }
+
+        public static string ResolveArcancielRewardItemId(ItemData rewardItemData, string fallbackProgressFlagKey)
+        {
+            if (rewardItemData != null && !string.IsNullOrWhiteSpace(rewardItemData.itemId))
+            {
+                return rewardItemData.itemId;
+            }
+
+            return fallbackProgressFlagKey;
+        }
+
+        private IEnumerator PlayArcancielRewardNotification()
+        {
+            if (!EnsureArcancielRewardNotification())
+            {
+                yield break;
+            }
+
+            Vector2 shownPosition = arcancielRewardNotificationBottomLeftOffset;
+            Vector2 hiddenPosition = new Vector2(
+                -Mathf.Max(1f, arcancielRewardNotificationSize.x) - 32f,
+                shownPosition.y);
+
+            arcancielRewardNotificationCanvasGroup.alpha = 1f;
+            arcancielRewardNotificationRect.anchoredPosition = hiddenPosition;
+            arcancielRewardNotificationImage.enabled = true;
+
+            yield return MoveArcancielRewardNotification(hiddenPosition, shownPosition, arcancielRewardSlideInDuration);
+
+            if (arcancielRewardHoldSeconds > 0f)
+            {
+                yield return new WaitForSecondsRealtime(arcancielRewardHoldSeconds);
+            }
+
+            yield return MoveArcancielRewardNotification(shownPosition, hiddenPosition, arcancielRewardSlideOutDuration);
+            arcancielRewardNotificationCanvasGroup.alpha = 0f;
+        }
+
+        private IEnumerator MoveArcancielRewardNotification(Vector2 from, Vector2 to, float duration)
+        {
+            if (arcancielRewardNotificationRect == null)
+            {
+                yield break;
+            }
+
+            if (duration <= 0f)
+            {
+                arcancielRewardNotificationRect.anchoredPosition = to;
+                yield break;
+            }
+
+            float elapsed = 0f;
+            while (elapsed < duration && !returningToTitle)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                arcancielRewardNotificationRect.anchoredPosition = Vector2.LerpUnclamped(from, to, SmootherStep(t));
+                yield return null;
+            }
+
+            if (!returningToTitle)
+            {
+                arcancielRewardNotificationRect.anchoredPosition = to;
+            }
+        }
+
+        private bool EnsureArcancielRewardNotification()
+        {
+            if (arcancielRewardNotificationSprite == null)
+            {
+                Debug.LogWarning($"{nameof(LastBossEndingDirector)} has no Arcanciel reward notification sprite.", this);
+                return false;
+            }
+
+            if (arcancielRewardNotificationCanvasGroup == null)
+            {
+                GameObject canvasObject = new GameObject("ArcancielRewardNotificationCanvas");
+                Canvas canvas = canvasObject.AddComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvas.sortingOrder = 10000;
+
+                CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1920f, 1080f);
+                scaler.matchWidthOrHeight = 0.5f;
+
+                arcancielRewardNotificationCanvasGroup = canvasObject.AddComponent<CanvasGroup>();
+                arcancielRewardNotificationCanvasGroup.alpha = 0f;
+                arcancielRewardNotificationCanvasGroup.interactable = false;
+                arcancielRewardNotificationCanvasGroup.blocksRaycasts = false;
+                runtimeRewardNotificationCanvasCreated = true;
+            }
+
+            if (arcancielRewardNotificationImage == null)
+            {
+                GameObject imageObject = new GameObject("ArcancielRewardNotificationImage");
+                imageObject.transform.SetParent(arcancielRewardNotificationCanvasGroup.transform, false);
+
+                arcancielRewardNotificationRect = imageObject.AddComponent<RectTransform>();
+                arcancielRewardNotificationRect.anchorMin = Vector2.zero;
+                arcancielRewardNotificationRect.anchorMax = Vector2.zero;
+                arcancielRewardNotificationRect.pivot = Vector2.zero;
+
+                arcancielRewardNotificationImage = imageObject.AddComponent<Image>();
+                arcancielRewardNotificationImage.raycastTarget = false;
+                arcancielRewardNotificationImage.preserveAspect = true;
+            }
+
+            if (arcancielRewardNotificationRect == null)
+            {
+                arcancielRewardNotificationRect = arcancielRewardNotificationImage.GetComponent<RectTransform>();
+            }
+
+            arcancielRewardNotificationRect.sizeDelta = arcancielRewardNotificationSize;
+            arcancielRewardNotificationImage.sprite = arcancielRewardNotificationSprite;
+            return true;
         }
 
         private IEnumerator AnimateCamera(Vector3 fromPosition, Vector3 toPosition, float duration)

@@ -1,5 +1,8 @@
 ﻿using System;
+using Metroidvania.Player;
+using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GameName.Enemy
 {
@@ -32,6 +35,11 @@ namespace GameName.Enemy
         [SerializeField, Min(0.001f)] private float blockedMoveThreshold = 0.01f;
         [SerializeField, Min(0.02f)] private float blockedStopDelay = 0.1f;
 
+        [Header("Camera Shake")]
+        [SerializeField, FormerlySerializedAs("playShakeOnChargeStart")] private bool playShakeOnChargeImpact = true;
+        [SerializeField, FormerlySerializedAs("chargeStartShakeForce"), Min(0f)] private float chargeImpactShakeForce = 1f;
+        [SerializeField, FormerlySerializedAs("chargeStartShakeCount"), Min(1)] private int chargeImpactShakeCount = 2;
+
         [Header("Debug")]
         [SerializeField] private bool drawDebugGizmo = true;
 
@@ -48,10 +56,15 @@ namespace GameName.Enemy
         }
 
         private EnemyController enemyController;
+        private Collider2D bodyCollider;
         private Transform playerTransform;
+        private readonly Collider2D[] bodyHitResults = new Collider2D[8];
+        private ContactFilter2D playerContactFilter;
+        private BossAreaController activeBossArea;
 
         private AttackState attackState = AttackState.Idle;
         private bool encounterActive;
+        private bool playedPlayerImpactShakeThisCharge;
         private float stateTimer;
         private int chargeDirection;
         private float vibrationBaseX;
@@ -68,9 +81,12 @@ namespace GameName.Enemy
 
         public bool IsEncounterActive => encounterActive;
 
+        private const float BossAreaEdgeImpactTolerance = 0.02f;
+
         private void Awake()
         {
             enemyController = GetComponent<EnemyController>();
+            bodyCollider = GetComponent<Collider2D>();
             if (enemyController == null)
             {
                 Debug.LogWarning("StageBossAttack requires EnemyController on the same GameObject.", this);
@@ -78,17 +94,38 @@ namespace GameName.Enemy
                 return;
             }
 
+            BuildPlayerContactFilter();
             encounterActive = startActiveOnPlay;
+        }
+
+        private void OnValidate()
+        {
+            BuildPlayerContactFilter();
+        }
+
+        private void OnEnable()
+        {
+            BossAreaController.EncounterStarted -= HandleBossAreaEncounterStarted;
+            BossAreaController.EncounterStarted += HandleBossAreaEncounterStarted;
+            BossAreaController.EncounterCompleted -= HandleBossAreaEncounterEnded;
+            BossAreaController.EncounterCompleted += HandleBossAreaEncounterEnded;
+            BossAreaController.EncounterReset -= HandleBossAreaEncounterEnded;
+            BossAreaController.EncounterReset += HandleBossAreaEncounterEnded;
         }
 
         private void OnDisable()
         {
+            BossAreaController.EncounterStarted -= HandleBossAreaEncounterStarted;
+            BossAreaController.EncounterCompleted -= HandleBossAreaEncounterEnded;
+            BossAreaController.EncounterReset -= HandleBossAreaEncounterEnded;
+
             if (enemyController == null)
             {
                 return;
             }
 
             encounterActive = false;
+            activeBossArea = null;
             attackState = AttackState.Idle;
             stateTimer = 0f;
             enemyController.PauseMovement(false);
@@ -120,6 +157,7 @@ namespace GameName.Enemy
             attackState = AttackState.Idle;
             stateTimer = 0f;
             blockedTimer = 0f;
+            playedPlayerImpactShakeThisCharge = false;
             enemyController.StopHorizontalMotion();
             enemyController.PauseMovement(false);
             enemyController.ResetPatrolOrigin();
@@ -189,9 +227,33 @@ namespace GameName.Enemy
             chargeStartX = enemyController.CurrentX;
             previousChargeX = chargeStartX;
             blockedTimer = 0f;
+            playedPlayerImpactShakeThisCharge = false;
             attackState = AttackState.Charging;
             // StageBossもEnemy_Tackleと同じSEを、この突進開始時に1回だけ鳴らす。
             ChargeStarted?.Invoke();
+        }
+
+        private void PlayChargeImpactShake()
+        {
+            if (!playShakeOnChargeImpact || chargeImpactShakeForce <= 0f)
+            {
+                return;
+            }
+
+            CameraManager cameraManager = CameraManager.Instance;
+            if (cameraManager == null)
+            {
+                cameraManager = FindFirstObjectByType<CameraManager>(FindObjectsInactive.Include);
+            }
+
+            if (cameraManager == null)
+            {
+                return;
+            }
+
+            Vector3 shakeDirection = Vector3.right * chargeDirection;
+            int shakeCount = Mathf.Max(1, chargeImpactShakeCount);
+            cameraManager.PlayShakePulses(chargeImpactShakeForce, shakeDirection, shakeCount);
         }
 
         private void UpdateChargingState()
@@ -199,8 +261,18 @@ namespace GameName.Enemy
             // 仕様: プレイヤー接触では停止しない。
             enemyController.FaceDirection(chargeDirection);
 
+            TryPlayPlayerImpactShake();
+
             if (stopChargeOnWall && enemyController.IsWallAhead())
             {
+                PlayChargeImpactShake();
+                EnterCooldownState();
+                return;
+            }
+
+            if (HasReachedBossAreaEdge())
+            {
+                PlayChargeImpactShake();
                 EnterCooldownState();
                 return;
             }
@@ -217,6 +289,97 @@ namespace GameName.Enemy
             {
                 EnterCooldownState();
             }
+        }
+
+        private void TryPlayPlayerImpactShake()
+        {
+            if (playedPlayerImpactShakeThisCharge || !IsPlayerTouchingBody())
+            {
+                return;
+            }
+
+            playedPlayerImpactShakeThisCharge = true;
+            PlayChargeImpactShake();
+        }
+
+        private bool IsPlayerTouchingBody()
+        {
+            if (bodyCollider == null)
+            {
+                return false;
+            }
+
+            Bounds bounds = bodyCollider.bounds;
+            Vector2 overlapSize = new Vector2(
+                Mathf.Max(0.01f, bounds.size.x * 0.95f),
+                Mathf.Max(0.01f, bounds.size.y * 0.95f));
+
+            int hitCount = Physics2D.OverlapBox(bounds.center, overlapSize, 0f, playerContactFilter, bodyHitResults);
+            for (int i = 0; i < hitCount; i++)
+            {
+                Collider2D hit = bodyHitResults[i];
+                if (hit != null && !hit.isTrigger && IsPlayerCollider(hit))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsPlayerCollider(Collider2D hit)
+        {
+            if (hit == null)
+            {
+                return false;
+            }
+
+            if (hit.transform == transform || hit.transform.IsChildOf(transform))
+            {
+                return false;
+            }
+
+            if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(hit, out PlayerHealth playerHealth, out _))
+            {
+                return false;
+            }
+
+            return string.IsNullOrEmpty(playerTag) ||
+                   hit.CompareTag(playerTag) ||
+                   playerHealth.CompareTag(playerTag) ||
+                   (playerHealth.transform.root != null && playerHealth.transform.root.CompareTag(playerTag));
+        }
+
+        private void BuildPlayerContactFilter()
+        {
+            ContactFilter2D filter = new ContactFilter2D
+            {
+                useLayerMask = true,
+                useTriggers = true
+            };
+            filter.SetLayerMask(PlayerBodyColliderUtility.GetPlayerBodyLayerMask());
+            playerContactFilter = filter;
+        }
+
+        private bool HasReachedBossAreaEdge()
+        {
+            if (activeBossArea == null || bodyCollider == null)
+            {
+                return false;
+            }
+
+            if (!activeBossArea.TryGetActiveBossHorizontalConfinementBounds(out Bounds bounds))
+            {
+                return false;
+            }
+
+            Bounds bodyBounds = bodyCollider.bounds;
+            if (chargeDirection >= 0)
+            {
+                return bodyBounds.max.x >= bounds.max.x - BossAreaEdgeImpactTolerance;
+            }
+
+            return bodyBounds.min.x <= bounds.min.x + BossAreaEdgeImpactTolerance;
         }
 
         private bool IsChargeBlockedThisFrame()
@@ -313,6 +476,24 @@ namespace GameName.Enemy
             playerTransform = playerObject.transform;
             player = playerTransform;
             return true;
+        }
+
+        private void HandleBossAreaEncounterStarted(BossAreaController bossArea)
+        {
+            if (bossArea == null || bossArea.StageBossAttack != this)
+            {
+                return;
+            }
+
+            activeBossArea = bossArea;
+        }
+
+        private void HandleBossAreaEncounterEnded(BossAreaController bossArea)
+        {
+            if (bossArea == activeBossArea)
+            {
+                activeBossArea = null;
+            }
         }
 
         private void OnDrawGizmosSelected()
