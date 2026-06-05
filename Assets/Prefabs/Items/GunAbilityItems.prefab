@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
   itemData: {fileID: 11400000, guid: 7c8a2f78f0d69714ebf972840c2b7285, type: 2}
+  equipOnPickupForDebug: 0
 --- !u!114 &9100000000000000031
 MonoBehaviour:
   m_ObjectHideFlags: 0

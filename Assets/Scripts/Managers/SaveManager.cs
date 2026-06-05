@@ -168,6 +168,7 @@ public sealed class SaveManager : MonoBehaviour
     public static void ClearAllItems()
     {
         GameItems.ClearAll();
+        PlayerEquipmentState.ClearAll();
     }
 
     public static bool HasSave()

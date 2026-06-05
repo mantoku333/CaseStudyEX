@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a596a0122d176fd4d81638a716f851d2, type: 3}
+  m_Name: Arcanciel_Equipment
+  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
+  itemName: Arcanciel
+  itemId: Equipment_Arcanciel_Unlock
+  description: 
+  icon: {fileID: 0}
+  itemType: 2
+  healAmount: 0
+  staminaAmount: 0
+  maxHealthBonus: 0
+  abilityType: 0
+  stackable: 0
+  maxStackSize: 99
+  pickupSound: {fileID: 0}
+  equipmentEffects:
+  - effectType: 2
+    value: 5
+  equipmentVisualLayers:
+  - layerName: 
+    sprite: {fileID: -4849713495142812333, guid: 2c3507b37a38b454abfc93f81eed494c, type: 3}
+    parent: 0
+    localPosition: {x: -1, y: 5.5, z: 0}
+    useLeftFacingLocalPosition: 0
+    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
+    localEulerAngles: {x: 0, y: 0, z: 0}
+    localScale: {x: 0.5, y: 0.5, z: 0.5}
+    sortingOrderOffset: -1

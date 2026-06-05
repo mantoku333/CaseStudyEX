@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: adab7e5b3d4b0c04c9078e8e8d2a1b60, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ParryHitbox
 --- !u!58 &5261322581532133394
 CircleCollider2D:
@@ -518,6 +518,7 @@ GameObject:
   - component: {fileID: -7701998456525910624}
   - component: {fileID: 6628913746285037194}
   - component: {fileID: 1661112223334445556}
+  - component: {fileID: 2558782520259632627}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -696,6 +697,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerHealth
   statsData: {fileID: 0}
+  dodgeController: {fileID: 0}
   damageCooldownSeconds: 3
   maxHealthBonus: 0
 --- !u!114 &2152828851043830257
@@ -712,25 +714,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DodgeController
   dodgeDistance: 5
   dodgeDuration: 0.3
---- !u!114 &1661112223334445556
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4600020788520051928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1df4d3b9e35f4df4ab3f6e7af0e2a8c1, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCollisionMover2D
-  solidLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
-  skinWidth: 0.03
-  slideIterations: 2
-  maxOverlapResolveDistance: 0.2
-  overlapResolveIterations: 2
 --- !u!82 &7711066996538408739
 AudioSource:
   m_ObjectHideFlags: 0
@@ -941,6 +924,41 @@ MonoBehaviour:
   footstepAudioSource: {fileID: 0}
   logFootstepDebug: 0
   debugLogInterval: 0.5
+--- !u!114 &1661112223334445556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df4d3b9e35f4df4ab3f6e7af0e2a8c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCollisionMover2D
+  solidLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  skinWidth: 0.03
+  slideIterations: 2
+  maxOverlapResolveDistance: 0.2
+  overlapResolveIterations: 2
+--- !u!114 &2558782520259632627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b8cb9f9fdad4bf4a94da4f2f2368d5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerEquipmentController
+  equipmentCatalog:
+  - {fileID: 11400000, guid: 6c949d385be7b974e80518772677af58, type: 2}
+  backVisualRoot: {fileID: 0}
+  frontVisualRoot: {fileID: 0}
 --- !u!1 &5437759847484700699
 GameObject:
   m_ObjectHideFlags: 0
@@ -1202,6 +1220,7 @@ MonoBehaviour:
   parryStateName: parry
   changeStateName: change
   attackStateName: attack
+  recoilBoostSkyStateName: recoilboost_sky
   logCurrentSpriteEveryFrame: 0
 --- !u!1 &7408946771973873088
 GameObject:
@@ -1259,7 +1278,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4fbb44d667f44dd8e382cf192a3a1dd, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttackHitEffectPlayer
   hitSpriteSheet: {fileID: 2800000, guid: 636a6156a26cead4ba83a00037b1ba45, type: 3}
   frameColumns: 5
