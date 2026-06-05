@@ -237,7 +237,7 @@ public class RoomCameraTrigger : MonoBehaviour
 
     private void DeactivateOwnCamera()
     {
-        if (IsDefaultTrigger || !HasRoomCamera)
+        if (!HasRoomCamera)
         {
             return;
         }
@@ -333,7 +333,12 @@ public class RoomCameraTrigger : MonoBehaviour
                 continue;
             }
 
-            if (trigger == exception || trigger.IsDefaultTrigger)
+            if (trigger == exception)
+            {
+                continue;
+            }
+
+            if (trigger.IsDefaultTrigger && !trigger.HasRoomCamera)
             {
                 continue;
             }

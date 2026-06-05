@@ -409,7 +409,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             playerTransform.gameObject.scene == managedScene &&
             playerTransform.gameObject.activeInHierarchy)
         {
-            playerPosition = playerTransform.position;
+            playerPosition = ResolvePlayerReferencePoint(playerTransform, playerTransform.position);
             return true;
         }
 
@@ -419,7 +419,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         if (taggedPlayer != null && taggedPlayer.scene == managedScene)
         {
             playerTransform = taggedPlayer.transform;
-            playerPosition = playerTransform.position;
+            playerPosition = ResolvePlayerReferencePoint(playerTransform, playerTransform.position);
             return true;
         }
 
@@ -433,12 +433,65 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             }
 
             playerTransform = player.transform;
-            playerPosition = playerTransform.position;
+            playerPosition = ResolvePlayerReferencePoint(playerTransform, playerTransform.position);
             return true;
         }
 
         playerPosition = default;
         return false;
+    }
+
+    private static Vector3 ResolvePlayerReferencePoint(Transform player, Vector3 fallbackPosition)
+    {
+        if (player == null)
+        {
+            return fallbackPosition;
+        }
+
+        Collider2D[] colliders = player.GetComponentsInChildren<Collider2D>();
+        if (TryResolveBoundsCenter(colliders, false, out Vector3 center) ||
+            TryResolveBoundsCenter(colliders, true, out center))
+        {
+            return center;
+        }
+
+        return fallbackPosition;
+    }
+
+    private static bool TryResolveBoundsCenter(
+        Collider2D[] colliders,
+        bool includeTriggers,
+        out Vector3 center)
+    {
+        bool hasBounds = false;
+        Bounds bounds = default;
+
+        if (colliders != null)
+        {
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Collider2D collider = colliders[i];
+                if (collider == null ||
+                    !collider.enabled ||
+                    !includeTriggers && collider.isTrigger)
+                {
+                    continue;
+                }
+
+                if (!hasBounds)
+                {
+                    bounds = collider.bounds;
+                    hasBounds = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(collider.bounds);
+                }
+            }
+        }
+
+        center = hasBounds ? bounds.center : Vector3.zero;
+        return hasBounds;
     }
 
     private void RememberResolvedActiveRoom(RoomCameraTrigger room)
@@ -608,16 +661,36 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
     private RoomCameraTrigger ResolveRoomForPosition(Vector3 position)
     {
+        RoomCameraTrigger bestRoom = null;
+        float bestArea = float.PositiveInfinity;
+
         for (int i = 0; i < roomTriggers.Length; i++)
         {
             RoomCameraTrigger roomTrigger = roomTriggers[i];
-            if (roomTrigger != null && roomTrigger.ContainsPoint(position))
+            if (roomTrigger == null || !roomTrigger.ContainsPoint(position))
             {
-                return roomTrigger;
+                continue;
+            }
+
+            float area = ResolveRoomBoundsArea(roomTrigger);
+            if (area < bestArea)
+            {
+                bestArea = area;
+                bestRoom = roomTrigger;
             }
         }
 
-        return null;
+        return bestRoom;
+    }
+
+    private static float ResolveRoomBoundsArea(RoomCameraTrigger room)
+    {
+        if (room != null && room.TryGetAreaBounds(out Bounds bounds))
+        {
+            return bounds.size.x * bounds.size.y;
+        }
+
+        return float.MaxValue;
     }
 
     private static bool HasScenePrologueSource(Scene scene)
