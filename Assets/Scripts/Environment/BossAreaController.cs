@@ -37,6 +37,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     [SerializeField] private DualTargetCameraTarget dualTargetCameraTarget;
     [SerializeField] private int activeCameraPriority = 50;
     [SerializeField] private int inactiveCameraPriority = 0;
+    [SerializeField] private bool restoreRoomCameraAfterBoss = true;
 
     [Header("BGM")]
     [SerializeField] private StageBgmController stageBgm;
@@ -235,6 +236,11 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         }
 
         DeactivateBossCamera();
+
+        if (restoreRoomCameraAfterBoss)
+        {
+            RestoreRoomCameraAfterBoss();
+        }
 
         if (returnToNormalAfterBoss)
         {
@@ -847,6 +853,35 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
         fixedBossCamera.Priority.Value = inactiveCameraPriority;
         fixedBossCamera.Priority.Enabled = true;
+    }
+
+    private void RestoreRoomCameraAfterBoss()
+    {
+        RoomCameraTrigger roomTrigger = GetComponent<RoomCameraTrigger>();
+        if (roomTrigger != null)
+        {
+            AlignDefaultFollowCameraBeforeRoomRestore(roomTrigger);
+            roomTrigger.ActivateCamera();
+            return;
+        }
+
+        Transform player = playerRoot != null ? playerRoot : ResolvePlayerRoot();
+        if (player != null)
+        {
+            RoomCameraTrigger.TryActivateRoomAtPosition(player.position, out _);
+        }
+    }
+
+    private void AlignDefaultFollowCameraBeforeRoomRestore(RoomCameraTrigger roomTrigger)
+    {
+        if (roomTrigger == null || !roomTrigger.UsesDefaultCameraWhenEntered || fixedBossCamera == null)
+        {
+            return;
+        }
+
+        CameraManager.Instance?.TrySetFollowCameraPose(
+            fixedBossCamera.transform.position,
+            fixedBossCamera.Lens.OrthographicSize);
     }
 
     private void ConfigureDualTargetCamera()

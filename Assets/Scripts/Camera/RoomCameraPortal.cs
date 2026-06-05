@@ -87,7 +87,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
             overlappingPlayerColliders.Remove(collision);
             if (overlappingPlayerColliders.Count == 0)
             {
-                CommitPendingTransition(player.position);
+                CommitPendingTransition(ResolvePlayerCommitPoint(player, player.position));
                 playerTransform = null;
                 pendingFromRoom = null;
                 pendingToRoom = null;
@@ -109,8 +109,9 @@ public sealed class RoomCameraPortal : MonoBehaviour
             return;
         }
 
-        BeginPendingTransition(player.position);
-        StartTransitionCamera(player.position);
+        Vector3 playerCommitPoint = ResolvePlayerCommitPoint(player, player.position);
+        BeginPendingTransition(playerCommitPoint);
+        StartTransitionCamera(playerCommitPoint);
     }
 
     private void BeginPendingTransition(Vector3 playerPosition)
@@ -127,12 +128,14 @@ public sealed class RoomCameraPortal : MonoBehaviour
         RoomCameraTrigger finalRoom = ResolveRoomContaining(playerPosition);
         if (finalRoom == null)
         {
-            finalRoom = pendingFromRoom;
+            finalRoom = ResolveRoomOnPortalSide(playerPosition);
         }
-        else if (pendingFromRoom != null &&
-                 pendingToRoom != null &&
-                 finalRoom != pendingFromRoom &&
-                 finalRoom != pendingToRoom)
+
+        if (finalRoom == null ||
+            pendingFromRoom != null &&
+            pendingToRoom != null &&
+            finalRoom != pendingFromRoom &&
+            finalRoom != pendingToRoom)
         {
             finalRoom = pendingFromRoom;
         }
@@ -185,7 +188,8 @@ public sealed class RoomCameraPortal : MonoBehaviour
             return;
         }
 
-        CameraPose targetPose = BuildTransitionPose(playerTransform.position);
+        Vector3 playerPosition = ResolvePlayerCommitPoint(playerTransform, playerTransform.position);
+        CameraPose targetPose = BuildTransitionPose(playerPosition);
         if (smoothTime <= 0f)
         {
             camera.transform.position = targetPose.Position;
@@ -348,6 +352,11 @@ public sealed class RoomCameraPortal : MonoBehaviour
     private CameraPose ResolveRoomPose(RoomCameraTrigger room, Vector3 fallbackPosition)
     {
         CameraPose pose;
+        if (room != null && room.UsesDefaultCameraWhenEntered)
+        {
+            return ResolveDefaultRoomBasePose(room, fallbackPosition);
+        }
+
         if (room != null && room.TryGetCameraPose(out pose.Position, out pose.OrthographicSize))
         {
             return pose;
@@ -366,9 +375,42 @@ public sealed class RoomCameraPortal : MonoBehaviour
         return pose;
     }
 
+    private CameraPose ResolveDefaultRoomBasePose(RoomCameraTrigger room, Vector3 fallbackPosition)
+    {
+        if (TryGetCurrentCameraPose(out CameraPose pose))
+        {
+            return pose;
+        }
+
+        if (room != null && room.TryGetAreaBounds(out Bounds bounds))
+        {
+            float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+            pose.Position = bounds.center;
+            pose.Position.z = Camera.main != null ? Camera.main.transform.position.z : transform.position.z;
+            pose.OrthographicSize = Mathf.Max(bounds.extents.y, bounds.extents.x / aspect);
+            return pose;
+        }
+
+        pose.Position = fallbackPosition;
+        pose.Position.z = -10f;
+        pose.OrthographicSize = 10f;
+        return pose;
+    }
+
     private CameraPose ResolveCurrentViewPose(Vector3 fallbackPosition)
     {
-        CameraPose pose;
+        if (TryGetCurrentCameraPose(out CameraPose pose))
+        {
+            return pose;
+        }
+
+        pose = ResolveTransitionPose(pendingFromRoom, fromPoseAtEntry, fallbackPosition, false);
+        pose.OrthographicSize = Mathf.Max(pose.OrthographicSize, minimumOrthographicSize);
+        return pose;
+    }
+
+    private bool TryGetCurrentCameraPose(out CameraPose pose)
+    {
         Camera mainCamera = Camera.main;
         if (mainCamera != null)
         {
@@ -376,7 +418,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
             pose.OrthographicSize = mainCamera.orthographic
                 ? mainCamera.orthographicSize
                 : Mathf.Max(fromPoseAtEntry.OrthographicSize, minimumOrthographicSize);
-            return pose;
+            return true;
         }
 
         CinemachineCamera camera = GetTransitionCamera(false);
@@ -384,12 +426,11 @@ public sealed class RoomCameraPortal : MonoBehaviour
         {
             pose.Position = camera.transform.position;
             pose.OrthographicSize = camera.Lens.OrthographicSize;
-            return pose;
+            return true;
         }
 
-        pose = ResolveTransitionPose(pendingFromRoom, fromPoseAtEntry, fallbackPosition, false);
-        pose.OrthographicSize = Mathf.Max(pose.OrthographicSize, minimumOrthographicSize);
-        return pose;
+        pose = default;
+        return false;
     }
 
     private CameraPose ResolveTransitionPose(
@@ -455,6 +496,11 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
     private Vector3 ResolveFollowOffsetAtEntry(Vector3 playerPosition)
     {
+        if (TryGetCurrentCameraPose(out CameraPose currentPose))
+        {
+            return currentPose.Position - playerPosition;
+        }
+
         if (CameraManager.Instance != null &&
             CameraManager.Instance.TryGetFollowCameraPose(out Vector3 followPosition, out _))
         {
@@ -706,7 +752,13 @@ public sealed class RoomCameraPortal : MonoBehaviour
             return roomB;
         }
 
-        return ResolveRoomContaining(playerPosition);
+        RoomCameraTrigger containingRoom = ResolveRoomContaining(playerPosition);
+        if (containingRoom != null)
+        {
+            return containingRoom;
+        }
+
+        return ResolveRoomOnPortalSide(playerPosition);
     }
 
     private RoomCameraTrigger ResolveRoomContaining(Vector3 playerPosition)
@@ -742,6 +794,91 @@ public sealed class RoomCameraPortal : MonoBehaviour
         }
 
         return null;
+    }
+
+    private RoomCameraTrigger ResolveRoomOnPortalSide(Vector3 playerPosition)
+    {
+        Vector3 roomACenter = ResolveRoomCenter(roomA, transform.position + Vector3.left);
+        Vector3 roomBCenter = ResolveRoomCenter(roomB, transform.position + Vector3.right);
+        Vector3 aToB = roomBCenter - roomACenter;
+        aToB.z = 0f;
+
+        if (aToB.sqrMagnitude <= 0.001f)
+        {
+            aToB = Vector3.right;
+        }
+
+        Vector3 portalToPlayer = playerPosition - transform.position;
+        portalToPlayer.z = 0f;
+        return Vector3.Dot(portalToPlayer, aToB) >= 0f ? roomB : roomA;
+    }
+
+    private static Vector3 ResolvePlayerCommitPoint(Transform player, Vector3 fallbackPosition)
+    {
+        if (player == null)
+        {
+            return fallbackPosition;
+        }
+
+        Collider2D[] colliders = player.GetComponentsInChildren<Collider2D>();
+        if (TryResolveBoundsCenter(colliders, false, out Vector3 center) ||
+            TryResolveBoundsCenter(colliders, true, out center))
+        {
+            return center;
+        }
+
+        return fallbackPosition;
+    }
+
+    private static bool TryResolveBoundsCenter(
+        Collider2D[] colliders,
+        bool includeTriggers,
+        out Vector3 center)
+    {
+        bool hasBounds = false;
+        Bounds bounds = default;
+
+        if (colliders != null)
+        {
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Collider2D collider = colliders[i];
+                if (collider == null ||
+                    !collider.enabled ||
+                    !includeTriggers && collider.isTrigger)
+                {
+                    continue;
+                }
+
+                if (!hasBounds)
+                {
+                    bounds = collider.bounds;
+                    hasBounds = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(collider.bounds);
+                }
+            }
+        }
+
+        center = hasBounds ? bounds.center : Vector3.zero;
+        return hasBounds;
+    }
+
+    private static Vector3 ResolveRoomCenter(RoomCameraTrigger room, Vector3 fallback)
+    {
+        if (room != null && room.TryGetAreaBounds(out Bounds bounds))
+        {
+            return bounds.center;
+        }
+
+        if (room != null)
+        {
+            return room.transform.position;
+        }
+
+        return fallback;
     }
 
     private bool TryResolvePlayerTransform(Transform source, out Transform resolvedPlayer)

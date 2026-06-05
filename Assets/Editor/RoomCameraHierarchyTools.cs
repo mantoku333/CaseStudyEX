@@ -15,6 +15,7 @@ public static class RoomCameraHierarchyTools
     private const string PortalPrefix = "Portal_";
     private const string FallPortalPrefix = "FallPortal_";
     private const string VerticalPortalPrefix = "VerticalPortal_";
+    private const string SwitchPortalPrefix = "SwitchPortal_";
     private const string BossCameraSuffix = "_Boss";
     private const string BossCameraTargetName = "BossCameraTarget";
 
@@ -255,6 +256,36 @@ public static class RoomCameraHierarchyTools
         Selection.activeObject = portalObject;
         string action = createdPortal ? "Created" : "Repaired";
         Debug.Log($"[RoomCameraHierarchyTools] {action} fall camera portal {portalObject.name}. Move it slightly below the drop opening.");
+    }
+
+    [MenuItem("GameObject/Camera Area/Create Camera Switch Portal", false, 15)]
+    private static void CreateCameraSwitchPortal()
+    {
+        Transform targetArea = Selection.activeTransform != null
+            ? ResolveSelectedAreaTransform(Selection.activeTransform)
+            : null;
+        Transform areaRoot = ResolveAreaRoot(targetArea != null ? targetArea : Selection.activeTransform);
+
+        string portalName = CreateCameraSwitchPortalName(areaRoot, targetArea);
+        GameObject portalObject = new GameObject(portalName);
+        Undo.RegisterCreatedObjectUndo(portalObject, "Create Camera Switch Portal");
+        portalObject.transform.SetParent(areaRoot, false);
+        portalObject.transform.position = targetArea != null && TryGetAreaCenter(targetArea, out Vector3 targetCenter)
+            ? targetCenter
+            : GetCreationPosition();
+
+        BoxCollider2D portalCollider = Undo.AddComponent<BoxCollider2D>(portalObject);
+        portalCollider.isTrigger = true;
+        portalCollider.size = new Vector2(3f, 4f);
+
+        RoomCameraSwitchPortal portal = Undo.AddComponent<RoomCameraSwitchPortal>(portalObject);
+        SerializedObject serializedPortal = new SerializedObject(portal);
+        SetObject(serializedPortal, "targetRoom", targetArea != null ? ResolveRoomTrigger(targetArea.gameObject) : null);
+        SetString(serializedPortal, "playerTag", "Player");
+        serializedPortal.ApplyModifiedPropertiesWithoutUndo();
+
+        Selection.activeObject = portalObject;
+        Debug.Log($"[RoomCameraHierarchyTools] Created camera switch portal {portalObject.name}. Set Target Room if needed, then place it where touching should switch cameras.");
     }
 
     [MenuItem("GameObject/Camera Area/Create Vertical Camera Portal", true)]
@@ -665,6 +696,20 @@ public static class RoomCameraHierarchyTools
         string baseName = upperRoom != null && lowerRoom != null
             ? $"{VerticalPortalPrefix}{upperRoom.name}_{lowerRoom.name}"
             : $"{VerticalPortalPrefix}Upper_Lower";
+
+        if (areaRoot == null || areaRoot.Find(baseName) == null)
+        {
+            return baseName;
+        }
+
+        return CreateUniqueChildName(areaRoot, baseName);
+    }
+
+    private static string CreateCameraSwitchPortalName(Transform areaRoot, Transform targetArea)
+    {
+        string baseName = targetArea != null
+            ? $"{SwitchPortalPrefix}{targetArea.name}"
+            : $"{SwitchPortalPrefix}Target";
 
         if (areaRoot == null || areaRoot.Find(baseName) == null)
         {
