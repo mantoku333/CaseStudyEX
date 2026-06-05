@@ -10,6 +10,7 @@ public class DodgeController : MonoBehaviour
     [SerializeField] private float dodgeDuration = 0.1f;　 //回避にかかる時間
 
     private bool isDodging = false;   //回避中かどうかのフラグ
+    private bool dodgeMovementCancelled;
     private Rigidbody2D rigidBody2d;  //Rigidbody2Dコンポーネント
     private PlayerCollisionMover2D collisionMover;
 
@@ -106,6 +107,16 @@ public class DodgeController : MonoBehaviour
         areaDodgeBodyCollider = null;
     }
 
+    public void CancelCurrentDodgeMovement()
+    {
+        if (!isDodging)
+        {
+            return;
+        }
+
+        dodgeMovementCancelled = true;
+    }
+
     /// <summary>
     /// プレイヤーの回避動作を実行する関数
     /// </summary>
@@ -117,6 +128,7 @@ public class DodgeController : MonoBehaviour
         if (rigidBody2d == null) { return; }
 
         isDodging = true;
+        dodgeMovementCancelled = false;
 
         Vector2 velocity = rigidBody2d.linearVelocity;
         velocity.x = 0.0f;
@@ -147,6 +159,7 @@ public class DodgeController : MonoBehaviour
 
         MoveToDodgePosition(targetPos);
 
+        dodgeMovementCancelled = false;
         isDodging = false;
     }
 
@@ -161,6 +174,11 @@ public class DodgeController : MonoBehaviour
 
     private void MoveToDodgePosition(Vector2 targetPosition)
     {
+        if (dodgeMovementCancelled)
+        {
+            return;
+        }
+
         if (rigidBody2d == null)
         {
             return;

@@ -190,6 +190,11 @@ public sealed class WarpArea2D : MonoBehaviour
         Rigidbody2D rigidbodyToWarp = currentPlayerRigidbody != null
             ? currentPlayerRigidbody
             : playerToWarp.GetComponent<Rigidbody2D>();
+        DodgeController dodgeController = playerToWarp.GetComponent<DodgeController>();
+        if (dodgeController != null)
+        {
+            dodgeController.CancelCurrentDodgeMovement();
+        }
 
         bool acquiredControlLock = !playerToWarp.IsExternalControlLocked;
         if (acquiredControlLock)
