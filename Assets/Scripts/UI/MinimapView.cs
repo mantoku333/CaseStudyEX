@@ -33,6 +33,7 @@ public sealed class MinimapView : MonoBehaviour
     [SerializeField, Min(0f)] private float overlapPaddingPixels = 80f;
 
     private readonly List<GameObject> generatedObjects = new List<GameObject>();
+    private readonly List<MinimapRoomDefinition> fullMapRoomGroup = new List<MinimapRoomDefinition>();
     private readonly Vector3[] miniMapWorldCorners = new Vector3[4];
     private MinimapManager manager;
     private RectTransform miniMapPanel;
@@ -191,7 +192,7 @@ public sealed class MinimapView : MonoBehaviour
 
         if (fullMapPanel != null && fullMapPanel.gameObject.activeSelf)
         {
-            DrawMap(fullMapContent, FullBoardScale, FullLineThickness, FullRoomBorderThickness, false, FullMarkerDiameter);
+            DrawFullMap();
         }
     }
 
@@ -215,7 +216,8 @@ public sealed class MinimapView : MonoBehaviour
             MiniRoomBorderThickness,
             MiniMarkerDiameter,
             miniMapBounds,
-            miniMapOrigin);
+            miniMapOrigin,
+            manager.RoomDefinitions);
 
         lastDrawnMiniMapOrigin = miniMapOrigin;
         hasDrawnMiniMapOrigin = true;
@@ -242,6 +244,27 @@ public sealed class MinimapView : MonoBehaviour
         hasDrawnMiniMapOrigin = false;
     }
 
+    private void DrawFullMap()
+    {
+        IReadOnlyList<MinimapRoomDefinition> rooms = GetFullMapRoomGroup();
+        if (rooms == null || rooms.Count == 0)
+        {
+            return;
+        }
+
+        Rect bounds = CalculateBounds(rooms);
+        Vector2 origin = CalculateOrigin(bounds, FullBoardScale, false);
+        DrawMapAtOrigin(
+            fullMapContent,
+            FullBoardScale,
+            FullLineThickness,
+            FullRoomBorderThickness,
+            FullMarkerDiameter,
+            bounds,
+            origin,
+            rooms);
+    }
+
     private void DrawMap(
         RectTransform parent,
         float boardScale,
@@ -258,7 +281,7 @@ public sealed class MinimapView : MonoBehaviour
 
         Rect bounds = CalculateBounds(rooms);
         Vector2 origin = CalculateOrigin(bounds, boardScale, centerOnCurrentRoom);
-        DrawMapAtOrigin(parent, boardScale, lineThickness, roomBorderThickness, markerDiameter, bounds, origin);
+        DrawMapAtOrigin(parent, boardScale, lineThickness, roomBorderThickness, markerDiameter, bounds, origin, rooms);
     }
 
     private void DrawMapAtOrigin(
@@ -268,15 +291,15 @@ public sealed class MinimapView : MonoBehaviour
         float roomBorderThickness,
         float markerDiameter,
         Rect bounds,
-        Vector2 origin)
+        Vector2 origin,
+        IReadOnlyList<MinimapRoomDefinition> rooms)
     {
-        IReadOnlyList<MinimapRoomDefinition> rooms = manager.RoomDefinitions;
         if (rooms == null || rooms.Count == 0)
         {
             return;
         }
 
-        DrawConnections(parent, bounds, origin, boardScale, lineThickness);
+        DrawConnections(parent, bounds, origin, boardScale, lineThickness, rooms);
 
         for (int i = 0; i < rooms.Count; i++)
         {
@@ -289,7 +312,7 @@ public sealed class MinimapView : MonoBehaviour
             DrawBorderRoom(parent, room, origin, bounds, boardScale, roomBorderThickness);
         }
 
-        DrawCurrentMarker(parent, origin, bounds, boardScale, markerDiameter);
+        DrawCurrentMarker(parent, origin, bounds, boardScale, markerDiameter, rooms);
     }
 
     private bool ShouldDrawRoom(MinimapRoomDefinition room)
@@ -331,10 +354,17 @@ public sealed class MinimapView : MonoBehaviour
         generatedObjects.Add(line.gameObject);
     }
 
-    private void DrawCurrentMarker(RectTransform parent, Vector2 origin, Rect bounds, float boardScale, float markerDiameter)
+    private void DrawCurrentMarker(
+        RectTransform parent,
+        Vector2 origin,
+        Rect bounds,
+        float boardScale,
+        float markerDiameter,
+        IReadOnlyList<MinimapRoomDefinition> rooms)
     {
         if (string.IsNullOrWhiteSpace(manager.CurrentRoomId) ||
             !manager.TryGetRoom(manager.CurrentRoomId, out MinimapRoomDefinition currentRoom) ||
+            !ContainsRoom(rooms, currentRoom.RoomId) ||
             !ShouldDrawRoom(currentRoom))
         {
             return;
@@ -351,7 +381,8 @@ public sealed class MinimapView : MonoBehaviour
         Rect bounds,
         Vector2 origin,
         float boardScale,
-        float lineThickness)
+        float lineThickness,
+        IReadOnlyList<MinimapRoomDefinition> rooms)
     {
         IReadOnlyList<MinimapLinkDefinition> links = manager.LinkDefinitions;
         if (links == null || links.Count == 0)
@@ -365,6 +396,8 @@ public sealed class MinimapView : MonoBehaviour
             if (link == null ||
                 !manager.TryGetRoom(link.FromRoomId, out MinimapRoomDefinition fromRoom) ||
                 !manager.TryGetRoom(link.ToRoomId, out MinimapRoomDefinition toRoom) ||
+                !ContainsRoom(rooms, fromRoom.RoomId) ||
+                !ContainsRoom(rooms, toRoom.RoomId) ||
                 !ShouldDrawRoom(fromRoom) ||
                 !ShouldDrawRoom(toRoom))
             {
@@ -389,6 +422,104 @@ public sealed class MinimapView : MonoBehaviour
                 DrawLineSegment(parent, "Link_" + i + "_" + pointIndex, startInset, endInset, lineThickness, lineColor);
             }
         }
+    }
+
+    private IReadOnlyList<MinimapRoomDefinition> GetFullMapRoomGroup()
+    {
+        IReadOnlyList<MinimapRoomDefinition> rooms = manager.RoomDefinitions;
+        if (rooms == null || rooms.Count == 0)
+        {
+            return rooms;
+        }
+
+        if (!TryGetCurrentAreaGroupPrefix(out char groupPrefix))
+        {
+            return rooms;
+        }
+
+        fullMapRoomGroup.Clear();
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoomDefinition room = rooms[i];
+            if (IsRoomInAreaGroup(room, groupPrefix))
+            {
+                fullMapRoomGroup.Add(room);
+            }
+        }
+
+        return fullMapRoomGroup.Count > 0 ? fullMapRoomGroup : rooms;
+    }
+
+    private bool TryGetCurrentAreaGroupPrefix(out char groupPrefix)
+    {
+        groupPrefix = '\0';
+
+        if (!string.IsNullOrWhiteSpace(manager.CurrentRoomId) &&
+            manager.TryGetRoom(manager.CurrentRoomId, out MinimapRoomDefinition currentRoom))
+        {
+            if (TryGetAreaGroupPrefix(currentRoom.RoomId, out groupPrefix) ||
+                TryGetAreaGroupPrefix(currentRoom.DisplayName, out groupPrefix))
+            {
+                return true;
+            }
+        }
+
+        return TryGetAreaGroupPrefix(manager.CurrentRoomId, out groupPrefix);
+    }
+
+    private static bool IsRoomInAreaGroup(MinimapRoomDefinition room, char groupPrefix)
+    {
+        return room != null &&
+            (HasAreaGroupPrefix(room.RoomId, groupPrefix) ||
+                HasAreaGroupPrefix(room.DisplayName, groupPrefix));
+    }
+
+    private static bool HasAreaGroupPrefix(string value, char groupPrefix)
+    {
+        return TryGetAreaGroupPrefix(value, out char candidatePrefix) &&
+            candidatePrefix == groupPrefix;
+    }
+
+    private static bool TryGetAreaGroupPrefix(string value, out char groupPrefix)
+    {
+        groupPrefix = '\0';
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        for (int i = 0; i <= value.Length - 3; i++)
+        {
+            char character = value[i];
+            if ((character == '1' || character == '2' || character == '3') &&
+                char.IsDigit(value[i + 1]) &&
+                char.IsDigit(value[i + 2]))
+            {
+                groupPrefix = character;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ContainsRoom(IReadOnlyList<MinimapRoomDefinition> rooms, string roomId)
+    {
+        if (rooms == null || string.IsNullOrWhiteSpace(roomId))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoomDefinition room = rooms[i];
+            if (room != null && string.Equals(room.RoomId, roomId, StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private List<Vector2> BuildBoardPath(

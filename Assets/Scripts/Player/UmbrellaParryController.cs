@@ -20,8 +20,8 @@ public class UmbrellaParryController : MonoBehaviour
     [Header("パリィ成功エフェクト")]
     [SerializeField] private Texture2D parryEffectSpriteSheet;
     [SerializeField, Min(1)] private int parryEffectFrameColumns = 5;
-    [SerializeField, Min(1)] private int parryEffectFrameRows = 3;
-    [SerializeField, Min(1)] private int parryEffectFrameCount = 15;
+    [SerializeField, Min(1)] private int parryEffectFrameRows = 4;
+    [SerializeField, Min(1)] private int parryEffectFrameCount = 20;
     [SerializeField, Min(0.01f)] private float parryEffectFrameSeconds = 0.033f;
     [SerializeField, Min(1f)] private float parryEffectPixelsPerUnit = 100f;
     [SerializeField] private Vector2 parryEffectSpritePivot = new Vector2(0.5f, 0.5f);
