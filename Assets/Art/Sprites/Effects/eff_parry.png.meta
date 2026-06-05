@@ -1,0 +1,2223 @@
+fileFormatVersion: 2
+guid: aa182da2f96b25e45baaa62fe40f0626
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6836629307061790434
+    second: eff_parry_0
+  - first:
+      213: -4550935983694222205
+    second: eff_parry_1
+  - first:
+      213: -397918319545085454
+    second: eff_parry_2
+  - first:
+      213: -5809011697821019901
+    second: eff_parry_3
+  - first:
+      213: 1460684148587266592
+    second: eff_parry_4
+  - first:
+      213: 5334031301826809350
+    second: eff_parry_5
+  - first:
+      213: -6214304635403371702
+    second: eff_parry_6
+  - first:
+      213: 8295302688277485936
+    second: eff_parry_7
+  - first:
+      213: -3927506347413391287
+    second: eff_parry_8
+  - first:
+      213: -530837580621281131
+    second: eff_parry_9
+  - first:
+      213: -2704377508819453589
+    second: eff_parry_10
+  - first:
+      213: 4840335329750810630
+    second: eff_parry_11
+  - first:
+      213: -6326073584983548654
+    second: eff_parry_12
+  - first:
+      213: 3416292526088915521
+    second: eff_parry_13
+  - first:
+      213: 8337725709343309234
+    second: eff_parry_14
+  - first:
+      213: 3652508989994391477
+    second: eff_parry_15
+  - first:
+      213: -7070479309146645679
+    second: eff_parry_16
+  - first:
+      213: 3893807815586379208
+    second: eff_parry_17
+  - first:
+      213: -52005295083615981
+    second: eff_parry_18
+  - first:
+      213: -218014817158629417
+    second: eff_parry_19
+  - first:
+      213: 1124712256545044073
+    second: eff_parry_20
+  - first:
+      213: 7262693836702504617
+    second: eff_parry_21
+  - first:
+      213: -2858303592544833929
+    second: eff_parry_22
+  - first:
+      213: -7052094750009826402
+    second: eff_parry_23
+  - first:
+      213: 8053107960949370273
+    second: eff_parry_24
+  - first:
+      213: -1251963730646415856
+    second: eff_parry_25
+  - first:
+      213: -7927750056885699698
+    second: eff_parry_26
+  - first:
+      213: -4755514943559889326
+    second: eff_parry_27
+  - first:
+      213: -8307747442006896263
+    second: eff_parry_28
+  - first:
+      213: 3456658535412104738
+    second: eff_parry_29
+  - first:
+      213: 3708591643452383149
+    second: eff_parry_30
+  - first:
+      213: -3831523993146429238
+    second: eff_parry_31
+  - first:
+      213: -1087336941688265364
+    second: eff_parry_32
+  - first:
+      213: -5728511563838299049
+    second: eff_parry_33
+  - first:
+      213: -4819433773224395931
+    second: eff_parry_34
+  - first:
+      213: 3188488900607063091
+    second: eff_parry_35
+  - first:
+      213: 6514312292053049670
+    second: eff_parry_36
+  - first:
+      213: 2201729933394200653
+    second: eff_parry_37
+  - first:
+      213: 5006213577965092140
+    second: eff_parry_38
+  - first:
+      213: -8978856386343896597
+    second: eff_parry_39
+  - first:
+      213: -1043121314897178477
+    second: eff_parry_40
+  - first:
+      213: -7986299905484931481
+    second: eff_parry_41
+  - first:
+      213: -2416954572917561467
+    second: eff_parry_42
+  - first:
+      213: 7851136793976630732
+    second: eff_parry_43
+  - first:
+      213: 5468025290344350428
+    second: eff_parry_44
+  - first:
+      213: -2370017264634706237
+    second: eff_parry_45
+  - first:
+      213: -1140383291806228729
+    second: eff_parry_46
+  - first:
+      213: 6674662996518247062
+    second: eff_parry_47
+  - first:
+      213: 6515868622195030516
+    second: eff_parry_48
+  - first:
+      213: 7771000068446623911
+    second: eff_parry_49
+  - first:
+      213: 2547252710994331474
+    second: eff_parry_50
+  - first:
+      213: -326016107569749855
+    second: eff_parry_51
+  - first:
+      213: 8243356057867406272
+    second: eff_parry_52
+  - first:
+      213: -424942766695157833
+    second: eff_parry_53
+  - first:
+      213: -2888690170199587072
+    second: eff_parry_54
+  - first:
+      213: -8129230179140069601
+    second: eff_parry_55
+  - first:
+      213: 2155357835786033089
+    second: eff_parry_56
+  - first:
+      213: -6566936905736056381
+    second: eff_parry_57
+  - first:
+      213: 4796767344639479855
+    second: eff_parry_58
+  - first:
+      213: 394219302372092813
+    second: eff_parry_59
+  - first:
+      213: 2923121669753511536
+    second: eff_parry_60
+  - first:
+      213: 2095415998017661830
+    second: eff_parry_61
+  - first:
+      213: 2348042843349660816
+    second: eff_parry_62
+  - first:
+      213: -6771666890789177350
+    second: eff_parry_63
+  - first:
+      213: -2720094713594712706
+    second: eff_parry_64
+  - first:
+      213: -4206663194722506401
+    second: eff_parry_65
+  - first:
+      213: 430683991682175749
+    second: eff_parry_66
+  - first:
+      213: 5325651431613913309
+    second: eff_parry_67
+  - first:
+      213: -9170605457732309769
+    second: eff_parry_68
+  - first:
+      213: -9166234440856760519
+    second: eff_parry_69
+  - first:
+      213: 4025496418937321901
+    second: eff_parry_70
+  - first:
+      213: 6813275965348228344
+    second: eff_parry_71
+  - first:
+      213: -3249762573691720517
+    second: eff_parry_72
+  - first:
+      213: 3027900428290381413
+    second: eff_parry_73
+  - first:
+      213: -8433383817908090543
+    second: eff_parry_74
+  - first:
+      213: -159665429928493350
+    second: eff_parry_75
+  - first:
+      213: 1963085210319514549
+    second: eff_parry_76
+  - first:
+      213: 2231688164219816341
+    second: eff_parry_77
+  - first:
+      213: -1574609299682815557
+    second: eff_parry_78
+  - first:
+      213: 6206827630060648481
+    second: eff_parry_79
+  - first:
+      213: 4314003272204621236
+    second: eff_parry_80
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_parry_0
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 2200
+        width: 424
+        height: 725
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e6617cf12690ee50800000000000000
+      internalID: 6836629307061790434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_1
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 2765
+        width: 13
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38cec50b5d3d7d0c0800000000000000
+      internalID: -4550935983694222205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_2
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 2446
+        width: 51
+        height: 342
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f115e9856f4a7af0800000000000000
+      internalID: -397918319545085454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_3
+      rect:
+        serializedVersion: 2
+        x: 1088
+        y: 2190
+        width: 573
+        height: 741
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3011a4763ae326fa0800000000000000
+      internalID: -5809011697821019901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_4
+      rect:
+        serializedVersion: 2
+        x: 2141
+        y: 2191
+        width: 558
+        height: 741
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 022869d7e74654410800000000000000
+      internalID: 1460684148587266592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_5
+      rect:
+        serializedVersion: 2
+        x: 3228
+        y: 2192
+        width: 505
+        height: 740
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60e83364539460a40800000000000000
+      internalID: 5334031301826809350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_6
+      rect:
+        serializedVersion: 2
+        x: 4298
+        y: 2188
+        width: 459
+        height: 745
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4bf7b0ebda52c9a0800000000000000
+      internalID: -6214304635403371702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_7
+      rect:
+        serializedVersion: 2
+        x: 1649
+        y: 2485
+        width: 9
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0795f1738d5de1370800000000000000
+      internalID: 8295302688277485936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_8
+      rect:
+        serializedVersion: 2
+        x: 2701
+        y: 2525
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 948355d29c1be79c0800000000000000
+      internalID: -3927506347413391287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_9
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 2449
+        width: 11
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59804ad680612a8f0800000000000000
+      internalID: -530837580621281131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_10
+      rect:
+        serializedVersion: 2
+        x: 1654
+        y: 2462
+        width: 8
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b69b240fbfe187ad0800000000000000
+      internalID: -2704377508819453589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_11
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 2420
+        width: 8
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 600029356535c2340800000000000000
+      internalID: 4840335329750810630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_12
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 2393
+        width: 10
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21dd21867954538a0800000000000000
+      internalID: -6326073584983548654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_13
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 2352
+        width: 8
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14a0a52c3fb196f20800000000000000
+      internalID: 3416292526088915521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_14
+      rect:
+        serializedVersion: 2
+        x: 1410
+        y: 2188
+        width: 25
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bdbc048b5d85b370800000000000000
+      internalID: 8337725709343309234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_15
+      rect:
+        serializedVersion: 2
+        x: 2433
+        y: 2188
+        width: 22
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b75987139150b230800000000000000
+      internalID: 3652508989994391477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_16
+      rect:
+        serializedVersion: 2
+        x: 3456
+        y: 2188
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15b9092878c90ed90800000000000000
+      internalID: -7070479309146645679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_17
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 1194
+        width: 381
+        height: 693
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c57aa7f395990630800000000000000
+      internalID: 3893807815586379208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_18
+      rect:
+        serializedVersion: 2
+        x: 1509
+        y: 1858
+        width: 39
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3190a1ca57d374ff0800000000000000
+      internalID: -52005295083615981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_19
+      rect:
+        serializedVersion: 2
+        x: 2578
+        y: 1870
+        width: 29
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d7fc7bcda479fcf0800000000000000
+      internalID: -218014817158629417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_20
+      rect:
+        serializedVersion: 2
+        x: 3602
+        y: 1870
+        width: 29
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96635ed96d7cb9f00800000000000000
+      internalID: 1124712256545044073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_21
+      rect:
+        serializedVersion: 2
+        x: 4664
+        y: 1880
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a65219a0954ac460800000000000000
+      internalID: 7262693836702504617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_22
+      rect:
+        serializedVersion: 2
+        x: 1370
+        y: 1210
+        width: 315
+        height: 653
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77e642ac6044558d0800000000000000
+      internalID: -2858303592544833929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_23
+      rect:
+        serializedVersion: 2
+        x: 2442
+        y: 1761
+        width: 62
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e93644f303de12e90800000000000000
+      internalID: -7052094750009826402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_24
+      rect:
+        serializedVersion: 2
+        x: 2489
+        y: 1804
+        width: 56
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ade146f50362cf60800000000000000
+      internalID: 8053107960949370273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_25
+      rect:
+        serializedVersion: 2
+        x: 3466
+        y: 1761
+        width: 62
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 016c523ce9120aee0800000000000000
+      internalID: -1251963730646415856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_26
+      rect:
+        serializedVersion: 2
+        x: 3513
+        y: 1804
+        width: 56
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8bbe378359faf190800000000000000
+      internalID: -7927750056885699698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_27
+      rect:
+        serializedVersion: 2
+        x: 4531
+        y: 1776
+        width: 45
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25e0d09ca54010eb0800000000000000
+      internalID: -4755514943559889326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_28
+      rect:
+        serializedVersion: 2
+        x: 4569
+        y: 1814
+        width: 46
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 971d483c7b3f4bc80800000000000000
+      internalID: -8307747442006896263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_29
+      rect:
+        serializedVersion: 2
+        x: 2508
+        y: 1308
+        width: 201
+        height: 497
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22e7f01bf9488ff20800000000000000
+      internalID: 3456658535412104738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_30
+      rect:
+        serializedVersion: 2
+        x: 3596
+        y: 1674
+        width: 38
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daf16f46370977330800000000000000
+      internalID: 3708591643452383149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_31
+      rect:
+        serializedVersion: 2
+        x: 3621
+        y: 1464
+        width: 112
+        height: 298
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac0fe108a31b3dac0800000000000000
+      internalID: -3831523993146429238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_32
+      rect:
+        serializedVersion: 2
+        x: 4665
+        y: 1684
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c65e28fffc009e0f0800000000000000
+      internalID: -1087336941688265364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_33
+      rect:
+        serializedVersion: 2
+        x: 2503
+        y: 1554
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75463b9651d3080b0800000000000000
+      internalID: -5728511563838299049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_34
+      rect:
+        serializedVersion: 2
+        x: 3611
+        y: 1508
+        width: 13
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56b7078848eed1db0800000000000000
+      internalID: -4819433773224395931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_35
+      rect:
+        serializedVersion: 2
+        x: 3617
+        y: 1542
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 334b5f203c9cf3c20800000000000000
+      internalID: 3188488900607063091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_36
+      rect:
+        serializedVersion: 2
+        x: 4702
+        y: 1496
+        width: 55
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64168cbe38c776a50800000000000000
+      internalID: 6514312292053049670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_37
+      rect:
+        serializedVersion: 2
+        x: 3596
+        y: 1465
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d484e4b85bd1e8e10800000000000000
+      internalID: 2201729933394200653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_38
+      rect:
+        serializedVersion: 2
+        x: 3648
+        y: 1452
+        width: 38
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2db850a9b4a97540800000000000000
+      internalID: 5006213577965092140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_39
+      rect:
+        serializedVersion: 2
+        x: 4648
+        y: 1470
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be979ba40b1b46380800000000000000
+      internalID: -8978856386343896597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_40
+      rect:
+        serializedVersion: 2
+        x: 3645
+        y: 1456
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3905ae7d0b61681f0800000000000000
+      internalID: -1043121314897178477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_41
+      rect:
+        serializedVersion: 2
+        x: 3648
+        y: 1439
+        width: 44
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76eb5d79c86fa2190800000000000000
+      internalID: -7986299905484931481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_42
+      rect:
+        serializedVersion: 2
+        x: 3568
+        y: 1391
+        width: 30
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5872efa1f90457ed0800000000000000
+      internalID: -2416954572917561467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_43
+      rect:
+        serializedVersion: 2
+        x: 3652
+        y: 1378
+        width: 63
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccde9f72157d4fc60800000000000000
+      internalID: 7851136793976630732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_44
+      rect:
+        serializedVersion: 2
+        x: 4619
+        y: 1395
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd2c3ddd70452eb40800000000000000
+      internalID: 5468025290344350428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_45
+      rect:
+        serializedVersion: 2
+        x: 4729
+        y: 1400
+        width: 34
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c6c7edcad10c1fd0800000000000000
+      internalID: -2370017264634706237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_46
+      rect:
+        serializedVersion: 2
+        x: 2528
+        y: 1275
+        width: 114
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70f5918207b8c20f0800000000000000
+      internalID: -1140383291806228729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_47
+      rect:
+        serializedVersion: 2
+        x: 2490
+        y: 1235
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69a1ae6a1aa21ac50800000000000000
+      internalID: 6674662996518247062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_48
+      rect:
+        serializedVersion: 2
+        x: 2528
+        y: 1215
+        width: 51
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f97c054df30d6a50800000000000000
+      internalID: 6515868622195030516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_49
+      rect:
+        serializedVersion: 2
+        x: 3514
+        y: 1235
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a81c45c36328db60800000000000000
+      internalID: 7771000068446623911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_50
+      rect:
+        serializedVersion: 2
+        x: 3552
+        y: 1215
+        width: 50
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 257c7ff38d8a95320800000000000000
+      internalID: 2547252710994331474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_51
+      rect:
+        serializedVersion: 2
+        x: 4570
+        y: 1233
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a0ef35d312c97bf0800000000000000
+      internalID: -326016107569749855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_52
+      rect:
+        serializedVersion: 2
+        x: 4613
+        y: 1217
+        width: 36
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cb4042d8a8466270800000000000000
+      internalID: 8243356057867406272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_53
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 864
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bf634d1ecc4a1af0800000000000000
+      internalID: -424942766695157833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_54
+      rect:
+        serializedVersion: 2
+        x: 1624
+        y: 864
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 007471b589f49e7d0800000000000000
+      internalID: -2888690170199587072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_55
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 814
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1798faf83c2f2f80800000000000000
+      internalID: -8129230179140069601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_56
+      rect:
+        serializedVersion: 2
+        x: 1544
+        y: 814
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c791e5388e59ed10800000000000000
+      internalID: 2155357835786033089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_57
+      rect:
+        serializedVersion: 2
+        x: 2576
+        y: 803
+        width: 28
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c113376dad8dd4a0800000000000000
+      internalID: -6566936905736056381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_58
+      rect:
+        serializedVersion: 2
+        x: 3600
+        y: 803
+        width: 28
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f201e6f4c7a819240800000000000000
+      internalID: 4796767344639479855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_59
+      rect:
+        serializedVersion: 2
+        x: 502
+        y: 797
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8bad79ed5c887500800000000000000
+      internalID: 394219302372092813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_60
+      rect:
+        serializedVersion: 2
+        x: 1526
+        y: 797
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07e97e8dba3019820800000000000000
+      internalID: 2923121669753511536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_61
+      rect:
+        serializedVersion: 2
+        x: 474
+        y: 765
+        width: 26
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68b638a8fb9641d10800000000000000
+      internalID: 2095415998017661830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_62
+      rect:
+        serializedVersion: 2
+        x: 1498
+        y: 765
+        width: 26
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 094314b868ce59020800000000000000
+      internalID: 2348042843349660816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_63
+      rect:
+        serializedVersion: 2
+        x: 2557
+        y: 776
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af7bc3537d43602a0800000000000000
+      internalID: -6771666890789177350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_64
+      rect:
+        serializedVersion: 2
+        x: 3581
+        y: 776
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7de4c80548404ad0800000000000000
+      internalID: -2720094713594712706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_65
+      rect:
+        serializedVersion: 2
+        x: 609
+        y: 668
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f59eadcbc1eee95c0800000000000000
+      internalID: -4206663194722506401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_66
+      rect:
+        serializedVersion: 2
+        x: 1633
+        y: 668
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 503d9aefec81af500800000000000000
+      internalID: 430683991682175749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_67
+      rect:
+        serializedVersion: 2
+        x: 2694
+        y: 674
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd8d5e2b2c388e940800000000000000
+      internalID: 5325651431613913309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_68
+      rect:
+        serializedVersion: 2
+        x: 3718
+        y: 674
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fc6b949ce67bb080800000000000000
+      internalID: -9170605457732309769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_69
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 449
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93f08c0475efac080800000000000000
+      internalID: -9166234440856760519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_70
+      rect:
+        serializedVersion: 2
+        x: 1598
+        y: 449
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da9bd5f3aaf6dd730800000000000000
+      internalID: 4025496418937321901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_71
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 373
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fca947646e9d8e50800000000000000
+      internalID: 6813275965348228344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_72
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 383
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbceebe382686e2d0800000000000000
+      internalID: -3249762573691720517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_73
+      rect:
+        serializedVersion: 2
+        x: 1571
+        y: 373
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5665083a563450a20800000000000000
+      internalID: 3027900428290381413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_74
+      rect:
+        serializedVersion: 2
+        x: 1703
+        y: 383
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1598f0f791a96fa80800000000000000
+      internalID: -8433383817908090543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_75
+      rect:
+        serializedVersion: 2
+        x: 502
+        y: 209
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adeb33e2321c8cdf0800000000000000
+      internalID: -159665429928493350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_76
+      rect:
+        serializedVersion: 2
+        x: 552
+        y: 197
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bbeae019974e3b10800000000000000
+      internalID: 1963085210319514549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_77
+      rect:
+        serializedVersion: 2
+        x: 1526
+        y: 209
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59904c5bf8c88fe10800000000000000
+      internalID: 2231688164219816341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_78
+      rect:
+        serializedVersion: 2
+        x: 1576
+        y: 197
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb111604f2dd52ae0800000000000000
+      internalID: -1574609299682815557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_79
+      rect:
+        serializedVersion: 2
+        x: 2631
+        y: 200
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12838d728d4132650800000000000000
+      internalID: 6206827630060648481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_parry_80
+      rect:
+        serializedVersion: 2
+        x: 3655
+        y: 200
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b511a79e1b6edb30800000000000000
+      internalID: 4314003272204621236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_parry_0: 6836629307061790434
+      eff_parry_1: -4550935983694222205
+      eff_parry_10: -2704377508819453589
+      eff_parry_11: 4840335329750810630
+      eff_parry_12: -6326073584983548654
+      eff_parry_13: 3416292526088915521
+      eff_parry_14: 8337725709343309234
+      eff_parry_15: 3652508989994391477
+      eff_parry_16: -7070479309146645679
+      eff_parry_17: 3893807815586379208
+      eff_parry_18: -52005295083615981
+      eff_parry_19: -218014817158629417
+      eff_parry_2: -397918319545085454
+      eff_parry_20: 1124712256545044073
+      eff_parry_21: 7262693836702504617
+      eff_parry_22: -2858303592544833929
+      eff_parry_23: -7052094750009826402
+      eff_parry_24: 8053107960949370273
+      eff_parry_25: -1251963730646415856
+      eff_parry_26: -7927750056885699698
+      eff_parry_27: -4755514943559889326
+      eff_parry_28: -8307747442006896263
+      eff_parry_29: 3456658535412104738
+      eff_parry_3: -5809011697821019901
+      eff_parry_30: 3708591643452383149
+      eff_parry_31: -3831523993146429238
+      eff_parry_32: -1087336941688265364
+      eff_parry_33: -5728511563838299049
+      eff_parry_34: -4819433773224395931
+      eff_parry_35: 3188488900607063091
+      eff_parry_36: 6514312292053049670
+      eff_parry_37: 2201729933394200653
+      eff_parry_38: 5006213577965092140
+      eff_parry_39: -8978856386343896597
+      eff_parry_4: 1460684148587266592
+      eff_parry_40: -1043121314897178477
+      eff_parry_41: -7986299905484931481
+      eff_parry_42: -2416954572917561467
+      eff_parry_43: 7851136793976630732
+      eff_parry_44: 5468025290344350428
+      eff_parry_45: -2370017264634706237
+      eff_parry_46: -1140383291806228729
+      eff_parry_47: 6674662996518247062
+      eff_parry_48: 6515868622195030516
+      eff_parry_49: 7771000068446623911
+      eff_parry_5: 5334031301826809350
+      eff_parry_50: 2547252710994331474
+      eff_parry_51: -326016107569749855
+      eff_parry_52: 8243356057867406272
+      eff_parry_53: -424942766695157833
+      eff_parry_54: -2888690170199587072
+      eff_parry_55: -8129230179140069601
+      eff_parry_56: 2155357835786033089
+      eff_parry_57: -6566936905736056381
+      eff_parry_58: 4796767344639479855
+      eff_parry_59: 394219302372092813
+      eff_parry_6: -6214304635403371702
+      eff_parry_60: 2923121669753511536
+      eff_parry_61: 2095415998017661830
+      eff_parry_62: 2348042843349660816
+      eff_parry_63: -6771666890789177350
+      eff_parry_64: -2720094713594712706
+      eff_parry_65: -4206663194722506401
+      eff_parry_66: 430683991682175749
+      eff_parry_67: 5325651431613913309
+      eff_parry_68: -9170605457732309769
+      eff_parry_69: -9166234440856760519
+      eff_parry_7: 8295302688277485936
+      eff_parry_70: 4025496418937321901
+      eff_parry_71: 6813275965348228344
+      eff_parry_72: -3249762573691720517
+      eff_parry_73: 3027900428290381413
+      eff_parry_74: -8433383817908090543
+      eff_parry_75: -159665429928493350
+      eff_parry_76: 1963085210319514549
+      eff_parry_77: 2231688164219816341
+      eff_parry_78: -1574609299682815557
+      eff_parry_79: 6206827630060648481
+      eff_parry_8: -3927506347413391287
+      eff_parry_80: 4314003272204621236
+      eff_parry_9: -530837580621281131
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
