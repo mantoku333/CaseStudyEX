@@ -7,8 +7,10 @@ public class AttackDestructible : MonoBehaviour, IAttackReceiver
     [Header("Break Settings")]
     [SerializeField, Min(1)] private int hitPoints = 1;
     [SerializeField] private GameObject breakEffectPrefab;
-    [SerializeField] private AudioClip breakSe;
     [SerializeField] private bool destroyOnBreak = true;
+
+    [Header("SE")]
+    [SerializeField] private AudioClip breakSe;
 
     private bool isBroken;
 
