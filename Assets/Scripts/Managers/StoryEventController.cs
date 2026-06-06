@@ -1912,7 +1912,9 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
             for (int i = 0; i < behaviours.Length; i++)
             {
                 MonoBehaviour behaviour = behaviours[i];
-                if (behaviour == null || !IsPlayerControlBehaviourName(behaviour.GetType().Name))
+                if (behaviour == null ||
+                    behaviour is PlayerController ||
+                    !IsPlayerControlBehaviourName(behaviour.GetType().Name))
                 {
                     continue;
                 }

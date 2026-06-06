@@ -15,10 +15,12 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
     private Transform target;
     private Vector3 startPosition;
     private Vector3 targetPosition;
+    private PlayerController playerController;
 
     public override void OnBehaviourPlay(Playable playable, FrameData info)
     {
         initialized = false;
+        playerController = null;
     }
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
@@ -39,7 +41,19 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
             target = boundTarget;
             startPosition = target.position;
             targetPosition = ResolveTargetPosition(playable, startPosition);
+            playerController = ResolvePlayerController(target);
+            if (playerController != null)
+            {
+                targetPosition.y = startPosition.y;
+                targetPosition.z = startPosition.z;
+                playerController.StartExternalMoveToX(targetPosition.x);
+            }
             initialized = true;
+        }
+
+        if (playerController != null)
+        {
+            return;
         }
 
         double duration = playable.GetDuration();
@@ -51,6 +65,19 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
 
         Vector3 nextPosition = Vector3.Lerp(startPosition, targetPosition, t);
         target.position = nextPosition;
+    }
+
+    public override void OnBehaviourPause(Playable playable, FrameData info)
+    {
+        if (!Application.isPlaying || playerController == null)
+        {
+            return;
+        }
+
+        if (Mathf.Abs(playerController.transform.position.x - targetPosition.x) <= 0.05f)
+        {
+            playerController.ClearExternalMovementDirection();
+        }
     }
 
     private static Transform ResolveBoundTarget(object playerData)
@@ -71,6 +98,22 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
         }
 
         return null;
+    }
+
+    private static PlayerController ResolvePlayerController(Transform target)
+    {
+        if (target == null)
+        {
+            return null;
+        }
+
+        PlayerController controller = target.GetComponent<PlayerController>();
+        if (controller != null)
+        {
+            return controller;
+        }
+
+        return target.GetComponentInParent<PlayerController>();
     }
 
     private Vector3 ResolveTargetPosition(Playable playable, Vector3 fallback)

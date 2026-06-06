@@ -39,6 +39,10 @@ namespace Player
         [SerializeField] private string attackStateName = "attack";
         [SerializeField] private string recoilBoostSkyStateName = "recoilboost_sky";
 
+        [Header("Cutscene Movement")]
+        [SerializeField] private bool useTransformDeltaAsMovement = true;
+        [SerializeField, Min(0f)] private float transformMovementThreshold = 0.001f;
+
         [Header("Debug")]
         [SerializeField] private bool logCurrentSpriteEveryFrame = true;
 
@@ -69,6 +73,8 @@ namespace Player
         private bool _currentUmbrellaOpen;
         private string _activeLandStateName;
         private string _currentAnimatorStateName;
+        private bool _hasPreviousWorldPosition;
+        private Vector3 _previousWorldPosition;
 
         private void Awake()
         {
@@ -84,6 +90,8 @@ namespace Player
             _currentUmbrellaOpen = false;
             _activeLandStateName = null;
             _currentAnimatorStateName = null;
+            _hasPreviousWorldPosition = false;
+            _previousWorldPosition = transform.position;
         }
 
         private void Update()
@@ -109,6 +117,14 @@ namespace Player
                 return;
             }
             _warnedNoAnimator = false;
+
+            bool cutsceneMovementActive = TryResolveCutsceneMovement(out bool cutsceneFacingRight);
+            if (cutsceneMovementActive && !isDodging && !isGliding && !isRecoilBoosting)
+            {
+                isMoving = true;
+                isGrounded = true;
+                isFacingRight = cutsceneFacingRight;
+            }
 
             if (syncFacingFromController)
             {
@@ -432,6 +448,7 @@ namespace Player
                         if (AnimatorHasState("RunClosed")) return "RunClosed";
                     }
                     if (AnimatorHasState("Walk")) return "Walk";
+                    if (AnimatorHasState("walk")) return "walk";
                     if (AnimatorHasState("run")) return "run";
                     break;
                 case VisualState.Jump:
@@ -534,6 +551,60 @@ namespace Player
             return appendedAny
                 ? message
                 : $"[PlayerSprite] frame={Time.frameCount} visualState={_currentState} animatorState={_currentAnimatorStateName ?? "(none)"} sprite=(no active SpriteRenderer)";
+        }
+
+        private bool TryResolveCutsceneMovement(out bool isFacingRight)
+        {
+            if (_stateProvider is global::PlayerController playerController &&
+                playerController.IsExternalMovementActive)
+            {
+                isFacingRight = playerController.IsFacingRight;
+                TrackPreviousWorldPosition();
+                return true;
+            }
+
+            return TryResolveTransformMovement(out isFacingRight);
+        }
+
+        private bool TryResolveTransformMovement(out bool isFacingRight)
+        {
+            Vector3 currentPosition = transform.position;
+            float deltaX = currentPosition.x - _previousWorldPosition.x;
+            isFacingRight = deltaX >= 0f;
+
+            if (!_hasPreviousWorldPosition)
+            {
+                _hasPreviousWorldPosition = true;
+                _previousWorldPosition = currentPosition;
+                return false;
+            }
+
+            _previousWorldPosition = currentPosition;
+
+            return ShouldUseTransformDeltaAsMovement() &&
+                   Mathf.Abs(deltaX) > transformMovementThreshold;
+        }
+
+        private void TrackPreviousWorldPosition()
+        {
+            _hasPreviousWorldPosition = true;
+            _previousWorldPosition = transform.position;
+        }
+
+        private bool ShouldUseTransformDeltaAsMovement()
+        {
+            if (!useTransformDeltaAsMovement)
+            {
+                return false;
+            }
+
+            if (_stateProvider is global::PlayerController playerController)
+            {
+                return playerController.IsExternalControlLocked ||
+                       playerController.IsExternalMovementActive;
+            }
+
+            return false;
         }
 
         private static bool IsDefaultStateName(string stateName, string defaultStateName)

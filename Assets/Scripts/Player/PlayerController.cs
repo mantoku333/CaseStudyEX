@@ -15,6 +15,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 {
     private const string PlayerActionMapName = "Player";
+    private const float ExternalMoveArrivalThreshold = 0.03f;
 
     private static class InputActionNames
     {
@@ -48,6 +49,10 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private bool externalControlLocked;
     private bool externalFacingLocked;
     private bool externalFacingRight = true;
+    private bool externalMovementActive;
+    private float externalMoveInput;
+    private bool externalMovementHasTarget;
+    private float externalMovementTargetX;
 
     //-------各種コンポーネント参照関連--------
     private GroundCheck groundCheck;                           //地面判定のスクリプト
@@ -76,7 +81,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     // Animator/View が参照する読み取り専用状態。
     // ロジック追加時は「計算済みの状態」をここに公開し、View側で判定させない方針。
     public bool IsGrounded => isGround;
-    public bool IsMoving => Mathf.Abs(moveInput) > 0.01f;
+    public bool IsMoving => Mathf.Abs(moveInput) > 0.01f || externalMovementActive;
     public bool IsGliding =>
         umbrellaController != null &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open &&
@@ -96,6 +101,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsRecoilBoosting => gunController != null && gunController.GetRecoiling() && !isGround;
     public bool IsExternalControlLocked => externalControlLocked;
     public bool IsExternalFacingLocked => externalFacingLocked;
+    public bool IsExternalMovementActive => externalMovementActive;
 
     private void Awake()
     {
@@ -131,6 +137,10 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         externalControlLocked = false;
         externalFacingLocked = false;
         externalFacingRight = true;
+        externalMovementActive = false;
+        externalMoveInput = 0.0f;
+        externalMovementHasTarget = false;
+        externalMovementTargetX = 0.0f;
     }
 
     private void Start()
@@ -155,6 +165,14 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     {
         RefreshGroundState();
         HandleGroundTransition();
+
+        if (externalMovementActive)
+        {
+            UpdateExternalTargetMovement();
+            jumpInput = false;
+            Move();
+            return;
+        }
 
         if (externalControlLocked)
         {
@@ -211,6 +229,31 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             isFacingRight = externalFacingRight;
         }
+    }
+
+    public void SetExternalMovementDirection(float horizontalDirection)
+    {
+        externalMoveInput = Mathf.Clamp(horizontalDirection, -1.0f, 1.0f);
+        externalMovementActive = Mathf.Abs(externalMoveInput) > 0.01f;
+
+        if (externalMovementActive && !externalFacingLocked)
+        {
+            isFacingRight = externalMoveInput > 0.0f;
+        }
+    }
+
+    public void StartExternalMoveToX(float targetX)
+    {
+        externalMovementTargetX = targetX;
+        externalMovementHasTarget = true;
+        SetExternalMovementDirection(targetX - transform.position.x);
+    }
+
+    public void ClearExternalMovementDirection()
+    {
+        externalMovementActive = false;
+        externalMoveInput = 0.0f;
+        externalMovementHasTarget = false;
     }
 
     private void FindComponents()
@@ -599,7 +642,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         bool isGliding = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open && !isGround;
 
-        if (moveInput != 0.0f)
+        float horizontalInput = ResolveHorizontalMoveInput();
+
+        if (horizontalInput != 0.0f)
         {
             float moveSpeed = playerStatsData.MoveSpeed;
 
@@ -608,7 +653,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                 moveSpeed = umbrellaController.GetGlideMoveSpeed();
             }
 
-            velocity.x = moveInput * moveSpeed;
+            velocity.x = horizontalInput * moveSpeed;
         }
         else
         {
@@ -630,6 +675,47 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
 
         rigidBody2d.linearVelocity = velocity;
+    }
+
+    private float ResolveHorizontalMoveInput()
+    {
+        return externalMovementActive ? externalMoveInput : moveInput;
+    }
+
+    private void UpdateExternalTargetMovement()
+    {
+        if (!externalMovementHasTarget)
+        {
+            return;
+        }
+
+        float remainingX = externalMovementTargetX - transform.position.x;
+        float moveSpeed = playerStatsData != null ? playerStatsData.MoveSpeed : 0.0f;
+        float arrivalDistance = Mathf.Max(ExternalMoveArrivalThreshold, moveSpeed * Time.fixedDeltaTime);
+
+        if (Mathf.Abs(remainingX) <= arrivalDistance)
+        {
+            SnapExternalMovementTargetX();
+            ClearExternalMovementDirection();
+            return;
+        }
+
+        SetExternalMovementDirection(remainingX);
+    }
+
+    private void SnapExternalMovementTargetX()
+    {
+        Vector3 nextPosition = transform.position;
+        nextPosition.x = externalMovementTargetX;
+        transform.position = nextPosition;
+
+        if (rigidBody2d == null)
+        {
+            return;
+        }
+
+        rigidBody2d.position = new Vector2(externalMovementTargetX, rigidBody2d.position.y);
+        rigidBody2d.linearVelocity = new Vector2(0.0f, rigidBody2d.linearVelocity.y);
     }
 
     /// <summary>
@@ -709,6 +795,20 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         if (externalFacingLocked)
         {
             isFacingRight = externalFacingRight;
+            return;
+        }
+
+        if (externalMovementActive)
+        {
+            if (externalMoveInput > 0.01f)
+            {
+                isFacingRight = true;
+            }
+            else if (externalMoveInput < -0.01f)
+            {
+                isFacingRight = false;
+            }
+
             return;
         }
 
