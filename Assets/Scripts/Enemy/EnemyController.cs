@@ -13,7 +13,7 @@ namespace GameName.Enemy
     {
         [SerializeField] private float moveSpeed = 2f;
         [SerializeField] private float patrolDistance = 2f;
-        [SerializeField] private int damageToPlayer = 1;
+        [SerializeField, Min(0)] private int damageToPlayer = 1;
         [SerializeField, Min(1)] private int maxHealth = 1;
         [SerializeField, Min(1f)] private float backAttackDamageMultiplier = 2f;
 
@@ -59,6 +59,7 @@ namespace GameName.Enemy
 
         private void OnValidate()
         {
+            damageToPlayer = Mathf.Max(0, damageToPlayer);
             maxHealth = Mathf.Max(1, maxHealth);
             backAttackDamageMultiplier = Mathf.Max(1f, backAttackDamageMultiplier);
         }
@@ -81,6 +82,7 @@ namespace GameName.Enemy
         public float CurrentX => rigidbody2D != null ? rigidbody2D.position.x : transform.position.x;
         public int CurrentHealth => currentHealth;
         public int MaxHealth => Mathf.Max(1, maxHealth);
+        public int DamageToPlayer => Mathf.Max(0, damageToPlayer);
         public bool IsReturningHome => returningHome;
 
         /// <summary>
@@ -685,7 +687,7 @@ namespace GameName.Enemy
                     Debug.Log("パリィ中なので敵ダメージ無効");
                 }
                 else if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
-                        playerHealth.TryTakeDamage(damageToPlayer))
+                        playerHealth.TryTakeDamage(DamageToPlayer))
                 {
                     Debug.Log("敵接触ダメージ");
                     HitStopController.RequestEnemyToPlayer();

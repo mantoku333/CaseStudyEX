@@ -34,7 +34,7 @@ namespace Metroidvania.Enemy
         private void Awake()
         {
             RefreshEnemyColliders();
-            enemyController = GetComponent<GameName.Enemy.EnemyController>();
+            ResolveEnemyController();
             CachePlayerReferences();
 
             if (passThroughPlayer)
@@ -219,7 +219,7 @@ namespace Metroidvania.Enemy
             bool didDamage = false;
             if (applyDamageInPassThrough && cachedPlayerHealth != null)
             {
-                didDamage = cachedPlayerHealth.TryTakeDamage(contactDamage);
+                didDamage = cachedPlayerHealth.TryTakeDamage(ResolveContactDamage());
 
             }
 
@@ -248,6 +248,22 @@ namespace Metroidvania.Enemy
             }
 
             return playerHealth.GetComponentInChildren<PlayerDamageFlash>(true);
+        }
+
+        private int ResolveContactDamage()
+        {
+            ResolveEnemyController();
+            return enemyController != null ? enemyController.DamageToPlayer : contactDamage;
+        }
+
+        private void ResolveEnemyController()
+        {
+            if (enemyController != null)
+            {
+                return;
+            }
+
+            enemyController = GetComponent<GameName.Enemy.EnemyController>();
         }
 
         private static bool TryGetBodyHitFlash(Collider2D hitCollider, out PlayerDamageFlash damageFlash)
