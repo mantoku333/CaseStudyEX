@@ -2,7 +2,7 @@
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(BoxCollider2D))]
-public sealed class ReflectBreakableWall : MonoBehaviour
+public sealed class ReflectBreakableWall : MonoBehaviour, IAttackReceiver
 {
     [Header("壁の大きさ")]
     [SerializeField] private Vector2 size = Vector2.one;
@@ -39,6 +39,16 @@ public sealed class ReflectBreakableWall : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
+    {
+        if (attacker == null || attacker.PlayerAttackDamage <= 0)
+        {
+            return;
+        }
+
+        Break();
     }
 
     private void CacheComponents()
