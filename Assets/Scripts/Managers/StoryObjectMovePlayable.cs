@@ -16,11 +16,13 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
     private Vector3 startPosition;
     private Vector3 targetPosition;
     private PlayerController playerController;
+    private bool loggedDurationWarning;
 
     public override void OnBehaviourPlay(Playable playable, FrameData info)
     {
         initialized = false;
         playerController = null;
+        loggedDurationWarning = false;
     }
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
@@ -46,6 +48,7 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
             {
                 targetPosition.y = startPosition.y;
                 targetPosition.z = startPosition.z;
+                WarnIfPlayerMoveClipIsTooShort(playable);
                 playerController.StartExternalMoveToX(targetPosition.x);
             }
             initialized = true;
@@ -67,17 +70,34 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
         target.position = nextPosition;
     }
 
-    public override void OnBehaviourPause(Playable playable, FrameData info)
+    private void WarnIfPlayerMoveClipIsTooShort(Playable playable)
     {
-        if (!Application.isPlaying || playerController == null)
+        if (loggedDurationWarning || playerController == null)
         {
             return;
         }
 
-        if (Mathf.Abs(playerController.transform.position.x - targetPosition.x) <= 0.05f)
+        Player.PlayerStatsData statsData = playerController.GetPlayerStatsData();
+        float moveSpeed = statsData != null ? statsData.MoveSpeed : 0.0f;
+        if (moveSpeed <= 0.0f)
         {
-            playerController.ClearExternalMovementDirection();
+            return;
         }
+
+        float distance = Mathf.Abs(targetPosition.x - startPosition.x);
+        double requiredDuration = distance / moveSpeed;
+        double clipDuration = playable.GetDuration();
+        if (requiredDuration <= clipDuration + 0.05d)
+        {
+            return;
+        }
+
+        loggedDurationWarning = true;
+        Debug.LogWarning(
+            $"[StoryObjectMovePlayable] Player Move clip is shorter than walk-speed travel time. " +
+            $"distance={distance:0.###}, speed={moveSpeed:0.###}, clip={clipDuration:0.###}, required={requiredDuration:0.###}. " +
+            "Use Tools/CaseStudy/Story/Fit Move Clips To Walk Speed.",
+            playerController);
     }
 
     private static Transform ResolveBoundTarget(object playerData)
@@ -146,7 +166,13 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
 
     private static StoryEventController ResolveStoryEventController(Playable playable)
     {
-        PlayableDirector director = playable.GetGraph().GetResolver() as PlayableDirector;
+        PlayableDirector director = ResolvePlayableDirector(playable);
         return director != null ? director.GetComponent<StoryEventController>() : null;
     }
+
+    private static PlayableDirector ResolvePlayableDirector(Playable playable)
+    {
+        return playable.GetGraph().GetResolver() as PlayableDirector;
+    }
+
 }

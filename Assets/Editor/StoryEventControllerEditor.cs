@@ -87,6 +87,11 @@ public sealed class StoryEventControllerEditor : Editor
             }
         }
 
+        if (GUILayout.Button("Fit Move Clips To Walk Speed"))
+        {
+            StoryMoveClipDurationFitter.Fit(controller, null, true, 0.0f, 0.05f, true);
+        }
+
         using (new EditorGUILayout.HorizontalScope())
         {
             GUI.enabled = EditorApplication.isPlaying;
