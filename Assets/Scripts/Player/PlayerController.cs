@@ -236,9 +236,14 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         externalMoveInput = Mathf.Clamp(horizontalDirection, -1.0f, 1.0f);
         externalMovementActive = Mathf.Abs(externalMoveInput) > 0.01f;
 
-        if (externalMovementActive && !externalFacingLocked)
+        if (externalMovementActive)
         {
-            isFacingRight = externalMoveInput > 0.0f;
+            bool faceRight = externalMoveInput > 0.0f;
+            isFacingRight = faceRight;
+            if (externalFacingLocked)
+            {
+                externalFacingRight = faceRight;
+            }
         }
     }
 
