@@ -26,7 +26,7 @@ MonoBehaviour:
   pickupSound: {fileID: 0}
   equipmentAbility:
   - abilityType: 0
-    value: 0.1
+    value: 1.1
   equipmentVisualLayers:
   - layerName: 
     sprite: {fileID: -575574298655833603, guid: 936b15ea2de10d642939edad13aa2636, type: 3}

@@ -4192,15 +4192,15 @@ RectTransform:
   m_GameObject: {fileID: 707075379}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.0212, y: 1.0212, z: 1.0212}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 387405532}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.75, y: 68}
-  m_SizeDelta: {x: 1925.5, y: 1367.3872}
+  m_AnchoredPosition: {x: -2.75, y: 3}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &707075381
 MonoBehaviour:
@@ -4222,7 +4222,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8e911cf5e46cefa4ea616dbc5d3226c8, type: 3}
+  m_Sprite: {fileID: 2713135328581162842, guid: 45790f5e1cc2c3146928e85c1c8a0459, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5346,7 +5346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a47c42cf228fc644b663c1558765d7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TitleSceneController
-  gameSceneName: Fix_Alpha4_Fuyuno
+  gameSceneName: Fix_Beta2_Fuyuno
   quitConfirmPanel: {fileID: 553049807}
   noButton: {fileID: 271642318}
   yesButton: {fileID: 1055899291}
