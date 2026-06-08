@@ -12,8 +12,9 @@ public enum EventPanelMarkerMode
 }
 
 [System.Serializable]
+[HideInMenu]
 [DisplayName("Event/Panel Point")]
-public sealed class EventPanelMarker : Marker, INotification, INotificationOptionProvider
+public sealed class EventPanelMarker : Marker
 {
     [SerializeField, HideInInspector] private string markerId = string.Empty;
     [SerializeField] private EventPanelMarkerMode markerMode = EventPanelMarkerMode.ExistingPanel;
@@ -54,8 +55,6 @@ public sealed class EventPanelMarker : Marker, INotification, INotificationOptio
     public float AutoCloseSecondsWhenNoButton => Mathf.Max(0f, autoCloseSecondsWhenNoButton);
     public EventPanelKind PanelKind => panelKind;
     public string ResolvedTitle => ResolveTitle();
-    public PropertyName id => new PropertyName(nameof(EventPanelMarker));
-    public NotificationFlags flags => NotificationFlags.TriggerOnce;
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -83,20 +82,14 @@ public sealed class EventPanelMarker : Marker, INotification, INotificationOptio
         };
     }
 
-    public EventPanelPresenter ResolvePanelPresenter(Playable origin)
+    public EventPanelPresenter ResolvePanelPresenter(PlayableDirector director)
     {
-        if (!origin.IsValid())
+        if (director == null)
         {
             return null;
         }
 
-        IExposedPropertyTable resolver = origin.GetGraph().GetResolver();
-        if (resolver == null)
-        {
-            return null;
-        }
-
-        GameObject resolvedPanelObject = panelObject.Resolve(resolver);
+        GameObject resolvedPanelObject = panelObject.Resolve(director);
         if (resolvedPanelObject != null)
         {
             EventPanelPresenter resolvedPresenter =
@@ -114,7 +107,7 @@ public sealed class EventPanelMarker : Marker, INotification, INotificationOptio
             }
         }
 
-        return panelPresenter.Resolve(resolver);
+        return panelPresenter.Resolve(director);
     }
 
     private string ResolveTitle()

@@ -1,19 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Metroidvania.Managers;
 using Metroidvania.UI;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
+using UnityEngine.Timeline;
 using UnityEngine.Serialization;
 using Yarn.Unity;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(PlayableDirector))]
 [AddComponentMenu("CaseStudy/Story/Story Event Controller")]
-public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
+public sealed class StoryEventController : MonoBehaviour
 {
     private static readonly string[] PlayerControlBehaviourNames =
     {
@@ -123,6 +125,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         new Dictionary<string, StoryEventActor>(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> firedDialogueClipKeys = new HashSet<string>(StringComparer.Ordinal);
     private readonly HashSet<string> firedPanelClipKeys = new HashSet<string>(StringComparer.Ordinal);
+    private readonly HashSet<string> firedTimelinePointKeys = new HashSet<string>(StringComparer.Ordinal);
 
     private Coroutine playRoutine;
     private Coroutine dialogueRoutine;
@@ -248,6 +251,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         startMutationsApplied = false;
         firedDialogueClipKeys.Clear();
         firedPanelClipKeys.Clear();
+        firedTimelinePointKeys.Clear();
     }
 
     public Transform GetMarkerTransform(int markerNo)
@@ -300,69 +304,6 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
     public CinemachineCamera GetEventCameraForTimeline()
     {
         return activeEventCamera != null ? activeEventCamera : ResolveEventCamera();
-    }
-
-    public void OnNotify(Playable origin, INotification notification, object context)
-    {
-        if (notification is StoryYarnDialogueMarker dialogueMarker)
-        {
-            TryStartDialogueFromTimeline(
-                dialogueMarker.TriggerKey,
-                dialogueMarker.NodeName,
-                dialogueMarker.UseControllerDefaultStyle,
-                dialogueMarker.DialogueStyle,
-                dialogueMarker.PauseTimelineUntilComplete,
-                dialogueMarker.BubbleActorKey);
-            return;
-        }
-
-        if (notification is StoryAudioMarker audioMarker)
-        {
-            PlayAudioMarker(audioMarker);
-            return;
-        }
-
-        if (notification is StoryCameraShakeMarker shakeMarker)
-        {
-            PlayCameraShakeMarker(shakeMarker);
-            return;
-        }
-
-        if (notification is EventPanelMarker panelMarker)
-        {
-            EventPanelPresenter panelPresenterOverride = panelMarker.ResolvePanelPresenter(origin);
-            if (panelMarker.UsesExistingPanel)
-            {
-                TryShowExistingPanelFromTimeline(
-                    panelMarker.TriggerKey,
-                    panelMarker.PanelPresenterName,
-                    panelPresenterOverride,
-                    panelMarker.PauseTimelineUntilClosed,
-                    panelMarker.AutoCloseSecondsWhenNoButton);
-            }
-            else
-            {
-                TryShowPanelFromTimeline(
-                    panelMarker.TriggerKey,
-                    panelMarker.BuildContent(),
-                    panelMarker.PauseTimelineUntilClosed,
-                    panelMarker.AutoCloseSecondsWhenNoButton,
-                    panelMarker.PanelPresenterName,
-                    panelPresenterOverride);
-            }
-
-            return;
-        }
-
-        if (notification is StoryAutoSaveMarker autoSaveMarker)
-        {
-            if (autoSaveMarker.ApplyCompleteMutationsBeforeSave)
-            {
-                ApplyCompleteMutations();
-            }
-
-            SaveManager.TrySaveCurrentGame();
-        }
     }
 
     private static void PlayAudioMarker(StoryAudioMarker marker)
@@ -437,6 +378,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         completeMutationsApplied = false;
         firedDialogueClipKeys.Clear();
         firedPanelClipKeys.Clear();
+        firedTimelinePointKeys.Clear();
 
         StoryPauseRuntime.SetOverride(pausePolicy);
         CaptureCinematicState();
@@ -454,13 +396,23 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         }
 
         resolvedDirector.time = 0d;
+        resolvedDirector.RebuildGraph();
         resolvedDirector.Evaluate();
         resolvedDirector.Play();
 
+        double lastPointProcessTime = -0.000001d;
+        ProcessTimelinePoints(resolvedDirector, lastPointProcessTime, resolvedDirector.time);
+        lastPointProcessTime = resolvedDirector.time;
+
         while (!directorStopped)
         {
+            double currentTime = resolvedDirector.time;
+            ProcessTimelinePoints(resolvedDirector, lastPointProcessTime, currentTime);
+            lastPointProcessTime = currentTime;
             yield return null;
         }
+
+        ProcessTimelinePoints(resolvedDirector, lastPointProcessTime, resolvedDirector.time);
 
         resolvedDirector.stopped -= OnDirectorStopped;
         ApplyCompletionState();
@@ -470,6 +422,184 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         RestoreCinematicState();
 
         playRoutine = null;
+    }
+
+    private void ProcessTimelinePoints(PlayableDirector resolvedDirector, double previousTime, double currentTime)
+    {
+        if (resolvedDirector == null || !(resolvedDirector.playableAsset is TimelineAsset timelineAsset))
+        {
+            return;
+        }
+
+        double minTime = Math.Min(previousTime, currentTime);
+        double maxTime = Math.Max(previousTime, currentTime);
+        const double epsilon = 0.000001d;
+
+        foreach (TrackAsset track in EnumerateTracks(timelineAsset))
+        {
+            if (track == null || track.mutedInHierarchy)
+            {
+                continue;
+            }
+
+            foreach (IMarker marker in track.GetMarkers())
+            {
+                if (marker == null)
+                {
+                    continue;
+                }
+
+                double markerTime = marker.time;
+                if (markerTime < minTime - epsilon || markerTime > maxTime + epsilon)
+                {
+                    continue;
+                }
+
+                string pointKey = BuildTimelinePointKey(track, marker);
+                if (!firedTimelinePointKeys.Add(pointKey))
+                {
+                    continue;
+                }
+
+                PlayTimelinePoint(resolvedDirector, track, marker);
+            }
+        }
+    }
+
+    private static IEnumerable<TrackAsset> EnumerateTracks(TimelineAsset timelineAsset)
+    {
+        if (timelineAsset == null)
+        {
+            yield break;
+        }
+
+        foreach (TrackAsset rootTrack in timelineAsset.GetRootTracks())
+        {
+            foreach (TrackAsset track in EnumerateTrackAndChildren(rootTrack))
+            {
+                yield return track;
+            }
+        }
+    }
+
+    private static IEnumerable<TrackAsset> EnumerateTrackAndChildren(TrackAsset track)
+    {
+        if (track == null)
+        {
+            yield break;
+        }
+
+        yield return track;
+
+        foreach (TrackAsset childTrack in track.GetChildTracks())
+        {
+            foreach (TrackAsset descendant in EnumerateTrackAndChildren(childTrack))
+            {
+                yield return descendant;
+            }
+        }
+    }
+
+    private static string BuildTimelinePointKey(TrackAsset track, IMarker marker)
+    {
+        string markerObjectId = marker is UnityEngine.Object markerObject
+            ? markerObject.GetInstanceID().ToString(CultureInfo.InvariantCulture)
+            : marker.GetHashCode().ToString(CultureInfo.InvariantCulture);
+
+        return string.Join(
+            "|",
+            track != null ? track.GetInstanceID().ToString(CultureInfo.InvariantCulture) : "track",
+            marker.GetType().FullName,
+            markerObjectId,
+            marker.time.ToString("0.######", CultureInfo.InvariantCulture));
+    }
+
+    private void PlayTimelinePoint(PlayableDirector resolvedDirector, TrackAsset track, IMarker marker)
+    {
+        if (marker is StoryYarnDialogueMarker dialogueMarker)
+        {
+            if (!(track is StoryYarnDialogueTrack))
+            {
+                return;
+            }
+
+            TryStartDialogueFromTimeline(
+                dialogueMarker.TriggerKey,
+                dialogueMarker.NodeName,
+                dialogueMarker.UseControllerDefaultStyle,
+                dialogueMarker.DialogueStyle,
+                dialogueMarker.PauseTimelineUntilComplete,
+                dialogueMarker.BubbleActorKey);
+            return;
+        }
+
+        if (marker is StoryAudioMarker audioMarker)
+        {
+            if (!(track is StoryAudioTrack))
+            {
+                return;
+            }
+
+            PlayAudioMarker(audioMarker);
+            return;
+        }
+
+        if (marker is StoryCameraShakeMarker shakeMarker)
+        {
+            if (!(track is StoryCameraShakeTrack))
+            {
+                return;
+            }
+
+            PlayCameraShakeMarker(shakeMarker);
+            return;
+        }
+
+        if (marker is EventPanelMarker panelMarker)
+        {
+            if (!(track is EventPanelTrack))
+            {
+                return;
+            }
+
+            EventPanelPresenter panelPresenterOverride = panelMarker.ResolvePanelPresenter(resolvedDirector);
+            if (panelMarker.UsesExistingPanel)
+            {
+                TryShowExistingPanelFromTimeline(
+                    panelMarker.TriggerKey,
+                    panelMarker.PanelPresenterName,
+                    panelPresenterOverride,
+                    panelMarker.PauseTimelineUntilClosed,
+                    panelMarker.AutoCloseSecondsWhenNoButton);
+            }
+            else
+            {
+                TryShowPanelFromTimeline(
+                    panelMarker.TriggerKey,
+                    panelMarker.BuildContent(),
+                    panelMarker.PauseTimelineUntilClosed,
+                    panelMarker.AutoCloseSecondsWhenNoButton,
+                    panelMarker.PanelPresenterName,
+                    panelPresenterOverride);
+            }
+
+            return;
+        }
+
+        if (marker is StoryAutoSaveMarker autoSaveMarker)
+        {
+            if (!(track is StoryEventTrack))
+            {
+                return;
+            }
+
+            if (autoSaveMarker.ApplyCompleteMutationsBeforeSave)
+            {
+                ApplyCompleteMutations();
+            }
+
+            SaveManager.TrySaveCurrentGame();
+        }
     }
 
     private bool CanRun()
