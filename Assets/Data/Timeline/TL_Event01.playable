@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
   m_Name: StoryObjectMoveClip(Clone)(Clone)
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
   targetMode: 0
   markerNo: 3
   worldPosition: {x: 0, y: 0, z: 0}
@@ -369,6 +373,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
   m_Name: StoryObjectMoveClip(Clone)(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
   targetMode: 0
   markerNo: 3
   worldPosition: {x: 0, y: 0, z: 0}
@@ -894,6 +902,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
   m_Name: StoryObjectMoveClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
   targetMode: 0
   markerNo: 1
   worldPosition: {x: 0, y: 0, z: 0}
@@ -1183,6 +1195,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67e335cd1a64dc283cb8280dcc78b76, type: 3}
   m_Name: StoryAnimatorClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryAnimatorClip
+  actorKey: iris
+  animator:
+    exposedName: 
+    defaultValue: {fileID: 0}
   actionType: 0
   parameterOrStateName: walk
   layer: 0
@@ -1203,6 +1219,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
   m_Name: StoryObjectMoveClip(Clone)(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
   targetMode: 0
   markerNo: 5
   worldPosition: {x: 0, y: 0, z: 0}
@@ -1263,6 +1283,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67e335cd1a64dc283cb8280dcc78b76, type: 3}
   m_Name: StoryAnimatorClip(Clone)(Clone)
   m_EditorClassIdentifier: Assembly-CSharp::StoryAnimatorClip
+  actorKey: iris
+  animator:
+    exposedName: 
+    defaultValue: {fileID: 0}
   actionType: 0
   parameterOrStateName: walk
   layer: 0
@@ -1283,6 +1307,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67e335cd1a64dc283cb8280dcc78b76, type: 3}
   m_Name: StoryAnimatorClip(Clone)(Clone)
   m_EditorClassIdentifier: Assembly-CSharp::StoryAnimatorClip
+  actorKey: iris
+  animator:
+    exposedName: 
+    defaultValue: {fileID: 0}
   actionType: 0
   parameterOrStateName: walk
   layer: 0
@@ -1321,6 +1349,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
   m_Name: StoryObjectMoveClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
   targetMode: 0
   markerNo: 2
   worldPosition: {x: 0, y: 0, z: 0}
@@ -1340,6 +1372,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67e335cd1a64dc283cb8280dcc78b76, type: 3}
   m_Name: StoryAnimatorClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryAnimatorClip
+  actorKey: iris
+  animator:
+    exposedName: 
+    defaultValue: {fileID: 0}
   actionType: 0
   parameterOrStateName: walk
   layer: 0
