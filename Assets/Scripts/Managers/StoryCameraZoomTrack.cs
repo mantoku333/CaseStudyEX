@@ -4,7 +4,7 @@ using UnityEngine.Timeline;
 
 [TrackColor(0.35f, 0.65f, 1f)]
 [TrackClipType(typeof(StoryCameraZoomClip))]
-[DisplayName("Story/Camera Zoom Track")]
+[DisplayName("Camera Zoom Track")]
 public sealed class StoryCameraZoomTrack : TrackAsset
 {
 }

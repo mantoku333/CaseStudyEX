@@ -4,7 +4,7 @@ using UnityEngine.Timeline;
 
 [TrackColor(0.75f, 0.45f, 1f)]
 [TrackClipType(typeof(StoryYarnDialogueClip))]
-[DisplayName("Story/Yarn Dialogue Track")]
+[DisplayName("Yarn Dialogue Track")]
 public sealed class StoryYarnDialogueTrack : TrackAsset
 {
 }
