@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using GameName.Enemy;
 using Metroidvania.Player;
 using Player;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// ボスエリア侵入で戦闘を開始し、
@@ -27,6 +30,21 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     [HideInInspector, SerializeField] private LastBossController lastBossController;
     [SerializeField] private string bossDefeatedFlagKey = GameProgressKeys.Boss01Defeated;
     [SerializeField] private bool hideBossWhenDefeated = true;
+
+    [Header("StageBoss Intro")]
+    // StageBoss 専用の登場演出。LastBoss は従来通り即時開始させる。
+    [SerializeField] private bool playStageBossIntro = true;
+    [SerializeField] private bool hideStageBossUntilIntro = true;
+    // 入室直後は部屋とカメラだけ先に固定し、少し間を置いてからプレイヤーを止める。
+    [SerializeField, Min(0f)] private float stageBossEntryDelaySeconds = 2f;
+    [SerializeField, Min(0f)] private float stageBossNormalBgmFadeOutSeconds = 1f;
+    // 上から入室・ジャンプ中に空中で固まらないよう、接地後にロックする。
+    [SerializeField] private bool waitForStageBossPlayerGroundedBeforeLock = true;
+    [SerializeField, Min(0f)] private float stageBossRevealDuration = 3f;
+    [SerializeField, Min(0f)] private float stageBossHpLeadInSeconds = 1f;
+    [SerializeField] private bool lockPlayerFacingStageBoss = true;
+    [SerializeField, Min(0f)] private float stageBossMirageAmplitude = 0.08f;
+    [SerializeField, Min(0f)] private float stageBossMirageFrequency = 8f;
 
     [Header("Walls")]
     [SerializeField] private ShutterWallBlockRise[] wallsCloseOnStart = new ShutterWallBlockRise[0];
@@ -76,6 +94,9 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     // 回避移動がエリア拘束と競合しないよう、DodgeController に境界を渡すための参照。
     private DodgeController playerDodgeController;
     private Rigidbody2D bossRigidbody2D;
+    private StageBossIntroVisualState stageBossIntroVisualState;
+    private StageBossIntroPlayerLockState stageBossIntroPlayerLockState;
+    private Coroutine stageBossIntroRoutine;
 
     public int Priority => 240;
     public string BossDisplayName => ResolveBossDisplayName();
@@ -109,6 +130,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         DeactivateBossCamera();
 
         ApplyDefeatedStateIfSaved();
+        ApplyInitialStageBossIntroVisibility();
     }
 
     private void OnEnable()
@@ -118,6 +140,8 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void OnDisable()
     {
+        StopStageBossIntroRoutine();
+        RestoreStageBossIntroPlayerLock();
         ClearActiveDodgeBounds();
         SaveManager.UnregisterModule(this);
     }
@@ -149,10 +173,13 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag(playerTag))
-        {
-            TryStartEncounter();
-        }
+        TryStartEncounterFrom2DTrigger(collision);
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        // 端に触れた直後は開始せず、歩いて完全に入ったタイミングで開始できるよう Stay でも確認する。
+        TryStartEncounterFrom2DTrigger(collision);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -161,6 +188,30 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         {
             TryStartEncounter();
         }
+    }
+
+    private void TryStartEncounterFrom2DTrigger(Collider2D sourceCollider)
+    {
+        if (encounterStarted || encounterCompleted)
+        {
+            return;
+        }
+
+        // 攻撃・傘・パリィなどの子トリガーではなく、プレイヤー本体コライダーだけを入口判定に使う。
+        if (!TryResolvePlayerBodyCollider(sourceCollider, out Collider2D bodyCollider))
+        {
+            return;
+        }
+
+        // 本体が半分だけ触れた状態で拘束を始めると、FixedUpdate の補正で部屋内へ押し込まれて見える。
+        // そのため、拘束範囲へ完全に入るまではボス戦を開始しない。
+        if (!IsPlayerBodyFullyInsideArea(bodyCollider))
+        {
+            return;
+        }
+
+        CachePlayerReferencesFromBodyCollider(bodyCollider);
+        TryStartEncounter();
     }
 
     private void TryStartEncounter()
@@ -188,21 +239,21 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             LockArea();
         }
 
-        // カメラ切り替え -> ボス起動 の順で開始演出を揃える。
-        // カメラ/BGMをボス戦用へ切り替えてから、設定されているボスを起動する。
         ActivateBossCamera();
-        stageBgm?.PlayBoss(bossBgm, bossBgmVolume);
 
-        if (stageBossAttack != null)
+        if (ShouldPlayStageBossIntro())
         {
-            stageBossAttack.ActivateEncounter();
+            // StageBoss は通常BGMを先に薄くして、HP表示完了後にボスBGMへ切り替える。
+            stageBgm?.FadeOutCurrent(stageBossNormalBgmFadeOutSeconds);
+            stageBossIntroRoutine = StartCoroutine(PlayStageBossIntroRoutine());
         }
-        else if (lastBossController != null)
+        else
         {
-            lastBossController.ActivateEncounter();
+            // LastBoss など StageBoss 以外はこれまで通り即時に戦闘開始する。
+            stageBgm?.PlayBoss(bossBgm, bossBgmVolume);
+            ActivateAssignedBoss();
+            EncounterStarted?.Invoke(this);
         }
-
-        EncounterStarted?.Invoke(this);
 
         if (disableTriggerAfterStart)
         {
@@ -215,12 +266,211 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         }
     }
 
+    private bool ShouldPlayStageBossIntro()
+    {
+        return playStageBossIntro && stageBossAttack != null && lastBossController == null;
+    }
+
+    private void ActivateAssignedBoss()
+    {
+        if (stageBossAttack != null)
+        {
+            RestoreStageBossForCombat();
+            stageBossAttack.ActivateEncounter();
+        }
+        else if (lastBossController != null)
+        {
+            lastBossController.ActivateEncounter();
+        }
+    }
+
+    private IEnumerator PlayStageBossIntroRoutine()
+    {
+        CaptureStageBossIntroVisualState();
+
+        // 入室してすぐ固めず、プレイヤーが部屋に入ったことを見せるための待ち時間。
+        float entryDelaySeconds = Mathf.Max(0f, stageBossEntryDelaySeconds);
+        if (entryDelaySeconds > 0f)
+        {
+            yield return new WaitForSeconds(entryDelaySeconds);
+        }
+
+        CachePlayerReferences();
+        // 空中で停止すると不自然なので、接地を待ってから操作ロックへ進む。
+        yield return WaitForStageBossPlayerGroundedBeforeLock();
+
+        CachePlayerReferences();
+        stageBossIntroPlayerLockState = StageBossIntroPlayerLockState.Capture(
+            playerRoot,
+            bossRoot,
+            lockPlayerFacingStageBoss);
+        stageBossIntroPlayerLockState?.ApplyLock();
+        // 登場時点でボスもプレイヤーの方を向かせ、突進開始時の向きズレを防ぐ。
+        FaceStageBossTowardPlayer();
+
+        if (stageBossIntroVisualState != null)
+        {
+            yield return stageBossIntroVisualState.PlayReveal(
+                this,
+                stageBossRevealDuration,
+                stageBossMirageAmplitude,
+                stageBossMirageFrequency);
+        }
+
+        EncounterStarted?.Invoke(this);
+
+        float leadInSeconds = Mathf.Max(0f, stageBossHpLeadInSeconds);
+        if (leadInSeconds > 0f)
+        {
+            yield return new WaitForSeconds(leadInSeconds);
+        }
+
+        // HPバーのフェードインが終わる想定タイミングでボスBGMとAIを開始する。
+        stageBgm?.PlayBoss(bossBgm, bossBgmVolume);
+        RestoreStageBossForCombat();
+        stageBossAttack?.ActivateEncounter();
+        RestoreStageBossIntroPlayerLock();
+        stageBossIntroRoutine = null;
+    }
+
+    private IEnumerator WaitForStageBossPlayerGroundedBeforeLock()
+    {
+        if (!waitForStageBossPlayerGroundedBeforeLock)
+        {
+            yield break;
+        }
+
+        // GroundCheck がある場合は実際の接地判定を毎フレーム確認する。
+        while (!IsPlayerGroundedForStageBossIntro())
+        {
+            yield return null;
+        }
+    }
+
+    private bool IsPlayerGroundedForStageBossIntro()
+    {
+        if (playerRoot == null)
+        {
+            return true;
+        }
+
+        GroundCheck groundCheck = playerRoot.GetComponentInChildren<GroundCheck>(true);
+        if (groundCheck != null)
+        {
+            return groundCheck.IsGround();
+        }
+
+        PlayerController playerController = playerRoot.GetComponent<PlayerController>();
+        if (playerController == null)
+        {
+            playerController = playerRoot.GetComponentInChildren<PlayerController>(true);
+        }
+
+        // テスト用・特殊プレイヤーなど接地情報が無い場合は、演出が詰まらないよう待たない。
+        return playerController == null || !playerController.enabled || playerController.IsGrounded;
+    }
+
+    private void FaceStageBossTowardPlayer()
+    {
+        if (bossRoot == null)
+        {
+            return;
+        }
+
+        if (playerRoot == null)
+        {
+            CachePlayerReferences();
+        }
+
+        if (playerRoot == null)
+        {
+            return;
+        }
+
+        EnemyController enemyController = bossRoot.GetComponent<EnemyController>();
+        if (enemyController == null)
+        {
+            enemyController = bossRoot.GetComponentInChildren<EnemyController>(true);
+        }
+
+        if (enemyController == null)
+        {
+            return;
+        }
+
+        int direction = playerRoot.position.x >= bossRoot.position.x ? 1 : -1;
+        enemyController.FaceDirection(direction);
+    }
+
+    private void StopStageBossIntroRoutine()
+    {
+        if (stageBossIntroRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(stageBossIntroRoutine);
+        stageBossIntroRoutine = null;
+    }
+
+    private void RestoreStageBossIntroPlayerLock()
+    {
+        stageBossIntroPlayerLockState?.Restore();
+        stageBossIntroPlayerLockState = null;
+    }
+
+    private void ApplyInitialStageBossIntroVisibility()
+    {
+        if (encounterCompleted || !hideStageBossUntilIntro || !ShouldPlayStageBossIntro())
+        {
+            return;
+        }
+
+        // シーン配置済みのStageBossだけを、入室前は見えず当たらない状態にしておく。
+        CaptureStageBossIntroVisualState();
+        stageBossIntroVisualState?.ApplyHidden();
+    }
+
+    private void CaptureStageBossIntroVisualState()
+    {
+        if (bossRoot == null || stageBossAttack == null)
+        {
+            return;
+        }
+
+        if (stageBossIntroVisualState == null ||
+            !stageBossIntroVisualState.IsForRoot(bossRoot))
+        {
+            stageBossIntroVisualState = StageBossIntroVisualState.Capture(bossRoot);
+        }
+    }
+
+    private void RestoreStageBossForCombat()
+    {
+        if (stageBossAttack == null)
+        {
+            return;
+        }
+
+        // 演出用に無効化した表示・当たり判定・Rigidbodyを戦闘用へ戻す。
+        CaptureStageBossIntroVisualState();
+        stageBossIntroVisualState?.RestoreForCombat();
+
+        if (bossRoot != null && bossRigidbody2D == null)
+        {
+            bossRigidbody2D = bossRoot.GetComponent<Rigidbody2D>();
+        }
+    }
+
     private void CompleteEncounter()
     {
         if (encounterCompleted)
         {
             return;
         }
+
+        StopStageBossIntroRoutine();
+        RestoreStageBossIntroPlayerLock();
 
         encounterCompleted = true;
         encounterStarted = false;
@@ -294,6 +544,9 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             return;
         }
 
+        StopStageBossIntroRoutine();
+        RestoreStageBossIntroPlayerLock();
+
         encounterCompleted = true;
         encounterStarted = false;
         ClearActiveDodgeBounds();
@@ -328,6 +581,9 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void ResetUnfinishedEncounterAfterLoad()
     {
+        StopStageBossIntroRoutine();
+        RestoreStageBossIntroPlayerLock();
+
         encounterCompleted = false;
         encounterStarted = false;
         ClearActiveDodgeBounds();
@@ -357,6 +613,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
         DeactivateBossCamera();
         EnableTriggerComponents();
+        ApplyInitialStageBossIntroVisibility();
         EncounterReset?.Invoke(this);
     }
 
@@ -805,6 +1062,122 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         playerDodgeController = bodyCollider.GetComponent<DodgeController>();
     }
 
+    private bool TryResolvePlayerBodyCollider(Collider2D sourceCollider, out Collider2D bodyCollider)
+    {
+        bodyCollider = null;
+        if (sourceCollider == null)
+        {
+            return false;
+        }
+
+        // 直接当たったのが本体コライダーなら、そのまま採用する。
+        if (PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(
+                sourceCollider,
+                out PlayerHealth playerHealth,
+                out bodyCollider) &&
+            IsPlayerHealthObject(playerHealth))
+        {
+            return true;
+        }
+
+        if (bodyCollider != null && IsPlayerHealthObject(playerHealth))
+        {
+            return true;
+        }
+
+        // 子オブジェクト側のトリガーが触れた場合でも、PlayerHealth から本体コライダーへ戻して判定する。
+        playerHealth = ResolvePlayerHealth(sourceCollider);
+        if (!IsPlayerHealthObject(playerHealth))
+        {
+            return false;
+        }
+
+        return PlayerBodyColliderUtility.TryGetBodyCollider(playerHealth, out bodyCollider);
+    }
+
+    private static PlayerHealth ResolvePlayerHealth(Collider2D sourceCollider)
+    {
+        if (sourceCollider == null)
+        {
+            return null;
+        }
+
+        PlayerHealth playerHealth = sourceCollider.GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            return playerHealth;
+        }
+
+        playerHealth = sourceCollider.GetComponentInParent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            return playerHealth;
+        }
+
+        Rigidbody2D attachedRigidbody = sourceCollider.attachedRigidbody;
+        if (attachedRigidbody == null)
+        {
+            return null;
+        }
+
+        playerHealth = attachedRigidbody.GetComponent<PlayerHealth>();
+        return playerHealth != null ? playerHealth : attachedRigidbody.GetComponentInParent<PlayerHealth>();
+    }
+
+    private bool IsPlayerBodyFullyInsideArea(Collider2D bodyCollider)
+    {
+        if (bodyCollider == null)
+        {
+            return false;
+        }
+
+        if (!hasConfinementBounds)
+        {
+            return true;
+        }
+
+        Bounds bodyBounds = bodyCollider.bounds;
+        const float tolerance = 0.001f;
+
+        // 戦闘開始後に拘束する軸だけを、開始前の「完全に入っている」条件にも使う。
+        if (confineX &&
+            (bodyBounds.min.x < confinementBounds.min.x - tolerance ||
+             bodyBounds.max.x > confinementBounds.max.x + tolerance))
+        {
+            return false;
+        }
+
+        Rigidbody2D bodyRigidbody = bodyCollider.attachedRigidbody != null
+            ? bodyCollider.attachedRigidbody
+            : bodyCollider.GetComponent<Rigidbody2D>();
+        bool canConfineY = confineY && ShouldConfineYForTarget(bodyRigidbody);
+        if (canConfineY &&
+            (bodyBounds.min.y < confinementBounds.min.y - tolerance ||
+             bodyBounds.max.y > confinementBounds.max.y + tolerance))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool IsPlayerHealthObject(PlayerHealth playerHealth)
+    {
+        if (playerHealth == null)
+        {
+            return false;
+        }
+
+        return IsPlayerObject(playerHealth.gameObject) ||
+               (playerHealth.transform.root != null && IsPlayerObject(playerHealth.transform.root.gameObject));
+    }
+
+    private bool IsPlayerObject(GameObject target)
+    {
+        return target != null &&
+               (string.IsNullOrWhiteSpace(playerTag) || target.CompareTag(playerTag));
+    }
+
     private void LockArea()
     {
         ApplyWallCommands(wallsCloseOnStart, open: false);
@@ -940,6 +1313,816 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         if (trigger3D != null)
         {
             trigger3D.enabled = true;
+        }
+    }
+
+    private sealed class StageBossIntroVisualState
+    {
+        // SpriteRenderer以外のRendererでも色フェードできるよう、代表的な色プロパティを探す。
+        private static readonly int BaseColorPropertyId = Shader.PropertyToID("_BaseColor");
+        private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
+        private static readonly Color MirageWarm = new Color(1f, 0.78f, 0.38f, 1f);
+        private static readonly Color MirageCool = new Color(0.45f, 0.95f, 1f, 1f);
+
+        private readonly Transform root;
+        private readonly Vector3 originalLocalPosition;
+        private readonly RendererState[] rendererStates;
+        private readonly SpriteRendererState[] spriteRendererStates;
+        private readonly Collider2DState[] collider2DStates;
+        private readonly ColliderState[] colliderStates;
+        private readonly Rigidbody2D rigidbody2D;
+        private readonly bool rigidbodySimulated;
+        private readonly List<SpriteGhostLayer> ghostLayers = new List<SpriteGhostLayer>();
+
+        private StageBossIntroVisualState(
+            Transform root,
+            RendererState[] rendererStates,
+            SpriteRendererState[] spriteRendererStates,
+            Collider2DState[] collider2DStates,
+            ColliderState[] colliderStates,
+            Rigidbody2D rigidbody2D)
+        {
+            this.root = root;
+            originalLocalPosition = root != null ? root.localPosition : Vector3.zero;
+            this.rendererStates = rendererStates ?? Array.Empty<RendererState>();
+            this.spriteRendererStates = spriteRendererStates ?? Array.Empty<SpriteRendererState>();
+            this.collider2DStates = collider2DStates ?? Array.Empty<Collider2DState>();
+            this.colliderStates = colliderStates ?? Array.Empty<ColliderState>();
+            this.rigidbody2D = rigidbody2D;
+            rigidbodySimulated = rigidbody2D == null || rigidbody2D.simulated;
+        }
+
+        public static StageBossIntroVisualState Capture(Transform root)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            // 元の表示・当たり判定状態を保存し、演出後にPrefab/シーン設定へ戻せるようにする。
+            Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+            RendererState[] rendererStates = new RendererState[renderers.Length];
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                rendererStates[i] = new RendererState(renderers[i]);
+            }
+
+            SpriteRenderer[] spriteRenderers = root.GetComponentsInChildren<SpriteRenderer>(true);
+            SpriteRendererState[] spriteRendererStates = new SpriteRendererState[spriteRenderers.Length];
+            for (int i = 0; i < spriteRenderers.Length; i++)
+            {
+                spriteRendererStates[i] = new SpriteRendererState(spriteRenderers[i]);
+            }
+
+            Collider2D[] colliders2D = root.GetComponentsInChildren<Collider2D>(true);
+            Collider2DState[] collider2DStates = new Collider2DState[colliders2D.Length];
+            for (int i = 0; i < colliders2D.Length; i++)
+            {
+                collider2DStates[i] = new Collider2DState(colliders2D[i]);
+            }
+
+            Collider[] colliders = root.GetComponentsInChildren<Collider>(true);
+            ColliderState[] colliderStates = new ColliderState[colliders.Length];
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                colliderStates[i] = new ColliderState(colliders[i]);
+            }
+
+            return new StageBossIntroVisualState(
+                root,
+                rendererStates,
+                spriteRendererStates,
+                collider2DStates,
+                colliderStates,
+                root.GetComponent<Rigidbody2D>());
+        }
+
+        public bool IsForRoot(Transform targetRoot)
+        {
+            return root == targetRoot;
+        }
+
+        public void ApplyHidden()
+        {
+            if (root == null)
+            {
+                return;
+            }
+
+            root.gameObject.SetActive(true);
+            DestroyGhostLayers();
+            // 非表示中もGameObject自体は生かし、割り当て参照や撃破保存処理を壊さない。
+            SetRendererStates(enabled: false);
+            SetSpriteReveal(0f, 0f, 0f, 0f);
+            SetColliderStates(enabled: false);
+            SetRigidbodySimulated(false);
+        }
+
+        public IEnumerator PlayReveal(
+            MonoBehaviour owner,
+            float duration,
+            float amplitude,
+            float frequency)
+        {
+            if (root == null || owner == null)
+            {
+                yield break;
+            }
+
+            root.gameObject.SetActive(true);
+            RestoreRendererStates();
+            // 本体の薄いフェードだけだと弱いため、色ズレした複製スプライトで蜃気楼感を足す。
+            CreateGhostLayers();
+            SetColliderStates(enabled: false);
+            SetRigidbodySimulated(false);
+
+            duration = Mathf.Max(0f, duration);
+            if (duration <= 0f)
+            {
+                SetSpriteReveal(1f, 0f, amplitude, frequency);
+                RestoreVisuals();
+                yield break;
+            }
+
+            float elapsed = 0f;
+            SetSpriteReveal(0f, 0f, amplitude, frequency);
+
+            while (elapsed < duration)
+            {
+                // EditModeテストや一時停止中でも手動実行が進むよう、deltaTimeが0なら固定値を使う。
+                float deltaTime = Time.deltaTime > 0f ? Time.deltaTime : Time.unscaledDeltaTime;
+                if (deltaTime <= 0f)
+                {
+                    deltaTime = 1f / 60f;
+                }
+
+                elapsed += deltaTime;
+                float normalized = Mathf.Clamp01(elapsed / duration);
+                float eased = normalized * normalized * (3f - 2f * normalized);
+                SetSpriteReveal(eased, elapsed, amplitude, frequency);
+                yield return null;
+            }
+
+            RestoreVisuals();
+        }
+
+        public void RestoreForCombat()
+        {
+            RestoreVisuals();
+            RestoreColliderStates();
+            RestoreRigidbody();
+        }
+
+        private void RestoreVisuals()
+        {
+            if (root != null)
+            {
+                root.localPosition = originalLocalPosition;
+            }
+
+            // 演出で触った色・位置・ゴーストを完全に戻し、戦闘中の見た目へ影響を残さない。
+            RestoreRendererStates();
+            RestoreSpriteColors();
+            DestroyGhostLayers();
+        }
+
+        private void SetSpriteReveal(float reveal, float elapsed, float amplitude, float frequency)
+        {
+            reveal = Mathf.Clamp01(reveal);
+
+            if (root != null)
+            {
+                // 本体を小さく横揺れさせ、遠景の蜃気楼のような揺らぎにする。
+                float wave = Mathf.Sin(elapsed * Mathf.Max(0f, frequency) * Mathf.PI * 2f);
+                float offset = wave * Mathf.Max(0f, amplitude) * (1f - reveal);
+                root.localPosition = originalLocalPosition + new Vector3(offset, 0f, 0f);
+            }
+
+            float pulse = Mathf.Sin(elapsed * Mathf.Max(0f, frequency) * Mathf.PI * 2f) * 0.5f + 0.5f;
+            Color tint = Color.Lerp(MirageWarm, MirageCool, pulse);
+            float tintWeight = Mathf.Lerp(0.4f, 0f, reveal);
+
+            for (int i = 0; i < spriteRendererStates.Length; i++)
+            {
+                SpriteRendererState state = spriteRendererStates[i];
+                if (state.Renderer == null)
+                {
+                    continue;
+                }
+
+                Color color = Color.Lerp(state.Color, tint, tintWeight);
+                color.a = state.Color.a * reveal;
+                state.Renderer.color = color;
+            }
+
+            SetRendererReveal(reveal, tint, tintWeight);
+            SetGhostReveal(reveal, elapsed, amplitude, frequency);
+        }
+
+        private void SetRendererReveal(float reveal, Color tint, float tintWeight)
+        {
+            // SpriteRenderer以外の見た目にも、MaterialPropertyBlockで可能な範囲の色フェードをかける。
+            for (int i = 0; i < rendererStates.Length; i++)
+            {
+                rendererStates[i].ApplyReveal(reveal, tint, tintWeight);
+            }
+        }
+
+        private void CreateGhostLayers()
+        {
+            DestroyGhostLayers();
+
+            // 各スプライトの前後に暖色/寒色のゴーストを作り、色収差っぽく見せる。
+            for (int i = 0; i < spriteRendererStates.Length; i++)
+            {
+                SpriteRendererState state = spriteRendererStates[i];
+                if (!state.CanCreateGhost)
+                {
+                    continue;
+                }
+
+                ghostLayers.Add(SpriteGhostLayer.Create(state.Renderer, MirageWarm, -1, -1));
+                ghostLayers.Add(SpriteGhostLayer.Create(state.Renderer, MirageCool, 1, 1));
+            }
+        }
+
+        private void SetGhostReveal(float reveal, float elapsed, float amplitude, float frequency)
+        {
+            float safeFrequency = Mathf.Max(0f, frequency);
+            float wave = Mathf.Sin(elapsed * safeFrequency * Mathf.PI * 2f);
+            float pulse = wave * 0.5f + 0.5f;
+            float split = Mathf.Max(0.02f, amplitude) * (1f - reveal) * Mathf.Lerp(2.5f, 4f, pulse);
+            float alpha = Mathf.Lerp(0.42f, 0f, reveal) * Mathf.Lerp(0.65f, 1f, pulse);
+
+            // 本体がはっきりするにつれてゴーストを薄くし、最後は完全に消す。
+            for (int i = 0; i < ghostLayers.Count; i++)
+            {
+                ghostLayers[i].Apply(split, alpha);
+            }
+        }
+
+        private void DestroyGhostLayers()
+        {
+            for (int i = 0; i < ghostLayers.Count; i++)
+            {
+                ghostLayers[i].Destroy();
+            }
+
+            ghostLayers.Clear();
+        }
+
+        private void SetRendererStates(bool enabled)
+        {
+            for (int i = 0; i < rendererStates.Length; i++)
+            {
+                if (rendererStates[i].Renderer != null)
+                {
+                    rendererStates[i].Renderer.enabled = enabled;
+                }
+            }
+        }
+
+        private void RestoreRendererStates()
+        {
+            for (int i = 0; i < rendererStates.Length; i++)
+            {
+                rendererStates[i].Restore();
+            }
+        }
+
+        private void RestoreSpriteColors()
+        {
+            for (int i = 0; i < spriteRendererStates.Length; i++)
+            {
+                spriteRendererStates[i].Restore();
+            }
+        }
+
+        private void SetColliderStates(bool enabled)
+        {
+            for (int i = 0; i < collider2DStates.Length; i++)
+            {
+                if (collider2DStates[i].Collider != null)
+                {
+                    collider2DStates[i].Collider.enabled = enabled;
+                }
+            }
+
+            for (int i = 0; i < colliderStates.Length; i++)
+            {
+                if (colliderStates[i].Collider != null)
+                {
+                    colliderStates[i].Collider.enabled = enabled;
+                }
+            }
+        }
+
+        private void RestoreColliderStates()
+        {
+            for (int i = 0; i < collider2DStates.Length; i++)
+            {
+                collider2DStates[i].Restore();
+            }
+
+            for (int i = 0; i < colliderStates.Length; i++)
+            {
+                colliderStates[i].Restore();
+            }
+        }
+
+        private void SetRigidbodySimulated(bool simulated)
+        {
+            if (rigidbody2D == null)
+            {
+                return;
+            }
+
+            rigidbody2D.linearVelocity = Vector2.zero;
+            rigidbody2D.angularVelocity = 0f;
+            rigidbody2D.simulated = simulated;
+        }
+
+        private void RestoreRigidbody()
+        {
+            if (rigidbody2D == null)
+            {
+                return;
+            }
+
+            rigidbody2D.simulated = rigidbodySimulated;
+            rigidbody2D.linearVelocity = Vector2.zero;
+            rigidbody2D.angularVelocity = 0f;
+        }
+
+        private readonly struct RendererState
+        {
+            private readonly MaterialPropertyBlock originalPropertyBlock;
+            private readonly int colorPropertyId;
+            private readonly Color color;
+
+            public RendererState(Renderer renderer)
+            {
+                Renderer = renderer;
+                Enabled = renderer != null && renderer.enabled;
+                colorPropertyId = ResolveColorPropertyId(renderer);
+                color = ResolveColor(renderer, colorPropertyId);
+                originalPropertyBlock = new MaterialPropertyBlock();
+                if (renderer != null)
+                {
+                    renderer.GetPropertyBlock(originalPropertyBlock);
+                }
+            }
+
+            public Renderer Renderer { get; }
+            private bool Enabled { get; }
+
+            public void ApplyReveal(float reveal, Color tint, float tintWeight)
+            {
+                if (Renderer == null || Renderer is SpriteRenderer || colorPropertyId == 0)
+                {
+                    return;
+                }
+
+                // sharedMaterialを書き換えず、Renderer単位の一時色だけを上書きする。
+                MaterialPropertyBlock block = new MaterialPropertyBlock();
+                Renderer.GetPropertyBlock(block);
+
+                Color revealColor = Color.Lerp(color, tint, tintWeight);
+                revealColor.a = color.a * reveal;
+                block.SetColor(colorPropertyId, revealColor);
+                Renderer.SetPropertyBlock(block);
+            }
+
+            public void Restore()
+            {
+                if (Renderer != null)
+                {
+                    Renderer.enabled = Enabled;
+                    Renderer.SetPropertyBlock(originalPropertyBlock);
+                }
+            }
+
+            private static int ResolveColorPropertyId(Renderer renderer)
+            {
+                Material material = renderer != null ? renderer.sharedMaterial : null;
+                if (material == null)
+                {
+                    return 0;
+                }
+
+                if (material.HasProperty(BaseColorPropertyId))
+                {
+                    return BaseColorPropertyId;
+                }
+
+                return material.HasProperty(ColorPropertyId) ? ColorPropertyId : 0;
+            }
+
+            private static Color ResolveColor(Renderer renderer, int propertyId)
+            {
+                Material material = renderer != null ? renderer.sharedMaterial : null;
+                if (material == null || propertyId == 0)
+                {
+                    return Color.white;
+                }
+
+                return material.GetColor(propertyId);
+            }
+        }
+
+        private readonly struct SpriteRendererState
+        {
+            public SpriteRendererState(SpriteRenderer renderer)
+            {
+                Renderer = renderer;
+                Color = renderer != null ? renderer.color : Color.white;
+                Enabled = renderer != null && renderer.enabled;
+            }
+
+            public SpriteRenderer Renderer { get; }
+            public Color Color { get; }
+            public bool Enabled { get; }
+            public bool CanCreateGhost => Renderer != null && Enabled && Renderer.sprite != null;
+
+            public void Restore()
+            {
+                if (Renderer != null)
+                {
+                    Renderer.color = Color;
+                }
+            }
+        }
+
+        private sealed class SpriteGhostLayer
+        {
+            private readonly SpriteRenderer source;
+            private readonly SpriteRenderer ghost;
+            private readonly Color tint;
+            private readonly int direction;
+
+            private SpriteGhostLayer(
+                SpriteRenderer source,
+                SpriteRenderer ghost,
+                Color tint,
+                int direction)
+            {
+                this.source = source;
+                this.ghost = ghost;
+                this.tint = tint;
+                this.direction = direction;
+            }
+
+            public static SpriteGhostLayer Create(
+                SpriteRenderer source,
+                Color tint,
+                int direction,
+                int sortingOffset)
+            {
+                // DontSaveにして、実行中だけ存在する演出用オブジェクトとして扱う。
+                GameObject ghostObject = new GameObject($"{source.name}_MirageGhost");
+                ghostObject.hideFlags = HideFlags.DontSave;
+                ghostObject.transform.SetParent(source.transform, false);
+                ghostObject.transform.localPosition = Vector3.zero;
+                ghostObject.transform.localRotation = Quaternion.identity;
+                ghostObject.transform.localScale = Vector3.one;
+
+                SpriteRenderer ghost = ghostObject.AddComponent<SpriteRenderer>();
+                CopySpriteState(source, ghost, sortingOffset);
+                ghost.color = new Color(tint.r, tint.g, tint.b, 0f);
+
+                return new SpriteGhostLayer(source, ghost, tint, direction);
+            }
+
+            public void Apply(float split, float alpha)
+            {
+                if (source == null || ghost == null)
+                {
+                    return;
+                }
+
+                // 元スプライトの反転・ソートなどを毎フレーム追従し、アニメ中の見た目ズレを避ける。
+                CopySpriteState(source, ghost, direction);
+                ghost.transform.localPosition = Vector3.right * direction * split;
+
+                Color sourceColor = source.color;
+                ghost.color = new Color(
+                    tint.r,
+                    tint.g,
+                    tint.b,
+                    Mathf.Clamp01(alpha * sourceColor.a));
+                ghost.enabled = source.enabled;
+            }
+
+            public void Destroy()
+            {
+                if (ghost == null)
+                {
+                    return;
+                }
+
+                GameObject ghostObject = ghost.gameObject;
+                if (Application.isPlaying)
+                {
+                    UnityEngine.Object.Destroy(ghostObject);
+                }
+                else
+                {
+                    UnityEngine.Object.DestroyImmediate(ghostObject);
+                }
+            }
+
+            private static void CopySpriteState(
+                SpriteRenderer source,
+                SpriteRenderer target,
+                int sortingOffset)
+            {
+                if (source == null || target == null)
+                {
+                    return;
+                }
+
+                target.sprite = source.sprite;
+                target.drawMode = source.drawMode;
+                target.size = source.size;
+                target.tileMode = source.tileMode;
+                target.adaptiveModeThreshold = source.adaptiveModeThreshold;
+                target.flipX = source.flipX;
+                target.flipY = source.flipY;
+                target.maskInteraction = source.maskInteraction;
+                target.spriteSortPoint = source.spriteSortPoint;
+                target.sortingLayerID = source.sortingLayerID;
+                target.sortingOrder = source.sortingOrder + sortingOffset;
+                target.sharedMaterial = source.sharedMaterial;
+            }
+        }
+
+        private readonly struct Collider2DState
+        {
+            public Collider2DState(Collider2D collider)
+            {
+                Collider = collider;
+                Enabled = collider != null && collider.enabled;
+            }
+
+            public Collider2D Collider { get; }
+            private bool Enabled { get; }
+
+            public void Restore()
+            {
+                if (Collider != null)
+                {
+                    Collider.enabled = Enabled;
+                }
+            }
+        }
+
+        private readonly struct ColliderState
+        {
+            public ColliderState(Collider collider)
+            {
+                Collider = collider;
+                Enabled = collider != null && collider.enabled;
+            }
+
+            public Collider Collider { get; }
+            private bool Enabled { get; }
+
+            public void Restore()
+            {
+                if (Collider != null)
+                {
+                    Collider.enabled = Enabled;
+                }
+            }
+        }
+    }
+
+    private sealed class StageBossIntroPlayerLockState
+    {
+        // 入力だけでなく攻撃・回避などの能動アクションも一時停止する対象。
+        private static readonly string[] PlayerActionBehaviourNames =
+        {
+            "DodgeController",
+            "PlayerShooter",
+            "GunController",
+            "UmbrellaController",
+            "UmbrellaAttackController",
+            "UmbrellaParryController",
+            "FallThroughController"
+        };
+
+        private readonly Transform playerRoot;
+        private readonly Transform bossRoot;
+        private readonly PlayerController playerController;
+        private readonly bool controlLocked;
+        private readonly bool facingLocked;
+        private readonly bool facingRight;
+        private readonly bool lockFacingBoss;
+        private readonly PlayerInput playerInput;
+        private readonly bool playerInputEnabled;
+        private readonly Rigidbody2D rigidbody2D;
+        private readonly RigidbodyConstraints2D rigidbodyConstraints;
+        private readonly List<BehaviourState> behaviourStates;
+        private bool restored;
+
+        private StageBossIntroPlayerLockState(
+            Transform playerRoot,
+            Transform bossRoot,
+            bool lockFacingBoss,
+            PlayerController playerController,
+            PlayerInput playerInput,
+            Rigidbody2D rigidbody2D,
+            List<BehaviourState> behaviourStates)
+        {
+            this.playerRoot = playerRoot;
+            this.bossRoot = bossRoot;
+            this.lockFacingBoss = lockFacingBoss;
+            this.playerController = playerController;
+            this.playerInput = playerInput;
+            this.rigidbody2D = rigidbody2D;
+            this.behaviourStates = behaviourStates ?? new List<BehaviourState>();
+
+            controlLocked = playerController != null && playerController.IsExternalControlLocked;
+            facingLocked = playerController != null && playerController.IsExternalFacingLocked;
+            facingRight = playerController == null || playerController.IsFacingRight;
+            playerInputEnabled = playerInput != null && playerInput.enabled;
+            rigidbodyConstraints = rigidbody2D != null ? rigidbody2D.constraints : RigidbodyConstraints2D.None;
+        }
+
+        public static StageBossIntroPlayerLockState Capture(
+            Transform playerRoot,
+            Transform bossRoot,
+            bool lockFacingBoss)
+        {
+            if (playerRoot == null)
+            {
+                return null;
+            }
+
+            PlayerController playerController = playerRoot.GetComponent<PlayerController>();
+            if (playerController == null)
+            {
+                playerController = playerRoot.GetComponentInChildren<PlayerController>(true);
+            }
+
+            PlayerInput playerInput = playerRoot.GetComponent<PlayerInput>();
+            if (playerInput == null)
+            {
+                playerInput = playerRoot.GetComponentInChildren<PlayerInput>(true);
+            }
+
+            Rigidbody2D rigidbody2D = playerRoot.GetComponent<Rigidbody2D>();
+            List<BehaviourState> behaviourStates = new List<BehaviourState>();
+            // 復帰時に元のenabled状態へ戻せるよう、ロック対象の状態を先に保存する。
+            MonoBehaviour[] behaviours = playerRoot.GetComponentsInChildren<MonoBehaviour>(true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                MonoBehaviour behaviour = behaviours[i];
+                if (behaviour == null || behaviour == playerController || !IsPlayerActionBehaviour(behaviour))
+                {
+                    continue;
+                }
+
+                behaviourStates.Add(new BehaviourState(behaviour));
+            }
+
+            return new StageBossIntroPlayerLockState(
+                playerRoot,
+                bossRoot,
+                lockFacingBoss,
+                playerController,
+                playerInput,
+                rigidbody2D,
+                behaviourStates);
+        }
+
+        public void ApplyLock()
+        {
+            if (restored)
+            {
+                return;
+            }
+
+            DodgeController dodgeController = playerRoot != null ? playerRoot.GetComponent<DodgeController>() : null;
+            dodgeController?.CancelCurrentDodgeMovement();
+
+            // PlayerControllerの外部ロックを使い、入力処理側にも「操作不可」を伝える。
+            if (playerController != null)
+            {
+                playerController.SetExternalControlLocked(true);
+
+                if (lockFacingBoss)
+                {
+                    playerController.SetExternalFacingLocked(true, ShouldFaceRight());
+                }
+            }
+
+            if (playerInput != null)
+            {
+                playerInput.enabled = false;
+            }
+
+            for (int i = 0; i < behaviourStates.Count; i++)
+            {
+                behaviourStates[i].ApplyLock();
+            }
+
+            if (rigidbody2D != null)
+            {
+                // 速度と物理拘束を同時に止め、ロック開始直後の滑りや落下を防ぐ。
+                rigidbody2D.linearVelocity = Vector2.zero;
+                rigidbody2D.angularVelocity = 0f;
+                rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
+                rigidbody2D.Sleep();
+            }
+        }
+
+        public void Restore()
+        {
+            if (restored)
+            {
+                return;
+            }
+
+            restored = true;
+
+            if (rigidbody2D != null)
+            {
+                rigidbody2D.constraints = rigidbodyConstraints;
+                rigidbody2D.linearVelocity = Vector2.zero;
+                rigidbody2D.angularVelocity = 0f;
+                rigidbody2D.WakeUp();
+            }
+
+            for (int i = 0; i < behaviourStates.Count; i++)
+            {
+                behaviourStates[i].Restore();
+            }
+
+            if (playerInput != null)
+            {
+                playerInput.enabled = playerInputEnabled;
+            }
+
+            if (playerController != null)
+            {
+                // 一瞬だけ元の向きを戻してからロック状態を復元し、表示向きの取り残しを避ける。
+                playerController.SetExternalFacingLocked(true, facingRight);
+                playerController.SetExternalControlLocked(controlLocked);
+                playerController.SetExternalFacingLocked(facingLocked, facingRight);
+            }
+        }
+
+        private bool ShouldFaceRight()
+        {
+            if (playerRoot == null || bossRoot == null)
+            {
+                return facingRight;
+            }
+
+            return bossRoot.position.x >= playerRoot.position.x;
+        }
+
+        private static bool IsPlayerActionBehaviour(MonoBehaviour behaviour)
+        {
+            string typeName = behaviour.GetType().Name;
+            for (int i = 0; i < PlayerActionBehaviourNames.Length; i++)
+            {
+                if (PlayerActionBehaviourNames[i] == typeName)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private readonly struct BehaviourState
+        {
+            public BehaviourState(Behaviour behaviour)
+            {
+                Behaviour = behaviour;
+                Enabled = behaviour != null && behaviour.enabled;
+            }
+
+            private Behaviour Behaviour { get; }
+            private bool Enabled { get; }
+
+            public void ApplyLock()
+            {
+                if (Behaviour != null)
+                {
+                    Behaviour.enabled = false;
+                }
+            }
+
+            public void Restore()
+            {
+                if (Behaviour != null)
+                {
+                    Behaviour.enabled = Enabled;
+                }
+            }
         }
     }
 }
