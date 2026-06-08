@@ -129,7 +129,12 @@ namespace Metroidvania.Managers
         /// <summary>
         /// スタイルを指定して会話を開始する（対象はBubble専用オプション）
         /// </summary>
-        public void StartConversation(string nodeName, DialogueStyle style, Transform target = null)
+        public void StartConversation(
+            string nodeName,
+            DialogueStyle style,
+            Transform target = null,
+            BubbleDialogueView.SpeakerTargetResolver speakerTargetResolver = null,
+            bool speakerTargetResolverOnly = false)
         {
             if (dialogueRunner == null) return;
             if (dialogueRunner.IsDialogueRunning) dialogueRunner.Stop();
@@ -153,6 +158,7 @@ namespace Metroidvania.Managers
                 if (bubbleView != null)
                 {
                     bubbleView.gameObject.SetActive(true);
+                    bubbleView.SetSpeakerTargetResolver(null, false);
                     bubbleView.SetPresentationEnabled(false);
                 }
             }
@@ -167,6 +173,7 @@ namespace Metroidvania.Managers
                 if (bubbleView != null)
                 {
                     bubbleView.gameObject.SetActive(true);
+                    bubbleView.SetSpeakerTargetResolver(speakerTargetResolver, speakerTargetResolverOnly);
                     bubbleView.SetPresentationEnabled(true);
                     bubbleView.SetTarget(target);
                 }

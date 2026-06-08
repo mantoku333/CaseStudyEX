@@ -25,6 +25,8 @@ namespace Metroidvania.UI
     /// </summary>
     public class BubbleDialogueView : DialoguePresenterBase
     {
+        public delegate bool SpeakerTargetResolver(string characterName, out Transform? target, out Vector3 offset);
+
         [Header("UI Elements")]
         [SerializeField] private GameObject bubblePanel = null!;
         [SerializeField] private TextMeshProUGUI dialogueText = null!;
@@ -61,6 +63,8 @@ namespace Metroidvania.UI
 
         private Transform? _conversationDefaultTarget;
         private Transform? _currentTarget;
+        private SpeakerTargetResolver? _speakerTargetResolver;
+        private bool _speakerTargetResolverOnly;
         private Vector3 _currentOffset;
 
         private Camera? _mainCamera;
@@ -94,6 +98,14 @@ namespace Metroidvania.UI
             _conversationDefaultTarget = target;
             _currentTarget = target;
             _currentOffset = offset;
+        }
+
+        public void SetSpeakerTargetResolver(SpeakerTargetResolver? resolver, bool resolverOnly = false)
+        {
+            _speakerTargetResolver = resolver;
+            _speakerTargetResolverOnly = resolver != null && resolverOnly;
+            _speakerTargetCache.Clear();
+            _warnedUnresolvedSpeakers.Clear();
         }
 
         public bool IsPresentationEnabled => _presentationEnabled;
@@ -402,7 +414,7 @@ namespace Metroidvania.UI
             if (IsNarrationSpeaker(characterName))
             {
                 _currentTarget = _conversationDefaultTarget;
-                if (_currentTarget == null)
+                if (_currentTarget == null && !_speakerTargetResolverOnly)
                 {
                     _currentTarget = FindPlayerTransform();
                 }
@@ -420,7 +432,7 @@ namespace Metroidvania.UI
             }
 
             _currentTarget = _conversationDefaultTarget;
-            if (_currentTarget == null)
+            if (_currentTarget == null && !_speakerTargetResolverOnly)
             {
                 _currentTarget = FindPlayerTransform();
             }
@@ -438,6 +450,22 @@ namespace Metroidvania.UI
             }
 
             string speaker = characterName.Trim();
+
+            if (_speakerTargetResolver != null)
+            {
+                if (_speakerTargetResolver.Invoke(speaker, out Transform? resolvedTarget, out Vector3 resolverOffset) &&
+                    resolvedTarget != null)
+                {
+                    target = resolvedTarget;
+                    speakerOffset = offset + resolverOffset;
+                    return true;
+                }
+
+                if (_speakerTargetResolverOnly)
+                {
+                    return false;
+                }
+            }
 
             for (int i = 0; i < speakerAnchors.Count; i++)
             {

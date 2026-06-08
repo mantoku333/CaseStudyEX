@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Metroidvania.Managers;
+using Metroidvania.UI;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -31,8 +32,35 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
     private sealed class ActorBinding
     {
         public string actorKey = "actor";
+        public string displayName = string.Empty;
         public Transform actorRoot;
         public Transform bubbleTarget;
+        public Vector3 bubbleOffset;
+
+        public bool MatchesActorKey(string key)
+        {
+            return !string.IsNullOrWhiteSpace(key) &&
+                   !string.IsNullOrWhiteSpace(actorKey) &&
+                   string.Equals(actorKey.Trim(), key.Trim(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool MatchesSpeakerName(string speakerName)
+        {
+            if (string.IsNullOrWhiteSpace(speakerName))
+            {
+                return false;
+            }
+
+            string speaker = speakerName.Trim();
+            return MatchesActorKey(speaker) ||
+                   (!string.IsNullOrWhiteSpace(displayName) &&
+                    string.Equals(displayName.Trim(), speaker, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public Transform ResolveBubbleTarget()
+        {
+            return bubbleTarget != null ? bubbleTarget : actorRoot;
+        }
     }
 
     [Header("Identity")]
@@ -248,7 +276,7 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
                 continue;
             }
 
-            if (string.Equals(binding.actorKey.Trim(), key, StringComparison.OrdinalIgnoreCase))
+            if (binding.MatchesActorKey(key))
             {
                 return binding.actorRoot;
             }
@@ -813,7 +841,14 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
 
         DialogueStyle style = useControllerDefaultStyle ? defaultDialogueStyle : dialogueStyle;
         Transform bubbleTarget = ResolveBubbleTarget(bubbleActorKey);
-        dialogueManager.StartConversation(nodeName, style, bubbleTarget);
+        BubbleDialogueView.SpeakerTargetResolver speakerTargetResolver =
+            style == DialogueStyle.Bubble ? TryResolveBubbleTargetForSpeaker : null;
+        dialogueManager.StartConversation(
+            nodeName,
+            style,
+            bubbleTarget,
+            speakerTargetResolver,
+            speakerTargetResolver != null);
 
         while (waitingDialogueCompletion)
         {
@@ -849,16 +884,12 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
                     continue;
                 }
 
-                if (string.Equals(binding.actorKey.Trim(), key, StringComparison.OrdinalIgnoreCase))
+                if (binding.MatchesActorKey(key))
                 {
-                    if (binding.bubbleTarget != null)
+                    Transform bindingTarget = binding.ResolveBubbleTarget();
+                    if (bindingTarget != null)
                     {
-                        return binding.bubbleTarget;
-                    }
-
-                    if (binding.actorRoot != null)
-                    {
-                        return binding.actorRoot;
+                        return bindingTarget;
                     }
                 }
             }
@@ -877,6 +908,106 @@ public sealed class StoryEventController : MonoBehaviour, INotificationReceiver
         }
 
         return defaultBubbleTarget != null ? defaultBubbleTarget : transform;
+    }
+
+    private bool TryResolveBubbleTargetForSpeaker(string characterName, out Transform target, out Vector3 targetOffset)
+    {
+        target = null;
+        targetOffset = Vector3.zero;
+
+        if (string.IsNullOrWhiteSpace(characterName))
+        {
+            return false;
+        }
+
+        string speakerName = characterName.Trim();
+        if (TryResolveBubbleTargetBySpeakerName(speakerName, out target, out targetOffset))
+        {
+            return true;
+        }
+
+        string alias = ResolveSpeakerActorAlias(speakerName);
+        return !string.Equals(alias, speakerName, StringComparison.OrdinalIgnoreCase) &&
+               TryResolveBubbleTargetBySpeakerName(alias, out target, out targetOffset);
+    }
+
+    private bool TryResolveBubbleTargetBySpeakerName(string speakerName, out Transform target, out Vector3 targetOffset)
+    {
+        target = null;
+        targetOffset = Vector3.zero;
+
+        if (string.IsNullOrWhiteSpace(speakerName))
+        {
+            return false;
+        }
+
+        string speaker = speakerName.Trim();
+        for (int i = 0; i < actorBindings.Count; i++)
+        {
+            ActorBinding binding = actorBindings[i];
+            if (binding == null || !binding.MatchesSpeakerName(speaker))
+            {
+                continue;
+            }
+
+            target = binding.ResolveBubbleTarget();
+            if (target == null)
+            {
+                continue;
+            }
+
+            targetOffset = binding.bubbleOffset;
+            return true;
+        }
+
+        RebuildLookupCache();
+        foreach (StoryEventActor actor in actorByKey.Values)
+        {
+            if (actor == null || !actor.MatchesSpeakerName(speaker))
+            {
+                continue;
+            }
+
+            target = actor.BubbleTarget;
+            if (target == null)
+            {
+                continue;
+            }
+
+            targetOffset = actor.BubbleOffset;
+            return true;
+        }
+
+        Transform actorTransform = GetActorTransform(speaker);
+        if (actorTransform == null)
+        {
+            return false;
+        }
+
+        target = actorTransform;
+        return true;
+    }
+
+    private static string ResolveSpeakerActorAlias(string speakerName)
+    {
+        if (string.IsNullOrWhiteSpace(speakerName))
+        {
+            return string.Empty;
+        }
+
+        string speaker = speakerName.Trim();
+        if (string.Equals(speaker, "\u30A4\u30EA\u30B9", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(speaker, "player", StringComparison.OrdinalIgnoreCase))
+        {
+            return "iris";
+        }
+
+        if (string.Equals(speaker, "\u30CE\u30AF\u30B9", StringComparison.OrdinalIgnoreCase))
+        {
+            return "nox";
+        }
+
+        return speaker;
     }
 
     private void ApplyStartMutations()
