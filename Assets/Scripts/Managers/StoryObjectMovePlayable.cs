@@ -12,6 +12,7 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
     public bool moveX = true;
     public bool moveY = true;
     public bool smoothStep = true;
+    public bool useUmbrellaWalk;
 
     private bool initialized;
     private Transform target;
@@ -51,6 +52,7 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
                 targetPosition.y = startPosition.y;
                 targetPosition.z = startPosition.z;
                 WarnIfPlayerMoveClipIsTooShort(playable);
+                ApplyUmbrellaWalkState(target);
                 playerController.StartExternalMoveToX(targetPosition.x);
             }
             initialized = true;
@@ -70,6 +72,22 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
 
         Vector3 nextPosition = Vector3.Lerp(startPosition, targetPosition, t);
         target.position = nextPosition;
+    }
+
+    private void ApplyUmbrellaWalkState(Transform moveTarget)
+    {
+        if (!useUmbrellaWalk)
+        {
+            return;
+        }
+
+        UmbrellaController umbrellaController = ResolveUmbrellaController(moveTarget);
+        if (umbrellaController == null)
+        {
+            return;
+        }
+
+        umbrellaController.SetUmbrellaState(UmbrellaController.UmbrellaState.Open, false);
     }
 
     private void WarnIfPlayerMoveClipIsTooShort(Playable playable)
@@ -160,6 +178,22 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
         }
 
         return target.GetComponentInParent<PlayerController>();
+    }
+
+    private static UmbrellaController ResolveUmbrellaController(Transform target)
+    {
+        if (target == null)
+        {
+            return null;
+        }
+
+        UmbrellaController controller = target.GetComponentInChildren<UmbrellaController>(true);
+        if (controller != null)
+        {
+            return controller;
+        }
+
+        return target.GetComponentInParent<UmbrellaController>(true);
     }
 
     private Vector3 ResolveTargetPosition(Playable playable, Vector3 fallback)

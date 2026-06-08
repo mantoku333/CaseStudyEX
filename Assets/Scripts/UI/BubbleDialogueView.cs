@@ -63,6 +63,11 @@ namespace Metroidvania.UI
         [SerializeField] private Vector2 speakerNameOffset = new Vector2(0f, 8f);
         [SerializeField] private float nextMarkerBottomOffset = 22f;
 
+        [Header("Speaker Name Images")]
+        [SerializeField] private GameObject? irisSpeakerImage;
+        [SerializeField] private GameObject? noxSpeakerImage;
+        [SerializeField] private bool autoResolveSpeakerImages = true;
+
         private readonly Dictionary<string, Transform?> _speakerTargetCache =
             new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _warnedUnresolvedSpeakers =
@@ -91,6 +96,7 @@ namespace Metroidvania.UI
             _bubbleRectTransform = bubblePanel != null ? bubblePanel.GetComponent<RectTransform>() : null;
             _textRectTransform = dialogueText != null ? dialogueText.rectTransform : null;
             ResolveBubbleLayoutElements();
+            ResolveSpeakerImages();
             _currentOffset = offset;
 
             if (dialogueText != null)
@@ -303,6 +309,7 @@ namespace Metroidvania.UI
             CancellationToken mergedToken = linkedTokenSource.Token;
 
             ApplySpeakerTarget(line.CharacterName);
+            ApplySpeakerNameImage(line.CharacterName);
             _lineIsVisible = true;
 
             if (dialogueText != null)
@@ -390,6 +397,7 @@ namespace Metroidvania.UI
             }
 
             _lineIsVisible = false;
+            HideSpeakerNameImages();
 
             if (dialogueText != null)
             {
@@ -631,7 +639,8 @@ namespace Metroidvania.UI
 
             string trimmed = speaker.Trim();
             if (string.Equals(trimmed, "\u30A4\u30EA\u30B9", StringComparison.OrdinalIgnoreCase) || // イリス
-                string.Equals(trimmed, "iris", StringComparison.OrdinalIgnoreCase))
+                string.Equals(trimmed, "iris", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(trimmed, "player", StringComparison.OrdinalIgnoreCase))
             {
                 return "iris";
             }
@@ -649,6 +658,38 @@ namespace Metroidvania.UI
             }
 
             return trimmed;
+        }
+
+        private void ApplySpeakerNameImage(string? characterName)
+        {
+            ResolveSpeakerImages();
+
+            string? alias = ResolveSpeakerAlias(characterName);
+            bool showIris = string.Equals(alias, "iris", StringComparison.OrdinalIgnoreCase);
+            bool showNox = string.Equals(alias, "nox", StringComparison.OrdinalIgnoreCase);
+
+            if (irisSpeakerImage != null)
+            {
+                irisSpeakerImage.SetActive(showIris);
+            }
+
+            if (noxSpeakerImage != null)
+            {
+                noxSpeakerImage.SetActive(showNox);
+            }
+        }
+
+        private void HideSpeakerNameImages()
+        {
+            if (irisSpeakerImage != null)
+            {
+                irisSpeakerImage.SetActive(false);
+            }
+
+            if (noxSpeakerImage != null)
+            {
+                noxSpeakerImage.SetActive(false);
+            }
         }
 
         private static Transform? FindPlayerTransform()
@@ -833,6 +874,30 @@ namespace Metroidvania.UI
             }
         }
 
+        private void ResolveSpeakerImages()
+        {
+            if (!autoResolveSpeakerImages)
+            {
+                return;
+            }
+
+            if (irisSpeakerImage == null)
+            {
+                irisSpeakerImage =
+                    FindGameObjectByName(transform, "iris_speaker") ??
+                    FindGameObjectByName(transform.parent, "iris_speaker") ??
+                    FindGameObjectByName(transform.root, "iris_speaker");
+            }
+
+            if (noxSpeakerImage == null)
+            {
+                noxSpeakerImage =
+                    FindGameObjectByName(transform, "nox_speaker") ??
+                    FindGameObjectByName(transform.parent, "nox_speaker") ??
+                    FindGameObjectByName(transform.root, "nox_speaker");
+            }
+        }
+
         private static RectTransform? FindRectTransformByName(Transform? root, string objectName)
         {
             if (root == null)
@@ -847,6 +912,26 @@ namespace Metroidvania.UI
                 if (rect != null && string.Equals(rect.name, objectName, StringComparison.OrdinalIgnoreCase))
                 {
                     return rect;
+                }
+            }
+
+            return null;
+        }
+
+        private static GameObject? FindGameObjectByName(Transform? root, string objectName)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                Transform tf = transforms[i];
+                if (tf != null && string.Equals(tf.name, objectName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return tf.gameObject;
                 }
             }
 

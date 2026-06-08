@@ -15,6 +15,9 @@ public sealed class StoryObjectMoveClip : PlayableAsset, ITimelineClipAsset
     public bool moveX = true;
     public bool moveY = true;
     public bool smoothStep = true;
+    [InspectorName("傘あり")]
+    [Tooltip("プレイヤーを傘あり状態にして、移動後のアイドルも傘ありの見た目にします。")]
+    public bool useUmbrellaWalk;
 
     public ClipCaps clipCaps => ClipCaps.Blending | ClipCaps.ClipIn;
 
@@ -32,6 +35,7 @@ public sealed class StoryObjectMoveClip : PlayableAsset, ITimelineClipAsset
         behaviour.moveX = moveX;
         behaviour.moveY = moveY;
         behaviour.smoothStep = smoothStep;
+        behaviour.useUmbrellaWalk = useUmbrellaWalk;
         return playable;
     }
 }
