@@ -10,9 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 33e739f25d352a448aeb1b807bcf0bbf, type: 3}
-  m_Name: Diary_001
+  m_Name: Diary_003
   m_EditorClassIdentifier: Assembly-CSharp::DiaryEntryData
-  entryId: Diary_001
-  title: "\u59C9\u306E\u65E5\u8A18\u306E\u5207\u308C\u7AEF"
-  progressFlagKey: diary_001_collected
-  pickupEventName: TestEvent_01
+  entryId: Diary_002
+  title: "\u6559\u56E3\u306B\u3064\u3044\u3066\u306E\u8A18\u9332"
+  progressFlagKey: diary_002_collected
