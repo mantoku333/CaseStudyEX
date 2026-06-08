@@ -45,7 +45,7 @@ namespace Metroidvania.UI
         [Header("Auto Size")]
         [SerializeField] private bool autoResizeBubble = true;
         [SerializeField] private Vector2 bubblePadding = new Vector2(72f, 44f);
-        [SerializeField] private float minBubbleWidth = 140f;
+        [SerializeField] private float minBubbleWidth = 360f;
         [SerializeField] private float maxBubbleWidth = 980f;
         [SerializeField] private float minBubbleHeight = 84f;
         [SerializeField] private float maxBubbleHeight = 640f;
@@ -55,6 +55,13 @@ namespace Metroidvania.UI
         [SerializeField] private bool logAutoSizeResult = false;
         [SerializeField] private bool normalizeTextMargin = true;
         [SerializeField] private Vector4 normalizedTextMargin = new Vector4(0f, 0f, 12f, 6f);
+
+        [Header("Bubble Layout")]
+        [SerializeField] private bool autoLayoutBubbleElements = true;
+        [SerializeField] private RectTransform? speakerNamePlate;
+        [SerializeField] private RectTransform? nextMarker;
+        [SerializeField] private Vector2 speakerNameOffset = new Vector2(0f, 8f);
+        [SerializeField] private float nextMarkerBottomOffset = 22f;
 
         private readonly Dictionary<string, Transform?> _speakerTargetCache =
             new(StringComparer.OrdinalIgnoreCase);
@@ -83,6 +90,7 @@ namespace Metroidvania.UI
             _mainCamera = Camera.main;
             _bubbleRectTransform = bubblePanel != null ? bubblePanel.GetComponent<RectTransform>() : null;
             _textRectTransform = dialogueText != null ? dialogueText.rectTransform : null;
+            ResolveBubbleLayoutElements();
             _currentOffset = offset;
 
             if (dialogueText != null)
@@ -652,14 +660,19 @@ namespace Metroidvania.UI
 
         private void UpdateBubbleSizeForText(string text)
         {
-            if (!autoResizeBubble || dialogueText == null || _bubbleRectTransform == null || _textRectTransform == null)
+            if (!autoResizeBubble)
+            {
+                return;
+            }
+
+            if (dialogueText == null || _bubbleRectTransform == null || _textRectTransform == null)
             {
                 if (!_hasLoggedAutoSizeSkipReason)
                 {
                     _hasLoggedAutoSizeSkipReason = true;
                     Debug.LogWarning(
-                        $"[BubbleDialogueView] AutoSize skipped. autoResizeBubble={autoResizeBubble}, " +
-                        $"dialogueTextNull={dialogueText == null}, bubbleRectNull={_bubbleRectTransform == null}, textRectNull={_textRectTransform == null}");
+                        $"[BubbleDialogueView] AutoSize skipped. dialogueTextNull={dialogueText == null}, " +
+                        $"bubbleRectNull={_bubbleRectTransform == null}, textRectNull={_textRectTransform == null}");
                 }
                 return;
             }
@@ -728,15 +741,7 @@ namespace Metroidvania.UI
             _bubbleRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, bubbleHeight);
             _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, finalTextWidthText);
             _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, finalTextHeightText);
-            _textRectTransform.anchorMin = new Vector2(0f, 0.5f);
-            _textRectTransform.anchorMax = new Vector2(0f, 0.5f);
-            _textRectTransform.pivot = new Vector2(0f, 0.5f);
-
-            // Some scenes keep legacy anchored offsets (for example, large +Y),
-            // which makes text render outside the bubble. Re-center the text rect
-            // inside the current bubble while preserving left/right and top/bottom padding.
-            float textOffsetX = Mathf.Max(0f, (bubbleWidth - finalTextWidthBubble) * 0.5f);
-            _textRectTransform.anchoredPosition = new Vector2(textOffsetX, 0f);
+            ApplyBubbleElementLayout(bubbleWidth, bubbleHeight, finalTextWidthBubble);
 
             // Keep typewriter behavior intact.
             dialogueText.text = string.Empty;
@@ -753,6 +758,99 @@ namespace Metroidvania.UI
         private static float SafePositiveScale(float value)
         {
             return Mathf.Max(0.0001f, Mathf.Abs(value));
+        }
+
+        private void ApplyBubbleElementLayout(float bubbleWidth, float bubbleHeight, float finalTextWidthBubble)
+        {
+            if (!autoLayoutBubbleElements || _bubbleRectTransform == null || _textRectTransform == null)
+            {
+                return;
+            }
+
+            _textRectTransform.anchorMin = new Vector2(0f, 0.5f);
+            _textRectTransform.anchorMax = new Vector2(0f, 0.5f);
+            _textRectTransform.pivot = new Vector2(0f, 0.5f);
+            float textOffsetX = Mathf.Max(0f, (bubbleWidth - finalTextWidthBubble) * 0.5f);
+            _textRectTransform.anchoredPosition = new Vector2(textOffsetX, 0f);
+
+            if (nextMarker != null)
+            {
+                nextMarker.anchorMin = new Vector2(0.5f, 0.5f);
+                nextMarker.anchorMax = new Vector2(0.5f, 0.5f);
+                nextMarker.pivot = new Vector2(0.5f, 0.5f);
+                nextMarker.anchoredPosition = new Vector2(0f, -(bubbleHeight * 0.5f) - nextMarkerBottomOffset);
+            }
+
+            if (speakerNamePlate != null)
+            {
+                PositionRectAtBubbleLocalPoint(
+                    speakerNamePlate,
+                    new Vector2(-(bubbleWidth * 0.5f) + speakerNameOffset.x, (bubbleHeight * 0.5f) + speakerNameOffset.y),
+                    new Vector2(0f, 0.5f));
+            }
+        }
+
+        private void PositionRectAtBubbleLocalPoint(RectTransform rect, Vector2 bubbleLocalPoint, Vector2 pivot)
+        {
+            if (_bubbleRectTransform == null)
+            {
+                return;
+            }
+
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = pivot;
+
+            Vector3 worldPoint = _bubbleRectTransform.TransformPoint(bubbleLocalPoint);
+            if (rect.parent is RectTransform parentRect)
+            {
+                rect.anchoredPosition = (Vector2)parentRect.InverseTransformPoint(worldPoint);
+            }
+            else
+            {
+                rect.position = worldPoint;
+            }
+        }
+
+        private void ResolveBubbleLayoutElements()
+        {
+            if (_bubbleRectTransform == null)
+            {
+                return;
+            }
+
+            if (nextMarker == null)
+            {
+                nextMarker = FindRectTransformByName(_bubbleRectTransform, "NextMarker_Text");
+            }
+
+            if (speakerNamePlate == null)
+            {
+                speakerNamePlate =
+                    FindRectTransformByName(_bubbleRectTransform, "name") ??
+                    FindRectTransformByName(transform.parent, "name") ??
+                    FindRectTransformByName(transform.root, "name");
+            }
+        }
+
+        private static RectTransform? FindRectTransformByName(Transform? root, string objectName)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            RectTransform[] rects = root.GetComponentsInChildren<RectTransform>(true);
+            for (int i = 0; i < rects.Length; i++)
+            {
+                RectTransform rect = rects[i];
+                if (rect != null && string.Equals(rect.name, objectName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return rect;
+                }
+            }
+
+            return null;
         }
 
         private void ApplyTextLayoutDefaults()
@@ -788,7 +886,7 @@ namespace Metroidvania.UI
 
             autoResizeBubble = true;
             bubblePadding = new Vector2(72f, 44f);
-            minBubbleWidth = 140f;
+            minBubbleWidth = 360f;
             maxBubbleWidth = 980f;
             minBubbleHeight = 84f;
             maxBubbleHeight = 640f;
