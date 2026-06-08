@@ -81,43 +81,9 @@ public static class StoryMoveClipDurationFitter
                 continue;
             }
 
-            Transform boundTarget = ResolveBoundTransform(director.GetGenericBinding(track));
-            if (boundTarget == null)
-            {
-                skippedClips += CountMoveClips(track);
-                if (logDetails)
-                {
-                    Debug.LogWarning(
-                        $"[StoryMoveClipDurationFitter] Track '{track.name}' has no Transform binding.",
-                        timeline);
-                }
-
-                continue;
-            }
-
-            PlayerController playerController = ResolvePlayerController(boundTarget);
-            if (onlyPlayerTracks && playerController == null)
-            {
-                skippedClips += CountMoveClips(track);
-                continue;
-            }
-
-            PlayerStatsData statsData = playerController != null
-                ? playerController.GetPlayerStatsData()
-                : fallbackPlayerStatsData;
-            float moveSpeed = statsData != null ? statsData.MoveSpeed : 0.0f;
-            if (moveSpeed <= 0.0f)
-            {
-                skippedClips += CountMoveClips(track);
-                Debug.LogWarning(
-                    $"[StoryMoveClipDurationFitter] Move speed is missing or zero. Track '{track.name}' was skipped.",
-                    boundTarget);
-                continue;
-            }
-
-            Vector3 virtualPosition = boundTarget.position;
             List<TimelineClip> clips = CollectMoveClips(track);
             clips.Sort(CompareClipStart);
+            var virtualPositions = new Dictionary<Transform, Vector3>();
 
             for (int i = 0; i < clips.Count; i++)
             {
@@ -130,6 +96,45 @@ public static class StoryMoveClipDurationFitter
 
                 scannedClips++;
 
+                Transform moveTarget = ResolveMoveTarget(controller, director, moveClip);
+                if (moveTarget == null)
+                {
+                    skippedClips++;
+                    if (logDetails)
+                    {
+                        Debug.LogWarning(
+                            $"[StoryMoveClipDurationFitter] Move target was not found. Track='{track.name}', clip='{clip.displayName}'",
+                            timeline);
+                    }
+
+                    continue;
+                }
+
+                PlayerController playerController = ResolvePlayerController(moveTarget);
+                if (onlyPlayerTracks && playerController == null)
+                {
+                    skippedClips++;
+                    continue;
+                }
+
+                PlayerStatsData statsData = playerController != null
+                    ? playerController.GetPlayerStatsData()
+                    : fallbackPlayerStatsData;
+                float moveSpeed = statsData != null ? statsData.MoveSpeed : 0.0f;
+                if (moveSpeed <= 0.0f)
+                {
+                    skippedClips++;
+                    Debug.LogWarning(
+                        $"[StoryMoveClipDurationFitter] Move speed is missing or zero. Clip '{clip.displayName}' was skipped.",
+                        moveTarget);
+                    continue;
+                }
+
+                if (!virtualPositions.TryGetValue(moveTarget, out Vector3 virtualPosition))
+                {
+                    virtualPosition = moveTarget.position;
+                }
+
                 Vector3 targetPosition = ResolveTargetPosition(controller, moveClip, virtualPosition);
                 if (playerController != null)
                 {
@@ -140,7 +145,7 @@ public static class StoryMoveClipDurationFitter
                 float distance = playerController != null
                     ? Mathf.Abs(targetPosition.x - virtualPosition.x)
                     : Vector3.Distance(targetPosition, virtualPosition);
-                virtualPosition = targetPosition;
+                virtualPositions[moveTarget] = targetPosition;
 
                 if (distance <= Mathf.Epsilon)
                 {
@@ -193,24 +198,29 @@ public static class StoryMoveClipDurationFitter
         return Selection.activeGameObject.GetComponentInParent<StoryEventController>();
     }
 
-    private static Transform ResolveBoundTransform(Object binding)
+    private static Transform ResolveMoveTarget(
+        StoryEventController controller,
+        IExposedPropertyTable resolver,
+        StoryObjectMoveClip moveClip)
     {
-        if (binding is Transform transform)
+        if (moveClip == null)
         {
-            return transform;
+            return null;
         }
 
-        if (binding is GameObject gameObject)
+        Transform directTarget = moveClip.target.Resolve(resolver);
+        if (directTarget != null)
         {
-            return gameObject.transform;
+            return directTarget;
         }
 
-        if (binding is Component component)
+        if (controller == null)
         {
-            return component.transform;
+            return null;
         }
 
-        return null;
+        string key = string.IsNullOrWhiteSpace(moveClip.actorKey) ? "iris" : moveClip.actorKey.Trim();
+        return controller.GetActorTransform(key);
     }
 
     private static PlayerController ResolvePlayerController(Transform target)

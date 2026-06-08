@@ -25,7 +25,7 @@ public sealed class StoryYarnDialoguePlayable : PlayableBehaviour
             return;
         }
 
-        StoryEventController controller = playerData as StoryEventController;
+        StoryEventController controller = ResolveStoryEventController(playable, playerData);
         if (controller == null)
         {
             return;
@@ -40,5 +40,16 @@ public sealed class StoryYarnDialoguePlayable : PlayableBehaviour
             bubbleActorKey);
 
         started = true;
+    }
+
+    private static StoryEventController ResolveStoryEventController(Playable playable, object playerData)
+    {
+        if (playerData is StoryEventController boundController)
+        {
+            return boundController;
+        }
+
+        PlayableDirector director = playable.GetGraph().GetResolver() as PlayableDirector;
+        return director != null ? director.GetComponent<StoryEventController>() : null;
     }
 }

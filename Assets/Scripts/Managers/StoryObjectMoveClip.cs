@@ -6,6 +6,8 @@ using UnityEngine.Timeline;
 [DisplayName("Story/Object Move")]
 public sealed class StoryObjectMoveClip : PlayableAsset, ITimelineClipAsset
 {
+    public string actorKey = "iris";
+    public ExposedReference<Transform> target;
     public StoryObjectMoveTargetMode targetMode = StoryObjectMoveTargetMode.Marker;
     [Min(1)] public int markerNo = 1;
     public Vector3 worldPosition;
@@ -21,6 +23,8 @@ public sealed class StoryObjectMoveClip : PlayableAsset, ITimelineClipAsset
         ScriptPlayable<StoryObjectMovePlayable> playable =
             ScriptPlayable<StoryObjectMovePlayable>.Create(graph);
         StoryObjectMovePlayable behaviour = playable.GetBehaviour();
+        behaviour.actorKey = actorKey;
+        behaviour.targetReference = target;
         behaviour.targetMode = targetMode;
         behaviour.markerNo = markerNo;
         behaviour.worldPosition = worldPosition;

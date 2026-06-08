@@ -3,6 +3,8 @@ using UnityEngine.Playables;
 
 public sealed class StoryObjectMovePlayable : PlayableBehaviour
 {
+    public string actorKey = "iris";
+    public ExposedReference<Transform> targetReference;
     public StoryObjectMoveTargetMode targetMode;
     public int markerNo = 1;
     public Vector3 worldPosition;
@@ -32,7 +34,7 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
             return;
         }
 
-        Transform boundTarget = ResolveBoundTarget(playerData);
+        Transform boundTarget = ResolveMoveTarget(playable, playerData);
         if (boundTarget == null)
         {
             return;
@@ -98,6 +100,30 @@ public sealed class StoryObjectMovePlayable : PlayableBehaviour
             $"distance={distance:0.###}, speed={moveSpeed:0.###}, clip={clipDuration:0.###}, required={requiredDuration:0.###}. " +
             "Use Tools/CaseStudy/Story/Fit Move Clips To Walk Speed.",
             playerController);
+    }
+
+    private Transform ResolveMoveTarget(Playable playable, object playerData)
+    {
+        Transform resolvedTarget = targetReference.Resolve(playable.GetGraph().GetResolver());
+        if (resolvedTarget != null)
+        {
+            return resolvedTarget;
+        }
+
+        resolvedTarget = ResolveBoundTarget(playerData);
+        if (resolvedTarget != null)
+        {
+            return resolvedTarget;
+        }
+
+        StoryEventController controller = ResolveStoryEventController(playable);
+        if (controller == null)
+        {
+            return null;
+        }
+
+        string key = string.IsNullOrWhiteSpace(actorKey) ? "iris" : actorKey.Trim();
+        return controller.GetActorTransform(key);
     }
 
     private static Transform ResolveBoundTarget(object playerData)
