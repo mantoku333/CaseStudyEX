@@ -201,15 +201,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossAreaController
   playerTag: Player
   disableTriggerAfterStart: 1
+  bossDisplayName: Boss
+  bossRoot: {fileID: 0}
   stageBossAttack: {fileID: 0}
   lastBossController: {fileID: 0}
-  bossRoot: {fileID: 0}
   bossDefeatedFlagKey: boss_01_defeated
+  hideBossWhenDefeated: 1
+  playStageBossIntro: 1
+  hideStageBossUntilIntro: 1
+  stageBossEntryDelaySeconds: 1
+  stageBossNormalBgmFadeOutSeconds: 1
+  waitForStageBossPlayerGroundedBeforeLock: 1
+  stageBossRevealDuration: 3
+  stageBossHpLeadInSeconds: 1
+  lockPlayerFacingStageBoss: 1
+  stageBossMirageAmplitude: 0.08
+  stageBossMirageFrequency: 8
   wallsCloseOnStart: []
   wallsOpenOnStart: []
   fixedBossCamera: {fileID: 3927040128930259068}
+  dualTargetCameraTarget: {fileID: 0}
   activeCameraPriority: 50
   inactiveCameraPriority: 0
+  restoreRoomCameraAfterBoss: 1
+  stageBgm: {fileID: 0}
+  bossBgm: {fileID: 0}
+  bossBgmVolume: 0.2
+  returnToNormalAfterBoss: 0
   confineInsideArea: 1
   confinePlayerInsideArea: 1
   confineBossInsideArea: 1

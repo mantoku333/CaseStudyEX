@@ -404,6 +404,17 @@ public static class RoomCameraHierarchyTools
         SetObject(serializedBossArea, "lastBossController", bossRoot != null ? bossRoot.GetComponent<LastBossController>() : null);
         SetString(serializedBossArea, "bossDefeatedFlagKey", CreateBossDefeatedFlagKey(areaTransform.name));
         SetBool(serializedBossArea, "hideBossWhenDefeated", true);
+        // 自動セットアップ時もStageBoss専用イントロの標準値を入れておく。
+        SetBool(serializedBossArea, "playStageBossIntro", true);
+        SetBool(serializedBossArea, "hideStageBossUntilIntro", true);
+        SetFloat(serializedBossArea, "stageBossEntryDelaySeconds", 2f);
+        SetFloat(serializedBossArea, "stageBossNormalBgmFadeOutSeconds", 1f);
+        SetBool(serializedBossArea, "waitForStageBossPlayerGroundedBeforeLock", true);
+        SetFloat(serializedBossArea, "stageBossRevealDuration", 3f);
+        SetFloat(serializedBossArea, "stageBossHpLeadInSeconds", 1f);
+        SetBool(serializedBossArea, "lockPlayerFacingStageBoss", true);
+        SetFloat(serializedBossArea, "stageBossMirageAmplitude", 0.08f);
+        SetFloat(serializedBossArea, "stageBossMirageFrequency", 8f);
         SetObject(serializedBossArea, "fixedBossCamera", bossCamera);
         SetObject(serializedBossArea, "dualTargetCameraTarget", bossCameraTarget);
         SetInt(serializedBossArea, "activeCameraPriority", 50);
