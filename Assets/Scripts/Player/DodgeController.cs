@@ -138,8 +138,6 @@ public class DodgeController : MonoBehaviour
         dodgeMovementCancelled = false;
 
         float originalGravityScale = rigidBody2d.gravityScale;
-        float originalVerticalVelocity = rigidBody2d.linearVelocity.y;
-
         try
         {
             Vector2 velocity = rigidBody2d.linearVelocity;
@@ -180,7 +178,7 @@ public class DodgeController : MonoBehaviour
                 rigidBody2d.gravityScale = originalGravityScale;
 
                 Vector2 velocity = rigidBody2d.linearVelocity;
-                velocity.y = originalVerticalVelocity;
+                velocity.y = 0.0f;
                 rigidBody2d.linearVelocity = velocity;
             }
 
