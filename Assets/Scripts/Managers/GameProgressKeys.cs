@@ -16,9 +16,19 @@
     public const string PrologueCompleted = "prologue_completed";
     public const string PrologueCompletionUiShown = "prologue_completion_ui_shown";
 
+    //--------------収集要素(手記など)関連------------------
+    public const string Diary001Collected = "diary_001_collected";
+    public const string Diary002Collected = "diary_002_collected";
+    public const string Diary003Collected = "diary_003_collected";
+
     //--------------能力解放関連------------------
     public const string AbilityDodgeUnlocked = "ability_dodge_unlocked";
     public const string AbilityGlideUnlocked = "ability_glide_unlocked";
     public const string AbilityGunRecoilUnlocked = "ability_gun_recoil_unlocked";
     public const string AbilityParryUnlocked = "ability_parry_unlocked";
+
+    //--------------デコレーション関連------------
+    public const string EquipmentBlueAuraUnlocked = "Equipment_BlueAura_Unlock";
+    public const string EquipmentRedAuraUnlocked = "Equipment_RedAura_Unlock";
+    public const string EquipmentArcancielUnlocked = "Equipment_Arcanciel_Unlock";
 }

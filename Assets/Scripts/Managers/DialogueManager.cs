@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -129,13 +130,18 @@ namespace Metroidvania.Managers
         /// <summary>
         /// スタイルを指定して会話を開始する（対象はBubble専用オプション）
         /// </summary>
-        public void StartConversation(string nodeName, DialogueStyle style, Transform target = null)
+        public void StartConversation(
+            string nodeName,
+            DialogueStyle style,
+            Transform target = null,
+            BubbleDialogueView.SpeakerTargetResolver speakerTargetResolver = null,
+            bool speakerTargetResolverOnly = false)
         {
             if (dialogueRunner == null) return;
             if (dialogueRunner.IsDialogueRunning) dialogueRunner.Stop();
 
             if (advView == null) advView = FindFirstObjectByType<DialogueView>(FindObjectsInactive.Include);
-            if (bubbleView == null) bubbleView = FindFirstObjectByType<BubbleDialogueView>(FindObjectsInactive.Include);
+            bubbleView = ResolveBubbleView();
 
             Debug.LogWarning(
                 $"[DialogueManager] StartConversation node='{nodeName}', style={style}, " +
@@ -153,6 +159,7 @@ namespace Metroidvania.Managers
                 if (bubbleView != null)
                 {
                     bubbleView.gameObject.SetActive(true);
+                    bubbleView.SetSpeakerTargetResolver(null, false);
                     bubbleView.SetPresentationEnabled(false);
                 }
             }
@@ -167,6 +174,7 @@ namespace Metroidvania.Managers
                 if (bubbleView != null)
                 {
                     bubbleView.gameObject.SetActive(true);
+                    bubbleView.SetSpeakerTargetResolver(speakerTargetResolver, speakerTargetResolverOnly);
                     bubbleView.SetPresentationEnabled(true);
                     bubbleView.SetTarget(target);
                 }
@@ -174,6 +182,68 @@ namespace Metroidvania.Managers
 
             ignoreAnyButtonInputFrame = Time.frameCount;
             dialogueRunner.StartDialogue(nodeName);
+        }
+
+        private BubbleDialogueView ResolveBubbleView()
+        {
+            BubbleDialogueView preferredView = FindPreferredBubbleView();
+            if (preferredView != null)
+            {
+                return preferredView;
+            }
+
+            if (bubbleView != null)
+            {
+                return bubbleView;
+            }
+
+            return FindFirstObjectByType<BubbleDialogueView>(FindObjectsInactive.Include);
+        }
+
+        private static BubbleDialogueView FindPreferredBubbleView()
+        {
+            BubbleDialogueView[] views = FindObjectsByType<BubbleDialogueView>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+
+            for (int i = 0; i < views.Length; i++)
+            {
+                BubbleDialogueView view = views[i];
+                if (view != null &&
+                    string.Equals(view.name, "BubbleView", StringComparison.OrdinalIgnoreCase) &&
+                    HasParentNamed(view.transform, "EventCanvas"))
+                {
+                    return view;
+                }
+            }
+
+            for (int i = 0; i < views.Length; i++)
+            {
+                BubbleDialogueView view = views[i];
+                if (view != null &&
+                    string.Equals(view.name, "BubbleView", StringComparison.OrdinalIgnoreCase))
+                {
+                    return view;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool HasParentNamed(Transform transform, string parentName)
+        {
+            Transform current = transform;
+            while (current != null)
+            {
+                if (string.Equals(current.name, parentName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+
+                current = current.parent;
+            }
+
+            return false;
         }
     }
 }

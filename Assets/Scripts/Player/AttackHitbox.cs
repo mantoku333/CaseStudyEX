@@ -27,12 +27,26 @@ public class AttackHitbox : MonoBehaviour
     private int cachedWallMaskValue = int.MinValue;
     private int fallThroughFloorLayer = -1;
     private PlayerStatsData statsData;
+    private PlayerEquipmentController equipmentController;
 
     public event Action<Collider2D> OnHit;
 
-    public int PlayerAttackDamage => statsData != null
-        ? statsData.PlayerAttackDamage
-        : 0;
+    public int PlayerAttackDamage
+    {
+        get
+        {
+            int baseDamage = statsData != null ? statsData.PlayerAttackDamage : 0;
+            if (baseDamage <= 0)
+            {
+                return 0;
+            }
+
+            float multiplier = GetEquipmentAttackMultiplier();
+            return Mathf.Max(1, Mathf.RoundToInt(baseDamage * multiplier));
+        }
+    }
+
+    public Vector2 AttackOriginPosition => ResolveAttackOrigin();
 
     private void Awake()
     {
@@ -71,6 +85,18 @@ public class AttackHitbox : MonoBehaviour
     public void SetPlayerStatsData(PlayerStatsData playerData)
     {
         statsData = playerData;
+    }
+
+    private float GetEquipmentAttackMultiplier()
+    {
+        if (equipmentController == null)
+        {
+            equipmentController = GetComponentInParent<PlayerEquipmentController>();
+        }
+
+        return equipmentController != null
+            ? Mathf.Max(0f, equipmentController.AttackPowerMultiplier)
+            : 1f;
     }
 
     public void ScanCurrentOverlaps()

@@ -155,9 +155,11 @@ GameObject:
   - component: {fileID: 867530900123456789}
   - component: {fileID: 1141293357520890712}
   - component: {fileID: 6194872500186642142}
+  - component: {fileID: 6194872500186642143}
   - component: {fileID: 730100000000000001}
   - component: {fileID: 914900000000000003}
   - component: {fileID: 820100000000000002}
+  - component: {fileID: 910500000000000002}
   m_Layer: 0
   m_Name: Enemy_Tackle
   m_TagString: Untagged
@@ -272,6 +274,7 @@ MonoBehaviour:
   patrolDistance: 7
   damageToPlayer: 5
   maxHealth: 40
+  backAttackDamageMultiplier: 2
   wallCheckDistance: 0.15
   edgeCheckDistance: 0.35
   edgeCheckForwardOffset: 0.1
@@ -313,6 +316,7 @@ MonoBehaviour:
   stopChargeWhenBlocked: 1
   blockedMoveThreshold: 0.01
   blockedStopDelay: 0.1
+  chargeEndingLeadDistance: 1.2
   drawViewGizmo: 1
   parryKnockbackDistance: 0.5
 --- !u!114 &1141293357520890712
@@ -352,11 +356,36 @@ MonoBehaviour:
   frameSeconds: 0.033
   pixelsPerUnit: 100
   worldOffset: {x: 0, y: -1.36, z: 0}
-  effectScale: {x: 2, y: 2, z: 2}
+  effectScale: {x: 2.5, y: 2.5, z: 2.5}
   parentToPlayer: 1
   sortingOrderOffset: 3
   copyPlayerMaterial: 1
   chargingGraceSeconds: 0.15
+--- !u!114 &6194872500186642143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2641d6a90ae741469a84889483e2ecc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyTackleAttackEffectPlayer
+  attackSpriteSheet: {fileID: 2800000, guid: e8768b0e980ff5c48b0ac7e220be2262, type: 3}
+  frameColumns: 3
+  frameRows: 2
+  frameCount: 6
+  frameSeconds: 0.033
+  pixelsPerUnit: 100
+  spritePivot: {x: 0.25, y: 0.5}
+  worldOffset: {x: 0.85, y: -0.31, z: 0}
+  effectScale: {x: 0.6, y: 0.6, z: 0.6}
+  downwardAngleDegrees: 20
+  parentToEnemy: 1
+  sortingOrderOffset: 4
+  copyEnemyMaterial: 1
 --- !u!114 &730100000000000001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -408,6 +437,25 @@ MonoBehaviour:
   deathEffectPrefab: {fileID: 100000, guid: 200954b3ebad4d3cbbae01f6b2439763, type: 3}
   spawnOffset: {x: 0, y: 1.5, z: 0}
   useColliderCenter: 1
+--- !u!114 &910500000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421722041738095275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1b0b655e6484e4282a77c9dcbb96331, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.RandomUniqueItemDropOnDeath
+  dropTable: {fileID: 11400000, guid: af752883cf3d496c9332e526fb1ad237, type: 2}
+  dropPoint: {fileID: 0}
+  dropOffset: {x: 0, y: 0, z: 0}
+  randomHorizontalOffsetRange: {x: -3, y: 3}
+  hopHeight: 3
+  hopDuration: 0.35
+  disablePickupDuringHop: 1
 --- !u!1 &1701081988696678631
 GameObject:
   m_ObjectHideFlags: 0

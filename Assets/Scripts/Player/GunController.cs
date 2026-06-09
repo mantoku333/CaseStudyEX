@@ -51,6 +51,7 @@ public class GunController : MonoBehaviour
     private Rigidbody2D rigidBody2d;      //反動を加えるためのRigidbody2D
     private PlayerCollisionMover2D collisionMover;
     private float defaultLinearDamping = 0.0f;
+    private float recoilForceBonus = 0.0f;
 
     private AudioSource audioSource;      //AudioSource
     private SpriteRenderer sourceSpriteRenderer;
@@ -111,6 +112,11 @@ public class GunController : MonoBehaviour
     public float GetAirRecoilPower()
     {
         return airRecoilPower;
+    }
+
+    public void SetRecoilForceBonus(float bonus)
+    {
+        recoilForceBonus = Mathf.Max(0.0f, bonus);
     }
 
     public void SetRecoilDuration(float duration)
@@ -178,7 +184,7 @@ public class GunController : MonoBehaviour
         rigidBody2d.linearDamping = 2.0f;
 
         //現在の速度を取得
-        Vector2 recoil = -direction.normalized * airRecoilPower * powerMultiplier;
+        Vector2 recoil = -direction.normalized * GetModifiedAirRecoilPower() * powerMultiplier;
         rigidBody2d.AddForce(recoil, ForceMode2D.Impulse);
 
         BeginRecoil(recoilDuration);
@@ -203,7 +209,7 @@ public class GunController : MonoBehaviour
         velocity.x = 0.0f;
         velocity.y = 0.0f;
         rigidBody2d.linearVelocity = velocity;
-        rigidBody2d.AddForce(Vector2.up * airRecoilPower * recoilPowerMultiplier, ForceMode2D.Impulse);
+        rigidBody2d.AddForce(Vector2.up * GetModifiedAirRecoilPower() * recoilPowerMultiplier, ForceMode2D.Impulse);
         BeginRecoil(recoilDuration);
         // リコイルジャンプも同じ補正を通し、天井や角で押し込まれないようにする。
         ProjectRecoilVelocityForNextFixedStep();
@@ -247,12 +253,17 @@ public class GunController : MonoBehaviour
 
         // 現在速度を「次のFixedUpdateで移動する距離」としてSweepし、壁法線方向だけを取り除く。
         rigidBody2d.linearVelocity =
-            collisionMover.ProjectVelocityForNextFixedStep(rigidBody2d.linearVelocity);
+            collisionMover.ProjectRecoilVelocityForNextFixedStep(rigidBody2d.linearVelocity);
     }
 
     private float GetCurrentRecoilPowerMultiplier()
     {
         return isSecondRecoilNext ? secondRecoilPowerMultiplier : 1.0f;
+    }
+
+    private float GetModifiedAirRecoilPower()
+    {
+        return Mathf.Max(0.0f, airRecoilPower + recoilForceBonus);
     }
 
     private void StartRecoilCoolTime()

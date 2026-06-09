@@ -3025,6 +3025,17 @@ MonoBehaviour:
   playerSprite: {fileID: 775024502}
   parryColor: {r: 1, g: 0.9808723, b: 0.3254717, a: 1}
   flashDuration: 0.1
+  parryEffectSpriteSheet: {fileID: 2800000, guid: aa182da2f96b25e45baaa62fe40f0626, type: 3}
+  parryEffectFrameColumns: 5
+  parryEffectFrameRows: 3
+  parryEffectFrameCount: 15
+  parryEffectFrameSeconds: 0.033
+  parryEffectPixelsPerUnit: 100
+  parryEffectSpritePivot: {x: 0.5, y: 0.5}
+  parryEffectWorldOffset: {x: 0, y: 0, z: 0}
+  parryEffectScale: {x: 1, y: 1, z: 1}
+  parryEffectSortingOrderOffset: 4
+  copyPlayerMaterial: 1
   umbrella_open: {fileID: 8300000, guid: b23093459fc678f498899d1ceed37ba0, type: 3}
 --- !u!1 &1049368688
 GameObject:

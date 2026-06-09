@@ -13,8 +13,9 @@ namespace GameName.Enemy
     {
         [SerializeField] private float moveSpeed = 2f;
         [SerializeField] private float patrolDistance = 2f;
-        [SerializeField] private int damageToPlayer = 1;
+        [SerializeField, Min(0)] private int damageToPlayer = 1;
         [SerializeField, Min(1)] private int maxHealth = 1;
+        [SerializeField, Min(1f)] private float backAttackDamageMultiplier = 2f;
 
         [Header("Turn Check")]
         [SerializeField, Min(0.01f)] private float wallCheckDistance = 0.15f;
@@ -33,6 +34,7 @@ namespace GameName.Enemy
         [SerializeField, Min(0f)] private float enemyCollisionTurnCooldown = 0.15f;
 
         private const float EnemyCollisionSideNormalThreshold = 0.35f;
+        private const float BackAttackMinHorizontalDelta = 0.05f;
         private const float ReturnHomeArrivalDistance = 0.03f;
         // 巡回基準は攻撃後に更新されるため、帰還先として使う初期位置は別に保持する。
         private Vector3 originalStartPosition;
@@ -55,6 +57,13 @@ namespace GameName.Enemy
         private static Scene cachedShutterWallScene;
         private static bool shutterWallCacheValid;
 
+        private void OnValidate()
+        {
+            damageToPlayer = Mathf.Max(0, damageToPlayer);
+            maxHealth = Mathf.Max(1, maxHealth);
+            backAttackDamageMultiplier = Mathf.Max(1f, backAttackDamageMultiplier);
+        }
+
         public event Action EnemyCollisionTurned;
         /// <summary>
         /// 敵がDestroyされる直前に通知する。死亡SEなど、破棄前に必要な処理で使う。
@@ -73,6 +82,7 @@ namespace GameName.Enemy
         public float CurrentX => rigidbody2D != null ? rigidbody2D.position.x : transform.position.x;
         public int CurrentHealth => currentHealth;
         public int MaxHealth => Mathf.Max(1, maxHealth);
+        public int DamageToPlayer => Mathf.Max(0, damageToPlayer);
         public bool IsReturningHome => returningHome;
 
         /// <summary>
@@ -677,7 +687,7 @@ namespace GameName.Enemy
                     Debug.Log("パリィ中なので敵ダメージ無効");
                 }
                 else if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
-                        playerHealth.TryTakeDamage(damageToPlayer))
+                        playerHealth.TryTakeDamage(DamageToPlayer))
                 {
                     Debug.Log("敵接触ダメージ");
                     HitStopController.RequestEnemyToPlayer();
@@ -743,15 +753,53 @@ namespace GameName.Enemy
 
         public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
         {
-            int damage = 0;
-
-            if (attacker != null)
-            {
-                damage = attacker.PlayerAttackDamage;
-            }
+            int damage = CalculatePlayerAttackDamage(attacker);
+            bool wasAlive = currentHealth > 0;
 
             TakeDamage(damage);
+            if (wasAlive && currentHealth <= 0)
+            {
+                PlayerEquipmentController equipmentController = attacker != null
+                    ? attacker.GetComponentInParent<PlayerEquipmentController>()
+                    : null;
+                equipmentController?.NotifyEnemyKilledByPlayerAttack();
+            }
+
             HitStopController.RequestPlayerToEnemy();
+        }
+
+        private int CalculatePlayerAttackDamage(AttackHitbox attacker)
+        {
+            if (attacker == null)
+            {
+                return 0;
+            }
+
+            int baseDamage = attacker.PlayerAttackDamage;
+            if (baseDamage <= 0 || !IsBackAttack(attacker))
+            {
+                return baseDamage;
+            }
+
+            return Mathf.CeilToInt(baseDamage * Mathf.Max(1f, backAttackDamageMultiplier));
+        }
+
+        private bool IsBackAttack(AttackHitbox attacker)
+        {
+            if (attacker == null)
+            {
+                return false;
+            }
+
+            float attackDeltaX = attacker.AttackOriginPosition.x - transform.position.x;
+            if (Mathf.Abs(attackDeltaX) <= BackAttackMinHorizontalDelta)
+            {
+                return false;
+            }
+
+            int attackerSide = attackDeltaX >= 0f ? 1 : -1;
+            int facingDirection = moveDirection >= 0 ? 1 : -1;
+            return attackerSide != facingDirection;
         }
 
 

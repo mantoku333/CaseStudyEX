@@ -114,6 +114,13 @@ public sealed class StageBgmController : MonoBehaviour
 
     public void StopTimelineBgm(float fadeSeconds)
     {
+        // タイムライン停止と通常のBGMフェードアウトで同じ処理を使う。
+        FadeOutCurrent(fadeSeconds);
+    }
+
+    public void FadeOutCurrent(float fadeSeconds)
+    {
+        // 現在鳴っているBGMを、別クリップへ切り替えずに音量だけ下げて停止する。
         if (crossfadeCoroutine != null)
         {
             StopCoroutine(crossfadeCoroutine);

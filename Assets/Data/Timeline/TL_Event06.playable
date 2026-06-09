@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 80d4ea4a08024b65bf5bd6f65966e7cc, type: 3}
-  m_Name: Story Object Move Track
+  m_Name: Object Move Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7284a4d76fb4a5ab22217dc634537af, type: 3}
-  m_Name: Story Yarn Dialogue Track
+  m_Name: Yarn Dialogue Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88ad4e6cf71f45d2b8d6bb9953558c0b, type: 3}
-  m_Name: Story Camera Zoom Track
+  m_Name: Camera Zoom Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryCameraZoomTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -270,7 +270,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 150c23b523c465043a3342a8be374d79, type: 3}
-  m_Name: Story Camera Shake Track
+  m_Name: Camera Shake Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryCameraShakeTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -361,8 +361,8 @@ MonoBehaviour:
   - {fileID: -4819130723759348321}
   - {fileID: -8539405550118696819}
   - {fileID: 9018057022353266388}
-  - {fileID: -8455305301741701886}
   - {fileID: 1112982847894433}
+  - {fileID: -8455305301741701886}
   m_FixedDuration: 0
   m_EditorSettings:
     m_Framerate: 60
@@ -379,7 +379,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 186b588d46654fb469196dc1585cd5a3, type: 3}
-  m_Name: Event Panel Track
+  m_Name: Panel Track
   m_EditorClassIdentifier: Assembly-CSharp::EventPanelTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -403,7 +403,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7ef27a9f3dc45459b9f0802d25db2ac, type: 3}
-  m_Name: Story Camera Move Track
+  m_Name: Camera Move Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryCameraMoveTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -533,7 +533,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2adb5a2aea9313d4587606e8b62ed1d1, type: 3}
-  m_Name: Story Fade Track
+  m_Name: Fade Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryFadeTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -662,7 +662,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4b4a213633b4841a282b1e2418d257b, type: 3}
-  m_Name: Story Animator Track
+  m_Name: Animator Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryAnimatorTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}

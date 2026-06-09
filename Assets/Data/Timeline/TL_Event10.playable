@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 80d4ea4a08024b65bf5bd6f65966e7cc, type: 3}
-  m_Name: Story Object Move Track
+  m_Name: Object Move Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7284a4d76fb4a5ab22217dc634537af, type: 3}
-  m_Name: Story Yarn Dialogue Track
+  m_Name: Yarn Dialogue Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -211,13 +211,9 @@ MonoBehaviour:
     m_DisplayName: StoryYarnDialogueClip
   m_Markers:
     m_Objects:
-    - {fileID: 327608698108943624}
-    - {fileID: -4403982217242846192}
-    - {fileID: -2073824339582600517}
-    - {fileID: 8340132531640153485}
-    - {fileID: 3026920669365046440}
-    - {fileID: -1907171916938764281}
-    - {fileID: -1850197409799598628}
+    - {fileID: -201241108075983698}
+    - {fileID: -3278233865162303562}
+    - {fileID: 3633414500611637709}
 --- !u!114 &-4819130723759348321
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -228,7 +224,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88ad4e6cf71f45d2b8d6bb9953558c0b, type: 3}
-  m_Name: Story Camera Zoom Track
+  m_Name: Camera Zoom Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryCameraZoomTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -238,28 +234,78 @@ MonoBehaviour:
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
   m_Children: []
-  m_Clips: []
+  m_Clips:
+  - m_Version: 1
+    m_Start: 0
+    m_ClipIn: 0
+    m_Asset: {fileID: 420808127296622951}
+    m_Duration: 0.7333333333333333
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: -4819130723759348321}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: StoryCameraZoomClip
   m_Markers:
     m_Objects: []
---- !u!114 &-4403982217242846192
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 17.866666666666667
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_02
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
 --- !u!114 &-3805806930034002821
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -270,7 +316,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 150c23b523c465043a3342a8be374d79, type: 3}
-  m_Name: Story Camera Shake Track
+  m_Name: Camera Shake Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryCameraShakeTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -310,16 +356,64 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 22.866666666666674
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_03
+  m_Time: 3.402858257293701
+  markerId: 0288d546a496408f8ce026c4b9561f73
+  nodeName: test_02
   useControllerDefaultStyle: 1
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
   bubbleActorKey: 
---- !u!114 &-1907171916938764281
+--- !u!114 &-1586035172603498482
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
+  m_Name: StoryObjectMoveClip(Clone)(Clone)(Clone)(Clone)
+  m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
+  targetMode: 0
+  markerNo: 2
+  worldPosition: {x: 0, y: 0, z: 0}
+  keepCurrentZ: 1
+  moveX: 1
+  moveY: 0
+  smoothStep: 1
+  useUmbrellaWalk: 1
+--- !u!114 &-528955351536390968
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
+  m_Name: StoryObjectMoveClip(Clone)(Clone)
+  m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
+  targetMode: 0
+  markerNo: 1
+  worldPosition: {x: 0, y: 0, z: 0}
+  keepCurrentZ: 1
+  moveX: 1
+  moveY: 0
+  smoothStep: 1
+  useUmbrellaWalk: 1
+--- !u!114 &-201241108075983698
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -329,30 +423,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 37.86666666666669
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_06
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
---- !u!114 &-1850197409799598628
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 32.86666666666669
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_05
+  m_Time: 0.7333333333333333
+  markerId: 0288d546a496408f8ce026c4b9561f73
+  nodeName: test_01
   useControllerDefaultStyle: 1
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
@@ -378,8 +453,8 @@ MonoBehaviour:
   - {fileID: -4819130723759348321}
   - {fileID: -8539405550118696819}
   - {fileID: 9018057022353266388}
-  - {fileID: -8455305301741701886}
   - {fileID: 1112982847894433}
+  - {fileID: -8455305301741701886}
   m_FixedDuration: 0
   m_EditorSettings:
     m_Framerate: 60
@@ -396,7 +471,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 186b588d46654fb469196dc1585cd5a3, type: 3}
-  m_Name: Event Panel Track
+  m_Name: Panel Track
   m_EditorClassIdentifier: Assembly-CSharp::EventPanelTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -408,8 +483,7 @@ MonoBehaviour:
   m_Children: []
   m_Clips: []
   m_Markers:
-    m_Objects:
-    - {fileID: 8561065495896680998}
+    m_Objects: []
 --- !u!114 &149827093544674222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -420,7 +494,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7ef27a9f3dc45459b9f0802d25db2ac, type: 3}
-  m_Name: Story Camera Move Track
+  m_Name: Camera Move Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryCameraMoveTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -502,7 +576,7 @@ MonoBehaviour:
     m_DisplayName: StoryCameraMoveClip
   m_Markers:
     m_Objects: []
---- !u!114 &327608698108943624
+--- !u!114 &420808127296622951
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -511,16 +585,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 2.5833333333333335
-  markerId: af28a1b8189b45c9acbfdb853ab727e8
-  nodeName: test_01
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
+  m_Script: {fileID: 11500000, guid: 7d492b0b56f44b6c8fb1f1a8f8cfdc34, type: 3}
+  m_Name: StoryCameraZoomClip
+  m_EditorClassIdentifier: Assembly-CSharp::StoryCameraZoomClip
+  orthographicSize: 12
+  smoothStep: 1
 --- !u!114 &1274885233549238161
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -531,7 +600,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2adb5a2aea9313d4587606e8b62ed1d1, type: 3}
-  m_Name: Story Fade Track
+  m_Name: Fade Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryFadeTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
@@ -610,48 +679,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 27.866666666666674
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_04
+  m_Time: 4.916666666666667
+  markerId: 0288d546a496408f8ce026c4b9561f73
+  nodeName: test_03
   useControllerDefaultStyle: 1
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
   bubbleActorKey: 
---- !u!114 &8561065495896680998
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
-  m_Name: Event/Panel Point
-  m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
-  m_Time: 7.25
-  markerId: fd40845972ef46b19fe643c3bb200821
-  markerMode: 0
-  panelObject:
-    exposedName: 75b8291ec6091904284b4ee4445c391d
-    defaultValue: {fileID: 0}
-  panelPresenter:
-    exposedName: 9aadde69bc70a5e469624782ff1bdf36
-    defaultValue: {fileID: 0}
-  panelPresenterName: 
-  panelKind: 0
-  diaryEntryData: {fileID: 0}
-  title: 
-  body: 
-  closeLabel: 
-  illustration: {fileID: 0}
-  animationFrames: []
-  animationFramesPerSecond: 12
-  animationLoopIntervalSeconds: 0.5
-  pauseTimelineUntilClosed: 1
-  autoCloseSecondsWhenNoButton: 3
 --- !u!114 &9018057022353266388
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -662,7 +698,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4b4a213633b4841a282b1e2418d257b, type: 3}
-  m_Name: Story Animator Track
+  m_Name: Animator Track
   m_EditorClassIdentifier: Assembly-CSharp::StoryAnimatorTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}

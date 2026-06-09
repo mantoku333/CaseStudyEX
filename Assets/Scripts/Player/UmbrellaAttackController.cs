@@ -335,13 +335,27 @@ public class UmbrellaAttackController : MonoBehaviour
 
     private void PlayAttackHitSE(Collider2D collision)
     {
-        PlaySE(player_attackHit);
+        if (IsEnemyHit(collision))
+        {
+            PlaySE(player_attackHit);
+        }
     }
 
     private void PlaySE(AudioClip clip)
     {
         if (clip == null || audioSource == null) return;
         audioSource.PlayOneShot(clip);
+    }
+
+    private static bool IsEnemyHit(Collider2D collision)
+    {
+        if (collision == null)
+        {
+            return false;
+        }
+
+        return collision.GetComponentInParent<GameName.Enemy.EnemyController>() != null ||
+               collision.GetComponentInParent<GameName.Enemy.LastBossController>() != null;
     }
 
     private void HideAttackEffectRenderer()

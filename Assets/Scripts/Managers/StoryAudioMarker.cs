@@ -1,11 +1,11 @@
 using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
 [System.Serializable]
+[HideInMenu]
 [DisplayName("Story/Audio Point")]
-public sealed class StoryAudioMarker : Marker, INotification, INotificationOptionProvider
+public sealed class StoryAudioMarker : Marker
 {
     [SerializeField] private StoryTimelineAudioKind audioKind = StoryTimelineAudioKind.Se;
     [SerializeField] private StoryTimelineAudioAction action = StoryTimelineAudioAction.Play;
@@ -20,6 +20,4 @@ public sealed class StoryAudioMarker : Marker, INotification, INotificationOptio
     public float Volume => Mathf.Clamp01(volume);
     public bool Loop => loop;
     public float FadeSeconds => Mathf.Max(0f, fadeSeconds);
-    public PropertyName id => new PropertyName(nameof(StoryAudioMarker));
-    public NotificationFlags flags => NotificationFlags.TriggerOnce;
 }

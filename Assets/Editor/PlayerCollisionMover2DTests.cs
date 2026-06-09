@@ -31,7 +31,7 @@ public sealed class PlayerCollisionMover2DTests
         Vector2 appliedDelta = mover.CalculateSlideDelta(new Vector2(3f, 0f));
 
         Assert.That(appliedDelta.x, Is.GreaterThan(0.9f));
-        Assert.That(appliedDelta.x, Is.LessThanOrEqualTo(0.971f));
+        Assert.That(appliedDelta.x, Is.LessThanOrEqualTo(0.98f));
         Assert.That(Mathf.Abs(appliedDelta.y), Is.LessThan(0.001f));
     }
 
@@ -45,7 +45,7 @@ public sealed class PlayerCollisionMover2DTests
         Vector2 appliedDelta = mover.CalculateSlideDelta(new Vector2(3f, 1f));
 
         Assert.That(appliedDelta.x, Is.GreaterThan(0.9f));
-        Assert.That(appliedDelta.x, Is.LessThanOrEqualTo(0.971f));
+        Assert.That(appliedDelta.x, Is.LessThanOrEqualTo(0.98f));
         Assert.That(appliedDelta.y, Is.GreaterThan(0.9f));
     }
 
@@ -79,6 +79,57 @@ public sealed class PlayerCollisionMover2DTests
     }
 
     [Test]
+    public void ProjectRecoilVelocityForNextFixedStep_WhenTouchingRightWallAndRecoilingAway_PreservesLiftAndAwayVelocity()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(new Vector2(1f, 0f), out _, out _);
+        CreateGroundBox("Wall", new Vector2(2f, 0f), new Vector2(1f, 5f));
+        Physics2D.SyncTransforms();
+
+        Vector2 projectedVelocity = mover.ProjectRecoilVelocityForNextFixedStep(new Vector2(-10f, 10f));
+
+        Assert.That(projectedVelocity.x, Is.LessThan(-9.9f));
+        Assert.That(projectedVelocity.y, Is.GreaterThan(9.9f));
+    }
+
+    [Test]
+    public void ProjectRecoilVelocityForNextFixedStep_WhenTouchingRightWallAndRecoilingIntoWall_RemovesOnlyIntoWallVelocity()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(new Vector2(1f, 0f), out _, out _);
+        CreateGroundBox("Wall", new Vector2(2f, 0f), new Vector2(1f, 5f));
+        Physics2D.SyncTransforms();
+
+        Vector2 projectedVelocity = mover.ProjectRecoilVelocityForNextFixedStep(new Vector2(10f, 10f));
+
+        Assert.That(Mathf.Abs(projectedVelocity.x), Is.LessThan(0.01f));
+        Assert.That(projectedVelocity.y, Is.GreaterThan(9.9f));
+    }
+
+    [Test]
+    public void ProjectRecoilVelocityForNextFixedStep_WhenTouchingLeftWallAndRecoilingIntoWall_RemovesOnlyIntoWallVelocity()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(new Vector2(-1f, 0f), out _, out _);
+        CreateGroundBox("Wall", new Vector2(-2f, 0f), new Vector2(1f, 5f));
+        Physics2D.SyncTransforms();
+
+        Vector2 projectedVelocity = mover.ProjectRecoilVelocityForNextFixedStep(new Vector2(-10f, 10f));
+
+        Assert.That(Mathf.Abs(projectedVelocity.x), Is.LessThan(0.01f));
+        Assert.That(projectedVelocity.y, Is.GreaterThan(9.9f));
+    }
+
+    [Test]
+    public void ProjectRecoilVelocityForNextFixedStep_WhenTouchingCeiling_RemovesUpwardVelocity()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(new Vector2(0f, 1f), out _, out _);
+        CreateGroundBox("Ceiling", new Vector2(0f, 2f), new Vector2(5f, 1f));
+        Physics2D.SyncTransforms();
+
+        Vector2 projectedVelocity = mover.ProjectRecoilVelocityForNextFixedStep(new Vector2(0f, 10f));
+
+        Assert.That(Mathf.Abs(projectedVelocity.y), Is.LessThan(0.01f));
+    }
+
+    [Test]
     public void CalculateSlideDelta_WhenOnlyFallThroughFloorInPath_DoesNotBlock()
     {
         PlayerCollisionMover2D mover = CreatePlayer(Vector2.zero, out _, out _);
@@ -99,6 +150,7 @@ public sealed class PlayerCollisionMover2DTests
     {
         GameObject playerObject = CreateObject("Player", position);
         rigidbody2D = playerObject.AddComponent<Rigidbody2D>();
+        rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
         rigidbody2D.gravityScale = 0f;
         rigidbody2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 

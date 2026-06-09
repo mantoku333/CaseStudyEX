@@ -196,10 +196,29 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
             yield break;
         }
 
-        float duration = Mathf.Max(0.01f, durationSeconds);
         Vector3 start = actor.position;
         Vector3 end = marker.position;
         float elapsed = 0f;
+        global::PlayerController playerController = ResolvePlayerControllerForActor(actorId, actor);
+        if (playerController != null)
+        {
+            end.y = start.y;
+
+            if (Mathf.Abs(end.x - start.x) <= 0.01f)
+            {
+                yield break;
+            }
+
+            playerController.StartExternalMoveToX(end.x);
+            while (playerController != null && playerController.IsExternalMovementActive)
+            {
+                yield return null;
+            }
+
+            yield break;
+        }
+
+        float duration = Mathf.Max(0.01f, durationSeconds);
 
         while (elapsed < duration)
         {
@@ -325,6 +344,27 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
         }
 
         return FindNamedTransform(ActorPrefix, trimmedActorId);
+    }
+
+    private static global::PlayerController ResolvePlayerControllerForActor(string actorId, Transform actor)
+    {
+        if (actor == null || string.IsNullOrWhiteSpace(actorId))
+        {
+            return null;
+        }
+
+        if (!string.Equals(actorId.Trim(), IrisActorId, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        global::PlayerController playerController = actor.GetComponent<global::PlayerController>();
+        if (playerController != null)
+        {
+            return playerController;
+        }
+
+        return actor.GetComponentInParent<global::PlayerController>();
     }
 
     private static void SetActorWorldPosition(Transform actor, Vector3 worldPosition, bool resetVelocity)

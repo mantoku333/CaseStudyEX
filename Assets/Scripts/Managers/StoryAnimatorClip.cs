@@ -6,6 +6,8 @@ using UnityEngine.Timeline;
 [DisplayName("Story/Animator")]
 public sealed class StoryAnimatorClip : PlayableAsset, ITimelineClipAsset
 {
+    public string actorKey = "iris";
+    public ExposedReference<Animator> animator;
     public StoryAnimatorActionType actionType = StoryAnimatorActionType.PlayState;
     public string parameterOrStateName = "idle";
     public int layer = 0;
@@ -22,6 +24,8 @@ public sealed class StoryAnimatorClip : PlayableAsset, ITimelineClipAsset
         ScriptPlayable<StoryAnimatorPlayable> playable =
             ScriptPlayable<StoryAnimatorPlayable>.Create(graph);
         StoryAnimatorPlayable behaviour = playable.GetBehaviour();
+        behaviour.actorKey = actorKey;
+        behaviour.animatorReference = animator;
         behaviour.actionType = actionType;
         behaviour.parameterOrStateName = parameterOrStateName;
         behaviour.layer = layer;

@@ -10,6 +10,7 @@ public class DodgeController : MonoBehaviour
     [SerializeField] private float dodgeDuration = 0.1f;　 //回避にかかる時間
 
     private bool isDodging = false;   //回避中かどうかのフラグ
+    private bool dodgeMovementCancelled;
     private Rigidbody2D rigidBody2d;  //Rigidbody2Dコンポーネント
     private PlayerCollisionMover2D collisionMover;
 
@@ -25,6 +26,11 @@ public class DodgeController : MonoBehaviour
     private Collider2D areaDodgeBodyCollider;
 
     private void Awake()
+    {
+        EnsureComponents();
+    }
+
+    private void EnsureComponents()
     {
         rigidBody2d = GetComponent<Rigidbody2D>();
         collisionMover = GetComponent<PlayerCollisionMover2D>();
@@ -106,6 +112,16 @@ public class DodgeController : MonoBehaviour
         areaDodgeBodyCollider = null;
     }
 
+    public void CancelCurrentDodgeMovement()
+    {
+        if (!isDodging)
+        {
+            return;
+        }
+
+        dodgeMovementCancelled = true;
+    }
+
     /// <summary>
     /// プレイヤーの回避動作を実行する関数
     /// </summary>
@@ -114,9 +130,12 @@ public class DodgeController : MonoBehaviour
     {
         if (isDodging) { return; }
 
+        EnsureComponents();
+
         if (rigidBody2d == null) { return; }
 
         isDodging = true;
+        dodgeMovementCancelled = false;
 
         Vector2 velocity = rigidBody2d.linearVelocity;
         velocity.x = 0.0f;
@@ -127,7 +146,7 @@ public class DodgeController : MonoBehaviour
 
         if (direction != Vector2.zero)
         {
-            targetPos = startPos + direction.normalized * dodgeDistance;
+            targetPos = ResolveReachableDodgeTarget(startPos, direction.normalized * dodgeDistance);
         }
 
         // 回避アニメーションは通常通り再生しつつ、移動先だけをロック範囲内に収める。
@@ -147,6 +166,7 @@ public class DodgeController : MonoBehaviour
 
         MoveToDodgePosition(targetPos);
 
+        dodgeMovementCancelled = false;
         isDodging = false;
     }
 
@@ -159,24 +179,34 @@ public class DodgeController : MonoBehaviour
         return isDodging;
     }
 
+    private Vector2 ResolveReachableDodgeTarget(Vector2 startPosition, Vector2 desiredDelta)
+    {
+        Vector2 clampedDesiredTarget = ClampPositionToAreaDodgeBounds(startPosition + desiredDelta);
+        Vector2 clampedDesiredDelta = clampedDesiredTarget - startPosition;
+
+        if (collisionMover == null || clampedDesiredDelta.sqrMagnitude <= 0f)
+        {
+            return clampedDesiredTarget;
+        }
+
+        return startPosition + collisionMover.CalculateSlideDelta(clampedDesiredDelta);
+    }
+
     private void MoveToDodgePosition(Vector2 targetPosition)
     {
+        if (dodgeMovementCancelled)
+        {
+            return;
+        }
+
         if (rigidBody2d == null)
         {
             return;
         }
 
         Vector2 clampedTargetPosition = ClampPositionToAreaDodgeBounds(targetPosition);
-        Vector2 desiredDelta = clampedTargetPosition - rigidBody2d.position;
-
-        if (collisionMover != null)
-        {
-            // 回避は距離が大きく壁抜けしやすいため、直接MovePositionせず壁沿いスライド計算を通す。
-            collisionMover.MoveWithSlide(desiredDelta);
-            return;
-        }
-
-        // 保険用のフォールバック。通常は Awake で collisionMover が用意される。
+        // 衝突を考慮した最終目標は回避開始時に一度だけ解決する。
+        // 毎FixedUpdateでSweepし直すと、大きなステージ座標や重いTilemap付近でFPS低下を起こしやすい。
         rigidBody2d.MovePosition(clampedTargetPosition);
     }
 

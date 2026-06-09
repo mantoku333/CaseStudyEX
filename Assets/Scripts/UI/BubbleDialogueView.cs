@@ -25,6 +25,8 @@ namespace Metroidvania.UI
     /// </summary>
     public class BubbleDialogueView : DialoguePresenterBase
     {
+        public delegate bool SpeakerTargetResolver(string characterName, out Transform? target, out Vector3 offset);
+
         [Header("UI Elements")]
         [SerializeField] private GameObject bubblePanel = null!;
         [SerializeField] private TextMeshProUGUI dialogueText = null!;
@@ -43,7 +45,7 @@ namespace Metroidvania.UI
         [Header("Auto Size")]
         [SerializeField] private bool autoResizeBubble = true;
         [SerializeField] private Vector2 bubblePadding = new Vector2(72f, 44f);
-        [SerializeField] private float minBubbleWidth = 140f;
+        [SerializeField] private float minBubbleWidth = 360f;
         [SerializeField] private float maxBubbleWidth = 980f;
         [SerializeField] private float minBubbleHeight = 84f;
         [SerializeField] private float maxBubbleHeight = 640f;
@@ -54,6 +56,18 @@ namespace Metroidvania.UI
         [SerializeField] private bool normalizeTextMargin = true;
         [SerializeField] private Vector4 normalizedTextMargin = new Vector4(0f, 0f, 12f, 6f);
 
+        [Header("Bubble Layout")]
+        [SerializeField] private bool autoLayoutBubbleElements = true;
+        [SerializeField] private RectTransform? speakerNamePlate;
+        [SerializeField] private RectTransform? nextMarker;
+        [SerializeField] private Vector2 speakerNameOffset = new Vector2(0f, 8f);
+        [SerializeField] private float nextMarkerBottomOffset = 22f;
+
+        [Header("Speaker Name Images")]
+        [SerializeField] private GameObject? irisSpeakerImage;
+        [SerializeField] private GameObject? noxSpeakerImage;
+        [SerializeField] private bool autoResolveSpeakerImages = true;
+
         private readonly Dictionary<string, Transform?> _speakerTargetCache =
             new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _warnedUnresolvedSpeakers =
@@ -61,6 +75,8 @@ namespace Metroidvania.UI
 
         private Transform? _conversationDefaultTarget;
         private Transform? _currentTarget;
+        private SpeakerTargetResolver? _speakerTargetResolver;
+        private bool _speakerTargetResolverOnly;
         private Vector3 _currentOffset;
 
         private Camera? _mainCamera;
@@ -79,6 +95,8 @@ namespace Metroidvania.UI
             _mainCamera = Camera.main;
             _bubbleRectTransform = bubblePanel != null ? bubblePanel.GetComponent<RectTransform>() : null;
             _textRectTransform = dialogueText != null ? dialogueText.rectTransform : null;
+            ResolveBubbleLayoutElements();
+            ResolveSpeakerImages();
             _currentOffset = offset;
 
             if (dialogueText != null)
@@ -94,6 +112,14 @@ namespace Metroidvania.UI
             _conversationDefaultTarget = target;
             _currentTarget = target;
             _currentOffset = offset;
+        }
+
+        public void SetSpeakerTargetResolver(SpeakerTargetResolver? resolver, bool resolverOnly = false)
+        {
+            _speakerTargetResolver = resolver;
+            _speakerTargetResolverOnly = resolver != null && resolverOnly;
+            _speakerTargetCache.Clear();
+            _warnedUnresolvedSpeakers.Clear();
         }
 
         public bool IsPresentationEnabled => _presentationEnabled;
@@ -283,6 +309,7 @@ namespace Metroidvania.UI
             CancellationToken mergedToken = linkedTokenSource.Token;
 
             ApplySpeakerTarget(line.CharacterName);
+            ApplySpeakerNameImage(line.CharacterName);
             _lineIsVisible = true;
 
             if (dialogueText != null)
@@ -370,6 +397,7 @@ namespace Metroidvania.UI
             }
 
             _lineIsVisible = false;
+            HideSpeakerNameImages();
 
             if (dialogueText != null)
             {
@@ -402,7 +430,7 @@ namespace Metroidvania.UI
             if (IsNarrationSpeaker(characterName))
             {
                 _currentTarget = _conversationDefaultTarget;
-                if (_currentTarget == null)
+                if (_currentTarget == null && !_speakerTargetResolverOnly)
                 {
                     _currentTarget = FindPlayerTransform();
                 }
@@ -420,7 +448,7 @@ namespace Metroidvania.UI
             }
 
             _currentTarget = _conversationDefaultTarget;
-            if (_currentTarget == null)
+            if (_currentTarget == null && !_speakerTargetResolverOnly)
             {
                 _currentTarget = FindPlayerTransform();
             }
@@ -438,6 +466,22 @@ namespace Metroidvania.UI
             }
 
             string speaker = characterName.Trim();
+
+            if (_speakerTargetResolver != null)
+            {
+                if (_speakerTargetResolver.Invoke(speaker, out Transform? resolvedTarget, out Vector3 resolverOffset) &&
+                    resolvedTarget != null)
+                {
+                    target = resolvedTarget;
+                    speakerOffset = offset + resolverOffset;
+                    return true;
+                }
+
+                if (_speakerTargetResolverOnly)
+                {
+                    return false;
+                }
+            }
 
             for (int i = 0; i < speakerAnchors.Count; i++)
             {
@@ -595,7 +639,8 @@ namespace Metroidvania.UI
 
             string trimmed = speaker.Trim();
             if (string.Equals(trimmed, "\u30A4\u30EA\u30B9", StringComparison.OrdinalIgnoreCase) || // イリス
-                string.Equals(trimmed, "iris", StringComparison.OrdinalIgnoreCase))
+                string.Equals(trimmed, "iris", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(trimmed, "player", StringComparison.OrdinalIgnoreCase))
             {
                 return "iris";
             }
@@ -615,6 +660,38 @@ namespace Metroidvania.UI
             return trimmed;
         }
 
+        private void ApplySpeakerNameImage(string? characterName)
+        {
+            ResolveSpeakerImages();
+
+            string? alias = ResolveSpeakerAlias(characterName);
+            bool showIris = string.Equals(alias, "iris", StringComparison.OrdinalIgnoreCase);
+            bool showNox = string.Equals(alias, "nox", StringComparison.OrdinalIgnoreCase);
+
+            if (irisSpeakerImage != null)
+            {
+                irisSpeakerImage.SetActive(showIris);
+            }
+
+            if (noxSpeakerImage != null)
+            {
+                noxSpeakerImage.SetActive(showNox);
+            }
+        }
+
+        private void HideSpeakerNameImages()
+        {
+            if (irisSpeakerImage != null)
+            {
+                irisSpeakerImage.SetActive(false);
+            }
+
+            if (noxSpeakerImage != null)
+            {
+                noxSpeakerImage.SetActive(false);
+            }
+        }
+
         private static Transform? FindPlayerTransform()
         {
             global::PlayerController player =
@@ -624,14 +701,19 @@ namespace Metroidvania.UI
 
         private void UpdateBubbleSizeForText(string text)
         {
-            if (!autoResizeBubble || dialogueText == null || _bubbleRectTransform == null || _textRectTransform == null)
+            if (!autoResizeBubble)
+            {
+                return;
+            }
+
+            if (dialogueText == null || _bubbleRectTransform == null || _textRectTransform == null)
             {
                 if (!_hasLoggedAutoSizeSkipReason)
                 {
                     _hasLoggedAutoSizeSkipReason = true;
                     Debug.LogWarning(
-                        $"[BubbleDialogueView] AutoSize skipped. autoResizeBubble={autoResizeBubble}, " +
-                        $"dialogueTextNull={dialogueText == null}, bubbleRectNull={_bubbleRectTransform == null}, textRectNull={_textRectTransform == null}");
+                        $"[BubbleDialogueView] AutoSize skipped. dialogueTextNull={dialogueText == null}, " +
+                        $"bubbleRectNull={_bubbleRectTransform == null}, textRectNull={_textRectTransform == null}");
                 }
                 return;
             }
@@ -700,15 +782,7 @@ namespace Metroidvania.UI
             _bubbleRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, bubbleHeight);
             _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, finalTextWidthText);
             _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, finalTextHeightText);
-            _textRectTransform.anchorMin = new Vector2(0f, 0.5f);
-            _textRectTransform.anchorMax = new Vector2(0f, 0.5f);
-            _textRectTransform.pivot = new Vector2(0f, 0.5f);
-
-            // Some scenes keep legacy anchored offsets (for example, large +Y),
-            // which makes text render outside the bubble. Re-center the text rect
-            // inside the current bubble while preserving left/right and top/bottom padding.
-            float textOffsetX = Mathf.Max(0f, (bubbleWidth - finalTextWidthBubble) * 0.5f);
-            _textRectTransform.anchoredPosition = new Vector2(textOffsetX, 0f);
+            ApplyBubbleElementLayout(bubbleWidth, bubbleHeight, finalTextWidthBubble);
 
             // Keep typewriter behavior intact.
             dialogueText.text = string.Empty;
@@ -725,6 +799,143 @@ namespace Metroidvania.UI
         private static float SafePositiveScale(float value)
         {
             return Mathf.Max(0.0001f, Mathf.Abs(value));
+        }
+
+        private void ApplyBubbleElementLayout(float bubbleWidth, float bubbleHeight, float finalTextWidthBubble)
+        {
+            if (!autoLayoutBubbleElements || _bubbleRectTransform == null || _textRectTransform == null)
+            {
+                return;
+            }
+
+            _textRectTransform.anchorMin = new Vector2(0f, 0.5f);
+            _textRectTransform.anchorMax = new Vector2(0f, 0.5f);
+            _textRectTransform.pivot = new Vector2(0f, 0.5f);
+            float textOffsetX = Mathf.Max(0f, (bubbleWidth - finalTextWidthBubble) * 0.5f);
+            _textRectTransform.anchoredPosition = new Vector2(textOffsetX, 0f);
+
+            if (nextMarker != null)
+            {
+                nextMarker.anchorMin = new Vector2(0.5f, 0.5f);
+                nextMarker.anchorMax = new Vector2(0.5f, 0.5f);
+                nextMarker.pivot = new Vector2(0.5f, 0.5f);
+                nextMarker.anchoredPosition = new Vector2(0f, -(bubbleHeight * 0.5f) - nextMarkerBottomOffset);
+            }
+
+            if (speakerNamePlate != null)
+            {
+                PositionRectAtBubbleLocalPoint(
+                    speakerNamePlate,
+                    new Vector2(-(bubbleWidth * 0.5f) + speakerNameOffset.x, (bubbleHeight * 0.5f) + speakerNameOffset.y),
+                    new Vector2(0f, 0.5f));
+            }
+        }
+
+        private void PositionRectAtBubbleLocalPoint(RectTransform rect, Vector2 bubbleLocalPoint, Vector2 pivot)
+        {
+            if (_bubbleRectTransform == null)
+            {
+                return;
+            }
+
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = pivot;
+
+            Vector3 worldPoint = _bubbleRectTransform.TransformPoint(bubbleLocalPoint);
+            if (rect.parent is RectTransform parentRect)
+            {
+                rect.anchoredPosition = (Vector2)parentRect.InverseTransformPoint(worldPoint);
+            }
+            else
+            {
+                rect.position = worldPoint;
+            }
+        }
+
+        private void ResolveBubbleLayoutElements()
+        {
+            if (_bubbleRectTransform == null)
+            {
+                return;
+            }
+
+            if (nextMarker == null)
+            {
+                nextMarker = FindRectTransformByName(_bubbleRectTransform, "NextMarker_Text");
+            }
+
+            if (speakerNamePlate == null)
+            {
+                speakerNamePlate =
+                    FindRectTransformByName(_bubbleRectTransform, "name") ??
+                    FindRectTransformByName(transform.parent, "name") ??
+                    FindRectTransformByName(transform.root, "name");
+            }
+        }
+
+        private void ResolveSpeakerImages()
+        {
+            if (!autoResolveSpeakerImages)
+            {
+                return;
+            }
+
+            if (irisSpeakerImage == null)
+            {
+                irisSpeakerImage =
+                    FindGameObjectByName(transform, "iris_speaker") ??
+                    FindGameObjectByName(transform.parent, "iris_speaker") ??
+                    FindGameObjectByName(transform.root, "iris_speaker");
+            }
+
+            if (noxSpeakerImage == null)
+            {
+                noxSpeakerImage =
+                    FindGameObjectByName(transform, "nox_speaker") ??
+                    FindGameObjectByName(transform.parent, "nox_speaker") ??
+                    FindGameObjectByName(transform.root, "nox_speaker");
+            }
+        }
+
+        private static RectTransform? FindRectTransformByName(Transform? root, string objectName)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            RectTransform[] rects = root.GetComponentsInChildren<RectTransform>(true);
+            for (int i = 0; i < rects.Length; i++)
+            {
+                RectTransform rect = rects[i];
+                if (rect != null && string.Equals(rect.name, objectName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return rect;
+                }
+            }
+
+            return null;
+        }
+
+        private static GameObject? FindGameObjectByName(Transform? root, string objectName)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                Transform tf = transforms[i];
+                if (tf != null && string.Equals(tf.name, objectName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return tf.gameObject;
+                }
+            }
+
+            return null;
         }
 
         private void ApplyTextLayoutDefaults()
@@ -760,7 +971,7 @@ namespace Metroidvania.UI
 
             autoResizeBubble = true;
             bubblePadding = new Vector2(72f, 44f);
-            minBubbleWidth = 140f;
+            minBubbleWidth = 360f;
             maxBubbleWidth = 980f;
             minBubbleHeight = 84f;
             maxBubbleHeight = 640f;

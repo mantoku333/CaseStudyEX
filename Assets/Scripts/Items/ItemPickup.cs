@@ -7,6 +7,9 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
     //--------------アイテムデータ関連------------------
     [SerializeField] private ItemData itemData;
 
+    [Header("Debug")]
+    [SerializeField] private bool equipOnPickupForDebug;
+
     //--------------状態関連------------------
     private bool isPickedUp = false;
 
@@ -125,7 +128,20 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
 
         if (!isApplied && IsInventoryItem())
         {
-            GameItems.AddCount(itemData.itemId, 1);
+            if (itemData.itemType == ItemType.Equipment)
+            {
+                GameItems.SetCount(itemData.itemId, 1);
+
+                if (equipOnPickupForDebug)
+                {
+                    PlayerEquipmentState.Equip(itemData);
+                }
+            }
+            else
+            {
+                GameItems.AddCount(itemData.itemId, 1);
+            }
+
             isApplied = true;
         }
 
