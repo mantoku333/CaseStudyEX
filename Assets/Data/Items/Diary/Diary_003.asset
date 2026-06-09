@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DiaryEntryData
   entryId: Diary_002
   title: "\u6559\u56E3\u306B\u3064\u3044\u3066\u306E\u8A18\u9332"
-  progressFlagKey: diary_002_collected
+  progressFlagKey: diary_003_collected
+  pickupEventName: 

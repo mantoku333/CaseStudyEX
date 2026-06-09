@@ -137,37 +137,56 @@ public class DodgeController : MonoBehaviour
         isDodging = true;
         dodgeMovementCancelled = false;
 
-        Vector2 velocity = rigidBody2d.linearVelocity;
-        velocity.x = 0.0f;
-        rigidBody2d.linearVelocity = velocity;
+        float originalGravityScale = rigidBody2d.gravityScale;
+        float originalVerticalVelocity = rigidBody2d.linearVelocity.y;
 
-        Vector2 startPos = rigidBody2d.position;
-        Vector2 targetPos = startPos;
-
-        if (direction != Vector2.zero)
+        try
         {
-            targetPos = ResolveReachableDodgeTarget(startPos, direction.normalized * dodgeDistance);
+            Vector2 velocity = rigidBody2d.linearVelocity;
+            velocity.x = 0.0f;
+            velocity.y = 0.0f;
+            rigidBody2d.linearVelocity = velocity;
+            rigidBody2d.gravityScale = 0.0f;
+
+            Vector2 startPos = rigidBody2d.position;
+            Vector2 targetPos = startPos;
+
+            if (direction != Vector2.zero)
+            {
+                targetPos = ResolveReachableDodgeTarget(startPos, direction.normalized * dodgeDistance);
+            }
+
+            // 回避アニメーションは通常通り再生しつつ、移動先だけをロック範囲内に収める。
+            targetPos = ClampPositionToAreaDodgeBounds(targetPos);
+
+            float elapsedTime = 0.0f;
+
+            while (elapsedTime < dodgeDuration)
+            {
+                float t = elapsedTime / dodgeDuration;
+
+                MoveToDodgePosition(Vector2.Lerp(startPos, targetPos, t));
+
+                await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
+                elapsedTime += Time.fixedDeltaTime;
+            }
+
+            MoveToDodgePosition(targetPos);
         }
-
-        // 回避アニメーションは通常通り再生しつつ、移動先だけをロック範囲内に収める。
-        targetPos = ClampPositionToAreaDodgeBounds(targetPos);
-
-        float elapsedTime = 0.0f;
-
-        while (elapsedTime < dodgeDuration)
+        finally
         {
-            float t = elapsedTime / dodgeDuration;
+            if (rigidBody2d != null)
+            {
+                rigidBody2d.gravityScale = originalGravityScale;
 
-            MoveToDodgePosition(Vector2.Lerp(startPos, targetPos, t));
+                Vector2 velocity = rigidBody2d.linearVelocity;
+                velocity.y = originalVerticalVelocity;
+                rigidBody2d.linearVelocity = velocity;
+            }
 
-            await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
-            elapsedTime += Time.fixedDeltaTime;
+            dodgeMovementCancelled = false;
+            isDodging = false;
         }
-
-        MoveToDodgePosition(targetPos);
-
-        dodgeMovementCancelled = false;
-        isDodging = false;
     }
 
     /// <summary>
