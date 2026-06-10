@@ -30,11 +30,18 @@ public sealed class DecorationPage : MonoBehaviour
     private ItemData selectedItem;
     private DecorationItemSlot selectedSlot;
     private GameObject itemNameBase;
+    private Sprite defaultPreviewSprite;
 
     private void Awake()
     {
         if (itemNameBase == null)
             itemNameBase = transform.Find("item name base")?.gameObject;
+
+        if (previewImage != null)
+        {
+            defaultPreviewSprite = previewImage.sprite;
+            previewImage.preserveAspect = true;
+        }
 
         if (confirmButton != null)
             confirmButton.onClick.AddListener(OnConfirmClicked);
@@ -130,7 +137,10 @@ public sealed class DecorationPage : MonoBehaviour
     private void OnRemoveClicked()
     {
         PlayerEquipmentState.Unequip();
+        selectedItem = null;
+        selectedSlot = null;
         RefreshAllSlotSelection();
+        ClearRightPanel();
     }
 
     private void RefreshAllSlotSelection()
@@ -154,8 +164,8 @@ public sealed class DecorationPage : MonoBehaviour
 
         if (previewImage != null)
         {
-            previewImage.sprite = selectedItem.icon;
-            previewImage.gameObject.SetActive(selectedItem.icon != null);
+            previewImage.sprite = selectedItem.illustration;
+            previewImage.gameObject.SetActive(selectedItem.illustration != null);
         }
 
         if (itemNameBase != null)
@@ -179,7 +189,10 @@ public sealed class DecorationPage : MonoBehaviour
     private void ClearRightPanel()
     {
         if (previewImage != null)
-            previewImage.gameObject.SetActive(false);
+        {
+            previewImage.sprite = defaultPreviewSprite;
+            previewImage.gameObject.SetActive(true);
+        }
 
         if (itemNameBase != null)
             itemNameBase.SetActive(false);

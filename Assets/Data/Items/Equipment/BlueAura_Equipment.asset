@@ -16,6 +16,7 @@ MonoBehaviour:
   itemId: Equipment_RedAura_Unlock
   description: Hi, it seems your attack power has increased.
   icon: {fileID: -256204797617047970, guid: 9efb276a748ecba4fa47e76e0221a39e, type: 3}
+  illustration: {fileID: 8109299661090198294, guid: b731a811d421e864dbaf45de65ae5dc0, type: 3}
   itemType: 2
   healAmount: 0
   staminaAmount: 0

@@ -409,6 +409,7 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
+        MinimapManager.MapKeyRequested += OpenMapFromKeyboard;
         BindButton(resumeButton, CloseMenu);
         BindButton(saveButton, SaveCurrentGame);
         BindButton(mapButton, OpenMap);
@@ -445,6 +446,7 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
+        MinimapManager.MapKeyRequested -= OpenMapFromKeyboard;
         UnbindButton(resumeButton, CloseMenu);
         UnbindButton(saveButton, SaveCurrentGame);
         UnbindButton(mapButton, OpenMap);
@@ -624,8 +626,11 @@ public sealed class OptionsMenu : MonoBehaviour
         SetOptionTabPair(settingsTabNormal, settingsTabSelected, page == OptionPage.Settings);
         UpdateOptionHeaderSelectionMarker(true);
 
+        bool showMapPage = page == OptionPage.Map;
         bool showSettingsPage = page == OptionPage.Settings;
         bool showDecorationPage = page == OptionPage.Decoration;
+        if (cachedMinimapView != null)
+            cachedMinimapView.SetFullMapVisible(showMapPage);
         SetActiveIfChanged(optionDetailPanel, showSettingsPage);
         SetActiveIfChanged(decorationContentPanel, showDecorationPage);
         if (showSettingsPage)
@@ -653,7 +658,18 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private void HandleOptionPageKeyboardInput()
     {
-        if (!referencesResolved || !isOpen || !IsOptionDetailVisible() || Keyboard.current == null)
+        if (!referencesResolved || !isOpen || Keyboard.current == null)
+        {
+            return;
+        }
+
+        if (Keyboard.current.mKey.wasPressedThisFrame)
+        {
+            ShowMapOptionPage();
+            return;
+        }
+
+        if (!IsOptionDetailVisible())
         {
             return;
         }
@@ -1043,30 +1059,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
         if (cachedMinimapView != null)
         {
-            if (openFullMapAfterClose)
-            {
-                cachedMinimapView.SetFullMapVisible(true);
-                fullMapOpenedFromMenu = true;
-            }
-            else if (fullMapOpenedFromMenu && previousFullMapVisible)
-            {
-                bool restoredMiniMapVisible = hasMinimapVisibleBeforeMenuMap
-                    ? minimapVisibleBeforeMenuMap
-                    : previousMinimapVisible;
-                cachedMinimapView.SetPanelVisibility(restoredMiniMapVisible, false);
-                fullMapOpenedFromMenu = false;
-                hasMinimapVisibleBeforeMenuMap = false;
-            }
-            else
-            {
-                cachedMinimapView.SetPanelVisibility(previousMinimapVisible, previousFullMapVisible);
-                if (!previousFullMapVisible)
-                {
-                    fullMapOpenedFromMenu = false;
-                    hasMinimapVisibleBeforeMenuMap = false;
-                }
-            }
-
+            cachedMinimapView.SetPanelVisibility(previousMinimapVisible, false);
             cachedMinimapView = null;
         }
 
@@ -1137,27 +1130,18 @@ public sealed class OptionsMenu : MonoBehaviour
         hasPausedPlayerVelocity = false;
     }
 
+    private void OpenMapFromKeyboard()
+    {
+        if (!isOpen)
+        {
+            OpenMenu();
+        }
+        ShowMapOptionPage();
+    }
+
     public void OpenMap()
     {
-        MinimapManager manager = MinimapManager.Instance;
-        MinimapView view = manager != null ? manager.GetComponent<MinimapView>() : null;
-        if (view == null)
-        {
-            ShowStatus("\u30DE\u30C3\u30D7\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093");
-            return;
-        }
-
-        if (isOpen)
-        {
-            openFullMapAfterClose = true;
-            fullMapOpenedFromMenu = true;
-            minimapVisibleBeforeMenuMap = previousMinimapVisible;
-            hasMinimapVisibleBeforeMenuMap = true;
-            CloseMenu();
-            return;
-        }
-
-        view.SetFullMapVisible(true);
+        ShowMapOptionPage();
     }
 
     public void ShowFinishPrompt()

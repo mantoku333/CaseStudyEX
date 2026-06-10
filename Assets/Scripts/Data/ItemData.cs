@@ -19,9 +19,12 @@ namespace Metroidvania.Data
         [TextArea(3, 5)]
         public string description;
         
-        [Tooltip("アイテムアイコン")]
+        [Tooltip("アイテムアイコン（スロット内の小さい画像）")]
         public Sprite icon;
-        
+
+        [Tooltip("右パネルに表示する大きいイラスト")]
+        public Sprite illustration;
+
         [Header("アイテムタイプ")]
         public ItemType itemType;
 
