@@ -557,7 +557,7 @@ MonoBehaviour:
   m_Name: StoryYarnDialogueClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueClip
   clipId: 11ba336f7a10453d92984f9a08b8cb35
-  nodeName: EeventStory02
+  nodeName: EeventStory03
   useControllerDefaultStyle: 1
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
@@ -593,6 +593,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
   m_Name: StoryObjectMoveClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
   targetMode: 0
   markerNo: 2
   worldPosition: {x: 0, y: 0, z: 0}
@@ -600,6 +604,7 @@ MonoBehaviour:
   moveX: 1
   moveY: 1
   smoothStep: 1
+  useUmbrellaWalk: 0
 --- !u!114 &8340132531640153485
 MonoBehaviour:
   m_ObjectHideFlags: 1
