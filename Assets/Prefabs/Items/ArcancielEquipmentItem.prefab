@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4177557895994278279}
   - component: {fileID: 8606746616681234918}
   - component: {fileID: 8309066834816981396}
+  - component: {fileID: -5904709280732307922}
   m_Layer: 0
   m_Name: ArcancielEquipmentItem
   m_TagString: Untagged
@@ -153,3 +154,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
   itemData: {fileID: 11400000, guid: 6c949d385be7b974e80518772677af58, type: 2}
   equipOnPickupForDebug: 0
+  equipmentPickupNotificationSprite: {fileID: -7729522202017503734, guid: d3829420113d0974da5a76e401f579ea, type: 3}
+  equipmentPickupNotificationSize: {x: 512, y: 130}
+  equipmentPickupNotificationBottomLeftOffset: {x: 32, y: 32}
+  equipmentPickupNotificationSlideInDuration: 0.45
+  equipmentPickupNotificationHoldSeconds: 1.2
+  equipmentPickupNotificationSlideOutDuration: 0.35
+--- !u!114 &-5904709280732307922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408326291324731804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f4e39d6cb3471bab613a0f407feb2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemEffectController
+  settings: {fileID: 0}
+  effectTransform: {fileID: 0}
+  effectRenderer: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: dcb371cd1970cf545b33c60fcfe1a463, type: 3}
