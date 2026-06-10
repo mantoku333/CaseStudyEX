@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6509184494383124401}
   - component: {fileID: 6509184494383124402}
   - component: {fileID: 6509184494383124403}
+  - component: {fileID: 6509184494383124404}
   - component: {fileID: 730100000000000004}
   m_Layer: 0
   m_Name: LastBoss
@@ -240,6 +241,61 @@ MonoBehaviour:
   hitFlashRepeatCount: 2
   hitFlashNormalDuration: 0.05
   drawDebugGizmos: 0
+--- !u!114 &6509184494383124404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5507095774534671217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8932a0a6f3147d4b859a458b5f94021, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.LastBossEffectController
+  shieldInSpriteSheet: {fileID: 2800000, guid: 2c00a4018cab759469ab458ec88058e9, type: 3}
+  shieldLoopSpriteSheet: {fileID: 2800000, guid: 17682aae2164dfb4bba5a9721c3b0e91, type: 3}
+  shieldBreakSpriteSheet: {fileID: 2800000, guid: c7cfa5b8b9c2ba142b5e485b00abce5a, type: 3}
+  auraSpriteSheet: {fileID: 2800000, guid: 2c093d300f00e3f49ad0827a11f0ead3, type: 3}
+  deathSpriteSheet: {fileID: 2800000, guid: 3ee2a356ed48f3b46af19ec769199725, type: 3}
+  slashSpriteSheet: {fileID: 2800000, guid: 10ffdc1436e41b841a1c99ba8e8705ae, type: 3}
+  underAttackSpriteSheet: {fileID: 2800000, guid: 93b6a106091331e4697e0d90ff86567e, type: 3}
+  rangeSpriteSheet: {fileID: 2800000, guid: e4599434a1c8c7b43b391282de3c5931, type: 3}
+  magicCircleInSpriteSheet: {fileID: 2800000, guid: 0c7f3f73467ef9344a824959b3ece520, type: 3}
+  magicCircleOutSpriteSheet: {fileID: 2800000, guid: 0b64e45b416a05b45a36aad75469fcbd, type: 3}
+  topAttackInSpriteSheet: {fileID: 2800000, guid: a7b92dabf11880d4a9765c10da4045dd, type: 3}
+  topAttackOutSpriteSheet: {fileID: 2800000, guid: e4df0f94d939b884b8281cd18ce8fb50, type: 3}
+  framesPerSecond: 30
+  pixelsPerUnit: 100
+  rangeSpawnInterval: 0.2
+  rangeFadeInSeconds: 0.3
+  rangeFadeOutSeconds: 0.5
+  bossHideFrameIndex: 4
+  groundBladeUprightFrameIndex: 3
+  auraOffset: {x: 0, y: 0, z: 0}
+  shieldOffset: {x: 0, y: 0, z: 0}
+  shieldBreakOffset: {x: 0, y: 0, z: 0}
+  deathOffset: {x: 0, y: 0, z: 0}
+  auraSizeMultiplier: 1.35
+  shieldSizeMultiplier: 1.35
+  shieldBreakSizeMultiplier: 1.45
+  deathSizeMultiplier: 1.8
+  slashOffset: {x: 0, y: 0, z: 0}
+  slashSizeMultiplier: 1.1
+  rangeEffectWorldSize: {x: 1.6, y: 1.1}
+  rangeOffset: {x: 0, y: 0, z: 0}
+  magicCircleBeyondSpawnDistance: 1.5
+  magicCircleWorldSize: {x: 4, y: 4}
+  groundBladeVisualSizeMultiplier: 1
+  rainBladeVisualSizeMultiplier: 1
+  auraSortingOrderOffset: -2
+  shieldSortingOrderOffset: 2
+  shieldBreakSortingOrderOffset: 3
+  deathSortingOrderOffset: 5
+  slashSortingOrderOffset: 4
+  rangeSortingOrderOffset: 1
+  magicCircleSortingOrderOffset: 3
+  copyBossMaterial: 1
 --- !u!114 &730100000000000004
 MonoBehaviour:
   m_ObjectHideFlags: 0

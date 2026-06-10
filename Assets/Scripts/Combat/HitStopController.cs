@@ -89,12 +89,12 @@ public sealed class HitStopController : MonoBehaviour
                 instance.transform.SetParent(null, true);
             }
 
-            DontDestroyOnLoad(instance.gameObject);
+            MakePersistentIfPlaying(instance.gameObject);
             return instance;
         }
 
         GameObject gameObject = new GameObject(nameof(HitStopController));
-        DontDestroyOnLoad(gameObject);
+        MakePersistentIfPlaying(gameObject);
         instance = gameObject.AddComponent<HitStopController>();
         return instance;
     }
@@ -113,7 +113,17 @@ public sealed class HitStopController : MonoBehaviour
             transform.SetParent(null, true);
         }
 
-        DontDestroyOnLoad(gameObject);
+        MakePersistentIfPlaying(gameObject);
+    }
+
+    private static void MakePersistentIfPlaying(GameObject target)
+    {
+        if (!Application.isPlaying || target == null)
+        {
+            return;
+        }
+
+        DontDestroyOnLoad(target);
     }
 
     private void OnDestroy()
@@ -129,7 +139,7 @@ public sealed class HitStopController : MonoBehaviour
 
     private void RequestInternal(float duration, float delay)
     {
-        if (duration <= 0f || externalPauseDepth > 0)
+        if (!Application.isPlaying || duration <= 0f || externalPauseDepth > 0)
         {
             return;
         }
