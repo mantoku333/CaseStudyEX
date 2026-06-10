@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
   itemName: RedAura
   itemId: Equipment_BlueAura_Unlock
-  description: Your HP will recover when you defeat an enemy.
+  description: 
   icon: {fileID: -1284802032734153441, guid: c64c8109ded40544fa88e78a39f26b35, type: 3}
   illustration: {fileID: -2861532271502531303, guid: 76fe3867dab89c241a44f727fbf9784e, type: 3}
   itemType: 2
@@ -27,24 +27,15 @@ MonoBehaviour:
   pickupSound: {fileID: 0}
   equipmentBadge: {fileID: 0}
   equipmentAbility:
-  - abilityType: 0
-    value: 0.2
+  - abilityType: 1
+    value: 0.02
   equipmentVisualLayers:
   - layerName: 
-    sprite: {fileID: -6279402175740039742, guid: 7237b620ecc2ecc458859a0da09f70fd, type: 3}
+    sprite: {fileID: 21300000, guid: 5bf4b00ef71d7874e9b8724f9702fb41, type: 3}
     parent: 0
-    localPosition: {x: 0.42, y: 4.75, z: 0}
+    localPosition: {x: 0.15, y: 5, z: 0}
     useLeftFacingLocalPosition: 0
-    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
+    leftFacingLocalPosition: {x: 3, y: 0, z: 0}
     localEulerAngles: {x: 0, y: 0, z: 0}
-    localScale: {x: 0.25, y: 0.25, z: 0.25}
+    localScale: {x: 0.5, y: 0.5, z: 0.5}
     sortingOrderOffset: -1
-  - layerName: 
-    sprite: {fileID: -5335068214072861925, guid: b05edfe08dd650e49a50add2e9028d0e, type: 3}
-    parent: 1
-    localPosition: {x: 0.42, y: 4.25, z: 0}
-    useLeftFacingLocalPosition: 0
-    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
-    localEulerAngles: {x: 0, y: 0, z: 0}
-    localScale: {x: 0.25, y: 0.25, z: 0.25}
-    sortingOrderOffset: 1

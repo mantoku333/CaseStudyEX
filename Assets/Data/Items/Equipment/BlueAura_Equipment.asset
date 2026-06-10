@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
   itemName: BlueAura
   itemId: Equipment_RedAura_Unlock
-  description: Hi, it seems your attack power has increased.
+  description: 
   icon: {fileID: -256204797617047970, guid: 9efb276a748ecba4fa47e76e0221a39e, type: 3}
   illustration: {fileID: 8109299661090198294, guid: b731a811d421e864dbaf45de65ae5dc0, type: 3}
   itemType: 2
@@ -27,24 +27,15 @@ MonoBehaviour:
   pickupSound: {fileID: 0}
   equipmentBadge: {fileID: 0}
   equipmentAbility:
-  - abilityType: 1
-    value: 0.02
+  - abilityType: 0
+    value: 1.05
   equipmentVisualLayers:
   - layerName: 
-    sprite: {fileID: -575574298655833603, guid: 936b15ea2de10d642939edad13aa2636, type: 3}
+    sprite: {fileID: 21300000, guid: 1b485ca7410e318428873c0ee05e05b1, type: 3}
     parent: 0
-    localPosition: {x: 0.42, y: 4.75, z: 0}
+    localPosition: {x: 0.15, y: 5, z: 0}
     useLeftFacingLocalPosition: 0
     leftFacingLocalPosition: {x: 0, y: 0, z: 0}
     localEulerAngles: {x: 0, y: 0, z: 0}
-    localScale: {x: 0.25, y: 0.25, z: 0.25}
+    localScale: {x: 0.5, y: 0.5, z: 0.5}
     sortingOrderOffset: -1
-  - layerName: 
-    sprite: {fileID: 3302456590942342099, guid: ca15ea91c9920ee428add24c2bd07bad, type: 3}
-    parent: 1
-    localPosition: {x: 0.42, y: 4.25, z: 0}
-    useLeftFacingLocalPosition: 0
-    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
-    localEulerAngles: {x: 0, y: 0, z: 0}
-    localScale: {x: 0.25, y: 0.25, z: 0.25}
-    sortingOrderOffset: 1

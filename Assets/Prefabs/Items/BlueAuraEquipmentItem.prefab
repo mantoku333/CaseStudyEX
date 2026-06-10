@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4821036492223637180}
   - component: {fileID: 391788280497342570}
   - component: {fileID: 8806381575861640734}
+  - component: {fileID: 4577745272885434326}
   m_Layer: 0
   m_Name: BlueAuraEquipmentItem
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 155.76, y: 1.78, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -83,8 +84,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 3302456590942342099, guid: ca15ea91c9920ee428add24c2bd07bad, type: 3}
-  m_Color: {r: 0, g: 0.15004349, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 1b485ca7410e318428873c0ee05e05b1, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -127,17 +128,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 1.72}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 17, y: 2.39}
+    oldSize: {x: 10.24, y: 10.24}
     newSize: {x: 17, y: 2.39}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 6.2, y: 6}
   m_EdgeRadius: 0
 --- !u!114 &8806381575861640734
 MonoBehaviour:
@@ -153,3 +154,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
   itemData: {fileID: 11400000, guid: 68d6a21a28bdfcf4ab6c01702137cb07, type: 2}
   equipOnPickupForDebug: 0
+  equipmentPickupNotificationSprite: {fileID: -157644491298576482, guid: 68ba73bf24b7a7b43b5e7df09a8eae24, type: 3}
+  equipmentPickupNotificationSize: {x: 512, y: 130}
+  equipmentPickupNotificationBottomLeftOffset: {x: 32, y: 32}
+  equipmentPickupNotificationSlideInDuration: 0.45
+  equipmentPickupNotificationHoldSeconds: 1.2
+  equipmentPickupNotificationSlideOutDuration: 0.35
+--- !u!114 &4577745272885434326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4671800122229995490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f4e39d6cb3471bab613a0f407feb2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemEffectController
+  settings: {fileID: 0}
+  effectTransform: {fileID: 0}
+  effectRenderer: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: dcb371cd1970cf545b33c60fcfe1a463, type: 3}
