@@ -116,6 +116,7 @@ public sealed class StoryEventController : MonoBehaviour
     [SerializeField] private CinemachineCamera eventCamera;
     [SerializeField] private string eventCameraName = "EventCam";
     [SerializeField] private int eventCameraPriorityFloor = 100;
+    [SerializeField] private bool restoreRoomCameraOnExit = true;
 
     [Header("Bindings")]
     [SerializeField] private List<ActorBinding> actorBindings = new List<ActorBinding>();
@@ -152,6 +153,7 @@ public sealed class StoryEventController : MonoBehaviour
     private int cachedEventCameraPriorityValue;
     private bool cachedEventCameraPriorityEnabled;
     private bool hasCachedEventCameraPriority;
+    private RoomCameraTrigger cachedRoomCameraBeforeEvent;
 
     public string EventId => string.IsNullOrWhiteSpace(eventId) ? name : eventId.Trim();
     public string MemoName => string.IsNullOrWhiteSpace(memoName) ? string.Empty : memoName.Trim();
@@ -246,6 +248,7 @@ public sealed class StoryEventController : MonoBehaviour
         StoryPauseRuntime.ClearOverride();
         RestoreLetterBoxViewVisibility();
         RestoreEventCameraPriority();
+        RestoreRoomCameraOnEventExit();
         RestoreCinematicState();
         directorStopped = false;
         startMutationsApplied = false;
@@ -383,6 +386,7 @@ public sealed class StoryEventController : MonoBehaviour
         StoryPauseRuntime.SetOverride(pausePolicy);
         CaptureCinematicState();
         ApplyCinematicState();
+        CaptureRoomCameraBeforeEvent();
         ElevateEventCameraPriority();
         ShowLetterBoxView();
         ApplyStartMutations();
@@ -419,6 +423,7 @@ public sealed class StoryEventController : MonoBehaviour
         StoryPauseRuntime.ClearOverride();
         RestoreLetterBoxViewVisibility();
         RestoreEventCameraPriority();
+        RestoreRoomCameraOnEventExit();
         RestoreCinematicState();
 
         playRoutine = null;
@@ -1574,6 +1579,50 @@ public sealed class StoryEventController : MonoBehaviour
         cachedEventCameraPriorityValue = 0;
         cachedEventCameraPriorityEnabled = false;
         hasCachedEventCameraPriority = false;
+    }
+
+    private void CaptureRoomCameraBeforeEvent()
+    {
+        cachedRoomCameraBeforeEvent = restoreRoomCameraOnExit ? RoomCameraTrigger.ActiveRoom : null;
+    }
+
+    private void RestoreRoomCameraOnEventExit()
+    {
+        if (!restoreRoomCameraOnExit)
+        {
+            cachedRoomCameraBeforeEvent = null;
+            return;
+        }
+
+        if (cachedRoomCameraBeforeEvent != null && cachedRoomCameraBeforeEvent.isActiveAndEnabled)
+        {
+            cachedRoomCameraBeforeEvent.ActivateCamera();
+            cachedRoomCameraBeforeEvent = null;
+            return;
+        }
+
+        cachedRoomCameraBeforeEvent = null;
+
+        GameObject playerObject = ResolvePlayerObjectForCameraRestore();
+        if (playerObject == null)
+        {
+            return;
+        }
+
+        RoomCameraTrigger.TryActivateRoomAtPosition(playerObject.transform.position, out _);
+    }
+
+    private static GameObject ResolvePlayerObjectForCameraRestore()
+    {
+        GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
+        if (taggedPlayer != null)
+        {
+            return taggedPlayer;
+        }
+
+        global::PlayerController playerController =
+            FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
+        return playerController != null ? playerController.gameObject : null;
     }
 
     private CinemachineCamera CreateRuntimeEventCamera(CinemachineCamera sourceCamera)
