@@ -7,16 +7,27 @@ using UnityEngine.UI;
 public sealed class MinimapView : MonoBehaviour
 {
     private const string MiniMapBackgroundName = "MiniMapBackGround";
-    private const float MiniBoardScale = 42f;
-    private const float FullBoardScale = 87f;
-    private const float MiniLineThickness = 3f;
-    private const float FullLineThickness = 6f;
-    private const float MiniRoomBorderThickness = 3f;
-    private const float FullRoomBorderThickness = 6f;
-    private const float MiniMarkerDiameter = 12f;
-    private const float FullMarkerDiameter = 24f;
-    private const float ConnectorEndInset = 4f;
 
+    [Header("Minimap Panel")]
+    [SerializeField] private Vector2 miniMapSize = new Vector2(290f, 170f);
+    [SerializeField] private Vector2 miniMapOffset = new Vector2(-80f, -70f);
+    [SerializeField, Min(0f)] private float miniMapContentPadding = 14f;
+    [SerializeField, Min(0f)] private float miniBoardScale = 42f;
+    [SerializeField, Min(0f)] private float miniLineThickness = 3f;
+    [SerializeField, Min(0f)] private float miniRoomBorderThickness = 3f;
+    [SerializeField, Min(0f)] private float miniMarkerDiameter = 12f;
+
+    [Header("Full Map Panel")]
+    [SerializeField] private Vector2 fullMapSize = new Vector2(1620f, 800f);
+    [SerializeField] private float fullMapScale = 0.8f;
+    [SerializeField, Min(0f)] private float fullMapContentPadding = 22f;
+    [SerializeField, Min(0f)] private float fullBoardScale = 87f;
+    [SerializeField, Min(0f)] private float fullLineThickness = 6f;
+    [SerializeField, Min(0f)] private float fullRoomBorderThickness = 6f;
+    [SerializeField, Min(0f)] private float fullMarkerDiameter = 24f;
+
+    [Header("Shared")]
+    [SerializeField, Min(0f)] private float connectorEndInset = 4f;
     [SerializeField] private Color panelColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
     [SerializeField] private Color fullMapPanelColor = new Color(0.12f, 0.12f, 0.14f, 0.9f);
     [SerializeField] private Color visitedColor = new Color(1f, 1f, 1f, 0.92f);
@@ -165,21 +176,21 @@ public sealed class MinimapView : MonoBehaviour
         root.offsetMin = Vector2.zero;
         root.offsetMax = Vector2.zero;
 
-        miniMapPanel = CreatePanel("MiniMapPanel", root, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(290f, 170f), new Vector2(-80f, -70f));
+        miniMapPanel = CreatePanel("MiniMapPanel", root, new Vector2(1f, 1f), new Vector2(1f, 1f), miniMapSize, miniMapOffset);
         miniMapPanel.gameObject.AddComponent<RectMask2D>();
         miniMapCanvasGroup = EnsureCanvasGroup(miniMapPanel.gameObject);
         miniMapBackgroundCanvasGroup = FindMiniMapBackgroundCanvasGroup(canvas);
         miniMapContent = CreateRect("Content", miniMapPanel);
-        Stretch(miniMapContent, 14f);
+        Stretch(miniMapContent, miniMapContentPadding);
 
-        fullMapPanel = CreatePanel("FullMapPanel", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1620f, 800f), Vector2.zero, fullMapPanelColor);
-        fullMapPanel.localScale = new Vector3(0.8f, 0.8f, 1f);
+        fullMapPanel = CreatePanel("FullMapPanel", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), fullMapSize, Vector2.zero, fullMapPanelColor);
+        fullMapPanel.localScale = new Vector3(fullMapScale, fullMapScale, 1f);
         Canvas fullMapOverrideCanvas = fullMapPanel.gameObject.AddComponent<Canvas>();
         fullMapOverrideCanvas.overrideSorting = true;
         fullMapOverrideCanvas.sortingOrder = 300;
         fullMapPanel.gameObject.AddComponent<GraphicRaycaster>();
         fullMapContent = CreateRect("Content", fullMapPanel);
-        Stretch(fullMapContent, 22f);
+        Stretch(fullMapContent, fullMapContentPadding);
         fullMapPanel.gameObject.SetActive(false);
     }
 
@@ -196,7 +207,7 @@ public sealed class MinimapView : MonoBehaviour
 
         if (fullMapPanel != null && fullMapPanel.gameObject.activeSelf)
         {
-            DrawMap(fullMapContent, FullBoardScale, FullLineThickness, FullRoomBorderThickness, false, FullMarkerDiameter);
+            DrawMap(fullMapContent, fullBoardScale, fullLineThickness, fullRoomBorderThickness, false, fullMarkerDiameter);
         }
     }
 
@@ -215,10 +226,10 @@ public sealed class MinimapView : MonoBehaviour
         ClearGeneratedUnder(miniMapContent);
         DrawMapAtOrigin(
             miniMapContent,
-            MiniBoardScale,
-            MiniLineThickness,
-            MiniRoomBorderThickness,
-            MiniMarkerDiameter,
+            miniBoardScale,
+            miniLineThickness,
+            miniRoomBorderThickness,
+            miniMarkerDiameter,
             miniMapBounds,
             miniMapOrigin);
 
@@ -235,7 +246,7 @@ public sealed class MinimapView : MonoBehaviour
         }
 
         miniMapBounds = CalculateBounds(rooms);
-        miniMapTargetOrigin = CalculateOrigin(miniMapBounds, MiniBoardScale, true);
+        miniMapTargetOrigin = CalculateOrigin(miniMapBounds, miniBoardScale, true);
 
         if (!hasMiniMapOrigin)
         {
@@ -389,8 +400,8 @@ public sealed class MinimapView : MonoBehaviour
                 }
 
                 Vector2 direction = delta.normalized;
-                Vector2 startInset = pointIndex == 0 ? start + (direction * ConnectorEndInset) : start;
-                Vector2 endInset = pointIndex == boardPoints.Count - 2 ? end - (direction * ConnectorEndInset) : end;
+                Vector2 startInset = pointIndex == 0 ? start + (direction * connectorEndInset) : start;
+                Vector2 endInset = pointIndex == boardPoints.Count - 2 ? end - (direction * connectorEndInset) : end;
                 DrawLineSegment(parent, "Link_" + i + "_" + pointIndex, startInset, endInset, lineThickness, lineColor);
             }
         }
