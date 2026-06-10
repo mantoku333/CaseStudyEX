@@ -87,6 +87,16 @@ public sealed class StoryEventControllerEditor : Editor
             }
         }
 
+        if (GUILayout.Button("Fit Move Clips To Walk Speed"))
+        {
+            StoryMoveClipDurationFitter.Fit(controller, null, true, 0.0f, 0.05f, true);
+        }
+
+        if (GUILayout.Button("Refresh Track Names"))
+        {
+            StoryTimelineTrackNameUtility.RefreshTrackNames(controller, true);
+        }
+
         using (new EditorGUILayout.HorizontalScope())
         {
             GUI.enabled = EditorApplication.isPlaying;
@@ -165,11 +175,19 @@ public sealed class StoryEventControllerEditor : Editor
 
         StoryEventMarker[] markers = controller.GetComponentsInChildren<StoryEventMarker>(includeInactive: true);
         int nextNo = 1;
+        Transform previousMarkerTransform = null;
         for (int i = 0; i < markers.Length; i++)
         {
-            if (markers[i] != null)
+            StoryEventMarker candidate = markers[i];
+            if (candidate == null)
             {
-                nextNo = Mathf.Max(nextNo, markers[i].MarkerNo + 1);
+                continue;
+            }
+
+            if (candidate.MarkerNo >= nextNo)
+            {
+                nextNo = candidate.MarkerNo + 1;
+                previousMarkerTransform = candidate.Target;
             }
         }
 
@@ -185,7 +203,9 @@ public sealed class StoryEventControllerEditor : Editor
         var markerObject = new GameObject($"Marker_{nextNo:00}");
         Undo.RegisterCreatedObjectUndo(markerObject, "Create Story Marker");
         markerObject.transform.SetParent(markerRoot, false);
-        markerObject.transform.position = controller.transform.position;
+        markerObject.transform.position = previousMarkerTransform != null
+            ? previousMarkerTransform.position
+            : controller.transform.position;
 
         StoryEventMarker marker = markerObject.AddComponent<StoryEventMarker>();
         SerializedObject markerSerializedObject = new SerializedObject(marker);

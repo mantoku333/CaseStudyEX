@@ -2759,7 +2759,7 @@ MonoBehaviour:
   logUnresolvedSpeaker: 1
   autoResizeBubble: 1
   bubblePadding: {x: 72, y: 44}
-  minBubbleWidth: 140
+  minBubbleWidth: 360
   maxBubbleWidth: 1180
   minBubbleHeight: 84
   maxBubbleHeight: 720
