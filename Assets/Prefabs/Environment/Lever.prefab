@@ -151,6 +151,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f75ea38f6f6445f9f8a2f3a3d4f4e21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LeverSwitch2D
-  shutterWall: {fileID: 0}
+  shutterWall: {fileID: 7336844014595886822, guid: b136924b5c840f54ab73ea3ed0c33382, type: 3}
   leverRenderer: {fileID: 4012167722116743168}
-  oneShot: 0
+  oneShot: 1
