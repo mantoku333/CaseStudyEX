@@ -1,19 +1,19 @@
 fileFormatVersion: 2
-guid: 3bfdade1599558d43a0046fa4d28ea0a
+guid: 6a693914b9b3c80408fcadf8eb1bb0f9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7352873647587168443
-    second: AM_boss_Attack_Said_2_0
+      213: 5936687435497916400
+    second: AM_boss_sword_Attack_sky_Start_2_0
   - first:
-      213: -1301870426558491395
-    second: AM_boss_Attack_Said_2_1
+      213: 2839695128941313149
+    second: AM_boss_sword_Attack_sky_Start_2_1
   - first:
-      213: 7063267289592641027
-    second: AM_boss_Attack_Said_2_2
+      213: -4810874476272527678
+    second: AM_boss_sword_Attack_sky_Start_2_2
   - first:
-      213: -7711186749145423880
-    second: AM_boss_Attack_Said_2_3
+      213: -1710843306022466774
+    second: AM_boss_sword_Attack_sky_Start_2_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -109,13 +109,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: AM_boss_Attack_Said_2_0
+      name: AM_boss_sword_Attack_sky_Start_2_0
       rect:
         serializedVersion: 2
-        x: 331
-        y: 245
-        width: 252
-        height: 408
+        x: 189
+        y: 349
+        width: 225
+        height: 510
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,20 +124,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 54f6c3def5855f990800000000000000
-      internalID: -7352873647587168443
+      spriteID: 0f7c067c4c9536250800000000000000
+      internalID: 5936687435497916400
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_boss_Attack_Said_2_1
+      name: AM_boss_sword_Attack_sky_Start_2_1
       rect:
         serializedVersion: 2
-        x: 1140
-        y: 245
-        width: 250
-        height: 407
+        x: 1009
+        y: 347
+        width: 222
+        height: 511
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -146,20 +146,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: df41561aeb3deede0800000000000000
-      internalID: -1301870426558491395
+      spriteID: d7c34f6acaf986720800000000000000
+      internalID: 2839695128941313149
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_boss_Attack_Said_2_2
+      name: AM_boss_sword_Attack_sky_Start_2_2
       rect:
         serializedVersion: 2
-        x: 1952
-        y: 245
-        width: 243
-        height: 407
+        x: 1829
+        y: 346
+        width: 351
+        height: 411
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -168,20 +168,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3063ec55d24c50260800000000000000
-      internalID: 7063267289592641027
+      spriteID: 2c658c627275c3db0800000000000000
+      internalID: -4810874476272527678
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_boss_Attack_Said_2_3
+      name: AM_boss_sword_Attack_sky_Start_2_3
       rect:
         serializedVersion: 2
-        x: 2765
-        y: 245
-        width: 234
-        height: 406
+        x: 2649
+        y: 346
+        width: 381
+        height: 411
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -190,8 +190,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8ffdc7cd18c5cf490800000000000000
-      internalID: -7711186749145423880
+      spriteID: a2b0d2ed31dd148e0800000000000000
+      internalID: -1710843306022466774
       vertices: []
       indices: 
       edges: []
@@ -210,10 +210,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      AM_boss_Attack_Said_2_0: -7352873647587168443
-      AM_boss_Attack_Said_2_1: -1301870426558491395
-      AM_boss_Attack_Said_2_2: 7063267289592641027
-      AM_boss_Attack_Said_2_3: -7711186749145423880
+      AM_boss_sword_Attack_sky_Start_2_0: 5936687435497916400
+      AM_boss_sword_Attack_sky_Start_2_1: 2839695128941313149
+      AM_boss_sword_Attack_sky_Start_2_2: -4810874476272527678
+      AM_boss_sword_Attack_sky_Start_2_3: -1710843306022466774
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

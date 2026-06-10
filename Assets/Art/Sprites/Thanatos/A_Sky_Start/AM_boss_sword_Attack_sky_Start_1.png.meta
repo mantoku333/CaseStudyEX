@@ -1,0 +1,975 @@
+fileFormatVersion: 2
+guid: 2e6731951947fc04aad5688230fbaf4e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4957112095133746079
+    second: AM_boss_sword_Attack_sky_Start_1_0
+  - first:
+      213: 8813935342390493267
+    second: AM_boss_sword_Attack_sky_Start_1_1
+  - first:
+      213: -3412227424254280723
+    second: AM_boss_sword_Attack_sky_Start_1_2
+  - first:
+      213: -6880319418618344249
+    second: AM_boss_sword_Attack_sky_Start_1_3
+  - first:
+      213: -7139537217547051785
+    second: AM_boss_sword_Attack_sky_Start_1_4
+  - first:
+      213: -8880690783209537767
+    second: AM_boss_sword_Attack_sky_Start_1_5
+  - first:
+      213: -810347359066056414
+    second: AM_boss_sword_Attack_sky_Start_1_6
+  - first:
+      213: -5448811041013126686
+    second: AM_boss_sword_Attack_sky_Start_1_7
+  - first:
+      213: -8784952152151309539
+    second: AM_boss_sword_Attack_sky_Start_1_8
+  - first:
+      213: -67792004787740024
+    second: AM_boss_sword_Attack_sky_Start_1_9
+  - first:
+      213: -407404699577758485
+    second: AM_boss_sword_Attack_sky_Start_1_10
+  - first:
+      213: 123458435611265954
+    second: AM_boss_sword_Attack_sky_Start_1_11
+  - first:
+      213: -6896072232926333851
+    second: AM_boss_sword_Attack_sky_Start_1_12
+  - first:
+      213: -8094884735048866790
+    second: AM_boss_sword_Attack_sky_Start_1_13
+  - first:
+      213: -251795632883826426
+    second: AM_boss_sword_Attack_sky_Start_1_14
+  - first:
+      213: -7312925718735662365
+    second: AM_boss_sword_Attack_sky_Start_1_15
+  - first:
+      213: -8211338225415756490
+    second: AM_boss_sword_Attack_sky_Start_1_16
+  - first:
+      213: -8636393292452052671
+    second: AM_boss_sword_Attack_sky_Start_1_17
+  - first:
+      213: 7969884188739958836
+    second: AM_boss_sword_Attack_sky_Start_1_18
+  - first:
+      213: 8445994952890448753
+    second: AM_boss_sword_Attack_sky_Start_1_19
+  - first:
+      213: 7894423315775261394
+    second: AM_boss_sword_Attack_sky_Start_1_20
+  - first:
+      213: -8268998922488924615
+    second: AM_boss_sword_Attack_sky_Start_1_21
+  - first:
+      213: 7403668899269512324
+    second: AM_boss_sword_Attack_sky_Start_1_22
+  - first:
+      213: -6447581621366348714
+    second: AM_boss_sword_Attack_sky_Start_1_23
+  - first:
+      213: -8460101705911628911
+    second: AM_boss_sword_Attack_sky_Start_1_24
+  - first:
+      213: -4434986571759040657
+    second: AM_boss_sword_Attack_sky_Start_1_25
+  - first:
+      213: 3473270532616243396
+    second: AM_boss_sword_Attack_sky_Start_1_26
+  - first:
+      213: 5735482120384128740
+    second: AM_boss_sword_Attack_sky_Start_1_27
+  - first:
+      213: 7793634468261372113
+    second: AM_boss_sword_Attack_sky_Start_1_28
+  - first:
+      213: 4919365938170383130
+    second: AM_boss_sword_Attack_sky_Start_1_29
+  - first:
+      213: 1745570994004920623
+    second: AM_boss_sword_Attack_sky_Start_1_30
+  - first:
+      213: -1165853839526891127
+    second: AM_boss_sword_Attack_sky_Start_1_31
+  - first:
+      213: -2644673047402157380
+    second: AM_boss_sword_Attack_sky_Start_1_32
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_0
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 3191
+        width: 446
+        height: 446
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f934d36cf233bc440800000000000000
+      internalID: 4957112095133746079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_1
+      rect:
+        serializedVersion: 2
+        x: 926
+        y: 3225
+        width: 406
+        height: 436
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3504274ee73615a70800000000000000
+      internalID: 8813935342390493267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_2
+      rect:
+        serializedVersion: 2
+        x: 1738
+        y: 3246
+        width: 382
+        height: 434
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: deb3a748c3555a0d0800000000000000
+      internalID: -3412227424254280723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_3
+      rect:
+        serializedVersion: 2
+        x: 2530
+        y: 3273
+        width: 378
+        height: 427
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cc080831f13480a0800000000000000
+      internalID: -6880319418618344249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_4
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 2308
+        width: 345
+        height: 420
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fc5d6f3ab44bec90800000000000000
+      internalID: -7139537217547051785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_5
+      rect:
+        serializedVersion: 2
+        x: 892
+        y: 2395
+        width: 58
+        height: 335
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91fb5bad8c271c480800000000000000
+      internalID: -8880690783209537767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_6
+      rect:
+        serializedVersion: 2
+        x: 936
+        y: 2314
+        width: 296
+        height: 439
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 229113ece5111c4f0800000000000000
+      internalID: -810347359066056414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_7
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 2395
+        width: 58
+        height: 335
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e9af2c2a3fe164b0800000000000000
+      internalID: -5448811041013126686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_8
+      rect:
+        serializedVersion: 2
+        x: 1756
+        y: 2310
+        width: 292
+        height: 443
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d13c732ff84951680800000000000000
+      internalID: -8784952152151309539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_9
+      rect:
+        serializedVersion: 2
+        x: 2532
+        y: 2395
+        width: 58
+        height: 335
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 882e304e7872f0ff0800000000000000
+      internalID: -67792004787740024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_10
+      rect:
+        serializedVersion: 2
+        x: 2576
+        y: 2310
+        width: 309
+        height: 443
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: becc7d1959b985af0800000000000000
+      internalID: -407404699577758485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_11
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 1817
+        width: 26
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ab82270bcc96b100800000000000000
+      internalID: 123458435611265954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_12
+      rect:
+        serializedVersion: 2
+        x: 958
+        y: 1817
+        width: 26
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 564bdf257da3c40a0800000000000000
+      internalID: -6896072232926333851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_13
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 1783
+        width: 22
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a142ea5d83139af80800000000000000
+      internalID: -8094884735048866790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_14
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 1658
+        width: 46
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60107f9b431718cf0800000000000000
+      internalID: -251795632883826426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_15
+      rect:
+        serializedVersion: 2
+        x: 909
+        y: 1783
+        width: 22
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e251f9edc4438a90800000000000000
+      internalID: -7312925718735662365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_16
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 1658
+        width: 46
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 635e187b3677b0e80800000000000000
+      internalID: -8211338225415756490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_17
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 1656
+        width: 29
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14144dede0e552880800000000000000
+      internalID: -8636393292452052671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_18
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 1754
+        width: 19
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 438f8d28177ba9e60800000000000000
+      internalID: 7969884188739958836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_19
+      rect:
+        serializedVersion: 2
+        x: 904
+        y: 1656
+        width: 29
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17bf6cd29a3363570800000000000000
+      internalID: 8445994952890448753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_20
+      rect:
+        serializedVersion: 2
+        x: 1008
+        y: 1754
+        width: 19
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2da8853ed20ae8d60800000000000000
+      internalID: 7894423315775261394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_21
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 1634
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 936b5f08a4d9e3d80800000000000000
+      internalID: -8268998922488924615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_22
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 1630
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48c019733ad1fb660800000000000000
+      internalID: 7403668899269512324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_23
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 1328
+        width: 275
+        height: 419
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6542f161da69586a0800000000000000
+      internalID: -6447581621366348714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_24
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 1634
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19b067f625ea79a80800000000000000
+      internalID: -8460101705911628911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_25
+      rect:
+        serializedVersion: 2
+        x: 970
+        y: 1630
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f67cca6e533c372c0800000000000000
+      internalID: -4434986571759040657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_26
+      rect:
+        serializedVersion: 2
+        x: 1002
+        y: 1328
+        width: 278
+        height: 419
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c84c61b529833030800000000000000
+      internalID: 3473270532616243396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_27
+      rect:
+        serializedVersion: 2
+        x: 1823
+        y: 1328
+        width: 258
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e6a911c996889f40800000000000000
+      internalID: 5735482120384128740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_28
+      rect:
+        serializedVersion: 2
+        x: 2645
+        y: 1328
+        width: 224
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d0a5f5a14d882c60800000000000000
+      internalID: 7793634468261372113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_29
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 347
+        width: 224
+        height: 423
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1b4dc0c149154440800000000000000
+      internalID: 4919365938170383130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_30
+      rect:
+        serializedVersion: 2
+        x: 940
+        y: 347
+        width: 290
+        height: 413
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2983e31293893810800000000000000
+      internalID: 1745570994004920623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_31
+      rect:
+        serializedVersion: 2
+        x: 1727
+        y: 347
+        width: 324
+        height: 410
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98179f22c1e02dfe0800000000000000
+      internalID: -1165853839526891127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Attack_sky_Start_1_32
+      rect:
+        serializedVersion: 2
+        x: 2583
+        y: 348
+        width: 290
+        height: 433
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cba6b8e10eb3c4bd0800000000000000
+      internalID: -2644673047402157380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AM_boss_sword_Attack_sky_Start_1_0: 4957112095133746079
+      AM_boss_sword_Attack_sky_Start_1_1: 8813935342390493267
+      AM_boss_sword_Attack_sky_Start_1_10: -407404699577758485
+      AM_boss_sword_Attack_sky_Start_1_11: 123458435611265954
+      AM_boss_sword_Attack_sky_Start_1_12: -6896072232926333851
+      AM_boss_sword_Attack_sky_Start_1_13: -8094884735048866790
+      AM_boss_sword_Attack_sky_Start_1_14: -251795632883826426
+      AM_boss_sword_Attack_sky_Start_1_15: -7312925718735662365
+      AM_boss_sword_Attack_sky_Start_1_16: -8211338225415756490
+      AM_boss_sword_Attack_sky_Start_1_17: -8636393292452052671
+      AM_boss_sword_Attack_sky_Start_1_18: 7969884188739958836
+      AM_boss_sword_Attack_sky_Start_1_19: 8445994952890448753
+      AM_boss_sword_Attack_sky_Start_1_2: -3412227424254280723
+      AM_boss_sword_Attack_sky_Start_1_20: 7894423315775261394
+      AM_boss_sword_Attack_sky_Start_1_21: -8268998922488924615
+      AM_boss_sword_Attack_sky_Start_1_22: 7403668899269512324
+      AM_boss_sword_Attack_sky_Start_1_23: -6447581621366348714
+      AM_boss_sword_Attack_sky_Start_1_24: -8460101705911628911
+      AM_boss_sword_Attack_sky_Start_1_25: -4434986571759040657
+      AM_boss_sword_Attack_sky_Start_1_26: 3473270532616243396
+      AM_boss_sword_Attack_sky_Start_1_27: 5735482120384128740
+      AM_boss_sword_Attack_sky_Start_1_28: 7793634468261372113
+      AM_boss_sword_Attack_sky_Start_1_29: 4919365938170383130
+      AM_boss_sword_Attack_sky_Start_1_3: -6880319418618344249
+      AM_boss_sword_Attack_sky_Start_1_30: 1745570994004920623
+      AM_boss_sword_Attack_sky_Start_1_31: -1165853839526891127
+      AM_boss_sword_Attack_sky_Start_1_32: -2644673047402157380
+      AM_boss_sword_Attack_sky_Start_1_4: -7139537217547051785
+      AM_boss_sword_Attack_sky_Start_1_5: -8880690783209537767
+      AM_boss_sword_Attack_sky_Start_1_6: -810347359066056414
+      AM_boss_sword_Attack_sky_Start_1_7: -5448811041013126686
+      AM_boss_sword_Attack_sky_Start_1_8: -8784952152151309539
+      AM_boss_sword_Attack_sky_Start_1_9: -67792004787740024
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

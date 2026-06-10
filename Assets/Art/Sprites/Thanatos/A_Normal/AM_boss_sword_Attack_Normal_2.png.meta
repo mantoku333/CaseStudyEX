@@ -1,25 +1,19 @@
 fileFormatVersion: 2
-guid: 9d3a57fa27c1c874997608361a2e9311
+guid: e45fede552088524cb42916e6aace6ad
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6026542750750476186
-    second: AM_boss_down_Start_2_0
+      213: -894463245168110256
+    second: AM_boss_sword_Attack_Normal_2_0
   - first:
-      213: -7170323090875693621
-    second: AM_boss_down_Start_2_1
+      213: 3297365513639278768
+    second: AM_boss_sword_Attack_Normal_2_1
   - first:
-      213: -4907660864629893623
-    second: AM_boss_down_Start_2_2
+      213: 9018772822411686282
+    second: AM_boss_sword_Attack_Normal_2_2
   - first:
-      213: 5231511976993041632
-    second: AM_boss_down_Start_2_3
-  - first:
-      213: -3008386019961720590
-    second: AM_boss_down_Start_2_4
-  - first:
-      213: -4589431879694304864
-    second: AM_boss_down_Start_2_5
+      213: 1128984111263155880
+    second: AM_boss_sword_Attack_Normal_2_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -115,13 +109,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: AM_boss_down_Start_2_0
+      name: AM_boss_sword_Attack_Normal_2_0
       rect:
         serializedVersion: 2
-        x: 317
-        y: 1219
-        width: 206
-        height: 347
+        x: 99
+        y: 245
+        width: 484
+        height: 446
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -130,20 +124,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a97003aa3b492a350800000000000000
-      internalID: 6026542750750476186
+      spriteID: 0559c17ea6a3693f0800000000000000
+      internalID: -894463245168110256
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_boss_down_Start_2_1
+      name: AM_boss_sword_Attack_Normal_2_1
       rect:
         serializedVersion: 2
-        x: 1139
-        y: 1202
-        width: 188
-        height: 364
+        x: 919
+        y: 245
+        width: 471
+        height: 446
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -152,20 +146,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bc5c29b8325ed7c90800000000000000
-      internalID: -7170323090875693621
+      spriteID: 0b8b717e67892cd20800000000000000
+      internalID: 3297365513639278768
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_boss_down_Start_2_2
+      name: AM_boss_sword_Attack_Normal_2_2
       rect:
         serializedVersion: 2
-        x: 1959
-        y: 1202
-        width: 189
-        height: 364
+        x: 1739
+        y: 245
+        width: 456
+        height: 446
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -174,20 +168,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 90616ad027c74ebb0800000000000000
-      internalID: -4907660864629893623
+      spriteID: a81bbc5391e192d70800000000000000
+      internalID: 9018772822411686282
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: AM_boss_down_Start_2_3
+      name: AM_boss_sword_Attack_Normal_2_3
       rect:
         serializedVersion: 2
-        x: 2779
-        y: 1202
-        width: 189
-        height: 364
+        x: 2559
+        y: 245
+        width: 440
+        height: 446
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -196,52 +190,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0ec2fd2ec601a9840800000000000000
-      internalID: 5231511976993041632
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_down_Start_2_4
-      rect:
-        serializedVersion: 2
-        x: 319
-        y: 220
-        width: 189
-        height: 364
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2f03eec9ad01046d0800000000000000
-      internalID: -3008386019961720590
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_down_Start_2_5
-      rect:
-        serializedVersion: 2
-        x: 1139
-        y: 220
-        width: 189
-        height: 364
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0a9b7f175001f40c0800000000000000
-      internalID: -4589431879694304864
+      spriteID: 8a686ec4115faaf00800000000000000
+      internalID: 1128984111263155880
       vertices: []
       indices: 
       edges: []
@@ -260,12 +210,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      AM_boss_down_Start_2_0: 6026542750750476186
-      AM_boss_down_Start_2_1: -7170323090875693621
-      AM_boss_down_Start_2_2: -4907660864629893623
-      AM_boss_down_Start_2_3: 5231511976993041632
-      AM_boss_down_Start_2_4: -3008386019961720590
-      AM_boss_down_Start_2_5: -4589431879694304864
+      AM_boss_sword_Attack_Normal_2_0: -894463245168110256
+      AM_boss_sword_Attack_Normal_2_1: 3297365513639278768
+      AM_boss_sword_Attack_Normal_2_2: 9018772822411686282
+      AM_boss_sword_Attack_Normal_2_3: 1128984111263155880
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
