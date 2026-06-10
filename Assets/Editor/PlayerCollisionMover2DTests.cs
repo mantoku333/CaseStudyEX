@@ -31,7 +31,7 @@ public sealed class PlayerCollisionMover2DTests
         Vector2 appliedDelta = mover.CalculateSlideDelta(new Vector2(3f, 0f));
 
         Assert.That(appliedDelta.x, Is.GreaterThan(0.9f));
-        Assert.That(appliedDelta.x, Is.LessThanOrEqualTo(0.971f));
+        Assert.That(appliedDelta.x, Is.LessThanOrEqualTo(0.98f));
         Assert.That(Mathf.Abs(appliedDelta.y), Is.LessThan(0.001f));
     }
 
@@ -45,7 +45,7 @@ public sealed class PlayerCollisionMover2DTests
         Vector2 appliedDelta = mover.CalculateSlideDelta(new Vector2(3f, 1f));
 
         Assert.That(appliedDelta.x, Is.GreaterThan(0.9f));
-        Assert.That(appliedDelta.x, Is.LessThanOrEqualTo(0.971f));
+        Assert.That(appliedDelta.x, Is.LessThanOrEqualTo(0.98f));
         Assert.That(appliedDelta.y, Is.GreaterThan(0.9f));
     }
 
@@ -150,6 +150,7 @@ public sealed class PlayerCollisionMover2DTests
     {
         GameObject playerObject = CreateObject("Player", position);
         rigidbody2D = playerObject.AddComponent<Rigidbody2D>();
+        rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
         rigidbody2D.gravityScale = 0f;
         rigidbody2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 

@@ -31,7 +31,7 @@ public sealed class StoryCameraPlayable : PlayableBehaviour
             return;
         }
 
-        StoryEventController controller = playerData as StoryEventController;
+        StoryEventController controller = ResolveStoryEventController(playable, playerData);
         if (controller == null)
         {
             return;
@@ -91,5 +91,16 @@ public sealed class StoryCameraPlayable : PlayableBehaviour
         }
 
         return target;
+    }
+
+    private static StoryEventController ResolveStoryEventController(Playable playable, object playerData)
+    {
+        if (playerData is StoryEventController boundController)
+        {
+            return boundController;
+        }
+
+        PlayableDirector director = playable.GetGraph().GetResolver() as PlayableDirector;
+        return director != null ? director.GetComponent<StoryEventController>() : null;
     }
 }

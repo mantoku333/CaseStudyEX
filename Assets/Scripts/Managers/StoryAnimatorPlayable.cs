@@ -3,6 +3,8 @@ using UnityEngine.Playables;
 
 public sealed class StoryAnimatorPlayable : PlayableBehaviour
 {
+    public string actorKey = "iris";
+    public ExposedReference<Animator> animatorReference;
     public StoryAnimatorActionType actionType;
     public string parameterOrStateName;
     public int layer;
@@ -30,7 +32,7 @@ public sealed class StoryAnimatorPlayable : PlayableBehaviour
             return;
         }
 
-        animator = ResolveAnimator(playerData);
+        animator = ResolveAnimator(playable, playerData);
         if (animator == null || string.IsNullOrWhiteSpace(parameterOrStateName))
         {
             return;
@@ -83,7 +85,33 @@ public sealed class StoryAnimatorPlayable : PlayableBehaviour
         hadPreviousBoolValue = false;
     }
 
-    private static Animator ResolveAnimator(object playerData)
+    private Animator ResolveAnimator(Playable playable, object playerData)
+    {
+        Animator resolvedAnimator = animatorReference.Resolve(playable.GetGraph().GetResolver());
+        if (resolvedAnimator != null)
+        {
+            return resolvedAnimator;
+        }
+
+        resolvedAnimator = ResolveBoundAnimator(playerData);
+        if (resolvedAnimator != null)
+        {
+            return resolvedAnimator;
+        }
+
+        PlayableDirector director = playable.GetGraph().GetResolver() as PlayableDirector;
+        StoryEventController controller = director != null ? director.GetComponent<StoryEventController>() : null;
+        if (controller == null)
+        {
+            return null;
+        }
+
+        string key = string.IsNullOrWhiteSpace(actorKey) ? "iris" : actorKey.Trim();
+        Transform actorTransform = controller.GetActorTransform(key);
+        return actorTransform != null ? actorTransform.GetComponentInChildren<Animator>(true) : null;
+    }
+
+    private static Animator ResolveBoundAnimator(object playerData)
     {
         if (playerData is Animator directAnimator)
         {

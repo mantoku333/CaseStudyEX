@@ -32,6 +32,7 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
 
     private void Awake()
     {
+        EnsureRuntimeDefaults();
         CacheComponents();
         RebuildFilterIfNeeded();
     }
@@ -312,11 +313,40 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
 
     private bool CanMove()
     {
+        EnsureRuntimeDefaults();
         CacheComponents();
         return rigidBody2d != null &&
                bodyCollider != null &&
                bodyCollider.enabled &&
                !bodyCollider.isTrigger;
+    }
+
+    private void EnsureRuntimeDefaults()
+    {
+        if (slideIterations <= 0)
+        {
+            slideIterations = 2;
+
+            if (skinWidth <= 0f)
+            {
+                skinWidth = 0.03f;
+            }
+
+            if (maxOverlapResolveDistance <= 0f)
+            {
+                maxOverlapResolveDistance = 0.2f;
+            }
+        }
+
+        if (overlapResolveIterations <= 0)
+        {
+            overlapResolveIterations = 2;
+        }
+
+        skinWidth = Mathf.Max(0f, skinWidth);
+        slideIterations = Mathf.Clamp(slideIterations, 1, 4);
+        maxOverlapResolveDistance = Mathf.Max(0f, maxOverlapResolveDistance);
+        overlapResolveIterations = Mathf.Clamp(overlapResolveIterations, 1, 4);
     }
 
     private void CacheComponents()

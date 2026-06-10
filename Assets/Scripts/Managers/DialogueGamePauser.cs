@@ -27,7 +27,9 @@ namespace Metroidvania.Managers
 
         private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
         private PlayerInput pausedPlayerInput;
+        private global::PlayerController pausedPlayerController;
         private bool previousPlayerInputEnabled;
+        private bool previousExternalControlLocked;
         private float previousTimeScale = 1f;
         private bool gameplayPaused;
         private bool timeScalePaused;
@@ -122,6 +124,18 @@ namespace Metroidvania.Managers
                 return;
             }
 
+            pausedPlayerController = player.GetComponent<global::PlayerController>();
+            if (pausedPlayerController == null)
+            {
+                pausedPlayerController = player.GetComponentInParent<global::PlayerController>();
+            }
+
+            if (pausedPlayerController != null)
+            {
+                previousExternalControlLocked = pausedPlayerController.IsExternalControlLocked;
+                pausedPlayerController.SetExternalControlLocked(true);
+            }
+
             MonoBehaviour[] behaviours = player.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
             for (int i = 0; i < behaviours.Length; i++)
             {
@@ -132,6 +146,11 @@ namespace Metroidvania.Managers
                 }
 
                 if (!ShouldPauseBehaviour(behaviour.GetType().Name))
+                {
+                    continue;
+                }
+
+                if (behaviour is global::PlayerController)
                 {
                     continue;
                 }
@@ -160,6 +179,12 @@ namespace Metroidvania.Managers
             if (pausedPlayerInput != null)
             {
                 pausedPlayerInput.enabled = previousPlayerInputEnabled;
+            }
+
+            if (pausedPlayerController != null)
+            {
+                pausedPlayerController.SetExternalControlLocked(previousExternalControlLocked);
+                pausedPlayerController = null;
             }
 
             for (int i = 0; i < pausedBehaviours.Count; i++)
