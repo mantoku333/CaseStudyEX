@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 400000}
   - component: {fileID: 11400000}
+  - component: {fileID: 11400001}
   m_Layer: 0
   m_Name: MinimapSystem
   m_TagString: Untagged
@@ -48,3 +49,15 @@ MonoBehaviour:
   roomDefinitions: []
   showFullMapOnStart: 0
   fullMapKey: 109
+--- !u!114 &11400001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1766cc11b013240b2451d1d5d74f3d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:

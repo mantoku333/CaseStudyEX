@@ -456,7 +456,8 @@ public sealed class MinimapManager : MonoBehaviour
         view = GetComponent<MinimapView>();
         if (view == null)
         {
-            view = gameObject.AddComponent<MinimapView>();
+            Debug.LogError("[MinimapManager] MinimapView component is missing. Please attach MinimapView to the same GameObject.", this);
+            return;
         }
 
         view.Initialize(this);
