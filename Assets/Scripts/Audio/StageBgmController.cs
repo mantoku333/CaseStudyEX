@@ -3,7 +3,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class StageBgmController : MonoBehaviour
 {
-    private const string BgmVolumeKey = "MantokuStoryOptions.BgmVolume";
+    private const string BgmVolumeKey = "Options.BgmVolume";
 
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioClip normalStageBgm;
