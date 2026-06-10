@@ -154,6 +154,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
   itemData: {fileID: 11400000, guid: e11306a07cd06454f8ef2cf6bd04879f, type: 2}
   equipOnPickupForDebug: 0
+  equipmentPickupNotificationSprite: {fileID: -1500577975982041825, guid: f051449e7d6e25d4fbc5917a3fa13fad, type: 3}
+  equipmentPickupNotificationSize: {x: 512, y: 130}
+  equipmentPickupNotificationBottomLeftOffset: {x: 32, y: 32}
+  equipmentPickupNotificationSlideInDuration: 0.45
+  equipmentPickupNotificationHoldSeconds: 1.2
+  equipmentPickupNotificationSlideOutDuration: 0.35
 --- !u!114 &-4087955273640754734
 MonoBehaviour:
   m_ObjectHideFlags: 0
