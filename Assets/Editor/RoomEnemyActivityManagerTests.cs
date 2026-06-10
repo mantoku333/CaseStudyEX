@@ -100,7 +100,7 @@ public sealed class RoomEnemyActivityManagerTests
     }
 
     [Test]
-    public void ApplyEnemyActivity_WithNoResolvedRoom_DoesNotWakeSleepingEnemies()
+    public void ApplyEnemyActivity_WithNoResolvedRoomAndNoCameraVisibility_DoesNotWakeSleepingEnemies()
     {
         EnemyController enemy = CreateEnemy(out Rigidbody2D rigidbody2D, out _);
         object managedEnemy = CreateManagedEnemy(
@@ -111,6 +111,7 @@ public sealed class RoomEnemyActivityManagerTests
             new[] { true },
             desiredGameplayActive: false,
             appliedGameplayActive: false);
+        SetManagedVisibility(managedEnemy, Array.Empty<Renderer>(), Array.Empty<Collider2D>());
 
         AddManagedEnemy(managedEnemy);
         SetPrivateField(manager, "gatingActive", true);
@@ -151,12 +152,115 @@ public sealed class RoomEnemyActivityManagerTests
     }
 
     [Test]
+    public void VisibleEnemyInsideHomeRoom_StaysAwakeWhenPlayerIsOutsideHomeRoom()
+    {
+        SetManagedScene();
+        CreateMainCamera(Vector2.zero);
+        RoomCameraTrigger homeRoom = CreateRoom("HomeRoom", Vector2.zero, new Vector2(4f, 4f));
+        CreatePlayer(new Vector3(6f, 0f, 0f));
+
+        EnemyController enemy = CreateEnemy(out Rigidbody2D rigidbody2D, out _);
+        object managedEnemy = CreateManagedEnemy(
+            enemy,
+            new MonoBehaviour[] { enemy },
+            new[] { true },
+            new[] { rigidbody2D },
+            new[] { true },
+            desiredGameplayActive: false,
+            appliedGameplayActive: false,
+            room: homeRoom);
+
+        AddManagedEnemy(managedEnemy);
+        SetPrivateField(manager, "gatingActive", true);
+
+        InvokePrivate(manager, "ApplyEnemyActivity");
+
+        Assert.IsTrue((bool)GetPrivateField(managedEnemy, "DesiredGameplayActive"));
+        Assert.IsTrue((bool)GetPrivateField(manager, "hasPendingEnemyStateChanges"));
+    }
+
+    [Test]
+    public void VisibleSleepingEnemy_RestoresPhysicsWhenStateChangeIsApplied()
+    {
+        SetManagedScene();
+        CreateMainCamera(Vector2.zero);
+        RoomCameraTrigger homeRoom = CreateRoom("HomeRoom", Vector2.zero, new Vector2(4f, 4f));
+        CreatePlayer(new Vector3(6f, 0f, 0f));
+
+        EnemyController enemy = CreateEnemy(out Rigidbody2D rigidbody2D, out _);
+        enemy.enabled = false;
+        rigidbody2D.simulated = false;
+
+        object managedEnemy = CreateManagedEnemy(
+            enemy,
+            new MonoBehaviour[] { enemy },
+            new[] { true },
+            new[] { rigidbody2D },
+            new[] { true },
+            desiredGameplayActive: false,
+            appliedGameplayActive: false,
+            room: homeRoom);
+
+        AddManagedEnemy(managedEnemy);
+        SetPrivateField(manager, "gatingActive", true);
+
+        InvokePrivate(manager, "ApplyEnemyActivity");
+        InvokePrivate(manager, "ProcessPendingEnemyStateChanges", 8);
+
+        Assert.IsTrue(enemy.enabled);
+        Assert.IsTrue(rigidbody2D.simulated);
+        Assert.IsTrue((bool)GetPrivateField(managedEnemy, "AppliedGameplayActive"));
+    }
+
+    [Test]
+    public void PendingStateChanges_WakeEnemiesBeforeSleepingEnemies()
+    {
+        EnemyController sleepingEnemy = CreateEnemy(out Rigidbody2D sleepingRigidbody, out _);
+        object sleepingManagedEnemy = CreateManagedEnemy(
+            sleepingEnemy,
+            new MonoBehaviour[] { sleepingEnemy },
+            new[] { true },
+            new[] { sleepingRigidbody },
+            new[] { true },
+            desiredGameplayActive: false,
+            appliedGameplayActive: true);
+
+        EnemyController wakingEnemy = CreateEnemy(out Rigidbody2D wakingRigidbody, out _);
+        wakingEnemy.enabled = false;
+        wakingRigidbody.simulated = false;
+        object wakingManagedEnemy = CreateManagedEnemy(
+            wakingEnemy,
+            new MonoBehaviour[] { wakingEnemy },
+            new[] { true },
+            new[] { wakingRigidbody },
+            new[] { true },
+            desiredGameplayActive: true,
+            appliedGameplayActive: false);
+
+        AddManagedEnemy(sleepingManagedEnemy);
+        AddManagedEnemy(wakingManagedEnemy);
+        SetPrivateField(manager, "hasPendingEnemyStateChanges", true);
+        SetPrivateField(manager, "nextEnemyStateChangeIndex", 0);
+
+        InvokePrivate(manager, "ProcessPendingEnemyStateChanges", 1);
+
+        Assert.IsTrue(wakingEnemy.enabled);
+        Assert.IsTrue(wakingRigidbody.simulated);
+        Assert.IsTrue((bool)GetPrivateField(wakingManagedEnemy, "AppliedGameplayActive"));
+        Assert.IsTrue(sleepingEnemy.enabled);
+        Assert.IsTrue(sleepingRigidbody.simulated);
+        Assert.IsTrue((bool)GetPrivateField(sleepingManagedEnemy, "AppliedGameplayActive"));
+        Assert.IsTrue((bool)GetPrivateField(manager, "hasPendingEnemyStateChanges"));
+    }
+
+    [Test]
     public void EnemyOutsideHomeRoom_WakesAndStartsReturnHome()
     {
         // 敵が所属ルーム外へ出た場合は、眠らせずに初期位置への帰還を開始する。
         SetManagedScene();
         RoomCameraTrigger homeRoom = CreateRoom("HomeRoom", Vector2.zero, new Vector2(4f, 4f));
         EnemyController enemy = CreateEnemy(out Rigidbody2D rigidbody2D, out _);
+        _ = enemy.OriginalStartPosition;
         MoveEnemy(enemy, rigidbody2D, new Vector3(5f, 0f, 0f));
 
         object managedEnemy = CreateManagedEnemy(
@@ -187,6 +291,7 @@ public sealed class RoomEnemyActivityManagerTests
         RoomCameraTrigger activeRoom = CreateRoom("Room1", new Vector2(-1f, 0f), new Vector2(4f, 4f));
         RoomCameraTrigger homeRoom = CreateRoom("Room2", new Vector2(1f, 0f), new Vector2(4f, 4f));
         EnemyController enemy = CreateEnemy(out Rigidbody2D rigidbody2D, out _);
+        _ = enemy.OriginalStartPosition;
         MoveEnemy(enemy, rigidbody2D, new Vector3(0.75f, 0f, 0f));
 
         object managedEnemy = CreateManagedEnemy(
@@ -220,6 +325,7 @@ public sealed class RoomEnemyActivityManagerTests
         CreatePlayer(new Vector3(6f, 0f, 0f));
 
         EnemyController enemy = CreateEnemy(out Rigidbody2D rigidbody2D, out _);
+        _ = enemy.OriginalStartPosition;
         MoveEnemy(enemy, rigidbody2D, new Vector3(5f, 0f, 0f));
         enemy.StartReturnHome();
 
@@ -232,6 +338,7 @@ public sealed class RoomEnemyActivityManagerTests
             desiredGameplayActive: true,
             appliedGameplayActive: true,
             room: homeRoom);
+        SetManagedVisibility(managedEnemy, Array.Empty<Renderer>(), Array.Empty<Collider2D>());
 
         AddManagedEnemy(managedEnemy);
         SetPrivateField(manager, "gatingActive", true);
@@ -261,6 +368,7 @@ public sealed class RoomEnemyActivityManagerTests
             desiredGameplayActive: true,
             appliedGameplayActive: true,
             room: homeRoom);
+        SetManagedVisibility(managedEnemy, Array.Empty<Renderer>(), Array.Empty<Collider2D>());
 
         AddManagedEnemy(managedEnemy);
         SetPrivateField(manager, "gatingActive", true);
@@ -280,6 +388,7 @@ public sealed class RoomEnemyActivityManagerTests
         returnEnemyObject.transform.position = Vector3.zero;
         EnemyController enemy = returnEnemyObject.AddComponent<EnemyController>();
         SetPrivateField(enemy, "moveSpeed", 2f);
+        _ = enemy.OriginalStartPosition;
 
         returnEnemyObject.transform.position = new Vector3(1f, 0f, 0f);
         enemy.StartReturnHome();
@@ -302,6 +411,7 @@ public sealed class RoomEnemyActivityManagerTests
         createdObjects.Add(enemyObject);
         renderer = enemyObject.AddComponent<SpriteRenderer>();
         rigidbody2D = enemyObject.AddComponent<Rigidbody2D>();
+        enemyObject.AddComponent<BoxCollider2D>();
         return enemyObject.AddComponent<EnemyController>();
     }
 
@@ -329,7 +439,30 @@ public sealed class RoomEnemyActivityManagerTests
         SetPrivateField(managedEnemy, "InitialBehaviourEnabled", behaviourStates);
         SetPrivateField(managedEnemy, "Rigidbodies", rigidbodies);
         SetPrivateField(managedEnemy, "InitialRigidbodySimulated", simulatedStates);
+        SetPrivateField(managedEnemy, "VisibilityRenderers", enemy.GetComponentsInChildren<Renderer>(true));
+        SetPrivateField(managedEnemy, "VisibilityColliders", enemy.GetComponentsInChildren<Collider2D>(true));
         return managedEnemy;
+    }
+
+    private static void SetManagedVisibility(object managedEnemy, Renderer[] renderers, Collider2D[] colliders)
+    {
+        SetPrivateField(managedEnemy, "VisibilityRenderers", renderers);
+        SetPrivateField(managedEnemy, "VisibilityColliders", colliders);
+    }
+
+    private Camera CreateMainCamera(Vector2 center)
+    {
+        GameObject cameraObject = new GameObject("Main Camera");
+        createdObjects.Add(cameraObject);
+        cameraObject.tag = "MainCamera";
+        cameraObject.transform.position = new Vector3(center.x, center.y, -10f);
+
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 5f;
+        camera.nearClipPlane = 0.1f;
+        camera.farClipPlane = 100f;
+        return camera;
     }
 
     private RoomCameraTrigger CreateRoom(string name, Vector2 center, Vector2 size)
@@ -407,13 +540,22 @@ public sealed class RoomEnemyActivityManagerTests
     private static void ClearRoomCameraTriggerStatics()
     {
         Type roomTriggerType = typeof(RoomCameraTrigger);
-        roomTriggerType.GetField("_activeTrigger", StaticPrivate).SetValue(null, null);
-        roomTriggerType.GetField("_defaultTriggerOverlapCount", StaticPrivate).SetValue(null, 0);
+        SetStaticFieldIfExists(roomTriggerType, "_activeTrigger", null);
+        SetStaticFieldIfExists(roomTriggerType, "_defaultTriggerOverlapCount", 0);
+        ClearStaticListIfExists(roomTriggerType, "_occupiedRoomTriggers");
+        ClearStaticListIfExists(roomTriggerType, "_registeredTriggers");
+    }
 
-        IList occupiedRoomTriggers = (IList)roomTriggerType
-            .GetField("_occupiedRoomTriggers", StaticPrivate)
-            .GetValue(null);
-        occupiedRoomTriggers.Clear();
+    private static void SetStaticFieldIfExists(Type type, string fieldName, object value)
+    {
+        FieldInfo field = type.GetField(fieldName, StaticPrivate);
+        field?.SetValue(null, value);
+    }
+
+    private static void ClearStaticListIfExists(Type type, string fieldName)
+    {
+        IList list = type.GetField(fieldName, StaticPrivate)?.GetValue(null) as IList;
+        list?.Clear();
     }
 }
 
