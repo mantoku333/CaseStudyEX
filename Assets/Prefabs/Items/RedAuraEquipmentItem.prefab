@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1542282831087410545}
   - component: {fileID: 6803117087801181621}
   - component: {fileID: 5215015088542463352}
+  - component: {fileID: -4087955273640754734}
   m_Layer: 0
   m_Name: RedAuraEquipmentItem
   m_TagString: Untagged
@@ -153,3 +154,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
   itemData: {fileID: 11400000, guid: e11306a07cd06454f8ef2cf6bd04879f, type: 2}
   equipOnPickupForDebug: 0
+--- !u!114 &-4087955273640754734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 61547262103135006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f4e39d6cb3471bab613a0f407feb2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemEffectController
+  settings: {fileID: 0}
+  effectTransform: {fileID: 0}
+  effectRenderer: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: dcb371cd1970cf545b33c60fcfe1a463, type: 3}
