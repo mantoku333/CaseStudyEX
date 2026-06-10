@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: 6437c74715f145a458d947d48879bf2b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2986391899202704634
+    second: AM_boss_Move_0
+  - first:
+      213: -5428412654747302526
+    second: AM_boss_Move_1
+  - first:
+      213: 6923164018321335029
+    second: AM_boss_Move_2
+  - first:
+      213: -1326484322633624783
+    second: AM_boss_Move_3
+  - first:
+      213: 6863831448969257228
+    second: AM_boss_Move_4
+  - first:
+      213: 7596597154716150052
+    second: AM_boss_Move_5
+  - first:
+      213: -199210207733139885
+    second: AM_boss_Move_6
+  - first:
+      213: 5506005566148094307
+    second: AM_boss_Move_7
+  - first:
+      213: 1159209762118400148
+    second: AM_boss_Move_8
+  - first:
+      213: 240636193033169954
+    second: AM_boss_Move_9
+  - first:
+      213: -796075796784567230
+    second: AM_boss_Move_10
+  - first:
+      213: 2448652822129149236
+    second: AM_boss_Move_11
+  - first:
+      213: -700864211466950916
+    second: AM_boss_Move_12
+  - first:
+      213: 1103117734826552408
+    second: AM_boss_Move_13
+  - first:
+      213: -7319793342121912918
+    second: AM_boss_Move_14
+  - first:
+      213: 346436798393063480
+    second: AM_boss_Move_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AM_boss_Move_0
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 3191
+        width: 245
+        height: 406
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af4d4181c9bc17920800000000000000
+      internalID: 2986391899202704634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_1
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 3197
+        width: 245
+        height: 405
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2854d8393776aa4b0800000000000000
+      internalID: -5428412654747302526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_2
+      rect:
+        serializedVersion: 2
+        x: 1940
+        y: 3202
+        width: 245
+        height: 406
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f22fc18ef4041060800000000000000
+      internalID: 6923164018321335029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_3
+      rect:
+        serializedVersion: 2
+        x: 2759
+        y: 3208
+        width: 245
+        height: 405
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1335c4d5981679de0800000000000000
+      internalID: -1326484322633624783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_4
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 2231
+        width: 244
+        height: 404
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c01a7f1365a314f50800000000000000
+      internalID: 6863831448969257228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_5
+      rect:
+        serializedVersion: 2
+        x: 1119
+        y: 2233
+        width: 243
+        height: 403
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 429699c1dd88c6960800000000000000
+      internalID: 7596597154716150052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_6
+      rect:
+        serializedVersion: 2
+        x: 1940
+        y: 2235
+        width: 240
+        height: 403
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3563f6c1f534c3df0800000000000000
+      internalID: -199210207733139885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_7
+      rect:
+        serializedVersion: 2
+        x: 2760
+        y: 2236
+        width: 238
+        height: 404
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 369a49de3e2496c40800000000000000
+      internalID: 5506005566148094307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_8
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 1256
+        width: 235
+        height: 403
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4987b3b0327561010800000000000000
+      internalID: 1159209762118400148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_9
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1257
+        width: 237
+        height: 403
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22c28d5b759e65300800000000000000
+      internalID: 240636193033169954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_10
+      rect:
+        serializedVersion: 2
+        x: 1940
+        y: 1258
+        width: 239
+        height: 404
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24cae56d745c3f4f0800000000000000
+      internalID: -796075796784567230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_11
+      rect:
+        serializedVersion: 2
+        x: 2760
+        y: 1258
+        width: 240
+        height: 403
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4350449a4cc5bf120800000000000000
+      internalID: 2448652822129149236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_12
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 275
+        width: 242
+        height: 403
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf66ab786b70646f0800000000000000
+      internalID: -700864211466950916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_13
+      rect:
+        serializedVersion: 2
+        x: 1119
+        y: 274
+        width: 244
+        height: 403
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85c25c93cbf0f4f00800000000000000
+      internalID: 1103117734826552408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_14
+      rect:
+        serializedVersion: 2
+        x: 1939
+        y: 273
+        width: 245
+        height: 403
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa5dd8dbcbeda6a90800000000000000
+      internalID: -7319793342121912918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_Move_15
+      rect:
+        serializedVersion: 2
+        x: 2759
+        y: 272
+        width: 245
+        height: 404
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8389751ce6acec400800000000000000
+      internalID: 346436798393063480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AM_boss_Move_0: 2986391899202704634
+      AM_boss_Move_1: -5428412654747302526
+      AM_boss_Move_10: -796075796784567230
+      AM_boss_Move_11: 2448652822129149236
+      AM_boss_Move_12: -700864211466950916
+      AM_boss_Move_13: 1103117734826552408
+      AM_boss_Move_14: -7319793342121912918
+      AM_boss_Move_15: 346436798393063480
+      AM_boss_Move_2: 6923164018321335029
+      AM_boss_Move_3: -1326484322633624783
+      AM_boss_Move_4: 6863831448969257228
+      AM_boss_Move_5: 7596597154716150052
+      AM_boss_Move_6: -199210207733139885
+      AM_boss_Move_7: 5506005566148094307
+      AM_boss_Move_8: 1159209762118400148
+      AM_boss_Move_9: 240636193033169954
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
