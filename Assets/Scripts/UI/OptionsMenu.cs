@@ -21,6 +21,7 @@ public sealed class OptionsMenu : MonoBehaviour
     private const string JumpDefaultPath = "<Keyboard>/space";
     private const string AttackDefaultPath = "<Mouse>/leftButton";
     private const string GlideDefaultPath = "<Mouse>/rightButton";
+    private const string RecoilDefaultPath = "<Keyboard>/e";
     private const string DodgeDefaultPath = "<Keyboard>/leftShift";
     private const float AudioRefreshInterval = 0.35f;
     private const float HandlePadding = 10f;
@@ -77,6 +78,8 @@ public sealed class OptionsMenu : MonoBehaviour
     private Button titleButton;
     private Button soundTabButton;
     private Button keyboardTabButton;
+    private Button soundTabButtonBase;
+    private Button keyboardTabButtonBase;
     private Button backButton;
     private Button optionHeaderCloseButton;
     private Button optionHeaderPreviousButton;
@@ -94,6 +97,8 @@ public sealed class OptionsMenu : MonoBehaviour
     private Button jumpButton;
     private Button attackButton;
     private Button glideButton;
+    private Button recoilButton;
+    private Button parryButton;
     private Button dodgeButton;
 
     private RectTransform bgmBar;
@@ -114,6 +119,8 @@ public sealed class OptionsMenu : MonoBehaviour
     private TextMeshProUGUI jumpValueText;
     private TextMeshProUGUI attackValueText;
     private TextMeshProUGUI glideValueText;
+    private TextMeshProUGUI recoilValueText;
+    private TextMeshProUGUI parryValueText;
     private TextMeshProUGUI dodgeValueText;
     private OptionsMainMenuSkin alternateMainMenuSkin;
     private OptionsFinishPromptSkin finishPromptSkin;
@@ -294,6 +301,8 @@ public sealed class OptionsMenu : MonoBehaviour
         titleButton = FindChildComponent<Button>("MenuRoot/OptionPanel/MainMenuPanel/TitleButton");
         soundTabButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/SoundTabButton");
         keyboardTabButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/KeyboardTabButton");
+        soundTabButtonBase = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/SoundTabButton (1)");
+        keyboardTabButtonBase = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/KeyboardTabButton (1)");
         backButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/BackButton");
         optionHeaderCloseButton = EnsureRuntimeButton(optionHeaderCloseButtonObject, "Back Button");
         optionHeaderPreviousButton = EnsureRuntimeButton(optionHeaderPreviousButtonObject, "Q");
@@ -311,6 +320,8 @@ public sealed class OptionsMenu : MonoBehaviour
         jumpButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/JumpRow/ValueButton");
         attackButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/AttackRow/ValueButton");
         glideButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/GlideRow/ValueButton");
+        recoilButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/RecoilRow/ValueButton");
+        parryButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/ParryRow/ValueButton");
         dodgeButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/DodgeRow/ValueButton");
 
         bgmBar = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/BgmBar");
@@ -331,6 +342,8 @@ public sealed class OptionsMenu : MonoBehaviour
         jumpValueText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/JumpRow/ValueButton/Label");
         attackValueText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/AttackRow/ValueButton/Label");
         glideValueText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/GlideRow/ValueButton/Label");
+        recoilValueText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/RecoilRow/ValueButton/Label");
+        parryValueText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/ParryRow/ValueButton/Label");
         dodgeValueText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/DodgeRow/ValueButton/Label");
         optionPageHeaderAvailable =
             optionHeaderPreviousButtonObject != null &&
@@ -387,7 +400,6 @@ public sealed class OptionsMenu : MonoBehaviour
             keyboardScrollViewport != null &&
             keyboardScrollContent != null &&
             keyboardScrollbarTrack != null &&
-            keyboardScrollbarHandle != null &&
             keyboardStatusText != null &&
             rightMoveValueText != null &&
             leftMoveValueText != null &&
@@ -417,6 +429,8 @@ public sealed class OptionsMenu : MonoBehaviour
         BindButton(titleButton, ShowFinishPrompt);
         BindButton(soundTabButton, ShowSoundTab);
         BindButton(keyboardTabButton, ShowKeyboardTab);
+        BindButton(soundTabButtonBase, ShowSoundTab);
+        BindButton(keyboardTabButtonBase, ShowKeyboardTab);
         BindButton(backButton, ShowMainMenu);
         BindButton(optionHeaderCloseButton, CloseMenu);
         BindButton(optionHeaderPreviousButton, ShowPreviousOptionPage);
@@ -434,6 +448,7 @@ public sealed class OptionsMenu : MonoBehaviour
         BindButton(jumpButton, StartRebindJump);
         BindButton(attackButton, StartRebindAttack);
         BindButton(glideButton, StartRebindGlide);
+        BindButton(recoilButton, StartRebindRecoil);
         BindButton(dodgeButton, StartRebindDodge);
 
         listenersRegistered = true;
@@ -454,6 +469,8 @@ public sealed class OptionsMenu : MonoBehaviour
         UnbindButton(titleButton, ShowFinishPrompt);
         UnbindButton(soundTabButton, ShowSoundTab);
         UnbindButton(keyboardTabButton, ShowKeyboardTab);
+        UnbindButton(soundTabButtonBase, ShowSoundTab);
+        UnbindButton(keyboardTabButtonBase, ShowKeyboardTab);
         UnbindButton(backButton, ShowMainMenu);
         UnbindButton(optionHeaderCloseButton, CloseMenu);
         UnbindButton(optionHeaderPreviousButton, ShowPreviousOptionPage);
@@ -471,6 +488,7 @@ public sealed class OptionsMenu : MonoBehaviour
         UnbindButton(jumpButton, StartRebindJump);
         UnbindButton(attackButton, StartRebindAttack);
         UnbindButton(glideButton, StartRebindGlide);
+        UnbindButton(recoilButton, StartRebindRecoil);
         UnbindButton(dodgeButton, StartRebindDodge);
 
         listenersRegistered = false;
@@ -1245,26 +1263,8 @@ public sealed class OptionsMenu : MonoBehaviour
             float wheelDelta = Mouse.current.scroll.ReadValue().y;
             if (Mathf.Abs(wheelDelta) > 0.01f)
             {
-                AdjustKeyboardScroll(-(wheelDelta / 120f) * KeyboardScrollPixelsPerWheelTick);
+                AdjustKeyboardScroll(-Mathf.Sign(wheelDelta) * KeyboardScrollPixelsPerWheelTick);
             }
-        }
-
-        bool pointerOnScrollbar =
-            ContainsScreenPoint(keyboardScrollbarTrack, pointerPosition) ||
-            ContainsScreenPoint(keyboardScrollbarHandle, pointerPosition);
-
-        if (Mouse.current.leftButton.wasPressedThisFrame && pointerOnScrollbar)
-        {
-            isDraggingKeyboardScrollbar = true;
-            UpdateKeyboardScrollFromPointer(pointerPosition);
-        }
-        else if (Mouse.current.leftButton.isPressed && isDraggingKeyboardScrollbar)
-        {
-            UpdateKeyboardScrollFromPointer(pointerPosition);
-        }
-        else if (Mouse.current.leftButton.wasReleasedThisFrame)
-        {
-            isDraggingKeyboardScrollbar = false;
         }
     }
 
@@ -1402,7 +1402,7 @@ public sealed class OptionsMenu : MonoBehaviour
         InputActionAsset actions = ResolvePlayerActions();
         if (actions == null)
         {
-            SetKeyboardValueTexts("-", "-", "-", "-", "-", "-");
+            SetKeyboardValueTexts("-", "-", "-", "-", "-", "-", "-");
             return;
         }
 
@@ -1412,6 +1412,7 @@ public sealed class OptionsMenu : MonoBehaviour
             GetConfiguredBindingLabel(actions, "Jump", null, JumpDefaultPath),
             GetConfiguredBindingLabel(actions, "Attack", null, AttackDefaultPath),
             GetConfiguredBindingLabel(actions, "UmbrellaToggle", null, GlideDefaultPath),
+            GetConfiguredBindingLabel(actions, "RecoilJump", null, RecoilDefaultPath),
             GetConfiguredBindingLabel(actions, "Dodge", null, DodgeDefaultPath));
     }
 
@@ -1421,6 +1422,7 @@ public sealed class OptionsMenu : MonoBehaviour
         string jump,
         string attack,
         string glide,
+        string recoil,
         string dodge)
     {
         rightMoveValueText.text = rightMove;
@@ -1428,6 +1430,8 @@ public sealed class OptionsMenu : MonoBehaviour
         jumpValueText.text = jump;
         attackValueText.text = attack;
         glideValueText.text = glide;
+        if (recoilValueText != null) recoilValueText.text = recoil;
+        if (parryValueText != null) parryValueText.text = "-";
         dodgeValueText.text = dodge;
     }
 
@@ -1454,6 +1458,11 @@ public sealed class OptionsMenu : MonoBehaviour
     private void StartRebindGlide()
     {
         BeginInteractiveRebind("UmbrellaToggle", null, GlideDefaultPath, allowMouse: true, glideButton);
+    }
+
+    private void StartRebindRecoil()
+    {
+        BeginInteractiveRebind("RecoilJump", null, RecoilDefaultPath, allowMouse: false, recoilButton);
     }
 
     private void StartRebindDodge()
@@ -1626,6 +1635,8 @@ public sealed class OptionsMenu : MonoBehaviour
         SetButtonInteractable(jumpButton, interactable);
         SetButtonInteractable(attackButton, interactable);
         SetButtonInteractable(glideButton, interactable);
+        SetButtonInteractable(recoilButton, interactable);
+        SetButtonInteractable(parryButton, interactable);
         SetButtonInteractable(dodgeButton, interactable);
     }
 
@@ -1817,7 +1828,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private void RefreshKeyboardScrollVisuals()
     {
-        if (keyboardScrollViewport == null || keyboardScrollContent == null || keyboardScrollbarTrack == null || keyboardScrollbarHandle == null)
+        if (keyboardScrollViewport == null || keyboardScrollContent == null || keyboardScrollbarTrack == null)
         {
             return;
         }
@@ -1836,7 +1847,7 @@ public sealed class OptionsMenu : MonoBehaviour
             keyboardScrollbarTrack.gameObject.SetActive(needsScrollbar);
         }
 
-        if (!needsScrollbar)
+        if (!needsScrollbar || keyboardScrollbarHandle == null)
         {
             return;
         }
@@ -1971,18 +1982,12 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
-        Image image = button.GetComponent<Image>();
-        if (image != null)
-        {
-            image.color = active
-                ? new Color(0.18f, 0.43f, 0.68f, 1f)
-                : new Color(0.67f, 0.79f, 0.9f, 1f);
-        }
+        button.gameObject.SetActive(active);
 
-        TextMeshProUGUI label = button.GetComponentInChildren<TextMeshProUGUI>(true);
-        if (label != null)
+        Button baseButton = button == soundTabButton ? soundTabButtonBase : keyboardTabButtonBase;
+        if (baseButton != null)
         {
-            label.color = active ? Color.white : new Color(0.08f, 0.12f, 0.18f, 1f);
+            baseButton.gameObject.SetActive(!active);
         }
     }
 
@@ -2256,6 +2261,7 @@ public sealed class OptionsMenu : MonoBehaviour
         if (jumpButton == null) missing.Append("JumpButton ");
         if (attackButton == null) missing.Append("AttackButton ");
         if (glideButton == null) missing.Append("GlideButton ");
+        if (recoilButton == null) missing.Append("RecoilButton ");
         if (dodgeButton == null) missing.Append("DodgeButton ");
         if (bgmBar == null) missing.Append("BgmBar ");
         if (seBar == null) missing.Append("SeBar ");
