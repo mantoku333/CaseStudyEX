@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 
 [CustomEditor(typeof(StoryEventController))]
 public sealed class StoryEventControllerEditor : Editor
@@ -10,6 +11,9 @@ public sealed class StoryEventControllerEditor : Editor
     private SerializedProperty eventIdProperty;
     private SerializedProperty runOnceFlagKeyProperty;
     private SerializedProperty memoNameProperty;
+
+    private static readonly List<CopiedActorBinding> copiedActorBindings = new List<CopiedActorBinding>();
+    private static string copiedActorBindingsSourceName;
 
     private void OnEnable()
     {
@@ -35,7 +39,7 @@ public sealed class StoryEventControllerEditor : Editor
         DrawTools();
     }
 
-    private void DrawHeader()
+    private new void DrawHeader()
     {
         EditorGUILayout.LabelField("Story Event", EditorStyles.boldLabel);
 
@@ -97,6 +101,10 @@ public sealed class StoryEventControllerEditor : Editor
             StoryTimelineTrackNameUtility.RefreshTrackNames(controller, true);
         }
 
+        EditorGUILayout.Space(4f);
+        DrawActorBindingTools(controller);
+        EditorGUILayout.Space(4f);
+
         using (new EditorGUILayout.HorizontalScope())
         {
             GUI.enabled = EditorApplication.isPlaying;
@@ -117,6 +125,265 @@ public sealed class StoryEventControllerEditor : Editor
         {
             EditorGUILayout.HelpBox("Play Event is available in Play Mode.", MessageType.None);
         }
+    }
+
+    private static void DrawActorBindingTools(StoryEventController controller)
+    {
+        EditorGUILayout.LabelField("Actor Binding Tools", EditorStyles.boldLabel);
+
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            if (GUILayout.Button("Copy Actor Bindings"))
+            {
+                CopyActorBindings(controller);
+            }
+
+            using (new EditorGUI.DisabledScope(copiedActorBindings.Count == 0))
+            {
+                if (GUILayout.Button("Paste"))
+                {
+                    PasteActorBindings(controller, "Paste Actor Bindings");
+                }
+            }
+        }
+
+        using (new EditorGUI.DisabledScope(copiedActorBindings.Count == 0))
+        {
+            if (GUILayout.Button("Paste To All Story Events In This Scene"))
+            {
+                PasteActorBindingsToScene(controller);
+            }
+        }
+
+        if (copiedActorBindings.Count > 0)
+        {
+            string source = string.IsNullOrWhiteSpace(copiedActorBindingsSourceName)
+                ? "unknown"
+                : copiedActorBindingsSourceName;
+            EditorGUILayout.HelpBox(
+                $"Copied {copiedActorBindings.Count} actor binding(s) from '{source}'.",
+                MessageType.None);
+        }
+    }
+
+    private static void CopyActorBindings(StoryEventController controller)
+    {
+        if (controller == null)
+        {
+            return;
+        }
+
+        var controllerObject = new SerializedObject(controller);
+        SerializedProperty bindingsProperty = controllerObject.FindProperty("actorBindings");
+        if (bindingsProperty == null || !bindingsProperty.isArray)
+        {
+            Debug.LogWarning("[StoryEventControllerEditor] actorBindings property was not found.", controller);
+            return;
+        }
+
+        copiedActorBindings.Clear();
+        for (int i = 0; i < bindingsProperty.arraySize; i++)
+        {
+            copiedActorBindings.Add(CopiedActorBinding.From(bindingsProperty.GetArrayElementAtIndex(i), controller));
+        }
+
+        copiedActorBindingsSourceName = controller.name;
+        Debug.Log(
+            $"[StoryEventControllerEditor] Copied {copiedActorBindings.Count} actor binding(s) from '{controller.name}'.",
+            controller);
+    }
+
+    private static void PasteActorBindingsToScene(StoryEventController sourceController)
+    {
+        if (sourceController == null || copiedActorBindings.Count == 0)
+        {
+            return;
+        }
+
+        Scene targetScene = sourceController.gameObject.scene;
+        StoryEventController[] controllers =
+            FindObjectsByType<StoryEventController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        var sceneControllers = new List<StoryEventController>();
+        for (int i = 0; i < controllers.Length; i++)
+        {
+            StoryEventController controller = controllers[i];
+            if (controller != null && controller.gameObject.scene == targetScene)
+            {
+                sceneControllers.Add(controller);
+            }
+        }
+
+        if (sceneControllers.Count == 0)
+        {
+            return;
+        }
+
+        bool confirmed = EditorUtility.DisplayDialog(
+            "Paste Actor Bindings",
+            $"Paste {copiedActorBindings.Count} actor binding(s) to {sceneControllers.Count} StoryEventController(s) in '{targetScene.name}'?",
+            "Paste",
+            "Cancel");
+        if (!confirmed)
+        {
+            return;
+        }
+
+        for (int i = 0; i < sceneControllers.Count; i++)
+        {
+            PasteActorBindings(sceneControllers[i], "Paste Actor Bindings To Scene Events");
+        }
+
+        Debug.Log(
+            $"[StoryEventControllerEditor] Pasted actor bindings to {sceneControllers.Count} StoryEventController(s) in scene '{targetScene.name}'.",
+            sourceController);
+    }
+
+    private static void PasteActorBindings(StoryEventController targetController, string undoName)
+    {
+        if (targetController == null || copiedActorBindings.Count == 0)
+        {
+            return;
+        }
+
+        Undo.RecordObject(targetController, undoName);
+
+        var controllerObject = new SerializedObject(targetController);
+        SerializedProperty bindingsProperty = controllerObject.FindProperty("actorBindings");
+        if (bindingsProperty == null || !bindingsProperty.isArray)
+        {
+            Debug.LogWarning("[StoryEventControllerEditor] actorBindings property was not found.", targetController);
+            return;
+        }
+
+        bindingsProperty.arraySize = copiedActorBindings.Count;
+        for (int i = 0; i < copiedActorBindings.Count; i++)
+        {
+            CopiedActorBinding copied = copiedActorBindings[i];
+            SerializedProperty bindingProperty = bindingsProperty.GetArrayElementAtIndex(i);
+
+            bindingProperty.FindPropertyRelative("actorKey").stringValue = copied.ActorKey;
+            bindingProperty.FindPropertyRelative("displayName").stringValue = copied.DisplayName;
+            bindingProperty.FindPropertyRelative("actorRoot").objectReferenceValue =
+                ResolveCopiedTransform(copied.ActorRoot, targetController);
+            bindingProperty.FindPropertyRelative("bubbleTarget").objectReferenceValue =
+                ResolveCopiedTransform(copied.BubbleTarget, targetController);
+            bindingProperty.FindPropertyRelative("bubbleOffset").vector3Value = copied.BubbleOffset;
+        }
+
+        controllerObject.ApplyModifiedProperties();
+        EditorUtility.SetDirty(targetController);
+        EditorSceneManager.MarkSceneDirty(targetController.gameObject.scene);
+    }
+
+    private static Transform ResolveCopiedTransform(CopiedTransform copiedTransform, StoryEventController targetController)
+    {
+        if (targetController == null || copiedTransform == null || copiedTransform.IsEmpty)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrEmpty(copiedTransform.ControllerRelativePath))
+        {
+            Transform relativeTransform = targetController.transform.Find(copiedTransform.ControllerRelativePath);
+            if (relativeTransform != null)
+            {
+                return relativeTransform;
+            }
+        }
+        else if (copiedTransform.WasControllerRoot)
+        {
+            return targetController.transform;
+        }
+
+        Transform pathTransform = FindTransformByScenePath(targetController.gameObject.scene, copiedTransform.ScenePath);
+        if (pathTransform != null)
+        {
+            return pathTransform;
+        }
+
+        return FindTransformByName(targetController.gameObject.scene, copiedTransform.Name);
+    }
+
+    private static Transform FindTransformByScenePath(Scene scene, string scenePath)
+    {
+        if (!scene.IsValid() || string.IsNullOrWhiteSpace(scenePath))
+        {
+            return null;
+        }
+
+        string[] names = scenePath.Split('/');
+        if (names.Length == 0)
+        {
+            return null;
+        }
+
+        GameObject[] roots = scene.GetRootGameObjects();
+        for (int i = 0; i < roots.Length; i++)
+        {
+            GameObject root = roots[i];
+            if (root == null || root.name != names[0])
+            {
+                continue;
+            }
+
+            Transform current = root.transform;
+            for (int nameIndex = 1; nameIndex < names.Length && current != null; nameIndex++)
+            {
+                current = current.Find(names[nameIndex]);
+            }
+
+            if (current != null)
+            {
+                return current;
+            }
+        }
+
+        return null;
+    }
+
+    private static Transform FindTransformByName(Scene scene, string transformName)
+    {
+        if (!scene.IsValid() || string.IsNullOrWhiteSpace(transformName))
+        {
+            return null;
+        }
+
+        GameObject[] roots = scene.GetRootGameObjects();
+        for (int i = 0; i < roots.Length; i++)
+        {
+            Transform result = FindTransformByNameRecursive(roots[i].transform, transformName);
+            if (result != null)
+            {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    private static Transform FindTransformByNameRecursive(Transform current, string transformName)
+    {
+        if (current == null)
+        {
+            return null;
+        }
+
+        if (current.name == transformName)
+        {
+            return current;
+        }
+
+        for (int i = 0; i < current.childCount; i++)
+        {
+            Transform result = FindTransformByNameRecursive(current.GetChild(i), transformName);
+            if (result != null)
+            {
+                return result;
+            }
+        }
+
+        return null;
     }
 
     private static List<string> BuildWarnings(StoryEventController controller)
@@ -218,6 +485,97 @@ public sealed class StoryEventControllerEditor : Editor
 
         Selection.activeObject = markerObject;
         EditorSceneManager.MarkSceneDirty(controller.gameObject.scene);
+    }
+
+    private sealed class CopiedActorBinding
+    {
+        public string ActorKey { get; private set; }
+        public string DisplayName { get; private set; }
+        public CopiedTransform ActorRoot { get; private set; }
+        public CopiedTransform BubbleTarget { get; private set; }
+        public Vector3 BubbleOffset { get; private set; }
+
+        public static CopiedActorBinding From(SerializedProperty bindingProperty, StoryEventController sourceController)
+        {
+            return new CopiedActorBinding
+            {
+                ActorKey = bindingProperty.FindPropertyRelative("actorKey").stringValue,
+                DisplayName = bindingProperty.FindPropertyRelative("displayName").stringValue,
+                ActorRoot = CopiedTransform.From(
+                    bindingProperty.FindPropertyRelative("actorRoot").objectReferenceValue as Transform,
+                    sourceController),
+                BubbleTarget = CopiedTransform.From(
+                    bindingProperty.FindPropertyRelative("bubbleTarget").objectReferenceValue as Transform,
+                    sourceController),
+                BubbleOffset = bindingProperty.FindPropertyRelative("bubbleOffset").vector3Value
+            };
+        }
+    }
+
+    private sealed class CopiedTransform
+    {
+        public string Name { get; private set; }
+        public string ScenePath { get; private set; }
+        public string ControllerRelativePath { get; private set; }
+        public bool WasControllerRoot { get; private set; }
+        public bool IsEmpty => string.IsNullOrWhiteSpace(Name) &&
+                               string.IsNullOrWhiteSpace(ScenePath) &&
+                               string.IsNullOrWhiteSpace(ControllerRelativePath) &&
+                               !WasControllerRoot;
+
+        public static CopiedTransform From(Transform transform, StoryEventController sourceController)
+        {
+            if (transform == null)
+            {
+                return new CopiedTransform();
+            }
+
+            return new CopiedTransform
+            {
+                Name = transform.name,
+                ScenePath = GetScenePath(transform),
+                ControllerRelativePath = GetControllerRelativePath(transform, sourceController),
+                WasControllerRoot = sourceController != null && transform == sourceController.transform
+            };
+        }
+
+        private static string GetScenePath(Transform transform)
+        {
+            var names = new List<string>();
+            Transform current = transform;
+            while (current != null)
+            {
+                names.Add(current.name);
+                current = current.parent;
+            }
+
+            names.Reverse();
+            return string.Join("/", names);
+        }
+
+        private static string GetControllerRelativePath(Transform transform, StoryEventController sourceController)
+        {
+            if (sourceController == null || transform == null || !transform.IsChildOf(sourceController.transform))
+            {
+                return string.Empty;
+            }
+
+            if (transform == sourceController.transform)
+            {
+                return string.Empty;
+            }
+
+            var names = new List<string>();
+            Transform current = transform;
+            while (current != null && current != sourceController.transform)
+            {
+                names.Add(current.name);
+                current = current.parent;
+            }
+
+            names.Reverse();
+            return string.Join("/", names);
+        }
     }
 }
 
