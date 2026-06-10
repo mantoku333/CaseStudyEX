@@ -1,6 +1,8 @@
 ﻿using Metroidvania.Data;
+using System.Collections;
 using Player;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ItemPickup : MonoBehaviour, ISaveDataModule
 {
@@ -9,6 +11,14 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
 
     [Header("Debug")]
     [SerializeField] private bool equipOnPickupForDebug;
+
+    [Header("Equipment Pickup Notification")]
+    [SerializeField] private Sprite equipmentPickupNotificationSprite;
+    [SerializeField] private Vector2 equipmentPickupNotificationSize = new Vector2(512f, 130f);
+    [SerializeField] private Vector2 equipmentPickupNotificationBottomLeftOffset = new Vector2(32f, 32f);
+    [SerializeField, Min(0f)] private float equipmentPickupNotificationSlideInDuration = 0.45f;
+    [SerializeField, Min(0f)] private float equipmentPickupNotificationHoldSeconds = 1.2f;
+    [SerializeField, Min(0f)] private float equipmentPickupNotificationSlideOutDuration = 0.35f;
 
     //--------------状態関連------------------
     private bool isPickedUp = false;
@@ -94,6 +104,7 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
         }
 
         Debug.Log($"{itemData.itemName} を取得しました！");
+        PlayEquipmentPickupNotification();
 
         CompletePickup(playerHealth);
     }
@@ -256,6 +267,22 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
         Destroy(gameObject);
     }
 
+    private void PlayEquipmentPickupNotification()
+    {
+        if (itemData == null || itemData.itemType != ItemType.Equipment || equipmentPickupNotificationSprite == null)
+        {
+            return;
+        }
+
+        EquipmentPickupNotificationPlayer.Play(
+            equipmentPickupNotificationSprite,
+            equipmentPickupNotificationSize,
+            equipmentPickupNotificationBottomLeftOffset,
+            equipmentPickupNotificationSlideInDuration,
+            equipmentPickupNotificationHoldSeconds,
+            equipmentPickupNotificationSlideOutDuration);
+    }
+
     public void Capture(SaveGameData saveData)
     {
     }
@@ -265,6 +292,123 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
         if (IsAlreadyPickedUp())
         {
             Destroy(gameObject);
+        }
+    }
+
+    private sealed class EquipmentPickupNotificationPlayer : MonoBehaviour
+    {
+        private Sprite notificationSprite;
+        private Vector2 notificationSize;
+        private Vector2 bottomLeftOffset;
+        private float slideInDuration;
+        private float holdSeconds;
+        private float slideOutDuration;
+        private RectTransform notificationRect;
+        private CanvasGroup canvasGroup;
+        private Image notificationImage;
+
+        public static void Play(
+            Sprite sprite,
+            Vector2 size,
+            Vector2 offset,
+            float slideIn,
+            float hold,
+            float slideOut)
+        {
+            if (sprite == null)
+            {
+                return;
+            }
+
+            GameObject playerObject = new GameObject("EquipmentPickupNotification");
+            EquipmentPickupNotificationPlayer player = playerObject.AddComponent<EquipmentPickupNotificationPlayer>();
+            player.notificationSprite = sprite;
+            player.notificationSize = size;
+            player.bottomLeftOffset = offset;
+            player.slideInDuration = slideIn;
+            player.holdSeconds = hold;
+            player.slideOutDuration = slideOut;
+            player.StartCoroutine(player.PlayRoutine());
+        }
+
+        private IEnumerator PlayRoutine()
+        {
+            EnsureNotification();
+
+            Vector2 shownPosition = bottomLeftOffset;
+            Vector2 hiddenPosition = new Vector2(
+                -Mathf.Max(1f, notificationSize.x) - 32f,
+                shownPosition.y);
+
+            canvasGroup.alpha = 1f;
+            notificationRect.anchoredPosition = hiddenPosition;
+            notificationImage.enabled = true;
+
+            yield return MoveNotification(hiddenPosition, shownPosition, slideInDuration);
+
+            if (holdSeconds > 0f)
+            {
+                yield return new WaitForSecondsRealtime(holdSeconds);
+            }
+
+            yield return MoveNotification(shownPosition, hiddenPosition, slideOutDuration);
+            Destroy(gameObject);
+        }
+
+        private void EnsureNotification()
+        {
+            Canvas canvas = gameObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 10000;
+
+            CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            canvasGroup.alpha = 0f;
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+
+            GameObject imageObject = new GameObject("EquipmentPickupNotificationImage");
+            imageObject.transform.SetParent(transform, false);
+
+            notificationRect = imageObject.AddComponent<RectTransform>();
+            notificationRect.anchorMin = Vector2.zero;
+            notificationRect.anchorMax = Vector2.zero;
+            notificationRect.pivot = Vector2.zero;
+            notificationRect.sizeDelta = notificationSize;
+
+            notificationImage = imageObject.AddComponent<Image>();
+            notificationImage.raycastTarget = false;
+            notificationImage.preserveAspect = true;
+            notificationImage.sprite = notificationSprite;
+        }
+
+        private IEnumerator MoveNotification(Vector2 from, Vector2 to, float duration)
+        {
+            if (duration <= 0f)
+            {
+                notificationRect.anchoredPosition = to;
+                yield break;
+            }
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                notificationRect.anchoredPosition = Vector2.LerpUnclamped(from, to, SmootherStep(t));
+                yield return null;
+            }
+
+            notificationRect.anchoredPosition = to;
+        }
+
+        private static float SmootherStep(float t)
+        {
+            return t * t * t * (t * (t * 6f - 15f) + 10f);
         }
     }
 }

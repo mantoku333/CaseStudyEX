@@ -23,6 +23,8 @@ public sealed class MinimapManager : MonoBehaviour
 
     public static MinimapManager Instance { get; private set; }
 
+    public static System.Action MapKeyRequested;
+
     public event Action Changed;
 
     public IReadOnlyList<MinimapRoomDefinition> RoomDefinitions => roomDefinitions;
@@ -52,7 +54,10 @@ public sealed class MinimapManager : MonoBehaviour
     {
         if (WasFullMapKeyPressed())
         {
-            view.ToggleFullMap();
+            if (MapKeyRequested != null)
+                MapKeyRequested.Invoke();
+            else
+                view.ToggleFullMap();
         }
     }
 
@@ -451,7 +456,8 @@ public sealed class MinimapManager : MonoBehaviour
         view = GetComponent<MinimapView>();
         if (view == null)
         {
-            view = gameObject.AddComponent<MinimapView>();
+            Debug.LogError("[MinimapManager] MinimapView component is missing. Please attach MinimapView to the same GameObject.", this);
+            return;
         }
 
         view.Initialize(this);

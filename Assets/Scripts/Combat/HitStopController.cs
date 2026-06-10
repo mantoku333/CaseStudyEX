@@ -5,12 +5,13 @@ using UnityEngine;
 public sealed class HitStopController : MonoBehaviour
 {
     private const float DefaultDuration = 0.15f;
+    private const float PlayerToEnemyDelay = 0.05f;
 
     private static HitStopController instance;
     private static int externalPauseDepth;
 
-    [SerializeField, Min(0f)] private float defaultDuration = DefaultDuration;
-    [SerializeField, Min(0f)] private float playerToEnemyDelay = 0.05f;
+    [SerializeField, Min(0f)] private float normalParryDuration = 0.2f;
+    [SerializeField, Min(0f)] private float justParryDuration = 0.35f;
 
     private Coroutine activeRoutine;
     private Coroutine delayedRoutine;
@@ -29,7 +30,7 @@ public sealed class HitStopController : MonoBehaviour
     public static void RequestPlayerToEnemy()
     {
         HitStopController controller = EnsureInstance();
-        controller.RequestInternal(controller.defaultDuration, controller.playerToEnemyDelay);
+        controller.RequestInternal(DefaultDuration, PlayerToEnemyDelay);
     }
 
     public static void RequestEnemyToPlayer()
@@ -40,6 +41,18 @@ public sealed class HitStopController : MonoBehaviour
     public static void RequestParry()
     {
         RequestDefault();
+    }
+
+    public static void RequestNormalParry()
+    {
+        HitStopController controller = EnsureInstance();
+        controller.RequestInternal(controller.normalParryDuration, 0f);
+    }
+
+    public static void RequestJustParry()
+    {
+        HitStopController controller = EnsureInstance();
+        controller.RequestInternal(controller.justParryDuration, 0f);
     }
 
     public static void Request(float duration)
@@ -70,7 +83,7 @@ public sealed class HitStopController : MonoBehaviour
     private static void RequestDefault()
     {
         HitStopController controller = EnsureInstance();
-        controller.RequestInternal(controller.defaultDuration, 0f);
+        controller.RequestInternal(DefaultDuration, 0f);
     }
 
     private static HitStopController EnsureInstance()
