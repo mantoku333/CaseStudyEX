@@ -44,12 +44,10 @@ public class TitleSceneController : MonoBehaviour
             loadConfirmPanel.SetActive(false);
         }
 
-        ResolveContinueButtonReference();
+        ResolveButtonReferences();
 
         if (continueButton != null)
         {
-            continueButton.onClick.RemoveListener(OnClickContinueButton);
-            continueButton.onClick.AddListener(OnClickContinueButton);
             continueButton.interactable = SaveManager.HasAnySave();
         }
     }
@@ -112,18 +110,51 @@ public class TitleSceneController : MonoBehaviour
 #endif
     }
 
-    private void ResolveContinueButtonReference()
+    private void ResolveButtonReferences()
     {
-        if (continueButton != null)
+        if (continueButton == null)
         {
-            return;
+            var obj = GameObject.Find("Btn_Countinue");
+            if (obj != null)
+            {
+                continueButton = obj.GetComponent<Button>();
+            }
         }
 
-        var continueObject = GameObject.Find("Btn_Countinue");
-        if (continueObject != null)
+        if (noButton == null && quitConfirmPanel != null)
         {
-            continueButton = continueObject.GetComponent<Button>();
+            noButton = FindButtonInChildren(quitConfirmPanel.transform, "Btn_NO");
         }
+
+        if (yesButton == null && quitConfirmPanel != null)
+        {
+            yesButton = FindButtonInChildren(quitConfirmPanel.transform, "Btn_YES");
+        }
+    }
+
+    private static Button FindButtonInChildren(Transform root, string name)
+    {
+        Transform found = FindTransformInChildren(root, name);
+        return found != null ? found.GetComponent<Button>() : null;
+    }
+
+    private static Transform FindTransformInChildren(Transform root, string name)
+    {
+        if (root.name == name)
+        {
+            return root;
+        }
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform match = FindTransformInChildren(root.GetChild(i), name);
+            if (match != null)
+            {
+                return match;
+            }
+        }
+
+        return null;
     }
 
     private void ShowSaveListPanel()
