@@ -7,8 +7,13 @@ namespace GameName.Enemy
     public sealed class LastBossBladeVisual : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer targetRenderer;
+        [SerializeField] private string visualChildName = "BladeEffectVisual";
 
         private GridSpriteSheetPlayer player;
+        private Transform visualTransform;
+        private SpriteRenderer rootRenderer;
+
+        public SpriteRenderer Renderer => targetRenderer;
 
         private void Awake()
         {
@@ -122,27 +127,77 @@ namespace GameName.Enemy
 
         private void CacheComponents()
         {
-            if (targetRenderer == null)
+            if (rootRenderer == null)
             {
-                targetRenderer = GetComponent<SpriteRenderer>();
+                rootRenderer = GetComponent<SpriteRenderer>();
+            }
+
+            EnsureVisualTransform();
+
+            if (targetRenderer == null || targetRenderer.transform == transform)
+            {
+                targetRenderer = visualTransform.GetComponent<SpriteRenderer>();
             }
 
             if (targetRenderer == null)
             {
-                targetRenderer = gameObject.AddComponent<SpriteRenderer>();
+                targetRenderer = visualTransform.gameObject.AddComponent<SpriteRenderer>();
+            }
+
+            if (player == null || player.transform != visualTransform)
+            {
+                player = visualTransform.GetComponent<GridSpriteSheetPlayer>();
             }
 
             if (player == null)
             {
-                player = GetComponent<GridSpriteSheetPlayer>();
+                player = visualTransform.gameObject.AddComponent<GridSpriteSheetPlayer>();
             }
 
-            if (player == null)
-            {
-                player = gameObject.AddComponent<GridSpriteSheetPlayer>();
-            }
-
+            ApplyRootRendererSettings();
             player.ConfigureRenderer(targetRenderer);
+        }
+
+        private void EnsureVisualTransform()
+        {
+            if (visualTransform != null)
+            {
+                return;
+            }
+
+            if (targetRenderer != null && targetRenderer.transform != transform)
+            {
+                visualTransform = targetRenderer.transform;
+                return;
+            }
+
+            Transform existingChild = transform.Find(visualChildName);
+            if (existingChild != null)
+            {
+                visualTransform = existingChild;
+                return;
+            }
+
+            GameObject visualObject = new GameObject(visualChildName);
+            visualTransform = visualObject.transform;
+            visualTransform.SetParent(transform, false);
+            visualTransform.localPosition = Vector3.zero;
+            visualTransform.localRotation = Quaternion.identity;
+            visualTransform.localScale = Vector3.one;
+        }
+
+        private void ApplyRootRendererSettings()
+        {
+            if (rootRenderer == null || targetRenderer == null || rootRenderer == targetRenderer)
+            {
+                return;
+            }
+
+            targetRenderer.sortingLayerID = rootRenderer.sortingLayerID;
+            targetRenderer.sortingOrder = rootRenderer.sortingOrder;
+            targetRenderer.sharedMaterial = rootRenderer.sharedMaterial;
+            targetRenderer.color = rootRenderer.color;
+            rootRenderer.enabled = false;
         }
     }
 }

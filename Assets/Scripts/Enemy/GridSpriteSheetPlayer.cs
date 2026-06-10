@@ -17,6 +17,10 @@ namespace GameName.Enemy
         public float FramesPerSecond;
         public float PixelsPerUnit;
         public Vector2 Pivot;
+        public int CenteredCropInsetPixels;
+        public bool UseFrameCrop;
+        public RectInt FrameCropPixels;
+        public Vector2Int FrameCropReferencePixels;
 
         public bool IsValid =>
             SpriteSheet != null &&
@@ -46,6 +50,7 @@ namespace GameName.Enemy
                 return Array.Empty<Sprite>();
             }
 
+            RectInt crop = ResolveFrameCrop(clip, frameWidth, frameHeight);
             int maxFrameCount = Mathf.Min(clip.FrameCount, clip.Columns * clip.Rows);
             Sprite[] frames = new Sprite[maxFrameCount];
             int index = 0;
@@ -56,7 +61,11 @@ namespace GameName.Enemy
 
                 for (int column = 0; column < clip.Columns && index < maxFrameCount; column++)
                 {
-                    Rect rect = new Rect(column * frameWidth, y, frameWidth, frameHeight);
+                    Rect rect = new Rect(
+                        column * frameWidth + crop.x,
+                        y + crop.y,
+                        crop.width,
+                        crop.height);
                     Sprite sprite = Sprite.Create(
                         clip.SpriteSheet,
                         rect,
@@ -71,6 +80,47 @@ namespace GameName.Enemy
             }
 
             return frames;
+        }
+
+        private static RectInt ResolveFrameCrop(GridSpriteSheetClip clip, int frameWidth, int frameHeight)
+        {
+            if (clip.UseFrameCrop)
+            {
+                RectInt frameCrop = ScaleFrameCrop(clip.FrameCropPixels, clip.FrameCropReferencePixels, frameWidth, frameHeight);
+                int cropX = Mathf.Clamp(frameCrop.x, 0, Mathf.Max(0, frameWidth - 1));
+                int cropY = Mathf.Clamp(frameCrop.y, 0, Mathf.Max(0, frameHeight - 1));
+                int cropWidth = Mathf.Clamp(frameCrop.width, 1, frameWidth - cropX);
+                int cropHeight = Mathf.Clamp(frameCrop.height, 1, frameHeight - cropY);
+                return new RectInt(cropX, cropY, cropWidth, cropHeight);
+            }
+
+            int maxInset = Mathf.Max(0, (Mathf.Min(frameWidth, frameHeight) - 1) / 2);
+            int inset = Mathf.Clamp(clip.CenteredCropInsetPixels, 0, maxInset);
+            return new RectInt(
+                inset,
+                inset,
+                frameWidth - (inset * 2),
+                frameHeight - (inset * 2));
+        }
+
+        private static RectInt ScaleFrameCrop(
+            RectInt crop,
+            Vector2Int referenceSize,
+            int frameWidth,
+            int frameHeight)
+        {
+            if (referenceSize.x <= 0 || referenceSize.y <= 0)
+            {
+                return crop;
+            }
+
+            float scaleX = frameWidth / (float)referenceSize.x;
+            float scaleY = frameHeight / (float)referenceSize.y;
+            return new RectInt(
+                Mathf.RoundToInt(crop.x * scaleX),
+                Mathf.RoundToInt(crop.y * scaleY),
+                Mathf.Max(1, Mathf.RoundToInt(crop.width * scaleX)),
+                Mathf.Max(1, Mathf.RoundToInt(crop.height * scaleY)));
         }
 
         public static void DestroyGeneratedSprites(IList<Sprite> generatedSprites)
@@ -473,9 +523,13 @@ namespace GameName.Enemy
                 return;
             }
 
+            Vector3 parentScale = transform.parent != null ? transform.parent.lossyScale : Vector3.one;
+            float parentScaleX = Mathf.Max(0.001f, Mathf.Abs(parentScale.x));
+            float parentScaleY = Mathf.Max(0.001f, Mathf.Abs(parentScale.y));
+
             transform.localScale = new Vector3(
-                targetWorldSize.x / spriteSize.x,
-                targetWorldSize.y / spriteSize.y,
+                targetWorldSize.x / (spriteSize.x * parentScaleX),
+                targetWorldSize.y / (spriteSize.y * parentScaleY),
                 transform.localScale.z == 0f ? 1f : transform.localScale.z);
         }
 

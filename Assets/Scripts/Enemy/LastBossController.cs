@@ -40,6 +40,7 @@ namespace GameName.Enemy
         [Header("Normal Attack")]
         [SerializeField, Min(1)] private int normalAttackDamage = 10;
         [SerializeField] private Vector2 normalAttackSize = new Vector2(4f, 4f);
+        [SerializeField, Min(0f)] private float normalAttackForwardInset = 2f;
         [SerializeField, Min(0.01f)] private float normalAttackVisibleTime = 0.16f;
         [SerializeField, Min(0f)] private float normalAttackRecovery = 0.45f;
 
@@ -190,6 +191,8 @@ namespace GameName.Enemy
             bodyCollider = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             effectController = GetComponent<LastBossEffectController>();
+            InitializeFacingDirectionFromSprite();
+            effectController?.SetFacingDirection(facingDirection);
             currentHealth = MaxHealth;
 
             if (spriteRenderer != null)
@@ -205,6 +208,14 @@ namespace GameName.Enemy
             BuildPlayerContactFilter();
             ConfigureRigidbody();
             EnsureVisualObjects();
+        }
+
+        private void InitializeFacingDirectionFromSprite()
+        {
+            if (spriteRenderer != null)
+            {
+                facingDirection = spriteRenderer.flipX ? 1 : -1;
+            }
         }
 
         private void Start()
@@ -223,6 +234,7 @@ namespace GameName.Enemy
             backAttackDamageMultiplier = Mathf.Max(1f, backAttackDamageMultiplier);
             normalAttackSize.x = Mathf.Max(0.1f, normalAttackSize.x);
             normalAttackSize.y = Mathf.Max(0.1f, normalAttackSize.y);
+            normalAttackForwardInset = Mathf.Max(0f, normalAttackForwardInset);
             horizontalAttackSize.x = Mathf.Max(0.1f, horizontalAttackSize.x);
             horizontalAttackSize.y = Mathf.Max(0.1f, horizontalAttackSize.y);
             horizontalGroundBladeSweepSpeed = Mathf.Max(0.1f, horizontalGroundBladeSweepSpeed);
@@ -347,6 +359,7 @@ namespace GameName.Enemy
             HideAttackVisual();
             SetBossRenderersEnabled(true);
             RestoreCombatBodyAfterReset();
+            effectController?.SetFacingDirection(facingDirection);
             effectController?.HandleEncounterStarted();
         }
 
@@ -762,7 +775,7 @@ namespace GameName.Enemy
                             groundVisualClip,
                             effectController.GroundBladeUprightFrameIndex,
                             i,
-                            effectController.GroundBladeVisualSizeMultiplier);
+                            effectController.GroundBladeVisualFrameSizeMultiplier);
                     }
 
                     blade.InitializeGround(
@@ -931,7 +944,7 @@ namespace GameName.Enemy
                         blade.ConfigureRainVisual(
                             rainInClip,
                             rainOutClip,
-                            effectController.RainBladeVisualSizeMultiplier);
+                            effectController.RainBladeVisualFrameSizeMultiplier);
                     }
                 }
 
@@ -1023,7 +1036,7 @@ namespace GameName.Enemy
                 attackBox,
                 out _,
                 out _);
-            effectController.BeginHorizontalRangeCharge(footPositions);
+            effectController.BeginHorizontalRangeCharge(footPositions, ResolveGroundBladePrefabWidth());
         }
 
         private List<Vector2> BuildGroundBladeFootPositions(
@@ -1585,6 +1598,7 @@ namespace GameName.Enemy
             }
 
             facingDirection = signedDistance >= 0f ? 1 : -1;
+            effectController?.SetFacingDirection(facingDirection);
             Vector2 velocity = rb2D.linearVelocity;
             velocity.x = facingDirection * moveSpeed;
             rb2D.linearVelocity = velocity;
@@ -1640,7 +1654,12 @@ namespace GameName.Enemy
             }
 
             Vector2 size = action == BossAction.Horizontal ? horizontalAttackSize : normalAttackSize;
-            float centerX = bounds.center.x + facingDirection * (bounds.extents.x + size.x * 0.5f);
+            float forwardInset = action == BossAction.Normal
+                ? Mathf.Min(
+                    Mathf.Max(0f, normalAttackForwardInset),
+                    Mathf.Max(0f, bounds.extents.x + size.x * 0.5f - 0.05f))
+                : 0f;
+            float centerX = bounds.center.x + facingDirection * (bounds.extents.x + size.x * 0.5f - forwardInset);
             return new AttackBox(new Vector2(centerX, bounds.center.y), size, 0f);
         }
 
@@ -1701,6 +1720,8 @@ namespace GameName.Enemy
             {
                 spriteRenderer.flipX = facingDirection > 0;
             }
+
+            effectController?.SetFacingDirection(facingDirection);
         }
 
         private bool CanTurnTowardPlayer()
@@ -1853,6 +1874,7 @@ namespace GameName.Enemy
             HideAttackVisual();
             RestoreCombatBodyAfterReset();
             SetBossRenderersEnabled(true);
+            effectController?.SetFacingDirection(facingDirection);
             effectController?.HandleResetToFull();
             currentHealth = MaxHealth;
             NotifyHealthChanged();

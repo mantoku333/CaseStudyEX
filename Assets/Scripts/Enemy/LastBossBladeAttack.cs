@@ -30,13 +30,15 @@ namespace GameName.Enemy
         private GridSpriteSheetClip groundVisualClip;
         private GridSpriteSheetClip rainInVisualClip;
         private GridSpriteSheetClip rainOutVisualClip;
+        private Vector2 groundVisualWorldSize;
+        private Vector2 rainVisualWorldSize;
         private int damage = 1;
         private int groundVisualUprightFrameIndex;
         private int groundVisualSlotIndex = -1;
         private float rainFallSpeed = 8f;
         private float rainGroundDestroyDelay = 0.3f;
-        private float groundVisualSizeMultiplier = 1f;
-        private float rainVisualSizeMultiplier = 1f;
+        private Vector2 groundVisualFrameSizeMultiplier = Vector2.one;
+        private Vector2 rainVisualFrameSizeMultiplier = Vector2.one;
         [SerializeField] private float rainAimRotationOffsetDegrees = 180f;
         private bool initialized;
         private bool canDamage;
@@ -99,13 +101,14 @@ namespace GameName.Enemy
             GridSpriteSheetClip clip,
             int uprightFrameIndex,
             int slotIndex,
-            float sizeMultiplier)
+            Vector2 frameSizeMultiplier)
         {
             groundVisualClip = clip;
             groundVisualUprightFrameIndex = Mathf.Max(0, uprightFrameIndex);
             groundVisualSlotIndex = slotIndex;
-            groundVisualSizeMultiplier = Mathf.Max(0.01f, sizeMultiplier);
+            groundVisualFrameSizeMultiplier = SanitizeFrameSizeMultiplier(frameSizeMultiplier);
             useGroundVisual = clip.IsValid;
+            groundVisualWorldSize = Vector2.Scale(ResolveBladeWorldSize(), groundVisualFrameSizeMultiplier);
 
             if (useGroundVisual)
             {
@@ -116,12 +119,13 @@ namespace GameName.Enemy
         public void ConfigureRainVisual(
             GridSpriteSheetClip inClip,
             GridSpriteSheetClip outClip,
-            float sizeMultiplier)
+            Vector2 frameSizeMultiplier)
         {
             rainInVisualClip = inClip;
             rainOutVisualClip = outClip;
-            rainVisualSizeMultiplier = Mathf.Max(0.01f, sizeMultiplier);
+            rainVisualFrameSizeMultiplier = SanitizeFrameSizeMultiplier(frameSizeMultiplier);
             useRainVisual = inClip.IsValid;
+            rainVisualWorldSize = Vector2.Scale(ResolveBladeWorldSize(), rainVisualFrameSizeMultiplier);
 
             if (useRainVisual)
             {
@@ -191,7 +195,7 @@ namespace GameName.Enemy
             if (useRainVisual)
             {
                 EnsureBladeVisual();
-                bladeVisual.PlayRainIn(rainInVisualClip, ResolveBladeWorldSize() * rainVisualSizeMultiplier);
+                bladeVisual.PlayRainIn(rainInVisualClip, ResolveCachedVisualWorldSize(rainVisualWorldSize));
             }
         }
 
@@ -328,7 +332,7 @@ namespace GameName.Enemy
                 {
                     bladeVisual.PlayRainOut(
                         rainOutVisualClip,
-                        ResolveBladeWorldSize() * rainVisualSizeMultiplier,
+                        ResolveCachedVisualWorldSize(rainVisualWorldSize),
                         DestroySelf);
                     return;
                 }
@@ -428,7 +432,7 @@ namespace GameName.Enemy
             return bladeVisual.PlayGround(
                 groundVisualClip,
                 groundVisualUprightFrameIndex,
-                ResolveBladeWorldSize() * groundVisualSizeMultiplier,
+                ResolveCachedVisualWorldSize(groundVisualWorldSize),
                 () =>
                 {
                     EnableBladeDamage();
@@ -472,6 +476,23 @@ namespace GameName.Enemy
                 Mathf.Max(0.1f, Mathf.Abs(scale.y)));
         }
 
+        private Vector2 ResolveCachedVisualWorldSize(Vector2 cachedSize)
+        {
+            if (cachedSize.x > 0.001f && cachedSize.y > 0.001f)
+            {
+                return cachedSize;
+            }
+
+            return ResolveBladeWorldSize();
+        }
+
+        private static Vector2 SanitizeFrameSizeMultiplier(Vector2 multiplier)
+        {
+            return new Vector2(
+                Mathf.Max(0.01f, multiplier.x),
+                Mathf.Max(0.01f, multiplier.y));
+        }
+
         private void EnsureBladeVisual()
         {
             if (bladeVisual == null)
@@ -483,6 +504,8 @@ namespace GameName.Enemy
             {
                 bladeVisual = gameObject.AddComponent<LastBossBladeVisual>();
             }
+
+            CacheSpriteRenderers();
         }
 
         private void CacheSpriteRenderers()

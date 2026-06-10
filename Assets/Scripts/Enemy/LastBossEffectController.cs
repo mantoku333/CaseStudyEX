@@ -8,6 +8,15 @@ namespace GameName.Enemy
     [DisallowMultipleComponent]
     public sealed class LastBossEffectController : MonoBehaviour
     {
+        private static readonly Vector2Int LargeFrameReferencePixels = new Vector2Int(1024, 1024);
+        private static readonly Vector2Int RangeFrameReferencePixels = new Vector2Int(512, 512);
+        private static readonly RectInt RangeFrameCropPixels = new RectInt(98, 0, 316, 214);
+        private static readonly RectInt GroundBladeFrameCropPixels = new RectInt(418, 0, 187, 1009);
+        private static readonly RectInt RainBladeFrameCropPixels = new RectInt(405, 20, 217, 995);
+        private static readonly RectInt ShieldInFrameCropPixels = new RectInt(97, 97, 830, 830);
+        private static readonly RectInt ShieldLoopFrameCropPixels = new RectInt(94, 94, 836, 836);
+        private static readonly RectInt DeathFrameCropPixels = new RectInt(20, 20, 984, 984);
+
         [Header("Sprite Sheets")]
         [SerializeField] private Texture2D shieldInSpriteSheet;
         [SerializeField] private Texture2D shieldLoopSpriteSheet;
@@ -37,6 +46,7 @@ namespace GameName.Enemy
         [SerializeField] private Vector3 shieldBreakOffset;
         [SerializeField] private Vector3 deathOffset;
         [SerializeField, Min(0.01f)] private float auraSizeMultiplier = 1.35f;
+        [SerializeField, Min(0f)] private float auraFacingPush = 0.35f;
         [SerializeField, Min(0.01f)] private float shieldSizeMultiplier = 1.35f;
         [SerializeField, Min(0.01f)] private float shieldBreakSizeMultiplier = 1.45f;
         [SerializeField, Min(0.01f)] private float deathSizeMultiplier = 1.8f;
@@ -44,12 +54,13 @@ namespace GameName.Enemy
         [Header("Attack Placement")]
         [SerializeField] private Vector3 slashOffset;
         [SerializeField, Min(0.01f)] private float slashSizeMultiplier = 1.1f;
-        [SerializeField] private Vector2 rangeEffectWorldSize = new Vector2(1.6f, 1.1f);
+        [SerializeField, Min(0.01f)] private float rangeEffectSizeMultiplier = 1f;
+        [SerializeField] private Vector2 rangeEffectFrameSizeMultiplier = Vector2.one;
         [SerializeField] private Vector3 rangeOffset;
         [SerializeField, Min(0.01f)] private float magicCircleBeyondSpawnDistance = 1.5f;
         [SerializeField] private Vector2 magicCircleWorldSize = new Vector2(4f, 4f);
-        [SerializeField, Min(0.01f)] private float groundBladeVisualSizeMultiplier = 1f;
-        [SerializeField, Min(0.01f)] private float rainBladeVisualSizeMultiplier = 1f;
+        [SerializeField] private Vector2 groundBladeVisualFrameSizeMultiplier = Vector2.one;
+        [SerializeField] private Vector2 rainBladeVisualFrameSizeMultiplier = Vector2.one;
 
         [Header("Sorting")]
         [SerializeField] private int auraSortingOrderOffset = -2;
@@ -74,17 +85,22 @@ namespace GameName.Enemy
         private GridSpriteSheetPlayer shieldPlayer;
         private GridSpriteSheetPlayer magicCirclePlayer;
         private Coroutine rangeSpawnRoutine;
+        private int facingDirection = 1;
+        private int magicCircleFacingDirection = 1;
+        private float horizontalRangeBladeWorldWidth = 1f;
         private bool shieldBrokenThisDown;
         private bool deathHideNotified;
 
+        public int FacingDirection => facingDirection;
         public int GroundBladeUprightFrameIndex => Mathf.Max(0, groundBladeUprightFrameIndex);
-        public float GroundBladeVisualSizeMultiplier => Mathf.Max(0.01f, groundBladeVisualSizeMultiplier);
-        public float RainBladeVisualSizeMultiplier => Mathf.Max(0.01f, rainBladeVisualSizeMultiplier);
+        public Vector2 GroundBladeVisualFrameSizeMultiplier => SanitizeVectorMultiplier(groundBladeVisualFrameSizeMultiplier);
+        public Vector2 RainBladeVisualFrameSizeMultiplier => SanitizeVectorMultiplier(rainBladeVisualFrameSizeMultiplier);
+        public float RangeEffectSizeMultiplier => Mathf.Max(0.01f, rangeEffectSizeMultiplier);
         public float GroundBladeClipDuration => GroundBladeClip.DurationSeconds;
 
-        public GridSpriteSheetClip GroundBladeClip => CreateClip(underAttackSpriteSheet, 5, 4, 20, new Vector2(0.5f, 0.5f));
-        public GridSpriteSheetClip RainBladeInClip => CreateClip(topAttackInSpriteSheet, 5, 5, 25, new Vector2(0.5f, 0.5f));
-        public GridSpriteSheetClip RainBladeOutClip => CreateClip(topAttackOutSpriteSheet, 5, 4, 20, new Vector2(0.5f, 0.5f));
+        public GridSpriteSheetClip GroundBladeClip => CreateClip(underAttackSpriteSheet, 5, 4, 20, new Vector2(0.5f, 0.5f), GroundBladeFrameCropPixels, LargeFrameReferencePixels);
+        public GridSpriteSheetClip RainBladeInClip => CreateClip(topAttackInSpriteSheet, 5, 5, 23, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
+        public GridSpriteSheetClip RainBladeOutClip => CreateClip(topAttackOutSpriteSheet, 5, 4, 20, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
 
         private void Awake()
         {
@@ -107,7 +123,7 @@ namespace GameName.Enemy
 
         private void LateUpdate()
         {
-            FollowBoss(auraObject, auraOffset);
+            FollowBoss(auraObject, ResolveAuraOffset());
             FollowBoss(shieldObject, shieldOffset);
             FollowBoss(shieldBreakObject, shieldBreakOffset);
             FollowBoss(deathObject, deathOffset);
@@ -127,9 +143,11 @@ namespace GameName.Enemy
             shieldBreakSizeMultiplier = Mathf.Max(0.01f, shieldBreakSizeMultiplier);
             deathSizeMultiplier = Mathf.Max(0.01f, deathSizeMultiplier);
             slashSizeMultiplier = Mathf.Max(0.01f, slashSizeMultiplier);
+            rangeEffectSizeMultiplier = Mathf.Max(0.01f, rangeEffectSizeMultiplier);
+            rangeEffectFrameSizeMultiplier = SanitizeVectorMultiplier(rangeEffectFrameSizeMultiplier);
             magicCircleBeyondSpawnDistance = Mathf.Max(0.01f, magicCircleBeyondSpawnDistance);
-            groundBladeVisualSizeMultiplier = Mathf.Max(0.01f, groundBladeVisualSizeMultiplier);
-            rainBladeVisualSizeMultiplier = Mathf.Max(0.01f, rainBladeVisualSizeMultiplier);
+            groundBladeVisualFrameSizeMultiplier = SanitizeVectorMultiplier(groundBladeVisualFrameSizeMultiplier);
+            rainBladeVisualFrameSizeMultiplier = SanitizeVectorMultiplier(rainBladeVisualFrameSizeMultiplier);
         }
 
         public void HandleEncounterStarted()
@@ -181,6 +199,17 @@ namespace GameName.Enemy
             PlayAuraLoop();
         }
 
+        public void SetFacingDirection(int direction)
+        {
+            facingDirection = direction < 0 ? -1 : 1;
+            FollowBoss(auraObject, ResolveAuraOffset());
+            FollowBoss(shieldObject, shieldOffset);
+            FollowBoss(shieldBreakObject, shieldBreakOffset);
+            FollowBoss(deathObject, deathOffset);
+            ApplyAuraFacing(auraObject);
+            ApplyMagicCircleFacing(magicCirclePlayer);
+        }
+
         public void PlayNormalSlash(Vector2 center, Vector2 size, float angle, int facingDirection)
         {
             GridSpriteSheetClip clip = CreateClip(slashSpriteSheet, 5, 6, 30, new Vector2(0.5f, 0.5f));
@@ -189,7 +218,9 @@ namespace GameName.Enemy
                 return;
             }
 
-            Vector3 position = new Vector3(center.x, center.y, transform.position.z) + slashOffset;
+            int slashFacingDirection = facingDirection < 0 ? -1 : 1;
+            Vector3 position = new Vector3(center.x, center.y, transform.position.z) +
+                               ResolveFacingOffset(slashOffset, slashFacingDirection);
             GridSpriteSheetPlayer player = CreateEffectPlayer(
                 "LastBossSlashEffect",
                 position,
@@ -203,7 +234,7 @@ namespace GameName.Enemy
             player.transform.rotation = Quaternion.Euler(0f, 0f, angle);
             if (player.Renderer != null)
             {
-                player.Renderer.flipX = facingDirection < 0;
+                player.Renderer.flipX = slashFacingDirection < 0;
             }
 
             GameObject effectObject = player.gameObject;
@@ -217,6 +248,11 @@ namespace GameName.Enemy
 
         public void BeginHorizontalRangeCharge(IReadOnlyList<Vector2> footPositions)
         {
+            BeginHorizontalRangeCharge(footPositions, 1f);
+        }
+
+        public void BeginHorizontalRangeCharge(IReadOnlyList<Vector2> footPositions, float groundBladeWorldWidth)
+        {
             StopHorizontalRangeEffects();
 
             if (footPositions == null || footPositions.Count == 0)
@@ -224,6 +260,7 @@ namespace GameName.Enemy
                 return;
             }
 
+            horizontalRangeBladeWorldWidth = Mathf.Max(0.1f, groundBladeWorldWidth);
             rangeSpawnRoutine = StartCoroutine(SpawnHorizontalRangeIndicators(footPositions));
         }
 
@@ -289,6 +326,7 @@ namespace GameName.Enemy
 
             magicCircleObject = magicCirclePlayer.gameObject;
             magicCircleObject.transform.rotation = Quaternion.identity;
+            UpdateMagicCircleFacing(groundLockPoint, rainSpawnPosition);
             magicCirclePlayer.Play(
                 clip,
                 loop: false,
@@ -305,6 +343,7 @@ namespace GameName.Enemy
 
             magicCircleObject.transform.position = ResolveMagicCirclePosition(groundLockPoint, rainSpawnPosition);
             magicCircleObject.transform.rotation = Quaternion.identity;
+            UpdateMagicCircleFacing(groundLockPoint, rainSpawnPosition);
         }
 
         public void EndVerticalRangeCharge()
@@ -335,6 +374,7 @@ namespace GameName.Enemy
 
             GameObject outObject = outPlayer.gameObject;
             outObject.transform.rotation = Quaternion.identity;
+            ApplyMagicCircleFacing(outPlayer);
             outPlayer.Play(
                 outClip,
                 loop: false,
@@ -345,7 +385,7 @@ namespace GameName.Enemy
 
         public bool PlayDeath(Action hideBossVisuals, Action completed)
         {
-            GridSpriteSheetClip clip = CreateClip(deathSpriteSheet, 5, 9, 45, new Vector2(0.5f, 0.5f));
+            GridSpriteSheetClip clip = CreateClip(deathSpriteSheet, 5, 9, 45, new Vector2(0.5f, 0.5f), DeathFrameCropPixels, LargeFrameReferencePixels);
             if (!clip.IsValid)
             {
                 return false;
@@ -361,7 +401,7 @@ namespace GameName.Enemy
 
             GridSpriteSheetPlayer deathPlayer = CreateEffectPlayer(
                 "LastBossDestroyEffect",
-                ResolveBossCenter() + deathOffset,
+                ResolveBossCenter() + ResolveFacingOffset(deathOffset),
                 ResolveBossSquareSize(deathSizeMultiplier),
                 deathSortingOrderOffset);
             if (deathPlayer == null)
@@ -414,7 +454,7 @@ namespace GameName.Enemy
 
         private IEnumerator SpawnHorizontalRangeIndicators(IReadOnlyList<Vector2> footPositions)
         {
-            GridSpriteSheetClip clip = CreateClip(rangeSpriteSheet, 10, 9, 90, new Vector2(0.5f, 0f));
+            GridSpriteSheetClip clip = CreateClip(rangeSpriteSheet, 10, 9, 90, new Vector2(0.5f, 0f), RangeFrameCropPixels, RangeFrameReferencePixels);
             if (!clip.IsValid)
             {
                 rangeSpawnRoutine = null;
@@ -428,11 +468,12 @@ namespace GameName.Enemy
                     rangeIndicators.Add(null);
                 }
 
-                Vector3 position = new Vector3(footPositions[i].x, footPositions[i].y, transform.position.z) + rangeOffset;
+                Vector3 position = new Vector3(footPositions[i].x, footPositions[i].y, transform.position.z) +
+                                   ResolveFacingOffset(rangeOffset);
                 GridSpriteSheetPlayer player = CreateEffectPlayer(
                     "LastBossRangeIndicator",
                     position,
-                    rangeEffectWorldSize,
+                    ResolveRangeIndicatorWorldSize(horizontalRangeBladeWorldWidth),
                     rangeSortingOrderOffset);
 
                 if (player != null)
@@ -499,7 +540,7 @@ namespace GameName.Enemy
 
             GridSpriteSheetPlayer player = CreateEffectPlayer(
                 "LastBossAuraEffect",
-                ResolveBossCenter() + auraOffset,
+                ResolveBossCenter() + ResolveFacingOffset(ResolveAuraOffset()),
                 ResolveBossSquareSize(auraSizeMultiplier),
                 auraSortingOrderOffset);
             if (player == null)
@@ -508,6 +549,7 @@ namespace GameName.Enemy
             }
 
             auraObject = player.gameObject;
+            ApplyAuraFacing(auraObject);
             player.Play(clip, loop: true, holdLast: false, hideOnComplete: false);
         }
 
@@ -519,8 +561,15 @@ namespace GameName.Enemy
 
         private void PlayShieldInThenLoop()
         {
-            GridSpriteSheetClip inClip = CreateClip(shieldInSpriteSheet, 5, 2, 10, new Vector2(0.5f, 0.5f));
-            GridSpriteSheetClip loopClip = CreateClip(shieldLoopSpriteSheet, 5, 12, 60, new Vector2(0.5f, 0.5f));
+            GridSpriteSheetClip inClip = CreateClip(shieldInSpriteSheet, 5, 2, 10, new Vector2(0.5f, 0.5f), ShieldInFrameCropPixels, LargeFrameReferencePixels);
+            GridSpriteSheetClip loopClip = CreateClip(
+                shieldLoopSpriteSheet,
+                5,
+                12,
+                60,
+                new Vector2(0.5f, 0.5f),
+                ShieldLoopFrameCropPixels,
+                LargeFrameReferencePixels);
             if (!inClip.IsValid || !loopClip.IsValid)
             {
                 return;
@@ -529,7 +578,7 @@ namespace GameName.Enemy
             StopShield();
             GridSpriteSheetPlayer player = CreateEffectPlayer(
                 "LastBossShieldEffect",
-                ResolveBossCenter() + shieldOffset,
+                ResolveBossCenter() + ResolveFacingOffset(shieldOffset),
                 ResolveBossSquareSize(shieldSizeMultiplier),
                 shieldSortingOrderOffset);
             if (player == null)
@@ -548,6 +597,7 @@ namespace GameName.Enemy
                 {
                     if (shieldPlayer == player && shieldObject != null)
                     {
+                        player.SetTargetWorldSize(ResolveBossSquareSize(shieldSizeMultiplier));
                         player.Play(loopClip, loop: true, holdLast: false, hideOnComplete: false);
                     }
                 });
@@ -571,7 +621,7 @@ namespace GameName.Enemy
             StopShieldBreak();
             GridSpriteSheetPlayer player = CreateEffectPlayer(
                 "LastBossShieldBreakEffect",
-                ResolveBossCenter() + shieldBreakOffset,
+                ResolveBossCenter() + ResolveFacingOffset(shieldBreakOffset),
                 ResolveBossSquareSize(shieldBreakSizeMultiplier),
                 shieldBreakSortingOrderOffset);
             if (player == null)
@@ -630,7 +680,13 @@ namespace GameName.Enemy
             return player;
         }
 
-        private GridSpriteSheetClip CreateClip(Texture2D spriteSheet, int columns, int rows, int frameCount, Vector2 pivot)
+        private GridSpriteSheetClip CreateClip(
+            Texture2D spriteSheet,
+            int columns,
+            int rows,
+            int frameCount,
+            Vector2 pivot,
+            int centeredCropInsetPixels = 0)
         {
             return new GridSpriteSheetClip
             {
@@ -640,8 +696,25 @@ namespace GameName.Enemy
                 FrameCount = frameCount,
                 FramesPerSecond = framesPerSecond,
                 PixelsPerUnit = pixelsPerUnit,
-                Pivot = pivot
+                Pivot = pivot,
+                CenteredCropInsetPixels = Mathf.Max(0, centeredCropInsetPixels)
             };
+        }
+
+        private GridSpriteSheetClip CreateClip(
+            Texture2D spriteSheet,
+            int columns,
+            int rows,
+            int frameCount,
+            Vector2 pivot,
+            RectInt frameCropPixels,
+            Vector2Int frameCropReferencePixels)
+        {
+            GridSpriteSheetClip clip = CreateClip(spriteSheet, columns, rows, frameCount, pivot, 0);
+            clip.UseFrameCrop = true;
+            clip.FrameCropPixels = frameCropPixels;
+            clip.FrameCropReferencePixels = frameCropReferencePixels;
+            return clip;
         }
 
         private void FollowBoss(GameObject target, Vector3 offset)
@@ -651,7 +724,64 @@ namespace GameName.Enemy
                 return;
             }
 
-            target.transform.position = ResolveBossCenter() + offset;
+            target.transform.position = ResolveBossCenter() + ResolveFacingOffset(offset);
+        }
+
+        public Vector3 ResolveFacingOffset(Vector3 localOffset)
+        {
+            return ResolveFacingOffset(localOffset, facingDirection);
+        }
+
+        public Vector2 ResolveRangeIndicatorWorldSize(float groundBladeWorldWidth)
+        {
+            float width = Mathf.Max(0.1f, groundBladeWorldWidth) * RangeEffectSizeMultiplier;
+            Vector2 frameMultiplier = SanitizeVectorMultiplier(rangeEffectFrameSizeMultiplier);
+            float croppedAspect = (float)RangeFrameCropPixels.height / Mathf.Max(1, RangeFrameCropPixels.width);
+            return new Vector2(width * frameMultiplier.x, width * croppedAspect * frameMultiplier.y);
+        }
+
+        private Vector3 ResolveAuraOffset()
+        {
+            return auraOffset + new Vector3(Mathf.Max(0f, auraFacingPush), 0f, 0f);
+        }
+
+        private static Vector3 ResolveFacingOffset(Vector3 localOffset, int direction)
+        {
+            int normalizedDirection = direction < 0 ? -1 : 1;
+            return new Vector3(localOffset.x * normalizedDirection, localOffset.y, localOffset.z);
+        }
+
+        private static Vector2 SanitizeVectorMultiplier(Vector2 multiplier)
+        {
+            return new Vector2(
+                Mathf.Max(0.01f, multiplier.x),
+                Mathf.Max(0.01f, multiplier.y));
+        }
+
+        private void ApplyAuraFacing(GameObject target)
+        {
+            GridSpriteSheetPlayer player = target != null ? target.GetComponent<GridSpriteSheetPlayer>() : null;
+            if (player?.Renderer != null)
+            {
+                player.Renderer.flipX = facingDirection < 0;
+            }
+        }
+
+        private void ApplyMagicCircleFacing(GridSpriteSheetPlayer player)
+        {
+            if (player?.Renderer != null)
+            {
+                player.Renderer.flipX = magicCircleFacingDirection > 0;
+            }
+        }
+
+        private void UpdateMagicCircleFacing(Vector2 groundLockPoint, Vector2 rainSpawnPosition)
+        {
+            float horizontalDirection = groundLockPoint.x - rainSpawnPosition.x;
+            magicCircleFacingDirection = Mathf.Abs(horizontalDirection) > 0.001f
+                ? (horizontalDirection > 0f ? 1 : -1)
+                : facingDirection;
+            ApplyMagicCircleFacing(magicCirclePlayer);
         }
 
         private Vector3 ResolveBossCenter()
@@ -670,17 +800,47 @@ namespace GameName.Enemy
         private Bounds ResolveBossBounds()
         {
             CacheComponents();
-            if (bodyCollider != null)
+            if (TryGetUsableBounds(bodyCollider, out Bounds colliderBounds))
             {
-                return bodyCollider.bounds;
+                return colliderBounds;
             }
 
-            if (bossRenderer != null)
+            if (TryGetUsableBounds(bossRenderer, out Bounds rendererBounds))
             {
-                return bossRenderer.bounds;
+                return rendererBounds;
             }
 
             return new Bounds(transform.position, Vector3.one);
+        }
+
+        private static bool TryGetUsableBounds(Collider2D collider, out Bounds bounds)
+        {
+            bounds = default;
+            if (collider == null || !collider.enabled)
+            {
+                return false;
+            }
+
+            bounds = collider.bounds;
+            return HasUsableSize(bounds);
+        }
+
+        private static bool TryGetUsableBounds(Renderer renderer, out Bounds bounds)
+        {
+            bounds = default;
+            if (renderer == null)
+            {
+                return false;
+            }
+
+            bounds = renderer.bounds;
+            return HasUsableSize(bounds);
+        }
+
+        private static bool HasUsableSize(Bounds bounds)
+        {
+            Vector3 size = bounds.size;
+            return size.x > 0.001f || size.y > 0.001f || size.z > 0.001f;
         }
 
         private void CacheComponents()

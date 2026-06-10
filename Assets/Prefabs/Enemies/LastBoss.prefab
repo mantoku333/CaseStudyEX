@@ -198,6 +198,7 @@ MonoBehaviour:
   minimumPlayerDistance: 3
   normalAttackDamage: 10
   normalAttackSize: {x: 4, y: 4}
+  normalAttackForwardInset: 2
   normalAttackVisibleTime: 0.16
   normalAttackRecovery: 0.45
   horizontalAttackDamage: 15
@@ -232,8 +233,8 @@ MonoBehaviour:
   playerDetectionMask:
     serializedVersion: 2
     m_Bits: 256
-  telegraphColor: {r: 1, g: 0, b: 0, a: 0.35}
-  attackColor: {r: 1, g: 0.15, b: 0.05, a: 0.55}
+  telegraphColor: {r: 1, g: 1, b: 1, a: 0}
+  attackColor: {r: 1, g: 1, b: 1, a: 0}
   enragedColor: {r: 0.6, g: 0, b: 0, a: 1}
   enragedPulseSpeed: 8
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
@@ -251,7 +252,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8932a0a6f3147d4b859a458b5f94021, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.LastBossEffectController
   shieldInSpriteSheet: {fileID: 2800000, guid: 2c00a4018cab759469ab458ec88058e9, type: 3}
   shieldLoopSpriteSheet: {fileID: 2800000, guid: 17682aae2164dfb4bba5a9721c3b0e91, type: 3}
@@ -277,17 +278,19 @@ MonoBehaviour:
   shieldBreakOffset: {x: 0, y: 0, z: 0}
   deathOffset: {x: 0, y: 0, z: 0}
   auraSizeMultiplier: 1.35
-  shieldSizeMultiplier: 1.35
+  auraFacingPush: 0.35
+  shieldSizeMultiplier: 1
   shieldBreakSizeMultiplier: 1.45
   deathSizeMultiplier: 1.8
   slashOffset: {x: 0, y: 0, z: 0}
   slashSizeMultiplier: 1.1
-  rangeEffectWorldSize: {x: 1.6, y: 1.1}
-  rangeOffset: {x: 0, y: 0, z: 0}
+  rangeEffectSizeMultiplier: 1
+  rangeEffectFrameSizeMultiplier: {x: 1, y: 1}
+  rangeOffset: {x: 0, y: -0.35, z: 0}
   magicCircleBeyondSpawnDistance: 1.5
   magicCircleWorldSize: {x: 4, y: 4}
-  groundBladeVisualSizeMultiplier: 1
-  rainBladeVisualSizeMultiplier: 1
+  groundBladeVisualFrameSizeMultiplier: {x: 1, y: 1}
+  rainBladeVisualFrameSizeMultiplier: {x: 1, y: 1}
   auraSortingOrderOffset: -2
   shieldSortingOrderOffset: 2
   shieldBreakSortingOrderOffset: 3
