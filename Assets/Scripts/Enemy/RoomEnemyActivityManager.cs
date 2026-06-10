@@ -43,6 +43,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         public bool[] InitialBehaviourEnabled;
         public Rigidbody2D[] Rigidbodies;
         public bool[] InitialRigidbodySimulated;
+        public Renderer[] VisibilityRenderers;
+        public Collider2D[] VisibilityColliders;
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -164,7 +166,9 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 AppliedGameplayActive = enemy.gameObject.activeSelf,
                 TackleAttacks = enemy.GetComponentsInChildren<EnemyTackleAttack>(true),
                 GameplayBehaviours = CollectGameplayBehaviours(enemy.gameObject),
-                Rigidbodies = enemy.GetComponentsInChildren<Rigidbody2D>(true)
+                Rigidbodies = enemy.GetComponentsInChildren<Rigidbody2D>(true),
+                VisibilityRenderers = enemy.GetComponentsInChildren<Renderer>(true),
+                VisibilityColliders = enemy.GetComponentsInChildren<Collider2D>(true)
             });
 
             ManagedEnemy managedEnemy = managedEnemies[managedEnemies.Count - 1];
@@ -222,6 +226,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         bool hasPlayerPosition = TryGetPlayerPosition(out Vector3 playerPosition);
         // カメラ用のアクティブルームは、敵の所属変更ではなく重なり部から戻す判定にだけ使う。
         RoomCameraTrigger activeRoom = ResolveActiveRoom();
+        Plane[] mainCameraPlanes = TryGetMainCameraPlanes();
         bool shouldQueueStateApplication = false;
 
         for (int i = managedEnemies.Count - 1; i >= 0; i--)
@@ -244,7 +249,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 managedEnemy,
                 activeRoom,
                 hasPlayerPosition,
-                playerPosition);
+                playerPosition,
+                mainCameraPlanes);
 
             shouldQueueStateApplication |= SetDesiredGameplayActive(managedEnemy, shouldRunGameplay);
             shouldQueueStateApplication |= managedEnemy.AppliedGameplayActive != managedEnemy.DesiredGameplayActive;
@@ -307,7 +313,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         ManagedEnemy managedEnemy,
         RoomCameraTrigger activeRoom,
         bool hasPlayerPosition,
-        Vector3 playerPosition)
+        Vector3 playerPosition,
+        Plane[] mainCameraPlanes)
     {
         bool enemyInsideHomeRoom = IsEnemyInsideHomeRoom(managedEnemy);
         bool enemyReturningHome = managedEnemy.Enemy.IsReturningHome;
@@ -320,6 +327,11 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             return true;
         }
 
+        if (IsManagedEnemyVisibleToMainCamera(managedEnemy, mainCameraPlanes))
+        {
+            return true;
+        }
+
         if (hasPlayerPosition)
         {
             // 敵の起床判定はアクティブカメラではなく、プレイヤーが敵の所属ルーム内にいるかで決める。
@@ -327,6 +339,81 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         }
 
         return managedEnemy.DesiredGameplayActive;
+    }
+
+    private static Plane[] TryGetMainCameraPlanes()
+    {
+        Camera mainCamera = Camera.main;
+        return mainCamera != null && mainCamera.isActiveAndEnabled
+            ? GeometryUtility.CalculateFrustumPlanes(mainCamera)
+            : null;
+    }
+
+    private static bool IsManagedEnemyVisibleToMainCamera(ManagedEnemy managedEnemy, Plane[] mainCameraPlanes)
+    {
+        if (managedEnemy == null || mainCameraPlanes == null)
+        {
+            return false;
+        }
+
+        if (HasVisibleRendererBounds(managedEnemy.VisibilityRenderers, mainCameraPlanes))
+        {
+            return true;
+        }
+
+        return HasVisibleColliderBounds(managedEnemy.VisibilityColliders, mainCameraPlanes);
+    }
+
+    private static bool HasVisibleRendererBounds(Renderer[] renderers, Plane[] cameraPlanes)
+    {
+        if (renderers == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer targetRenderer = renderers[i];
+            if (targetRenderer == null ||
+                !targetRenderer.enabled ||
+                !targetRenderer.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+
+            if (GeometryUtility.TestPlanesAABB(cameraPlanes, targetRenderer.bounds))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasVisibleColliderBounds(Collider2D[] colliders, Plane[] cameraPlanes)
+    {
+        if (colliders == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Collider2D targetCollider = colliders[i];
+            if (targetCollider == null ||
+                !targetCollider.enabled ||
+                !targetCollider.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+
+            if (GeometryUtility.TestPlanesAABB(cameraPlanes, targetCollider.bounds))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private bool IsEnemyInsideOtherActiveRoom(ManagedEnemy managedEnemy, RoomCameraTrigger activeRoom)
@@ -535,12 +622,23 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         }
 
         int budget = Mathf.Max(1, maxStateChanges);
+        int changedCount = ProcessPendingEnemyStateChangesMatching(budget, desiredActive: true);
+        if (changedCount < budget)
+        {
+            ProcessPendingEnemyStateChangesMatching(budget - changedCount, desiredActive: false);
+        }
+
+        hasPendingEnemyStateChanges = HasPendingEnemyStateChanges();
+    }
+
+    private int ProcessPendingEnemyStateChangesMatching(int maxStateChanges, bool desiredActive)
+    {
         int changedCount = 0;
         int checkedCount = 0;
 
         while (managedEnemies.Count > 0 &&
                checkedCount < managedEnemies.Count &&
-               changedCount < budget)
+               changedCount < maxStateChanges)
         {
             if (nextEnemyStateChangeIndex >= managedEnemies.Count)
             {
@@ -554,7 +652,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 continue;
             }
 
-            if (managedEnemy.AppliedGameplayActive != managedEnemy.DesiredGameplayActive)
+            if (managedEnemy.AppliedGameplayActive != managedEnemy.DesiredGameplayActive &&
+                managedEnemy.DesiredGameplayActive == desiredActive)
             {
                 SetManagedEnemyGameplayActive(managedEnemy, managedEnemy.DesiredGameplayActive);
                 changedCount++;
@@ -564,7 +663,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             checkedCount++;
         }
 
-        hasPendingEnemyStateChanges = HasPendingEnemyStateChanges();
+        return changedCount;
     }
 
     private bool HasPendingEnemyStateChanges()
