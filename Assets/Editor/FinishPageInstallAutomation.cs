@@ -97,9 +97,9 @@ namespace CaseStudy.Editor
                     promptRect.localScale = Vector3.one;
                 }
 
-                if (promptInstance.GetComponent<MantokuStoryOptionsFinishPromptSkin>() == null)
+                if (promptInstance.GetComponent<OptionsFinishPromptSkin>() == null)
                 {
-                    promptInstance.AddComponent<MantokuStoryOptionsFinishPromptSkin>();
+                    promptInstance.AddComponent<OptionsFinishPromptSkin>();
                 }
 
                 PrefabUtility.SaveAsPrefabAsset(root, targetPrefabPath);

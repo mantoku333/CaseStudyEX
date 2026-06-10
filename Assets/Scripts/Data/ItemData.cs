@@ -19,9 +19,12 @@ namespace Metroidvania.Data
         [TextArea(3, 5)]
         public string description;
         
-        [Tooltip("アイテムアイコン")]
+        [Tooltip("アイテムアイコン（スロット内の小さい画像）")]
         public Sprite icon;
-        
+
+        [Tooltip("右パネルに表示する大きいイラスト")]
+        public Sprite illustration;
+
         [Header("アイテムタイプ")]
         public ItemType itemType;
 
@@ -47,6 +50,9 @@ namespace Metroidvania.Data
         public AudioClip pickupSound;
 
         [Header("装備")]
+        [Tooltip("スロットに表示するバッジ画像（アイテムごとに異なる説明バッジ）")]
+        public Sprite equipmentBadge;
+
         [Tooltip("装備アイテムとして使う場合の効果一覧")]
         public EquipmentAbilityData[] equipmentAbility;
 

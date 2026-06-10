@@ -173,6 +173,11 @@ public sealed class MinimapView : MonoBehaviour
         Stretch(miniMapContent, 14f);
 
         fullMapPanel = CreatePanel("FullMapPanel", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1620f, 800f), Vector2.zero, fullMapPanelColor);
+        fullMapPanel.localScale = new Vector3(0.8f, 0.8f, 1f);
+        Canvas fullMapOverrideCanvas = fullMapPanel.gameObject.AddComponent<Canvas>();
+        fullMapOverrideCanvas.overrideSorting = true;
+        fullMapOverrideCanvas.sortingOrder = 300;
+        fullMapPanel.gameObject.AddComponent<GraphicRaycaster>();
         fullMapContent = CreateRect("Content", fullMapPanel);
         Stretch(fullMapContent, 22f);
         fullMapPanel.gameObject.SetActive(false);

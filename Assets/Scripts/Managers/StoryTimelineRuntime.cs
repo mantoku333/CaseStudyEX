@@ -6,8 +6,8 @@ using UnityEngine;
 public sealed class StoryTimelineRuntime : MonoBehaviour
 {
     private const string RuntimeObjectName = "[StoryTimelineRuntime]";
-    private const string BgmVolumeKey = "MantokuStoryOptions.BgmVolume";
-    private const string SeVolumeKey = "MantokuStoryOptions.SeVolume";
+    private const string BgmVolumeKey = "Options.BgmVolume";
+    private const string SeVolumeKey = "Options.SeVolume";
 
     private static StoryTimelineRuntime instance;
 
