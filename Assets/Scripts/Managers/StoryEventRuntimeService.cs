@@ -48,7 +48,8 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
             return false;
         }
 
-        return instance.TryQueueEventById(eventId, ignoreFlags: false, allowSceneLoad: false);
+        return instance.TryQueueEventById(eventId, ignoreFlags: false, allowSceneLoad: false) ||
+               instance.TryPlaySceneStoryEventController(eventId);
     }
 
     public static bool TryPlayEventFromDebugger(string eventId, bool ignoreFlags)
@@ -371,6 +372,47 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
 
         eventRunner.Enqueue(CreatePlayableDefinition(matchedEvent, ignoreFlags));
         return true;
+    }
+
+    private bool TryPlaySceneStoryEventController(string eventId)
+    {
+        if (string.IsNullOrWhiteSpace(eventId))
+        {
+            return false;
+        }
+
+        string trimmedEventId = eventId.Trim();
+        string activeSceneName = SceneManager.GetActiveScene().name;
+        StoryEventController fallbackController = null;
+
+        StoryEventController[] controllers =
+            FindObjectsByType<StoryEventController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < controllers.Length; i++)
+        {
+            StoryEventController controller = controllers[i];
+            if (controller == null)
+            {
+                continue;
+            }
+
+            bool matchesId =
+                string.Equals(controller.EventId, trimmedEventId, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(controller.name, trimmedEventId, StringComparison.OrdinalIgnoreCase);
+            if (!matchesId)
+            {
+                continue;
+            }
+
+            if (controller.gameObject.scene.IsValid() &&
+                string.Equals(controller.gameObject.scene.name, activeSceneName, StringComparison.Ordinal))
+            {
+                return controller.PlayEvent();
+            }
+
+            fallbackController ??= controller;
+        }
+
+        return fallbackController != null && fallbackController.PlayEvent();
     }
 
     private StoryEventDefinition FindSceneEventById(string eventId, string sceneName)

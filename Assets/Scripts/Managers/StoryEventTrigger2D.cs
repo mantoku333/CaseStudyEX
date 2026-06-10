@@ -109,7 +109,7 @@ public sealed class StoryEventTrigger2D : MonoBehaviour
             if (logIfEventNotFound)
             {
                 Debug.LogWarning(
-                    $"[StoryEventTrigger2D] Story event was not found. eventId='{trimmedEventId}', trigger='{name}'",
+                    $"[StoryEventTrigger2D] Story event was not found or could not start. eventId='{trimmedEventId}', trigger='{name}'",
                     this);
             }
 
