@@ -25,6 +25,32 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
     private StoryEventCatalog loadedCatalog;
     private StoryEventRunner eventRunner;
 
+    public static bool HasPendingEvents
+    {
+        get
+        {
+            EnsureInstance();
+            if (instance == null)
+            {
+                return false;
+            }
+
+            instance.EnsureEventRunner();
+            return instance.eventRunner != null && instance.eventRunner.HasPendingEvents;
+        }
+    }
+
+    public static bool TryPlayEvent(string eventId)
+    {
+        EnsureInstance();
+        if (instance == null)
+        {
+            return false;
+        }
+
+        return instance.TryQueueEventById(eventId, ignoreFlags: false, allowSceneLoad: false);
+    }
+
     public static bool TryPlayEventFromDebugger(string eventId, bool ignoreFlags)
     {
         EnsureInstance();
@@ -33,7 +59,7 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
             return false;
         }
 
-        return instance.TryQueueEventById(eventId, ignoreFlags);
+        return instance.TryQueueEventById(eventId, ignoreFlags, allowSceneLoad: true);
     }
 
     public static bool TryCompleteActiveEventFromDebugger()
@@ -276,7 +302,7 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
         return enqueued;
     }
 
-    private bool TryQueueEventById(string eventId, bool ignoreFlags)
+    private bool TryQueueEventById(string eventId, bool ignoreFlags, bool allowSceneLoad)
     {
         if (string.IsNullOrWhiteSpace(eventId))
         {
@@ -309,14 +335,21 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
                     ? activeSceneName
                     : anySceneEvent.sceneName.Trim();
 
-                if (!string.Equals(activeSceneName, targetSceneName, StringComparison.Ordinal) &&
-                    Application.CanStreamedLevelBeLoaded(targetSceneName))
+                if (!string.Equals(activeSceneName, targetSceneName, StringComparison.Ordinal))
                 {
-                    pendingDebugEventId = trimmedEventId;
-                    pendingDebugSceneName = targetSceneName;
-                    pendingDebugIgnoreFlags = ignoreFlags;
-                    SceneManager.LoadScene(targetSceneName);
-                    return true;
+                    if (!allowSceneLoad)
+                    {
+                        return false;
+                    }
+
+                    if (Application.CanStreamedLevelBeLoaded(targetSceneName))
+                    {
+                        pendingDebugEventId = trimmedEventId;
+                        pendingDebugSceneName = targetSceneName;
+                        pendingDebugIgnoreFlags = ignoreFlags;
+                        SceneManager.LoadScene(targetSceneName);
+                        return true;
+                    }
                 }
 
                 eventRunner.Enqueue(CreatePlayableDefinition(anySceneEvent, ignoreFlags));
