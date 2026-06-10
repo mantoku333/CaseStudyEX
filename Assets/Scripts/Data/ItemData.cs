@@ -47,6 +47,9 @@ namespace Metroidvania.Data
         public AudioClip pickupSound;
 
         [Header("装備")]
+        [Tooltip("スロットに表示するバッジ画像（アイテムごとに異なる説明バッジ）")]
+        public Sprite equipmentBadge;
+
         [Tooltip("装備アイテムとして使う場合の効果一覧")]
         public EquipmentAbilityData[] equipmentAbility;
 

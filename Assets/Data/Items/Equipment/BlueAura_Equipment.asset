@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a596a0122d176fd4d81638a716f851d2, type: 3}
   m_Name: BlueAura_Equipment
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
-  itemName: RedAura
+  itemName: BlueAura
   itemId: Equipment_RedAura_Unlock
-  description: 
-  icon: {fileID: 0}
+  description: Hi, it seems your attack power has increased.
+  icon: {fileID: -256204797617047970, guid: 9efb276a748ecba4fa47e76e0221a39e, type: 3}
   itemType: 2
   healAmount: 0
   staminaAmount: 0
@@ -24,8 +24,9 @@ MonoBehaviour:
   stackable: 0
   maxStackSize: 99
   pickupSound: {fileID: 0}
-  equipmentEffects:
-  - effectType: 1
+  equipmentBadge: {fileID: 0}
+  equipmentAbility:
+  - abilityType: 1
     value: 0.02
   equipmentVisualLayers:
   - layerName: 

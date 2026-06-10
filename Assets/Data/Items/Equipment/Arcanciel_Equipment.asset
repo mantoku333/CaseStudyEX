@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
   itemName: Arcanciel
   itemId: Equipment_Arcanciel_Unlock
-  description: 
-  icon: {fileID: 0}
+  description: "\u81EA\u5206\u3067\u524D\u306B\u9032\u307F\u59CB\u3081\u305F\u30A4\u30EA\u30B9\u3092\u8868\u3059\u3082\u306E\u3002\u3069\u3053\u3078\u3067\u3082\u884C\u3051\u308B\u3053\u3068\u306E\u8868\u73FE\u3068\u3057\u3066\u306E\u7FBD\u3002
+    -\r\nThis represents Iris, who has begun to move forward on her own. The wings
+    symbolize her ability to go anywhere."
+  icon: {fileID: 3315684175802607544, guid: c9cb4027715640745be9e555cbfad60f, type: 3}
   itemType: 2
   healAmount: 0
   staminaAmount: 0
@@ -24,6 +26,7 @@ MonoBehaviour:
   stackable: 0
   maxStackSize: 99
   pickupSound: {fileID: 0}
+  equipmentBadge: {fileID: 324036295199150595, guid: bed8f49f5740fe044a9f5f4d4b24f87b, type: 3}
   equipmentAbility:
   - abilityType: 2
     value: 5

@@ -150,6 +150,7 @@ public sealed class OptionsMenu : MonoBehaviour
     private float statusHideAt;
     private float keyboardScrollNormalized;
     private ScrollRect decorationScrollRect;
+    private DecorationPage decorationPage;
     private string activeRebindPreviousOverridePath = string.Empty;
     private int activeRebindBindingIndex = -1;
     private ActiveVolumeBar activeVolumeBar;
@@ -264,6 +265,7 @@ public sealed class OptionsMenu : MonoBehaviour
         keyboardContentPanel = FindChildObject("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel");
         decorationContentPanel = FindChildObject("MenuRoot/OptionPanel/Decoration");
         decorationScrollRect = FindChildComponent<ScrollRect>("MenuRoot/OptionPanel/Decoration/Item back ground");
+        decorationPage = decorationContentPanel != null ? decorationContentPanel.GetComponent<DecorationPage>() : null;
         optionHeaderCloseButtonObject = FindChildObject("MenuRoot/OptionPanel/Back Button");
         optionHeaderPreviousButtonObject = FindChildObject("MenuRoot/OptionPanel/Q");
         optionHeaderNextButtonObject = FindChildObject("MenuRoot/OptionPanel/E");
@@ -635,6 +637,7 @@ public sealed class OptionsMenu : MonoBehaviour
             activeVolumeBar = ActiveVolumeBar.None;
             isDraggingKeyboardScrollbar = false;
             ClearKeyboardStatus();
+            decorationPage?.Refresh();
             if (decorationScrollRect != null)
             {
                 decorationScrollRect.verticalNormalizedPosition = 1f;

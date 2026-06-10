@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a596a0122d176fd4d81638a716f851d2, type: 3}
   m_Name: RedAura_Equipment
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
-  itemName: BlueAura
+  itemName: RedAura
   itemId: Equipment_BlueAura_Unlock
-  description: 
-  icon: {fileID: 0}
+  description: Your HP will recover when you defeat an enemy.
+  icon: {fileID: -1284802032734153441, guid: c64c8109ded40544fa88e78a39f26b35, type: 3}
   itemType: 2
   healAmount: 0
   staminaAmount: 0
@@ -24,8 +24,9 @@ MonoBehaviour:
   stackable: 0
   maxStackSize: 99
   pickupSound: {fileID: 0}
-  equipmentEffects:
-  - effectType: 0
+  equipmentBadge: {fileID: 0}
+  equipmentAbility:
+  - abilityType: 0
     value: 0.2
   equipmentVisualLayers:
   - layerName: 
