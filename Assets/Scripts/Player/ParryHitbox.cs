@@ -70,7 +70,7 @@ public class ParryHitbox : MonoBehaviour
             RecordParryHit(collision);
             enemyBullet.DestroyByParry();
             umbrellaParryController.PlayParrySuccessEffect(lastParryHitPosition);
-            HitStopController.RequestParry();
+            HitStopController.RequestNormalParry();
             return;
         }
 
@@ -91,7 +91,7 @@ public class ParryHitbox : MonoBehaviour
             RecordParryHit(collision);
             parryableAttack.StopByParry();
             umbrellaParryController.PlayParrySuccessEffect(lastParryHitPosition);
-            HitStopController.RequestParry();
+            HitStopController.RequestNormalParry();
         }
     }
 
@@ -240,6 +240,7 @@ public class ParryHitbox : MonoBehaviour
         ScanCurrentOverlaps();
 
         bool parried = false;
+        bool justParried = false;
         List<GameObject> parriedAttacks = new List<GameObject>();
 
         for (int i = enemyAttacks.Count - 1; i >= 0; i--)
@@ -270,6 +271,7 @@ public class ParryHitbox : MonoBehaviour
                 enemyBullet.ReflectByJustParry(transform.position);
                 parriedAttacks.Add(attackObject);
                 parried = true;
+                justParried = true;
                 continue;
             }
 
@@ -287,7 +289,14 @@ public class ParryHitbox : MonoBehaviour
 
         if (parried)
         {
-            HitStopController.RequestParry();
+            if (justParried)
+            {
+                HitStopController.RequestJustParry();
+            }
+            else
+            {
+                HitStopController.RequestNormalParry();
+            }
         }
 
         return parried;
@@ -333,7 +342,7 @@ public class ParryHitbox : MonoBehaviour
 
             RecordParryHit(hitCollider);
             parryableAttack.StopByParry();
-            HitStopController.RequestParry();
+            HitStopController.RequestNormalParry();
             return true;
         }
 
