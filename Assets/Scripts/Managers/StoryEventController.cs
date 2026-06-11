@@ -781,7 +781,7 @@ public sealed class StoryEventController : MonoBehaviour
         bool shouldPauseTimeline = pauseTimelineUntilClosed && resolvedDirector != null;
         if (shouldPauseTimeline)
         {
-            resolvedDirector.Pause();
+            PauseDirectorAfterCurrentEvaluation(resolvedDirector);
             panelPausedDirector = resolvedDirector;
             shouldResumePanelPausedDirector = true;
         }
@@ -839,7 +839,7 @@ public sealed class StoryEventController : MonoBehaviour
         bool shouldPauseTimeline = pauseTimelineUntilClosed && resolvedDirector != null;
         if (shouldPauseTimeline)
         {
-            resolvedDirector.Pause();
+            PauseDirectorAfterCurrentEvaluation(resolvedDirector);
             panelPausedDirector = resolvedDirector;
             shouldResumePanelPausedDirector = true;
         }
@@ -918,6 +918,17 @@ public sealed class StoryEventController : MonoBehaviour
         shouldResumePanelPausedDirector = false;
 
         ResumeDirectorIfNeeded(resolvedDirector, shouldResume);
+    }
+
+    private static void PauseDirectorAfterCurrentEvaluation(PlayableDirector resolvedDirector)
+    {
+        if (resolvedDirector == null)
+        {
+            return;
+        }
+
+        resolvedDirector.Evaluate();
+        resolvedDirector.Pause();
     }
 
     private IEnumerator PlayDialogueRoutine(
