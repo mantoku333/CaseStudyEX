@@ -9,7 +9,6 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
 {
     private const string RuntimeObjectName = "[StoryEventRuntimeService]";
     private const string DefaultCatalogResourcePath = "Story/StoryEventCatalog";
-    private const string DefaultEntrySceneName = "Story_Mantoku";
     private const float DefaultLoadWaitTimeoutSeconds = 10f;
 
     private static StoryEventRuntimeService instance;
@@ -36,7 +35,8 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
             }
 
             instance.EnsureEventRunner();
-            return instance.eventRunner != null && instance.eventRunner.HasPendingEvents;
+            return (instance.eventRunner != null && instance.eventRunner.HasPendingEvents) ||
+                   FindPlayingSceneStoryEventController() != null;
         }
     }
 
@@ -260,11 +260,7 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
             }
         }
 
-        StoryEventDefinition fallbackDefinition = CreateFallbackPrologueDefinition(sceneName);
-        if (fallbackDefinition != null)
-        {
-            eventRunner.Enqueue(fallbackDefinition);
-        }
+        Debug.LogWarning($"[StoryEventRuntimeService] Scene start event not found. scene='{sceneName}'");
     }
 
     private bool EnqueueSceneComponentEvents(string sceneName)
@@ -293,6 +289,24 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
             StoryEventDefinition definition = source.CreateDefinition(sceneName);
             if (definition == null)
             {
+                continue;
+            }
+
+            if (!definition.CanRunByFlags())
+            {
+                continue;
+            }
+
+            if (!string.IsNullOrWhiteSpace(definition.storyEventControllerId))
+            {
+                if (!TryPlaySceneStoryEventController(definition.storyEventControllerId))
+                {
+                    Debug.LogWarning(
+                        $"[StoryEventRuntimeService] StoryEventController not found or could not start. " +
+                        $"eventId='{definition.eventId}', controllerId='{definition.storyEventControllerId}'");
+                }
+
+                enqueued = true;
                 continue;
             }
 
@@ -357,16 +371,6 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
                 return true;
             }
 
-            if (string.Equals(trimmedEventId, "prologue", StringComparison.OrdinalIgnoreCase))
-            {
-                StoryEventDefinition fallbackDefinition = CreateDebugPrologueDefinition(activeSceneName);
-                if (fallbackDefinition != null)
-                {
-                    eventRunner.Enqueue(CreatePlayableDefinition(fallbackDefinition, ignoreFlags));
-                    return true;
-                }
-            }
-
             return false;
         }
 
@@ -415,6 +419,33 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
         return fallbackController != null && fallbackController.PlayEvent();
     }
 
+    private static StoryEventController FindPlayingSceneStoryEventController()
+    {
+        string activeSceneName = SceneManager.GetActiveScene().name;
+        StoryEventController fallbackController = null;
+
+        StoryEventController[] controllers =
+            FindObjectsByType<StoryEventController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < controllers.Length; i++)
+        {
+            StoryEventController controller = controllers[i];
+            if (controller == null || !controller.IsPlaying)
+            {
+                continue;
+            }
+
+            if (controller.gameObject.scene.IsValid() &&
+                string.Equals(controller.gameObject.scene.name, activeSceneName, StringComparison.Ordinal))
+            {
+                return controller;
+            }
+
+            fallbackController ??= controller;
+        }
+
+        return fallbackController;
+    }
+
     private StoryEventDefinition FindSceneEventById(string eventId, string sceneName)
     {
         if (loadedCatalog != null &&
@@ -434,13 +465,6 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
                     return definition;
                 }
             }
-        }
-
-        StoryEventDefinition fallbackDefinition = CreateFallbackPrologueDefinition(sceneName);
-        if (fallbackDefinition != null &&
-            string.Equals(fallbackDefinition.eventId, eventId, StringComparison.OrdinalIgnoreCase))
-        {
-            return fallbackDefinition;
         }
 
         return null;
@@ -516,10 +540,6 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
         }
 
         StoryEventDefinition definition = FindSceneEventById(eventId, sceneName);
-        if (definition == null && string.Equals(eventId, "prologue", StringComparison.OrdinalIgnoreCase))
-        {
-            definition = CreateDebugPrologueDefinition(sceneName);
-        }
 
         if (definition == null)
         {
@@ -546,6 +566,7 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
         {
             eventId = source.eventId,
             sceneName = source.sceneName,
+            storyEventControllerId = source.storyEventControllerId,
             dialogueNodeName = source.dialogueNodeName,
             dialogueStyle = source.dialogueStyle,
             runOnceFlagKey = string.Empty,
@@ -560,48 +581,4 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
         };
     }
 
-    private static StoryEventDefinition CreateFallbackPrologueDefinition(string sceneName)
-    {
-        if (!StoryEventDefinition.MatchesConfiguredScene(DefaultEntrySceneName, sceneName))
-        {
-            return null;
-        }
-
-        return CreatePrologueDefinition(sceneName.Trim());
-    }
-
-    private static StoryEventDefinition CreateDebugPrologueDefinition(string sceneName)
-    {
-        if (string.IsNullOrWhiteSpace(sceneName))
-        {
-            return null;
-        }
-
-        return CreatePrologueDefinition(sceneName.Trim());
-    }
-
-    private static StoryEventDefinition CreatePrologueDefinition(string sceneName)
-    {
-        return new StoryEventDefinition
-        {
-            eventId = "prologue",
-            sceneName = sceneName,
-            dialogueNodeName = "Prologue",
-            dialogueStyle = DialogueStyle.Bubble,
-            pausePolicy = StoryPausePolicy.GameplayOnly,
-            runOnceFlagKey = GameProgressKeys.PrologueCompleted,
-            conditions = new StoryFlagConditionSet(),
-            onStartMutations = new StoryFlagMutationSet
-            {
-                setTrueFlags = new[] { GameProgressKeys.PrologueStarted },
-                setFalseFlags = new[] { GameProgressKeys.PrologueCompleted }
-            },
-            onCompleteMutations = new StoryFlagMutationSet
-            {
-                setTrueFlags = new[] { GameProgressKeys.PrologueCompleted }
-            },
-            autoSaveOnComplete = true,
-            skipWhenDialogueRunning = true
-        };
-    }
 }

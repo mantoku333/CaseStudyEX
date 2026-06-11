@@ -59,7 +59,7 @@ public sealed class StoryEventTrigger2D : MonoBehaviour
     {
         if (fireOnEnter)
         {
-            TryTrigger(other);
+            TryTrigger(other, "Enter");
         }
     }
 
@@ -67,7 +67,7 @@ public sealed class StoryEventTrigger2D : MonoBehaviour
     {
         if (fireOnStay)
         {
-            TryTrigger(other);
+            TryTrigger(other, "Stay");
         }
     }
 
@@ -80,7 +80,7 @@ public sealed class StoryEventTrigger2D : MonoBehaviour
         }
     }
 
-    private void TryTrigger(Collider2D other)
+    private void TryTrigger(Collider2D other, string phase)
     {
         if (triggerOnce && triggered)
         {
@@ -92,12 +92,12 @@ public sealed class StoryEventTrigger2D : MonoBehaviour
             return;
         }
 
-        if (skipWhenStoryEventRunning && StoryEventRuntimeService.HasPendingEvents)
+        if (!IsPlayerCollider(other))
         {
             return;
         }
 
-        if (!IsPlayerCollider(other))
+        if (skipWhenStoryEventRunning && StoryEventRuntimeService.HasPendingEvents)
         {
             return;
         }
@@ -139,6 +139,11 @@ public sealed class StoryEventTrigger2D : MonoBehaviour
             return MatchesPlayerTag(bodyCollider != null ? bodyCollider.gameObject : null, playerHealth);
         }
 
+        if (IsPlayerActionHitbox(other))
+        {
+            return false;
+        }
+
         if (MatchesPlayerTag(other.gameObject, null))
         {
             return true;
@@ -173,5 +178,18 @@ public sealed class StoryEventTrigger2D : MonoBehaviour
         }
 
         return false;
+    }
+
+    private static bool IsPlayerActionHitbox(Collider2D other)
+    {
+        if (other == null)
+        {
+            return false;
+        }
+
+        return other.GetComponent<AttackHitbox>() != null ||
+               other.GetComponentInParent<AttackHitbox>() != null ||
+               other.GetComponent<ParryHitbox>() != null ||
+               other.GetComponentInParent<ParryHitbox>() != null;
     }
 }
