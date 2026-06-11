@@ -7,7 +7,7 @@ namespace GameName.Enemy
     {
         [Header("Renderer")]
         [SerializeField] private SpriteRenderer mainRenderer;
-        [SerializeField] private bool flipXWhenFacingRight = true;
+        [SerializeField] private bool flipXWhenFacingRight = false;
 
         [Header("Animator")]
         [SerializeField] private Animator animator;

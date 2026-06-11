@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: ""
   m_EditorClassIdentifier: ""
   mainRenderer: {fileID: 5114111978084177922}
-  flipXWhenFacingRight: 1
+  flipXWhenFacingRight: 0
   animator: {fileID: 730100000000000104}
   animatorLayer: 0
   idleStateName: idle
