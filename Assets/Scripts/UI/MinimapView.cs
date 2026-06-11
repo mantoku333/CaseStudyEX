@@ -22,6 +22,7 @@ public sealed class MinimapView : MonoBehaviour
     [SerializeField] private float fullMapScale = 0.8f;
     [SerializeField, Min(0f)] private float fullMapContentPadding = 22f;
     [SerializeField, Min(0f)] private float fullBoardScale = 87f;
+    [SerializeField, Range(0.1f, 1f)] private float fullMapFitViewportRatio = 0.92f;
     [SerializeField, Min(0f)] private float fullLineThickness = 6f;
     [SerializeField, Min(0f)] private float fullRoomBorderThickness = 6f;
     [SerializeField, Min(0f)] private float fullMarkerDiameter = 24f;
@@ -44,6 +45,7 @@ public sealed class MinimapView : MonoBehaviour
     [SerializeField, Min(0f)] private float overlapPaddingPixels = 80f;
 
     private readonly List<GameObject> generatedObjects = new List<GameObject>();
+    private readonly List<MinimapRoomDefinition> fullMapAreaRooms = new List<MinimapRoomDefinition>();
     private readonly Vector3[] miniMapWorldCorners = new Vector3[4];
     private MinimapManager manager;
     private RectTransform miniMapPanel;
@@ -207,7 +209,14 @@ public sealed class MinimapView : MonoBehaviour
 
         if (fullMapPanel != null && fullMapPanel.gameObject.activeSelf)
         {
-            DrawMap(fullMapContent, fullBoardScale, fullLineThickness, fullRoomBorderThickness, false, fullMarkerDiameter);
+            DrawMap(
+                fullMapContent,
+                ResolveFullMapRooms(),
+                fullBoardScale,
+                fullLineThickness,
+                fullRoomBorderThickness,
+                false,
+                fullMarkerDiameter);
         }
     }
 
@@ -226,6 +235,7 @@ public sealed class MinimapView : MonoBehaviour
         ClearGeneratedUnder(miniMapContent);
         DrawMapAtOrigin(
             miniMapContent,
+            manager.RoomDefinitions,
             miniBoardScale,
             miniLineThickness,
             miniRoomBorderThickness,
@@ -260,25 +270,35 @@ public sealed class MinimapView : MonoBehaviour
 
     private void DrawMap(
         RectTransform parent,
+        IReadOnlyList<MinimapRoomDefinition> rooms,
         float boardScale,
         float lineThickness,
         float roomBorderThickness,
         bool centerOnCurrentRoom,
         float markerDiameter)
     {
-        IReadOnlyList<MinimapRoomDefinition> rooms = manager.RoomDefinitions;
         if (rooms == null || rooms.Count == 0)
         {
             return;
         }
 
-        Rect bounds = CalculateBounds(rooms);
-        Vector2 origin = CalculateOrigin(bounds, boardScale, centerOnCurrentRoom);
-        DrawMapAtOrigin(parent, boardScale, lineThickness, roomBorderThickness, markerDiameter, bounds, origin);
+        Rect bounds = CalculateDrawableBounds(rooms);
+        float resolvedBoardScale = CalculateFittedBoardScale(parent, bounds, boardScale);
+        Vector2 origin = CalculateOrigin(bounds, resolvedBoardScale, centerOnCurrentRoom);
+        DrawMapAtOrigin(
+            parent,
+            rooms,
+            resolvedBoardScale,
+            lineThickness,
+            roomBorderThickness,
+            markerDiameter,
+            bounds,
+            origin);
     }
 
     private void DrawMapAtOrigin(
         RectTransform parent,
+        IReadOnlyList<MinimapRoomDefinition> rooms,
         float boardScale,
         float lineThickness,
         float roomBorderThickness,
@@ -286,13 +306,12 @@ public sealed class MinimapView : MonoBehaviour
         Rect bounds,
         Vector2 origin)
     {
-        IReadOnlyList<MinimapRoomDefinition> rooms = manager.RoomDefinitions;
         if (rooms == null || rooms.Count == 0)
         {
             return;
         }
 
-        DrawConnections(parent, bounds, origin, boardScale, lineThickness);
+        DrawConnections(parent, rooms, bounds, origin, boardScale, lineThickness);
 
         for (int i = 0; i < rooms.Count; i++)
         {
@@ -305,7 +324,62 @@ public sealed class MinimapView : MonoBehaviour
             DrawBorderRoom(parent, room, origin, bounds, boardScale, roomBorderThickness);
         }
 
-        DrawCurrentMarker(parent, origin, bounds, boardScale, markerDiameter);
+        DrawCurrentMarker(parent, rooms, origin, bounds, boardScale, markerDiameter);
+    }
+
+    private IReadOnlyList<MinimapRoomDefinition> ResolveFullMapRooms()
+    {
+        IReadOnlyList<MinimapRoomDefinition> rooms = manager.RoomDefinitions;
+        if (rooms == null || rooms.Count == 0)
+        {
+            return rooms;
+        }
+
+        if (!TryGetAreaKey(manager.CurrentRoomId, out char currentAreaKey))
+        {
+            return rooms;
+        }
+
+        fullMapAreaRooms.Clear();
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoomDefinition room = rooms[i];
+            if (RoomBelongsToArea(room, currentAreaKey))
+            {
+                fullMapAreaRooms.Add(room);
+            }
+        }
+
+        return fullMapAreaRooms.Count > 0 ? fullMapAreaRooms : rooms;
+    }
+
+    private static bool RoomBelongsToArea(MinimapRoomDefinition room, char areaKey)
+    {
+        return room != null &&
+            TryGetAreaKey(room.RoomId, out char roomAreaKey) &&
+            roomAreaKey == areaKey;
+    }
+
+    private static bool TryGetAreaKey(string roomId, out char areaKey)
+    {
+        areaKey = '\0';
+        if (string.IsNullOrWhiteSpace(roomId))
+        {
+            return false;
+        }
+
+        string trimmedRoomId = roomId.Trim();
+        for (int i = 0; i < trimmedRoomId.Length; i++)
+        {
+            char candidate = trimmedRoomId[i];
+            if (char.IsDigit(candidate))
+            {
+                areaKey = candidate;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private bool ShouldDrawRoom(MinimapRoomDefinition room)
@@ -347,10 +421,16 @@ public sealed class MinimapView : MonoBehaviour
         generatedObjects.Add(line.gameObject);
     }
 
-    private void DrawCurrentMarker(RectTransform parent, Vector2 origin, Rect bounds, float boardScale, float markerDiameter)
+    private void DrawCurrentMarker(
+        RectTransform parent,
+        IReadOnlyList<MinimapRoomDefinition> rooms,
+        Vector2 origin,
+        Rect bounds,
+        float boardScale,
+        float markerDiameter)
     {
         if (string.IsNullOrWhiteSpace(manager.CurrentRoomId) ||
-            !manager.TryGetRoom(manager.CurrentRoomId, out MinimapRoomDefinition currentRoom) ||
+            !TryFindDrawRoom(rooms, manager.CurrentRoomId, out MinimapRoomDefinition currentRoom) ||
             !ShouldDrawRoom(currentRoom))
         {
             return;
@@ -364,6 +444,7 @@ public sealed class MinimapView : MonoBehaviour
 
     private void DrawConnections(
         RectTransform parent,
+        IReadOnlyList<MinimapRoomDefinition> rooms,
         Rect bounds,
         Vector2 origin,
         float boardScale,
@@ -379,8 +460,8 @@ public sealed class MinimapView : MonoBehaviour
         {
             MinimapLinkDefinition link = links[i];
             if (link == null ||
-                !manager.TryGetRoom(link.FromRoomId, out MinimapRoomDefinition fromRoom) ||
-                !manager.TryGetRoom(link.ToRoomId, out MinimapRoomDefinition toRoom) ||
+                !TryFindDrawRoom(rooms, link.FromRoomId, out MinimapRoomDefinition fromRoom) ||
+                !TryFindDrawRoom(rooms, link.ToRoomId, out MinimapRoomDefinition toRoom) ||
                 !ShouldDrawRoom(fromRoom) ||
                 !ShouldDrawRoom(toRoom))
             {
@@ -405,6 +486,33 @@ public sealed class MinimapView : MonoBehaviour
                 DrawLineSegment(parent, "Link_" + i + "_" + pointIndex, startInset, endInset, lineThickness, lineColor);
             }
         }
+    }
+
+    private static bool TryFindDrawRoom(
+        IReadOnlyList<MinimapRoomDefinition> rooms,
+        string roomId,
+        out MinimapRoomDefinition room)
+    {
+        room = null;
+        if (rooms == null || string.IsNullOrWhiteSpace(roomId))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoomDefinition candidate = rooms[i];
+            if (candidate == null ||
+                !string.Equals(candidate.RoomId, roomId, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            room = candidate;
+            return true;
+        }
+
+        return false;
     }
 
     private List<Vector2> BuildBoardPath(
@@ -565,6 +673,64 @@ public sealed class MinimapView : MonoBehaviour
         }
 
         return Rect.MinMaxRect(minX, minY, maxX, maxY);
+    }
+
+    private Rect CalculateDrawableBounds(IReadOnlyList<MinimapRoomDefinition> rooms)
+    {
+        bool hasRoom = false;
+        float minX = 0f;
+        float minY = 0f;
+        float maxX = 0f;
+        float maxY = 0f;
+
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            MinimapRoomDefinition room = rooms[i];
+            if (room == null || !ShouldDrawRoom(room))
+            {
+                continue;
+            }
+
+            Vector2 position = room.AreaPosition;
+            Vector2 size = room.AreaSize;
+
+            if (!hasRoom)
+            {
+                minX = position.x;
+                minY = position.y;
+                maxX = position.x + size.x;
+                maxY = position.y + size.y;
+                hasRoom = true;
+                continue;
+            }
+
+            minX = Mathf.Min(minX, position.x);
+            minY = Mathf.Min(minY, position.y);
+            maxX = Mathf.Max(maxX, position.x + size.x);
+            maxY = Mathf.Max(maxY, position.y + size.y);
+        }
+
+        return hasRoom ? Rect.MinMaxRect(minX, minY, maxX, maxY) : CalculateBounds(rooms);
+    }
+
+    private float CalculateFittedBoardScale(RectTransform parent, Rect bounds, float preferredBoardScale)
+    {
+        if (parent == null || bounds.width <= 0f || bounds.height <= 0f)
+        {
+            return preferredBoardScale;
+        }
+
+        Rect parentRect = parent.rect;
+        if (parentRect.width <= 0f || parentRect.height <= 0f)
+        {
+            return preferredBoardScale;
+        }
+
+        float fitScale = Mathf.Min(
+            parentRect.width * fullMapFitViewportRatio / bounds.width,
+            parentRect.height * fullMapFitViewportRatio / bounds.height);
+
+        return Mathf.Min(preferredBoardScale, fitScale);
     }
 
     private Vector2 CalculateOrigin(Rect bounds, float boardScale, bool centerOnCurrentRoom)
