@@ -5,6 +5,7 @@ public sealed class EventPanelPlayable : PlayableBehaviour
 {
     public string clipId = string.Empty;
     public EventPanelContent content;
+    public string panelPresenterName = string.Empty;
     public bool pauseTimelineUntilClosed = true;
     public float autoCloseSecondsWhenNoButton = 3f;
 
@@ -32,7 +33,8 @@ public sealed class EventPanelPlayable : PlayableBehaviour
             clipId,
             content,
             pauseTimelineUntilClosed,
-            autoCloseSecondsWhenNoButton);
+            autoCloseSecondsWhenNoButton,
+            panelPresenterName);
 
         started = true;
     }

@@ -84,11 +84,11 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 0dcf1e0b78e043a3a0190ea51ca9a3d4, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: -8451293343420188771, guid: 158fad97a306bf940a2c6deecea24032, type: 3}
+  m_Color: {r: 1.8, g: 1.8, b: 1.8, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
+  m_DrawMode: 1
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
@@ -132,10 +132,10 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1.5699999, y: 1.5602539}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
-    drawMode: 0
+    drawMode: 1
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
@@ -163,6 +163,13 @@ MonoBehaviour:
   freezeHorizontalMovement: 1
   freezeRotation: 1
   breakEffectSizeMultiplier: 1
+  rightSideLeftLaunchMultiplier: 2
+  idleSpriteSheetTexture: {fileID: 2800000, guid: 158fad97a306bf940a2c6deecea24032, type: 3}
+  idleFrameColumns: 5
+  idleFrameRows: 3
+  idleFrameIndex: 6
+  idleFramePixelsPerUnit: 100
+  fitIdleSpriteToCollider: 1
 --- !u!50 &5000000
 Rigidbody2D:
   serializedVersion: 5

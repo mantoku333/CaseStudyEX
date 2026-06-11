@@ -155,6 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DiaryPickupItem
   diaryEntryData: {fileID: 0}
   pickupEventName: 
+  showDiaryPanelOnPickup: 1
 --- !u!114 &9100000000000000001
 MonoBehaviour:
   m_ObjectHideFlags: 0
