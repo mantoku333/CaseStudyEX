@@ -98,7 +98,7 @@ namespace GameName.Enemy
         public float RangeEffectSizeMultiplier => Mathf.Max(0.01f, rangeEffectSizeMultiplier);
         public float GroundBladeClipDuration => GroundBladeClip.DurationSeconds;
 
-        public GridSpriteSheetClip GroundBladeClip => CreateClip(underAttackSpriteSheet, 5, 4, 20, new Vector2(0.5f, 0.5f), GroundBladeFrameCropPixels, LargeFrameReferencePixels);
+        public GridSpriteSheetClip GroundBladeClip => CreateStableClip(underAttackSpriteSheet, 5, 4, 20, new Vector2(0.5f, 0.5f), GroundBladeFrameCropPixels, LargeFrameReferencePixels);
         public GridSpriteSheetClip RainBladeInClip => CreateClip(topAttackInSpriteSheet, 5, 5, 23, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
         public GridSpriteSheetClip RainBladeOutClip => CreateClip(topAttackOutSpriteSheet, 5, 4, 20, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
 
@@ -385,7 +385,7 @@ namespace GameName.Enemy
 
         public bool PlayDeath(Action hideBossVisuals, Action completed)
         {
-            GridSpriteSheetClip clip = CreateClip(deathSpriteSheet, 5, 9, 45, new Vector2(0.5f, 0.5f), DeathFrameCropPixels, LargeFrameReferencePixels);
+            GridSpriteSheetClip clip = CreateStableClip(deathSpriteSheet, 5, 9, 45, new Vector2(0.5f, 0.5f), DeathFrameCropPixels, LargeFrameReferencePixels);
             if (!clip.IsValid)
             {
                 return false;
@@ -454,7 +454,7 @@ namespace GameName.Enemy
 
         private IEnumerator SpawnHorizontalRangeIndicators(IReadOnlyList<Vector2> footPositions)
         {
-            GridSpriteSheetClip clip = CreateClip(rangeSpriteSheet, 10, 9, 90, new Vector2(0.5f, 0f), RangeFrameCropPixels, RangeFrameReferencePixels);
+            GridSpriteSheetClip clip = CreateStableClip(rangeSpriteSheet, 10, 9, 90, new Vector2(0.5f, 0f), RangeFrameCropPixels, RangeFrameReferencePixels);
             if (!clip.IsValid)
             {
                 rangeSpawnRoutine = null;
@@ -561,8 +561,8 @@ namespace GameName.Enemy
 
         private void PlayShieldInThenLoop()
         {
-            GridSpriteSheetClip inClip = CreateClip(shieldInSpriteSheet, 5, 2, 10, new Vector2(0.5f, 0.5f), ShieldInFrameCropPixels, LargeFrameReferencePixels);
-            GridSpriteSheetClip loopClip = CreateClip(
+            GridSpriteSheetClip inClip = CreateStableClip(shieldInSpriteSheet, 5, 2, 10, new Vector2(0.5f, 0.5f), ShieldInFrameCropPixels, LargeFrameReferencePixels);
+            GridSpriteSheetClip loopClip = CreateStableClip(
                 shieldLoopSpriteSheet,
                 5,
                 12,
@@ -714,6 +714,23 @@ namespace GameName.Enemy
             clip.UseFrameCrop = true;
             clip.FrameCropPixels = frameCropPixels;
             clip.FrameCropReferencePixels = frameCropReferencePixels;
+            return clip;
+        }
+
+        private GridSpriteSheetClip CreateStableClip(
+            Texture2D spriteSheet,
+            int columns,
+            int rows,
+            int frameCount,
+            Vector2 pivot,
+            RectInt visibleFramePixels,
+            Vector2Int visibleFrameReferencePixels)
+        {
+            GridSpriteSheetClip clip = CreateClip(spriteSheet, columns, rows, frameCount, pivot, 0);
+            clip.UseFrameCrop = true;
+            clip.UseFrameCropForSizingOnly = true;
+            clip.FrameCropPixels = visibleFramePixels;
+            clip.FrameCropReferencePixels = visibleFrameReferencePixels;
             return clip;
         }
 
