@@ -7,6 +7,7 @@ public sealed class SceneStartStoryEventSource : MonoBehaviour
 {
     [Header("Story Event")]
     [SerializeField] private string eventId = "prologue";
+    [SerializeField] private string storyEventControllerId = string.Empty;
     [SerializeField] private string dialogueNodeName = "Prologue";
     [SerializeField] private DialogueStyle dialogueStyle = DialogueStyle.Bubble;
     [SerializeField] private StoryPausePolicy pausePolicy = StoryPausePolicy.GameplayOnly;
@@ -26,6 +27,7 @@ public sealed class SceneStartStoryEventSource : MonoBehaviour
     private void Reset()
     {
         eventId = "prologue";
+        storyEventControllerId = string.Empty;
         dialogueNodeName = "Prologue";
         dialogueStyle = DialogueStyle.Bubble;
         pausePolicy = StoryPausePolicy.GameplayOnly;
@@ -50,7 +52,8 @@ public sealed class SceneStartStoryEventSource : MonoBehaviour
 
     public StoryEventDefinition CreateDefinition(string sceneName)
     {
-        if (string.IsNullOrWhiteSpace(dialogueNodeName))
+        if (string.IsNullOrWhiteSpace(dialogueNodeName) &&
+            string.IsNullOrWhiteSpace(storyEventControllerId))
         {
             return null;
         }
@@ -59,7 +62,12 @@ public sealed class SceneStartStoryEventSource : MonoBehaviour
         {
             eventId = string.IsNullOrWhiteSpace(eventId) ? "scene_start_event" : eventId.Trim(),
             sceneName = sceneName,
-            dialogueNodeName = dialogueNodeName.Trim(),
+            storyEventControllerId = string.IsNullOrWhiteSpace(storyEventControllerId)
+                ? string.Empty
+                : storyEventControllerId.Trim(),
+            dialogueNodeName = string.IsNullOrWhiteSpace(dialogueNodeName)
+                ? string.Empty
+                : dialogueNodeName.Trim(),
             dialogueStyle = dialogueStyle,
             runOnceFlagKey = runOnceFlagKey,
             conditions = conditions ?? new StoryFlagConditionSet(),
