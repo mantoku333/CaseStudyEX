@@ -288,6 +288,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
   m_Name: StoryObjectMoveClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
   targetMode: 0
   markerNo: 2
   worldPosition: {x: 0, y: 0, z: 0}
@@ -295,6 +299,7 @@ MonoBehaviour:
   moveX: 1
   moveY: 1
   smoothStep: 1
+  useUmbrellaWalk: 0
 --- !u!114 &-3805806930034002821
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -331,7 +336,7 @@ MonoBehaviour:
   m_Name: StoryYarnDialogueClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueClip
   clipId: 4307f155624846d39a59504c037c4c94
-  nodeName: Tutorial_Attack1aa
+  nodeName: TutorialStory_Attack1
   useControllerDefaultStyle: 1
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
@@ -619,13 +624,18 @@ MonoBehaviour:
   panelPresenter:
     exposedName: 9aadde69bc70a5e469624782ff1bdf36
     defaultValue: {fileID: 0}
-  targetMode: 0
-  markerNo: 1
-  worldPosition: {x: 0, y: 0, z: 0}
-  keepCurrentZ: 1
-  moveX: 1
-  moveY: 1
-  smoothStep: 1
+  panelPresenterName: 
+  panelKind: 0
+  diaryEntryData: {fileID: 0}
+  title: 
+  body: 
+  closeLabel: 
+  illustration: {fileID: 0}
+  animationFrames: []
+  animationFramesPerSecond: 12
+  animationLoopIntervalSeconds: 0.5
+  pauseTimelineUntilClosed: 1
+  autoCloseSecondsWhenNoButton: 3
 --- !u!114 &9018057022353266388
 MonoBehaviour:
   m_ObjectHideFlags: 1
