@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public enum EventPanelKind
@@ -39,6 +40,9 @@ public sealed class EventPanelPresenter : MonoBehaviour
     [SerializeField] private Image illustrationImage;
     [SerializeField] private Image animationImage;
 
+    [Header("Input")]
+    [SerializeField] private bool closeOnSpace = true;
+
     private Action onClosed;
     private Coroutine autoCloseRoutine;
     private bool isVisible;
@@ -55,10 +59,13 @@ public sealed class EventPanelPresenter : MonoBehaviour
     private void Reset()
     {
         panelRoot = gameObject;
+        ResolveMissingReferences();
     }
 
     private void Awake()
     {
+        ResolveMissingReferences();
+
         if (!isVisible)
         {
             HideWithoutCallback();
@@ -72,6 +79,8 @@ public sealed class EventPanelPresenter : MonoBehaviour
         {
             panelRoot = gameObject;
         }
+
+        ResolveMissingReferences();
     }
 #endif
 
@@ -95,12 +104,24 @@ public sealed class EventPanelPresenter : MonoBehaviour
 
     private void Update()
     {
+        if (isVisible && closeOnSpace && Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            Hide();
+            return;
+        }
+
         UpdateAnimation();
+    }
+
+    public bool ShowDiary(DiaryEntryData diaryEntryData, Action closeCallback = null, float autoCloseSecondsWhenNoButton = 0f)
+    {
+        return Show(CreateDiaryContent(diaryEntryData), closeCallback, autoCloseSecondsWhenNoButton);
     }
 
     public bool Show(EventPanelContent content, Action closeCallback = null, float autoCloseSecondsWhenNoButton = 0f)
     {
-        if (!ValidateRequiredReferences(autoCloseSecondsWhenNoButton))
+        float resolvedAutoCloseSeconds = ResolveAutoCloseSeconds(content, autoCloseSecondsWhenNoButton);
+        if (!ValidateRequiredReferences(resolvedAutoCloseSeconds))
         {
             return false;
         }
@@ -110,9 +131,9 @@ public sealed class EventPanelPresenter : MonoBehaviour
         ApplyContent(content);
         SetVisible(true);
 
-        if (closeButton == null)
+        if (closeButton == null && resolvedAutoCloseSeconds > 0f)
         {
-            autoCloseRoutine = StartCoroutine(AutoClose(autoCloseSecondsWhenNoButton));
+            autoCloseRoutine = StartCoroutine(AutoClose(resolvedAutoCloseSeconds));
         }
 
         return true;
@@ -129,7 +150,7 @@ public sealed class EventPanelPresenter : MonoBehaviour
         onClosed = closeCallback;
         SetVisible(true);
 
-        if (closeButton == null)
+        if (closeButton == null && autoCloseSecondsWhenNoButton > 0f)
         {
             autoCloseRoutine = StartCoroutine(AutoClose(autoCloseSecondsWhenNoButton));
         }
@@ -177,6 +198,16 @@ public sealed class EventPanelPresenter : MonoBehaviour
         Hide();
     }
 
+    private static float ResolveAutoCloseSeconds(EventPanelContent content, float autoCloseSecondsWhenNoButton)
+    {
+        if (content != null && content.kind == EventPanelKind.Diary)
+        {
+            return 0f;
+        }
+
+        return autoCloseSecondsWhenNoButton;
+    }
+
     private void StopAutoCloseRoutine()
     {
         if (autoCloseRoutine == null)
@@ -208,6 +239,17 @@ public sealed class EventPanelPresenter : MonoBehaviour
         RestartAnimation();
     }
 
+    private static EventPanelContent CreateDiaryContent(DiaryEntryData diaryEntryData)
+    {
+        return new EventPanelContent
+        {
+            kind = EventPanelKind.Diary,
+            title = diaryEntryData != null ? diaryEntryData.GetTitle() : string.Empty,
+            body = diaryEntryData != null ? diaryEntryData.GetContent() : string.Empty,
+            closeLabel = "SPACEで閉じる"
+        };
+    }
+
     private static string ResolveTitle(EventPanelContent content)
     {
         if (!string.IsNullOrWhiteSpace(content.title))
@@ -228,7 +270,12 @@ public sealed class EventPanelPresenter : MonoBehaviour
 
     private static string ResolveCloseLabel(EventPanelContent content)
     {
-        return string.IsNullOrWhiteSpace(content.closeLabel) ? string.Empty : content.closeLabel.Trim();
+        if (!string.IsNullOrWhiteSpace(content.closeLabel))
+        {
+            return content.closeLabel.Trim();
+        }
+
+        return content.kind == EventPanelKind.Diary ? "SPACEで閉じる" : string.Empty;
     }
 
     private static void SetText(TMP_Text label, string value)
@@ -320,7 +367,9 @@ public sealed class EventPanelPresenter : MonoBehaviour
 
     private bool ValidateRequiredReferences(float autoCloseSecondsWhenNoButton)
     {
-        if (panelRoot != null && (closeButton != null || autoCloseSecondsWhenNoButton > 0f))
+        ResolveMissingReferences();
+
+        if (panelRoot != null && (closeButton != null || closeOnSpace || autoCloseSecondsWhenNoButton > 0f))
         {
             return true;
         }
@@ -335,5 +384,122 @@ public sealed class EventPanelPresenter : MonoBehaviour
         Debug.Break();
 #endif
         return false;
+    }
+
+    private void ResolveMissingReferences()
+    {
+        if (panelRoot == null)
+        {
+            panelRoot = gameObject;
+        }
+
+        if (closeButton == null)
+        {
+            closeButton = GetComponentInChildren<Button>(includeInactive: true);
+        }
+
+        TMP_Text[] labels = null;
+        if (titleLabel == null)
+        {
+            titleLabel = FindLabelByName(ref labels, "Title", "TitleLabel", "DiaryTitle");
+        }
+
+        if (bodyLabel == null)
+        {
+            bodyLabel = FindLabelByName(ref labels, "Body", "BodyLabel", "Content", "DiaryBody", "DiaryContent");
+        }
+
+        if (bodyLabel == null)
+        {
+            bodyLabel = FindFirstBodyCandidate(ref labels);
+        }
+
+        if (closeButtonLabel == null && closeButton != null)
+        {
+            closeButtonLabel = closeButton.GetComponentInChildren<TMP_Text>(includeInactive: true);
+        }
+
+        Image[] images = null;
+        if (illustrationImage == null)
+        {
+            illustrationImage = FindImageByName(ref images, "Illustration", "IllustrationImage", "DiaryImage");
+        }
+
+        if (animationImage == null)
+        {
+            animationImage = FindImageByName(ref images, "Animation", "AnimationImage", "GifImage");
+        }
+    }
+
+    private TMP_Text FindLabelByName(ref TMP_Text[] labels, params string[] names)
+    {
+        if (labels == null)
+        {
+            labels = GetComponentsInChildren<TMP_Text>(includeInactive: true);
+        }
+
+        for (int nameIndex = 0; nameIndex < names.Length; nameIndex++)
+        {
+            string targetName = names[nameIndex];
+            for (int i = 0; i < labels.Length; i++)
+            {
+                TMP_Text label = labels[i];
+                if (label != null && string.Equals(label.name, targetName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return label;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private TMP_Text FindFirstBodyCandidate(ref TMP_Text[] labels)
+    {
+        if (labels == null)
+        {
+            labels = GetComponentsInChildren<TMP_Text>(includeInactive: true);
+        }
+
+        for (int i = 0; i < labels.Length; i++)
+        {
+            TMP_Text label = labels[i];
+            if (label == null || label == titleLabel || label == closeButtonLabel)
+            {
+                continue;
+            }
+
+            if (closeButton != null && label.transform.IsChildOf(closeButton.transform))
+            {
+                continue;
+            }
+
+            return label;
+        }
+
+        return null;
+    }
+
+    private Image FindImageByName(ref Image[] images, params string[] names)
+    {
+        if (images == null)
+        {
+            images = GetComponentsInChildren<Image>(includeInactive: true);
+        }
+
+        for (int nameIndex = 0; nameIndex < names.Length; nameIndex++)
+        {
+            string targetName = names[nameIndex];
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (image != null && string.Equals(image.name, targetName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return image;
+                }
+            }
+        }
+
+        return null;
     }
 }
