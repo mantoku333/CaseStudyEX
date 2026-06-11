@@ -19,9 +19,14 @@ public class WoodenBoxBreakEffect : MonoBehaviour
     [SerializeField] private bool playOnEnable = true;
     [SerializeField] private bool destroyOnComplete = true;
 
+    [Header("Launch")]
+    [SerializeField, Min(0f)] private float launchDistance = 0.45f;
+    [SerializeField, Min(0f)] private float launchRise = 0.18f;
+
     private SpriteRenderer spriteRenderer;
     private Sprite[] frames;
     private Coroutine playRoutine;
+    private Coroutine launchRoutine;
 
     private void Awake()
     {
@@ -71,7 +76,7 @@ public class WoodenBoxBreakEffect : MonoBehaviour
             return;
         }
 
-        Vector2 frameWorldSize = GetSpriteContentWorldSize(frames[0]);
+        Vector2 frameWorldSize = WoodenBoxSpriteSheetFrames.GetSpriteContentWorldSize(frames[0]);
         if (frameWorldSize.x <= 0f || frameWorldSize.y <= 0f)
         {
             return;
@@ -81,6 +86,29 @@ public class WoodenBoxBreakEffect : MonoBehaviour
             targetWorldSize.x / frameWorldSize.x,
             targetWorldSize.y / frameWorldSize.y,
             1f);
+    }
+
+    public void Launch(Vector2 direction)
+    {
+        if (launchRoutine != null)
+        {
+            StopCoroutine(launchRoutine);
+            launchRoutine = null;
+        }
+
+        if (direction.sqrMagnitude <= 0.0001f || launchDistance <= 0f)
+        {
+            return;
+        }
+
+        CacheRenderer();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.flipX = direction.x < -0.0001f;
+        }
+
+        float launchMultiplier = Mathf.Max(1f, direction.magnitude);
+        launchRoutine = StartCoroutine(LaunchRoutine(direction.normalized * launchMultiplier));
     }
 
     private IEnumerator PlayRoutine()
@@ -115,6 +143,27 @@ public class WoodenBoxBreakEffect : MonoBehaviour
         }
     }
 
+    private IEnumerator LaunchRoutine(Vector2 direction)
+    {
+        Vector3 startPosition = transform.position;
+        float duration = Mathf.Max(frameSeconds * Mathf.Max(1, frameColumns * frameRows), 0.01f);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float easedOut = 1f - ((1f - t) * (1f - t));
+            float rise = Mathf.Sin(t * Mathf.PI) * launchRise;
+            Vector3 offset = (Vector3)(direction * (launchDistance * easedOut)) + (Vector3.up * rise);
+            transform.position = startPosition + offset;
+            yield return null;
+        }
+
+        transform.position = startPosition + (Vector3)(direction * launchDistance);
+        launchRoutine = null;
+    }
+
     private void CacheRenderer()
     {
         if (spriteRenderer == null)
@@ -140,45 +189,84 @@ public class WoodenBoxBreakEffect : MonoBehaviour
             return;
         }
 
+        frames = WoodenBoxSpriteSheetFrames.CreateFrames(
+            spriteSheetTexture,
+            frameColumns,
+            frameRows,
+            pixelsPerUnit);
+    }
+
+    private void OnDestroy()
+    {
+        if (playRoutine != null)
+        {
+            StopCoroutine(playRoutine);
+        }
+
+        if (launchRoutine != null)
+        {
+            StopCoroutine(launchRoutine);
+        }
+
+        WoodenBoxSpriteSheetFrames.DestroyFrames(frames);
+    }
+}
+
+internal static class WoodenBoxSpriteSheetFrames
+{
+    public static Sprite[] CreateFrames(Texture2D spriteSheetTexture, int frameColumns, int frameRows, float pixelsPerUnit)
+    {
         if (spriteSheetTexture == null || frameColumns <= 0 || frameRows <= 0)
         {
-            frames = System.Array.Empty<Sprite>();
-            return;
+            return System.Array.Empty<Sprite>();
+        }
+
+        int frameCount = frameColumns * frameRows;
+        Sprite[] frames = new Sprite[frameCount];
+
+        for (int i = 0; i < frameCount; i++)
+        {
+            frames[i] = CreateFrame(spriteSheetTexture, frameColumns, frameRows, i, pixelsPerUnit);
+        }
+
+        return frames;
+    }
+
+    public static Sprite CreateFrame(
+        Texture2D spriteSheetTexture,
+        int frameColumns,
+        int frameRows,
+        int frameIndex,
+        float pixelsPerUnit)
+    {
+        if (spriteSheetTexture == null || frameColumns <= 0 || frameRows <= 0)
+        {
+            return null;
         }
 
         int frameWidth = spriteSheetTexture.width / frameColumns;
         int frameHeight = spriteSheetTexture.height / frameRows;
-
         if (frameWidth <= 0 || frameHeight <= 0)
         {
-            frames = System.Array.Empty<Sprite>();
-            return;
+            return null;
         }
 
-        frames = new Sprite[frameColumns * frameRows];
-        int frameIndex = 0;
-        Vector2 pivot = new Vector2(0.5f, 0.5f);
+        int clampedFrameIndex = Mathf.Clamp(frameIndex, 0, (frameColumns * frameRows) - 1);
+        int visualRow = clampedFrameIndex / frameColumns;
+        int xIndex = clampedFrameIndex % frameColumns;
+        int x = xIndex * frameWidth;
+        int y = spriteSheetTexture.height - ((visualRow + 1) * frameHeight);
 
-        for (int visualRow = 0; visualRow < frameRows; visualRow++)
-        {
-            int y = spriteSheetTexture.height - ((visualRow + 1) * frameHeight);
-
-            for (int xIndex = 0; xIndex < frameColumns; xIndex++)
-            {
-                int x = xIndex * frameWidth;
-                Rect rect = new Rect(x, y, frameWidth, frameHeight);
-                frames[frameIndex++] = Sprite.Create(
-                    spriteSheetTexture,
-                    rect,
-                    pivot,
-                    pixelsPerUnit,
-                    0,
-                    SpriteMeshType.Tight);
-            }
-        }
+        return Sprite.Create(
+            spriteSheetTexture,
+            new Rect(x, y, frameWidth, frameHeight),
+            new Vector2(0.5f, 0.5f),
+            Mathf.Max(1f, pixelsPerUnit),
+            0,
+            SpriteMeshType.Tight);
     }
 
-    private static Vector2 GetSpriteContentWorldSize(Sprite sprite)
+    public static Vector2 GetSpriteContentWorldSize(Sprite sprite)
     {
         if (sprite == null)
         {
@@ -207,13 +295,8 @@ public class WoodenBoxBreakEffect : MonoBehaviour
         return sprite.bounds.size;
     }
 
-    private void OnDestroy()
+    public static void DestroyFrames(Sprite[] frames)
     {
-        if (playRoutine != null)
-        {
-            StopCoroutine(playRoutine);
-        }
-
         if (frames == null)
         {
             return;
@@ -221,10 +304,15 @@ public class WoodenBoxBreakEffect : MonoBehaviour
 
         for (int i = 0; i < frames.Length; i++)
         {
-            if (frames[i] != null)
-            {
-                Destroy(frames[i]);
-            }
+            DestroyFrame(frames[i]);
+        }
+    }
+
+    public static void DestroyFrame(Sprite frame)
+    {
+        if (frame != null)
+        {
+            Object.Destroy(frame);
         }
     }
 }
