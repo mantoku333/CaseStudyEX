@@ -7,6 +7,7 @@ using UnityEngine.Timeline;
 public sealed class EventPanelClip : PlayableAsset, ITimelineClipAsset
 {
     [SerializeField, HideInInspector] private string clipId = string.Empty;
+    [SerializeField] private string panelPresenterName = string.Empty;
     [SerializeField] private EventPanelKind panelKind = EventPanelKind.Custom;
     [SerializeField] private DiaryEntryData diaryEntryData;
     [SerializeField] private string title = string.Empty;
@@ -38,6 +39,7 @@ public sealed class EventPanelClip : PlayableAsset, ITimelineClipAsset
         EventPanelPlayable behaviour = playable.GetBehaviour();
         behaviour.clipId = ClipId;
         behaviour.content = BuildContent();
+        behaviour.panelPresenterName = ResolvePanelPresenterName();
         behaviour.pauseTimelineUntilClosed = pauseTimelineUntilClosed;
         behaviour.autoCloseSecondsWhenNoButton = autoCloseSecondsWhenNoButton;
         return playable;
@@ -45,11 +47,21 @@ public sealed class EventPanelClip : PlayableAsset, ITimelineClipAsset
 
     private string ClipId => string.IsNullOrWhiteSpace(clipId) ? BuildFallbackClipId() : clipId.Trim();
 
+    private string ResolvePanelPresenterName()
+    {
+        if (!string.IsNullOrWhiteSpace(panelPresenterName))
+        {
+            return panelPresenterName.Trim();
+        }
+
+        return ResolvePanelKind() == EventPanelKind.Diary ? "DiaryView" : string.Empty;
+    }
+
     private EventPanelContent BuildContent()
     {
         var content = new EventPanelContent
         {
-            kind = panelKind,
+            kind = ResolvePanelKind(),
             title = ResolveTitle(),
             body = ResolveBody(),
             closeLabel = closeLabel,
@@ -60,6 +72,16 @@ public sealed class EventPanelClip : PlayableAsset, ITimelineClipAsset
         };
 
         return content;
+    }
+
+    private EventPanelKind ResolvePanelKind()
+    {
+        if (panelKind == EventPanelKind.Custom && diaryEntryData != null)
+        {
+            return EventPanelKind.Diary;
+        }
+
+        return panelKind;
     }
 
     private string ResolveTitle()
@@ -90,6 +112,6 @@ public sealed class EventPanelClip : PlayableAsset, ITimelineClipAsset
             return resolvedTitle.Trim();
         }
 
-        return panelKind.ToString();
+        return ResolvePanelKind().ToString();
     }
 }

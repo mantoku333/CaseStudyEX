@@ -7,6 +7,7 @@ public sealed class StoryEventDefinition
 {
     public string eventId = "event_id";
     public string sceneName = string.Empty;
+    public string storyEventControllerId = string.Empty;
     public string dialogueNodeName = "Start";
     public DialogueStyle dialogueStyle = DialogueStyle.Bubble;
     public string runOnceFlagKey = string.Empty;
