@@ -108,9 +108,9 @@ namespace CaseStudy.Editor
                     rectTransform.localScale = Vector3.one;
                 }
 
-                if (instance.GetComponent<MantokuStoryOptionsMainMenuSkin>() == null)
+                if (instance.GetComponent<OptionsMainMenuSkin>() == null)
                 {
-                    instance.AddComponent<MantokuStoryOptionsMainMenuSkin>();
+                    instance.AddComponent<OptionsMainMenuSkin>();
                 }
 
                 Transform skill = instance.transform.Find("Skill");

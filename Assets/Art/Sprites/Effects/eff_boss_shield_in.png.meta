@@ -1,0 +1,1157 @@
+fileFormatVersion: 2
+guid: 2c00a4018cab759469ab458ec88058e9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6657688785924829311
+    second: eff_boss_shield_in_0
+  - first:
+      213: 6915064600981026170
+    second: eff_boss_shield_in_1
+  - first:
+      213: 7202018196906949009
+    second: eff_boss_shield_in_2
+  - first:
+      213: 9157774576770099831
+    second: eff_boss_shield_in_3
+  - first:
+      213: 4685160325774418678
+    second: eff_boss_shield_in_4
+  - first:
+      213: -8137003792036077532
+    second: eff_boss_shield_in_5
+  - first:
+      213: 8137512858047134457
+    second: eff_boss_shield_in_6
+  - first:
+      213: -2783440923167766123
+    second: eff_boss_shield_in_7
+  - first:
+      213: 918222735970248424
+    second: eff_boss_shield_in_8
+  - first:
+      213: 1384784529217415982
+    second: eff_boss_shield_in_9
+  - first:
+      213: 6672266297781639526
+    second: eff_boss_shield_in_10
+  - first:
+      213: -4443132424767306330
+    second: eff_boss_shield_in_11
+  - first:
+      213: 1203077109922730548
+    second: eff_boss_shield_in_12
+  - first:
+      213: 3442326289389816284
+    second: eff_boss_shield_in_13
+  - first:
+      213: -1490367123987539931
+    second: eff_boss_shield_in_14
+  - first:
+      213: -5674073422801156721
+    second: eff_boss_shield_in_15
+  - first:
+      213: -8166344652253211894
+    second: eff_boss_shield_in_16
+  - first:
+      213: -8451934937193061560
+    second: eff_boss_shield_in_17
+  - first:
+      213: 6212051153029703790
+    second: eff_boss_shield_in_18
+  - first:
+      213: -8725923918403876574
+    second: eff_boss_shield_in_19
+  - first:
+      213: 826358917758651635
+    second: eff_boss_shield_in_20
+  - first:
+      213: 8179454642935861529
+    second: eff_boss_shield_in_21
+  - first:
+      213: -9121335087081553803
+    second: eff_boss_shield_in_22
+  - first:
+      213: -7439140874486436640
+    second: eff_boss_shield_in_23
+  - first:
+      213: 3048724597895080679
+    second: eff_boss_shield_in_24
+  - first:
+      213: -6898491176891289940
+    second: eff_boss_shield_in_25
+  - first:
+      213: 8582004738208194691
+    second: eff_boss_shield_in_26
+  - first:
+      213: -5556031962967250044
+    second: eff_boss_shield_in_27
+  - first:
+      213: -3900222910222200291
+    second: eff_boss_shield_in_28
+  - first:
+      213: 7049326651947267935
+    second: eff_boss_shield_in_29
+  - first:
+      213: 5225000183439448463
+    second: eff_boss_shield_in_30
+  - first:
+      213: 2117563249624178851
+    second: eff_boss_shield_in_31
+  - first:
+      213: -2743301690192948315
+    second: eff_boss_shield_in_32
+  - first:
+      213: -1779882092614605706
+    second: eff_boss_shield_in_33
+  - first:
+      213: 2062510484971793578
+    second: eff_boss_shield_in_34
+  - first:
+      213: 7714286845091890205
+    second: eff_boss_shield_in_35
+  - first:
+      213: -2044444826800908354
+    second: eff_boss_shield_in_36
+  - first:
+      213: 971024418808413750
+    second: eff_boss_shield_in_37
+  - first:
+      213: -5223450319223123977
+    second: eff_boss_shield_in_38
+  - first:
+      213: -2669560893391341928
+    second: eff_boss_shield_in_39
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_boss_shield_in_0
+      rect:
+        serializedVersion: 2
+        x: 2395
+        y: 1621
+        width: 127
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f70b6264dacd46c50800000000000000
+      internalID: 6657688785924829311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_1
+      rect:
+        serializedVersion: 2
+        x: 2613
+        y: 1696
+        width: 98
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a753a54fd9e37ff50800000000000000
+      internalID: 6915064600981026170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_2
+      rect:
+        serializedVersion: 2
+        x: 3444
+        y: 1719
+        width: 79
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 199b9846465b2f360800000000000000
+      internalID: 7202018196906949009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_3
+      rect:
+        serializedVersion: 2
+        x: 3536
+        y: 1731
+        width: 108
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77a2c752573f61f70800000000000000
+      internalID: 9157774576770099831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_4
+      rect:
+        serializedVersion: 2
+        x: 3639
+        y: 1720
+        width: 33
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f2a9854e78050140800000000000000
+      internalID: 4685160325774418678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_5
+      rect:
+        serializedVersion: 2
+        x: 3652
+        y: 1737
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 420eeafa92e831f80800000000000000
+      internalID: -8137003792036077532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_6
+      rect:
+        serializedVersion: 2
+        x: 3672
+        y: 1688
+        width: 89
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fab21b74d04ee070800000000000000
+      internalID: 8137512858047134457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_7
+      rect:
+        serializedVersion: 2
+        x: 4340
+        y: 1268
+        width: 536
+        height: 536
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 599cc494a3b3f59d0800000000000000
+      internalID: -2783440923167766123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_8
+      rect:
+        serializedVersion: 2
+        x: 1379
+        y: 1371
+        width: 113
+        height: 330
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e6a132a6be2ebc00800000000000000
+      internalID: 918222735970248424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_9
+      rect:
+        serializedVersion: 2
+        x: 3535
+        y: 1693
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2be572413eb73310800000000000000
+      internalID: 1384784529217415982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_10
+      rect:
+        serializedVersion: 2
+        x: 2716
+        y: 1618
+        width: 45
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 669d51eb8d6a89c50800000000000000
+      internalID: 6672266297781639526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_11
+      rect:
+        serializedVersion: 2
+        x: 2722
+        y: 1639
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a589b3b992d652c0800000000000000
+      internalID: -4443132424767306330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_12
+      rect:
+        serializedVersion: 2
+        x: 3377
+        y: 1651
+        width: 76
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 432195ed14032b010800000000000000
+      internalID: 1203077109922730548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_13
+      rect:
+        serializedVersion: 2
+        x: 3746
+        y: 1598
+        width: 68
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd98110a58995cf20800000000000000
+      internalID: 3442326289389816284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_14
+      rect:
+        serializedVersion: 2
+        x: 2744
+        y: 1623
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5285dcd3ff6215be0800000000000000
+      internalID: -1490367123987539931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_15
+      rect:
+        serializedVersion: 2
+        x: 3413
+        y: 1591
+        width: 22
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f85c374d844a141b0800000000000000
+      internalID: -5674073422801156721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_16
+      rect:
+        serializedVersion: 2
+        x: 3735
+        y: 1616
+        width: 11
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0359015ec05bae80800000000000000
+      internalID: -8166344652253211894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_17
+      rect:
+        serializedVersion: 2
+        x: 2743
+        y: 1464
+        width: 38
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 843e4e374f1b4ba80800000000000000
+      internalID: -8451934937193061560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_18
+      rect:
+        serializedVersion: 2
+        x: 3384
+        y: 1509
+        width: 38
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6824ee5c93a53650800000000000000
+      internalID: 6212051153029703790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_19
+      rect:
+        serializedVersion: 2
+        x: 3405
+        y: 1518
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 229c37a9d6a47e680800000000000000
+      internalID: -8725923918403876574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_20
+      rect:
+        serializedVersion: 2
+        x: 3405
+        y: 1506
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fc0bf5be01d77b00800000000000000
+      internalID: 826358917758651635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_21
+      rect:
+        serializedVersion: 2
+        x: 3496
+        y: 1296
+        width: 327
+        height: 229
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9119c9049a2438170800000000000000
+      internalID: 8179454642935861529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_22
+      rect:
+        serializedVersion: 2
+        x: 2723
+        y: 1427
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5708231b0128a6180800000000000000
+      internalID: -9121335087081553803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_23
+      rect:
+        serializedVersion: 2
+        x: 3354
+        y: 1429
+        width: 23
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eca526f9ccd2c890800000000000000
+      internalID: -7439140874486436640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_24
+      rect:
+        serializedVersion: 2
+        x: 3385
+        y: 1428
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ea28837ede3f4a20800000000000000
+      internalID: 3048724597895080679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_25
+      rect:
+        serializedVersion: 2
+        x: 3446
+        y: 1415
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cae6a3b03d2a340a0800000000000000
+      internalID: -6898491176891289940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_26
+      rect:
+        serializedVersion: 2
+        x: 1460
+        y: 1325
+        width: 157
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3806e9907d7691770800000000000000
+      internalID: 8582004738208194691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_27
+      rect:
+        serializedVersion: 2
+        x: 2389
+        y: 1358
+        width: 46
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48bee96ed5205e2b0800000000000000
+      internalID: -5556031962967250044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_28
+      rect:
+        serializedVersion: 2
+        x: 2625
+        y: 1375
+        width: 17
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d129d5b6def9fd9c0800000000000000
+      internalID: -3900222910222200291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_29
+      rect:
+        serializedVersion: 2
+        x: 2724
+        y: 1390
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f57b203bd3d34d160800000000000000
+      internalID: 7049326651947267935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_30
+      rect:
+        serializedVersion: 2
+        x: 3403
+        y: 1325
+        width: 70
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f89524dcbfde28840800000000000000
+      internalID: 5225000183439448463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_31
+      rect:
+        serializedVersion: 2
+        x: 2570
+        y: 1373
+        width: 19
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a065436e88136d10800000000000000
+      internalID: 2117563249624178851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_32
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1328
+        width: 57
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a3125cb5a5dde9d0800000000000000
+      internalID: -2743301690192948315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_33
+      rect:
+        serializedVersion: 2
+        x: 2481
+        y: 1315
+        width: 65
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 674a0afbaa69c47e0800000000000000
+      internalID: -1779882092614605706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_34
+      rect:
+        serializedVersion: 2
+        x: 2628
+        y: 1326
+        width: 37
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aac2342cb528f9c10800000000000000
+      internalID: 2062510484971793578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_35
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 208
+        width: 608
+        height: 608
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d14cb297307ae0b60800000000000000
+      internalID: 7714286845091890205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_36
+      rect:
+        serializedVersion: 2
+        x: 1193
+        y: 169
+        width: 686
+        height: 686
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb795af034ca0a3e0800000000000000
+      internalID: -2044444826800908354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_37
+      rect:
+        serializedVersion: 2
+        x: 2183
+        y: 135
+        width: 754
+        height: 754
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63e3e4f6095c97d00800000000000000
+      internalID: 971024418808413750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_38
+      rect:
+        serializedVersion: 2
+        x: 3183
+        y: 111
+        width: 802
+        height: 802
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ff0ec41c939287b0800000000000000
+      internalID: -5223450319223123977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_boss_shield_in_39
+      rect:
+        serializedVersion: 2
+        x: 4193
+        y: 97
+        width: 830
+        height: 830
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 896722be280d3fad0800000000000000
+      internalID: -2669560893391341928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_boss_shield_in_0: 6657688785924829311
+      eff_boss_shield_in_1: 6915064600981026170
+      eff_boss_shield_in_10: 6672266297781639526
+      eff_boss_shield_in_11: -4443132424767306330
+      eff_boss_shield_in_12: 1203077109922730548
+      eff_boss_shield_in_13: 3442326289389816284
+      eff_boss_shield_in_14: -1490367123987539931
+      eff_boss_shield_in_15: -5674073422801156721
+      eff_boss_shield_in_16: -8166344652253211894
+      eff_boss_shield_in_17: -8451934937193061560
+      eff_boss_shield_in_18: 6212051153029703790
+      eff_boss_shield_in_19: -8725923918403876574
+      eff_boss_shield_in_2: 7202018196906949009
+      eff_boss_shield_in_20: 826358917758651635
+      eff_boss_shield_in_21: 8179454642935861529
+      eff_boss_shield_in_22: -9121335087081553803
+      eff_boss_shield_in_23: -7439140874486436640
+      eff_boss_shield_in_24: 3048724597895080679
+      eff_boss_shield_in_25: -6898491176891289940
+      eff_boss_shield_in_26: 8582004738208194691
+      eff_boss_shield_in_27: -5556031962967250044
+      eff_boss_shield_in_28: -3900222910222200291
+      eff_boss_shield_in_29: 7049326651947267935
+      eff_boss_shield_in_3: 9157774576770099831
+      eff_boss_shield_in_30: 5225000183439448463
+      eff_boss_shield_in_31: 2117563249624178851
+      eff_boss_shield_in_32: -2743301690192948315
+      eff_boss_shield_in_33: -1779882092614605706
+      eff_boss_shield_in_34: 2062510484971793578
+      eff_boss_shield_in_35: 7714286845091890205
+      eff_boss_shield_in_36: -2044444826800908354
+      eff_boss_shield_in_37: 971024418808413750
+      eff_boss_shield_in_38: -5223450319223123977
+      eff_boss_shield_in_39: -2669560893391341928
+      eff_boss_shield_in_4: 4685160325774418678
+      eff_boss_shield_in_5: -8137003792036077532
+      eff_boss_shield_in_6: 8137512858047134457
+      eff_boss_shield_in_7: -2783440923167766123
+      eff_boss_shield_in_8: 918222735970248424
+      eff_boss_shield_in_9: 1384784529217415982
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

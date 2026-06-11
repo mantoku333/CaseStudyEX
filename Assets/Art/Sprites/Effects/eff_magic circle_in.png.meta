@@ -1,0 +1,611 @@
+fileFormatVersion: 2
+guid: 0c7f3f73467ef9344a824959b3ece520
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1547961742063673515
+    second: eff_magic circle_in_0
+  - first:
+      213: -117966357888901752
+    second: eff_magic circle_in_1
+  - first:
+      213: -804149014447251645
+    second: eff_magic circle_in_2
+  - first:
+      213: 1307593456729461159
+    second: eff_magic circle_in_3
+  - first:
+      213: 2531501292011142808
+    second: eff_magic circle_in_4
+  - first:
+      213: -4268796189410522394
+    second: eff_magic circle_in_5
+  - first:
+      213: -5770514522379625649
+    second: eff_magic circle_in_6
+  - first:
+      213: 5632219313922878501
+    second: eff_magic circle_in_7
+  - first:
+      213: 7480832681565529100
+    second: eff_magic circle_in_8
+  - first:
+      213: 8851716409269376751
+    second: eff_magic circle_in_9
+  - first:
+      213: 29080355642010214
+    second: eff_magic circle_in_10
+  - first:
+      213: 1904138165339359546
+    second: eff_magic circle_in_11
+  - first:
+      213: 1152653786224392602
+    second: eff_magic circle_in_12
+  - first:
+      213: -880722722897370809
+    second: eff_magic circle_in_13
+  - first:
+      213: 8911494468733609760
+    second: eff_magic circle_in_14
+  - first:
+      213: -7578979381227919221
+    second: eff_magic circle_in_15
+  - first:
+      213: 6223542935499044917
+    second: eff_magic circle_in_16
+  - first:
+      213: -438089570259695636
+    second: eff_magic circle_in_17
+  - first:
+      213: -7564706702190200120
+    second: eff_magic circle_in_18
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_magic circle_in_0
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 3238
+        width: 443
+        height: 560
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55f566e3ff8848ae0800000000000000
+      internalID: -1547961742063673515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_1
+      rect:
+        serializedVersion: 2
+        x: 1225
+        y: 3242
+        width: 450
+        height: 566
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88dd596f836ec5ef0800000000000000
+      internalID: -117966357888901752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_2
+      rect:
+        serializedVersion: 2
+        x: 2185
+        y: 3102
+        width: 599
+        height: 805
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34f146f5bb617d4f0800000000000000
+      internalID: -804149014447251645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_3
+      rect:
+        serializedVersion: 2
+        x: 3198
+        y: 3157
+        width: 648
+        height: 773
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a11cfa2251852210800000000000000
+      internalID: 1307593456729461159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_4
+      rect:
+        serializedVersion: 2
+        x: 4224
+        y: 3155
+        width: 642
+        height: 776
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89e34ca3303b12320800000000000000
+      internalID: 2531501292011142808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_5
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 2174
+        width: 622
+        height: 823
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ea05a79b7032c4c0800000000000000
+      internalID: -4268796189410522394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_6
+      rect:
+        serializedVersion: 2
+        x: 1181
+        y: 2183
+        width: 649
+        height: 747
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4b545a8d930befa0800000000000000
+      internalID: -5770514522379625649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_7
+      rect:
+        serializedVersion: 2
+        x: 2267
+        y: 2172
+        width: 618
+        height: 812
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52ca77f00a9a92e40800000000000000
+      internalID: 5632219313922878501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_8
+      rect:
+        serializedVersion: 2
+        x: 3302
+        y: 2207
+        width: 694
+        height: 814
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c04a8d050b141d760800000000000000
+      internalID: 7480832681565529100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_9
+      rect:
+        serializedVersion: 2
+        x: 4347
+        y: 2168
+        width: 611
+        height: 788
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe65ff20d2d97da70800000000000000
+      internalID: 8851716409269376751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_10
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 1173
+        width: 683
+        height: 795
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66aebfbed60576000800000000000000
+      internalID: 29080355642010214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_11
+      rect:
+        serializedVersion: 2
+        x: 1273
+        y: 1202
+        width: 654
+        height: 732
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a390154a29bdc6a10800000000000000
+      internalID: 1904138165339359546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_12
+      rect:
+        serializedVersion: 2
+        x: 2297
+        y: 1202
+        width: 654
+        height: 732
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a99f9e4f28c0fff00800000000000000
+      internalID: 1152653786224392602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_13
+      rect:
+        serializedVersion: 2
+        x: 3321
+        y: 1202
+        width: 654
+        height: 732
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 741661c895b07c3f0800000000000000
+      internalID: -880722722897370809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_14
+      rect:
+        serializedVersion: 2
+        x: 4345
+        y: 1202
+        width: 654
+        height: 732
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 027a9b2110dfbab70800000000000000
+      internalID: 8911494468733609760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_15
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 178
+        width: 654
+        height: 732
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8866ed686e02d690800000000000000
+      internalID: -7578979381227919221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_16
+      rect:
+        serializedVersion: 2
+        x: 1273
+        y: 178
+        width: 654
+        height: 732
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 538ffca73577e5650800000000000000
+      internalID: 6223542935499044917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_17
+      rect:
+        serializedVersion: 2
+        x: 2297
+        y: 178
+        width: 654
+        height: 732
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce70ed06bd79be9f0800000000000000
+      internalID: -438089570259695636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_magic circle_in_18
+      rect:
+        serializedVersion: 2
+        x: 3321
+        y: 178
+        width: 654
+        height: 732
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cabfe97553c40790800000000000000
+      internalID: -7564706702190200120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_magic circle_in_0: -1547961742063673515
+      eff_magic circle_in_1: -117966357888901752
+      eff_magic circle_in_10: 29080355642010214
+      eff_magic circle_in_11: 1904138165339359546
+      eff_magic circle_in_12: 1152653786224392602
+      eff_magic circle_in_13: -880722722897370809
+      eff_magic circle_in_14: 8911494468733609760
+      eff_magic circle_in_15: -7578979381227919221
+      eff_magic circle_in_16: 6223542935499044917
+      eff_magic circle_in_17: -438089570259695636
+      eff_magic circle_in_18: -7564706702190200120
+      eff_magic circle_in_2: -804149014447251645
+      eff_magic circle_in_3: 1307593456729461159
+      eff_magic circle_in_4: 2531501292011142808
+      eff_magic circle_in_5: -4268796189410522394
+      eff_magic circle_in_6: -5770514522379625649
+      eff_magic circle_in_7: 5632219313922878501
+      eff_magic circle_in_8: 7480832681565529100
+      eff_magic circle_in_9: 8851716409269376751
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

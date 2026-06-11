@@ -6,7 +6,10 @@ public static class GameItems
 {
     private const string SectionKey = "game_items_v1";
     private static readonly Dictionary<string, int> items = new Dictionary<string, int>(StringComparer.Ordinal);
+    private static readonly List<string> insertionOrder = new List<string>();
     private static readonly GameItemsSaveModule module = new GameItemsSaveModule();
+
+    public static IReadOnlyList<string> InsertionOrder => insertionOrder;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
@@ -37,9 +40,12 @@ public static class GameItems
         if (normalized <= 0)
         {
             items.Remove(itemId);
+            insertionOrder.Remove(itemId);
             return;
         }
 
+        if (!items.ContainsKey(itemId))
+            insertionOrder.Add(itemId);
         items[itemId] = normalized;
     }
 
@@ -62,11 +68,13 @@ public static class GameItems
         }
 
         items.Remove(itemId);
+        insertionOrder.Remove(itemId);
     }
 
     public static void ClearAll()
     {
         items.Clear();
+        insertionOrder.Clear();
     }
 
     public static void RestoreFromSaveData(SaveGameData saveData)
@@ -99,6 +107,7 @@ public static class GameItems
     private static void ApplyPayload(GameItemsPayload payload)
     {
         items.Clear();
+        insertionOrder.Clear();
 
         if (payload == null || payload.entries == null)
         {
@@ -120,6 +129,7 @@ public static class GameItems
             }
 
             items[entry.itemId] = count;
+            insertionOrder.Add(entry.itemId);
         }
     }
 
@@ -127,16 +137,16 @@ public static class GameItems
     {
         var payload = new GameItemsPayload
         {
-            entries = new List<GameItemEntry>(items.Count)
+            entries = new List<GameItemEntry>(insertionOrder.Count)
         };
 
-        foreach (var pair in items)
+        for (int i = 0; i < insertionOrder.Count; i++)
         {
-            payload.entries.Add(new GameItemEntry
+            string itemId = insertionOrder[i];
+            if (items.TryGetValue(itemId, out int count))
             {
-                itemId = pair.Key,
-                count = pair.Value
-            });
+                payload.entries.Add(new GameItemEntry { itemId = itemId, count = count });
+            }
         }
 
         return payload;
