@@ -1,0 +1,586 @@
+fileFormatVersion: 2
+guid: ee9d63449b3cbdc46b5239c0adb20980
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3251518452618743937
+    second: AM_boss_sword_Move_0
+  - first:
+      213: 7089440777528765950
+    second: AM_boss_sword_Move_1
+  - first:
+      213: 3562507134081398950
+    second: AM_boss_sword_Move_2
+  - first:
+      213: 7282886094706813053
+    second: AM_boss_sword_Move_3
+  - first:
+      213: 8345603123867019552
+    second: AM_boss_sword_Move_4
+  - first:
+      213: -425538102246561986
+    second: AM_boss_sword_Move_5
+  - first:
+      213: 5425877240165438795
+    second: AM_boss_sword_Move_6
+  - first:
+      213: -8542432872617368502
+    second: AM_boss_sword_Move_7
+  - first:
+      213: -8137275593801295787
+    second: AM_boss_sword_Move_8
+  - first:
+      213: 4815508642244433422
+    second: AM_boss_sword_Move_9
+  - first:
+      213: -4238633985508866557
+    second: AM_boss_sword_Move_10
+  - first:
+      213: 4914032169779166333
+    second: AM_boss_sword_Move_11
+  - first:
+      213: 7877761949778050104
+    second: AM_boss_sword_Move_12
+  - first:
+      213: 989879093464097932
+    second: AM_boss_sword_Move_13
+  - first:
+      213: 5302664213409747268
+    second: AM_boss_sword_Move_14
+  - first:
+      213: 1210313100389286749
+    second: AM_boss_sword_Move_15
+  - first:
+      213: -4958729583053759540
+    second: AM_boss_sword_Move_16
+  - first:
+      213: 2108047456145966449
+    second: AM_boss_sword_Move_17
+  - first:
+      213: -3764277788345375013
+    second: AM_boss_sword_Move_18
+  - first:
+      213: -150135972777299357
+    second: AM_boss_sword_Move_19
+  - first:
+      213: 682342313711886984
+    second: AM_boss_sword_Move_20
+  - first:
+      213: -1926714743914105626
+    second: AM_boss_sword_Move_21
+  - first:
+      213: 239013245210316614
+    second: AM_boss_sword_Move_22
+  - first:
+      213: -6414826837877211935
+    second: AM_boss_sword_Move_23
+  - first:
+      213: -7889558684751171712
+    second: AM_boss_sword_Move_24
+  - first:
+      213: 5318288467125316903
+    second: AM_boss_sword_Move_25
+  - first:
+      213: -8908037636896054415
+    second: AM_boss_sword_Move_26
+  - first:
+      213: -2001772363790035577
+    second: AM_boss_sword_Move_27
+  - first:
+      213: 9198194219237192744
+    second: AM_boss_sword_Move_28
+  - first:
+      213: 6767475854207706569
+    second: AM_boss_sword_Move_29
+  - first:
+      213: 1276206225794759733
+    second: AM_boss_sword_Move_30
+  - first:
+      213: 8285286960366082982
+    second: AM_boss_sword_Move_31
+  - first:
+      213: -5855795104972692248
+    second: AM_boss_sword_Move_32
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7f2803d13940e2d0800000000000000
+      internalID: -3251518452618743937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_1
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efd65c063d0c26260800000000000000
+      internalID: 7089440777528765950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_2
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a877bc0d51907130800000000000000
+      internalID: 3562507134081398950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_3
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d78a1a61152021560800000000000000
+      internalID: 7282886094706813053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 029eb7203d981d370800000000000000
+      internalID: 8345603123867019552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_5
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e372331c95f281af0800000000000000
+      internalID: -425538102246561986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_6
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4510f63a969c4b40800000000000000
+      internalID: 5425877240165438795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_7
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a44a506ef8e237980800000000000000
+      internalID: -8542432872617368502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5589408e5f6921f80800000000000000
+      internalID: -8137275593801295787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_9
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e069dc1b89f14d240800000000000000
+      internalID: 4815508642244433422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_10
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30688d0f8d85d25c0800000000000000
+      internalID: -4238633985508866557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_11
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7c77860936223440800000000000000
+      internalID: 4914032169779166333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83cfb9151ce635d60800000000000000
+      internalID: 7877761949778050104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_13
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8463887ac1ccbd00800000000000000
+      internalID: 989879093464097932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_14
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 441d673e109d69940800000000000000
+      internalID: 5302664213409747268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_boss_sword_Move_15
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5384bf2a55ebc010800000000000000
+      internalID: 1210313100389286749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 2ed9dca1f0866f1498fde8202a2fbe12
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":820.0,"y":982.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      AM_boss_sword_Move_0: -3251518452618743937
+      AM_boss_sword_Move_1: 7089440777528765950
+      AM_boss_sword_Move_10: -4238633985508866557
+      AM_boss_sword_Move_11: 4914032169779166333
+      AM_boss_sword_Move_12: 7877761949778050104
+      AM_boss_sword_Move_13: 989879093464097932
+      AM_boss_sword_Move_14: 5302664213409747268
+      AM_boss_sword_Move_15: 1210313100389286749
+      AM_boss_sword_Move_2: 3562507134081398950
+      AM_boss_sword_Move_3: 7282886094706813053
+      AM_boss_sword_Move_4: 8345603123867019552
+      AM_boss_sword_Move_5: -425538102246561986
+      AM_boss_sword_Move_6: 5425877240165438795
+      AM_boss_sword_Move_7: -8542432872617368502
+      AM_boss_sword_Move_8: -8137275593801295787
+      AM_boss_sword_Move_9: 4815508642244433422
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

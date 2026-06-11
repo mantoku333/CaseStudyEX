@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2375599917644370412}
-  - component: {fileID: 5114111978084177922}
   - component: {fileID: 6509184494383124401}
   - component: {fileID: 6509184494383124402}
   - component: {fileID: 6509184494383124403}
@@ -34,8 +33,43 @@ Transform:
   m_LocalPosition: {x: 244.03, y: 2.03, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 2.4054}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 730100000000000102}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &730100000000000101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 730100000000000102}
+  - component: {fileID: 5114111978084177922}
+  - component: {fileID: 730100000000000104}
+  - component: {fileID: 730100000000000103}
+  m_Layer: 0
+  m_Name: SpriteView
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &730100000000000102
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730100000000000101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2375599917644370412}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5114111978084177922
 SpriteRenderer:
@@ -44,7 +78,7 @@ SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5507095774534671217}
+  m_GameObject: {fileID: 730100000000000101}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -96,6 +130,56 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!95 &730100000000000104
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730100000000000101}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a4f1df2f4b7f4d3a9f6dd8c2bfa00f21, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage:
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &730100000000000103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730100000000000101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e0e66388f2f4cf4936d3a18762d2f64, type: 3}
+  m_Name: ""
+  m_EditorClassIdentifier: ""
+  mainRenderer: {fileID: 5114111978084177922}
+  flipXWhenFacingRight: 0
+  animator: {fileID: 730100000000000104}
+  animatorLayer: 0
+  idleStateName: idle
+  moveStateName: move
+  normalAttackStateName: attack_normal
+  horizontalStartStateName: attack_horizontal_start
+  horizontalEndStateName: attack_horizontal_end
+  verticalStartStateName: attack_vertical_start
+  verticalEndStateName: attack_vertical_end
+  downStartStateName: down_start
+  downHoldStateName: down_hold
+  downEndStateName: down_end
+  downStartDuration: 3.75
+  downEndDuration: 3.0833333
 --- !u!61 &6509184494383124401
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -241,6 +325,7 @@ MonoBehaviour:
   hitFlashDuration: 0.14
   hitFlashRepeatCount: 2
   hitFlashNormalDuration: 0.05
+  spriteView: {fileID: 730100000000000103}
   drawDebugGizmos: 0
 --- !u!114 &6509184494383124404
 MonoBehaviour:
