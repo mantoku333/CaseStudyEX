@@ -108,7 +108,7 @@ namespace GameName.Enemy
             groundVisualSlotIndex = slotIndex;
             groundVisualFrameSizeMultiplier = SanitizeFrameSizeMultiplier(frameSizeMultiplier);
             useGroundVisual = clip.IsValid;
-            groundVisualWorldSize = Vector2.Scale(ResolveBladeWorldSize(), groundVisualFrameSizeMultiplier);
+            groundVisualWorldSize = ResolveGroundVisualWorldSize(clip, ResolveBladeWorldSize(), groundVisualFrameSizeMultiplier);
 
             if (useGroundVisual)
             {
@@ -484,6 +484,28 @@ namespace GameName.Enemy
             }
 
             return ResolveBladeWorldSize();
+        }
+
+        private static Vector2 ResolveGroundVisualWorldSize(
+            GridSpriteSheetClip clip,
+            Vector2 bladeWorldSize,
+            Vector2 frameSizeMultiplier)
+        {
+            Vector2 multiplier = SanitizeFrameSizeMultiplier(frameSizeMultiplier);
+            if (!clip.UseFrameCropForSizingOnly)
+            {
+                return Vector2.Scale(bladeWorldSize, multiplier);
+            }
+
+            Vector2 visibleFrameSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(clip);
+            if (visibleFrameSize.x <= 0.001f || visibleFrameSize.y <= 0.001f || bladeWorldSize.y <= 0.001f)
+            {
+                return Vector2.Scale(bladeWorldSize, multiplier);
+            }
+
+            float visibleAspect = visibleFrameSize.x / visibleFrameSize.y;
+            Vector2 aspectPreservedSize = new Vector2(bladeWorldSize.y * visibleAspect, bladeWorldSize.y);
+            return Vector2.Scale(aspectPreservedSize, multiplier);
         }
 
         private static Vector2 SanitizeFrameSizeMultiplier(Vector2 multiplier)

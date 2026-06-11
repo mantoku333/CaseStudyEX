@@ -19,6 +19,7 @@ namespace GameName.Enemy
         public Vector2 Pivot;
         public int CenteredCropInsetPixels;
         public bool UseFrameCrop;
+        public bool UseFrameCropForSizingOnly;
         public RectInt FrameCropPixels;
         public Vector2Int FrameCropReferencePixels;
 
@@ -50,7 +51,7 @@ namespace GameName.Enemy
                 return Array.Empty<Sprite>();
             }
 
-            RectInt crop = ResolveFrameCrop(clip, frameWidth, frameHeight);
+            RectInt frameRect = ResolveSpriteFrameRect(clip, frameWidth, frameHeight);
             int maxFrameCount = Mathf.Min(clip.FrameCount, clip.Columns * clip.Rows);
             Sprite[] frames = new Sprite[maxFrameCount];
             int index = 0;
@@ -62,10 +63,10 @@ namespace GameName.Enemy
                 for (int column = 0; column < clip.Columns && index < maxFrameCount; column++)
                 {
                     Rect rect = new Rect(
-                        column * frameWidth + crop.x,
-                        y + crop.y,
-                        crop.width,
-                        crop.height);
+                        column * frameWidth + frameRect.x,
+                        y + frameRect.y,
+                        frameRect.width,
+                        frameRect.height);
                     Sprite sprite = Sprite.Create(
                         clip.SpriteSheet,
                         rect,
@@ -82,18 +83,48 @@ namespace GameName.Enemy
             return frames;
         }
 
-        private static RectInt ResolveFrameCrop(GridSpriteSheetClip clip, int frameWidth, int frameHeight)
+        public static Vector2 ResolveVisibleFrameSize(GridSpriteSheetClip clip)
+        {
+            if (!clip.IsValid)
+            {
+                return Vector2.zero;
+            }
+
+            int frameWidth = clip.SpriteSheet.width / clip.Columns;
+            int frameHeight = clip.SpriteSheet.height / clip.Rows;
+            if (frameWidth <= 0 || frameHeight <= 0)
+            {
+                return Vector2.zero;
+            }
+
+            RectInt visibleRect = ResolveVisibleFrameRect(clip, frameWidth, frameHeight);
+            return new Vector2(
+                visibleRect.width / clip.PixelsPerUnit,
+                visibleRect.height / clip.PixelsPerUnit);
+        }
+
+        private static RectInt ResolveSpriteFrameRect(GridSpriteSheetClip clip, int frameWidth, int frameHeight)
+        {
+            if (clip.UseFrameCrop && !clip.UseFrameCropForSizingOnly)
+            {
+                return ResolveClampedFrameCrop(clip, frameWidth, frameHeight);
+            }
+
+            return ResolveCenteredFrameRect(clip, frameWidth, frameHeight);
+        }
+
+        private static RectInt ResolveVisibleFrameRect(GridSpriteSheetClip clip, int frameWidth, int frameHeight)
         {
             if (clip.UseFrameCrop)
             {
-                RectInt frameCrop = ScaleFrameCrop(clip.FrameCropPixels, clip.FrameCropReferencePixels, frameWidth, frameHeight);
-                int cropX = Mathf.Clamp(frameCrop.x, 0, Mathf.Max(0, frameWidth - 1));
-                int cropY = Mathf.Clamp(frameCrop.y, 0, Mathf.Max(0, frameHeight - 1));
-                int cropWidth = Mathf.Clamp(frameCrop.width, 1, frameWidth - cropX);
-                int cropHeight = Mathf.Clamp(frameCrop.height, 1, frameHeight - cropY);
-                return new RectInt(cropX, cropY, cropWidth, cropHeight);
+                return ResolveClampedFrameCrop(clip, frameWidth, frameHeight);
             }
 
+            return ResolveCenteredFrameRect(clip, frameWidth, frameHeight);
+        }
+
+        private static RectInt ResolveCenteredFrameRect(GridSpriteSheetClip clip, int frameWidth, int frameHeight)
+        {
             int maxInset = Mathf.Max(0, (Mathf.Min(frameWidth, frameHeight) - 1) / 2);
             int inset = Mathf.Clamp(clip.CenteredCropInsetPixels, 0, maxInset);
             return new RectInt(
@@ -101,6 +132,16 @@ namespace GameName.Enemy
                 inset,
                 frameWidth - (inset * 2),
                 frameHeight - (inset * 2));
+        }
+
+        private static RectInt ResolveClampedFrameCrop(GridSpriteSheetClip clip, int frameWidth, int frameHeight)
+        {
+            RectInt frameCrop = ScaleFrameCrop(clip.FrameCropPixels, clip.FrameCropReferencePixels, frameWidth, frameHeight);
+            int cropX = Mathf.Clamp(frameCrop.x, 0, Mathf.Max(0, frameWidth - 1));
+            int cropY = Mathf.Clamp(frameCrop.y, 0, Mathf.Max(0, frameHeight - 1));
+            int cropWidth = Mathf.Clamp(frameCrop.width, 1, frameWidth - cropX);
+            int cropHeight = Mathf.Clamp(frameCrop.height, 1, frameHeight - cropY);
+            return new RectInt(cropX, cropY, cropWidth, cropHeight);
         }
 
         private static RectInt ScaleFrameCrop(
@@ -163,6 +204,7 @@ namespace GameName.Enemy
         private Sprite[] frames = Array.Empty<Sprite>();
         private bool useTargetWorldSize;
         private Vector2 targetWorldSize;
+        private Vector2 targetScaleFrameSize;
 #if UNITY_EDITOR
         private bool editorPlaybackActive;
         private bool editorLoop;
@@ -220,6 +262,7 @@ namespace GameName.Enemy
             ClearGeneratedSprites();
 
             frames = GridSpriteSheetUtility.BuildFrames(clip, generatedSprites);
+            targetScaleFrameSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(clip);
             if (targetRenderer == null || frames.Length == 0)
             {
                 completed?.Invoke();
@@ -517,7 +560,12 @@ namespace GameName.Enemy
                 return;
             }
 
-            Vector2 spriteSize = frame.bounds.size;
+            Vector2 spriteSize = targetScaleFrameSize;
+            if (spriteSize.x <= 0.001f || spriteSize.y <= 0.001f)
+            {
+                spriteSize = frame.bounds.size;
+            }
+
             if (spriteSize.x <= 0.001f || spriteSize.y <= 0.001f)
             {
                 return;
@@ -550,6 +598,7 @@ namespace GameName.Enemy
         {
             GridSpriteSheetUtility.DestroyGeneratedSprites(generatedSprites);
             frames = Array.Empty<Sprite>();
+            targetScaleFrameSize = Vector2.zero;
         }
 
         private void OnDestroy()
