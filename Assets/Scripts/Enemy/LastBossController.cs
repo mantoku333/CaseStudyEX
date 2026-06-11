@@ -1661,18 +1661,27 @@ namespace GameName.Enemy
             }
 
             float downHoldSeconds = Mathf.Max(0f, downDuration);
-            if (spriteView != null && spriteView.DownEndDuration > 0f)
+            float downStartDuration = spriteView != null ? spriteView.DownStartDuration : 0f;
+            float downEndDuration = spriteView != null ? spriteView.DownEndDuration : 0f;
+            if (downEndDuration > 0f)
             {
-                downHoldSeconds = Mathf.Max(0f, downHoldSeconds - spriteView.DownEndDuration);
+                downHoldSeconds = Mathf.Max(0f, downHoldSeconds - downEndDuration);
             }
 
+            if (downStartDuration > 0f && downHoldSeconds > 0f)
+            {
+                float downStartWait = Mathf.Min(downStartDuration, downHoldSeconds);
+                yield return new WaitForSeconds(downStartWait);
+                downHoldSeconds = Mathf.Max(0f, downHoldSeconds - downStartWait);
+            }
+
+            spriteView?.PlayDownHold();
             if (downHoldSeconds > 0f)
             {
                 yield return new WaitForSeconds(downHoldSeconds);
             }
 
             spriteView?.PlayDownEnd();
-            float downEndDuration = spriteView != null ? spriteView.DownEndDuration : 0f;
             if (downEndDuration > 0f)
             {
                 yield return new WaitForSeconds(downEndDuration);

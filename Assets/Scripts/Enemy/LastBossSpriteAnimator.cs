@@ -8,22 +8,24 @@ namespace GameName.Enemy
         [Header("Renderer")]
         [SerializeField] private SpriteRenderer mainRenderer;
         [SerializeField] private bool flipXWhenFacingRight = true;
-        [SerializeField] private Sprite idleSprite;
 
-        [Header("Frames")]
-        [SerializeField] private Sprite[] moveFrames = System.Array.Empty<Sprite>();
-        [SerializeField] private Sprite[] normalAttackFrames = System.Array.Empty<Sprite>();
-        [SerializeField] private Sprite[] horizontalStartFrames = System.Array.Empty<Sprite>();
-        [SerializeField] private Sprite[] horizontalEndFrames = System.Array.Empty<Sprite>();
-        [SerializeField] private Sprite[] verticalStartFrames = System.Array.Empty<Sprite>();
-        [SerializeField] private Sprite[] verticalEndFrames = System.Array.Empty<Sprite>();
-        [SerializeField] private Sprite[] downStartFrames = System.Array.Empty<Sprite>();
-        [SerializeField] private Sprite[] downEndFrames = System.Array.Empty<Sprite>();
+        [Header("Animator")]
+        [SerializeField] private Animator animator;
+        [SerializeField] private int animatorLayer = 0;
+        [SerializeField] private string idleStateName = "idle";
+        [SerializeField] private string moveStateName = "move";
+        [SerializeField] private string normalAttackStateName = "attack_normal";
+        [SerializeField] private string horizontalStartStateName = "attack_horizontal_start";
+        [SerializeField] private string horizontalEndStateName = "attack_horizontal_end";
+        [SerializeField] private string verticalStartStateName = "attack_vertical_start";
+        [SerializeField] private string verticalEndStateName = "attack_vertical_end";
+        [SerializeField] private string downStartStateName = "down_start";
+        [SerializeField] private string downHoldStateName = "down_hold";
+        [SerializeField] private string downEndStateName = "down_end";
 
         [Header("Timing")]
-        [SerializeField, Min(0.01f)] private float moveFramesPerSecond = 10f;
-        [SerializeField, Min(0.01f)] private float attackFramesPerSecond = 12f;
-        [SerializeField, Min(0.01f)] private float downFramesPerSecond = 10f;
+        [SerializeField, Min(0f)] private float downStartDuration = 3.75f;
+        [SerializeField, Min(0f)] private float downEndDuration = 3.0833333f;
 
         private enum VisualState
         {
@@ -42,33 +44,27 @@ namespace GameName.Enemy
         }
 
         private VisualState currentState = VisualState.None;
-        private Sprite defaultSprite;
         private Color defaultColor = Color.white;
-        private Sprite[] activeFrames = System.Array.Empty<Sprite>();
-        private float activeFramesPerSecond = 12f;
-        private float stateElapsed;
-        private int activeFrameIndex = -1;
-        private bool loopActiveFrames;
-        private bool holdLastFrame;
+        private bool warnedNoAnimator;
 
         public SpriteRenderer MainRenderer
         {
             get
             {
-                ResolveRenderer();
+                ResolveReferences();
                 return mainRenderer;
             }
         }
 
         public Color DefaultColor => defaultColor;
-        public float DownEndDuration => GetDuration(downEndFrames, downFramesPerSecond);
+        public float DownStartDuration => downStartDuration;
+        public float DownEndDuration => downEndDuration;
 
         private void Awake()
         {
-            ResolveRenderer();
+            ResolveReferences();
             if (mainRenderer != null)
             {
-                defaultSprite = mainRenderer.sprite;
                 defaultColor = mainRenderer.color;
             }
         }
@@ -77,11 +73,6 @@ namespace GameName.Enemy
         {
             currentState = VisualState.None;
             PlayIdle();
-        }
-
-        private void Update()
-        {
-            AdvanceFrames(Time.deltaTime);
         }
 
         public void SetFacing(int facingDirection)
@@ -104,81 +95,60 @@ namespace GameName.Enemy
 
         public void PlayIdle()
         {
-            if (currentState == VisualState.Idle)
-            {
-                return;
-            }
-
-            currentState = VisualState.Idle;
-            StopFramePlayback();
-            ApplySprite(idleSprite != null ? idleSprite : defaultSprite);
+            PlayState(VisualState.Idle, idleStateName);
         }
 
         public void PlayMove()
         {
-            PlayFrames(VisualState.Move, moveFrames, moveFramesPerSecond, true, true);
+            PlayState(VisualState.Move, moveStateName);
         }
 
         public void PlayNormalAttack()
         {
-            PlayFrames(VisualState.NormalAttack, normalAttackFrames, attackFramesPerSecond, false, true);
+            PlayState(VisualState.NormalAttack, normalAttackStateName);
         }
 
         public void PlayHorizontalStart()
         {
-            PlayFrames(VisualState.HorizontalStart, horizontalStartFrames, attackFramesPerSecond, false, true);
+            PlayState(VisualState.HorizontalStart, horizontalStartStateName);
         }
 
         public void PlayHorizontalEnd()
         {
-            PlayFrames(VisualState.HorizontalEnd, horizontalEndFrames, attackFramesPerSecond, false, true);
+            PlayState(VisualState.HorizontalEnd, horizontalEndStateName);
         }
 
         public void PlayVerticalStart()
         {
-            PlayFrames(VisualState.VerticalStart, verticalStartFrames, attackFramesPerSecond, false, true);
+            PlayState(VisualState.VerticalStart, verticalStartStateName);
         }
 
         public void PlayVerticalEnd()
         {
-            PlayFrames(VisualState.VerticalEnd, verticalEndFrames, attackFramesPerSecond, false, true);
+            PlayState(VisualState.VerticalEnd, verticalEndStateName);
         }
 
         public void PlayDownStart()
         {
-            PlayFrames(VisualState.DownStart, downStartFrames, downFramesPerSecond, false, true);
+            PlayState(VisualState.DownStart, downStartStateName);
         }
 
         public void PlayDownHold()
         {
-            if (currentState == VisualState.DownHold)
-            {
-                return;
-            }
-
-            currentState = VisualState.DownHold;
-            StopFramePlayback();
-            Sprite holdSprite = GetLastFrame(downStartFrames);
-            ApplySprite(holdSprite != null ? holdSprite : idleSprite != null ? idleSprite : defaultSprite);
+            PlayState(VisualState.DownHold, downHoldStateName);
         }
 
         public void PlayDownEnd()
         {
-            PlayFrames(VisualState.DownEnd, downEndFrames, downFramesPerSecond, false, true);
+            PlayState(VisualState.DownEnd, downEndStateName);
         }
 
         public void PlayDead()
         {
             currentState = VisualState.Dead;
-            StopFramePlayback();
         }
 
-        private void PlayFrames(
-            VisualState nextState,
-            Sprite[] frames,
-            float framesPerSecond,
-            bool loop,
-            bool holdLast)
+        private void PlayState(VisualState nextState, string stateName)
         {
             if (currentState == nextState)
             {
@@ -186,108 +156,44 @@ namespace GameName.Enemy
             }
 
             currentState = nextState;
-            activeFrames = frames ?? System.Array.Empty<Sprite>();
-            activeFramesPerSecond = Mathf.Max(0.01f, framesPerSecond);
-            loopActiveFrames = loop;
-            holdLastFrame = holdLast;
-            stateElapsed = 0f;
-            activeFrameIndex = -1;
-
-            if (activeFrames.Length == 0)
-            {
-                StopFramePlayback();
-                if (nextState == VisualState.Move)
-                {
-                    ApplySprite(idleSprite != null ? idleSprite : defaultSprite);
-                }
-
-                return;
-            }
-
-            ApplyFrame(0);
-        }
-
-        private void AdvanceFrames(float deltaTime)
-        {
-            if (activeFrames == null || activeFrames.Length == 0)
+            if (string.IsNullOrEmpty(stateName) || !IsAnimatorReady())
             {
                 return;
             }
 
-            stateElapsed += Mathf.Max(0f, deltaTime);
-            int nextFrameIndex = Mathf.FloorToInt(stateElapsed * activeFramesPerSecond);
-
-            if (loopActiveFrames)
-            {
-                nextFrameIndex %= activeFrames.Length;
-            }
-            else if (nextFrameIndex >= activeFrames.Length)
-            {
-                if (holdLastFrame)
-                {
-                    nextFrameIndex = activeFrames.Length - 1;
-                }
-                else
-                {
-                    PlayIdle();
-                    return;
-                }
-            }
-
-            ApplyFrame(nextFrameIndex);
+            animator.Play(stateName, animatorLayer, 0f);
         }
 
-        private void ApplyFrame(int frameIndex)
+        private bool IsAnimatorReady()
         {
-            if (frameIndex == activeFrameIndex || frameIndex < 0 || frameIndex >= activeFrames.Length)
+            bool isReady = animator != null &&
+                           animatorLayer >= 0 &&
+                           animator.runtimeAnimatorController != null;
+            if (!isReady && !warnedNoAnimator)
             {
-                return;
+                Debug.LogWarning("LastBossSpriteAnimator: Animator is missing or has no controller.", this);
+                warnedNoAnimator = true;
             }
 
-            activeFrameIndex = frameIndex;
-            ApplySprite(activeFrames[frameIndex]);
-        }
-
-        private void ApplySprite(Sprite sprite)
-        {
-            if (sprite == null || MainRenderer == null)
+            if (isReady)
             {
-                return;
+                warnedNoAnimator = false;
             }
 
-            mainRenderer.sprite = sprite;
+            return isReady;
         }
 
-        private void StopFramePlayback()
-        {
-            activeFrames = System.Array.Empty<Sprite>();
-            stateElapsed = 0f;
-            activeFrameIndex = -1;
-            loopActiveFrames = false;
-            holdLastFrame = false;
-        }
-
-        private void ResolveRenderer()
+        private void ResolveReferences()
         {
             if (mainRenderer == null)
             {
                 mainRenderer = GetComponent<SpriteRenderer>();
             }
-        }
 
-        private static Sprite GetLastFrame(Sprite[] frames)
-        {
-            return frames != null && frames.Length > 0 ? frames[frames.Length - 1] : null;
-        }
-
-        private static float GetDuration(Sprite[] frames, float framesPerSecond)
-        {
-            if (frames == null || frames.Length == 0)
+            if (animator == null)
             {
-                return 0f;
+                animator = GetComponent<Animator>();
             }
-
-            return frames.Length / Mathf.Max(0.01f, framesPerSecond);
         }
     }
 }

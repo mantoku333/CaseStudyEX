@@ -247,12 +247,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_0
       rect:
         serializedVersion: 2
-        x: 1953
-        y: 3673
-        width: 12
-        height: 26
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -269,12 +269,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_1
       rect:
         serializedVersion: 2
-        x: 1963
-        y: 3692
-        width: 15
-        height: 31
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 820
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -291,12 +291,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_2
       rect:
         serializedVersion: 2
-        x: 2026
-        y: 3693
-        width: 17
-        height: 37
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1640
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -313,12 +313,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_3
       rect:
         serializedVersion: 2
-        x: 2773
-        y: 3673
-        width: 12
-        height: 26
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 2460
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -335,12 +335,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_4
       rect:
         serializedVersion: 2
-        x: 2783
-        y: 3692
-        width: 15
-        height: 31
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -357,12 +357,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_5
       rect:
         serializedVersion: 2
-        x: 2846
-        y: 3693
-        width: 17
-        height: 37
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 820
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -379,12 +379,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_6
       rect:
         serializedVersion: 2
-        x: 1879
-        y: 3581
-        width: 90
-        height: 102
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1640
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -401,12 +401,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_7
       rect:
         serializedVersion: 2
-        x: 1946
-        y: 3525
-        width: 86
-        height: 155
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 2460
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -423,12 +423,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_8
       rect:
         serializedVersion: 2
-        x: 2019
-        y: 3613
-        width: 14
-        height: 26
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -445,12 +445,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_9
       rect:
         serializedVersion: 2
-        x: 2699
-        y: 3581
-        width: 90
-        height: 102
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 820
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -467,12 +467,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_10
       rect:
         serializedVersion: 2
-        x: 2766
-        y: 3525
-        width: 86
-        height: 155
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1640
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -489,12 +489,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_11
       rect:
         serializedVersion: 2
-        x: 2797
-        y: 3195
-        width: 203
-        height: 435
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 2460
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -511,12 +511,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_12
       rect:
         serializedVersion: 2
-        x: 2839
-        y: 3613
-        width: 14
-        height: 26
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -533,12 +533,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_13
       rect:
         serializedVersion: 2
-        x: 300
-        y: 3191
-        width: 245
-        height: 406
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 820
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -555,12 +555,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_14
       rect:
         serializedVersion: 2
-        x: 1141
-        y: 3192
-        width: 304
-        height: 405
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1640
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -577,12 +577,12 @@ TextureImporter:
       name: AM_boss_sword_Attack_Normal_1_15
       rect:
         serializedVersion: 2
-        x: 1872
-        y: 3587
-        width: 7
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 2460
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -595,737 +595,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_16
-      rect:
-        serializedVersion: 2
-        x: 1969
-        y: 3193
-        width: 258
-        height: 412
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9383cc5b832c648b0800000000000000
-      internalID: -5168229973537048519
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_17
-      rect:
-        serializedVersion: 2
-        x: 2692
-        y: 3587
-        width: 7
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7ed484db604034390800000000000000
-      internalID: -7835414499702583833
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_18
-      rect:
-        serializedVersion: 2
-        x: 2791
-        y: 3519
-        width: 55
-        height: 86
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 549be421c57bc36a0800000000000000
-      internalID: -6468093358738851515
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_19
-      rect:
-        serializedVersion: 2
-        x: 1898
-        y: 3558
-        width: 6
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 681ec61981d3eaba0800000000000000
-      internalID: -6075851671547879034
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_20
-      rect:
-        serializedVersion: 2
-        x: 2718
-        y: 3558
-        width: 6
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2a33d0ec2e2e850c0800000000000000
-      internalID: -4586666756729392222
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_21
-      rect:
-        serializedVersion: 2
-        x: 1968
-        y: 3500
-        width: 6
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7e8185b10546663c0800000000000000
-      internalID: -4366692493470197529
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_22
-      rect:
-        serializedVersion: 2
-        x: 2788
-        y: 3500
-        width: 6
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 99acbd5b70b614920800000000000000
-      internalID: 2972774909901261465
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_23
-      rect:
-        serializedVersion: 2
-        x: 125
-        y: 2375
-        width: 190
-        height: 304
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: da65b209f9c3a5310800000000000000
-      internalID: 1394493690640815789
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_24
-      rect:
-        serializedVersion: 2
-        x: 196
-        y: 2288
-        width: 188
-        height: 379
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 56d47215cf1b4aea0800000000000000
-      internalID: -5862365117678138011
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_25
-      rect:
-        serializedVersion: 2
-        x: 345
-        y: 2214
-        width: 199
-        height: 459
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2fe934bfd2e857f50800000000000000
-      internalID: 6878560334018486002
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_26
-      rect:
-        serializedVersion: 2
-        x: 945
-        y: 2375
-        width: 190
-        height: 304
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 97da5dd87dfe94400800000000000000
-      internalID: 309041758528187769
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_27
-      rect:
-        serializedVersion: 2
-        x: 1016
-        y: 2288
-        width: 188
-        height: 379
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9feaf85cfad1b99a0800000000000000
-      internalID: -6225349419138568455
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_28
-      rect:
-        serializedVersion: 2
-        x: 1174
-        y: 2216
-        width: 201
-        height: 464
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c491d81779c2bb440800000000000000
-      internalID: 4952601244180748620
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_29
-      rect:
-        serializedVersion: 2
-        x: 1750
-        y: 2266
-        width: 266
-        height: 399
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4d77aa3b4ea60e780800000000000000
-      internalID: -8655800953306712108
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_30
-      rect:
-        serializedVersion: 2
-        x: 2002
-        y: 2214
-        width: 204
-        height: 461
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 6457a090e8ba08880800000000000000
-      internalID: -8610693861007002298
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_31
-      rect:
-        serializedVersion: 2
-        x: 2570
-        y: 2266
-        width: 266
-        height: 399
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: acb0d9e2bddd467e0800000000000000
-      internalID: -1773048419827512374
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_32
-      rect:
-        serializedVersion: 2
-        x: 2827
-        y: 2214
-        width: 205
-        height: 459
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9dc49bf07b2611570800000000000000
-      internalID: 8435632115423988953
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_33
-      rect:
-        serializedVersion: 2
-        x: 110
-        y: 1284
-        width: 266
-        height: 399
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b07c9de2b1e28bea0800000000000000
-      internalID: -5856880621110311157
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_34
-      rect:
-        serializedVersion: 2
-        x: 367
-        y: 1232
-        width: 205
-        height: 459
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c605240c1b47f7220800000000000000
-      internalID: 2485833826115407980
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_35
-      rect:
-        serializedVersion: 2
-        x: 919
-        y: 1259
-        width: 278
-        height: 414
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7d9fb98c115e7dda0800000000000000
-      internalID: -5920011320612357673
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_36
-      rect:
-        serializedVersion: 2
-        x: 1186
-        y: 1232
-        width: 206
-        height: 458
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: eeb5b5a5b648bb640800000000000000
-      internalID: 5096812999912152046
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_37
-      rect:
-        serializedVersion: 2
-        x: 1739
-        y: 1259
-        width: 278
-        height: 414
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d7477754e4cbb3230800000000000000
-      internalID: 3619693769881252989
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_38
-      rect:
-        serializedVersion: 2
-        x: 2005
-        y: 1232
-        width: 208
-        height: 455
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 44326ad9017be5720800000000000000
-      internalID: 2836906097282261828
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_39
-      rect:
-        serializedVersion: 2
-        x: 2559
-        y: 1259
-        width: 278
-        height: 414
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4fcc81d8beedd2160800000000000000
-      internalID: 7002498098896882932
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_40
-      rect:
-        serializedVersion: 2
-        x: 2818
-        y: 1230
-        width: 328
-        height: 405
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d9371b43b7392a840800000000000000
-      internalID: 5233907874332242845
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_41
-      rect:
-        serializedVersion: 2
-        x: 99
-        y: 277
-        width: 278
-        height: 414
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: bb126d52aacf93300800000000000000
-      internalID: 232494663495721403
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_42
-      rect:
-        serializedVersion: 2
-        x: 351
-        y: 245
-        width: 286
-        height: 408
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9dc26c1b2f68a85e0800000000000000
-      internalID: -1906563115315221287
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_43
-      rect:
-        serializedVersion: 2
-        x: 919
-        y: 277
-        width: 278
-        height: 414
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cab5f86cb2848b890800000000000000
-      internalID: -7442119031377667156
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_44
-      rect:
-        serializedVersion: 2
-        x: 1166
-        y: 245
-        width: 278
-        height: 408
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 08143bb07d0430b20800000000000000
-      internalID: 3099392260919476608
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_45
-      rect:
-        serializedVersion: 2
-        x: 1739
-        y: 277
-        width: 278
-        height: 414
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4d75b38e33d8b3760800000000000000
-      internalID: 7438694463611557844
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_46
-      rect:
-        serializedVersion: 2
-        x: 1981
-        y: 245
-        width: 270
-        height: 408
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 100102e127a68a990800000000000000
-      internalID: -7374527351454953471
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_47
-      rect:
-        serializedVersion: 2
-        x: 2559
-        y: 277
-        width: 278
-        height: 414
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b25979224110f9010800000000000000
-      internalID: 1197677211895174443
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AM_boss_sword_Attack_Normal_1_48
-      rect:
-        serializedVersion: 2
-        x: 2796
-        y: 245
-        width: 261
-        height: 408
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7650090e240c43850800000000000000
-      internalID: 6355916367594521959
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: e948a0e23d30c804e97dd376d731c0bf
     internalID: 0
     vertices: []
     indices: 
@@ -1333,7 +607,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":820.0,"y":982.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       AM_boss_sword_Attack_Normal_1_0: -8034515914669871535
       AM_boss_sword_Attack_Normal_1_1: 8702926103983260203
@@ -1343,42 +619,9 @@ TextureImporter:
       AM_boss_sword_Attack_Normal_1_13: 2377716627317660511
       AM_boss_sword_Attack_Normal_1_14: 8313734186724696935
       AM_boss_sword_Attack_Normal_1_15: -8839358615509412169
-      AM_boss_sword_Attack_Normal_1_16: -5168229973537048519
-      AM_boss_sword_Attack_Normal_1_17: -7835414499702583833
-      AM_boss_sword_Attack_Normal_1_18: -6468093358738851515
-      AM_boss_sword_Attack_Normal_1_19: -6075851671547879034
       AM_boss_sword_Attack_Normal_1_2: 6448704690465618895
-      AM_boss_sword_Attack_Normal_1_20: -4586666756729392222
-      AM_boss_sword_Attack_Normal_1_21: -4366692493470197529
-      AM_boss_sword_Attack_Normal_1_22: 2972774909901261465
-      AM_boss_sword_Attack_Normal_1_23: 1394493690640815789
-      AM_boss_sword_Attack_Normal_1_24: -5862365117678138011
-      AM_boss_sword_Attack_Normal_1_25: 6878560334018486002
-      AM_boss_sword_Attack_Normal_1_26: 309041758528187769
-      AM_boss_sword_Attack_Normal_1_27: -6225349419138568455
-      AM_boss_sword_Attack_Normal_1_28: 4952601244180748620
-      AM_boss_sword_Attack_Normal_1_29: -8655800953306712108
       AM_boss_sword_Attack_Normal_1_3: 6279101821037536908
-      AM_boss_sword_Attack_Normal_1_30: -8610693861007002298
-      AM_boss_sword_Attack_Normal_1_31: -1773048419827512374
-      AM_boss_sword_Attack_Normal_1_32: 8435632115423988953
-      AM_boss_sword_Attack_Normal_1_33: -5856880621110311157
-      AM_boss_sword_Attack_Normal_1_34: 2485833826115407980
-      AM_boss_sword_Attack_Normal_1_35: -5920011320612357673
-      AM_boss_sword_Attack_Normal_1_36: 5096812999912152046
-      AM_boss_sword_Attack_Normal_1_37: 3619693769881252989
-      AM_boss_sword_Attack_Normal_1_38: 2836906097282261828
-      AM_boss_sword_Attack_Normal_1_39: 7002498098896882932
       AM_boss_sword_Attack_Normal_1_4: -5636772011114166938
-      AM_boss_sword_Attack_Normal_1_40: 5233907874332242845
-      AM_boss_sword_Attack_Normal_1_41: 232494663495721403
-      AM_boss_sword_Attack_Normal_1_42: -1906563115315221287
-      AM_boss_sword_Attack_Normal_1_43: -7442119031377667156
-      AM_boss_sword_Attack_Normal_1_44: 3099392260919476608
-      AM_boss_sword_Attack_Normal_1_45: 7438694463611557844
-      AM_boss_sword_Attack_Normal_1_46: -7374527351454953471
-      AM_boss_sword_Attack_Normal_1_47: 1197677211895174443
-      AM_boss_sword_Attack_Normal_1_48: 6355916367594521959
       AM_boss_sword_Attack_Normal_1_5: 5565717334968059788
       AM_boss_sword_Attack_Normal_1_6: -2731426502664369190
       AM_boss_sword_Attack_Normal_1_7: -174903372450328137

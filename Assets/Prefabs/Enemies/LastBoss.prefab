@@ -46,6 +46,7 @@ GameObject:
   m_Component:
   - component: {fileID: 730100000000000102}
   - component: {fileID: 5114111978084177922}
+  - component: {fileID: 730100000000000104}
   - component: {fileID: 730100000000000103}
   m_Layer: 0
   m_Name: SpriteView
@@ -128,6 +129,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!95 &730100000000000104
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730100000000000101}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a4f1df2f4b7f4d3a9f6dd8c2bfa00f21, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage:
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &730100000000000103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,31 +165,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: ""
   mainRenderer: {fileID: 5114111978084177922}
   flipXWhenFacingRight: 1
-  idleSprite: {fileID: -7842448947055689968, guid: d702382e9af5e3441ad0b8318110f282, type: 3}
-  moveFrames:
-  - {fileID: -3251518452618743937, guid: ee9d63449b3cbdc46b5239c0adb20980, type: 3}
-  - {fileID: 6561069839844747897, guid: 64003cf9d6a97994da4e6262bf192331, type: 3}
-  normalAttackFrames:
-  - {fileID: -8034515914669871535, guid: c524e013fbb9ab94a8e934a29faa0e97, type: 3}
-  - {fileID: -894463245168110256, guid: e45fede552088524cb42916e6aace6ad, type: 3}
-  horizontalStartFrames:
-  - {fileID: 7819632439106512219, guid: 3b77e94127b27a84aa4c74b3d0c3b05b, type: 3}
-  horizontalEndFrames:
-  - {fileID: 4529543524038182652, guid: ffb990719aaffac4e8ba18a2b75accf7, type: 3}
-  verticalStartFrames:
-  - {fileID: 4957112095133746079, guid: 2e6731951947fc04aad5688230fbaf4e, type: 3}
-  - {fileID: 5936687435497916400, guid: 6a693914b9b3c80408fcadf8eb1bb0f9, type: 3}
-  verticalEndFrames:
-  - {fileID: -6506424668848699643, guid: 094ba68d3690b9c4c988a67c7022515a, type: 3}
-  - {fileID: -5790204368358430125, guid: 8ed299b55842e594da19fbc6fadb0e3d, type: 3}
-  downStartFrames:
-  - {fileID: 3283686082329860302, guid: 097cd17c404636f41aef609e4a9decdb, type: 3}
-  - {fileID: -8037991577874693948, guid: f3c4b9b8cafaa9e4aa1705d83f80e2c6, type: 3}
-  downEndFrames:
-  - {fileID: -8428128356734652567, guid: 824d0eea66731e24e939a7e12857fc32, type: 3}
-  moveFramesPerSecond: 10
-  attackFramesPerSecond: 12
-  downFramesPerSecond: 10
+  animator: {fileID: 730100000000000104}
+  animatorLayer: 0
+  idleStateName: idle
+  moveStateName: move
+  normalAttackStateName: attack_normal
+  horizontalStartStateName: attack_horizontal_start
+  horizontalEndStateName: attack_horizontal_end
+  verticalStartStateName: attack_vertical_start
+  verticalEndStateName: attack_vertical_end
+  downStartStateName: down_start
+  downHoldStateName: down_hold
+  downEndStateName: down_end
+  downStartDuration: 3.75
+  downEndDuration: 3.0833333
 --- !u!61 &6509184494383124401
 BoxCollider2D:
   m_ObjectHideFlags: 0
