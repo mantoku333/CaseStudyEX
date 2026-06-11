@@ -26,6 +26,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
     [SerializeField] private CinemachineCamera transitionCamera;
     [SerializeField] private int transitionPriority = 30;
     [SerializeField, Range(0f, 1f)] private float targetRoomWeight = 0.45f;
+    [SerializeField] private bool lockTransitionHeight = true;
     [SerializeField, Min(0f)] private float smoothTime = 0.15f;
     [SerializeField, Min(0f)] private float playerPadding = 2f;
     [SerializeField, Min(0f)] private float minimumOrthographicSize;
@@ -242,7 +243,18 @@ public sealed class RoomCameraPortal : MonoBehaviour
             KeepPlayerInsideViewForTransition(ref pose, playerPosition, fromPose, toPose);
         }
 
+        ApplyTransitionHeightLock(ref pose);
         return pose;
+    }
+
+    private void ApplyTransitionHeightLock(ref CameraPose pose)
+    {
+        if (!lockTransitionHeight)
+        {
+            return;
+        }
+
+        pose.Position.y = fromPoseAtEntry.Position.y;
     }
 
     private bool ShouldLimitTargetRoomPreview(RoomCameraTrigger room)
