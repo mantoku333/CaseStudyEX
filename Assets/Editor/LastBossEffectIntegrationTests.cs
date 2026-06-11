@@ -391,6 +391,70 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(size.y, Is.EqualTo(2.5f * 214f / 316f).Within(0.001f));
     }
 
+    [Test]
+    public void LastBossPrefab_RestoresEffectControllerAndTransparentPreviewBoxes()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemies/LastBoss.prefab");
+        Assert.That(prefab, Is.Not.Null);
+
+        LastBossController boss = prefab.GetComponent<LastBossController>();
+        LastBossEffectController effects = prefab.GetComponent<LastBossEffectController>();
+
+        Assert.That(boss, Is.Not.Null);
+        Assert.That(effects, Is.Not.Null);
+        Assert.That(GetPrivateField<LastBossSpriteAnimator>(boss, "spriteView"), Is.Not.Null);
+        Assert.That(GetPrivateField<Color>(boss, "telegraphColor"), Is.EqualTo(new Color(1f, 1f, 1f, 0f)));
+        Assert.That(GetPrivateField<Color>(boss, "attackColor"), Is.EqualTo(new Color(1f, 1f, 1f, 0f)));
+
+        string[] textureFields =
+        {
+            "shieldInSpriteSheet",
+            "shieldLoopSpriteSheet",
+            "shieldBreakSpriteSheet",
+            "auraSpriteSheet",
+            "deathSpriteSheet",
+            "slashSpriteSheet",
+            "underAttackSpriteSheet",
+            "rangeSpriteSheet",
+            "magicCircleInSpriteSheet",
+            "magicCircleOutSpriteSheet",
+            "topAttackInSpriteSheet",
+            "topAttackOutSpriteSheet"
+        };
+
+        for (int i = 0; i < textureFields.Length; i++)
+        {
+            Assert.That(
+                GetPrivateField<Texture2D>(effects, textureFields[i]),
+                Is.Not.Null,
+                $"{textureFields[i]} should be assigned on the LastBoss prefab.");
+        }
+    }
+
+    [UnityTest]
+    public IEnumerator EffectController_CopiesSortingFromSpriteViewChildRenderer()
+    {
+        GameObject bossObject = CreateObject("LastBossChildRendererEffectsOwner", Vector2.zero);
+        bossObject.AddComponent<BoxCollider2D>();
+        GameObject spriteViewObject = CreateObject("SpriteView", Vector2.zero);
+        spriteViewObject.SetActive(false);
+        spriteViewObject.transform.SetParent(bossObject.transform, false);
+        SpriteRenderer childRenderer = spriteViewObject.AddComponent<SpriteRenderer>();
+        childRenderer.sortingOrder = 17;
+        spriteViewObject.AddComponent<LastBossSpriteAnimator>();
+        LastBossEffectController effects = bossObject.AddComponent<LastBossEffectController>();
+        SetPrivateField(effects, "auraSpriteSheet", CreateTexture("AuraChildRenderer", 10, 12));
+        SetPrivateField(effects, "auraSortingOrderOffset", 6);
+
+        InvokePrivate(effects, "Awake");
+        effects.HandleResetToFull();
+        yield return null;
+
+        SpriteRenderer auraRenderer = FindRendererNamed("LastBossAuraEffect");
+        Assert.That(auraRenderer, Is.Not.Null);
+        Assert.That(auraRenderer.sortingOrder, Is.EqualTo(childRenderer.sortingOrder + 6));
+    }
+
     [UnityTest]
     public IEnumerator EffectController_RangeIndicatorUsesStableFullFrameAndConfiguredOffset()
     {
