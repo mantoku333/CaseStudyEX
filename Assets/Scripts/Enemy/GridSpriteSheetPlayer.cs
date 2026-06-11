@@ -10,6 +10,7 @@ namespace GameName.Enemy
 {
     public struct GridSpriteSheetClip
     {
+        public Sprite[] SpriteFrames;
         public Texture2D SpriteSheet;
         public int Columns;
         public int Rows;
@@ -23,16 +24,20 @@ namespace GameName.Enemy
         public RectInt FrameCropPixels;
         public Vector2Int FrameCropReferencePixels;
 
+        public bool HasSpriteFrames => SpriteFrames != null && SpriteFrames.Length > 0;
+
         public bool IsValid =>
-            SpriteSheet != null &&
-            Columns > 0 &&
-            Rows > 0 &&
-            FrameCount > 0 &&
             FramesPerSecond > 0f &&
-            PixelsPerUnit > 0f;
+            (HasSpriteFrames ||
+             (SpriteSheet != null &&
+              Columns > 0 &&
+              Rows > 0 &&
+              FrameCount > 0 &&
+              PixelsPerUnit > 0f));
 
         public float FrameSeconds => 1f / Mathf.Max(0.01f, FramesPerSecond);
-        public float DurationSeconds => Mathf.Max(0, FrameCount) * FrameSeconds;
+        public int EffectiveFrameCount => HasSpriteFrames ? SpriteFrames.Length : Mathf.Max(0, FrameCount);
+        public float DurationSeconds => EffectiveFrameCount * FrameSeconds;
     }
 
     public static class GridSpriteSheetUtility
@@ -42,6 +47,11 @@ namespace GameName.Enemy
             if (!clip.IsValid)
             {
                 return Array.Empty<Sprite>();
+            }
+
+            if (clip.HasSpriteFrames)
+            {
+                return BuildImportedSpriteFrames(clip.SpriteFrames);
             }
 
             int frameWidth = clip.SpriteSheet.width / clip.Columns;
@@ -90,6 +100,11 @@ namespace GameName.Enemy
                 return Vector2.zero;
             }
 
+            if (clip.HasSpriteFrames)
+            {
+                return ResolveLargestSpriteFrameSize(clip.SpriteFrames);
+            }
+
             int frameWidth = clip.SpriteSheet.width / clip.Columns;
             int frameHeight = clip.SpriteSheet.height / clip.Rows;
             if (frameWidth <= 0 || frameHeight <= 0)
@@ -101,6 +116,65 @@ namespace GameName.Enemy
             return new Vector2(
                 visibleRect.width / clip.PixelsPerUnit,
                 visibleRect.height / clip.PixelsPerUnit);
+        }
+
+        private static Sprite[] BuildImportedSpriteFrames(Sprite[] sourceFrames)
+        {
+            if (sourceFrames == null || sourceFrames.Length == 0)
+            {
+                return Array.Empty<Sprite>();
+            }
+
+            int validCount = 0;
+            for (int i = 0; i < sourceFrames.Length; i++)
+            {
+                if (sourceFrames[i] != null)
+                {
+                    validCount++;
+                }
+            }
+
+            if (validCount <= 0)
+            {
+                return Array.Empty<Sprite>();
+            }
+
+            Sprite[] frames = new Sprite[validCount];
+            int index = 0;
+            for (int i = 0; i < sourceFrames.Length; i++)
+            {
+                Sprite frame = sourceFrames[i];
+                if (frame != null)
+                {
+                    frames[index++] = frame;
+                }
+            }
+
+            return frames;
+        }
+
+        private static Vector2 ResolveLargestSpriteFrameSize(Sprite[] sourceFrames)
+        {
+            if (sourceFrames == null)
+            {
+                return Vector2.zero;
+            }
+
+            Vector2 largestSize = Vector2.zero;
+            for (int i = 0; i < sourceFrames.Length; i++)
+            {
+                Sprite frame = sourceFrames[i];
+                if (frame == null)
+                {
+                    continue;
+                }
+
+                Vector2 frameSize = frame.bounds.size;
+                largestSize.x = Mathf.Max(largestSize.x, frameSize.x);
+                largestSize.y = Mathf.Max(largestSize.y, frameSize.y);
+            }
+
+            return largestSize;
         }
 
         private static RectInt ResolveSpriteFrameRect(GridSpriteSheetClip clip, int frameWidth, int frameHeight)
@@ -242,6 +316,7 @@ namespace GameName.Enemy
         {
             targetWorldSize = new Vector2(Mathf.Abs(worldSize.x), Mathf.Abs(worldSize.y));
             useTargetWorldSize = targetWorldSize.x > 0.001f && targetWorldSize.y > 0.001f;
+            ApplyCurrentFrameScale();
         }
 
         public void ClearTargetWorldSize()
@@ -579,6 +654,20 @@ namespace GameName.Enemy
                 targetWorldSize.x / (spriteSize.x * parentScaleX),
                 targetWorldSize.y / (spriteSize.y * parentScaleY),
                 transform.localScale.z == 0f ? 1f : transform.localScale.z);
+        }
+
+        private void ApplyCurrentFrameScale()
+        {
+            if (!useTargetWorldSize ||
+                targetRenderer == null ||
+                targetRenderer.sprite == null ||
+                CurrentFrameIndex < 0 ||
+                CurrentFrameIndex >= frames.Length)
+            {
+                return;
+            }
+
+            ApplyFrame(CurrentFrameIndex);
         }
 
         private void CacheRenderer()
