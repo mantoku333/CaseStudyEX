@@ -19,7 +19,7 @@ public class BreakableCrate : AttackDestructible
     private Collider2D cachedCollider;
     private Rigidbody2D cachedRigidbody;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         CacheComponents();
         ApplyCollisionSettings();
