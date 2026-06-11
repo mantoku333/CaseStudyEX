@@ -34,6 +34,7 @@ namespace GameName.Enemy
         [SerializeField] private bool stopChargeWhenBlocked = true;
         [SerializeField, Min(0.001f)] private float blockedMoveThreshold = 0.01f;
         [SerializeField, Min(0.02f)] private float blockedStopDelay = 0.1f;
+        [SerializeField, Min(0f)] private float chargeEndingLeadDistance = 1.2f;
 
         [Header("Camera Shake")]
         [SerializeField, FormerlySerializedAs("playShakeOnChargeStart")] private bool playShakeOnChargeImpact = true;
@@ -72,6 +73,7 @@ namespace GameName.Enemy
         private float chargeStartX;
         private float previousChargeX;
         private float blockedTimer;
+        private bool chargeEndingNotified;
 
         /// <summary>
         /// StageBossが実際に突進状態へ入った瞬間に通知する。
@@ -79,7 +81,16 @@ namespace GameName.Enemy
         /// </summary>
         public event Action ChargeStarted;
 
+        /// <summary>
+        /// 実際の突進状態が終わる少し前、または即時終了の直前に通知する。
+        /// Enemy_Tackle と同じ攻撃エフェクト再生タイミングで使う。
+        /// </summary>
+        public event Action ChargeEnding;
+
         public bool IsEncounterActive => encounterActive;
+        public bool IsWindingUp => attackState == AttackState.Vibration;
+        public bool IsCharging => attackState == AttackState.Charging;
+        public bool IsCoolingDown => attackState == AttackState.Cooldown;
 
         private const float BossAreaEdgeImpactTolerance = 0.02f;
 
@@ -128,6 +139,7 @@ namespace GameName.Enemy
             activeBossArea = null;
             attackState = AttackState.Idle;
             stateTimer = 0f;
+            chargeEndingNotified = false;
             enemyController.PauseMovement(false);
             enemyController.StopHorizontalMotion();
         }
@@ -157,6 +169,7 @@ namespace GameName.Enemy
             attackState = AttackState.Idle;
             stateTimer = 0f;
             blockedTimer = 0f;
+            chargeEndingNotified = false;
             playedPlayerImpactShakeThisCharge = false;
             enemyController.StopHorizontalMotion();
             enemyController.PauseMovement(false);
@@ -228,6 +241,7 @@ namespace GameName.Enemy
             previousChargeX = chargeStartX;
             blockedTimer = 0f;
             playedPlayerImpactShakeThisCharge = false;
+            chargeEndingNotified = false;
             attackState = AttackState.Charging;
             // StageBossもEnemy_Tackleと同じSEを、この突進開始時に1回だけ鳴らす。
             ChargeStarted?.Invoke();
@@ -284,6 +298,8 @@ namespace GameName.Enemy
                 EnterCooldownState();
                 return;
             }
+
+            NotifyChargeEndingIfCloseToDistanceLimit();
 
             if (stopChargeByDistance && HasReachedChargeDistance())
             {
@@ -413,8 +429,51 @@ namespace GameName.Enemy
             return traveledDistance >= targetDistance;
         }
 
+        private void NotifyChargeEndingIfCloseToDistanceLimit()
+        {
+            if (chargeEndingNotified || !stopChargeByDistance)
+            {
+                return;
+            }
+
+            float leadDistance = Mathf.Max(0f, chargeEndingLeadDistance);
+            if (leadDistance <= 0f)
+            {
+                return;
+            }
+
+            float targetDistance = Mathf.Max(0f, chargeDistance);
+            if (targetDistance <= leadDistance)
+            {
+                return;
+            }
+
+            float traveledDistance = Mathf.Abs(enemyController.CurrentX - chargeStartX);
+            if (traveledDistance >= targetDistance - leadDistance)
+            {
+                NotifyChargeEnding();
+            }
+        }
+
+        private void NotifyChargeEnding()
+        {
+            if (chargeEndingNotified)
+            {
+                return;
+            }
+
+            chargeEndingNotified = true;
+            ChargeEnding?.Invoke();
+        }
+
         private void EnterCooldownState()
         {
+            bool wasCharging = attackState == AttackState.Charging;
+            if (wasCharging)
+            {
+                NotifyChargeEnding();
+            }
+
             attackState = AttackState.Cooldown;
             stateTimer = chargeCooldown;
             enemyController.StopHorizontalMotion();
