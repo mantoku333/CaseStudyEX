@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -3975624549204834352, guid: 9bb3adf0f489464488cb93b0f8b48ca8, type: 3}
+  m_Sprite: {fileID: -4136572986605433815, guid: 2f82f0242d71ce84d8003a18840973a1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -151,6 +151,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f75ea38f6f6445f9f8a2f3a3d4f4e21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LeverSwitch2D
-  shutterWall: {fileID: 0}
+  shutterWall: {fileID: 7336844014595886822, guid: b136924b5c840f54ab73ea3ed0c33382, type: 3}
   leverRenderer: {fileID: 4012167722116743168}
-  oneShot: 0
+  closedSprite: {fileID: -4136572986605433815, guid: 2f82f0242d71ce84d8003a18840973a1, type: 3}
+  openedSprite: {fileID: -1369608760036095278, guid: 7980aba7a1a90264fa853fdc5e23efd0, type: 3}
+  oneShot: 1

@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a596a0122d176fd4d81638a716f851d2, type: 3}
   m_Name: RedAura_Equipment
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
-  itemName: BlueAura
+  itemName: RedAura
   itemId: Equipment_BlueAura_Unlock
-  description: 
-  icon: {fileID: 0}
+  description: Nice heal !
+  icon: {fileID: 21300000, guid: 35b31b97b2e443e4c88da0f4f338d386, type: 3}
+  illustration: {fileID: 21300000, guid: 4bd5f8c748393174ea9f938ad6959352, type: 3}
   itemType: 2
   healAmount: 0
   staminaAmount: 0
@@ -24,25 +25,17 @@ MonoBehaviour:
   stackable: 0
   maxStackSize: 99
   pickupSound: {fileID: 0}
-  equipmentEffects:
-  - effectType: 0
-    value: 0.2
+  equipmentBadge: {fileID: 0}
+  equipmentAbility:
+  - abilityType: 1
+    value: 0.02
   equipmentVisualLayers:
   - layerName: 
-    sprite: {fileID: -6279402175740039742, guid: 7237b620ecc2ecc458859a0da09f70fd, type: 3}
+    sprite: {fileID: 21300000, guid: 5bf4b00ef71d7874e9b8724f9702fb41, type: 3}
     parent: 0
-    localPosition: {x: 0.42, y: 4.75, z: 0}
+    localPosition: {x: 0.15, y: 5, z: 0}
     useLeftFacingLocalPosition: 0
-    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
+    leftFacingLocalPosition: {x: 3, y: 0, z: 0}
     localEulerAngles: {x: 0, y: 0, z: 0}
-    localScale: {x: 0.25, y: 0.25, z: 0.25}
+    localScale: {x: 0.5, y: 0.5, z: 0.5}
     sortingOrderOffset: -1
-  - layerName: 
-    sprite: {fileID: -5335068214072861925, guid: b05edfe08dd650e49a50add2e9028d0e, type: 3}
-    parent: 1
-    localPosition: {x: 0.42, y: 4.25, z: 0}
-    useLeftFacingLocalPosition: 0
-    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
-    localEulerAngles: {x: 0, y: 0, z: 0}
-    localScale: {x: 0.25, y: 0.25, z: 0.25}
-    sortingOrderOffset: 1

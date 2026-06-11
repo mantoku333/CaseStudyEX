@@ -40,6 +40,7 @@ namespace GameName.Enemy
         [Header("Normal Attack")]
         [SerializeField, Min(1)] private int normalAttackDamage = 10;
         [SerializeField] private Vector2 normalAttackSize = new Vector2(4f, 4f);
+        [SerializeField, Min(0f)] private float normalAttackForwardInset = 2f;
         [SerializeField, Min(0.01f)] private float normalAttackVisibleTime = 0.16f;
         [SerializeField, Min(0f)] private float normalAttackRecovery = 0.45f;
 
@@ -132,6 +133,7 @@ namespace GameName.Enemy
         private Rigidbody2D rb2D;
         private Collider2D bodyCollider;
         private SpriteRenderer spriteRenderer;
+        private LastBossEffectController effectController;
         private Transform playerTransform;
         private UmbrellaParryController playerParryController;
         private ParryHitbox playerParryHitbox;
@@ -161,6 +163,7 @@ namespace GameName.Enemy
         private bool horizontalBladeDamageDealt;
         private bool verticalBladeDamageDealt;
         private bool rangeParryProxyActive;
+        private bool deathRoutineRunning;
         private float stateTimer;
         private float horizontalReadyTime;
         private float verticalReadyTime;
@@ -188,6 +191,10 @@ namespace GameName.Enemy
             rb2D = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
             ResolveSpriteView();
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            effectController = GetComponent<LastBossEffectController>();
+            InitializeFacingDirectionFromSprite();
+            effectController?.SetFacingDirection(facingDirection);
             currentHealth = MaxHealth;
 
             SpriteRenderer mainRenderer = GetMainSpriteRenderer();
@@ -206,6 +213,14 @@ namespace GameName.Enemy
             EnsureVisualObjects();
         }
 
+        private void InitializeFacingDirectionFromSprite()
+        {
+            if (spriteRenderer != null)
+            {
+                facingDirection = spriteRenderer.flipX ? 1 : -1;
+            }
+        }
+
         private void Start()
         {
             CachePlayerReferences();
@@ -222,6 +237,7 @@ namespace GameName.Enemy
             backAttackDamageMultiplier = Mathf.Max(1f, backAttackDamageMultiplier);
             normalAttackSize.x = Mathf.Max(0.1f, normalAttackSize.x);
             normalAttackSize.y = Mathf.Max(0.1f, normalAttackSize.y);
+            normalAttackForwardInset = Mathf.Max(0f, normalAttackForwardInset);
             horizontalAttackSize.x = Mathf.Max(0.1f, horizontalAttackSize.x);
             horizontalAttackSize.y = Mathf.Max(0.1f, horizontalAttackSize.y);
             horizontalGroundBladeSweepSpeed = Mathf.Max(0.1f, horizontalGroundBladeSweepSpeed);
@@ -244,6 +260,7 @@ namespace GameName.Enemy
         private void OnDisable()
         {
             CancelActiveBladeAttack();
+            effectController?.HandleEncounterStopped();
             StopMotion();
             HideAttackVisual();
             encounterActive = false;
@@ -256,7 +273,14 @@ namespace GameName.Enemy
 
             if (telegraphObject != null)
             {
-                Destroy(telegraphObject);
+                if (Application.isPlaying)
+                {
+                    Destroy(telegraphObject);
+                }
+                else
+                {
+                    DestroyImmediate(telegraphObject);
+                }
             }
         }
 
@@ -329,6 +353,7 @@ namespace GameName.Enemy
             CancelActiveBladeAttack();
             CachePlayerReferences();
             encounterActive = true;
+            deathRoutineRunning = false;
             pendingAction = BossAction.None;
             // BossAreaに入ってすぐ攻撃せず、調整可能な待ち時間後に初回行動を始める。
             stateTimer = initialActionDelay;
@@ -336,11 +361,16 @@ namespace GameName.Enemy
             StopMotion();
             spriteView?.PlayIdle();
             HideAttackVisual();
+            SetBossRenderersEnabled(true);
+            RestoreCombatBodyAfterReset();
+            effectController?.SetFacingDirection(facingDirection);
+            effectController?.HandleEncounterStarted();
         }
 
         public void DeactivateEncounter()
         {
             CancelActiveBladeAttack();
+            effectController?.HandleEncounterStopped();
             encounterActive = false;
             state = BossState.Inactive;
             pendingAction = BossAction.None;
@@ -594,9 +624,14 @@ namespace GameName.Enemy
                 HideAttackVisual();
                 PlayRangeTelegraphAnimation(action);
 
-                if (action == BossAction.Vertical)
+                if (action == BossAction.Horizontal)
+                {
+                    BeginHorizontalRangeCharge(activeAttackBox);
+                }
+                else if (action == BossAction.Vertical)
                 {
                     StartVerticalRainPreview();
+                    BeginVerticalMagicCircle(activeAttackBox);
                 }
 
                 return;
@@ -615,6 +650,11 @@ namespace GameName.Enemy
             stateTimer = GetAttackVisibleTime(action);
             state = BossState.AttackVisible;
             ShowAttackVisual(activeAttackBox, attackColor);
+            effectController?.PlayNormalSlash(
+                activeAttackBox.Center,
+                activeAttackBox.Size,
+                activeAttackBox.Angle,
+                facingDirection);
         }
 
         // 戻り値は「この攻撃解決でダウンが開始したか」。trueなら攻撃表示へ進めない。
@@ -703,6 +743,7 @@ namespace GameName.Enemy
             // 縦範囲の狙いは攻撃開始直前までプレイヤーを追い、指定秒数前に固定する。
             activeAttackBox = BuildAttackBox(BossAction.Vertical);
             UpdateQueuedRainBladePreviews(activeAttackBox);
+            UpdateVerticalMagicCircle(activeAttackBox);
         }
 
         private IEnumerator HorizontalGroundBladeAttackRoutine(AttackBox attackBox)
@@ -721,6 +762,11 @@ namespace GameName.Enemy
             float spawnInterval = slotWidth / sweepSpeed;
             float nearEdgeX = attackBox.Center.x - facingDirection * (attackBox.Size.x * 0.5f);
             float groundY = attackBox.Center.y - attackBox.Size.y * 0.5f;
+            GridSpriteSheetClip groundVisualClip = effectController != null
+                ? effectController.GroundBladeClip
+                : default;
+            bool hasGroundVisual = groundVisualClip.IsValid;
+            float groundVisualDuration = hasGroundVisual ? groundVisualClip.DurationSeconds : 0f;
 
             // GroundBladeのscaleは触らず、prefabの実幅を使ってボス側から順に敷き詰める。
             for (int i = 0; i < bladeCount; i++)
@@ -733,6 +779,15 @@ namespace GameName.Enemy
                 LastBossBladeAttack blade = SpawnBlade(groundBladePrefab, spawnPosition, Quaternion.identity);
                 if (blade != null)
                 {
+                    if (hasGroundVisual)
+                    {
+                        blade.ConfigureGroundVisual(
+                            groundVisualClip,
+                            effectController.GroundBladeUprightFrameIndex,
+                            i,
+                            effectController.GroundBladeVisualFrameSizeMultiplier);
+                    }
+
                     blade.InitializeGround(
                         this,
                         GetAttackDamage(BossAction.Horizontal),
@@ -746,7 +801,8 @@ namespace GameName.Enemy
                 }
             }
 
-            yield return new WaitForSeconds(Mathf.Max(0.01f, horizontalAttackVisibleTime * 2f));
+            float cleanupDelay = Mathf.Max(Mathf.Max(0.01f, horizontalAttackVisibleTime * 2f), groundVisualDuration);
+            yield return new WaitForSeconds(cleanupDelay);
 
             ClearBladesOfKind(LastBossBladeAttack.BladeKind.Ground);
             FinishPrefabRangeAttack(BossAction.Horizontal);
@@ -889,6 +945,19 @@ namespace GameName.Enemy
             LastBossBladeAttack blade = SpawnBlade(rainBladePrefab, spawnPosition, Quaternion.identity);
             if (blade != null)
             {
+                if (effectController != null)
+                {
+                    GridSpriteSheetClip rainInClip = effectController.RainBladeInClip;
+                    GridSpriteSheetClip rainOutClip = effectController.RainBladeOutClip;
+                    if (rainInClip.IsValid && rainOutClip.IsValid)
+                    {
+                        blade.ConfigureRainVisual(
+                            rainInClip,
+                            rainOutClip,
+                            effectController.RainBladeVisualFrameSizeMultiplier);
+                    }
+                }
+
                 blade.InitializeRainPreview(
                     this,
                     GetAttackDamage(BossAction.Vertical),
@@ -964,6 +1033,77 @@ namespace GameName.Enemy
             spawnPosition = topCenter + side * sideOffset;
             targetPoint = bottomCenter + side * sideOffset;
             previewAimPoint = bottomCenter;
+        }
+
+        private void BeginHorizontalRangeCharge(AttackBox attackBox)
+        {
+            if (effectController == null)
+            {
+                return;
+            }
+
+            List<Vector2> footPositions = BuildGroundBladeFootPositions(
+                attackBox,
+                out _,
+                out _);
+            effectController.BeginHorizontalRangeCharge(footPositions, ResolveGroundBladePrefabWidth());
+        }
+
+        private List<Vector2> BuildGroundBladeFootPositions(
+            AttackBox attackBox,
+            out float groundY,
+            out float spawnInterval)
+        {
+            float spacing = ResolveGroundBladePrefabWidth();
+            float sweepSpeed = Mathf.Max(0.1f, horizontalGroundBladeSweepSpeed);
+            int bladeCount = Mathf.Max(1, Mathf.FloorToInt(attackBox.Size.x / spacing));
+            float slotWidth = attackBox.Size.x / bladeCount;
+            spawnInterval = slotWidth / sweepSpeed;
+            float nearEdgeX = attackBox.Center.x - facingDirection * (attackBox.Size.x * 0.5f);
+            groundY = attackBox.Center.y - attackBox.Size.y * 0.5f;
+
+            List<Vector2> footPositions = new List<Vector2>(bladeCount);
+            for (int i = 0; i < bladeCount; i++)
+            {
+                float distance = slotWidth * (i + 0.5f);
+                footPositions.Add(new Vector2(
+                    nearEdgeX + facingDirection * distance,
+                    groundY));
+            }
+
+            return footPositions;
+        }
+
+        private void BeginVerticalMagicCircle(AttackBox attackBox)
+        {
+            if (effectController == null)
+            {
+                return;
+            }
+
+            GetRainBladeSlotPoints(
+                attackBox,
+                0,
+                out Vector2 spawnPosition,
+                out Vector2 targetPoint,
+                out _);
+            effectController.BeginVerticalRangeCharge(targetPoint, spawnPosition);
+        }
+
+        private void UpdateVerticalMagicCircle(AttackBox attackBox)
+        {
+            if (effectController == null)
+            {
+                return;
+            }
+
+            GetRainBladeSlotPoints(
+                attackBox,
+                0,
+                out Vector2 spawnPosition,
+                out Vector2 targetPoint,
+                out _);
+            effectController.UpdateVerticalRangeCharge(targetPoint, spawnPosition);
         }
 
         private float ResolveGroundBladePrefabWidth()
@@ -1073,6 +1213,15 @@ namespace GameName.Enemy
             if (state == BossState.Dead || state == BossState.Downed)
             {
                 return;
+            }
+
+            if (action == BossAction.Horizontal)
+            {
+                effectController?.StopHorizontalRangeEffects();
+            }
+            else if (action == BossAction.Vertical)
+            {
+                effectController?.EndVerticalRangeCharge();
             }
 
             HideRangeParryProxy();
@@ -1213,6 +1362,10 @@ namespace GameName.Enemy
 
             // パリィ成立時は通常キャンセルと違い、ブレードを指定時間でフェードアウトさせる。
             CancelActiveBladeAttack(bladeParryFadeDuration);
+            if (action == BossAction.Vertical)
+            {
+                effectController?.EndVerticalRangeCharge();
+            }
 
             bool downStarted = AddDownCount(action == BossAction.Horizontal ? 7 : 15);
             if (downStarted)
@@ -1269,6 +1422,10 @@ namespace GameName.Enemy
 
             // 透明プロキシ経由のパリィでも、実体ブレード側と同じ中断処理を使う。
             CancelActiveBladeAttack(bladeParryFadeDuration);
+            if (action == BossAction.Vertical)
+            {
+                effectController?.EndVerticalRangeCharge();
+            }
 
             bool downStarted = AddDownCount(action == BossAction.Horizontal ? 7 : 15);
             if (downStarted)
@@ -1288,6 +1445,11 @@ namespace GameName.Enemy
 
         public void NotifyBladeLanded(LastBossBladeAttack blade)
         {
+        }
+
+        public void NotifyGroundBladeUpright(int slotIndex)
+        {
+            effectController?.FadeHorizontalRangeSlot(slotIndex);
         }
 
         public void NotifyBladeDestroyed(LastBossBladeAttack blade)
@@ -1449,6 +1611,7 @@ namespace GameName.Enemy
             }
 
             facingDirection = signedDistance >= 0f ? 1 : -1;
+            effectController?.SetFacingDirection(facingDirection);
             Vector2 velocity = rb2D.linearVelocity;
             velocity.x = facingDirection * moveSpeed;
             rb2D.linearVelocity = velocity;
@@ -1506,7 +1669,12 @@ namespace GameName.Enemy
             }
 
             Vector2 size = action == BossAction.Horizontal ? horizontalAttackSize : normalAttackSize;
-            float centerX = bounds.center.x + facingDirection * (bounds.extents.x + size.x * 0.5f);
+            float forwardInset = action == BossAction.Normal
+                ? Mathf.Min(
+                    Mathf.Max(0f, normalAttackForwardInset),
+                    Mathf.Max(0f, bounds.extents.x + size.x * 0.5f - 0.05f))
+                : 0f;
+            float centerX = bounds.center.x + facingDirection * (bounds.extents.x + size.x * 0.5f - forwardInset);
             return new AttackBox(new Vector2(centerX, bounds.center.y), size, 0f);
         }
 
@@ -1563,6 +1731,13 @@ namespace GameName.Enemy
 
             facingDirection = deltaX >= 0f ? 1 : -1;
             ApplyFacingVisual();
+
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.flipX = facingDirection > 0;
+            }
+
+            effectController?.SetFacingDirection(facingDirection);
         }
 
         private bool CanTurnTowardPlayer()
@@ -1642,6 +1817,7 @@ namespace GameName.Enemy
             pendingAction = BossAction.None;
             visibleAction = BossAction.None;
             ClearJustParryBuffer();
+            effectController?.HandleDownStarted();
 
             HitStopController.Request(hitStopDuration);
             float previousTimeScale = Time.timeScale;
@@ -1694,6 +1870,7 @@ namespace GameName.Enemy
                 state = BossState.Recovery;
                 stateTimer = 0f;
                 spriteView?.PlayIdle();
+                effectController?.HandleDownEnded();
             }
         }
 
@@ -1728,6 +1905,7 @@ namespace GameName.Enemy
             CancelActiveBladeAttack();
             RestoreHitStopTimeScale();
             downRoutineRunning = false;
+            deathRoutineRunning = false;
             enraged = false;
             downCount = 0;
             state = BossState.Inactive;
@@ -1738,6 +1916,10 @@ namespace GameName.Enemy
             StopMotion();
             spriteView?.PlayIdle();
             HideAttackVisual();
+            RestoreCombatBodyAfterReset();
+            SetBossRenderersEnabled(true);
+            effectController?.SetFacingDirection(facingDirection);
+            effectController?.HandleResetToFull();
             currentHealth = MaxHealth;
             NotifyHealthChanged();
         }
@@ -1795,15 +1977,90 @@ namespace GameName.Enemy
 
         private void Die()
         {
+            if (deathRoutineRunning)
+            {
+                return;
+            }
+
             state = BossState.Dead;
             encounterActive = false;
+            deathRoutineRunning = true;
             CancelActiveBladeAttack();
             StopMotion();
             HideAttackVisual();
             spriteView?.PlayDead();
+            DisableCombatBodyForDeath();
             // Destroy前に通知して、ボスの表示状態を参照できるようにする。
             Died?.Invoke();
-            Destroy(gameObject);
+            bool deathEffectStarted = effectController != null &&
+                                      effectController.PlayDeath(HideBossVisualsForDeath, CompleteDeathDestroy);
+            if (!deathEffectStarted)
+            {
+                HideBossVisualsForDeath();
+                CompleteDeathDestroy();
+            }
+        }
+
+        private void DisableCombatBodyForDeath()
+        {
+            if (bodyCollider != null)
+            {
+                bodyCollider.enabled = false;
+            }
+
+            if (rb2D != null)
+            {
+                rb2D.linearVelocity = Vector2.zero;
+                rb2D.simulated = false;
+            }
+        }
+
+        private void RestoreCombatBodyAfterReset()
+        {
+            if (bodyCollider != null)
+            {
+                bodyCollider.enabled = true;
+            }
+
+            if (rb2D != null)
+            {
+                rb2D.simulated = true;
+                ConfigureRigidbody();
+            }
+        }
+
+        private void HideBossVisualsForDeath()
+        {
+            SetBossRenderersEnabled(false);
+        }
+
+        private void SetBossRenderersEnabled(bool enabled)
+        {
+            SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (renderers[i] != null && renderers[i] != telegraphRenderer)
+                {
+                    renderers[i].enabled = enabled;
+                }
+            }
+        }
+
+        private void CompleteDeathDestroy()
+        {
+            if (!deathRoutineRunning || state != BossState.Dead)
+            {
+                return;
+            }
+
+            if (Application.isPlaying)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                DestroyImmediate(gameObject);
+            }
         }
 
         private void CancelActiveBladeAttack(float bladeFadeDuration = 0f)
@@ -1825,6 +2082,7 @@ namespace GameName.Enemy
             horizontalBladeDamageDealt = false;
             verticalBladeDamageDealt = false;
             HideRangeParryProxy();
+            effectController?.StopHorizontalRangeEffects();
 
             for (int i = activeBladeAttacks.Count - 1; i >= 0; i--)
             {

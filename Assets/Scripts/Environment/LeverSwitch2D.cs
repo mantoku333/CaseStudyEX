@@ -6,8 +6,12 @@ public class LeverSwitch2D : MonoBehaviour, IAttackReceiver
 {
     // 連動するシャッター本体
     [SerializeField] private ShutterWallBlockRise shutterWall;
-    // レバーの見た目を反転させるための SpriteRenderer
+    // レバーの見た目を切り替えるための SpriteRenderer
     [SerializeField] private SpriteRenderer leverRenderer;
+    // 閉状態のレバースプライト
+    [SerializeField] private Sprite closedSprite;
+    // 開状態のレバースプライト
+    [SerializeField] private Sprite openedSprite;
     // true の場合、最初の成功操作後に再操作不可
     [SerializeField] private bool oneShot = true;
 
@@ -17,8 +21,6 @@ public class LeverSwitch2D : MonoBehaviour, IAttackReceiver
     private bool isOn;
     // oneShot 消費済みかどうか
     private bool consumed;
-    // 初期向きに戻せるように初期反転値を保持
-    private bool initialFlipX;
 
     private void Awake()
     {
@@ -74,10 +76,7 @@ public class LeverSwitch2D : MonoBehaviour, IAttackReceiver
         isOn = nextOn;
 
         // 見た目を論理状態に同期
-        if (leverRenderer != null)
-        {
-            leverRenderer.flipX = isOn ? !initialFlipX : initialFlipX;
-        }
+        SyncVisualState();
     }
 
     public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
@@ -99,9 +98,9 @@ public class LeverSwitch2D : MonoBehaviour, IAttackReceiver
             leverRenderer = GetComponent<SpriteRenderer>();
         }
 
-        if (leverRenderer != null)
+        if (closedSprite == null && leverRenderer != null)
         {
-            initialFlipX = leverRenderer.flipX;
+            closedSprite = leverRenderer.sprite;
         }
 
         // 未設定時は名前 "ShutterWall" のオブジェクトを自動探索
@@ -125,9 +124,20 @@ public class LeverSwitch2D : MonoBehaviour, IAttackReceiver
         }
 
         // 初期見た目も同期
-        if (leverRenderer != null)
+        SyncVisualState();
+    }
+
+    private void SyncVisualState()
+    {
+        if (leverRenderer == null)
         {
-            leverRenderer.flipX = isOn ? !initialFlipX : initialFlipX;
+            return;
+        }
+
+        Sprite targetSprite = isOn ? openedSprite : closedSprite;
+        if (targetSprite != null)
+        {
+            leverRenderer.sprite = targetSprite;
         }
     }
 }

@@ -90,8 +90,6 @@ public class BreakableCrate : AttackDestructible
             cachedRigidbody.bodyType = RigidbodyType2D.Static;
             cachedRigidbody.gravityScale = 0f;
             cachedRigidbody.constraints = RigidbodyConstraints2D.None;
-            cachedRigidbody.linearVelocity = Vector2.zero;
-            cachedRigidbody.angularVelocity = 0f;
         }
     }
 }
