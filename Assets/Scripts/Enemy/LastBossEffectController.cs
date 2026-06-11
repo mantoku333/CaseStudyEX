@@ -2,6 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace GameName.Enemy
 {
@@ -10,6 +13,7 @@ namespace GameName.Enemy
     {
         private static readonly Vector2Int LargeFrameReferencePixels = new Vector2Int(1024, 1024);
         private static readonly Vector2Int RangeFrameReferencePixels = new Vector2Int(512, 512);
+        private static readonly RectInt LargeFrameCropPixels = new RectInt(0, 0, 1024, 1024);
         private static readonly RectInt RangeFrameCropPixels = new RectInt(98, 0, 316, 214);
         private static readonly RectInt GroundBladeFrameCropPixels = new RectInt(418, 0, 187, 1009);
         private static readonly RectInt RainBladeFrameCropPixels = new RectInt(405, 20, 217, 995);
@@ -30,6 +34,20 @@ namespace GameName.Enemy
         [SerializeField] private Texture2D magicCircleOutSpriteSheet;
         [SerializeField] private Texture2D topAttackInSpriteSheet;
         [SerializeField] private Texture2D topAttackOutSpriteSheet;
+
+        [Header("Sliced Sprite Frames")]
+        [SerializeField] private Sprite[] shieldInSpriteFrames;
+        [SerializeField] private Sprite[] shieldLoopSpriteFrames;
+        [SerializeField] private Sprite[] shieldBreakSpriteFrames;
+        [SerializeField] private Sprite[] auraSpriteFrames;
+        [SerializeField] private Sprite[] deathSpriteFrames;
+        [SerializeField] private Sprite[] slashSpriteFrames;
+        [SerializeField] private Sprite[] underAttackSpriteFrames;
+        [SerializeField] private Sprite[] rangeSpriteFrames;
+        [SerializeField] private Sprite[] magicCircleInSpriteFrames;
+        [SerializeField] private Sprite[] magicCircleOutSpriteFrames;
+        [SerializeField] private Sprite[] topAttackInSpriteFrames;
+        [SerializeField] private Sprite[] topAttackOutSpriteFrames;
 
         [Header("Playback")]
         [SerializeField, Min(1f)] private float framesPerSecond = 30f;
@@ -80,6 +98,7 @@ namespace GameName.Enemy
         private GameObject auraObject;
         private GameObject shieldObject;
         private GameObject shieldBreakObject;
+        private GameObject slashObject;
         private GameObject magicCircleObject;
         private GameObject deathObject;
         private GridSpriteSheetPlayer shieldPlayer;
@@ -90,6 +109,9 @@ namespace GameName.Enemy
         private float horizontalRangeBladeWorldWidth = 1f;
         private bool shieldBrokenThisDown;
         private bool deathHideNotified;
+        private bool deathPositionLocked;
+
+        public event Action MagicCircleInStarted;
 
         public int FacingDirection => facingDirection;
         public int GroundBladeUprightFrameIndex => Mathf.Max(0, groundBladeUprightFrameIndex);
@@ -98,9 +120,17 @@ namespace GameName.Enemy
         public float RangeEffectSizeMultiplier => Mathf.Max(0.01f, rangeEffectSizeMultiplier);
         public float GroundBladeClipDuration => GroundBladeClip.DurationSeconds;
 
-        public GridSpriteSheetClip GroundBladeClip => CreateStableClip(underAttackSpriteSheet, 5, 4, 20, new Vector2(0.5f, 0.5f), GroundBladeFrameCropPixels, LargeFrameReferencePixels);
-        public GridSpriteSheetClip RainBladeInClip => CreateClip(topAttackInSpriteSheet, 5, 5, 23, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
-        public GridSpriteSheetClip RainBladeOutClip => CreateClip(topAttackOutSpriteSheet, 5, 4, 20, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
+        public GridSpriteSheetClip GroundBladeClip => CreateStableClip(
+            underAttackSpriteSheet,
+            SelectPrimarySpriteFramesByGrid(underAttackSpriteSheet, underAttackSpriteFrames, 5, 4, 20),
+            5,
+            4,
+            20,
+            new Vector2(0.5f, 0.5f),
+            GroundBladeFrameCropPixels,
+            LargeFrameReferencePixels);
+        public GridSpriteSheetClip RainBladeInClip => CreateClip(topAttackInSpriteSheet, topAttackInSpriteFrames, 5, 5, 23, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
+        public GridSpriteSheetClip RainBladeOutClip => CreateClip(topAttackOutSpriteSheet, topAttackOutSpriteFrames, 5, 4, 20, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
 
         private void Awake()
         {
@@ -117,6 +147,7 @@ namespace GameName.Enemy
         {
             StopShield();
             StopShieldBreak();
+            StopNormalSlash();
             StopHorizontalRangeEffects();
             StopMagicCircleImmediate();
         }
@@ -126,7 +157,10 @@ namespace GameName.Enemy
             FollowBoss(auraObject, ResolveAuraOffset());
             FollowBoss(shieldObject, shieldOffset);
             FollowBoss(shieldBreakObject, shieldBreakOffset);
-            FollowBoss(deathObject, deathOffset);
+            if (!deathPositionLocked)
+            {
+                FollowBoss(deathObject, deathOffset);
+            }
         }
 
         private void OnValidate()
@@ -148,6 +182,13 @@ namespace GameName.Enemy
             magicCircleBeyondSpawnDistance = Mathf.Max(0.01f, magicCircleBeyondSpawnDistance);
             groundBladeVisualFrameSizeMultiplier = SanitizeVectorMultiplier(groundBladeVisualFrameSizeMultiplier);
             rainBladeVisualFrameSizeMultiplier = SanitizeVectorMultiplier(rainBladeVisualFrameSizeMultiplier);
+
+#if UNITY_EDITOR
+            PopulateSpriteFramesFromSpriteSheets();
+#endif
+
+            ApplyActiveAuraPlacement();
+            ApplyActiveShieldSize();
         }
 
         public void HandleEncounterStarted()
@@ -161,6 +202,7 @@ namespace GameName.Enemy
         {
             StopShield();
             StopShieldBreak();
+            StopNormalSlash();
             StopHorizontalRangeEffects();
             StopMagicCircleImmediate();
             shieldBrokenThisDown = false;
@@ -169,6 +211,7 @@ namespace GameName.Enemy
         public void HandleDownStarted()
         {
             StopShield();
+            StopNormalSlash();
             StopHorizontalRangeEffects();
             EndVerticalRangeCharge();
 
@@ -194,6 +237,7 @@ namespace GameName.Enemy
             StopHorizontalRangeEffects();
             StopMagicCircleImmediate();
             StopShieldBreak();
+            StopNormalSlash();
             StopDeathImmediate();
             StopAura();
             PlayAuraLoop();
@@ -205,18 +249,29 @@ namespace GameName.Enemy
             FollowBoss(auraObject, ResolveAuraOffset());
             FollowBoss(shieldObject, shieldOffset);
             FollowBoss(shieldBreakObject, shieldBreakOffset);
-            FollowBoss(deathObject, deathOffset);
+            if (!deathPositionLocked)
+            {
+                FollowBoss(deathObject, deathOffset);
+            }
             ApplyAuraFacing(auraObject);
             ApplyMagicCircleFacing(magicCirclePlayer);
         }
 
         public void PlayNormalSlash(Vector2 center, Vector2 size, float angle, int facingDirection)
         {
-            GridSpriteSheetClip clip = CreateClip(slashSpriteSheet, 5, 6, 30, new Vector2(0.5f, 0.5f));
+            GridSpriteSheetClip clip = CreateClip(
+                slashSpriteSheet,
+                null,
+                5,
+                6,
+                30,
+                new Vector2(0.5f, 0.5f));
             if (!clip.IsValid)
             {
                 return;
             }
+
+            StopNormalSlash();
 
             int slashFacingDirection = facingDirection < 0 ? -1 : 1;
             Vector3 position = new Vector3(center.x, center.y, transform.position.z) +
@@ -231,19 +286,35 @@ namespace GameName.Enemy
                 return;
             }
 
+            player.ClearTargetWorldSize();
+            player.transform.localScale = Vector3.one * slashSizeMultiplier;
             player.transform.rotation = Quaternion.Euler(0f, 0f, angle);
             if (player.Renderer != null)
             {
                 player.Renderer.flipX = slashFacingDirection < 0;
             }
 
-            GameObject effectObject = player.gameObject;
+            slashObject = player.gameObject;
+            GameObject effectObject = slashObject;
             player.Play(
                 clip,
                 loop: false,
                 holdLast: false,
                 hideOnComplete: true,
-                completed: () => DestroyEffectObject(effectObject));
+                completed: () =>
+                {
+                    DestroyEffectObject(effectObject);
+                    if (slashObject == effectObject)
+                    {
+                        slashObject = null;
+                    }
+                });
+        }
+
+        public void StopNormalSlash()
+        {
+            DestroyEffectObject(slashObject);
+            slashObject = null;
         }
 
         public void BeginHorizontalRangeCharge(IReadOnlyList<Vector2> footPositions)
@@ -304,7 +375,7 @@ namespace GameName.Enemy
 
         public void BeginVerticalRangeCharge(Vector2 groundLockPoint, Vector2 rainSpawnPosition)
         {
-            GridSpriteSheetClip clip = CreateClip(magicCircleInSpriteSheet, 5, 4, 19, new Vector2(0.5f, 0.5f));
+            GridSpriteSheetClip clip = CreateClip(magicCircleInSpriteSheet, magicCircleInSpriteFrames, 5, 4, 19, new Vector2(0.5f, 0.5f));
             if (!clip.IsValid)
             {
                 return;
@@ -332,6 +403,7 @@ namespace GameName.Enemy
                 loop: false,
                 holdLast: true,
                 hideOnComplete: false);
+            MagicCircleInStarted?.Invoke();
         }
 
         public void UpdateVerticalRangeCharge(Vector2 groundLockPoint, Vector2 rainSpawnPosition)
@@ -356,7 +428,7 @@ namespace GameName.Enemy
             Vector3 position = magicCircleObject.transform.position;
             StopMagicCircleImmediate();
 
-            GridSpriteSheetClip outClip = CreateClip(magicCircleOutSpriteSheet, 5, 2, 9, new Vector2(0.5f, 0.5f));
+            GridSpriteSheetClip outClip = CreateClip(magicCircleOutSpriteSheet, magicCircleOutSpriteFrames, 5, 2, 9, new Vector2(0.5f, 0.5f));
             if (!outClip.IsValid)
             {
                 return;
@@ -385,7 +457,9 @@ namespace GameName.Enemy
 
         public bool PlayDeath(Action hideBossVisuals, Action completed)
         {
-            GridSpriteSheetClip clip = CreateStableClip(deathSpriteSheet, 5, 9, 45, new Vector2(0.5f, 0.5f), DeathFrameCropPixels, LargeFrameReferencePixels);
+            GridSpriteSheetClip clip = CreateStableClip(deathSpriteSheet, null, 5, 9, 45, new Vector2(0.5f, 0.5f), DeathFrameCropPixels, LargeFrameReferencePixels);
+            clip.UseFrameBoundsPivot = true;
+            clip.FrameBoundsSourceFrames = deathSpriteFrames;
             if (!clip.IsValid)
             {
                 return false;
@@ -395,6 +469,7 @@ namespace GameName.Enemy
             StopShieldBreak();
             StopHorizontalRangeEffects();
             StopMagicCircleImmediate();
+            StopNormalSlash();
             StopAura();
             StopDeathImmediate();
             deathHideNotified = false;
@@ -410,6 +485,7 @@ namespace GameName.Enemy
             }
 
             deathObject = deathPlayer.gameObject;
+            deathPositionLocked = true;
             deathPlayer.Play(
                 clip,
                 loop: false,
@@ -435,6 +511,7 @@ namespace GameName.Enemy
 
                     DestroyEffectObject(deathObject);
                     deathObject = null;
+                    deathPositionLocked = false;
                     completed?.Invoke();
                 });
             return true;
@@ -454,7 +531,7 @@ namespace GameName.Enemy
 
         private IEnumerator SpawnHorizontalRangeIndicators(IReadOnlyList<Vector2> footPositions)
         {
-            GridSpriteSheetClip clip = CreateStableClip(rangeSpriteSheet, 10, 9, 90, new Vector2(0.5f, 0f), RangeFrameCropPixels, RangeFrameReferencePixels);
+            GridSpriteSheetClip clip = CreateStableClip(rangeSpriteSheet, rangeSpriteFrames, 10, 9, 90, new Vector2(0.5f, 0f), RangeFrameCropPixels, RangeFrameReferencePixels);
             if (!clip.IsValid)
             {
                 rangeSpawnRoutine = null;
@@ -532,7 +609,7 @@ namespace GameName.Enemy
                 return;
             }
 
-            GridSpriteSheetClip clip = CreateClip(auraSpriteSheet, 5, 6, 30, new Vector2(0.5f, 0.5f));
+            GridSpriteSheetClip clip = CreateClip(auraSpriteSheet, auraSpriteFrames, 5, 6, 30, new Vector2(0.5f, 0.5f));
             if (!clip.IsValid)
             {
                 return;
@@ -561,9 +638,18 @@ namespace GameName.Enemy
 
         private void PlayShieldInThenLoop()
         {
-            GridSpriteSheetClip inClip = CreateStableClip(shieldInSpriteSheet, 5, 2, 10, new Vector2(0.5f, 0.5f), ShieldInFrameCropPixels, LargeFrameReferencePixels);
+            GridSpriteSheetClip inClip = CreateStableClip(
+                shieldInSpriteSheet,
+                SelectPrimarySpriteFramesByGrid(shieldInSpriteSheet, shieldInSpriteFrames, 5, 2, 10),
+                5,
+                2,
+                10,
+                new Vector2(0.5f, 0.5f),
+                ShieldInFrameCropPixels,
+                LargeFrameReferencePixels);
             GridSpriteSheetClip loopClip = CreateStableClip(
                 shieldLoopSpriteSheet,
+                shieldLoopSpriteFrames,
                 5,
                 12,
                 60,
@@ -610,9 +696,43 @@ namespace GameName.Enemy
             shieldPlayer = null;
         }
 
+        private void ApplyActiveShieldSize()
+        {
+            if (shieldObject == null || shieldPlayer == null)
+            {
+                return;
+            }
+
+            shieldPlayer.SetTargetWorldSize(ResolveBossSquareSize(shieldSizeMultiplier));
+        }
+
+        private void ApplyActiveAuraPlacement()
+        {
+            if (auraObject == null)
+            {
+                return;
+            }
+
+            FollowBoss(auraObject, ResolveAuraOffset());
+            ApplyAuraFacing(auraObject);
+            GridSpriteSheetPlayer player = auraObject.GetComponent<GridSpriteSheetPlayer>();
+            if (player != null)
+            {
+                player.SetTargetWorldSize(ResolveBossSquareSize(auraSizeMultiplier));
+            }
+        }
+
         private void PlayShieldBreak()
         {
-            GridSpriteSheetClip clip = CreateClip(shieldBreakSpriteSheet, 3, 10, 30, new Vector2(0.5f, 0.5f));
+            GridSpriteSheetClip clip = CreateStableClip(
+                shieldBreakSpriteSheet,
+                null,
+                3,
+                10,
+                30,
+                new Vector2(0.5f, 0.5f),
+                LargeFrameCropPixels,
+                LargeFrameReferencePixels);
             if (!clip.IsValid)
             {
                 return;
@@ -659,6 +779,7 @@ namespace GameName.Enemy
         {
             DestroyEffectObject(deathObject);
             deathObject = null;
+            deathPositionLocked = false;
         }
 
         private GridSpriteSheetPlayer CreateEffectPlayer(
@@ -682,6 +803,7 @@ namespace GameName.Enemy
 
         private GridSpriteSheetClip CreateClip(
             Texture2D spriteSheet,
+            Sprite[] spriteFrames,
             int columns,
             int rows,
             int frameCount,
@@ -690,6 +812,7 @@ namespace GameName.Enemy
         {
             return new GridSpriteSheetClip
             {
+                SpriteFrames = spriteFrames,
                 SpriteSheet = spriteSheet,
                 Columns = columns,
                 Rows = rows,
@@ -703,6 +826,7 @@ namespace GameName.Enemy
 
         private GridSpriteSheetClip CreateClip(
             Texture2D spriteSheet,
+            Sprite[] spriteFrames,
             int columns,
             int rows,
             int frameCount,
@@ -710,7 +834,7 @@ namespace GameName.Enemy
             RectInt frameCropPixels,
             Vector2Int frameCropReferencePixels)
         {
-            GridSpriteSheetClip clip = CreateClip(spriteSheet, columns, rows, frameCount, pivot, 0);
+            GridSpriteSheetClip clip = CreateClip(spriteSheet, spriteFrames, columns, rows, frameCount, pivot, 0);
             clip.UseFrameCrop = true;
             clip.FrameCropPixels = frameCropPixels;
             clip.FrameCropReferencePixels = frameCropReferencePixels;
@@ -719,6 +843,7 @@ namespace GameName.Enemy
 
         private GridSpriteSheetClip CreateStableClip(
             Texture2D spriteSheet,
+            Sprite[] spriteFrames,
             int columns,
             int rows,
             int frameCount,
@@ -726,12 +851,271 @@ namespace GameName.Enemy
             RectInt visibleFramePixels,
             Vector2Int visibleFrameReferencePixels)
         {
-            GridSpriteSheetClip clip = CreateClip(spriteSheet, columns, rows, frameCount, pivot, 0);
+            GridSpriteSheetClip clip = CreateClip(spriteSheet, spriteFrames, columns, rows, frameCount, pivot, 0);
             clip.UseFrameCrop = true;
             clip.UseFrameCropForSizingOnly = true;
             clip.FrameCropPixels = visibleFramePixels;
             clip.FrameCropReferencePixels = visibleFrameReferencePixels;
             return clip;
+        }
+
+#if UNITY_EDITOR
+        private void PopulateSpriteFramesFromSpriteSheets()
+        {
+            shieldInSpriteFrames = LoadSortedSpriteFrames(shieldInSpriteSheet, shieldInSpriteFrames);
+            shieldLoopSpriteFrames = LoadSortedSpriteFrames(shieldLoopSpriteSheet, shieldLoopSpriteFrames);
+            shieldBreakSpriteFrames = LoadSortedSpriteFrames(shieldBreakSpriteSheet, shieldBreakSpriteFrames);
+            auraSpriteFrames = LoadPrimarySpriteFramesByGrid(auraSpriteSheet, auraSpriteFrames, 5, 6, 30);
+            deathSpriteFrames = LoadSortedSpriteFrames(deathSpriteSheet, deathSpriteFrames);
+            slashSpriteFrames = LoadPrimarySpriteFramesByGrid(slashSpriteSheet, slashSpriteFrames, 5, 6, 30);
+            underAttackSpriteFrames = LoadPrimarySpriteFramesByGrid(underAttackSpriteSheet, underAttackSpriteFrames, 5, 4, 20);
+            rangeSpriteFrames = LoadSortedSpriteFrames(rangeSpriteSheet, rangeSpriteFrames);
+            magicCircleInSpriteFrames = LoadSortedSpriteFrames(magicCircleInSpriteSheet, magicCircleInSpriteFrames);
+            magicCircleOutSpriteFrames = LoadSortedSpriteFrames(magicCircleOutSpriteSheet, magicCircleOutSpriteFrames);
+            topAttackInSpriteFrames = LoadPrimarySpriteFramesByGrid(topAttackInSpriteSheet, topAttackInSpriteFrames, 5, 5, 23);
+            topAttackOutSpriteFrames = LoadPrimarySpriteFramesByGrid(topAttackOutSpriteSheet, topAttackOutSpriteFrames, 5, 4, 20);
+        }
+
+        private static Sprite[] LoadSortedSpriteFrames(Texture2D spriteSheet, Sprite[] currentFrames)
+        {
+            Sprite[] sprites = LoadAllSpriteFrames(spriteSheet);
+            if (sprites.Length <= 0)
+            {
+                return currentFrames;
+            }
+
+            Array.Sort(sprites, CompareSpriteNames);
+            return sprites;
+        }
+
+        private static Sprite[] LoadPrimarySpriteFramesByGrid(
+            Texture2D spriteSheet,
+            Sprite[] currentFrames,
+            int columns,
+            int rows,
+            int frameCount)
+        {
+            Sprite[] sprites = LoadAllSpriteFrames(spriteSheet);
+            if (sprites.Length <= 0 || columns <= 0 || rows <= 0 || frameCount <= 0)
+            {
+                return currentFrames;
+            }
+
+            Array.Sort(sprites, CompareSpriteNames);
+
+            int maxFrameCount = Mathf.Min(frameCount, columns * rows);
+            Sprite[] primaryFrames = new Sprite[maxFrameCount];
+            float[] primaryFrameAreas = new float[maxFrameCount];
+            float cellWidth = spriteSheet.width / (float)columns;
+            float cellHeight = spriteSheet.height / (float)rows;
+
+            for (int i = 0; i < sprites.Length; i++)
+            {
+                Sprite sprite = sprites[i];
+                if (sprite == null)
+                {
+                    continue;
+                }
+
+                Rect rect = sprite.rect;
+                int column = Mathf.Clamp(Mathf.FloorToInt(rect.center.x / cellWidth), 0, columns - 1);
+                int rowFromBottom = Mathf.Clamp(Mathf.FloorToInt(rect.center.y / cellHeight), 0, rows - 1);
+                int row = rows - 1 - rowFromBottom;
+                int frameIndex = row * columns + column;
+                if (frameIndex < 0 || frameIndex >= maxFrameCount)
+                {
+                    continue;
+                }
+
+                float area = rect.width * rect.height;
+                if (primaryFrames[frameIndex] == null || area > primaryFrameAreas[frameIndex])
+                {
+                    primaryFrames[frameIndex] = sprite;
+                    primaryFrameAreas[frameIndex] = area;
+                }
+            }
+
+            int validCount = 0;
+            for (int i = 0; i < primaryFrames.Length; i++)
+            {
+                if (primaryFrames[i] != null)
+                {
+                    validCount++;
+                }
+            }
+
+            if (validCount <= 0)
+            {
+                return currentFrames;
+            }
+
+            Sprite[] frames = new Sprite[validCount];
+            int index = 0;
+            for (int i = 0; i < primaryFrames.Length; i++)
+            {
+                if (primaryFrames[i] != null)
+                {
+                    frames[index++] = primaryFrames[i];
+                }
+            }
+
+            return frames;
+        }
+
+        private static Sprite[] LoadAllSpriteFrames(Texture2D spriteSheet)
+        {
+            if (spriteSheet == null)
+            {
+                return Array.Empty<Sprite>();
+            }
+
+            string assetPath = AssetDatabase.GetAssetPath(spriteSheet);
+            if (string.IsNullOrEmpty(assetPath))
+            {
+                return Array.Empty<Sprite>();
+            }
+
+            UnityEngine.Object[] assets = AssetDatabase.LoadAllAssetRepresentationsAtPath(assetPath);
+            int spriteCount = 0;
+            for (int i = 0; i < assets.Length; i++)
+            {
+                if (assets[i] is Sprite)
+                {
+                    spriteCount++;
+                }
+            }
+
+            if (spriteCount <= 0)
+            {
+                return Array.Empty<Sprite>();
+            }
+
+            Sprite[] sprites = new Sprite[spriteCount];
+            int index = 0;
+            for (int i = 0; i < assets.Length; i++)
+            {
+                if (assets[i] is Sprite sprite)
+                {
+                    sprites[index++] = sprite;
+                }
+            }
+
+            return sprites;
+        }
+
+        private static int CompareSpriteNames(Sprite left, Sprite right)
+        {
+            string leftName = left != null ? left.name : string.Empty;
+            string rightName = right != null ? right.name : string.Empty;
+            bool leftHasNumber = TryReadTrailingNumber(leftName, out int leftNumber);
+            bool rightHasNumber = TryReadTrailingNumber(rightName, out int rightNumber);
+
+            if (leftHasNumber && rightHasNumber && leftNumber != rightNumber)
+            {
+                return leftNumber.CompareTo(rightNumber);
+            }
+
+            return string.Compare(leftName, rightName, StringComparison.Ordinal);
+        }
+
+        private static bool TryReadTrailingNumber(string text, out int value)
+        {
+            value = 0;
+            if (string.IsNullOrEmpty(text))
+            {
+                return false;
+            }
+
+            int start = text.Length - 1;
+            while (start >= 0 && char.IsDigit(text[start]))
+            {
+                start--;
+            }
+
+            start++;
+            if (start >= text.Length)
+            {
+                return false;
+            }
+
+            return int.TryParse(text.Substring(start), out value);
+        }
+#endif
+
+        private static Sprite[] SelectPrimarySpriteFramesByGrid(
+            Texture2D spriteSheet,
+            Sprite[] sourceFrames,
+            int columns,
+            int rows,
+            int frameCount)
+        {
+            if (spriteSheet == null ||
+                sourceFrames == null ||
+                sourceFrames.Length == 0 ||
+                columns <= 0 ||
+                rows <= 0 ||
+                frameCount <= 0)
+            {
+                return sourceFrames;
+            }
+
+            int maxFrameCount = Mathf.Min(frameCount, columns * rows);
+            Sprite[] primaryFrames = new Sprite[maxFrameCount];
+            float[] primaryFrameAreas = new float[maxFrameCount];
+            float cellWidth = spriteSheet.width / (float)columns;
+            float cellHeight = spriteSheet.height / (float)rows;
+
+            for (int i = 0; i < sourceFrames.Length; i++)
+            {
+                Sprite sprite = sourceFrames[i];
+                if (sprite == null)
+                {
+                    continue;
+                }
+
+                Rect rect = sprite.rect;
+                int column = Mathf.Clamp(Mathf.FloorToInt(rect.center.x / cellWidth), 0, columns - 1);
+                int rowFromBottom = Mathf.Clamp(Mathf.FloorToInt(rect.center.y / cellHeight), 0, rows - 1);
+                int row = rows - 1 - rowFromBottom;
+                int frameIndex = row * columns + column;
+                if (frameIndex < 0 || frameIndex >= maxFrameCount)
+                {
+                    continue;
+                }
+
+                float area = rect.width * rect.height;
+                if (primaryFrames[frameIndex] == null || area > primaryFrameAreas[frameIndex])
+                {
+                    primaryFrames[frameIndex] = sprite;
+                    primaryFrameAreas[frameIndex] = area;
+                }
+            }
+
+            int validCount = 0;
+            for (int i = 0; i < primaryFrames.Length; i++)
+            {
+                if (primaryFrames[i] != null)
+                {
+                    validCount++;
+                }
+            }
+
+            if (validCount <= 0)
+            {
+                return sourceFrames;
+            }
+
+            Sprite[] frames = new Sprite[validCount];
+            int index = 0;
+            for (int i = 0; i < primaryFrames.Length; i++)
+            {
+                if (primaryFrames[i] != null)
+                {
+                    frames[index++] = primaryFrames[i];
+                }
+            }
+
+            return frames;
         }
 
         private void FollowBoss(GameObject target, Vector3 offset)
@@ -753,13 +1137,33 @@ namespace GameName.Enemy
         {
             float width = Mathf.Max(0.1f, groundBladeWorldWidth) * RangeEffectSizeMultiplier;
             Vector2 frameMultiplier = SanitizeVectorMultiplier(rangeEffectFrameSizeMultiplier);
-            float croppedAspect = (float)RangeFrameCropPixels.height / Mathf.Max(1, RangeFrameCropPixels.width);
-            return new Vector2(width * frameMultiplier.x, width * croppedAspect * frameMultiplier.y);
+            float frameAspect = ResolveRangeIndicatorFrameAspect();
+            return new Vector2(width * frameMultiplier.x, width * frameAspect * frameMultiplier.y);
+        }
+
+        private float ResolveRangeIndicatorFrameAspect()
+        {
+            GridSpriteSheetClip clip = CreateStableClip(
+                rangeSpriteSheet,
+                rangeSpriteFrames,
+                10,
+                9,
+                90,
+                new Vector2(0.5f, 0f),
+                RangeFrameCropPixels,
+                RangeFrameReferencePixels);
+            Vector2 frameSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(clip);
+            if (frameSize.x > 0.001f && frameSize.y > 0.001f)
+            {
+                return frameSize.y / frameSize.x;
+            }
+
+            return (float)RangeFrameCropPixels.height / Mathf.Max(1, RangeFrameCropPixels.width);
         }
 
         private Vector3 ResolveAuraOffset()
         {
-            return auraOffset + new Vector3(Mathf.Max(0f, auraFacingPush), 0f, 0f);
+            return auraOffset - new Vector3(Mathf.Max(0f, auraFacingPush), 0f, 0f);
         }
 
         private static Vector3 ResolveFacingOffset(Vector3 localOffset, int direction)

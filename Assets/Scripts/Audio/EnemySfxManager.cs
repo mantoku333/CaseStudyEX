@@ -142,6 +142,30 @@ namespace GameName.Audio
             PlayOneShot(sfxProfile?.LastBossDead, sfxProfile != null ? sfxProfile.LastBossDeadVolume : 1f);
         }
 
+        public void PlayLastBossMagicIn(EnemySfxProfile preferredProfile)
+        {
+            EnemySfxProfile sfxProfile = ResolveProfile(preferredProfile);
+            PlayOneShot(sfxProfile?.LastBossMagicIn, sfxProfile != null ? sfxProfile.LastBossMagicInVolume : 1f);
+        }
+
+        public void PlayLastBossNormalAttack(EnemySfxProfile preferredProfile)
+        {
+            EnemySfxProfile sfxProfile = ResolveProfile(preferredProfile);
+            PlayOneShot(sfxProfile?.LastBossNormalAttack, sfxProfile != null ? sfxProfile.LastBossNormalAttackVolume : 1f);
+        }
+
+        public void PlayLastBossShieldBreak(EnemySfxProfile preferredProfile)
+        {
+            EnemySfxProfile sfxProfile = ResolveProfile(preferredProfile);
+            PlayOneShot(sfxProfile?.LastBossShieldBreak, sfxProfile != null ? sfxProfile.LastBossShieldBreakVolume : 1f);
+        }
+
+        public void PlayLastBossSwordLaunch(EnemySfxProfile preferredProfile)
+        {
+            EnemySfxProfile sfxProfile = ResolveProfile(preferredProfile);
+            PlayOneShot(sfxProfile?.LastBossSwordLaunch, sfxProfile != null ? sfxProfile.LastBossSwordLaunchVolume : 1f);
+        }
+
         public void PlayStageBossDead(EnemySfxProfile preferredProfile)
         {
             EnemySfxProfile sfxProfile = ResolveProfile(preferredProfile);

@@ -166,6 +166,30 @@ public sealed class LastBossEffectIntegrationTests
         GridSpriteSheetUtility.DestroyGeneratedSprites(generatedSprites);
     }
 
+    [Test]
+    public void BuildFrames_SpriteFramesUseImportedSpritesWithoutGeneratingCopies()
+    {
+        Sprite first = CreateSprite("ImportedFrame_0", 20, 10, 10f);
+        Sprite second = CreateSprite("ImportedFrame_1", 12, 16, 8f);
+        var generatedSprites = new List<Sprite>();
+        GridSpriteSheetClip clip = CreateSpriteClip(new[] { first, second }, 30f);
+
+        Sprite[] frames = GridSpriteSheetUtility.BuildFrames(clip, generatedSprites);
+        Vector2 visibleFrameSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(clip);
+
+        Assert.That(frames, Has.Length.EqualTo(2));
+        Assert.That(frames[0], Is.SameAs(first));
+        Assert.That(frames[1], Is.SameAs(second));
+        Assert.That(frames[0].textureRect, Is.EqualTo(first.textureRect));
+        Assert.That(frames[0].pivot, Is.EqualTo(first.pivot));
+        Assert.That(generatedSprites, Is.Empty);
+        GridSpriteSheetUtility.DestroyGeneratedSprites(generatedSprites);
+        Assert.That(first, Is.Not.Null);
+        Assert.That(second, Is.Not.Null);
+        Assert.That(visibleFrameSize.x, Is.EqualTo(2f).Within(0.001f));
+        Assert.That(visibleFrameSize.y, Is.EqualTo(2f).Within(0.001f));
+    }
+
     [UnityTest]
     public IEnumerator GridPlayer_HoldsLastFrameAndCompletes()
     {
@@ -246,6 +270,46 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [UnityTest]
+    public IEnumerator GridPlayer_TargetWorldSizeChangeRescalesCurrentFrameImmediately()
+    {
+        Texture2D texture = CreateTexture("GridResize", 10, 10);
+        GameObject effectObject = CreateObject("GridResizePlayer", Vector2.zero);
+        effectObject.AddComponent<SpriteRenderer>();
+        GridSpriteSheetPlayer player = effectObject.AddComponent<GridSpriteSheetPlayer>();
+        GridSpriteSheetClip clip = CreateClip(texture, 1, 1, 1, 60f);
+        player.SetTargetWorldSize(new Vector2(1f, 1f));
+
+        player.Play(clip, loop: true, holdLast: false, hideOnComplete: false);
+        yield return null;
+
+        Vector3 firstScale = effectObject.transform.localScale;
+        player.SetTargetWorldSize(new Vector2(2f, 2f));
+
+        Assert.That(effectObject.transform.localScale.x, Is.EqualTo(firstScale.x * 2f).Within(0.001f));
+        Assert.That(effectObject.transform.localScale.y, Is.EqualTo(firstScale.y * 2f).Within(0.001f));
+    }
+
+    [UnityTest]
+    public IEnumerator GridPlayer_SpriteFramesUseLargestFrameForStableTargetScale()
+    {
+        Sprite largeFrame = CreateSprite("SpriteScaleLarge", 100, 100, 100f);
+        Sprite narrowFrame = CreateSprite("SpriteScaleNarrow", 50, 100, 100f);
+        GameObject effectObject = CreateObject("GridSpriteStableScalePlayer", Vector2.zero);
+        effectObject.AddComponent<SpriteRenderer>();
+        GridSpriteSheetPlayer player = effectObject.AddComponent<GridSpriteSheetPlayer>();
+        GridSpriteSheetClip clip = CreateSpriteClip(new[] { largeFrame, narrowFrame }, 60f);
+        player.SetTargetWorldSize(new Vector2(2f, 2f));
+
+        player.Play(clip, loop: true, holdLast: false, hideOnComplete: false);
+        yield return null;
+        Vector3 firstScale = effectObject.transform.localScale;
+        yield return new WaitForSecondsRealtime((1f / 60f) + 0.05f);
+
+        Assert.That(effectObject.transform.localScale.x, Is.EqualTo(firstScale.x).Within(0.001f));
+        Assert.That(effectObject.transform.localScale.y, Is.EqualTo(firstScale.y).Within(0.001f));
+    }
+
+    [UnityTest]
     public IEnumerator EffectController_ShieldBreakPlaysOncePerDownCycle()
     {
         LastBossEffectController effects = CreateEffectController();
@@ -293,6 +357,37 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [UnityTest]
+    public IEnumerator EffectController_InspectorShieldSizeChangeRescalesActiveShield()
+    {
+        LastBossEffectController effects = CreateEffectController();
+        SetPrivateField(effects, "shieldInSpriteSheet", CreateTexture("ShieldResizeIn", 10, 4));
+        SetPrivateField(effects, "shieldLoopSpriteSheet", CreateTexture("ShieldResizeLoop", 10, 24));
+        SetPrivateField(effects, "shieldSizeMultiplier", 1f);
+
+        effects.HandleEncounterStarted();
+        yield return null;
+
+        SpriteRenderer shieldRenderer = FindRendererNamed("LastBossShieldEffect");
+        Assert.That(shieldRenderer, Is.Not.Null);
+        Vector3 firstScale = shieldRenderer.transform.localScale;
+
+        SetPrivateField(effects, "shieldSizeMultiplier", 2f);
+        InvokePrivate(effects, "OnValidate");
+
+        Assert.That(shieldRenderer.transform.localScale.x, Is.EqualTo(firstScale.x * 2f).Within(0.001f));
+        Assert.That(shieldRenderer.transform.localScale.y, Is.EqualTo(firstScale.y * 2f).Within(0.001f));
+
+        effects.HandleEncounterStopped();
+        effects.HandleEncounterStarted();
+        yield return null;
+
+        SpriteRenderer respawnedShieldRenderer = FindRendererNamed("LastBossShieldEffect");
+        Assert.That(respawnedShieldRenderer, Is.Not.Null);
+        Assert.That(respawnedShieldRenderer.transform.localScale.x, Is.EqualTo(firstScale.x * 2f).Within(0.001f));
+        Assert.That(respawnedShieldRenderer.transform.localScale.y, Is.EqualTo(firstScale.y * 2f).Within(0.001f));
+    }
+
+    [UnityTest]
     public IEnumerator EffectController_AuraFlipsWhenFacingLeft()
     {
         LastBossEffectController effects = CreateEffectController();
@@ -306,12 +401,33 @@ public sealed class LastBossEffectIntegrationTests
         SpriteRenderer auraRenderer = FindRendererNamed("LastBossAuraEffect");
         Assert.That(auraRenderer, Is.Not.Null);
         Assert.That(auraRenderer.flipX, Is.True);
-        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(-0.35f).Within(0.001f));
+        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.35f).Within(0.001f));
 
         effects.SetFacingDirection(1);
         yield return null;
         Assert.That(auraRenderer.flipX, Is.False);
+        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(-0.35f).Within(0.001f));
+    }
+
+    [UnityTest]
+    public IEnumerator EffectController_InspectorAuraFacingPushChangeRepositionsActiveAura()
+    {
+        LastBossEffectController effects = CreateEffectController();
+        SetPrivateField(effects, "auraSpriteSheet", CreateTexture("AuraInspectorPush", 10, 12));
+        SetPrivateField(effects, "auraFacingPush", 0.35f);
+
+        effects.SetFacingDirection(-1);
+        effects.HandleResetToFull();
+        yield return null;
+
+        SpriteRenderer auraRenderer = FindRendererNamed("LastBossAuraEffect");
+        Assert.That(auraRenderer, Is.Not.Null);
         Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.35f).Within(0.001f));
+
+        SetPrivateField(effects, "auraFacingPush", 0.55f);
+        InvokePrivate(effects, "OnValidate");
+
+        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.55f).Within(0.001f));
     }
 
     [UnityTest]
@@ -337,7 +453,7 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(effects.FacingDirection, Is.EqualTo(-1));
         Assert.That(auraRenderer, Is.Not.Null);
         Assert.That(auraRenderer.flipX, Is.True);
-        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(-0.35f).Within(0.001f));
+        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.35f).Within(0.001f));
     }
 
     [UnityTest]
@@ -405,6 +521,7 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(GetPrivateField<LastBossSpriteAnimator>(boss, "spriteView"), Is.Not.Null);
         Assert.That(GetPrivateField<Color>(boss, "telegraphColor"), Is.EqualTo(new Color(1f, 1f, 1f, 0f)));
         Assert.That(GetPrivateField<Color>(boss, "attackColor"), Is.EqualTo(new Color(1f, 1f, 1f, 0f)));
+        Assert.That(GetPrivateField<float>(effects, "auraFacingPush"), Is.EqualTo(0.55f).Within(0.001f));
 
         string[] textureFields =
         {
@@ -429,6 +546,20 @@ public sealed class LastBossEffectIntegrationTests
                 Is.Not.Null,
                 $"{textureFields[i]} should be assigned on the LastBoss prefab.");
         }
+
+        AssertSpriteFrameCount(effects, "shieldInSpriteFrames", 40);
+        AssertSpriteFrameCount(effects, "shieldLoopSpriteFrames", 60);
+        AssertSpriteFrameCount(effects, "shieldBreakSpriteFrames", 154);
+        AssertSpriteFrameCount(effects, "auraSpriteFrames", 30);
+        AssertSpriteFrameCount(effects, "deathSpriteFrames", 587);
+        AssertSpriteFrameCount(effects, "slashSpriteFrames", 30);
+        Assert.That(GetPrivateField<Sprite[]>(effects, "underAttackSpriteFrames"), Has.Length.GreaterThanOrEqualTo(20));
+        Assert.That(GridSpriteSheetUtility.BuildFrames(effects.GroundBladeClip), Has.Length.EqualTo(20));
+        AssertSpriteFrameCount(effects, "rangeSpriteFrames", 90);
+        AssertSpriteFrameCount(effects, "magicCircleInSpriteFrames", 19);
+        AssertSpriteFrameCount(effects, "magicCircleOutSpriteFrames", 9);
+        AssertSpriteFrameCount(effects, "topAttackInSpriteFrames", 23);
+        AssertSpriteFrameCount(effects, "topAttackOutSpriteFrames", 20);
     }
 
     [UnityTest]
@@ -463,6 +594,9 @@ public sealed class LastBossEffectIntegrationTests
         LastBossEffectController effects = CreateEffectController();
         SetPrivateField(effects, "rangeSpriteSheet", range);
         SetPrivateField(effects, "rangeOffset", new Vector3(0f, -0.35f, 0f));
+        InvokePrivate(effects, "OnValidate");
+        Sprite[] rangeFrames = GetPrivateField<Sprite[]>(effects, "rangeSpriteFrames");
+        Assert.That(rangeFrames, Has.Length.EqualTo(90));
 
         effects.BeginHorizontalRangeCharge(new List<Vector2> { Vector2.zero }, 2f);
         yield return null;
@@ -470,23 +604,30 @@ public sealed class LastBossEffectIntegrationTests
         SpriteRenderer rangeRenderer = FindRendererNamed("LastBossRangeIndicator");
         Assert.That(rangeRenderer, Is.Not.Null);
         Assert.That(rangeRenderer.sprite, Is.Not.Null);
-        Assert.That(
-            rangeRenderer.sprite.textureRect,
-            Is.EqualTo(ExpectedGridFrameRect(range, 10, 9, 0)));
-        Assert.That(rangeRenderer.sprite.pivot.y, Is.EqualTo(0f).Within(0.001f));
+        Assert.That(rangeRenderer.sprite, Is.SameAs(rangeFrames[0]));
+        Assert.That(rangeRenderer.sprite.pivot.y, Is.EqualTo(rangeFrames[0].pivot.y).Within(0.001f));
         Assert.That(rangeRenderer.transform.position.y, Is.EqualTo(-0.35f).Within(0.001f));
     }
 
     [UnityTest]
     public IEnumerator EffectController_ShieldUsesStableFullFrameCells()
     {
-        Texture2D shieldIn = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_boss_shield_in.png");
-        Texture2D shieldLoop = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_boss_shield.png");
+        const string shieldInPath = "Assets/Art/Sprites/Effects/eff_boss_shield_in.png";
+        const string shieldLoopPath = "Assets/Art/Sprites/Effects/eff_boss_shield.png";
+        Texture2D shieldIn = AssetDatabase.LoadAssetAtPath<Texture2D>(shieldInPath);
+        Texture2D shieldLoop = AssetDatabase.LoadAssetAtPath<Texture2D>(shieldLoopPath);
         Assert.That(shieldIn, Is.Not.Null);
         Assert.That(shieldLoop, Is.Not.Null);
         LastBossEffectController effects = CreateEffectController();
         SetPrivateField(effects, "shieldInSpriteSheet", shieldIn);
         SetPrivateField(effects, "shieldLoopSpriteSheet", shieldLoop);
+        InvokePrivate(effects, "OnValidate");
+        Sprite[] shieldInFrames = GetPrivateField<Sprite[]>(effects, "shieldInSpriteFrames");
+        Sprite[] shieldLoopFrames = GetPrivateField<Sprite[]>(effects, "shieldLoopSpriteFrames");
+        Sprite[] playableShieldInFrames = LoadPrimarySpriteFramesByGrid(shieldInPath, 5, 2, 10);
+        Assert.That(shieldInFrames, Has.Length.EqualTo(40));
+        Assert.That(shieldLoopFrames, Has.Length.EqualTo(60));
+        Assert.That(playableShieldInFrames, Has.Length.EqualTo(10));
 
         effects.HandleEncounterStarted();
         yield return null;
@@ -494,18 +635,14 @@ public sealed class LastBossEffectIntegrationTests
         SpriteRenderer shieldRenderer = FindRendererNamed("LastBossShieldEffect");
         Assert.That(shieldRenderer, Is.Not.Null);
         Assert.That(shieldRenderer.sprite, Is.Not.Null);
-        Assert.That(
-            shieldRenderer.sprite.textureRect,
-            Is.EqualTo(ExpectedGridFrameRect(shieldIn, 5, 2, 0)));
+        Assert.That(shieldRenderer.sprite, Is.SameAs(playableShieldInFrames[0]));
 
-        yield return new WaitForSecondsRealtime((10f / 30f) + 0.1f);
+        yield return new WaitForSecondsRealtime((playableShieldInFrames.Length / 30f) + 0.1f);
 
         GridSpriteSheetPlayer shieldPlayer = shieldRenderer.GetComponent<GridSpriteSheetPlayer>();
         Assert.That(shieldPlayer, Is.Not.Null);
         Assert.That(shieldRenderer.sprite, Is.Not.Null);
-        Assert.That(
-            shieldRenderer.sprite.textureRect,
-            Is.EqualTo(ExpectedGridFrameRect(shieldLoop, 5, 12, shieldPlayer.CurrentFrameIndex)));
+        Assert.That(shieldRenderer.sprite, Is.SameAs(shieldLoopFrames[shieldPlayer.CurrentFrameIndex]));
 
         Vector3 loopScale = shieldRenderer.transform.localScale;
         yield return new WaitForSecondsRealtime((1f / 30f) + 0.05f);
@@ -514,12 +651,47 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [UnityTest]
-    public IEnumerator EffectController_DeathUsesStableFullFrameCell()
+    public IEnumerator EffectController_ShieldBreakUsesStableFullGridFrames()
+    {
+        const string shieldBreakPath = "Assets/Art/Sprites/Effects/eff_boss_shieldbreak.png";
+        Texture2D shieldBreak = AssetDatabase.LoadAssetAtPath<Texture2D>(shieldBreakPath);
+        Assert.That(shieldBreak, Is.Not.Null);
+        LastBossEffectController effects = CreateEffectController();
+        SetPrivateField(effects, "shieldBreakSpriteSheet", shieldBreak);
+        InvokePrivate(effects, "OnValidate");
+        Sprite[] shieldBreakFrames = GetPrivateField<Sprite[]>(effects, "shieldBreakSpriteFrames");
+        Sprite[] playableShieldBreakFrames = LoadPrimarySpriteFramesByGrid(shieldBreakPath, 3, 10, 30);
+        Assert.That(shieldBreakFrames, Has.Length.EqualTo(154));
+        Assert.That(playableShieldBreakFrames, Has.Length.EqualTo(30));
+
+        effects.HandleDownStarted();
+        yield return null;
+
+        SpriteRenderer shieldBreakRenderer = FindRendererNamed("LastBossShieldBreakEffect");
+        Assert.That(shieldBreakRenderer, Is.Not.Null);
+        int shieldBreakFrameWidth = shieldBreak.width / 3;
+        int shieldBreakFrameHeight = shieldBreak.height / 10;
+        Assert.That(shieldBreakRenderer.sprite, Is.Not.SameAs(playableShieldBreakFrames[0]));
+        Assert.That(shieldBreakRenderer.sprite.texture, Is.SameAs(shieldBreak));
+        Assert.That(
+            shieldBreakRenderer.sprite.textureRect,
+            Is.EqualTo(new Rect(0f, shieldBreak.height - shieldBreakFrameHeight, shieldBreakFrameWidth, shieldBreakFrameHeight)));
+
+        yield return new WaitForSecondsRealtime((playableShieldBreakFrames.Length / 30f) + 0.2f);
+
+        Assert.That(FindTransformNamed("LastBossShieldBreakEffect"), Is.Null);
+    }
+
+    [UnityTest]
+    public IEnumerator EffectController_DeathUsesStableFullGridFrameCell()
     {
         Texture2D death = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_boss_Destroy.png");
         Assert.That(death, Is.Not.Null);
         LastBossEffectController effects = CreateEffectController();
         SetPrivateField(effects, "deathSpriteSheet", death);
+        InvokePrivate(effects, "OnValidate");
+        Sprite[] deathFrames = GetPrivateField<Sprite[]>(effects, "deathSpriteFrames");
+        Assert.That(deathFrames, Has.Length.EqualTo(587));
 
         bool played = effects.PlayDeath(null, null);
         Assert.That(played, Is.True);
@@ -528,9 +700,47 @@ public sealed class LastBossEffectIntegrationTests
         SpriteRenderer deathRenderer = FindRendererNamed("LastBossDestroyEffect");
         Assert.That(deathRenderer, Is.Not.Null);
         Assert.That(deathRenderer.sprite, Is.Not.Null);
+        int deathFrameWidth = death.width / 5;
+        int deathFrameHeight = death.height / 9;
+        Vector2 expectedPivot = ResolveCombinedFrameBoundsPivot(death, deathFrames, 5, 9, 0);
+        Assert.That(deathRenderer.sprite, Is.Not.SameAs(deathFrames[0]));
+        Assert.That(deathRenderer.sprite.texture, Is.SameAs(death));
         Assert.That(
             deathRenderer.sprite.textureRect,
-            Is.EqualTo(ExpectedGridFrameRect(death, 5, 9, 0)));
+            Is.EqualTo(new Rect(0f, death.height - deathFrameHeight, deathFrameWidth, deathFrameHeight)));
+        Assert.That(deathRenderer.sprite.pivot.x / deathFrameWidth, Is.EqualTo(expectedPivot.x).Within(0.001f));
+        Assert.That(deathRenderer.sprite.pivot.y / deathFrameHeight, Is.EqualTo(expectedPivot.y).Within(0.001f));
+        Assert.That(expectedPivot, Is.Not.EqualTo(new Vector2(0.5f, 0.5f)));
+    }
+
+    [UnityTest]
+    public IEnumerator EffectController_DeathEffectKeepsSpawnPositionWhenBossBoundsChange()
+    {
+        GameObject bossObject = CreateObject("LastBossDeathPositionLock", Vector2.zero);
+        BoxCollider2D collider = bossObject.AddComponent<BoxCollider2D>();
+        collider.enabled = false;
+
+        GameObject rendererObject = CreateObject("LastBossDeathPositionRenderer", new Vector2(2f, 0f));
+        rendererObject.transform.SetParent(bossObject.transform, worldPositionStays: true);
+        SpriteRenderer renderer = rendererObject.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSprite("LastBossDeathPositionBody", 100, 80, 10f);
+
+        LastBossEffectController effects = bossObject.AddComponent<LastBossEffectController>();
+        SetPrivateField(effects, "deathSpriteSheet", CreateTexture("DeathPositionLock", 10, 18));
+        InvokePrivate(effects, "Awake");
+
+        Assert.That(effects.PlayDeath(null, null), Is.True);
+        yield return null;
+
+        Transform deathEffect = FindTransformNamed("LastBossDestroyEffect");
+        Assert.That(deathEffect, Is.Not.Null);
+        Vector3 spawnedPosition = deathEffect.position;
+
+        rendererObject.transform.position = new Vector3(8f, 0f, 0f);
+        InvokePrivate(effects, "LateUpdate");
+
+        Assert.That(deathEffect.position.x, Is.EqualTo(spawnedPosition.x).Within(0.001f));
+        Assert.That(deathEffect.position.y, Is.EqualTo(spawnedPosition.y).Within(0.001f));
     }
 
     [Test]
@@ -556,35 +766,35 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [Test]
-    public void EffectController_BladeVisibleBoundsScaleAgainstImportedTextureSize()
+    public void EffectController_BladeClipsUseImportedSpriteSlicesAndLargestFrameBounds()
     {
-        Texture2D underAttack = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_under_attack.png");
-        Texture2D topAttackIn = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_top_attack_in.png");
+        const string underAttackPath = "Assets/Art/Sprites/Effects/eff_under_attack.png";
+        const string topAttackInPath = "Assets/Art/Sprites/Effects/eff_top_attack_in.png";
+        Texture2D underAttack = AssetDatabase.LoadAssetAtPath<Texture2D>(underAttackPath);
+        Texture2D topAttackIn = AssetDatabase.LoadAssetAtPath<Texture2D>(topAttackInPath);
         Assert.That(underAttack, Is.Not.Null);
         Assert.That(topAttackIn, Is.Not.Null);
         LastBossEffectController effects = CreateEffectController();
         SetPrivateField(effects, "underAttackSpriteSheet", underAttack);
         SetPrivateField(effects, "topAttackInSpriteSheet", topAttackIn);
+        InvokePrivate(effects, "OnValidate");
 
         var generatedSprites = new List<Sprite>();
         Sprite[] groundFrames = GridSpriteSheetUtility.BuildFrames(effects.GroundBladeClip, generatedSprites);
         Sprite[] rainFrames = GridSpriteSheetUtility.BuildFrames(effects.RainBladeInClip, generatedSprites);
-
-        float groundFrameWidth = underAttack.width / 5f;
-        float groundFrameHeight = underAttack.height / 4f;
-        RectInt expectedGroundVisibleCrop = ExpectedScaledCrop(
-            new RectInt(418, 0, 187, 1009),
-            new Vector2Int(1024, 1024),
-            Mathf.FloorToInt(groundFrameWidth),
-            Mathf.FloorToInt(groundFrameHeight));
+        Sprite[] importedGroundFrames = LoadSortedSpriteFrames(underAttackPath);
+        Sprite[] importedRainFrames = LoadPrimarySpriteFramesByGrid(topAttackInPath, 5, 5, 23);
         Vector2 groundVisibleSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(effects.GroundBladeClip);
-        Assert.That(groundFrames[0].textureRect, Is.EqualTo(ExpectedGridFrameRect(underAttack, 5, 4, 0)));
-        Assert.That(groundVisibleSize.x, Is.EqualTo(expectedGroundVisibleCrop.width / 100f).Within(0.01f));
-        Assert.That(groundVisibleSize.y, Is.EqualTo(expectedGroundVisibleCrop.height / 100f).Within(0.01f));
 
-        float rainFrameWidth = topAttackIn.width / 5f;
-        Assert.That(rainFrames[0].textureRect.width, Is.EqualTo(Mathf.RoundToInt(217f * rainFrameWidth / 1024f)).Within(1f));
-        Assert.That(rainFrames[0].textureRect.x, Is.LessThan(rainFrameWidth - rainFrames[0].textureRect.width));
+        Assert.That(generatedSprites, Is.Empty);
+        Assert.That(groundFrames, Has.Length.EqualTo(20));
+        Assert.That(rainFrames, Has.Length.EqualTo(23));
+        Assert.That(groundFrames[0], Is.SameAs(importedGroundFrames[0]));
+        Assert.That(rainFrames[0], Is.SameAs(importedRainFrames[0]));
+        Assert.That(rainFrames[22], Is.SameAs(importedRainFrames[22]));
+        Vector2 expectedGroundVisibleSize = ResolveLargestSpriteBounds(importedGroundFrames);
+        Assert.That(groundVisibleSize.x, Is.EqualTo(expectedGroundVisibleSize.x).Within(0.001f));
+        Assert.That(groundVisibleSize.y, Is.EqualTo(expectedGroundVisibleSize.y).Within(0.001f));
 
         GridSpriteSheetUtility.DestroyGeneratedSprites(generatedSprites);
     }
@@ -610,6 +820,78 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(leftSlash, Is.Not.Null);
         Assert.That(leftSlash.position.x, Is.EqualTo(-0.5f).Within(0.001f));
         Assert.That(leftSlash.position.y, Is.EqualTo(0.25f).Within(0.001f));
+    }
+
+    [UnityTest]
+    public IEnumerator EffectController_StopNormalSlashDestroysActiveSlash()
+    {
+        LastBossEffectController effects = CreateEffectController();
+        SetPrivateField(effects, "slashSpriteSheet", CreateTexture("SlashStop", 10, 12));
+
+        effects.PlayNormalSlash(Vector2.zero, Vector2.one, 0f, 1);
+        yield return null;
+        Assert.That(FindTransformNamed("LastBossSlashEffect"), Is.Not.Null);
+
+        effects.StopNormalSlash();
+        yield return null;
+
+        Assert.That(FindTransformNamed("LastBossSlashEffect"), Is.Null);
+    }
+
+    [UnityTest]
+    public IEnumerator EffectController_NormalSlashKeepsFixedUniformScaleAcrossFrames()
+    {
+        LastBossEffectController effects = CreateEffectController();
+        SetPrivateField(effects, "slashSpriteSheet", CreateTexture("SlashFullGrid", 50, 60));
+        SetPrivateField(effects, "slashSpriteFrames", new[]
+        {
+            CreateSprite("SlashSquareFrame", 100, 100, 100f),
+            CreateSprite("SlashFlatFrame", 95, 75, 100f)
+        });
+        SetPrivateField(effects, "slashSizeMultiplier", 1.1f);
+
+        effects.PlayNormalSlash(Vector2.zero, Vector2.one, 0f, 1);
+        yield return null;
+        Transform slash = FindTransformNamed("LastBossSlashEffect");
+        Assert.That(slash, Is.Not.Null);
+        Assert.That(slash.localScale.x, Is.EqualTo(1.1f).Within(0.001f));
+        Assert.That(slash.localScale.y, Is.EqualTo(1.1f).Within(0.001f));
+
+        SpriteRenderer renderer = slash.GetComponent<SpriteRenderer>();
+        Assert.That(renderer, Is.Not.Null);
+        Assert.That(renderer.sprite, Is.Not.Null);
+        Assert.That(renderer.sprite.textureRect, Is.EqualTo(new Rect(0f, 50f, 10f, 10f)));
+
+        yield return new WaitForSecondsRealtime((1f / 30f) + 0.05f);
+        Assert.That(slash.localScale.x, Is.EqualTo(1.1f).Within(0.001f));
+        Assert.That(slash.localScale.y, Is.EqualTo(1.1f).Within(0.001f));
+        Assert.That(renderer.sprite, Is.Not.Null);
+        Assert.That(renderer.sprite.textureRect, Is.EqualTo(new Rect(10f, 50f, 10f, 10f)));
+    }
+
+    [UnityTest]
+    public IEnumerator LastBoss_HideAttackVisualDoesNotStopNormalSlashEffect()
+    {
+        GameObject bossObject = CreateObject("LastBossSlashOwner", Vector2.zero);
+        bossObject.SetActive(false);
+        bossObject.AddComponent<SpriteRenderer>();
+        bossObject.AddComponent<BoxCollider2D>();
+        bossObject.AddComponent<Rigidbody2D>().gravityScale = 0f;
+        LastBossEffectController effects = bossObject.AddComponent<LastBossEffectController>();
+        SetPrivateField(effects, "slashSpriteSheet", CreateTexture("SlashSurvivesAttackHide", 50, 60));
+        LastBossController boss = bossObject.AddComponent<LastBossController>();
+        bossObject.SetActive(true);
+        InvokePrivate(effects, "Awake");
+        InvokePrivate(boss, "Awake");
+
+        effects.PlayNormalSlash(Vector2.zero, Vector2.one, 0f, 1);
+        yield return null;
+        Assert.That(FindTransformNamed("LastBossSlashEffect"), Is.Not.Null);
+
+        InvokePrivate(boss, "HideAttackVisual");
+        yield return null;
+
+        Assert.That(FindTransformNamed("LastBossSlashEffect"), Is.Not.Null);
     }
 
     [Test]
@@ -655,6 +937,53 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(bladeObject.transform.localScale, Is.EqualTo(startScale));
         Assert.That(collider.size, Is.EqualTo(colliderSize));
         Assert.That(FindChildRenderer(bladeObject, "BladeEffectVisual"), Is.Not.Null);
+    }
+
+    [UnityTest]
+    public IEnumerator GroundBladeVisual_KeepsRisenPositionThroughVanishFrames()
+    {
+        GameObject bladeObject = CreateObject("GroundBladeGrounded", Vector2.zero);
+        BoxCollider2D collider = bladeObject.AddComponent<BoxCollider2D>();
+        collider.size = new Vector2(1f, 2f);
+        LastBossBladeAttack blade = bladeObject.AddComponent<LastBossBladeAttack>();
+        InvokePrivate(blade, "Awake");
+        GridSpriteSheetClip clip = CreateSpriteClip(new[]
+        {
+            CreateSprite("GroundBladeBottomFrame", 50, 50, 100f),
+            CreateSprite("GroundBladeRiseFrameA", 75, 75, 100f),
+            CreateSprite("GroundBladeRiseFrameB", 90, 90, 100f),
+            CreateSprite("GroundBladeUprightFrame", 100, 100, 100f),
+            CreateSprite("GroundBladeVanishFrame", 50, 50, 100f)
+        }, 30f);
+        const float groundY = 1.25f;
+
+        blade.ConfigureGroundVisual(clip, uprightFrameIndex: 3, slotIndex: 0, frameSizeMultiplier: Vector2.one);
+        blade.InitializeGround(null, 1, groundY, riseDuration: 0f);
+        yield return null;
+
+        SpriteRenderer visualRenderer = FindChildRenderer(bladeObject, "BladeEffectVisual");
+        Assert.That(visualRenderer, Is.Not.Null);
+        Assert.That(visualRenderer.sprite, Is.Not.Null);
+        Assert.That(visualRenderer.bounds.min.y, Is.EqualTo(groundY).Within(0.001f));
+
+        yield return new WaitForSecondsRealtime((3f / 30f) + 0.05f);
+
+        Assert.That(visualRenderer.sprite.name, Is.EqualTo("GroundBladeUprightFrame"));
+        Assert.That(visualRenderer.bounds.min.y, Is.EqualTo(groundY).Within(0.001f));
+        Vector3 risenPosition = visualRenderer.transform.position;
+        float risenTopY = visualRenderer.bounds.max.y;
+
+        yield return new WaitForSecondsRealtime((1f / 30f) + 0.05f);
+
+        Assert.That(visualRenderer.sprite.name, Is.EqualTo("GroundBladeVanishFrame"));
+        Assert.That(visualRenderer.transform.position.y, Is.GreaterThan(risenPosition.y));
+        Assert.That(visualRenderer.bounds.max.y, Is.EqualTo(risenTopY).Within(0.001f));
+        Assert.That(visualRenderer.bounds.min.y, Is.GreaterThan(groundY));
+
+        yield return new WaitForSecondsRealtime((1f / 30f) + 0.05f);
+
+        Assert.That(visualRenderer.enabled, Is.False);
+        Assert.That(visualRenderer.sprite, Is.Null);
     }
 
     [UnityTest]
@@ -852,34 +1181,185 @@ public sealed class LastBossEffectIntegrationTests
         };
     }
 
-    private static Rect ExpectedGridFrameRect(Texture2D texture, int columns, int rows, int frameIndex)
+    private static GridSpriteSheetClip CreateSpriteClip(Sprite[] sprites, float framesPerSecond)
+    {
+        return new GridSpriteSheetClip
+        {
+            SpriteFrames = sprites,
+            FramesPerSecond = framesPerSecond
+        };
+    }
+
+    private static Sprite[] LoadSortedSpriteFrames(string assetPath)
+    {
+        Object[] assets = AssetDatabase.LoadAllAssetRepresentationsAtPath(assetPath);
+        var sprites = new List<Sprite>();
+        for (int i = 0; i < assets.Length; i++)
+        {
+            if (assets[i] is Sprite sprite)
+            {
+                sprites.Add(sprite);
+            }
+        }
+
+        sprites.Sort(CompareSpriteNames);
+        return sprites.ToArray();
+    }
+
+    private static Sprite[] LoadPrimarySpriteFramesByGrid(string assetPath, int columns, int rows, int frameCount)
+    {
+        Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+        Assert.That(texture, Is.Not.Null);
+
+        Sprite[] sprites = LoadSortedSpriteFrames(assetPath);
+        int maxFrameCount = Mathf.Min(frameCount, columns * rows);
+        Sprite[] primaryFrames = new Sprite[maxFrameCount];
+        float[] primaryFrameAreas = new float[maxFrameCount];
+        float cellWidth = texture.width / (float)columns;
+        float cellHeight = texture.height / (float)rows;
+
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            Sprite sprite = sprites[i];
+            if (sprite == null)
+            {
+                continue;
+            }
+
+            Rect rect = sprite.rect;
+            int column = Mathf.Clamp(Mathf.FloorToInt(rect.center.x / cellWidth), 0, columns - 1);
+            int rowFromBottom = Mathf.Clamp(Mathf.FloorToInt(rect.center.y / cellHeight), 0, rows - 1);
+            int row = rows - 1 - rowFromBottom;
+            int frameIndex = row * columns + column;
+            if (frameIndex < 0 || frameIndex >= maxFrameCount)
+            {
+                continue;
+            }
+
+            float area = rect.width * rect.height;
+            if (primaryFrames[frameIndex] == null || area > primaryFrameAreas[frameIndex])
+            {
+                primaryFrames[frameIndex] = sprite;
+                primaryFrameAreas[frameIndex] = area;
+            }
+        }
+
+        var frames = new List<Sprite>(maxFrameCount);
+        for (int i = 0; i < primaryFrames.Length; i++)
+        {
+            if (primaryFrames[i] != null)
+            {
+                frames.Add(primaryFrames[i]);
+            }
+        }
+
+        return frames.ToArray();
+    }
+
+    private static int CompareSpriteNames(Sprite left, Sprite right)
+    {
+        string leftName = left != null ? left.name : string.Empty;
+        string rightName = right != null ? right.name : string.Empty;
+        bool leftHasNumber = TryReadTrailingNumber(leftName, out int leftNumber);
+        bool rightHasNumber = TryReadTrailingNumber(rightName, out int rightNumber);
+
+        if (leftHasNumber && rightHasNumber && leftNumber != rightNumber)
+        {
+            return leftNumber.CompareTo(rightNumber);
+        }
+
+        return string.Compare(leftName, rightName, StringComparison.Ordinal);
+    }
+
+    private static bool TryReadTrailingNumber(string text, out int value)
+    {
+        value = 0;
+        if (string.IsNullOrEmpty(text))
+        {
+            return false;
+        }
+
+        int start = text.Length - 1;
+        while (start >= 0 && char.IsDigit(text[start]))
+        {
+            start--;
+        }
+
+        start++;
+        return start < text.Length && int.TryParse(text.Substring(start), out value);
+    }
+
+    private static Vector2 ResolveLargestSpriteBounds(Sprite[] sprites)
+    {
+        Vector2 largestSize = Vector2.zero;
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            if (sprites[i] == null)
+            {
+                continue;
+            }
+
+            Vector2 frameSize = sprites[i].bounds.size;
+            largestSize.x = Mathf.Max(largestSize.x, frameSize.x);
+            largestSize.y = Mathf.Max(largestSize.y, frameSize.y);
+        }
+
+        return largestSize;
+    }
+
+    private static Vector2 ResolveCombinedFrameBoundsPivot(
+        Texture2D texture,
+        Sprite[] sprites,
+        int columns,
+        int rows,
+        int frameIndex)
     {
         int frameWidth = texture.width / columns;
         int frameHeight = texture.height / rows;
-        int row = frameIndex / columns;
         int column = frameIndex % columns;
-        int y = texture.height - ((row + 1) * frameHeight);
+        int row = frameIndex / columns;
+        int rowFromBottom = rows - 1 - row;
+        Rect cell = new Rect(column * frameWidth, rowFromBottom * frameHeight, frameWidth, frameHeight);
+        Rect bounds = default;
+        bool hasBounds = false;
 
-        return new Rect(
-            column * frameWidth,
-            y,
-            frameWidth,
-            frameHeight);
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            Sprite sprite = sprites[i];
+            if (sprite == null || sprite.texture != texture || !cell.Contains(sprite.rect.center))
+            {
+                continue;
+            }
+
+            if (!hasBounds)
+            {
+                bounds = sprite.rect;
+                hasBounds = true;
+                continue;
+            }
+
+            float minX = Mathf.Min(bounds.xMin, sprite.rect.xMin);
+            float minY = Mathf.Min(bounds.yMin, sprite.rect.yMin);
+            float maxX = Mathf.Max(bounds.xMax, sprite.rect.xMax);
+            float maxY = Mathf.Max(bounds.yMax, sprite.rect.yMax);
+            bounds = Rect.MinMaxRect(minX, minY, maxX, maxY);
+        }
+
+        Assert.That(hasBounds, Is.True, $"Expected imported bounds for frame {frameIndex}.");
+        return new Vector2(
+            Mathf.Clamp01((bounds.center.x - cell.xMin) / cell.width),
+            Mathf.Clamp01((bounds.center.y - cell.yMin) / cell.height));
     }
 
-    private static RectInt ExpectedScaledCrop(
-        RectInt crop,
-        Vector2Int referenceSize,
-        int frameWidth,
-        int frameHeight)
+    private static void AssertSpriteFrameCount(LastBossEffectController effects, string fieldName, int expectedCount)
     {
-        float scaleX = frameWidth / (float)referenceSize.x;
-        float scaleY = frameHeight / (float)referenceSize.y;
-        return new RectInt(
-            Mathf.RoundToInt(crop.x * scaleX),
-            Mathf.RoundToInt(crop.y * scaleY),
-            Mathf.Max(1, Mathf.RoundToInt(crop.width * scaleX)),
-            Mathf.Max(1, Mathf.RoundToInt(crop.height * scaleY)));
+        Sprite[] frames = GetPrivateField<Sprite[]>(effects, fieldName);
+        Assert.That(frames, Is.Not.Null, $"{fieldName} should be serialized on the LastBoss prefab.");
+        Assert.That(frames, Has.Length.EqualTo(expectedCount), $"{fieldName} should match the playable frame count.");
+        for (int i = 0; i < frames.Length; i++)
+        {
+            Assert.That(frames[i], Is.Not.Null, $"{fieldName}[{i}] should be assigned.");
+        }
     }
 
     private static int CountObjectsNamed(string objectName)

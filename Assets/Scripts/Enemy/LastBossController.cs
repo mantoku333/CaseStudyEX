@@ -184,6 +184,9 @@ namespace GameName.Enemy
         /// System.Actionを直接書き、UnityEngine.Randomとの名前衝突を避ける。
         /// </summary>
         public event System.Action Died;
+        public event System.Action BecameDowned;
+        public event System.Action BladeLaunched;
+        public event System.Action NormalAttackStarted;
         public event System.Action<int, int> HealthChanged;
 
         private void Awake()
@@ -650,6 +653,7 @@ namespace GameName.Enemy
             stateTimer = GetAttackVisibleTime(action);
             state = BossState.AttackVisible;
             ShowAttackVisual(activeAttackBox, attackColor);
+            NormalAttackStarted?.Invoke();
             effectController?.PlayNormalSlash(
                 activeAttackBox.Center,
                 activeAttackBox.Size,
@@ -793,6 +797,7 @@ namespace GameName.Enemy
                         GetAttackDamage(BossAction.Horizontal),
                         groundY,
                         horizontalAttackVisibleTime);
+                    BladeLaunched?.Invoke();
                 }
 
                 if (i < bladeCount - 1)
@@ -848,6 +853,7 @@ namespace GameName.Enemy
                 if (blade != null)
                 {
                     blade.ReleaseRainBlade();
+                    BladeLaunched?.Invoke();
                 }
 
                 if (Time.time < endTime)
@@ -1818,6 +1824,7 @@ namespace GameName.Enemy
             visibleAction = BossAction.None;
             ClearJustParryBuffer();
             effectController?.HandleDownStarted();
+            BecameDowned?.Invoke();
 
             HitStopController.Request(hitStopDuration);
             float previousTimeScale = Time.timeScale;

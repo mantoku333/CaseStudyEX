@@ -32,6 +32,7 @@ namespace GameName.Audio
         private EnemyTackleAttack tackleAttack;
         private StageBossAttack stageBossAttack;
         private LastBossController lastBossController;
+        private LastBossEffectController lastBossEffectController;
 
         private void Awake()
         {
@@ -130,6 +131,11 @@ namespace GameName.Audio
             {
                 lastBossController = GetComponent<LastBossController>();
             }
+
+            if (lastBossEffectController == null)
+            {
+                lastBossEffectController = GetComponent<LastBossEffectController>();
+            }
         }
 
         private void SubscribeEvents()
@@ -157,7 +163,15 @@ namespace GameName.Audio
 
             if (lastBossController != null)
             {
+                lastBossController.BecameDowned += HandleLastBossBecameDowned;
+                lastBossController.BladeLaunched += HandleLastBossBladeLaunched;
                 lastBossController.Died += HandleLastBossDied;
+                lastBossController.NormalAttackStarted += HandleLastBossNormalAttackStarted;
+            }
+
+            if (lastBossEffectController != null)
+            {
+                lastBossEffectController.MagicCircleInStarted += HandleLastBossMagicCircleInStarted;
             }
         }
 
@@ -185,7 +199,15 @@ namespace GameName.Audio
 
             if (lastBossController != null)
             {
+                lastBossController.BecameDowned -= HandleLastBossBecameDowned;
+                lastBossController.BladeLaunched -= HandleLastBossBladeLaunched;
                 lastBossController.Died -= HandleLastBossDied;
+                lastBossController.NormalAttackStarted -= HandleLastBossNormalAttackStarted;
+            }
+
+            if (lastBossEffectController != null)
+            {
+                lastBossEffectController.MagicCircleInStarted -= HandleLastBossMagicCircleInStarted;
             }
         }
 
@@ -218,6 +240,46 @@ namespace GameName.Audio
             }
 
             EnemySfxManager.GetOrCreate(profile).PlayLastBossDead(profile);
+        }
+
+        private void HandleLastBossMagicCircleInStarted()
+        {
+            if (enemyKind != EnemySfxKind.LastBoss || !IsVisibleToMainCamera())
+            {
+                return;
+            }
+
+            EnemySfxManager.GetOrCreate(profile).PlayLastBossMagicIn(profile);
+        }
+
+        private void HandleLastBossNormalAttackStarted()
+        {
+            if (enemyKind != EnemySfxKind.LastBoss || !IsVisibleToMainCamera())
+            {
+                return;
+            }
+
+            EnemySfxManager.GetOrCreate(profile).PlayLastBossNormalAttack(profile);
+        }
+
+        private void HandleLastBossBladeLaunched()
+        {
+            if (enemyKind != EnemySfxKind.LastBoss || !IsVisibleToMainCamera())
+            {
+                return;
+            }
+
+            EnemySfxManager.GetOrCreate(profile).PlayLastBossSwordLaunch(profile);
+        }
+
+        private void HandleLastBossBecameDowned()
+        {
+            if (enemyKind != EnemySfxKind.LastBoss || !IsVisibleToMainCamera())
+            {
+                return;
+            }
+
+            EnemySfxManager.GetOrCreate(profile).PlayLastBossShieldBreak(profile);
         }
 
         private void HandleProjectileFired()
