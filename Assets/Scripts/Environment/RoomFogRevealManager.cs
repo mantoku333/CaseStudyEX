@@ -4,13 +4,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
+[AddComponentMenu("Environment/Room Fog Reveal Manager")]
 public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 {
-    private const string RuntimeObjectName = "[RoomFogRevealManager]";
     private const string ShaderName = "CaseStudy/RoomFogOverlay";
     private const string RevealedFlagPrefix = "room_fog_revealed:";
     private const float PlayerRoomRefreshInterval = 0.2f;
-    private const float CameraViewRevealInterval = 0.05f;
 
     private static RoomFogRevealManager instance;
 
@@ -20,10 +19,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     [SerializeField] private bool useColliderShape = true;
     [SerializeField, Min(0f)] private float worldPadding = 6f;
     [SerializeField, Min(0f)] private float revealPaddingX = 2f;
-    [SerializeField, Min(0f)] private float revealPaddingY = 8f;
-    [SerializeField] private bool includeCameraViewInReveal = true;
-    [SerializeField] private bool keepActiveCameraViewRevealed = true;
-    [SerializeField, Min(0f)] private float cameraViewRevealPadding = 1f;
+    [SerializeField, Min(0f)] private float revealPaddingY = 2f;
 
     [Header("Fog Look")]
     [SerializeField] private Color fogColor = new Color(0f, 0f, 0f, 0.92f);
@@ -49,17 +45,17 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private Texture2D maskTexture;
     private Color32[] maskPixels;
     private Material fogMaterial;
+    private GameObject overlayObject;
     private Mesh overlayMesh;
     private MeshRenderer overlayRenderer;
     private MeshFilter overlayFilter;
     private float nextPlayerRoomRefreshTime;
-    private float nextCameraViewRevealTime;
     private bool hasRooms;
     private bool shaderWarningLogged;
 
     public int Priority => 260;
 
-    public static bool FogEnabled => instance == null || instance.fogEnabled;
+    public static bool FogEnabled => instance != null && instance.fogEnabled;
 
     private struct PendingReveal
     {
@@ -79,7 +75,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         SceneManager.sceneLoaded -= HandleSceneLoaded;
         SceneManager.sceneLoaded += HandleSceneLoaded;
 
-        EnsureInstance().RefreshForCurrentScene(true);
+        RefreshExistingManagerForCurrentScene(true);
     }
 
     public static bool RevealRoom(RoomCameraTrigger room)
@@ -89,39 +85,53 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             return false;
         }
 
-        return EnsureInstance().Reveal(room, true);
+        return TryGetInstance(out RoomFogRevealManager manager) &&
+            manager.Reveal(room, true);
     }
 
     public static void SetFogEnabled(bool enabled)
     {
-        RoomFogRevealManager manager = EnsureInstance();
+        if (!TryGetInstance(out RoomFogRevealManager manager))
+        {
+            Debug.LogWarning("[RoomFogRevealManager] No manager exists in the active scene.");
+            return;
+        }
+
         manager.fogEnabled = enabled;
         manager.SetOverlayVisible(manager.hasRooms);
     }
 
-    private static RoomFogRevealManager EnsureInstance()
+    private static bool TryGetInstance(out RoomFogRevealManager manager)
     {
         if (instance != null)
         {
-            return instance;
+            manager = instance;
+            return true;
         }
 
         RoomFogRevealManager existing = FindFirstObjectByType<RoomFogRevealManager>(FindObjectsInactive.Include);
         if (existing != null)
         {
             instance = existing;
-            return instance;
+            manager = instance;
+            return true;
         }
 
-        GameObject managerObject = new GameObject(RuntimeObjectName);
-        DontDestroyOnLoad(managerObject);
-        instance = managerObject.AddComponent<RoomFogRevealManager>();
-        return instance;
+        manager = null;
+        return false;
+    }
+
+    private static void RefreshExistingManagerForCurrentScene(bool revealCurrentRoom)
+    {
+        if (TryGetInstance(out RoomFogRevealManager manager))
+        {
+            manager.RefreshForCurrentScene(revealCurrentRoom);
+        }
     }
 
     private static void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        EnsureInstance().RefreshForCurrentScene(true);
+        RefreshExistingManagerForCurrentScene(true);
     }
 
     private void Awake()
@@ -133,19 +143,20 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         }
 
         instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     private void OnEnable()
     {
         SaveManager.RegisterModule(this);
         RoomCameraTrigger.ActiveRoomChanged += HandleActiveRoomChanged;
+        RefreshForCurrentScene(true);
     }
 
     private void OnDisable()
     {
         SaveManager.UnregisterModule(this);
         RoomCameraTrigger.ActiveRoomChanged -= HandleActiveRoomChanged;
+        SetOverlayVisible(false);
     }
 
     private void OnDestroy()
@@ -155,8 +166,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             return;
         }
 
-        SceneManager.sceneLoaded -= HandleSceneLoaded;
         instance = null;
+        DestroyOverlayResources();
     }
 
     private void Update()
@@ -173,7 +184,6 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         }
 
         ProcessPendingReveals();
-        KeepActiveCameraViewRevealed();
 
         if (Time.unscaledTime < nextPlayerRoomRefreshTime)
         {
@@ -234,10 +244,6 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 worldBounds.Encapsulate(roomBounds);
             }
 
-            if (TryGetRoomCameraViewBounds(room, roomBounds, out Bounds roomCameraBounds))
-            {
-                worldBounds.Encapsulate(roomCameraBounds);
-            }
         }
 
         if (!hasBounds || rooms.Count == 0)
@@ -337,7 +343,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             center = new Vector2(playerPosition.x, playerPosition.y);
         }
 
-        Bounds revealBounds = CreateRevealBounds(room, roomBounds, true);
+        Bounds revealBounds = CreateRevealBounds(roomBounds);
         PendingReveal pendingReveal = new PendingReveal
         {
             Room = room,
@@ -400,37 +406,6 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         {
             ApplyMaskTexture();
         }
-    }
-
-    private void KeepActiveCameraViewRevealed()
-    {
-        if (!keepActiveCameraViewRevealed ||
-            !includeCameraViewInReveal ||
-            maskTexture == null ||
-            maskPixels == null ||
-            Time.unscaledTime < nextCameraViewRevealTime)
-        {
-            return;
-        }
-
-        nextCameraViewRevealTime = Time.unscaledTime + CameraViewRevealInterval;
-
-        RoomCameraTrigger activeRoom = RoomCameraTrigger.ActiveRoom;
-        if (activeRoom == null || activeRoom.gameObject.scene != managedScene)
-        {
-            return;
-        }
-
-        if (!roomIds.TryGetValue(activeRoom, out string roomId) ||
-            !revealedRoomIds.Contains(roomId) ||
-            !activeRoom.TryGetAreaBounds(out Bounds roomBounds) ||
-            !TryGetCurrentCameraViewBounds(roomBounds, out Bounds cameraViewBounds))
-        {
-            return;
-        }
-
-        PaintRoom(activeRoom, roomBounds, cameraViewBounds);
-        ApplyMaskTexture();
     }
 
     private void RevealCurrentRoomFromRuntimeState()
@@ -532,7 +507,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             return;
         }
 
-        PaintRoom(room, roomBounds, CreateRevealBounds(room, roomBounds, false));
+        PaintRoom(room, roomBounds, CreateRevealBounds(roomBounds));
     }
 
     private void PaintRoom(RoomCameraTrigger room, Bounds roomBounds, Bounds revealBounds)
@@ -625,26 +600,12 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         }
     }
 
-    private Bounds CreateRevealBounds(RoomCameraTrigger room, Bounds roomBounds, bool includeCurrentCameraView)
+    private Bounds CreateRevealBounds(Bounds roomBounds)
     {
         Bounds revealBounds = roomBounds;
         if (revealPaddingX > 0f || revealPaddingY > 0f)
         {
             revealBounds.Expand(new Vector3(revealPaddingX * 2f, revealPaddingY * 2f, 0f));
-        }
-
-        if (TryGetRoomCameraViewBounds(room, roomBounds, out Bounds roomCameraBounds) &&
-            revealBounds.Intersects(roomCameraBounds))
-        {
-            revealBounds.Encapsulate(roomCameraBounds);
-        }
-
-        if (includeCurrentCameraView &&
-            includeCameraViewInReveal &&
-            TryGetCurrentCameraViewBounds(roomBounds, out Bounds cameraViewBounds) &&
-            revealBounds.Intersects(cameraViewBounds))
-        {
-            revealBounds.Encapsulate(cameraViewBounds);
         }
 
         return revealBounds;
@@ -702,103 +663,6 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     {
         float normalized = (y + 0.5f) / height;
         return Mathf.Lerp(worldBounds.min.y, worldBounds.max.y, normalized);
-    }
-
-    private bool TryGetRoomCameraViewBounds(
-        RoomCameraTrigger room,
-        Bounds referenceBounds,
-        out Bounds cameraViewBounds)
-    {
-        cameraViewBounds = default;
-        if (room == null || !room.TryGetCameraPose(out Vector3 position, out float orthographicSize))
-        {
-            return false;
-        }
-
-        float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
-        float halfHeight = Mathf.Max(orthographicSize, 0.001f);
-        float halfWidth = halfHeight * Mathf.Max(aspect, 0.001f);
-        position.z = referenceBounds.center.z;
-        cameraViewBounds = new Bounds(
-            position,
-            new Vector3(
-                halfWidth * 2f,
-                halfHeight * 2f,
-                Mathf.Max(referenceBounds.size.z, 0.001f)));
-
-        if (cameraViewRevealPadding > 0f)
-        {
-            cameraViewBounds.Expand(new Vector3(cameraViewRevealPadding * 2f, cameraViewRevealPadding * 2f, 0f));
-        }
-
-        return true;
-    }
-
-    private bool TryGetCurrentCameraViewBounds(Bounds referenceBounds, out Bounds cameraViewBounds)
-    {
-        cameraViewBounds = default;
-
-        Camera camera = Camera.main;
-        if (camera == null || !camera.isActiveAndEnabled)
-        {
-            camera = ResolveSceneCamera();
-        }
-
-        if (camera == null)
-        {
-            return false;
-        }
-
-        Vector3 center = camera.transform.position;
-        center.z = referenceBounds.center.z;
-
-        if (camera.orthographic)
-        {
-            float halfHeight = camera.orthographicSize;
-            float halfWidth = halfHeight * camera.aspect;
-            cameraViewBounds = new Bounds(
-                center,
-                new Vector3(
-                    halfWidth * 2f,
-                    halfHeight * 2f,
-                    Mathf.Max(referenceBounds.size.z, 0.001f)));
-        }
-        else
-        {
-            float distance = Mathf.Abs(camera.transform.position.z - referenceBounds.center.z);
-            Vector3 bottomLeft = camera.ViewportToWorldPoint(new Vector3(0f, 0f, distance));
-            Vector3 topRight = camera.ViewportToWorldPoint(new Vector3(1f, 1f, distance));
-            bottomLeft.z = referenceBounds.center.z;
-            topRight.z = referenceBounds.center.z;
-            cameraViewBounds = new Bounds(bottomLeft, Vector3.zero);
-            cameraViewBounds.Encapsulate(topRight);
-            cameraViewBounds.Expand(new Vector3(0f, 0f, Mathf.Max(referenceBounds.size.z, 0.001f)));
-        }
-
-        if (cameraViewRevealPadding > 0f)
-        {
-            cameraViewBounds.Expand(new Vector3(cameraViewRevealPadding * 2f, cameraViewRevealPadding * 2f, 0f));
-        }
-
-        return true;
-    }
-
-    private Camera ResolveSceneCamera()
-    {
-        Camera[] cameras = Camera.allCameras;
-        for (int i = 0; i < cameras.Length; i++)
-        {
-            Camera camera = cameras[i];
-            if (camera != null &&
-                camera.isActiveAndEnabled &&
-                camera.gameObject.scene == managedScene &&
-                camera.cameraType == CameraType.Game)
-            {
-                return camera;
-            }
-        }
-
-        return null;
     }
 
     private float ResolveRevealRadius(Vector2 center, Bounds revealBounds)
@@ -860,9 +724,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
         if (overlayFilter == null || overlayRenderer == null)
         {
-            GameObject overlayObject = new GameObject("[RoomFogOverlay]");
+            overlayObject = new GameObject("[RoomFogOverlay]");
             overlayObject.hideFlags = HideFlags.DontSave;
-            overlayObject.transform.SetParent(transform, false);
             overlayFilter = overlayObject.AddComponent<MeshFilter>();
             overlayRenderer = overlayObject.AddComponent<MeshRenderer>();
             overlayRenderer.sharedMaterial = fogMaterial;
@@ -930,6 +793,36 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         if (overlayRenderer != null)
         {
             overlayRenderer.enabled = fogEnabled && visible;
+        }
+    }
+
+    private void DestroyOverlayResources()
+    {
+        if (overlayObject != null)
+        {
+            Destroy(overlayObject);
+            overlayObject = null;
+            overlayFilter = null;
+            overlayRenderer = null;
+        }
+
+        if (overlayMesh != null)
+        {
+            Destroy(overlayMesh);
+            overlayMesh = null;
+        }
+
+        if (fogMaterial != null)
+        {
+            Destroy(fogMaterial);
+            fogMaterial = null;
+        }
+
+        if (maskTexture != null)
+        {
+            Destroy(maskTexture);
+            maskTexture = null;
+            maskPixels = null;
         }
     }
 
