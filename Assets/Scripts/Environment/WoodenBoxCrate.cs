@@ -7,6 +7,18 @@ public class WoodenBoxCrate : BreakableCrate
     [SerializeField, Min(0.01f)] private float breakEffectSizeMultiplier = 1f;
     [SerializeField, Min(1f)] private float rightSideLeftLaunchMultiplier = 2f;
 
+    [Header("Item Drop")]
+    [SerializeField] private bool dropItemOnBreak;
+    [SerializeField] private GameObject dropItemPrefab;
+    [SerializeField] private Transform dropPoint;
+    [SerializeField] private Vector3 dropOffset;
+
+    [Header("Item Drop Hop")]
+    [SerializeField] private Vector2 randomHorizontalOffsetRange;
+    [SerializeField, Min(0f)] private float dropHopHeight = 1f;
+    [SerializeField, Min(0f)] private float dropHopDuration = 0.25f;
+    [SerializeField] private bool disablePickupDuringDropHop = true;
+
     [Header("Idle Sprite")]
     [SerializeField] private Texture2D idleSpriteSheetTexture;
     [SerializeField, Min(1)] private int idleFrameColumns = 5;
@@ -32,6 +44,15 @@ public class WoodenBoxCrate : BreakableCrate
         idleFrameRows = Mathf.Max(1, idleFrameRows);
         idleFrameIndex = Mathf.Max(0, idleFrameIndex);
         idleFramePixelsPerUnit = Mathf.Max(1f, idleFramePixelsPerUnit);
+        dropHopHeight = Mathf.Max(0f, dropHopHeight);
+        dropHopDuration = Mathf.Max(0f, dropHopDuration);
+
+        if (randomHorizontalOffsetRange.x > randomHorizontalOffsetRange.y)
+        {
+            randomHorizontalOffsetRange = new Vector2(
+                randomHorizontalOffsetRange.y,
+                randomHorizontalOffsetRange.x);
+        }
     }
 #endif
 
@@ -69,6 +90,32 @@ public class WoodenBoxCrate : BreakableCrate
         breakEffect.Launch(ResolveBreakLaunchDirection(attacker, hitCollider));
     }
 
+    protected override void OnBroken(AttackHitbox attacker, Collider2D hitCollider)
+    {
+        if (!dropItemOnBreak)
+        {
+            return;
+        }
+
+        if (dropItemPrefab == null)
+        {
+            Debug.LogWarning($"{nameof(WoodenBoxCrate)} on {name} is set to drop an item, but no item prefab is assigned.", this);
+            return;
+        }
+
+        Vector3 spawnPosition = ResolveDropPosition(hitCollider);
+        Vector3 landingPosition = ResolveDropLandingPosition(spawnPosition);
+        GameObject droppedItem = Instantiate(dropItemPrefab, spawnPosition, dropItemPrefab.transform.rotation);
+
+        DroppedItemHopMotion hopMotion = droppedItem.GetComponent<DroppedItemHopMotion>();
+        if (hopMotion == null)
+        {
+            hopMotion = droppedItem.AddComponent<DroppedItemHopMotion>();
+        }
+
+        hopMotion.Play(spawnPosition, landingPosition, dropHopHeight, dropHopDuration, disablePickupDuringDropHop);
+    }
+
     private Vector2 ResolveEffectTargetSize()
     {
         Collider2D hitCollider = GetComponent<Collider2D>();
@@ -82,6 +129,31 @@ public class WoodenBoxCrate : BreakableCrate
         }
 
         return Vector2.one;
+    }
+
+    private Vector3 ResolveDropPosition(Collider2D hitCollider)
+    {
+        if (dropPoint != null)
+        {
+            return dropPoint.position + dropOffset;
+        }
+
+        Collider2D bodyCollider = hitCollider != null ? hitCollider : GetComponent<Collider2D>();
+        if (bodyCollider != null)
+        {
+            return bodyCollider.bounds.center + dropOffset;
+        }
+
+        return transform.position + dropOffset;
+    }
+
+    private Vector3 ResolveDropLandingPosition(Vector3 spawnPosition)
+    {
+        float minOffset = Mathf.Min(randomHorizontalOffsetRange.x, randomHorizontalOffsetRange.y);
+        float maxOffset = Mathf.Max(randomHorizontalOffsetRange.x, randomHorizontalOffsetRange.y);
+        float xOffset = Random.Range(minOffset, maxOffset);
+
+        return spawnPosition + Vector3.right * xOffset;
     }
 
     private void ApplyIdleSprite()
