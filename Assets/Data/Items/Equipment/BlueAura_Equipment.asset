@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
   itemName: BlueAura
   itemId: Equipment_RedAura_Unlock
-  description: 
-  icon: {fileID: -256204797617047970, guid: 9efb276a748ecba4fa47e76e0221a39e, type: 3}
-  illustration: {fileID: 8109299661090198294, guid: b731a811d421e864dbaf45de65ae5dc0, type: 3}
+  description: Damage up!!
+  icon: {fileID: 21300000, guid: d7733374c8c86254b856728946bf6513, type: 3}
+  illustration: {fileID: 21300000, guid: 6b9c5c983bb738848913bd06c1fc9719, type: 3}
   itemType: 2
   healAmount: 0
   staminaAmount: 0
