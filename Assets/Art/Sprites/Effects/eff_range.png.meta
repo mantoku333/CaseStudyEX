@@ -1,0 +1,2457 @@
+fileFormatVersion: 2
+guid: e4599434a1c8c7b43b391282de3c5931
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2601297913587415735
+    second: eff_range_0
+  - first:
+      213: 7446441596202499676
+    second: eff_range_1
+  - first:
+      213: 6350696929113997709
+    second: eff_range_2
+  - first:
+      213: 7767867653762061231
+    second: eff_range_3
+  - first:
+      213: -8115952755164311522
+    second: eff_range_4
+  - first:
+      213: 5162958089248581819
+    second: eff_range_5
+  - first:
+      213: -1437116151366829570
+    second: eff_range_6
+  - first:
+      213: 4964449177113479885
+    second: eff_range_7
+  - first:
+      213: -238198679754447156
+    second: eff_range_8
+  - first:
+      213: -1925807464451011423
+    second: eff_range_9
+  - first:
+      213: 49025756891137277
+    second: eff_range_10
+  - first:
+      213: -7408159147796338085
+    second: eff_range_11
+  - first:
+      213: 2882609254394154742
+    second: eff_range_12
+  - first:
+      213: -6763580334239951321
+    second: eff_range_13
+  - first:
+      213: -6240693610376540984
+    second: eff_range_14
+  - first:
+      213: -8347580789473044844
+    second: eff_range_15
+  - first:
+      213: 8391013690324213750
+    second: eff_range_16
+  - first:
+      213: -6573371196088897697
+    second: eff_range_17
+  - first:
+      213: 3696650295076363721
+    second: eff_range_18
+  - first:
+      213: -2493958998828419776
+    second: eff_range_19
+  - first:
+      213: -1421001201724705389
+    second: eff_range_20
+  - first:
+      213: 1154682359674467788
+    second: eff_range_21
+  - first:
+      213: 3488435315155493177
+    second: eff_range_22
+  - first:
+      213: 986380543061051281
+    second: eff_range_23
+  - first:
+      213: -6711543145952663946
+    second: eff_range_24
+  - first:
+      213: -683469537148098713
+    second: eff_range_25
+  - first:
+      213: 2111977476021592217
+    second: eff_range_26
+  - first:
+      213: 6979488118100821049
+    second: eff_range_27
+  - first:
+      213: 127343844874507517
+    second: eff_range_28
+  - first:
+      213: 7809718541191686556
+    second: eff_range_29
+  - first:
+      213: 6691878439081444636
+    second: eff_range_30
+  - first:
+      213: 8766815287640107030
+    second: eff_range_31
+  - first:
+      213: -520785838291109694
+    second: eff_range_32
+  - first:
+      213: 5325819786977657647
+    second: eff_range_33
+  - first:
+      213: -6003264998960998912
+    second: eff_range_34
+  - first:
+      213: -6874649071806206594
+    second: eff_range_35
+  - first:
+      213: -3324866786316942931
+    second: eff_range_36
+  - first:
+      213: -2786643891452357939
+    second: eff_range_37
+  - first:
+      213: 3323867170032774503
+    second: eff_range_38
+  - first:
+      213: -5370134572940825611
+    second: eff_range_39
+  - first:
+      213: -7903212932920068238
+    second: eff_range_40
+  - first:
+      213: 2242569415614732141
+    second: eff_range_41
+  - first:
+      213: -8155115750689932783
+    second: eff_range_42
+  - first:
+      213: -1976337124169939093
+    second: eff_range_43
+  - first:
+      213: -967869043513951118
+    second: eff_range_44
+  - first:
+      213: -1223259048894331829
+    second: eff_range_45
+  - first:
+      213: -2214357151615352108
+    second: eff_range_46
+  - first:
+      213: -4739802977322040707
+    second: eff_range_47
+  - first:
+      213: -9137205268419330943
+    second: eff_range_48
+  - first:
+      213: -8594004840714914284
+    second: eff_range_49
+  - first:
+      213: -3340617411586054927
+    second: eff_range_50
+  - first:
+      213: 27165243574146645
+    second: eff_range_51
+  - first:
+      213: 7602933188822946276
+    second: eff_range_52
+  - first:
+      213: -1300773367408448353
+    second: eff_range_53
+  - first:
+      213: 4383737264895646805
+    second: eff_range_54
+  - first:
+      213: -4555913255613095904
+    second: eff_range_55
+  - first:
+      213: 7898746753763192959
+    second: eff_range_56
+  - first:
+      213: -4021514926083418967
+    second: eff_range_57
+  - first:
+      213: -4356468131326653637
+    second: eff_range_58
+  - first:
+      213: 6933598357941100514
+    second: eff_range_59
+  - first:
+      213: -3844672364931524218
+    second: eff_range_60
+  - first:
+      213: -4620634201721725751
+    second: eff_range_61
+  - first:
+      213: 4898007551341725393
+    second: eff_range_62
+  - first:
+      213: 1329119176882149273
+    second: eff_range_63
+  - first:
+      213: -5992491931471840046
+    second: eff_range_64
+  - first:
+      213: 6318872348755668509
+    second: eff_range_65
+  - first:
+      213: 6580886840954486820
+    second: eff_range_66
+  - first:
+      213: -1869421124428183941
+    second: eff_range_67
+  - first:
+      213: 8370898719277279984
+    second: eff_range_68
+  - first:
+      213: 2925968681458498523
+    second: eff_range_69
+  - first:
+      213: -8555202480001954532
+    second: eff_range_70
+  - first:
+      213: -4318562813940958897
+    second: eff_range_71
+  - first:
+      213: 7800018175503849173
+    second: eff_range_72
+  - first:
+      213: -5209901847286712345
+    second: eff_range_73
+  - first:
+      213: -1684186160922744794
+    second: eff_range_74
+  - first:
+      213: 4821993883495231667
+    second: eff_range_75
+  - first:
+      213: -6059274476329511135
+    second: eff_range_76
+  - first:
+      213: 147955037666591612
+    second: eff_range_77
+  - first:
+      213: 784764078770382615
+    second: eff_range_78
+  - first:
+      213: 901902901791739712
+    second: eff_range_79
+  - first:
+      213: -2608525999668212722
+    second: eff_range_80
+  - first:
+      213: 6903440119701660596
+    second: eff_range_81
+  - first:
+      213: 4578706320726740386
+    second: eff_range_82
+  - first:
+      213: -3539860732079724542
+    second: eff_range_83
+  - first:
+      213: 6962202671817872986
+    second: eff_range_84
+  - first:
+      213: 8557727513974409397
+    second: eff_range_85
+  - first:
+      213: -6937775382300917824
+    second: eff_range_86
+  - first:
+      213: 8568888496908817992
+    second: eff_range_87
+  - first:
+      213: 3164736622028717595
+    second: eff_range_88
+  - first:
+      213: 2281635018439980705
+    second: eff_range_89
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_range_0
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 4095
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94548a1745556ebd0800000000000000
+      internalID: -2601297913587415735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_1
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 4095
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5eb756cd23175760800000000000000
+      internalID: 7446441596202499676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_2
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 4095
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d810108a535322850800000000000000
+      internalID: 6350696929113997709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_3
+      rect:
+        serializedVersion: 2
+        x: 1634
+        y: 4095
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa31cb4a9720dcb60800000000000000
+      internalID: 7767867653762061231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_4
+      rect:
+        serializedVersion: 2
+        x: 2146
+        y: 4095
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e10149628f75e5f80800000000000000
+      internalID: -8115952755164311522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_5
+      rect:
+        serializedVersion: 2
+        x: 2658
+        y: 4095
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb824e3170386a740800000000000000
+      internalID: 5162958089248581819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_6
+      rect:
+        serializedVersion: 2
+        x: 3170
+        y: 4095
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef9bdc879765e0ce0800000000000000
+      internalID: -1437116151366829570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_7
+      rect:
+        serializedVersion: 2
+        x: 3682
+        y: 4095
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dca445b493445e440800000000000000
+      internalID: 4964449177113479885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_8
+      rect:
+        serializedVersion: 2
+        x: 4194
+        y: 4095
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc6e443109fb1bcf0800000000000000
+      internalID: -238198679754447156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_9
+      rect:
+        serializedVersion: 2
+        x: 4706
+        y: 4095
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ac0a9f70582645e0800000000000000
+      internalID: -1925807464451011423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_10
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 3583
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df447588aac2ea000800000000000000
+      internalID: 49025756891137277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_11
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 3583
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5ae904518ee03990800000000000000
+      internalID: -7408159147796338085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_12
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 3583
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6feca6a18d5110820800000000000000
+      internalID: 2882609254394154742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_13
+      rect:
+        serializedVersion: 2
+        x: 1634
+        y: 3583
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7265fcf558fe222a0800000000000000
+      internalID: -6763580334239951321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_14
+      rect:
+        serializedVersion: 2
+        x: 2146
+        y: 3583
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ccc479d93a9469a0800000000000000
+      internalID: -6240693610376540984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_15
+      rect:
+        serializedVersion: 2
+        x: 2658
+        y: 3583
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4969595df7f672c80800000000000000
+      internalID: -8347580789473044844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_16
+      rect:
+        serializedVersion: 2
+        x: 3170
+        y: 3583
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ffd63d6e7ed27470800000000000000
+      internalID: 8391013690324213750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_17
+      rect:
+        serializedVersion: 2
+        x: 3682
+        y: 3583
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5f265079b1b6c4a0800000000000000
+      internalID: -6573371196088897697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_18
+      rect:
+        serializedVersion: 2
+        x: 4194
+        y: 3583
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cd9ed09bd32d4330800000000000000
+      internalID: 3696650295076363721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_19
+      rect:
+        serializedVersion: 2
+        x: 4706
+        y: 3583
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 045717e018da36dd0800000000000000
+      internalID: -2493958998828419776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_20
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 3071
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 395bbc19fe6974ce0800000000000000
+      internalID: -1421001201724705389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_21
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 3071
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc57ec40d71460010800000000000000
+      internalID: 1154682359674467788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_22
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 3071
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93165c5cf69696030800000000000000
+      internalID: 3488435315155493177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_23
+      rect:
+        serializedVersion: 2
+        x: 1634
+        y: 3071
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 197c28ab0e350bd00800000000000000
+      internalID: 986380543061051281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_24
+      rect:
+        serializedVersion: 2
+        x: 2146
+        y: 3071
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 676a8ca611fcbd2a0800000000000000
+      internalID: -6711543145952663946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_25
+      rect:
+        serializedVersion: 2
+        x: 2658
+        y: 3071
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 767ac7fb314d386f0800000000000000
+      internalID: -683469537148098713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_26
+      rect:
+        serializedVersion: 2
+        x: 3170
+        y: 3071
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 990a4ef13504f4d10800000000000000
+      internalID: 2111977476021592217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_27
+      rect:
+        serializedVersion: 2
+        x: 3682
+        y: 3071
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9348579e67f1cd060800000000000000
+      internalID: 6979488118100821049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_28
+      rect:
+        serializedVersion: 2
+        x: 4194
+        y: 3071
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df4d31e5d8a64c100800000000000000
+      internalID: 127343844874507517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_29
+      rect:
+        serializedVersion: 2
+        x: 4706
+        y: 3071
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c992383b2a1b16c60800000000000000
+      internalID: 7809718541191686556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_30
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 2559
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c158b893cf35edc50800000000000000
+      internalID: 6691878439081444636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_31
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 2559
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 618a0473e0cf9a970800000000000000
+      internalID: 8766815287640107030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_32
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 2559
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c8ba901a0cc5c8f0800000000000000
+      internalID: -520785838291109694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_33
+      rect:
+        serializedVersion: 2
+        x: 1634
+        y: 2559
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f23cc8cf0ec19e940800000000000000
+      internalID: 5325819786977657647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_34
+      rect:
+        serializedVersion: 2
+        x: 2146
+        y: 2559
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 006d4644a4e10bca0800000000000000
+      internalID: -6003264998960998912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_35
+      rect:
+        serializedVersion: 2
+        x: 2658
+        y: 2559
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7da587b7175890a0800000000000000
+      internalID: -6874649071806206594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_36
+      rect:
+        serializedVersion: 2
+        x: 3170
+        y: 2559
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da185141643bbd1d0800000000000000
+      internalID: -3324866786316942931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_37
+      rect:
+        serializedVersion: 2
+        x: 3682
+        y: 2559
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc2587e152ad359d0800000000000000
+      internalID: -2786643891452357939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_38
+      rect:
+        serializedVersion: 2
+        x: 4194
+        y: 2559
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76de26e949fb02e20800000000000000
+      internalID: 3323867170032774503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_39
+      rect:
+        serializedVersion: 2
+        x: 4706
+        y: 2559
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fb61dfde037975b0800000000000000
+      internalID: -5370134572940825611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_40
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 2047
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 277b605e5b5225290800000000000000
+      internalID: -7903212932920068238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_41
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 2047
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d671fd970053f1f10800000000000000
+      internalID: 2242569415614732141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_42
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 2047
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11afee1be6533de80800000000000000
+      internalID: -8155115750689932783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_43
+      rect:
+        serializedVersion: 2
+        x: 1634
+        y: 2047
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b670f6d4bd3a294e0800000000000000
+      internalID: -1976337124169939093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_44
+      rect:
+        serializedVersion: 2
+        x: 2146
+        y: 2047
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27cf040ab307192f0800000000000000
+      internalID: -967869043513951118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_45
+      rect:
+        serializedVersion: 2
+        x: 2658
+        y: 2047
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b440f5a406c160fe0800000000000000
+      internalID: -1223259048894331829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_46
+      rect:
+        serializedVersion: 2
+        x: 3170
+        y: 2047
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d20f1c17e50541e0800000000000000
+      internalID: -2214357151615352108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_47
+      rect:
+        serializedVersion: 2
+        x: 3682
+        y: 2047
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d72816ffd46d83eb0800000000000000
+      internalID: -4739802977322040707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_48
+      rect:
+        serializedVersion: 2
+        x: 4194
+        y: 2047
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18cb9082830223180800000000000000
+      internalID: -9137205268419330943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_49
+      rect:
+        serializedVersion: 2
+        x: 4706
+        y: 2047
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 416333f5126fbb880800000000000000
+      internalID: -8594004840714914284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_50
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 1535
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f4adebd92eb3a1d0800000000000000
+      internalID: -3340617411586054927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_51
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 1535
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 556597525a2806000800000000000000
+      internalID: 27165243574146645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_52
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 1535
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e1d1d2047b038960800000000000000
+      internalID: 7602933188822946276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_53
+      rect:
+        serializedVersion: 2
+        x: 1634
+        y: 1535
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9ca45e9389b2fde0800000000000000
+      internalID: -1300773367408448353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_54
+      rect:
+        serializedVersion: 2
+        x: 2146
+        y: 1535
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55c5fbef0d926dc30800000000000000
+      internalID: 4383737264895646805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_55
+      rect:
+        serializedVersion: 2
+        x: 2658
+        y: 1535
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02020b3480526c0c0800000000000000
+      internalID: -4555913255613095904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_56
+      rect:
+        serializedVersion: 2
+        x: 3171
+        y: 1535
+        width: 315
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7033dcb25cfd9d60800000000000000
+      internalID: 7898746753763192959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_57
+      rect:
+        serializedVersion: 2
+        x: 3682
+        y: 1535
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a4dddb4b75b038c0800000000000000
+      internalID: -4021514926083418967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_58
+      rect:
+        serializedVersion: 2
+        x: 4194
+        y: 1535
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3b07fce057ba83c0800000000000000
+      internalID: -4356468131326653637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_59
+      rect:
+        serializedVersion: 2
+        x: 4706
+        y: 1535
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ef9f4488f6193060800000000000000
+      internalID: 6933598357941100514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_60
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 1023
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 689de72aadaf4aac0800000000000000
+      internalID: -3844672364931524218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_61
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 1023
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cc1b59bca530efb0800000000000000
+      internalID: -4620634201721725751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_62
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 1023
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d687eccae739f340800000000000000
+      internalID: 4898007551341725393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_63
+      rect:
+        serializedVersion: 2
+        x: 1634
+        y: 1023
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 997583279daf17210800000000000000
+      internalID: 1329119176882149273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_64
+      rect:
+        serializedVersion: 2
+        x: 2146
+        y: 1023
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2dcf931865466dca0800000000000000
+      internalID: -5992491931471840046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_65
+      rect:
+        serializedVersion: 2
+        x: 2658
+        y: 1023
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1eae902ce421b750800000000000000
+      internalID: 6318872348755668509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_66
+      rect:
+        serializedVersion: 2
+        x: 3170
+        y: 1023
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 420822ef6b1045b50800000000000000
+      internalID: 6580886840954486820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_67
+      rect:
+        serializedVersion: 2
+        x: 3682
+        y: 1023
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b76c8d6546b7e06e0800000000000000
+      internalID: -1869421124428183941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_68
+      rect:
+        serializedVersion: 2
+        x: 4194
+        y: 1023
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fa6b45c8086b2470800000000000000
+      internalID: 8370898719277279984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_69
+      rect:
+        serializedVersion: 2
+        x: 4706
+        y: 1023
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdb704a63012b9820800000000000000
+      internalID: 2925968681458498523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_70
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 511
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1d41fdfba0d54980800000000000000
+      internalID: -8555202480001954532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_71
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 511
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4976de50026114c0800000000000000
+      internalID: -4318562813940958897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_72
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 511
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d65f70543b3f3c60800000000000000
+      internalID: 7800018175503849173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_73
+      rect:
+        serializedVersion: 2
+        x: 1634
+        y: 511
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e7f2d58fd5b2b7b0800000000000000
+      internalID: -5209901847286712345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_74
+      rect:
+        serializedVersion: 2
+        x: 2146
+        y: 511
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 628229e1c9190a8e0800000000000000
+      internalID: -1684186160922744794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_75
+      rect:
+        serializedVersion: 2
+        x: 2658
+        y: 511
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b0f6d693e92be240800000000000000
+      internalID: 4821993883495231667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_76
+      rect:
+        serializedVersion: 2
+        x: 3170
+        y: 511
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 127d9c997f129eba0800000000000000
+      internalID: -6059274476329511135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_77
+      rect:
+        serializedVersion: 2
+        x: 3682
+        y: 511
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c73c8d6a254ad0200800000000000000
+      internalID: 147955037666591612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_78
+      rect:
+        serializedVersion: 2
+        x: 4194
+        y: 511
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 717689395ca04ea00800000000000000
+      internalID: 784764078770382615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_79
+      rect:
+        serializedVersion: 2
+        x: 4706
+        y: 511
+        width: 316
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04fc03329e3348c00800000000000000
+      internalID: 901902901791739712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_80
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 0
+        width: 316
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0cc7628c67accbd0800000000000000
+      internalID: -2608525999668212722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_81
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 0
+        width: 316
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b36ffe7632fdcf50800000000000000
+      internalID: 6903440119701660596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_82
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 0
+        width: 316
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2adc0c1c325da8f30800000000000000
+      internalID: 4578706320726740386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_83
+      rect:
+        serializedVersion: 2
+        x: 1634
+        y: 0
+        width: 316
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 208a80e4b63efdec0800000000000000
+      internalID: -3539860732079724542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_84
+      rect:
+        serializedVersion: 2
+        x: 2146
+        y: 0
+        width: 316
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a56daf35176be9060800000000000000
+      internalID: 6962202671817872986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_85
+      rect:
+        serializedVersion: 2
+        x: 2658
+        y: 0
+        width: 316
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b8080b45d723c670800000000000000
+      internalID: 8557727513974409397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_86
+      rect:
+        serializedVersion: 2
+        x: 3170
+        y: 0
+        width: 316
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cff0863c0218bf90800000000000000
+      internalID: -6937775382300917824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_87
+      rect:
+        serializedVersion: 2
+        x: 3682
+        y: 0
+        width: 316
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8465e2220becae670800000000000000
+      internalID: 8568888496908817992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_88
+      rect:
+        serializedVersion: 2
+        x: 4194
+        y: 0
+        width: 316
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1ef0b3b0376beb20800000000000000
+      internalID: 3164736622028717595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_range_89
+      rect:
+        serializedVersion: 2
+        x: 4706
+        y: 0
+        width: 316
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a6f43de5fef9af10800000000000000
+      internalID: 2281635018439980705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_range_0: -2601297913587415735
+      eff_range_1: 7446441596202499676
+      eff_range_10: 49025756891137277
+      eff_range_11: -7408159147796338085
+      eff_range_12: 2882609254394154742
+      eff_range_13: -6763580334239951321
+      eff_range_14: -6240693610376540984
+      eff_range_15: -8347580789473044844
+      eff_range_16: 8391013690324213750
+      eff_range_17: -6573371196088897697
+      eff_range_18: 3696650295076363721
+      eff_range_19: -2493958998828419776
+      eff_range_2: 6350696929113997709
+      eff_range_20: -1421001201724705389
+      eff_range_21: 1154682359674467788
+      eff_range_22: 3488435315155493177
+      eff_range_23: 986380543061051281
+      eff_range_24: -6711543145952663946
+      eff_range_25: -683469537148098713
+      eff_range_26: 2111977476021592217
+      eff_range_27: 6979488118100821049
+      eff_range_28: 127343844874507517
+      eff_range_29: 7809718541191686556
+      eff_range_3: 7767867653762061231
+      eff_range_30: 6691878439081444636
+      eff_range_31: 8766815287640107030
+      eff_range_32: -520785838291109694
+      eff_range_33: 5325819786977657647
+      eff_range_34: -6003264998960998912
+      eff_range_35: -6874649071806206594
+      eff_range_36: -3324866786316942931
+      eff_range_37: -2786643891452357939
+      eff_range_38: 3323867170032774503
+      eff_range_39: -5370134572940825611
+      eff_range_4: -8115952755164311522
+      eff_range_40: -7903212932920068238
+      eff_range_41: 2242569415614732141
+      eff_range_42: -8155115750689932783
+      eff_range_43: -1976337124169939093
+      eff_range_44: -967869043513951118
+      eff_range_45: -1223259048894331829
+      eff_range_46: -2214357151615352108
+      eff_range_47: -4739802977322040707
+      eff_range_48: -9137205268419330943
+      eff_range_49: -8594004840714914284
+      eff_range_5: 5162958089248581819
+      eff_range_50: -3340617411586054927
+      eff_range_51: 27165243574146645
+      eff_range_52: 7602933188822946276
+      eff_range_53: -1300773367408448353
+      eff_range_54: 4383737264895646805
+      eff_range_55: -4555913255613095904
+      eff_range_56: 7898746753763192959
+      eff_range_57: -4021514926083418967
+      eff_range_58: -4356468131326653637
+      eff_range_59: 6933598357941100514
+      eff_range_6: -1437116151366829570
+      eff_range_60: -3844672364931524218
+      eff_range_61: -4620634201721725751
+      eff_range_62: 4898007551341725393
+      eff_range_63: 1329119176882149273
+      eff_range_64: -5992491931471840046
+      eff_range_65: 6318872348755668509
+      eff_range_66: 6580886840954486820
+      eff_range_67: -1869421124428183941
+      eff_range_68: 8370898719277279984
+      eff_range_69: 2925968681458498523
+      eff_range_7: 4964449177113479885
+      eff_range_70: -8555202480001954532
+      eff_range_71: -4318562813940958897
+      eff_range_72: 7800018175503849173
+      eff_range_73: -5209901847286712345
+      eff_range_74: -1684186160922744794
+      eff_range_75: 4821993883495231667
+      eff_range_76: -6059274476329511135
+      eff_range_77: 147955037666591612
+      eff_range_78: 784764078770382615
+      eff_range_79: 901902901791739712
+      eff_range_8: -238198679754447156
+      eff_range_80: -2608525999668212722
+      eff_range_81: 6903440119701660596
+      eff_range_82: 4578706320726740386
+      eff_range_83: -3539860732079724542
+      eff_range_84: 6962202671817872986
+      eff_range_85: 8557727513974409397
+      eff_range_86: -6937775382300917824
+      eff_range_87: 8568888496908817992
+      eff_range_88: 3164736622028717595
+      eff_range_89: 2281635018439980705
+      eff_range_9: -1925807464451011423
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

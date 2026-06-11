@@ -20,15 +20,25 @@ namespace GameName.Enemy
 
         private LastBossController owner;
         private Collider2D bladeCollider;
+        private LastBossBladeVisual bladeVisual;
         private SpriteRenderer[] spriteRenderers = System.Array.Empty<SpriteRenderer>();
         private Color[] spriteRendererStartColors = System.Array.Empty<Color>();
         private ContactFilter2D playerOverlapFilter;
         private BladeKind kind;
         private Vector2 rainTargetPoint;
         private Vector3 originalScale;
+        private GridSpriteSheetClip groundVisualClip;
+        private GridSpriteSheetClip rainInVisualClip;
+        private GridSpriteSheetClip rainOutVisualClip;
+        private Vector2 groundVisualWorldSize;
+        private Vector2 rainVisualWorldSize;
         private int damage = 1;
+        private int groundVisualUprightFrameIndex;
+        private int groundVisualSlotIndex = -1;
         private float rainFallSpeed = 8f;
         private float rainGroundDestroyDelay = 0.3f;
+        private Vector2 groundVisualFrameSizeMultiplier = Vector2.one;
+        private Vector2 rainVisualFrameSizeMultiplier = Vector2.one;
         [SerializeField] private float rainAimRotationOffsetDegrees = 180f;
         private bool initialized;
         private bool canDamage;
@@ -36,6 +46,8 @@ namespace GameName.Enemy
         private bool rainLanded;
         private bool parried;
         private bool destroying;
+        private bool useGroundVisual;
+        private bool useRainVisual;
 
         public BladeKind Kind => kind;
         public bool IsParryable => initialized && canDamage && !parried && !destroying;
@@ -85,6 +97,42 @@ namespace GameName.Enemy
             }
         }
 
+        public void ConfigureGroundVisual(
+            GridSpriteSheetClip clip,
+            int uprightFrameIndex,
+            int slotIndex,
+            Vector2 frameSizeMultiplier)
+        {
+            groundVisualClip = clip;
+            groundVisualUprightFrameIndex = Mathf.Max(0, uprightFrameIndex);
+            groundVisualSlotIndex = slotIndex;
+            groundVisualFrameSizeMultiplier = SanitizeFrameSizeMultiplier(frameSizeMultiplier);
+            useGroundVisual = clip.IsValid;
+            groundVisualWorldSize = Vector2.Scale(ResolveBladeWorldSize(), groundVisualFrameSizeMultiplier);
+
+            if (useGroundVisual)
+            {
+                EnsureBladeVisual();
+            }
+        }
+
+        public void ConfigureRainVisual(
+            GridSpriteSheetClip inClip,
+            GridSpriteSheetClip outClip,
+            Vector2 frameSizeMultiplier)
+        {
+            rainInVisualClip = inClip;
+            rainOutVisualClip = outClip;
+            rainVisualFrameSizeMultiplier = SanitizeFrameSizeMultiplier(frameSizeMultiplier);
+            useRainVisual = inClip.IsValid;
+            rainVisualWorldSize = Vector2.Scale(ResolveBladeWorldSize(), rainVisualFrameSizeMultiplier);
+
+            if (useRainVisual)
+            {
+                EnsureBladeVisual();
+            }
+        }
+
         public void InitializeGround(
             LastBossController attackOwner,
             int attackDamage,
@@ -95,7 +143,7 @@ namespace GameName.Enemy
             kind = BladeKind.Ground;
             damage = Mathf.Max(1, attackDamage);
             initialized = true;
-            canDamage = true;
+            canDamage = !useGroundVisual;
             rainReleased = false;
             rainLanded = false;
             parried = false;
@@ -107,6 +155,17 @@ namespace GameName.Enemy
                 originalScale = transform.localScale;
             }
 
+            if (bladeCollider != null)
+            {
+                bladeCollider.enabled = !useGroundVisual;
+            }
+
+            if (useGroundVisual && PlayGroundVisual(groundY))
+            {
+                return;
+            }
+
+            EnableBladeDamage();
             StartCoroutine(GroundBladeRiseRoutine(groundY, Mathf.Max(0f, riseDuration)));
         }
 
@@ -133,6 +192,11 @@ namespace GameName.Enemy
             transform.localScale = originalScale;
 
             RotateToward(previewAimPoint);
+            if (useRainVisual)
+            {
+                EnsureBladeVisual();
+                bladeVisual.PlayRainIn(rainInVisualClip, ResolveCachedVisualWorldSize(rainVisualWorldSize));
+            }
         }
 
         public void UpdateRainPreview(Vector2 previewPosition, Vector2 targetPoint, Vector2 previewAimPoint)
@@ -156,6 +220,11 @@ namespace GameName.Enemy
 
             rainReleased = true;
             canDamage = true;
+            if (bladeCollider != null)
+            {
+                bladeCollider.enabled = true;
+            }
+
             RotateToward(rainTargetPoint);
         }
 
@@ -252,6 +321,22 @@ namespace GameName.Enemy
             {
                 rainLanded = true;
                 owner?.NotifyBladeLanded(this);
+                canDamage = false;
+
+                if (bladeCollider != null)
+                {
+                    bladeCollider.enabled = false;
+                }
+
+                if (useRainVisual && bladeVisual != null)
+                {
+                    bladeVisual.PlayRainOut(
+                        rainOutVisualClip,
+                        ResolveCachedVisualWorldSize(rainVisualWorldSize),
+                        DestroySelf);
+                    return;
+                }
+
                 StartCoroutine(DestroyAfterGroundDelayRoutine());
             }
         }
@@ -331,6 +416,98 @@ namespace GameName.Enemy
             return Mathf.Max(0.1f, Mathf.Abs(transform.lossyScale.y));
         }
 
+        private bool PlayGroundVisual(float groundY)
+        {
+            EnsureBladeVisual();
+            if (bladeVisual == null)
+            {
+                return false;
+            }
+
+            float bladeHeight = ResolveBladeWorldHeight();
+            Vector3 finalPosition = transform.position;
+            finalPosition.y = groundY + bladeHeight * 0.5f;
+            transform.position = finalPosition;
+
+            return bladeVisual.PlayGround(
+                groundVisualClip,
+                groundVisualUprightFrameIndex,
+                ResolveCachedVisualWorldSize(groundVisualWorldSize),
+                () =>
+                {
+                    EnableBladeDamage();
+                    owner?.NotifyGroundBladeUpright(groundVisualSlotIndex);
+                });
+        }
+
+        private void EnableBladeDamage()
+        {
+            canDamage = true;
+            if (bladeCollider != null)
+            {
+                bladeCollider.enabled = true;
+            }
+        }
+
+        private Vector2 ResolveBladeWorldSize()
+        {
+            if (bladeCollider != null)
+            {
+                Vector2 colliderSize = bladeCollider.bounds.size;
+                if (colliderSize.x > 0.001f && colliderSize.y > 0.001f)
+                {
+                    return colliderSize;
+                }
+            }
+
+            SpriteRenderer renderer = GetComponentInChildren<SpriteRenderer>(true);
+            if (renderer != null)
+            {
+                Vector2 rendererSize = renderer.bounds.size;
+                if (rendererSize.x > 0.001f && rendererSize.y > 0.001f)
+                {
+                    return rendererSize;
+                }
+            }
+
+            Vector3 scale = transform.lossyScale;
+            return new Vector2(
+                Mathf.Max(0.1f, Mathf.Abs(scale.x)),
+                Mathf.Max(0.1f, Mathf.Abs(scale.y)));
+        }
+
+        private Vector2 ResolveCachedVisualWorldSize(Vector2 cachedSize)
+        {
+            if (cachedSize.x > 0.001f && cachedSize.y > 0.001f)
+            {
+                return cachedSize;
+            }
+
+            return ResolveBladeWorldSize();
+        }
+
+        private static Vector2 SanitizeFrameSizeMultiplier(Vector2 multiplier)
+        {
+            return new Vector2(
+                Mathf.Max(0.01f, multiplier.x),
+                Mathf.Max(0.01f, multiplier.y));
+        }
+
+        private void EnsureBladeVisual()
+        {
+            if (bladeVisual == null)
+            {
+                bladeVisual = GetComponent<LastBossBladeVisual>();
+            }
+
+            if (bladeVisual == null)
+            {
+                bladeVisual = gameObject.AddComponent<LastBossBladeVisual>();
+            }
+
+            CacheSpriteRenderers();
+        }
+
         private void CacheSpriteRenderers()
         {
             // 後でアニメSpriteへ差し替えてもフェードできるよう、子SpriteRendererもまとめて扱う。
@@ -364,7 +541,7 @@ namespace GameName.Enemy
             }
 
             ApplyFadeAlpha(0f);
-            Destroy(gameObject);
+            DestroyBladeObject();
         }
 
         private void ApplyFadeAlpha(float alphaMultiplier)
@@ -395,7 +572,7 @@ namespace GameName.Enemy
             destroying = true;
             canDamage = false;
             StopAllCoroutines();
-            Destroy(gameObject);
+            DestroyBladeObject();
         }
 
         private void OnDestroy()
@@ -403,6 +580,18 @@ namespace GameName.Enemy
             if (owner != null)
             {
                 owner.NotifyBladeDestroyed(this);
+            }
+        }
+
+        private void DestroyBladeObject()
+        {
+            if (Application.isPlaying)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                DestroyImmediate(gameObject);
             }
         }
     }

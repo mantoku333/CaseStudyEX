@@ -1,0 +1,1001 @@
+fileFormatVersion: 2
+guid: 2c093d300f00e3f49ad0827a11f0ead3
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4601674874447721213
+    second: eff_aura_0
+  - first:
+      213: -5502542794857560747
+    second: eff_aura_1
+  - first:
+      213: 5625528812445034723
+    second: eff_aura_2
+  - first:
+      213: -2013933178046785353
+    second: eff_aura_3
+  - first:
+      213: -6550578989372126957
+    second: eff_aura_4
+  - first:
+      213: 372380001216106953
+    second: eff_aura_5
+  - first:
+      213: -6881954801197948019
+    second: eff_aura_6
+  - first:
+      213: 4499113474179136460
+    second: eff_aura_7
+  - first:
+      213: -7598897835766640513
+    second: eff_aura_8
+  - first:
+      213: 6836403582777174336
+    second: eff_aura_9
+  - first:
+      213: 2284799990352208606
+    second: eff_aura_10
+  - first:
+      213: 3892405489445453896
+    second: eff_aura_11
+  - first:
+      213: -830692272145865660
+    second: eff_aura_12
+  - first:
+      213: -8029153644843058912
+    second: eff_aura_13
+  - first:
+      213: 7279274052170783784
+    second: eff_aura_14
+  - first:
+      213: 6768406891405609394
+    second: eff_aura_15
+  - first:
+      213: 7571419972975664762
+    second: eff_aura_16
+  - first:
+      213: 1037042375593979189
+    second: eff_aura_17
+  - first:
+      213: 2442971925719883613
+    second: eff_aura_18
+  - first:
+      213: 3765064240336802598
+    second: eff_aura_19
+  - first:
+      213: -1592584772015003215
+    second: eff_aura_20
+  - first:
+      213: 661143176530351122
+    second: eff_aura_21
+  - first:
+      213: -6546226355026564093
+    second: eff_aura_22
+  - first:
+      213: -5486995777304462128
+    second: eff_aura_23
+  - first:
+      213: -2797040001178371495
+    second: eff_aura_24
+  - first:
+      213: 2647435273083834313
+    second: eff_aura_25
+  - first:
+      213: -5835185588227015872
+    second: eff_aura_26
+  - first:
+      213: -1944030638464198778
+    second: eff_aura_27
+  - first:
+      213: -2390998901065585698
+    second: eff_aura_28
+  - first:
+      213: -3652293301552130760
+    second: eff_aura_29
+  - first:
+      213: 7873868829398264324
+    second: eff_aura_30
+  - first:
+      213: 4892022349978228960
+    second: eff_aura_31
+  - first:
+      213: -4185654918713087655
+    second: eff_aura_32
+  - first:
+      213: 4731452058796854578
+    second: eff_aura_33
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_aura_0
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 5360
+        width: 342
+        height: 694
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30d04b815119320c0800000000000000
+      internalID: -4601674874447721213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_1
+      rect:
+        serializedVersion: 2
+        x: 1253
+        y: 5361
+        width: 341
+        height: 693
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55541275b7a03a3b0800000000000000
+      internalID: -5502542794857560747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_2
+      rect:
+        serializedVersion: 2
+        x: 2277
+        y: 5361
+        width: 341
+        height: 693
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e8e28b46a4e11e40800000000000000
+      internalID: 5625528812445034723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_3
+      rect:
+        serializedVersion: 2
+        x: 3301
+        y: 5362
+        width: 342
+        height: 692
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b8d521e1721d04e0800000000000000
+      internalID: -2013933178046785353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_4
+      rect:
+        serializedVersion: 2
+        x: 4325
+        y: 5368
+        width: 342
+        height: 686
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31946599d1ba715a0800000000000000
+      internalID: -6550578989372126957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_5
+      rect:
+        serializedVersion: 2
+        x: 4444
+        y: 5362
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c112fd53a5fa2500800000000000000
+      internalID: 372380001216106953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_6
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 4340
+        width: 342
+        height: 690
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d836d4a02926e70a0800000000000000
+      internalID: -6881954801197948019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_7
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 4338
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccbfe901edf007e30800000000000000
+      internalID: 4499113474179136460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_8
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 4338
+        width: 21
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7015a6ddaa4b8690800000000000000
+      internalID: -7598897835766640513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_9
+      rect:
+        serializedVersion: 2
+        x: 1253
+        y: 4336
+        width: 342
+        height: 694
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04924a476d8cfde50800000000000000
+      internalID: 6836403582777174336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_10
+      rect:
+        serializedVersion: 2
+        x: 2277
+        y: 4335
+        width: 343
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed262cf5c7d35bf10800000000000000
+      internalID: 2284799990352208606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_11
+      rect:
+        serializedVersion: 2
+        x: 3301
+        y: 4336
+        width: 343
+        height: 694
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8404d287b2a940630800000000000000
+      internalID: 3892405489445453896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_12
+      rect:
+        serializedVersion: 2
+        x: 4325
+        y: 4336
+        width: 343
+        height: 694
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 444651997c9c874f0800000000000000
+      internalID: -830692272145865660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_13
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 3313
+        width: 343
+        height: 693
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 029b810ec47b29090800000000000000
+      internalID: -8029153644843058912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_14
+      rect:
+        serializedVersion: 2
+        x: 1253
+        y: 3313
+        width: 343
+        height: 693
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82c9b56ee2d250560800000000000000
+      internalID: 7279274052170783784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_15
+      rect:
+        serializedVersion: 2
+        x: 2277
+        y: 3313
+        width: 342
+        height: 693
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b9898905363eed50800000000000000
+      internalID: 6768406891405609394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_16
+      rect:
+        serializedVersion: 2
+        x: 3301
+        y: 3313
+        width: 342
+        height: 693
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7e138ea956131960800000000000000
+      internalID: 7571419972975664762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_17
+      rect:
+        serializedVersion: 2
+        x: 4325
+        y: 3313
+        width: 342
+        height: 693
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53d6e4ecb80546e00800000000000000
+      internalID: 1037042375593979189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_18
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 2288
+        width: 342
+        height: 694
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5f19c4e50e27e120800000000000000
+      internalID: 2442971925719883613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_19
+      rect:
+        serializedVersion: 2
+        x: 1253
+        y: 2287
+        width: 341
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6231dc97af1304430800000000000000
+      internalID: 3765064240336802598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_20
+      rect:
+        serializedVersion: 2
+        x: 2277
+        y: 2287
+        width: 341
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b96955769006e9e0800000000000000
+      internalID: -1592584772015003215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_21
+      rect:
+        serializedVersion: 2
+        x: 3301
+        y: 2691
+        width: 11
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 214d3c6573adc2900800000000000000
+      internalID: 661143176530351122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_22
+      rect:
+        serializedVersion: 2
+        x: 3302
+        y: 2287
+        width: 340
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30c675140d12725a0800000000000000
+      internalID: -6546226355026564093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_23
+      rect:
+        serializedVersion: 2
+        x: 4325
+        y: 2287
+        width: 341
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0dcf2b179664ad3b0800000000000000
+      internalID: -5486995777304462128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_24
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 1263
+        width: 341
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95a743330faee29d0800000000000000
+      internalID: -2797040001178371495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_25
+      rect:
+        serializedVersion: 2
+        x: 1253
+        y: 1263
+        width: 341
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cf400aaa549db420800000000000000
+      internalID: 2647435273083834313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_26
+      rect:
+        serializedVersion: 2
+        x: 2277
+        y: 1263
+        width: 341
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04bff37af91450fa0800000000000000
+      internalID: -5835185588227015872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_27
+      rect:
+        serializedVersion: 2
+        x: 3301
+        y: 1263
+        width: 341
+        height: 694
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6879dd92f6a6505e0800000000000000
+      internalID: -1944030638464198778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_28
+      rect:
+        serializedVersion: 2
+        x: 4325
+        y: 1263
+        width: 341
+        height: 694
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edbe2a3ea2771ded0800000000000000
+      internalID: -2390998901065585698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_29
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 239
+        width: 341
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8355279c792705dc0800000000000000
+      internalID: -3652293301552130760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_30
+      rect:
+        serializedVersion: 2
+        x: 1253
+        y: 239
+        width: 342
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40aed489bf9954d60800000000000000
+      internalID: 7873868829398264324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_31
+      rect:
+        serializedVersion: 2
+        x: 2277
+        y: 239
+        width: 342
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e859b38864f3e340800000000000000
+      internalID: 4892022349978228960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_32
+      rect:
+        serializedVersion: 2
+        x: 3301
+        y: 239
+        width: 342
+        height: 695
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9596db9270199e5c0800000000000000
+      internalID: -4185654918713087655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_aura_33
+      rect:
+        serializedVersion: 2
+        x: 4325
+        y: 240
+        width: 342
+        height: 694
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23d8064449e79a140800000000000000
+      internalID: 4731452058796854578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_aura_0: -4601674874447721213
+      eff_aura_1: -5502542794857560747
+      eff_aura_10: 2284799990352208606
+      eff_aura_11: 3892405489445453896
+      eff_aura_12: -830692272145865660
+      eff_aura_13: -8029153644843058912
+      eff_aura_14: 7279274052170783784
+      eff_aura_15: 6768406891405609394
+      eff_aura_16: 7571419972975664762
+      eff_aura_17: 1037042375593979189
+      eff_aura_18: 2442971925719883613
+      eff_aura_19: 3765064240336802598
+      eff_aura_2: 5625528812445034723
+      eff_aura_20: -1592584772015003215
+      eff_aura_21: 661143176530351122
+      eff_aura_22: -6546226355026564093
+      eff_aura_23: -5486995777304462128
+      eff_aura_24: -2797040001178371495
+      eff_aura_25: 2647435273083834313
+      eff_aura_26: -5835185588227015872
+      eff_aura_27: -1944030638464198778
+      eff_aura_28: -2390998901065585698
+      eff_aura_29: -3652293301552130760
+      eff_aura_3: -2013933178046785353
+      eff_aura_30: 7873868829398264324
+      eff_aura_31: 4892022349978228960
+      eff_aura_32: -4185654918713087655
+      eff_aura_33: 4731452058796854578
+      eff_aura_4: -6550578989372126957
+      eff_aura_5: 372380001216106953
+      eff_aura_6: -6881954801197948019
+      eff_aura_7: 4499113474179136460
+      eff_aura_8: -7598897835766640513
+      eff_aura_9: 6836403582777174336
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

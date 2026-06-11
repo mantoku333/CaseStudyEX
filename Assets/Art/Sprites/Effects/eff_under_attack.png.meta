@@ -1,0 +1,871 @@
+fileFormatVersion: 2
+guid: 93b6a106091331e4697e0d90ff86567e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6973086617225679530
+    second: eff_under_attack_0
+  - first:
+      213: -2781762235328317340
+    second: eff_under_attack_1
+  - first:
+      213: 7447093484855312224
+    second: eff_under_attack_2
+  - first:
+      213: 5598030014905656502
+    second: eff_under_attack_3
+  - first:
+      213: -6352270231369516865
+    second: eff_under_attack_4
+  - first:
+      213: 8338599286468306841
+    second: eff_under_attack_5
+  - first:
+      213: 7504279431964829548
+    second: eff_under_attack_6
+  - first:
+      213: 5778520041178386163
+    second: eff_under_attack_7
+  - first:
+      213: -8594450897580871506
+    second: eff_under_attack_8
+  - first:
+      213: -4135986716461805028
+    second: eff_under_attack_9
+  - first:
+      213: -9095473473355710704
+    second: eff_under_attack_10
+  - first:
+      213: -5578090671971630215
+    second: eff_under_attack_11
+  - first:
+      213: 8342985528304477000
+    second: eff_under_attack_12
+  - first:
+      213: -4204707747805078469
+    second: eff_under_attack_13
+  - first:
+      213: 4634339117598774926
+    second: eff_under_attack_14
+  - first:
+      213: -8461920009168348305
+    second: eff_under_attack_15
+  - first:
+      213: -3296560887755729564
+    second: eff_under_attack_16
+  - first:
+      213: 626058810344330646
+    second: eff_under_attack_17
+  - first:
+      213: 5458234304921059371
+    second: eff_under_attack_18
+  - first:
+      213: 8664284329277255531
+    second: eff_under_attack_19
+  - first:
+      213: 8600496289032921808
+    second: eff_under_attack_20
+  - first:
+      213: -367835614895209321
+    second: eff_under_attack_21
+  - first:
+      213: -7519474100053391516
+    second: eff_under_attack_22
+  - first:
+      213: -7109423120847998162
+    second: eff_under_attack_23
+  - first:
+      213: 5130853516254356429
+    second: eff_under_attack_24
+  - first:
+      213: 4430163257962179742
+    second: eff_under_attack_25
+  - first:
+      213: 6324493815917382916
+    second: eff_under_attack_26
+  - first:
+      213: 7878475030234368001
+    second: eff_under_attack_27
+  - first:
+      213: 4758940667337840581
+    second: eff_under_attack_28
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: eff_under_attack_0
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 3071
+        width: 71
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65dab38aaae9a3f90800000000000000
+      internalID: -6973086617225679530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_1
+      rect:
+        serializedVersion: 2
+        x: 1441
+        y: 3071
+        width: 189
+        height: 377
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 468b8a14cf13569d0800000000000000
+      internalID: -2781762235328317340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_2
+      rect:
+        serializedVersion: 2
+        x: 2465
+        y: 3071
+        width: 189
+        height: 697
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06f3ded6114695760800000000000000
+      internalID: 7447093484855312224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_3
+      rect:
+        serializedVersion: 2
+        x: 3489
+        y: 3077
+        width: 189
+        height: 1006
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b42d6093a230bd40800000000000000
+      internalID: 5598030014905656502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_4
+      rect:
+        serializedVersion: 2
+        x: 4513
+        y: 3077
+        width: 189
+        height: 1006
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb87eed51e338d7a0800000000000000
+      internalID: -6352270231369516865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_5
+      rect:
+        serializedVersion: 2
+        x: 417
+        y: 2053
+        width: 189
+        height: 1006
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 997e44a0fd7a8b370800000000000000
+      internalID: 8338599286468306841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_6
+      rect:
+        serializedVersion: 2
+        x: 1441
+        y: 2053
+        width: 189
+        height: 1006
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c67a88d426e842860800000000000000
+      internalID: 7504279431964829548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_7
+      rect:
+        serializedVersion: 2
+        x: 2465
+        y: 2053
+        width: 189
+        height: 1006
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fec9ed8c5d613050800000000000000
+      internalID: 5778520041178386163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_8
+      rect:
+        serializedVersion: 2
+        x: 3489
+        y: 2054
+        width: 189
+        height: 1005
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea0b72aa1706ab880800000000000000
+      internalID: -8594450897580871506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_9
+      rect:
+        serializedVersion: 2
+        x: 4513
+        y: 2174
+        width: 189
+        height: 885
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c125f89aef50a96c0800000000000000
+      internalID: -4135986716461805028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_10
+      rect:
+        serializedVersion: 2
+        x: 417
+        y: 1259
+        width: 189
+        height: 776
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01ff4acd01366c180800000000000000
+      internalID: -9095473473355710704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_11
+      rect:
+        serializedVersion: 2
+        x: 1441
+        y: 1378
+        width: 189
+        height: 657
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 973063c7614a692b0800000000000000
+      internalID: -5578090671971630215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_12
+      rect:
+        serializedVersion: 2
+        x: 2465
+        y: 1656
+        width: 189
+        height: 379
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84320dc822d38c370800000000000000
+      internalID: 8342985528304477000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_13
+      rect:
+        serializedVersion: 2
+        x: 3547
+        y: 1751
+        width: 103
+        height: 284
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3cdeb3b490e5a5c0800000000000000
+      internalID: -4204707747805078469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_14
+      rect:
+        serializedVersion: 2
+        x: 4571
+        y: 1855
+        width: 73
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e861c29afda705040800000000000000
+      internalID: 4634339117598774926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_15
+      rect:
+        serializedVersion: 2
+        x: 4612
+        y: 1782
+        width: 18
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6b10c7b598319a80800000000000000
+      internalID: -8461920009168348305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_16
+      rect:
+        serializedVersion: 2
+        x: 4618
+        y: 1808
+        width: 26
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4659fd8a6534042d0800000000000000
+      internalID: -3296560887755729564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_17
+      rect:
+        serializedVersion: 2
+        x: 4626
+        y: 1757
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 695d317cb2530b800800000000000000
+      internalID: 626058810344330646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_18
+      rect:
+        serializedVersion: 2
+        x: 4651
+        y: 1763
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b20cbad6e2b8fbb40800000000000000
+      internalID: 5458234304921059371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_19
+      rect:
+        serializedVersion: 2
+        x: 4661
+        y: 1764
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6fed8f21b8bd3870800000000000000
+      internalID: 8664284329277255531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_20
+      rect:
+        serializedVersion: 2
+        x: 3490
+        y: 1731
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d26fd7bec91b5770800000000000000
+      internalID: 8600496289032921808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_21
+      rect:
+        serializedVersion: 2
+        x: 2545
+        y: 1497
+        width: 29
+        height: 154
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7940f66057f25eaf0800000000000000
+      internalID: -367835614895209321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_22
+      rect:
+        serializedVersion: 2
+        x: 3534
+        y: 1616
+        width: 54
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4674198552675a790800000000000000
+      internalID: -7519474100053391516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_23
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 889
+        width: 70
+        height: 122
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e23f7e3c651465d90800000000000000
+      internalID: -7109423120847998162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_24
+      rect:
+        serializedVersion: 2
+        x: 1515
+        y: 933
+        width: 42
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc3a7eea614743740800000000000000
+      internalID: 5130853516254356429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_25
+      rect:
+        serializedVersion: 2
+        x: 2544
+        y: 956
+        width: 32
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9ca2d7d20a1b7d30800000000000000
+      internalID: 4430163257962179742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_26
+      rect:
+        serializedVersion: 2
+        x: 3570
+        y: 965
+        width: 28
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40d09e1fd9d15c750800000000000000
+      internalID: 6324493815917382916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_27
+      rect:
+        serializedVersion: 2
+        x: 4594
+        y: 966
+        width: 28
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10887ec4c47f55d60800000000000000
+      internalID: 7878475030234368001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: eff_under_attack_28
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 836
+        width: 54
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c715dfa2572b0240800000000000000
+      internalID: 4758940667337840581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      eff_under_attack_0: -6973086617225679530
+      eff_under_attack_1: -2781762235328317340
+      eff_under_attack_10: -9095473473355710704
+      eff_under_attack_11: -5578090671971630215
+      eff_under_attack_12: 8342985528304477000
+      eff_under_attack_13: -4204707747805078469
+      eff_under_attack_14: 4634339117598774926
+      eff_under_attack_15: -8461920009168348305
+      eff_under_attack_16: -3296560887755729564
+      eff_under_attack_17: 626058810344330646
+      eff_under_attack_18: 5458234304921059371
+      eff_under_attack_19: 8664284329277255531
+      eff_under_attack_2: 7447093484855312224
+      eff_under_attack_20: 8600496289032921808
+      eff_under_attack_21: -367835614895209321
+      eff_under_attack_22: -7519474100053391516
+      eff_under_attack_23: -7109423120847998162
+      eff_under_attack_24: 5130853516254356429
+      eff_under_attack_25: 4430163257962179742
+      eff_under_attack_26: 6324493815917382916
+      eff_under_attack_27: 7878475030234368001
+      eff_under_attack_28: 4758940667337840581
+      eff_under_attack_3: 5598030014905656502
+      eff_under_attack_4: -6352270231369516865
+      eff_under_attack_5: 8338599286468306841
+      eff_under_attack_6: 7504279431964829548
+      eff_under_attack_7: 5778520041178386163
+      eff_under_attack_8: -8594450897580871506
+      eff_under_attack_9: -4135986716461805028
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
