@@ -28,8 +28,8 @@ Transform:
   m_GameObject: {fileID: 552640998741230002}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: -0.4, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_LocalPosition: {x: 0, y: 0.019, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3660086356055333866}
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 1813728757, guid: b02103fd1d461824fa57377d6d2ff3a4, type: 3}
+  m_Sprite: {fileID: 2879133411664118327, guid: 457e5edb799f7bd40b50bdcfb9efaf4b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -103,7 +103,7 @@ Animator:
   m_GameObject: {fileID: 552640998741230002}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: d18842e5a5824f248948b4f04e798f1a, type: 2}
+  m_Controller: {fileID: 9100000, guid: dc751bccec6440b383e08c4235d54732, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -129,6 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemySpriteAnimator
   enemyController: {fileID: 4333219616003735470}
   tackleAttack: {fileID: 0}
+  stageBossAttack: {fileID: 0}
   rangedAttack: {fileID: 867530900123456789}
   syncFacingFromController: 1
   autoCollectFlipRenderers: 1
@@ -280,7 +281,10 @@ MonoBehaviour:
   stageLayerMask:
     serializedVersion: 2
     m_Bits: 192
+  treatShutterWallsAsWalls: 1
   flipSpriteOnTurn: 1
+  turnCheckInterval: 0.08
+  staggerTurnChecks: 1
   enemyCollisionTurnCooldown: 0.15
 --- !u!114 &867530900123456789
 MonoBehaviour:
@@ -319,7 +323,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cde4b0a4e4f84f609e9e8b7e5dcf7b12, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyRangedWindupEffectPlayer
   inSpriteSheet: {fileID: 2800000, guid: 7754464a816ef9b4c9d8fb355c685ba8, type: 3}
   frameColumns: 5

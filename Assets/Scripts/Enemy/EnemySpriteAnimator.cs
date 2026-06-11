@@ -12,6 +12,7 @@ namespace GameName.Enemy
         [Header("Controller")]
         [SerializeField] private EnemyController enemyController;
         [SerializeField] private EnemyTackleAttack tackleAttack;
+        [SerializeField] private StageBossAttack stageBossAttack;
         [SerializeField] private EnemyRangedAttack rangedAttack;
 
         [Header("Facing")]
@@ -91,6 +92,11 @@ namespace GameName.Enemy
                 tackleAttack = GetComponentInParent<EnemyTackleAttack>();
             }
 
+            if (stageBossAttack == null)
+            {
+                stageBossAttack = GetComponentInParent<StageBossAttack>();
+            }
+
             if (rangedAttack == null)
             {
                 rangedAttack = GetComponentInParent<EnemyRangedAttack>();
@@ -129,6 +135,16 @@ namespace GameName.Enemy
             }
 
             if (tackleAttack != null && (tackleAttack.IsWindingUp || tackleAttack.IsCoolingDown))
+            {
+                return VisualState.Engage;
+            }
+
+            if (stageBossAttack != null && stageBossAttack.IsCharging)
+            {
+                return VisualState.Attack;
+            }
+
+            if (stageBossAttack != null && (stageBossAttack.IsWindingUp || stageBossAttack.IsCoolingDown))
             {
                 return VisualState.Engage;
             }

@@ -24,6 +24,7 @@ namespace GameName.Enemy
             GridSpriteSheetClip clip,
             int uprightFrameIndex,
             Vector2 targetWorldSize,
+            float worldBottomY,
             Action uprightFrameReached)
         {
             if (!clip.IsValid)
@@ -34,16 +35,33 @@ namespace GameName.Enemy
             CacheComponents();
             ConfigureTargetSize(targetWorldSize);
             ResetAlpha();
+            visualTransform.localPosition = Vector3.zero;
 
             bool notified = false;
-            int clampedFrame = Mathf.Clamp(uprightFrameIndex, 0, Mathf.Max(0, clip.FrameCount - 1));
+            int clampedFrame = Mathf.Clamp(uprightFrameIndex, 0, Mathf.Max(0, clip.EffectiveFrameCount - 1));
+            float risenTopY = 0f;
+            bool hasRisenTopY = false;
             return player.Play(
                 clip,
                 loop: false,
-                holdLast: true,
-                hideOnComplete: false,
+                holdLast: false,
+                hideOnComplete: true,
                 frameChanged: frameIndex =>
                 {
+                    if (frameIndex <= clampedFrame)
+                    {
+                        AlignBottomToWorldY(worldBottomY);
+                        if (frameIndex == clampedFrame && targetRenderer != null)
+                        {
+                            risenTopY = targetRenderer.bounds.max.y;
+                            hasRisenTopY = true;
+                        }
+                    }
+                    else if (hasRisenTopY)
+                    {
+                        AlignTopToWorldY(risenTopY);
+                    }
+
                     if (notified || frameIndex < clampedFrame)
                     {
                         return;
@@ -123,6 +141,42 @@ namespace GameName.Enemy
             Color color = targetRenderer.color;
             color.a = 1f;
             targetRenderer.color = color;
+        }
+
+        private void AlignBottomToWorldY(float worldBottomY)
+        {
+            if (targetRenderer == null || targetRenderer.sprite == null || visualTransform == null)
+            {
+                return;
+            }
+
+            Bounds bounds = targetRenderer.bounds;
+            if (bounds.size.y <= 0.001f)
+            {
+                return;
+            }
+
+            Vector3 position = visualTransform.position;
+            position.y += worldBottomY - bounds.min.y;
+            visualTransform.position = position;
+        }
+
+        private void AlignTopToWorldY(float worldTopY)
+        {
+            if (targetRenderer == null || targetRenderer.sprite == null || visualTransform == null)
+            {
+                return;
+            }
+
+            Bounds bounds = targetRenderer.bounds;
+            if (bounds.size.y <= 0.001f)
+            {
+                return;
+            }
+
+            Vector3 position = visualTransform.position;
+            position.y += worldTopY - bounds.max.y;
+            visualTransform.position = position;
         }
 
         private void CacheComponents()

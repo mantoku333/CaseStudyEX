@@ -433,6 +433,7 @@ namespace GameName.Enemy
                 groundVisualClip,
                 groundVisualUprightFrameIndex,
                 ResolveCachedVisualWorldSize(groundVisualWorldSize),
+                groundY,
                 () =>
                 {
                     EnableBladeDamage();

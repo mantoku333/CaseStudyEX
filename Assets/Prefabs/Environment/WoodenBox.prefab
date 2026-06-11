@@ -164,6 +164,14 @@ MonoBehaviour:
   freezeRotation: 1
   breakEffectSizeMultiplier: 1
   rightSideLeftLaunchMultiplier: 2
+  dropItemOnBreak: 0
+  dropItemPrefab: {fileID: 8939175200346428530, guid: 66fdf311024d44a4799de1893ee3cb11, type: 3}
+  dropPoint: {fileID: 0}
+  dropOffset: {x: 0, y: 0, z: 0}
+  randomHorizontalOffsetRange: {x: 0, y: 0}
+  dropHopHeight: 1
+  dropHopDuration: 0.25
+  disablePickupDuringDropHop: 1
   idleSpriteSheetTexture: {fileID: 2800000, guid: 158fad97a306bf940a2c6deecea24032, type: 3}
   idleFrameColumns: 5
   idleFrameRows: 3

@@ -636,9 +636,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
   m_Name: Event/Panel Point
   m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
-  m_Time: 7.25
+  m_Time: 0
   markerId: fd40845972ef46b19fe643c3bb200821
-  markerMode: 0
+  markerMode: 1
   panelObject:
     exposedName: 75b8291ec6091904284b4ee4445c391d
     defaultValue: {fileID: 0}
@@ -647,7 +647,7 @@ MonoBehaviour:
     defaultValue: {fileID: 0}
   panelPresenterName: 
   panelKind: 0
-  diaryEntryData: {fileID: 0}
+  diaryEntryData: {fileID: 11400000, guid: 2e6a661052bee2346a64b09bbf957071, type: 2}
   title: 
   body: 
   closeLabel: 

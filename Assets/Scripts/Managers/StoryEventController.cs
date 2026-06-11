@@ -96,6 +96,7 @@ public sealed class StoryEventController : MonoBehaviour
     [SerializeField] private StoryPausePolicy pausePolicy = StoryPausePolicy.GameplayOnly;
     [SerializeField] private bool autoSaveOnComplete = true;
     [SerializeField] private bool markRunOnceFlagOnComplete = true;
+    [SerializeField] private List<GameObject> deactivateObjectsOnComplete = new List<GameObject>();
 
     [Header("Cinematic State")]
     [SerializeField] private bool lockPlayerControlDuringEvent = true;
@@ -413,6 +414,13 @@ public sealed class StoryEventController : MonoBehaviour
             double currentTime = resolvedDirector.time;
             ProcessTimelinePoints(resolvedDirector, lastPointProcessTime, currentTime);
             lastPointProcessTime = currentTime;
+
+            if (!waitingDialogueCompletion && HasDirectorReachedTimelineEnd(resolvedDirector))
+            {
+                directorStopped = true;
+                continue;
+            }
+
             yield return null;
         }
 
@@ -781,7 +789,7 @@ public sealed class StoryEventController : MonoBehaviour
         bool shouldPauseTimeline = pauseTimelineUntilClosed && resolvedDirector != null;
         if (shouldPauseTimeline)
         {
-            resolvedDirector.Pause();
+            PauseDirectorAfterCurrentEvaluation(resolvedDirector);
             panelPausedDirector = resolvedDirector;
             shouldResumePanelPausedDirector = true;
         }
@@ -839,7 +847,7 @@ public sealed class StoryEventController : MonoBehaviour
         bool shouldPauseTimeline = pauseTimelineUntilClosed && resolvedDirector != null;
         if (shouldPauseTimeline)
         {
-            resolvedDirector.Pause();
+            PauseDirectorAfterCurrentEvaluation(resolvedDirector);
             panelPausedDirector = resolvedDirector;
             shouldResumePanelPausedDirector = true;
         }
@@ -918,6 +926,17 @@ public sealed class StoryEventController : MonoBehaviour
         shouldResumePanelPausedDirector = false;
 
         ResumeDirectorIfNeeded(resolvedDirector, shouldResume);
+    }
+
+    private static void PauseDirectorAfterCurrentEvaluation(PlayableDirector resolvedDirector)
+    {
+        if (resolvedDirector == null)
+        {
+            return;
+        }
+
+        resolvedDirector.Evaluate();
+        resolvedDirector.Pause();
     }
 
     private IEnumerator PlayDialogueRoutine(
@@ -1159,6 +1178,7 @@ public sealed class StoryEventController : MonoBehaviour
     private void ApplyCompletionState()
     {
         ApplyCompleteMutations();
+        DeactivateObjectsOnComplete();
 
         if (markRunOnceFlagOnComplete && !string.IsNullOrWhiteSpace(runOnceFlagKey))
         {
@@ -1169,6 +1189,39 @@ public sealed class StoryEventController : MonoBehaviour
         {
             SaveManager.TrySaveCurrentGame();
         }
+    }
+
+    private void DeactivateObjectsOnComplete()
+    {
+        if (deactivateObjectsOnComplete == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < deactivateObjectsOnComplete.Count; i++)
+        {
+            GameObject target = deactivateObjectsOnComplete[i];
+            if (target != null)
+            {
+                target.SetActive(false);
+            }
+        }
+    }
+
+    private static bool HasDirectorReachedTimelineEnd(PlayableDirector targetDirector)
+    {
+        if (targetDirector == null || targetDirector.extrapolationMode == DirectorWrapMode.Loop)
+        {
+            return false;
+        }
+
+        double duration = targetDirector.duration;
+        if (double.IsInfinity(duration) || double.IsNaN(duration) || duration <= 0.000001d)
+        {
+            return false;
+        }
+
+        return targetDirector.time >= duration - 0.0001d;
     }
 
     private void ApplyCompleteMutations()
