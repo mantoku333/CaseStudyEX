@@ -139,76 +139,7 @@ MonoBehaviour:
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
   m_Children: []
-  m_Clips:
-  - m_Version: 1
-    m_Start: 0.11666666666666667
-    m_ClipIn: 0
-    m_Asset: {fileID: 6250761020134836445}
-    m_Duration: 2.466666666666667
-    m_TimeScale: 1
-    m_ParentTrack: {fileID: -5675552448397036753}
-    m_EaseInDuration: 0
-    m_EaseOutDuration: 0
-    m_BlendInDuration: 0
-    m_BlendOutDuration: 0
-    m_MixInCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_MixOutCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_BlendInCurveMode: 0
-    m_BlendOutCurveMode: 0
-    m_ExposedParameterNames: []
-    m_AnimationCurves: {fileID: 0}
-    m_Recordable: 0
-    m_PostExtrapolationMode: 0
-    m_PreExtrapolationMode: 0
-    m_PostExtrapolationTime: 0
-    m_PreExtrapolationTime: 0
-    m_DisplayName: StoryYarnDialogueClip
+  m_Clips: []
   m_Markers:
     m_Objects:
     - {fileID: 327608698108943624}
@@ -340,6 +271,39 @@ MonoBehaviour:
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
   bubbleActorKey: 
+--- !u!114 &-130548716381830414
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
+  m_Time: 0
+  markerId: 8b20d9e4abbd4f2f9344f4c46bd5c7af
+  markerMode: 1
+  panelObject:
+    exposedName: fec8fa5e847f8d14fa0e6fafbf02f1dd
+    defaultValue: {fileID: 0}
+  panelPresenter:
+    exposedName: 23dbffccd5cba1047831fe4ec459188b
+    defaultValue: {fileID: 0}
+  panelPresenterName: 
+  panelKind: 0
+  diaryEntryData: {fileID: 11400000, guid: 2ff1fa1019933f045bdbd935307edc21, type: 2}
+  title: 
+  body: 
+  closeLabel: 
+  illustration: {fileID: 0}
+  animationFrames: []
+  animationFramesPerSecond: 12
+  animationLoopIntervalSeconds: 0.5
+  pauseTimelineUntilClosed: 1
+  autoCloseSecondsWhenNoButton: 3
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -393,6 +357,7 @@ MonoBehaviour:
   m_Markers:
     m_Objects:
     - {fileID: 8561065495896680998}
+    - {fileID: -130548716381830414}
 --- !u!114 &149827093544674222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -583,24 +548,6 @@ MonoBehaviour:
   m_Time: 42.86666666666669
   markerId: e084d23cce954d0dac3494c348322d77
   nodeName: test_07
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
---- !u!114 &6250761020134836445
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a4da3f2323046fdbb3dc0f7ca40a6b8, type: 3}
-  m_Name: StoryYarnDialogueClip
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueClip
-  clipId: 368817bbf1194c198f82565d5ce9b8c2
-  nodeName: Start
   useControllerDefaultStyle: 1
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
