@@ -184,7 +184,7 @@ MonoBehaviour:
   sideSteerProbeDistance: 0.8
   justParryWindow: 1
   maxReflectDistance: 15
-  reflectedDamageMultiplier: 1.5
+  reflectedDamageMultiplier: 4
 --- !u!114 &650300000000000001
 MonoBehaviour:
   m_ObjectHideFlags: 0
