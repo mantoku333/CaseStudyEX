@@ -96,6 +96,7 @@ namespace GameName.Enemy
         [SerializeField, Min(0.01f)] private float hitFlashDuration = 0.14f;
         [SerializeField, Min(1)] private int hitFlashRepeatCount = 2;
         [SerializeField, Min(0f)] private float hitFlashNormalDuration = 0.05f;
+        [SerializeField] private LastBossSpriteAnimator spriteView;
         [SerializeField] private bool drawDebugGizmos = true;
 
         // Update内の状態遷移を明示するための簡易ステート。
@@ -189,15 +190,17 @@ namespace GameName.Enemy
         {
             rb2D = GetComponent<Rigidbody2D>();
             bodyCollider = GetComponent<Collider2D>();
+            ResolveSpriteView();
             spriteRenderer = GetComponent<SpriteRenderer>();
             effectController = GetComponent<LastBossEffectController>();
             InitializeFacingDirectionFromSprite();
             effectController?.SetFacingDirection(facingDirection);
             currentHealth = MaxHealth;
 
-            if (spriteRenderer != null)
+            SpriteRenderer mainRenderer = GetMainSpriteRenderer();
+            if (mainRenderer != null)
             {
-                defaultSpriteColor = spriteRenderer.color;
+                defaultSpriteColor = mainRenderer.color;
             }
 
             if (playerDetectionMask.value == 0)
@@ -356,6 +359,7 @@ namespace GameName.Enemy
             stateTimer = initialActionDelay;
             state = BossState.InitialDelay;
             StopMotion();
+            spriteView?.PlayIdle();
             HideAttackVisual();
             SetBossRenderersEnabled(true);
             RestoreCombatBodyAfterReset();
@@ -373,6 +377,7 @@ namespace GameName.Enemy
             visibleAction = BossAction.None;
             ClearJustParryBuffer();
             StopMotion();
+            spriteView?.PlayIdle();
             HideAttackVisual();
         }
 
@@ -517,6 +522,7 @@ namespace GameName.Enemy
             HideAttackVisual();
             stateTimer = GetRecoveryTime(visibleAction);
             state = BossState.Recovery;
+            spriteView?.PlayIdle();
         }
 
         private void UpdateRecovery()
@@ -616,6 +622,7 @@ namespace GameName.Enemy
                 stateTimer = action == BossAction.Horizontal ? horizontalTelegraphTime : verticalTelegraphTime;
                 state = BossState.Telegraphing;
                 HideAttackVisual();
+                PlayRangeTelegraphAnimation(action);
 
                 if (action == BossAction.Horizontal)
                 {
@@ -629,6 +636,8 @@ namespace GameName.Enemy
 
                 return;
             }
+
+            spriteView?.PlayNormalAttack();
 
             bool downStarted = ResolveAttack(action, activeAttackBox);
             if (downStarted)
@@ -705,6 +714,7 @@ namespace GameName.Enemy
             state = BossState.AttackVisible;
             prefabAttackRunning = true;
             HideRangeParryProxy();
+            PlayAttackReleaseAnimation(action);
 
             if (activeBladeAttackRoutine != null)
             {
@@ -1220,6 +1230,7 @@ namespace GameName.Enemy
             visibleAction = action;
             stateTimer = GetRecoveryTime(action);
             state = BossState.Recovery;
+            spriteView?.PlayIdle();
         }
 
         private void SetRangeActionCooldown(BossAction action)
@@ -1368,6 +1379,7 @@ namespace GameName.Enemy
                 visibleAction = action;
                 stateTimer = GetRecoveryTime(action);
                 state = BossState.Recovery;
+                spriteView?.PlayIdle();
             }
         }
 
@@ -1427,6 +1439,7 @@ namespace GameName.Enemy
                 visibleAction = action;
                 stateTimer = GetRecoveryTime(action);
                 state = BossState.Recovery;
+                spriteView?.PlayIdle();
             }
         }
 
@@ -1602,6 +1615,8 @@ namespace GameName.Enemy
             Vector2 velocity = rb2D.linearVelocity;
             velocity.x = facingDirection * moveSpeed;
             rb2D.linearVelocity = velocity;
+            ApplyFacingVisual();
+            spriteView?.PlayMove();
         }
 
         private float GetStopDistanceForAction(BossAction action)
@@ -1715,6 +1730,7 @@ namespace GameName.Enemy
             }
 
             facingDirection = deltaX >= 0f ? 1 : -1;
+            ApplyFacingVisual();
 
             if (spriteRenderer != null)
             {
@@ -1797,6 +1813,7 @@ namespace GameName.Enemy
             state = BossState.Downed;
             StopMotion();
             HideAttackVisual();
+            spriteView?.PlayDownStart();
             pendingAction = BossAction.None;
             visibleAction = BossAction.None;
             ClearJustParryBuffer();
@@ -1819,7 +1836,32 @@ namespace GameName.Enemy
                 yield return new WaitForSecondsRealtime(hitStopDuration);
             }
 
-            yield return new WaitForSeconds(downDuration);
+            float downHoldSeconds = Mathf.Max(0f, downDuration);
+            float downStartDuration = spriteView != null ? spriteView.DownStartDuration : 0f;
+            float downEndDuration = spriteView != null ? spriteView.DownEndDuration : 0f;
+            if (downEndDuration > 0f)
+            {
+                downHoldSeconds = Mathf.Max(0f, downHoldSeconds - downEndDuration);
+            }
+
+            if (downStartDuration > 0f && downHoldSeconds > 0f)
+            {
+                float downStartWait = Mathf.Min(downStartDuration, downHoldSeconds);
+                yield return new WaitForSeconds(downStartWait);
+                downHoldSeconds = Mathf.Max(0f, downHoldSeconds - downStartWait);
+            }
+
+            spriteView?.PlayDownHold();
+            if (downHoldSeconds > 0f)
+            {
+                yield return new WaitForSeconds(downHoldSeconds);
+            }
+
+            spriteView?.PlayDownEnd();
+            if (downEndDuration > 0f)
+            {
+                yield return new WaitForSeconds(downEndDuration);
+            }
 
             if (state != BossState.Dead)
             {
@@ -1827,6 +1869,7 @@ namespace GameName.Enemy
                 downRoutineRunning = false;
                 state = BossState.Recovery;
                 stateTimer = 0f;
+                spriteView?.PlayIdle();
                 effectController?.HandleDownEnded();
             }
         }
@@ -1871,6 +1914,7 @@ namespace GameName.Enemy
             visibleAction = BossAction.None;
             ClearJustParryBuffer();
             StopMotion();
+            spriteView?.PlayIdle();
             HideAttackVisual();
             RestoreCombatBodyAfterReset();
             SetBossRenderersEnabled(true);
@@ -1896,25 +1940,26 @@ namespace GameName.Enemy
 
         private void UpdateEnragedVisual()
         {
-            if (spriteRenderer == null)
+            SpriteRenderer mainRenderer = GetMainSpriteRenderer();
+            if (mainRenderer == null)
             {
                 return;
             }
 
             if (IsHitFlashActive())
             {
-                spriteRenderer.color = hitFlashColor;
+                mainRenderer.color = hitFlashColor;
                 return;
             }
 
             if (!enraged)
             {
-                spriteRenderer.color = defaultSpriteColor;
+                mainRenderer.color = defaultSpriteColor;
                 return;
             }
 
             float pulse = enragedPulseSpeed <= 0f ? 1f : (Mathf.Sin(Time.time * enragedPulseSpeed) + 1f) * 0.5f;
-            spriteRenderer.color = Color.Lerp(defaultSpriteColor, enragedColor, 0.45f + pulse * 0.35f);
+            mainRenderer.color = Color.Lerp(defaultSpriteColor, enragedColor, 0.45f + pulse * 0.35f);
         }
 
         private bool IsHitFlashActive()
@@ -1943,6 +1988,7 @@ namespace GameName.Enemy
             CancelActiveBladeAttack();
             StopMotion();
             HideAttackVisual();
+            spriteView?.PlayDead();
             DisableCombatBodyForDeath();
             // Destroy前に通知して、ボスの表示状態を参照できるようにする。
             Died?.Invoke();
@@ -2158,6 +2204,81 @@ namespace GameName.Enemy
             return side.sqrMagnitude <= 0.0001f ? Vector2.right : side.normalized;
         }
 
+        private void ResolveSpriteView()
+        {
+            if (spriteView == null)
+            {
+                spriteView = GetComponentInChildren<LastBossSpriteAnimator>(true);
+            }
+
+            spriteRenderer = spriteView != null && spriteView.MainRenderer != null
+                ? spriteView.MainRenderer
+                : GetComponent<SpriteRenderer>();
+        }
+
+        private SpriteRenderer GetMainSpriteRenderer()
+        {
+            if (spriteView != null && spriteView.MainRenderer != null)
+            {
+                return spriteView.MainRenderer;
+            }
+
+            if (spriteRenderer == null)
+            {
+                spriteRenderer = GetComponent<SpriteRenderer>();
+            }
+
+            return spriteRenderer;
+        }
+
+        private void ApplyFacingVisual()
+        {
+            if (spriteView != null)
+            {
+                spriteView.SetFacing(facingDirection);
+                return;
+            }
+
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.flipX = facingDirection > 0;
+            }
+        }
+
+        private void PlayRangeTelegraphAnimation(BossAction action)
+        {
+            if (spriteView == null)
+            {
+                return;
+            }
+
+            if (action == BossAction.Horizontal)
+            {
+                spriteView.PlayHorizontalStart();
+            }
+            else if (action == BossAction.Vertical)
+            {
+                spriteView.PlayVerticalStart();
+            }
+        }
+
+        private void PlayAttackReleaseAnimation(BossAction action)
+        {
+            if (spriteView == null)
+            {
+                return;
+            }
+
+            if (action == BossAction.Horizontal)
+            {
+                spriteView.PlayHorizontalEnd();
+            }
+            else if (action == BossAction.Vertical)
+            {
+                spriteView.PlayVerticalEnd();
+            }
+        }
+
         private void ConfigureRigidbody()
         {
             if (rb2D == null)
@@ -2251,7 +2372,8 @@ namespace GameName.Enemy
             telegraphCollider.size = Vector2.one;
             telegraphCollider.enabled = false;
             telegraphRenderer.sprite = runtimeBoxSprite;
-            telegraphRenderer.sortingOrder = spriteRenderer != null ? spriteRenderer.sortingOrder + 1 : 1;
+            SpriteRenderer mainRenderer = GetMainSpriteRenderer();
+            telegraphRenderer.sortingOrder = mainRenderer != null ? mainRenderer.sortingOrder + 1 : 1;
             telegraphRenderer.enabled = false;
         }
 
