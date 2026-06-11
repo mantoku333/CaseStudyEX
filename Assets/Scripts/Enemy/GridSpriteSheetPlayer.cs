@@ -23,6 +23,8 @@ namespace GameName.Enemy
         public bool UseFrameCropForSizingOnly;
         public RectInt FrameCropPixels;
         public Vector2Int FrameCropReferencePixels;
+        public bool UseFrameBoundsPivot;
+        public Sprite[] FrameBoundsSourceFrames;
 
         public bool HasSpriteFrames => SpriteFrames != null && SpriteFrames.Length > 0;
 
@@ -77,10 +79,13 @@ namespace GameName.Enemy
                         y + frameRect.y,
                         frameRect.width,
                         frameRect.height);
+                    Vector2 pivot = clip.UseFrameBoundsPivot
+                        ? ResolveFrameBoundsPivot(clip, column, row, frameWidth, frameHeight, frameRect, rect)
+                        : clip.Pivot;
                     Sprite sprite = Sprite.Create(
                         clip.SpriteSheet,
                         rect,
-                        clip.Pivot,
+                        pivot,
                         clip.PixelsPerUnit,
                         0,
                         SpriteMeshType.FullRect);
@@ -216,6 +221,77 @@ namespace GameName.Enemy
             int cropWidth = Mathf.Clamp(frameCrop.width, 1, frameWidth - cropX);
             int cropHeight = Mathf.Clamp(frameCrop.height, 1, frameHeight - cropY);
             return new RectInt(cropX, cropY, cropWidth, cropHeight);
+        }
+
+        private static Vector2 ResolveFrameBoundsPivot(
+            GridSpriteSheetClip clip,
+            int column,
+            int row,
+            int frameWidth,
+            int frameHeight,
+            RectInt frameRect,
+            Rect generatedRect)
+        {
+            if (clip.FrameBoundsSourceFrames == null ||
+                clip.FrameBoundsSourceFrames.Length == 0 ||
+                generatedRect.width <= 0f ||
+                generatedRect.height <= 0f)
+            {
+                return clip.Pivot;
+            }
+
+            RectInt sourceBounds = default;
+            bool hasBounds = false;
+            int sourceRowFromBottom = clip.Rows - 1 - row;
+            Rect sourceCell = new Rect(
+                column * frameWidth,
+                sourceRowFromBottom * frameHeight,
+                frameWidth,
+                frameHeight);
+
+            for (int i = 0; i < clip.FrameBoundsSourceFrames.Length; i++)
+            {
+                Sprite sourceFrame = clip.FrameBoundsSourceFrames[i];
+                if (sourceFrame == null || sourceFrame.texture != clip.SpriteSheet)
+                {
+                    continue;
+                }
+
+                Rect sourceRect = sourceFrame.rect;
+                if (!sourceCell.Contains(sourceRect.center))
+                {
+                    continue;
+                }
+
+                RectInt sourceRectInt = new RectInt(
+                    Mathf.FloorToInt(sourceRect.xMin),
+                    Mathf.FloorToInt(sourceRect.yMin),
+                    Mathf.CeilToInt(sourceRect.width),
+                    Mathf.CeilToInt(sourceRect.height));
+
+                if (!hasBounds)
+                {
+                    sourceBounds = sourceRectInt;
+                    hasBounds = true;
+                    continue;
+                }
+
+                int minX = Mathf.Min(sourceBounds.xMin, sourceRectInt.xMin);
+                int minY = Mathf.Min(sourceBounds.yMin, sourceRectInt.yMin);
+                int maxX = Mathf.Max(sourceBounds.xMax, sourceRectInt.xMax);
+                int maxY = Mathf.Max(sourceBounds.yMax, sourceRectInt.yMax);
+                sourceBounds = new RectInt(minX, minY, maxX - minX, maxY - minY);
+            }
+
+            if (!hasBounds)
+            {
+                return clip.Pivot;
+            }
+
+            Vector2 sourceCenter = sourceBounds.center;
+            return new Vector2(
+                Mathf.Clamp01((sourceCenter.x - generatedRect.xMin) / generatedRect.width),
+                Mathf.Clamp01((sourceCenter.y - generatedRect.yMin) / generatedRect.height));
         }
 
         private static RectInt ScaleFrameCrop(

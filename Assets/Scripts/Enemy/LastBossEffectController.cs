@@ -109,6 +109,9 @@ namespace GameName.Enemy
         private float horizontalRangeBladeWorldWidth = 1f;
         private bool shieldBrokenThisDown;
         private bool deathHideNotified;
+        private bool deathPositionLocked;
+
+        public event Action MagicCircleInStarted;
 
         public int FacingDirection => facingDirection;
         public int GroundBladeUprightFrameIndex => Mathf.Max(0, groundBladeUprightFrameIndex);
@@ -154,7 +157,10 @@ namespace GameName.Enemy
             FollowBoss(auraObject, ResolveAuraOffset());
             FollowBoss(shieldObject, shieldOffset);
             FollowBoss(shieldBreakObject, shieldBreakOffset);
-            FollowBoss(deathObject, deathOffset);
+            if (!deathPositionLocked)
+            {
+                FollowBoss(deathObject, deathOffset);
+            }
         }
 
         private void OnValidate()
@@ -243,7 +249,10 @@ namespace GameName.Enemy
             FollowBoss(auraObject, ResolveAuraOffset());
             FollowBoss(shieldObject, shieldOffset);
             FollowBoss(shieldBreakObject, shieldBreakOffset);
-            FollowBoss(deathObject, deathOffset);
+            if (!deathPositionLocked)
+            {
+                FollowBoss(deathObject, deathOffset);
+            }
             ApplyAuraFacing(auraObject);
             ApplyMagicCircleFacing(magicCirclePlayer);
         }
@@ -394,6 +403,7 @@ namespace GameName.Enemy
                 loop: false,
                 holdLast: true,
                 hideOnComplete: false);
+            MagicCircleInStarted?.Invoke();
         }
 
         public void UpdateVerticalRangeCharge(Vector2 groundLockPoint, Vector2 rainSpawnPosition)
@@ -447,7 +457,9 @@ namespace GameName.Enemy
 
         public bool PlayDeath(Action hideBossVisuals, Action completed)
         {
-            GridSpriteSheetClip clip = CreateStableClip(deathSpriteSheet, deathSpriteFrames, 5, 9, 45, new Vector2(0.5f, 0.5f), DeathFrameCropPixels, LargeFrameReferencePixels);
+            GridSpriteSheetClip clip = CreateStableClip(deathSpriteSheet, null, 5, 9, 45, new Vector2(0.5f, 0.5f), DeathFrameCropPixels, LargeFrameReferencePixels);
+            clip.UseFrameBoundsPivot = true;
+            clip.FrameBoundsSourceFrames = deathSpriteFrames;
             if (!clip.IsValid)
             {
                 return false;
@@ -473,6 +485,7 @@ namespace GameName.Enemy
             }
 
             deathObject = deathPlayer.gameObject;
+            deathPositionLocked = true;
             deathPlayer.Play(
                 clip,
                 loop: false,
@@ -498,6 +511,7 @@ namespace GameName.Enemy
 
                     DestroyEffectObject(deathObject);
                     deathObject = null;
+                    deathPositionLocked = false;
                     completed?.Invoke();
                 });
             return true;
@@ -765,6 +779,7 @@ namespace GameName.Enemy
         {
             DestroyEffectObject(deathObject);
             deathObject = null;
+            deathPositionLocked = false;
         }
 
         private GridSpriteSheetPlayer CreateEffectPlayer(

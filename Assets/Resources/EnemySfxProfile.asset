@@ -17,10 +17,18 @@ MonoBehaviour:
   enemyRangedAttack: {fileID: 8300000, guid: bf0af312a310f58428b8930f17e23cb6, type: 3}
   enemyTackleAttack: {fileID: 8300000, guid: f1cae226270d8c444b3c7773538f7a2f, type: 3}
   lastBossDead: {fileID: 8300000, guid: cd24303d1f167544baa18a3c92526f82, type: 3}
+  lastBossMagicIn: {fileID: 8300000, guid: bba9f8d319a7a1042b6c73e5ab610f10, type: 3}
+  lastBossNormalAttack: {fileID: 8300000, guid: 25417a85d00a1644495f2c06b2fab1de, type: 3}
+  lastBossShieldBreak: {fileID: 8300000, guid: 560ed07660cfc554b81d1e14c9cff3d5, type: 3}
+  lastBossSwordLaunch: {fileID: 8300000, guid: bc680f9a0971a064ea2f3622f20850e9, type: 3}
   stageBossDead: {fileID: 8300000, guid: 4d928c25d6d3fb74080af63ce22edd06, type: 3}
   enemyDeadVolume: 1
   enemyGrowlVolume: 0.15
   enemyRangedAttackVolume: 0.3
   enemyTackleAttackVolume: 0.4
   lastBossDeadVolume: 0.5
+  lastBossMagicInVolume: 1
+  lastBossNormalAttackVolume: 1
+  lastBossShieldBreakVolume: 1
+  lastBossSwordLaunchVolume: 1
   stageBossDeadVolume: 1

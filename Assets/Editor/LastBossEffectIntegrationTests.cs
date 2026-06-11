@@ -683,7 +683,7 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [UnityTest]
-    public IEnumerator EffectController_DeathUsesStableFullFrameCell()
+    public IEnumerator EffectController_DeathUsesStableFullGridFrameCell()
     {
         Texture2D death = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_boss_Destroy.png");
         Assert.That(death, Is.Not.Null);
@@ -700,7 +700,47 @@ public sealed class LastBossEffectIntegrationTests
         SpriteRenderer deathRenderer = FindRendererNamed("LastBossDestroyEffect");
         Assert.That(deathRenderer, Is.Not.Null);
         Assert.That(deathRenderer.sprite, Is.Not.Null);
-        Assert.That(deathRenderer.sprite, Is.SameAs(deathFrames[0]));
+        int deathFrameWidth = death.width / 5;
+        int deathFrameHeight = death.height / 9;
+        Vector2 expectedPivot = ResolveCombinedFrameBoundsPivot(death, deathFrames, 5, 9, 0);
+        Assert.That(deathRenderer.sprite, Is.Not.SameAs(deathFrames[0]));
+        Assert.That(deathRenderer.sprite.texture, Is.SameAs(death));
+        Assert.That(
+            deathRenderer.sprite.textureRect,
+            Is.EqualTo(new Rect(0f, death.height - deathFrameHeight, deathFrameWidth, deathFrameHeight)));
+        Assert.That(deathRenderer.sprite.pivot.x / deathFrameWidth, Is.EqualTo(expectedPivot.x).Within(0.001f));
+        Assert.That(deathRenderer.sprite.pivot.y / deathFrameHeight, Is.EqualTo(expectedPivot.y).Within(0.001f));
+        Assert.That(expectedPivot, Is.Not.EqualTo(new Vector2(0.5f, 0.5f)));
+    }
+
+    [UnityTest]
+    public IEnumerator EffectController_DeathEffectKeepsSpawnPositionWhenBossBoundsChange()
+    {
+        GameObject bossObject = CreateObject("LastBossDeathPositionLock", Vector2.zero);
+        BoxCollider2D collider = bossObject.AddComponent<BoxCollider2D>();
+        collider.enabled = false;
+
+        GameObject rendererObject = CreateObject("LastBossDeathPositionRenderer", new Vector2(2f, 0f));
+        rendererObject.transform.SetParent(bossObject.transform, worldPositionStays: true);
+        SpriteRenderer renderer = rendererObject.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSprite("LastBossDeathPositionBody", 100, 80, 10f);
+
+        LastBossEffectController effects = bossObject.AddComponent<LastBossEffectController>();
+        SetPrivateField(effects, "deathSpriteSheet", CreateTexture("DeathPositionLock", 10, 18));
+        InvokePrivate(effects, "Awake");
+
+        Assert.That(effects.PlayDeath(null, null), Is.True);
+        yield return null;
+
+        Transform deathEffect = FindTransformNamed("LastBossDestroyEffect");
+        Assert.That(deathEffect, Is.Not.Null);
+        Vector3 spawnedPosition = deathEffect.position;
+
+        rendererObject.transform.position = new Vector3(8f, 0f, 0f);
+        InvokePrivate(effects, "LateUpdate");
+
+        Assert.That(deathEffect.position.x, Is.EqualTo(spawnedPosition.x).Within(0.001f));
+        Assert.That(deathEffect.position.y, Is.EqualTo(spawnedPosition.y).Within(0.001f));
     }
 
     [Test]
@@ -1265,6 +1305,50 @@ public sealed class LastBossEffectIntegrationTests
         }
 
         return largestSize;
+    }
+
+    private static Vector2 ResolveCombinedFrameBoundsPivot(
+        Texture2D texture,
+        Sprite[] sprites,
+        int columns,
+        int rows,
+        int frameIndex)
+    {
+        int frameWidth = texture.width / columns;
+        int frameHeight = texture.height / rows;
+        int column = frameIndex % columns;
+        int row = frameIndex / columns;
+        int rowFromBottom = rows - 1 - row;
+        Rect cell = new Rect(column * frameWidth, rowFromBottom * frameHeight, frameWidth, frameHeight);
+        Rect bounds = default;
+        bool hasBounds = false;
+
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            Sprite sprite = sprites[i];
+            if (sprite == null || sprite.texture != texture || !cell.Contains(sprite.rect.center))
+            {
+                continue;
+            }
+
+            if (!hasBounds)
+            {
+                bounds = sprite.rect;
+                hasBounds = true;
+                continue;
+            }
+
+            float minX = Mathf.Min(bounds.xMin, sprite.rect.xMin);
+            float minY = Mathf.Min(bounds.yMin, sprite.rect.yMin);
+            float maxX = Mathf.Max(bounds.xMax, sprite.rect.xMax);
+            float maxY = Mathf.Max(bounds.yMax, sprite.rect.yMax);
+            bounds = Rect.MinMaxRect(minX, minY, maxX, maxY);
+        }
+
+        Assert.That(hasBounds, Is.True, $"Expected imported bounds for frame {frameIndex}.");
+        return new Vector2(
+            Mathf.Clamp01((bounds.center.x - cell.xMin) / cell.width),
+            Mathf.Clamp01((bounds.center.y - cell.yMin) / cell.height));
     }
 
     private static void AssertSpriteFrameCount(LastBossEffectController effects, string fieldName, int expectedCount)

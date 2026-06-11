@@ -20,6 +20,10 @@ namespace GameName.Audio
         [SerializeField] private AudioClip enemyTackleAttack;
         [Tooltip("LastBoss が死亡したときのSE。")]
         [SerializeField] private AudioClip lastBossDead;
+        [SerializeField] private AudioClip lastBossMagicIn;
+        [SerializeField] private AudioClip lastBossNormalAttack;
+        [SerializeField] private AudioClip lastBossShieldBreak;
+        [SerializeField] private AudioClip lastBossSwordLaunch;
         [Tooltip("StageBoss が死亡したときのSE。")]
         [SerializeField] private AudioClip stageBossDead;
 
@@ -34,6 +38,10 @@ namespace GameName.Audio
         [SerializeField, Range(0f, 1f)] private float enemyTackleAttackVolume = 1f;
         [Tooltip("LastBoss死亡SEの個別音量。最終音量はオプション画面のSE音量とも掛け合わされる。")]
         [SerializeField, Range(0f, 1f)] private float lastBossDeadVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float lastBossMagicInVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float lastBossNormalAttackVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float lastBossShieldBreakVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float lastBossSwordLaunchVolume = 1f;
         [Tooltip("StageBoss死亡SEの個別音量。最終音量はオプション画面のSE音量とも掛け合わされる。")]
         [SerializeField, Range(0f, 1f)] private float stageBossDeadVolume = 1f;
 
@@ -42,6 +50,10 @@ namespace GameName.Audio
         public AudioClip EnemyRangedAttack => enemyRangedAttack;
         public AudioClip EnemyTackleAttack => enemyTackleAttack;
         public AudioClip LastBossDead => lastBossDead;
+        public AudioClip LastBossMagicIn => lastBossMagicIn;
+        public AudioClip LastBossNormalAttack => lastBossNormalAttack;
+        public AudioClip LastBossShieldBreak => lastBossShieldBreak;
+        public AudioClip LastBossSwordLaunch => lastBossSwordLaunch;
         public AudioClip StageBossDead => stageBossDead;
 
         public float EnemyDeadVolume => enemyDeadVolume;
@@ -49,6 +61,10 @@ namespace GameName.Audio
         public float EnemyRangedAttackVolume => enemyRangedAttackVolume;
         public float EnemyTackleAttackVolume => enemyTackleAttackVolume;
         public float LastBossDeadVolume => lastBossDeadVolume;
+        public float LastBossMagicInVolume => lastBossMagicInVolume;
+        public float LastBossNormalAttackVolume => lastBossNormalAttackVolume;
+        public float LastBossShieldBreakVolume => lastBossShieldBreakVolume;
+        public float LastBossSwordLaunchVolume => lastBossSwordLaunchVolume;
         public float StageBossDeadVolume => stageBossDeadVolume;
     }
 }
