@@ -144,6 +144,28 @@ public sealed class LastBossEffectIntegrationTests
         GridSpriteSheetUtility.DestroyGeneratedSprites(generatedSprites);
     }
 
+    [Test]
+    public void BuildFrames_FrameCropForSizingOnlyKeepsFullFrameRect()
+    {
+        Texture2D texture = CreateTexture("GridSizingOnlyCrop", 20, 10);
+        var generatedSprites = new List<Sprite>();
+        GridSpriteSheetClip clip = CreateClip(texture, 2, 1, 2, 30f);
+        clip.UseFrameCrop = true;
+        clip.UseFrameCropForSizingOnly = true;
+        clip.FrameCropPixels = new RectInt(2, 1, 4, 8);
+
+        Sprite[] frames = GridSpriteSheetUtility.BuildFrames(clip, generatedSprites);
+        Vector2 visibleFrameSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(clip);
+
+        Assert.That(frames, Has.Length.EqualTo(2));
+        Assert.That(frames[0].textureRect, Is.EqualTo(new Rect(0f, 0f, 10f, 10f)));
+        Assert.That(frames[1].textureRect, Is.EqualTo(new Rect(10f, 0f, 10f, 10f)));
+        Assert.That(visibleFrameSize.x, Is.EqualTo(0.04f).Within(0.001f));
+        Assert.That(visibleFrameSize.y, Is.EqualTo(0.08f).Within(0.001f));
+
+        GridSpriteSheetUtility.DestroyGeneratedSprites(generatedSprites);
+    }
+
     [UnityTest]
     public IEnumerator GridPlayer_HoldsLastFrameAndCompletes()
     {
@@ -370,7 +392,7 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [UnityTest]
-    public IEnumerator EffectController_RangeIndicatorUsesVisibleArtCropAndConfiguredOffset()
+    public IEnumerator EffectController_RangeIndicatorUsesStableFullFrameAndConfiguredOffset()
     {
         Texture2D range = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_range.png");
         Assert.That(range, Is.Not.Null);
@@ -386,12 +408,13 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(rangeRenderer.sprite, Is.Not.Null);
         Assert.That(
             rangeRenderer.sprite.textureRect,
-            Is.EqualTo(ExpectedFrameRect(range, 10, 9, 0, new RectInt(98, 0, 316, 214), new Vector2Int(512, 512))));
+            Is.EqualTo(ExpectedGridFrameRect(range, 10, 9, 0)));
+        Assert.That(rangeRenderer.sprite.pivot.y, Is.EqualTo(0f).Within(0.001f));
         Assert.That(rangeRenderer.transform.position.y, Is.EqualTo(-0.35f).Within(0.001f));
     }
 
     [UnityTest]
-    public IEnumerator EffectController_ShieldUsesPaddedStableCrops()
+    public IEnumerator EffectController_ShieldUsesStableFullFrameCells()
     {
         Texture2D shieldIn = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_boss_shield_in.png");
         Texture2D shieldLoop = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_boss_shield.png");
@@ -409,7 +432,7 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(shieldRenderer.sprite, Is.Not.Null);
         Assert.That(
             shieldRenderer.sprite.textureRect,
-            Is.EqualTo(ExpectedFrameRect(shieldIn, 5, 2, 0, new RectInt(97, 97, 830, 830), new Vector2Int(1024, 1024))));
+            Is.EqualTo(ExpectedGridFrameRect(shieldIn, 5, 2, 0)));
 
         yield return new WaitForSecondsRealtime((10f / 30f) + 0.1f);
 
@@ -418,11 +441,16 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(shieldRenderer.sprite, Is.Not.Null);
         Assert.That(
             shieldRenderer.sprite.textureRect,
-            Is.EqualTo(ExpectedFrameRect(shieldLoop, 5, 12, shieldPlayer.CurrentFrameIndex, new RectInt(94, 94, 836, 836), new Vector2Int(1024, 1024))));
+            Is.EqualTo(ExpectedGridFrameRect(shieldLoop, 5, 12, shieldPlayer.CurrentFrameIndex)));
+
+        Vector3 loopScale = shieldRenderer.transform.localScale;
+        yield return new WaitForSecondsRealtime((1f / 30f) + 0.05f);
+        Assert.That(shieldRenderer.transform.localScale.x, Is.EqualTo(loopScale.x).Within(0.001f));
+        Assert.That(shieldRenderer.transform.localScale.y, Is.EqualTo(loopScale.y).Within(0.001f));
     }
 
     [UnityTest]
-    public IEnumerator EffectController_DeathUsesSquareStableCrop()
+    public IEnumerator EffectController_DeathUsesStableFullFrameCell()
     {
         Texture2D death = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_boss_Destroy.png");
         Assert.That(death, Is.Not.Null);
@@ -438,7 +466,7 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(deathRenderer.sprite, Is.Not.Null);
         Assert.That(
             deathRenderer.sprite.textureRect,
-            Is.EqualTo(ExpectedFrameRect(death, 5, 9, 0, new RectInt(20, 20, 984, 984), new Vector2Int(1024, 1024))));
+            Is.EqualTo(ExpectedGridFrameRect(death, 5, 9, 0)));
     }
 
     [Test]
@@ -450,18 +478,21 @@ public sealed class LastBossEffectIntegrationTests
         SetPrivateField(effects, "topAttackOutSpriteSheet", CreateTexture("TopOutClipCrop", 10, 8));
 
         Assert.That(effects.GroundBladeClip.UseFrameCrop, Is.True);
+        Assert.That(effects.GroundBladeClip.UseFrameCropForSizingOnly, Is.True);
         Assert.That(effects.GroundBladeClip.FrameCropPixels, Is.EqualTo(new RectInt(418, 0, 187, 1009)));
         Assert.That(effects.GroundBladeClip.FrameCropReferencePixels, Is.EqualTo(new Vector2Int(1024, 1024)));
         Assert.That(effects.RainBladeInClip.UseFrameCrop, Is.True);
+        Assert.That(effects.RainBladeInClip.UseFrameCropForSizingOnly, Is.False);
         Assert.That(effects.RainBladeInClip.FrameCropPixels, Is.EqualTo(new RectInt(405, 20, 217, 995)));
         Assert.That(effects.RainBladeInClip.FrameCropReferencePixels, Is.EqualTo(new Vector2Int(1024, 1024)));
         Assert.That(effects.RainBladeOutClip.UseFrameCrop, Is.True);
+        Assert.That(effects.RainBladeOutClip.UseFrameCropForSizingOnly, Is.False);
         Assert.That(effects.RainBladeOutClip.FrameCropPixels, Is.EqualTo(new RectInt(405, 20, 217, 995)));
         Assert.That(effects.RainBladeOutClip.FrameCropReferencePixels, Is.EqualTo(new Vector2Int(1024, 1024)));
     }
 
     [Test]
-    public void EffectController_BladeCropsScaleAgainstImportedTextureSize()
+    public void EffectController_BladeVisibleBoundsScaleAgainstImportedTextureSize()
     {
         Texture2D underAttack = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_under_attack.png");
         Texture2D topAttackIn = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_top_attack_in.png");
@@ -477,9 +508,15 @@ public sealed class LastBossEffectIntegrationTests
 
         float groundFrameWidth = underAttack.width / 5f;
         float groundFrameHeight = underAttack.height / 4f;
-        Assert.That(groundFrames[0].textureRect.width, Is.EqualTo(Mathf.RoundToInt(187f * groundFrameWidth / 1024f)).Within(1f));
-        Assert.That(groundFrames[0].textureRect.height, Is.EqualTo(Mathf.RoundToInt(1009f * groundFrameHeight / 1024f)).Within(1f));
-        Assert.That(groundFrames[0].textureRect.x, Is.LessThan(groundFrameWidth - groundFrames[0].textureRect.width));
+        RectInt expectedGroundVisibleCrop = ExpectedScaledCrop(
+            new RectInt(418, 0, 187, 1009),
+            new Vector2Int(1024, 1024),
+            Mathf.FloorToInt(groundFrameWidth),
+            Mathf.FloorToInt(groundFrameHeight));
+        Vector2 groundVisibleSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(effects.GroundBladeClip);
+        Assert.That(groundFrames[0].textureRect, Is.EqualTo(ExpectedGridFrameRect(underAttack, 5, 4, 0)));
+        Assert.That(groundVisibleSize.x, Is.EqualTo(expectedGroundVisibleCrop.width / 100f).Within(0.01f));
+        Assert.That(groundVisibleSize.y, Is.EqualTo(expectedGroundVisibleCrop.height / 100f).Within(0.01f));
 
         float rainFrameWidth = topAttackIn.width / 5f;
         Assert.That(rainFrames[0].textureRect.width, Is.EqualTo(Mathf.RoundToInt(217f * rainFrameWidth / 1024f)).Within(1f));
@@ -554,6 +591,32 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(bladeObject.transform.localScale, Is.EqualTo(startScale));
         Assert.That(collider.size, Is.EqualTo(colliderSize));
         Assert.That(FindChildRenderer(bladeObject, "BladeEffectVisual"), Is.Not.Null);
+    }
+
+    [UnityTest]
+    public IEnumerator GroundBladeVisual_SizingOnlyCropPreservesVisibleAspectAndCollider()
+    {
+        GameObject bladeObject = CreateObject("GroundBladeAspect", Vector2.zero);
+        BoxCollider2D collider = bladeObject.AddComponent<BoxCollider2D>();
+        collider.size = new Vector2(1f, 2f);
+        LastBossBladeAttack blade = bladeObject.AddComponent<LastBossBladeAttack>();
+        InvokePrivate(blade, "Awake");
+        GridSpriteSheetClip clip = CreateClip(CreateTexture("UnderAttackStableFrame", 20, 10), 2, 1, 2, 30f);
+        clip.UseFrameCrop = true;
+        clip.UseFrameCropForSizingOnly = true;
+        clip.FrameCropPixels = new RectInt(4, 0, 2, 10);
+
+        blade.ConfigureGroundVisual(clip, uprightFrameIndex: 0, slotIndex: 0, frameSizeMultiplier: Vector2.one);
+        Vector2 colliderSize = collider.size;
+        blade.InitializeGround(null, 1, groundY: 0f, riseDuration: 0f);
+        yield return null;
+
+        SpriteRenderer visualRenderer = FindChildRenderer(bladeObject, "BladeEffectVisual");
+        Assert.That(visualRenderer, Is.Not.Null);
+        Assert.That(visualRenderer.sprite, Is.Not.Null);
+        Assert.That(visualRenderer.sprite.textureRect, Is.EqualTo(new Rect(0f, 0f, 10f, 10f)));
+        Assert.That(visualRenderer.transform.localScale.x, Is.EqualTo(visualRenderer.transform.localScale.y).Within(0.001f));
+        Assert.That(collider.size, Is.EqualTo(colliderSize));
     }
 
     [UnityTest]
@@ -725,26 +788,19 @@ public sealed class LastBossEffectIntegrationTests
         };
     }
 
-    private static Rect ExpectedFrameRect(
-        Texture2D texture,
-        int columns,
-        int rows,
-        int frameIndex,
-        RectInt crop,
-        Vector2Int referenceSize)
+    private static Rect ExpectedGridFrameRect(Texture2D texture, int columns, int rows, int frameIndex)
     {
         int frameWidth = texture.width / columns;
         int frameHeight = texture.height / rows;
         int row = frameIndex / columns;
         int column = frameIndex % columns;
-        RectInt scaledCrop = ExpectedScaledCrop(crop, referenceSize, frameWidth, frameHeight);
         int y = texture.height - ((row + 1) * frameHeight);
 
         return new Rect(
-            (column * frameWidth) + scaledCrop.x,
-            y + scaledCrop.y,
-            scaledCrop.width,
-            scaledCrop.height);
+            column * frameWidth,
+            y,
+            frameWidth,
+            frameHeight);
     }
 
     private static RectInt ExpectedScaledCrop(
