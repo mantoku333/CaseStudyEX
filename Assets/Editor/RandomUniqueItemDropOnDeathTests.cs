@@ -37,15 +37,13 @@ public sealed class RandomUniqueItemDropOnDeathTests
         GameObject itemPrefab = CreateObject("ItemPrefab");
         var entries = new[]
         {
-            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentBlueAuraUnlocked)
+            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentBlueAuraUnlocked, 0.3f)
         };
 
         EnemyUniqueDropTable.DropEntry selected = RandomUniqueItemDropOnDeath.SelectDropEntry(
             entries,
-            0.3f,
             _ => false,
-            0.31f,
-            0);
+            0.31f);
 
         Assert.That(selected, Is.Null);
     }
@@ -60,17 +58,15 @@ public sealed class RandomUniqueItemDropOnDeathTests
         GameObject itemPrefab = CreateObject("ItemPrefab");
         var entries = new[]
         {
-            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentBlueAuraUnlocked),
-            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentRedAuraUnlocked),
-            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentArcancielUnlocked)
+            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentBlueAuraUnlocked, 1f),
+            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentRedAuraUnlocked, 1f),
+            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentArcancielUnlocked, 1f)
         };
 
         EnemyUniqueDropTable.DropEntry selected = RandomUniqueItemDropOnDeath.SelectDropEntry(
             entries,
-            1f,
             key => GameProgressFlags.Get(key),
-            0f,
-            0);
+            0f);
 
         Assert.That(selected, Is.Null);
     }
@@ -83,19 +79,49 @@ public sealed class RandomUniqueItemDropOnDeathTests
         GameObject itemPrefab = CreateObject("ItemPrefab");
         var entries = new[]
         {
-            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentBlueAuraUnlocked),
-            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentRedAuraUnlocked)
+            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentBlueAuraUnlocked, 1f),
+            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentRedAuraUnlocked, 1f)
         };
 
         EnemyUniqueDropTable.DropEntry selected = RandomUniqueItemDropOnDeath.SelectDropEntry(
             entries,
-            1f,
             key => GameProgressFlags.Get(key),
-            0f,
-            0);
+            0f);
 
         Assert.That(selected, Is.Not.Null);
         Assert.That(selected.ProgressFlagKey, Is.EqualTo(GameProgressKeys.EquipmentRedAuraUnlocked));
+    }
+
+    [Test]
+    public void SelectDropEntry_UsesEntryDropChance()
+    {
+        GameObject itemPrefab = CreateObject("ItemPrefab");
+        var entries = new[]
+        {
+            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentBlueAuraUnlocked, 0.03f),
+            new EnemyUniqueDropTable.DropEntry(itemPrefab, GameProgressKeys.EquipmentRedAuraUnlocked, 0.005f)
+        };
+
+        EnemyUniqueDropTable.DropEntry blueSelected = RandomUniqueItemDropOnDeath.SelectDropEntry(
+            entries,
+            _ => false,
+            0.029f);
+
+        EnemyUniqueDropTable.DropEntry redSelected = RandomUniqueItemDropOnDeath.SelectDropEntry(
+            entries,
+            _ => false,
+            0.031f);
+
+        EnemyUniqueDropTable.DropEntry noDrop = RandomUniqueItemDropOnDeath.SelectDropEntry(
+            entries,
+            _ => false,
+            0.035f);
+
+        Assert.That(blueSelected, Is.Not.Null);
+        Assert.That(blueSelected.ProgressFlagKey, Is.EqualTo(GameProgressKeys.EquipmentBlueAuraUnlocked));
+        Assert.That(redSelected, Is.Not.Null);
+        Assert.That(redSelected.ProgressFlagKey, Is.EqualTo(GameProgressKeys.EquipmentRedAuraUnlocked));
+        Assert.That(noDrop, Is.Null);
     }
 
     [Test]

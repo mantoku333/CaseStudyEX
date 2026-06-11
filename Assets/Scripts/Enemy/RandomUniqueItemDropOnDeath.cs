@@ -21,8 +21,6 @@ namespace GameName.Enemy
         [SerializeField] private bool disablePickupDuringHop = true;
 
         private static readonly HashSet<string> ActiveDropFlagKeys = new HashSet<string>(StringComparer.Ordinal);
-        private static readonly List<EnemyUniqueDropTable.DropEntry> CandidateEntries = new List<EnemyUniqueDropTable.DropEntry>();
-
         private IBossHealthSource healthSource;
         private IBossHealthSource subscribedHealthSource;
         private Collider2D bodyCollider;
@@ -82,17 +80,17 @@ namespace GameName.Enemy
 
         public static EnemyUniqueDropTable.DropEntry SelectDropEntry(
             IReadOnlyList<EnemyUniqueDropTable.DropEntry> entries,
-            float dropChance,
             Predicate<string> isUnavailable,
-            float chanceRoll,
-            int randomIndexSeed)
+            float chanceRoll)
         {
-            if (entries == null || chanceRoll > Mathf.Clamp01(dropChance))
+            if (entries == null)
             {
                 return null;
             }
 
-            CandidateEntries.Clear();
+            float roll = Mathf.Clamp01(chanceRoll);
+            float cumulativeChance = 0f;
+
             for (int i = 0; i < entries.Count; i++)
             {
                 EnemyUniqueDropTable.DropEntry entry = entries[i];
@@ -107,16 +105,20 @@ namespace GameName.Enemy
                     continue;
                 }
 
-                CandidateEntries.Add(entry);
+                float entryChance = entry.DropChance;
+                if (entryChance <= 0f)
+                {
+                    continue;
+                }
+
+                cumulativeChance += entryChance;
+                if (roll < cumulativeChance)
+                {
+                    return entry;
+                }
             }
 
-            if (CandidateEntries.Count == 0)
-            {
-                return null;
-            }
-
-            int index = (int)((uint)randomIndexSeed % CandidateEntries.Count);
-            return CandidateEntries[index];
+            return null;
         }
 
         private void CacheReferences()
@@ -191,10 +193,8 @@ namespace GameName.Enemy
 
             EnemyUniqueDropTable.DropEntry entry = SelectDropEntry(
                 dropTable.Entries,
-                dropTable.DropChance,
                 IsDropUnavailable,
-                UnityEngine.Random.value,
-                UnityEngine.Random.Range(0, int.MaxValue));
+                UnityEngine.Random.value);
 
             if (entry == null)
             {
