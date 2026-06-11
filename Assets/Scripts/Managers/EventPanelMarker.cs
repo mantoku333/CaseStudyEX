@@ -41,7 +41,7 @@ public sealed class EventPanelMarker : Marker
             panelObject.exposedName.ToString(),
             panelPresenter.exposedName.ToString(),
             ResolvePanelPresenterName(),
-            panelKind.ToString(),
+            ResolvePanelKind().ToString(),
             ResolveTitle(),
             time.ToString("0.######", CultureInfo.InvariantCulture));
 
@@ -53,7 +53,7 @@ public sealed class EventPanelMarker : Marker
     public string PanelPresenterName => ResolvePanelPresenterName();
     public bool PauseTimelineUntilClosed => pauseTimelineUntilClosed;
     public float AutoCloseSecondsWhenNoButton => Mathf.Max(0f, autoCloseSecondsWhenNoButton);
-    public EventPanelKind PanelKind => panelKind;
+    public EventPanelKind PanelKind => ResolvePanelKind();
     public string ResolvedTitle => ResolveTitle();
 
 #if UNITY_EDITOR
@@ -71,7 +71,7 @@ public sealed class EventPanelMarker : Marker
     {
         return new EventPanelContent
         {
-            kind = panelKind,
+            kind = ResolvePanelKind(),
             title = ResolveTitle(),
             body = ResolveBody(),
             closeLabel = closeLabel,
@@ -80,6 +80,16 @@ public sealed class EventPanelMarker : Marker
             animationFramesPerSecond = animationFramesPerSecond,
             animationLoopIntervalSeconds = animationLoopIntervalSeconds
         };
+    }
+
+    private EventPanelKind ResolvePanelKind()
+    {
+        if (panelKind == EventPanelKind.Custom && diaryEntryData != null)
+        {
+            return EventPanelKind.Diary;
+        }
+
+        return panelKind;
     }
 
     public EventPanelPresenter ResolvePanelPresenter(PlayableDirector director)
@@ -122,7 +132,12 @@ public sealed class EventPanelMarker : Marker
 
     private string ResolvePanelPresenterName()
     {
-        return string.IsNullOrWhiteSpace(panelPresenterName) ? string.Empty : panelPresenterName.Trim();
+        if (!string.IsNullOrWhiteSpace(panelPresenterName))
+        {
+            return panelPresenterName.Trim();
+        }
+
+        return ResolvePanelKind() == EventPanelKind.Diary ? "DiaryView" : string.Empty;
     }
 
     private string ResolveBody()

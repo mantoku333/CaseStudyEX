@@ -6,9 +6,12 @@ using UnityEngine.InputSystem;
 
 public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
 {
+    private const string DiaryPanelPresenterName = "DiaryView";
+
     [SerializeField] private DiaryEntryData diaryEntryData;
     [Header("Pickup Event Name Override")]
     [SerializeField] private string pickupEventName = "";
+    [SerializeField] private bool showDiaryPanelOnPickup = true;
 
     private bool isPickedUp = false;
 
@@ -86,9 +89,9 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
     private void TryPlayPickupEvent()
     {
         string eventName = ResolvePickupEventName();
-        if (string.IsNullOrWhiteSpace(eventName)){ return; }
+        if (!showDiaryPanelOnPickup && string.IsNullOrWhiteSpace(eventName)){ return; }
 
-        DiaryPickupEventPlayer.Play(eventName, transform.position, name);
+        DiaryPickupEventPlayer.Play(eventName, diaryEntryData, transform.position, name, showDiaryPanelOnPickup);
     }
 
     private string ResolvePickupEventName()
@@ -150,40 +153,71 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
         private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
         private GameObject dialogueTargetObject;
         private DialogueManager dialogueManager;
+        private EventPanelPresenter diaryPanelPresenter;
         private PlayerInput pausedPlayerInput;
         private bool previousPlayerInputEnabled;
         private bool waitingDialogueCompletion;
+        private bool waitingDiaryPanelClose;
         private bool gameplayPaused;
         private bool cleaningUp;
 
-        public static void Play(string dialogueNodeName, Vector3 pickupPosition, string sourceName)
+        public static void Play(
+            string dialogueNodeName,
+            DiaryEntryData diaryEntryData,
+            Vector3 pickupPosition,
+            string sourceName,
+            bool showDiaryPanel)
         {
             GameObject playerObject = new GameObject("[DiaryPickupEventPlayer]");
             DiaryPickupEventPlayer player = playerObject.AddComponent<DiaryPickupEventPlayer>();
-            player.StartCoroutine(player.PlayRoutine(dialogueNodeName.Trim(), pickupPosition, sourceName));
+            player.StartCoroutine(
+                player.PlayRoutine(
+                    string.IsNullOrWhiteSpace(dialogueNodeName) ? string.Empty : dialogueNodeName.Trim(),
+                    diaryEntryData,
+                    pickupPosition,
+                    sourceName,
+                    showDiaryPanel));
         }
 
-        private IEnumerator PlayRoutine(string dialogueNodeName, Vector3 pickupPosition, string sourceName)
+        private IEnumerator PlayRoutine(
+            string dialogueNodeName,
+            DiaryEntryData diaryEntryData,
+            Vector3 pickupPosition,
+            string sourceName,
+            bool showDiaryPanel)
+        {
+            PausePlayerControl();
+
+            if (!string.IsNullOrWhiteSpace(dialogueNodeName))
+            {
+                yield return PlayDialogueRoutine(dialogueNodeName, pickupPosition, sourceName);
+            }
+
+            if (showDiaryPanel)
+            {
+                yield return ShowDiaryPanelRoutine(diaryEntryData);
+            }
+
+            Cleanup();
+        }
+
+        private IEnumerator PlayDialogueRoutine(string dialogueNodeName, Vector3 pickupPosition, string sourceName)
         {
             dialogueManager = FindFirstObjectByType<DialogueManager>();
             if (dialogueManager == null || dialogueManager.Runner == null)
             {
                 Debug.LogWarning($"Diary pickup dialogue manager not found: {dialogueNodeName}");
-                Cleanup();
                 yield break;
             }
 
             if (dialogueManager.Runner.Dialogue == null || !dialogueManager.Runner.Dialogue.NodeExists(dialogueNodeName))
             {
                 Debug.LogWarning($"Diary pickup dialogue node not found: {dialogueNodeName}");
-                Cleanup();
                 yield break;
             }
 
             dialogueTargetObject = new GameObject($"[DiaryPickupDialogueTarget] {sourceName}");
             dialogueTargetObject.transform.position = pickupPosition;
-
-            PausePlayerControl();
 
             yield return StoryOverlayFader.Instance.FadeTo(1f, 0.5f, Color.black);
             yield return StoryOverlayFader.Instance.FadeTo(0f, 0.5f, Color.black);
@@ -196,8 +230,50 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
             {
                 yield return null;
             }
+        }
 
-            Cleanup();
+        private IEnumerator ShowDiaryPanelRoutine(DiaryEntryData diaryEntryData)
+        {
+            if (diaryEntryData == null)
+            {
+                yield break;
+            }
+
+            diaryPanelPresenter = FindDiaryPanelPresenter();
+            if (diaryPanelPresenter == null)
+            {
+                Debug.LogWarning($"Diary panel presenter '{DiaryPanelPresenterName}' not found.");
+                yield break;
+            }
+
+            waitingDiaryPanelClose = true;
+            bool shown = diaryPanelPresenter.ShowDiary(diaryEntryData, OnDiaryPanelClosed);
+            if (!shown)
+            {
+                waitingDiaryPanelClose = false;
+                yield break;
+            }
+
+            while (waitingDiaryPanelClose)
+            {
+                yield return null;
+            }
+        }
+
+        private static EventPanelPresenter FindDiaryPanelPresenter()
+        {
+            EventPanelPresenter[] presenters =
+                FindObjectsByType<EventPanelPresenter>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < presenters.Length; i++)
+            {
+                EventPanelPresenter presenter = presenters[i];
+                if (presenter != null && presenter.name == DiaryPanelPresenterName)
+                {
+                    return presenter;
+                }
+            }
+
+            return null;
         }
 
         private void PausePlayerControl()
@@ -305,6 +381,11 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
             waitingDialogueCompletion = false;
         }
 
+        private void OnDiaryPanelClosed()
+        {
+            waitingDiaryPanelClose = false;
+        }
+
         private void OnDestroy()
         {
             Cleanup();
@@ -322,6 +403,12 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
             if (dialogueManager != null && dialogueManager.Runner != null)
             {
                 dialogueManager.Runner.onDialogueComplete?.RemoveListener(OnDialogueComplete);
+            }
+
+            if (diaryPanelPresenter != null)
+            {
+                diaryPanelPresenter.HideWithoutCallback();
+                diaryPanelPresenter = null;
             }
 
             ResumePlayerControl();
