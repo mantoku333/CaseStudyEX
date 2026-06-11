@@ -161,7 +161,7 @@ MonoBehaviour:
     m_Start: 0.13333333333333333
     m_ClipIn: 0
     m_Asset: {fileID: 8311723034512747128}
-    m_Duration: 5
+    m_Duration: 2.45
     m_TimeScale: 1
     m_ParentTrack: {fileID: -5675552448397036753}
     m_EaseInDuration: 0
@@ -312,6 +312,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
   m_Name: StoryObjectMoveClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
   targetMode: 0
   markerNo: 2
   worldPosition: {x: 0, y: 0, z: 0}
@@ -319,6 +323,7 @@ MonoBehaviour:
   moveX: 1
   moveY: 1
   smoothStep: 1
+  useUmbrellaWalk: 0
 --- !u!114 &-2073824339582600517
 MonoBehaviour:
   m_ObjectHideFlags: 1
