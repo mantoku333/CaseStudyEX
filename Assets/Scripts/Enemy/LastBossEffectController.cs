@@ -867,6 +867,17 @@ namespace GameName.Enemy
                 bossRenderer = GetComponent<SpriteRenderer>();
             }
 
+            if (bossRenderer == null)
+            {
+                LastBossSpriteAnimator spriteAnimator = GetComponentInChildren<LastBossSpriteAnimator>(true);
+                bossRenderer = spriteAnimator != null ? spriteAnimator.MainRenderer : null;
+            }
+
+            if (bossRenderer == null)
+            {
+                bossRenderer = GetComponentInChildren<SpriteRenderer>(true);
+            }
+
             if (bodyCollider == null)
             {
                 bodyCollider = GetComponent<Collider2D>();
