@@ -156,6 +156,12 @@ public sealed class StoryEventController : MonoBehaviour
     private bool cachedEventCameraPriorityEnabled;
     private bool hasCachedEventCameraPriority;
     private RoomCameraTrigger cachedRoomCameraBeforeEvent;
+    private MinimapManager cachedMinimapManager;
+    private MinimapView cachedMinimapView;
+    private bool cachedMinimapManagerEnabled;
+    private bool cachedMiniMapVisible;
+    private bool cachedFullMapVisible;
+    private bool hasCachedMinimapState;
 
     public string EventId => string.IsNullOrWhiteSpace(eventId) ? name : eventId.Trim();
     public string MemoName => string.IsNullOrWhiteSpace(memoName) ? string.Empty : memoName.Trim();
@@ -248,6 +254,7 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         StoryPauseRuntime.ClearOverride();
+        RestoreMinimapVisibility();
         RestoreLetterBoxViewVisibility();
         RestoreEventCameraPriority();
         RestoreRoomCameraOnEventExit();
@@ -500,6 +507,7 @@ public sealed class StoryEventController : MonoBehaviour
         firedTimelinePointKeys.Clear();
 
         StoryPauseRuntime.SetOverride(pausePolicy);
+        HideMinimapForEvent();
         CaptureCinematicState();
         ApplyCinematicState();
         CaptureRoomCameraBeforeEvent();
@@ -545,6 +553,7 @@ public sealed class StoryEventController : MonoBehaviour
         ApplyCompletionState();
         StoryPauseRuntime.ClearOverride();
         yield return RestorePresentationOnEventExitRoutine();
+        RestoreMinimapVisibility();
         RestoreCinematicState();
 
         playRoutine = null;
@@ -2040,12 +2049,19 @@ public sealed class StoryEventController : MonoBehaviour
         GameObject runtimeCameraObject = Instantiate(sourceCamera.gameObject, sourceCamera.transform.parent);
         runtimeCameraObject.name = $"{sourceCamera.name}_Runtime";
         runtimeCameraObject.hideFlags = HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+        runtimeCameraObject.SetActive(true);
         runtimeEventCamera = runtimeCameraObject.GetComponent<CinemachineCamera>();
         if (runtimeEventCamera == null)
         {
             Destroy(runtimeCameraObject);
             return null;
         }
+
+        runtimeEventCamera.enabled = true;
+        CameraTarget runtimeTarget = runtimeEventCamera.Target;
+        runtimeTarget.TrackingTarget = null;
+        runtimeTarget.LookAtTarget = null;
+        runtimeEventCamera.Target = runtimeTarget;
 
         return runtimeEventCamera;
     }
@@ -2085,23 +2101,42 @@ public sealed class StoryEventController : MonoBehaviour
         string targetName = eventCameraName.Trim();
         CinemachineCamera[] cameras =
             FindObjectsByType<CinemachineCamera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        CinemachineCamera fallbackCamera = null;
         for (int i = 0; i < cameras.Length; i++)
         {
             CinemachineCamera camera = cameras[i];
-            if (camera == null)
+            if (camera == null || IsRuntimeEventCamera(camera))
             {
                 continue;
             }
 
-            if (string.Equals(camera.name, targetName, StringComparison.OrdinalIgnoreCase) ||
-                camera.name.IndexOf(targetName, StringComparison.OrdinalIgnoreCase) >= 0)
+            if (string.Equals(camera.name, targetName, StringComparison.OrdinalIgnoreCase))
             {
                 eventCamera = camera;
                 return eventCamera;
             }
+
+            if (fallbackCamera == null &&
+                camera.name.IndexOf(targetName, StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                fallbackCamera = camera;
+            }
+        }
+
+        if (fallbackCamera != null)
+        {
+            eventCamera = fallbackCamera;
+            return eventCamera;
         }
 
         return null;
+    }
+
+    private static bool IsRuntimeEventCamera(CinemachineCamera camera)
+    {
+        return camera != null &&
+               (camera.name.EndsWith("_Runtime", StringComparison.OrdinalIgnoreCase) ||
+                (camera.gameObject.hideFlags & (HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild)) != 0);
     }
 
     private void UnsubscribeDialogueComplete()
@@ -2113,6 +2148,64 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         waitingDialogueCompletion = false;
+    }
+
+    private void HideMinimapForEvent()
+    {
+        RestoreMinimapVisibility();
+
+        cachedMinimapManager = MinimapManager.Instance;
+        if (cachedMinimapManager == null)
+        {
+            cachedMinimapManager = FindFirstObjectByType<MinimapManager>(FindObjectsInactive.Include);
+        }
+
+        if (cachedMinimapManager == null)
+        {
+            return;
+        }
+
+        cachedMinimapManagerEnabled = cachedMinimapManager.enabled;
+        cachedMinimapView = cachedMinimapManager.GetComponent<MinimapView>();
+        if (cachedMinimapView == null)
+        {
+            cachedMinimapView = FindFirstObjectByType<MinimapView>(FindObjectsInactive.Include);
+        }
+
+        if (cachedMinimapView != null)
+        {
+            cachedMiniMapVisible = cachedMinimapView.IsMiniMapVisible;
+            cachedFullMapVisible = cachedMinimapView.IsFullMapVisible;
+            cachedMinimapView.SetPanelVisibility(false, false);
+        }
+
+        cachedMinimapManager.enabled = false;
+        hasCachedMinimapState = true;
+    }
+
+    private void RestoreMinimapVisibility()
+    {
+        if (!hasCachedMinimapState)
+        {
+            return;
+        }
+
+        if (cachedMinimapView != null)
+        {
+            cachedMinimapView.SetPanelVisibility(cachedMiniMapVisible, cachedFullMapVisible);
+        }
+
+        if (cachedMinimapManager != null)
+        {
+            cachedMinimapManager.enabled = cachedMinimapManagerEnabled;
+        }
+
+        cachedMinimapManager = null;
+        cachedMinimapView = null;
+        cachedMinimapManagerEnabled = false;
+        cachedMiniMapVisible = false;
+        cachedFullMapVisible = false;
+        hasCachedMinimapState = false;
     }
 
     private PlayableDirector ResolveDirector()
