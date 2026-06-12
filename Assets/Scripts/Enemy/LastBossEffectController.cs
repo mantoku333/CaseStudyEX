@@ -109,6 +109,7 @@ namespace GameName.Enemy
         private float horizontalRangeBladeWorldWidth = 1f;
         private bool shieldBrokenThisDown;
         private bool deathHideNotified;
+        private bool shieldBreakPositionLocked;
         private bool deathPositionLocked;
 
         public event Action MagicCircleInStarted;
@@ -156,7 +157,10 @@ namespace GameName.Enemy
         {
             FollowBoss(auraObject, ResolveAuraOffset());
             FollowBoss(shieldObject, shieldOffset);
-            FollowBoss(shieldBreakObject, shieldBreakOffset);
+            if (!shieldBreakPositionLocked)
+            {
+                FollowBoss(shieldBreakObject, shieldBreakOffset);
+            }
             if (!deathPositionLocked)
             {
                 FollowBoss(deathObject, deathOffset);
@@ -248,7 +252,10 @@ namespace GameName.Enemy
             facingDirection = direction < 0 ? -1 : 1;
             FollowBoss(auraObject, ResolveAuraOffset());
             FollowBoss(shieldObject, shieldOffset);
-            FollowBoss(shieldBreakObject, shieldBreakOffset);
+            if (!shieldBreakPositionLocked)
+            {
+                FollowBoss(shieldBreakObject, shieldBreakOffset);
+            }
             if (!deathPositionLocked)
             {
                 FollowBoss(deathObject, deathOffset);
@@ -413,7 +420,6 @@ namespace GameName.Enemy
                 return;
             }
 
-            magicCircleObject.transform.position = ResolveMagicCirclePosition(groundLockPoint, rainSpawnPosition);
             magicCircleObject.transform.rotation = Quaternion.identity;
             UpdateMagicCircleFacing(groundLockPoint, rainSpawnPosition);
         }
@@ -458,8 +464,6 @@ namespace GameName.Enemy
         public bool PlayDeath(Action hideBossVisuals, Action completed)
         {
             GridSpriteSheetClip clip = CreateStableClip(deathSpriteSheet, null, 5, 9, 45, new Vector2(0.5f, 0.5f), DeathFrameCropPixels, LargeFrameReferencePixels);
-            clip.UseFrameBoundsPivot = true;
-            clip.FrameBoundsSourceFrames = deathSpriteFrames;
             if (!clip.IsValid)
             {
                 return false;
@@ -527,6 +531,34 @@ namespace GameName.Enemy
 
             Vector2 position = rainSpawnPosition + awayFromGround.normalized * magicCircleBeyondSpawnDistance;
             return new Vector3(position.x, position.y, transform.position.z);
+        }
+
+        public Vector2 ResolveMagicCircleBladeSpawnPosition(Vector2 groundLockPoint, Vector2 rainSpawnPosition)
+        {
+            Vector2 circleCenter = ResolveCurrentOrPredictedMagicCirclePosition(groundLockPoint, rainSpawnPosition);
+            int circleFacing = ResolveMagicCircleFacingDirection(groundLockPoint, rainSpawnPosition);
+            Vector2 cornerOffset = new Vector2(
+                magicCircleWorldSize.x * 0.5f * circleFacing,
+                -magicCircleWorldSize.y * 0.5f);
+            return circleCenter + cornerOffset;
+        }
+
+        public Vector2 ResolveMagicCircleBladeSpawnOutsidePosition(Vector2 groundLockPoint, Vector2 rainSpawnPosition)
+        {
+            Vector2 circleCenter = ResolveCurrentOrPredictedMagicCirclePosition(groundLockPoint, rainSpawnPosition);
+            int circleFacing = ResolveMagicCircleFacingDirection(groundLockPoint, rainSpawnPosition);
+            float cellWidth = Mathf.Max(0.01f, magicCircleWorldSize.x / 3f);
+            Vector2 outsideOffset = new Vector2(
+                (magicCircleWorldSize.x * 0.5f + cellWidth * 0.5f) * circleFacing,
+                -magicCircleWorldSize.y * 0.5f);
+            return circleCenter + outsideOffset;
+        }
+
+        private Vector2 ResolveCurrentOrPredictedMagicCirclePosition(Vector2 groundLockPoint, Vector2 rainSpawnPosition)
+        {
+            return magicCircleObject != null
+                ? magicCircleObject.transform.position
+                : ResolveMagicCirclePosition(groundLockPoint, rainSpawnPosition);
         }
 
         private IEnumerator SpawnHorizontalRangeIndicators(IReadOnlyList<Vector2> footPositions)
@@ -750,6 +782,7 @@ namespace GameName.Enemy
             }
 
             shieldBreakObject = player.gameObject;
+            shieldBreakPositionLocked = true;
             player.Play(
                 clip,
                 loop: false,
@@ -759,6 +792,7 @@ namespace GameName.Enemy
                 {
                     DestroyEffectObject(shieldBreakObject);
                     shieldBreakObject = null;
+                    shieldBreakPositionLocked = false;
                 });
         }
 
@@ -766,6 +800,7 @@ namespace GameName.Enemy
         {
             DestroyEffectObject(shieldBreakObject);
             shieldBreakObject = null;
+            shieldBreakPositionLocked = false;
         }
 
         private void StopMagicCircleImmediate()
@@ -1198,11 +1233,16 @@ namespace GameName.Enemy
 
         private void UpdateMagicCircleFacing(Vector2 groundLockPoint, Vector2 rainSpawnPosition)
         {
+            magicCircleFacingDirection = ResolveMagicCircleFacingDirection(groundLockPoint, rainSpawnPosition);
+            ApplyMagicCircleFacing(magicCirclePlayer);
+        }
+
+        private int ResolveMagicCircleFacingDirection(Vector2 groundLockPoint, Vector2 rainSpawnPosition)
+        {
             float horizontalDirection = groundLockPoint.x - rainSpawnPosition.x;
-            magicCircleFacingDirection = Mathf.Abs(horizontalDirection) > 0.001f
+            return Mathf.Abs(horizontalDirection) > 0.001f
                 ? (horizontalDirection > 0f ? 1 : -1)
                 : facingDirection;
-            ApplyMagicCircleFacing(magicCirclePlayer);
         }
 
         private Vector3 ResolveBossCenter()

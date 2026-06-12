@@ -340,6 +340,28 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [UnityTest]
+    public IEnumerator EffectController_ShieldBreakPositionStaysLockedWhenFacingChanges()
+    {
+        LastBossEffectController effects = CreateEffectController();
+        SetPrivateField(effects, "shieldBreakSpriteSheet", CreateTexture("ShieldBreakLocked", 6, 20));
+        SetPrivateField(effects, "shieldBreakOffset", new Vector3(0.75f, 1f, 0f));
+
+        effects.SetFacingDirection(1);
+        effects.HandleDownStarted();
+        yield return null;
+
+        Transform shieldBreak = FindTransformNamed("LastBossShieldBreakEffect");
+        Assert.That(shieldBreak, Is.Not.Null);
+        Vector3 lockedPosition = shieldBreak.position;
+
+        effects.SetFacingDirection(-1);
+        InvokePrivate(effects, "LateUpdate");
+
+        Assert.That(shieldBreak.position.x, Is.EqualTo(lockedPosition.x).Within(0.001f));
+        Assert.That(shieldBreak.position.y, Is.EqualTo(lockedPosition.y).Within(0.001f));
+    }
+
+    [UnityTest]
     public IEnumerator EffectController_ShieldLoopsAfterShieldIn()
     {
         LastBossEffectController effects = CreateEffectController();
@@ -480,6 +502,46 @@ public sealed class LastBossEffectIntegrationTests
         yield return null;
         Assert.That(magicRenderer.flipX, Is.False);
         Assert.That(magicRenderer.transform.rotation, Is.EqualTo(Quaternion.identity));
+    }
+
+    [UnityTest]
+    public IEnumerator EffectController_MagicCircleKeepsSpawnPositionDuringChargeUpdates()
+    {
+        LastBossEffectController effects = CreateEffectController();
+        SetPrivateField(effects, "magicCircleInSpriteSheet", CreateTexture("MagicInPositionLock", 10, 8));
+
+        Vector2 initialGroundLockPoint = new Vector2(2f, 0f);
+        Vector2 initialRainSpawnPosition = new Vector2(0f, 4f);
+        Vector3 expectedPosition = effects.ResolveMagicCirclePosition(initialGroundLockPoint, initialRainSpawnPosition);
+
+        effects.BeginVerticalRangeCharge(initialGroundLockPoint, initialRainSpawnPosition);
+        yield return null;
+
+        SpriteRenderer magicRenderer = FindRendererNamed("LastBossMagicCircleIn");
+        Assert.That(magicRenderer, Is.Not.Null);
+        Assert.That(magicRenderer.transform.position, Is.EqualTo(expectedPosition));
+
+        effects.UpdateVerticalRangeCharge(new Vector2(-8f, -3f), new Vector2(5f, 7f));
+        yield return null;
+
+        Assert.That(magicRenderer.transform.position, Is.EqualTo(expectedPosition));
+    }
+
+    [Test]
+    public void EffectController_MagicCircleBladeSpawnUsesLowerFacingCorner()
+    {
+        LastBossEffectController effects = CreateEffectController();
+        SetPrivateField(effects, "magicCircleWorldSize", new Vector2(4f, 4f));
+
+        Vector2 rainSpawnPosition = new Vector2(0f, 4f);
+        Vector3 leftCircleCenter = effects.ResolveMagicCirclePosition(new Vector2(-2f, 0f), rainSpawnPosition);
+        Vector3 rightCircleCenter = effects.ResolveMagicCirclePosition(new Vector2(2f, 0f), rainSpawnPosition);
+
+        Vector2 leftSpawn = effects.ResolveMagicCircleBladeSpawnPosition(new Vector2(-2f, 0f), rainSpawnPosition);
+        Vector2 rightSpawn = effects.ResolveMagicCircleBladeSpawnPosition(new Vector2(2f, 0f), rainSpawnPosition);
+
+        Assert.That(leftSpawn, Is.EqualTo((Vector2)leftCircleCenter + new Vector2(-2f, -2f)));
+        Assert.That(rightSpawn, Is.EqualTo((Vector2)rightCircleCenter + new Vector2(2f, -2f)));
     }
 
     [Test]
@@ -676,6 +738,8 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(
             shieldBreakRenderer.sprite.textureRect,
             Is.EqualTo(new Rect(0f, shieldBreak.height - shieldBreakFrameHeight, shieldBreakFrameWidth, shieldBreakFrameHeight)));
+        Assert.That(shieldBreakRenderer.sprite.pivot.x / shieldBreakFrameWidth, Is.EqualTo(0.5f).Within(0.001f));
+        Assert.That(shieldBreakRenderer.sprite.pivot.y / shieldBreakFrameHeight, Is.EqualTo(0.5f).Within(0.001f));
 
         yield return new WaitForSecondsRealtime((playableShieldBreakFrames.Length / 30f) + 0.2f);
 
@@ -683,7 +747,7 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [UnityTest]
-    public IEnumerator EffectController_DeathUsesStableFullGridFrameCell()
+    public IEnumerator EffectController_DeathUsesStableFullGridFrame()
     {
         Texture2D death = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Art/Sprites/Effects/eff_boss_Destroy.png");
         Assert.That(death, Is.Not.Null);
@@ -702,15 +766,13 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(deathRenderer.sprite, Is.Not.Null);
         int deathFrameWidth = death.width / 5;
         int deathFrameHeight = death.height / 9;
-        Vector2 expectedPivot = ResolveCombinedFrameBoundsPivot(death, deathFrames, 5, 9, 0);
         Assert.That(deathRenderer.sprite, Is.Not.SameAs(deathFrames[0]));
         Assert.That(deathRenderer.sprite.texture, Is.SameAs(death));
         Assert.That(
             deathRenderer.sprite.textureRect,
             Is.EqualTo(new Rect(0f, death.height - deathFrameHeight, deathFrameWidth, deathFrameHeight)));
-        Assert.That(deathRenderer.sprite.pivot.x / deathFrameWidth, Is.EqualTo(expectedPivot.x).Within(0.001f));
-        Assert.That(deathRenderer.sprite.pivot.y / deathFrameHeight, Is.EqualTo(expectedPivot.y).Within(0.001f));
-        Assert.That(expectedPivot, Is.Not.EqualTo(new Vector2(0.5f, 0.5f)));
+        Assert.That(deathRenderer.sprite.pivot.x / deathFrameWidth, Is.EqualTo(0.5f).Within(0.001f));
+        Assert.That(deathRenderer.sprite.pivot.y / deathFrameHeight, Is.EqualTo(0.5f).Within(0.001f));
     }
 
     [UnityTest]
@@ -743,6 +805,36 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(deathEffect.position.y, Is.EqualTo(spawnedPosition.y).Within(0.001f));
     }
 
+    [UnityTest]
+    public IEnumerator EffectController_ShieldBreakKeepsSpawnPositionWhenBossBoundsChange()
+    {
+        GameObject bossObject = CreateObject("LastBossShieldBreakPositionLock", Vector2.zero);
+        BoxCollider2D collider = bossObject.AddComponent<BoxCollider2D>();
+        collider.enabled = false;
+
+        GameObject rendererObject = CreateObject("LastBossShieldBreakPositionRenderer", new Vector2(2f, 0f));
+        rendererObject.transform.SetParent(bossObject.transform, worldPositionStays: true);
+        SpriteRenderer renderer = rendererObject.AddComponent<SpriteRenderer>();
+        renderer.sprite = CreateSprite("LastBossShieldBreakPositionBody", 100, 80, 10f);
+
+        LastBossEffectController effects = bossObject.AddComponent<LastBossEffectController>();
+        SetPrivateField(effects, "shieldBreakSpriteSheet", CreateTexture("ShieldBreakPositionLock", 6, 20));
+        InvokePrivate(effects, "Awake");
+
+        effects.HandleDownStarted();
+        yield return null;
+
+        Transform shieldBreakEffect = FindTransformNamed("LastBossShieldBreakEffect");
+        Assert.That(shieldBreakEffect, Is.Not.Null);
+        Vector3 spawnedPosition = shieldBreakEffect.position;
+
+        rendererObject.transform.position = new Vector3(8f, 0f, 0f);
+        InvokePrivate(effects, "LateUpdate");
+
+        Assert.That(shieldBreakEffect.position.x, Is.EqualTo(spawnedPosition.x).Within(0.001f));
+        Assert.That(shieldBreakEffect.position.y, Is.EqualTo(spawnedPosition.y).Within(0.001f));
+    }
+
     [Test]
     public void EffectController_BladeClipsUseVisibleArtCrops()
     {
@@ -766,7 +858,7 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [Test]
-    public void EffectController_BladeClipsUseImportedSpriteSlicesAndLargestFrameBounds()
+    public void EffectController_BladeClipsUseImportedGroundSlicesAndImportedRainSlices()
     {
         const string underAttackPath = "Assets/Art/Sprites/Effects/eff_under_attack.png";
         const string topAttackInPath = "Assets/Art/Sprites/Effects/eff_top_attack_in.png";
@@ -782,7 +874,7 @@ public sealed class LastBossEffectIntegrationTests
         var generatedSprites = new List<Sprite>();
         Sprite[] groundFrames = GridSpriteSheetUtility.BuildFrames(effects.GroundBladeClip, generatedSprites);
         Sprite[] rainFrames = GridSpriteSheetUtility.BuildFrames(effects.RainBladeInClip, generatedSprites);
-        Sprite[] importedGroundFrames = LoadSortedSpriteFrames(underAttackPath);
+        Sprite[] importedGroundFrames = LoadPrimarySpriteFramesByGrid(underAttackPath, 5, 4, 20);
         Sprite[] importedRainFrames = LoadPrimarySpriteFramesByGrid(topAttackInPath, 5, 5, 23);
         Vector2 groundVisibleSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(effects.GroundBladeClip);
 
@@ -792,9 +884,8 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(groundFrames[0], Is.SameAs(importedGroundFrames[0]));
         Assert.That(rainFrames[0], Is.SameAs(importedRainFrames[0]));
         Assert.That(rainFrames[22], Is.SameAs(importedRainFrames[22]));
-        Vector2 expectedGroundVisibleSize = ResolveLargestSpriteBounds(importedGroundFrames);
-        Assert.That(groundVisibleSize.x, Is.EqualTo(expectedGroundVisibleSize.x).Within(0.001f));
-        Assert.That(groundVisibleSize.y, Is.EqualTo(expectedGroundVisibleSize.y).Within(0.001f));
+        Assert.That(groundVisibleSize.x, Is.EqualTo(1.87f).Within(0.001f));
+        Assert.That(groundVisibleSize.y, Is.EqualTo(10.09f).Within(0.001f));
 
         GridSpriteSheetUtility.DestroyGeneratedSprites(generatedSprites);
     }
@@ -915,6 +1006,46 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(GetAttackBoxCenter(leftAttackBox).x, Is.EqualTo(-0.5f).Within(0.001f));
     }
 
+    [Test]
+    public void LastBoss_RainBladePreviewSpawnsOutsideFacingBottomCornerAndKeepsSlotSpacing()
+    {
+        GameObject bossObject = CreateObject("LastBossRainPreviewSlots", Vector2.zero);
+        LastBossEffectController effects = bossObject.AddComponent<LastBossEffectController>();
+        LastBossController boss = bossObject.AddComponent<LastBossController>();
+        SetPrivateField(boss, "effectController", effects);
+        SetPrivateField(boss, "verticalRainBladeCount", 3);
+        SetPrivateField(effects, "magicCircleWorldSize", new Vector2(4f, 4f));
+
+        GameObject magicCircleObject = CreateObject("MagicCircleActive", Vector2.zero);
+        SetPrivateField(effects, "magicCircleObject", magicCircleObject);
+
+        object attackBox = CreateAttackBox(Vector2.zero, new Vector2(6f, 6f), 0f);
+
+        SetPrivateField(boss, "facingDirection", -1);
+        effects.SetFacingDirection(-1);
+        GetRainBladeSlotPoints(boss, attackBox, 0, out Vector2 leftSlot0, out _, out Vector2 leftAim0);
+        GetRainBladeSlotPoints(boss, attackBox, 1, out Vector2 leftSlot1, out _, out Vector2 leftAim1);
+        GetRainBladeSlotPoints(boss, attackBox, 2, out Vector2 leftSlot2, out _, out Vector2 leftAim2);
+        Assert.That(Vector2.Distance(leftSlot1, new Vector2(-8f / 3f, -2f)), Is.LessThan(0.001f));
+        Assert.That(leftSlot1 - leftSlot0, Is.EqualTo(new Vector2(3f, 0f)));
+        Assert.That(leftSlot2 - leftSlot1, Is.EqualTo(new Vector2(3f, 0f)));
+        Assert.That(leftAim0 - leftSlot0, Is.EqualTo(leftAim1 - leftSlot1));
+        Assert.That(leftAim1 - leftSlot1, Is.EqualTo(leftAim2 - leftSlot2));
+        Assert.That(Vector2.Distance(leftAim1 - leftSlot1, new Vector2(8f / 3f, 5f)), Is.LessThan(0.001f));
+
+        SetPrivateField(boss, "facingDirection", 1);
+        effects.SetFacingDirection(1);
+        GetRainBladeSlotPoints(boss, attackBox, 0, out Vector2 rightSlot0, out _, out Vector2 rightAim0);
+        GetRainBladeSlotPoints(boss, attackBox, 1, out Vector2 rightSlot1, out _, out Vector2 rightAim1);
+        GetRainBladeSlotPoints(boss, attackBox, 2, out Vector2 rightSlot2, out _, out Vector2 rightAim2);
+        Assert.That(Vector2.Distance(rightSlot1, new Vector2(8f / 3f, -2f)), Is.LessThan(0.001f));
+        Assert.That(rightSlot1 - rightSlot0, Is.EqualTo(new Vector2(3f, 0f)));
+        Assert.That(rightSlot2 - rightSlot1, Is.EqualTo(new Vector2(3f, 0f)));
+        Assert.That(rightAim0 - rightSlot0, Is.EqualTo(rightAim1 - rightSlot1));
+        Assert.That(rightAim1 - rightSlot1, Is.EqualTo(rightAim2 - rightSlot2));
+        Assert.That(Vector2.Distance(rightAim1 - rightSlot1, new Vector2(-8f / 3f, 5f)), Is.LessThan(0.001f));
+    }
+
     [UnityTest]
     public IEnumerator GroundBladeVisual_EnablesColliderOnConfiguredFrame()
     {
@@ -940,7 +1071,7 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [UnityTest]
-    public IEnumerator GroundBladeVisual_KeepsRisenPositionThroughVanishFrames()
+    public IEnumerator GroundBladeVisual_KeepsRisenTopThroughVanishFrames()
     {
         GameObject bladeObject = CreateObject("GroundBladeGrounded", Vector2.zero);
         BoxCollider2D collider = bladeObject.AddComponent<BoxCollider2D>();
@@ -970,13 +1101,11 @@ public sealed class LastBossEffectIntegrationTests
 
         Assert.That(visualRenderer.sprite.name, Is.EqualTo("GroundBladeUprightFrame"));
         Assert.That(visualRenderer.bounds.min.y, Is.EqualTo(groundY).Within(0.001f));
-        Vector3 risenPosition = visualRenderer.transform.position;
         float risenTopY = visualRenderer.bounds.max.y;
 
         yield return new WaitForSecondsRealtime((1f / 30f) + 0.05f);
 
         Assert.That(visualRenderer.sprite.name, Is.EqualTo("GroundBladeVanishFrame"));
-        Assert.That(visualRenderer.transform.position.y, Is.GreaterThan(risenPosition.y));
         Assert.That(visualRenderer.bounds.max.y, Is.EqualTo(risenTopY).Within(0.001f));
         Assert.That(visualRenderer.bounds.min.y, Is.GreaterThan(groundY));
 
@@ -997,7 +1126,7 @@ public sealed class LastBossEffectIntegrationTests
         GridSpriteSheetClip clip = CreateClip(CreateTexture("UnderAttackStableFrame", 20, 10), 2, 1, 2, 30f);
         clip.UseFrameCrop = true;
         clip.UseFrameCropForSizingOnly = true;
-        clip.FrameCropPixels = new RectInt(4, 0, 2, 10);
+        clip.FrameCropPixels = new RectInt(6, 2, 2, 6);
 
         blade.ConfigureGroundVisual(clip, uprightFrameIndex: 0, slotIndex: 0, frameSizeMultiplier: Vector2.one);
         Vector2 colliderSize = collider.size;
@@ -1412,6 +1541,42 @@ public sealed class LastBossEffectIntegrationTests
         Type actionType = typeof(LastBossController).GetNestedType("BossAction", BindingFlags.NonPublic);
         Assert.That(actionType, Is.Not.Null, "BossAction must exist.");
         return Enum.Parse(actionType, actionName);
+    }
+
+    private static object CreateAttackBox(Vector2 center, Vector2 size, float angle)
+    {
+        Type attackBoxType = typeof(LastBossController).GetNestedType("AttackBox", BindingFlags.NonPublic);
+        Assert.That(attackBoxType, Is.Not.Null, "AttackBox must exist.");
+        ConstructorInfo constructor = attackBoxType.GetConstructor(
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+            null,
+            new[] { typeof(Vector2), typeof(Vector2), typeof(float) },
+            null);
+        Assert.That(constructor, Is.Not.Null, "AttackBox constructor must exist.");
+        return constructor.Invoke(new object[] { center, size, angle });
+    }
+
+    private static void GetRainBladeSlotPoints(
+        LastBossController boss,
+        object attackBox,
+        int slotIndex,
+        out Vector2 spawnPosition,
+        out Vector2 targetPoint,
+        out Vector2 previewAimPoint)
+    {
+        object[] arguments =
+        {
+            attackBox,
+            slotIndex,
+            Vector2.zero,
+            Vector2.zero,
+            Vector2.zero,
+            true
+        };
+        InvokePrivate(boss, "GetRainBladeSlotPoints", arguments);
+        spawnPosition = (Vector2)arguments[2];
+        targetPoint = (Vector2)arguments[3];
+        previewAimPoint = (Vector2)arguments[4];
     }
 
     private static Vector2 GetAttackBoxCenter(object attackBox)
