@@ -314,21 +314,13 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             return false;
         }
 
-        RevealRoomImmediately(room, roomId);
-        return true;
-    }
-
-    private void RevealRoomImmediately(RoomCameraTrigger room, string roomId)
-    {
-        if (room == null || string.IsNullOrEmpty(roomId))
+        if (!ShouldRoomBeCurrent(room))
         {
-            return;
+            return false;
         }
 
-        CancelPendingTransition(roomId);
-        PaintRoom(room);
-        visibleRoomIds.Add(roomId);
-        ApplyMaskTexture();
+        SetCurrentRoom(room);
+        return true;
     }
 
     private void SetCurrentRoom(RoomCameraTrigger room)
@@ -343,10 +335,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             return;
         }
 
-        bool targetAlreadyVisibleOrOpening =
-            visibleRoomIds.Contains(roomId) ||
-            HasPendingTransition(roomId, true);
-        if (currentRoom == room && targetAlreadyVisibleOrOpening)
+        if (currentRoom == room &&
+            (visibleRoomIds.Contains(roomId) || pendingRoomIds.Contains(roomId)))
         {
             return;
         }
@@ -362,10 +352,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             BeginTransition(previousRoom, previousRoomId, false);
         }
 
-        if (!targetAlreadyVisibleOrOpening)
-        {
-            BeginTransition(room, roomId, true);
-        }
+        BeginTransition(room, roomId, true);
     }
 
     private void ClearCurrentRoom()
@@ -382,6 +369,18 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         {
             BeginTransition(previousRoom, previousRoomId, false);
         }
+    }
+
+    private bool ShouldRoomBeCurrent(RoomCameraTrigger room)
+    {
+        RoomCameraTrigger activeRoom = RoomCameraTrigger.ActiveRoom;
+        if (activeRoom != null)
+        {
+            return activeRoom == room;
+        }
+
+        return TryGetPlayerPosition(out Vector3 playerPosition) &&
+            room.ContainsPoint(playerPosition);
     }
 
     private void BeginTransition(RoomCameraTrigger room, string roomId, bool revealing)
@@ -429,21 +428,6 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 pendingReveals.RemoveAt(i);
             }
         }
-    }
-
-    private bool HasPendingTransition(string roomId, bool revealing)
-    {
-        for (int i = 0; i < pendingReveals.Count; i++)
-        {
-            PendingReveal pendingReveal = pendingReveals[i];
-            if (pendingReveal.Revealing == revealing &&
-                string.Equals(pendingReveal.RoomId, roomId, StringComparison.Ordinal))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private void ProcessPendingReveals()
