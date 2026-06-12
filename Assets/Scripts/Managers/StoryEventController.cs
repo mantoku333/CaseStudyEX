@@ -1342,10 +1342,12 @@ public sealed class StoryEventController : MonoBehaviour
             CanvasGroup canvasGroup = EnsureLetterBoxCanvasGroup(view);
             if (canvasGroup != null)
             {
-                StartLetterBoxTransition(canvasGroup, canvasGroup.alpha, 0f, 1f, 0f, () =>
+                canvasGroup.alpha = 1f;
+                StartLetterBoxTransition(canvasGroup, 1f, 1f, 1f, 0f, () =>
                 {
                     if (view == null)
                     {
+                        ClearLetterBoxCache();
                         return;
                     }
 
@@ -1355,14 +1357,20 @@ public sealed class StoryEventController : MonoBehaviour
                     {
                         canvasGroup.alpha = restoreAlpha;
                     }
+
+                    ClearLetterBoxCache();
                 });
+                return;
             }
-            else
-            {
-                view.SetActive(restoreActiveSelf);
-            }
+
+            view.SetActive(restoreActiveSelf);
         }
 
+        ClearLetterBoxCache();
+    }
+
+    private void ClearLetterBoxCache()
+    {
         cachedLetterBoxViewActiveSelf = false;
         cachedLetterBoxAlpha = 1f;
         cachedLetterBoxTop = null;
