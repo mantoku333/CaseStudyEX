@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 81a37d5bda1ca8c4b93d9fb7745a6fd0
+guid: 026dd0fe969724544b8b5a51f5f925ed
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5640941529454258430
-    second: Gimmick_Tutorial_0
+      213: -1032646052330970858
+    second: ITEM_DiaryPage1_ver02_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Gimmick_Tutorial_0
+      name: ITEM_DiaryPage1_ver02_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1280
-        height: 720
+        x: 183
+        y: 96
+        width: 624
+        height: 770
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2075122e09957b1b0800000000000000
-      internalID: -5640941529454258430
+      spriteID: 6116a18f2ed4ba1f0800000000000000
+      internalID: -1032646052330970858
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Gimmick_Tutorial_0: -5640941529454258430
+      ITEM_DiaryPage1_ver02_0: -1032646052330970858
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
