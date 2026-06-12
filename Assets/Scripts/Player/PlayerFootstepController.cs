@@ -16,6 +16,7 @@ namespace Player
 
         [Header("Surface Detection")]
         [SerializeField] private LayerMask surfaceLayerMask;
+        [SerializeField] private LayerMask surfaceZoneLayerMask;
         [SerializeField, Min(0.01f)] private float surfaceProbeDistance = 1.2f;
         [SerializeField] private SurfaceAudioProfile fallbackSurfaceProfile;
 
@@ -33,8 +34,12 @@ namespace Player
 
         [SerializeField] private bool useAnimationEventsForFootsteps = true;
 
+        private const int SurfaceZoneOverlapCapacity = 16;
+
+        private readonly Collider2D[] surfaceZoneOverlapResults = new Collider2D[SurfaceZoneOverlapCapacity];
         private Rigidbody2D rigidBody2d;
         private IPlayerViewStateProvider stateProvider;
+        private ContactFilter2D surfaceZoneContactFilter;
         private float stepTimer;
         private float defaultPitch;
         private bool hasGroundState;
@@ -42,12 +47,14 @@ namespace Player
         private float minAirborneVelocityY;
         private float nextDebugLogTime;
         private int nextFootstepClipIndex;
+        private int cachedSurfaceZoneLayerMask;
 
         private void Awake()
         {
             rigidBody2d = GetComponent<Rigidbody2D>();
             stateProvider = GetComponent<IPlayerViewStateProvider>();
             EnsureFootstepAudioSource();
+            RebuildSurfaceZoneContactFilterIfNeeded(force: true);
 
             if (footstepAudioSource != null)
             {
@@ -272,7 +279,8 @@ namespace Player
 
         private SurfaceAudioZone ResolveZoneAtPoint(Vector2 point, SurfaceAudioZone currentBestZone)
         {
-            Collider2D[] hits = Physics2D.OverlapPointAll(point);
+            RebuildSurfaceZoneContactFilterIfNeeded(force: false);
+            int hitCount = Physics2D.OverlapPoint(point, surfaceZoneContactFilter, surfaceZoneOverlapResults);
             SurfaceAudioZone selectedZone = null;
 
             if (currentBestZone != null)
@@ -280,9 +288,10 @@ namespace Player
                 selectedZone = currentBestZone;
             }
 
-            for (int i = 0; i < hits.Length; i++)
+            for (int i = 0; i < hitCount; i++)
             {
-                SurfaceAudioZone zone = hits[i].GetComponentInParent<SurfaceAudioZone>();
+                Collider2D hit = surfaceZoneOverlapResults[i];
+                SurfaceAudioZone zone = hit != null ? hit.GetComponentInParent<SurfaceAudioZone>() : null;
                 if (zone == null || zone.Profile == null)
                 {
                     continue;
@@ -295,6 +304,38 @@ namespace Player
             }
 
             return selectedZone;
+        }
+
+        private void RebuildSurfaceZoneContactFilterIfNeeded(bool force)
+        {
+            int layerMask = ResolveSurfaceZoneLayerMask();
+            if (!force && cachedSurfaceZoneLayerMask == layerMask)
+            {
+                return;
+            }
+
+            surfaceZoneContactFilter = new ContactFilter2D
+            {
+                useLayerMask = true,
+                useTriggers = true
+            };
+            surfaceZoneContactFilter.SetLayerMask(layerMask);
+            cachedSurfaceZoneLayerMask = layerMask;
+        }
+
+        private int ResolveSurfaceZoneLayerMask()
+        {
+            if (surfaceZoneLayerMask.value != 0)
+            {
+                return surfaceZoneLayerMask.value;
+            }
+
+            if (surfaceLayerMask.value != 0)
+            {
+                return surfaceLayerMask.value;
+            }
+
+            return Physics2D.DefaultRaycastLayers;
         }
 
         private AudioClip[] ResolveFootstepClips(SurfaceAudioProfile surfaceProfile)

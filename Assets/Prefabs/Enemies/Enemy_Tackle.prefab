@@ -283,7 +283,7 @@ MonoBehaviour:
     m_Bits: 192
   treatShutterWallsAsWalls: 1
   flipSpriteOnTurn: 1
-  turnCheckInterval: 0.08
+  turnCheckInterval: 0.16
   staggerTurnChecks: 1
   enemyCollisionTurnCooldown: 0.15
 --- !u!114 &867530900123456789
