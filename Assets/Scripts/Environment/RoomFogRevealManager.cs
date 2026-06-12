@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 {
     private const string ShaderName = "CaseStudy/RoomFogOverlay";
-    private const string RevealedFlagPrefix = "room_fog_revealed:";
     private const float PlayerRoomRefreshInterval = 0.2f;
 
     private static RoomFogRevealManager instance;
@@ -36,9 +35,10 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private readonly List<RoomCameraTrigger> rooms = new List<RoomCameraTrigger>();
     private readonly Dictionary<RoomCameraTrigger, string> roomIds = new Dictionary<RoomCameraTrigger, string>();
-    private readonly HashSet<string> revealedRoomIds = new HashSet<string>(StringComparer.Ordinal);
+    private readonly HashSet<string> visibleRoomIds = new HashSet<string>(StringComparer.Ordinal);
     private readonly HashSet<string> pendingRoomIds = new HashSet<string>(StringComparer.Ordinal);
     private readonly List<PendingReveal> pendingReveals = new List<PendingReveal>();
+    private RoomCameraTrigger currentRoom;
 
     private Scene managedScene;
     private Bounds worldBounds;
@@ -61,7 +61,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     {
         public RoomCameraTrigger Room;
         public string RoomId;
-        public bool WriteFlagWhenComplete;
+        public bool Revealing;
         public Bounds OriginalBounds;
         public Bounds RevealBounds;
         public Vector2 Center;
@@ -86,7 +86,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         }
 
         return TryGetInstance(out RoomFogRevealManager manager) &&
-            manager.Reveal(room, true);
+            manager.Reveal(room);
     }
 
     public static void SetFogEnabled(bool enabled)
@@ -196,12 +196,12 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     public void Capture(SaveGameData saveData)
     {
-        // Revealed rooms are stored in GameProgressFlags, so the flags module captures them.
+        // Room fog visibility is transient and follows only the current room.
     }
 
     public void Restore(SaveGameData saveData)
     {
-        RebuildMaskFromSavedFlags(false);
+        RebuildMaskForCurrentRoom(true);
     }
 
     private void RefreshForCurrentScene(bool revealCurrentRoom)
@@ -209,9 +209,10 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         managedScene = SceneManager.GetActiveScene();
         rooms.Clear();
         roomIds.Clear();
-        revealedRoomIds.Clear();
+        visibleRoomIds.Clear();
         pendingRoomIds.Clear();
         pendingReveals.Clear();
+        currentRoom = null;
         hasRooms = false;
 
         RoomCameraTrigger[] allRooms = FindObjectsByType<RoomCameraTrigger>(
@@ -259,34 +260,21 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         ClearMaskPixels();
         EnsureOverlay();
         ApplyMaterialProperties();
-        ConfigurePortalRevealTriggers();
-        RebuildMaskFromSavedFlags(revealCurrentRoom);
+        RebuildMaskForCurrentRoom(revealCurrentRoom);
     }
 
-    private void RebuildMaskFromSavedFlags(bool revealCurrentRoom)
+    private void RebuildMaskForCurrentRoom(bool revealCurrentRoom)
     {
         if (!hasRooms || maskPixels == null)
         {
             return;
         }
 
-        revealedRoomIds.Clear();
+        visibleRoomIds.Clear();
+        pendingRoomIds.Clear();
+        pendingReveals.Clear();
+        currentRoom = null;
         ClearMaskPixels();
-
-        for (int i = 0; i < rooms.Count; i++)
-        {
-            RoomCameraTrigger room = rooms[i];
-            if (room == null || !roomIds.TryGetValue(room, out string roomId))
-            {
-                continue;
-            }
-
-            if (GameProgressFlags.Get(CreateFlagKey(roomId)))
-            {
-                PaintRoom(room);
-                revealedRoomIds.Add(roomId);
-            }
-        }
 
         ApplyMaskTexture();
         SetOverlayVisible(true);
@@ -299,10 +287,17 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void HandleActiveRoomChanged(RoomCameraTrigger activeRoom)
     {
-        Reveal(activeRoom, true);
+        if (activeRoom != null)
+        {
+            SetCurrentRoom(activeRoom);
+        }
+        else
+        {
+            ClearCurrentRoom();
+        }
     }
 
-    private bool Reveal(RoomCameraTrigger room, bool writeFlag)
+    private bool Reveal(RoomCameraTrigger room)
     {
         if (room == null)
         {
@@ -319,16 +314,76 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             return false;
         }
 
-        if (revealedRoomIds.Contains(roomId) || pendingRoomIds.Contains(roomId))
+        if (!ShouldRoomBeCurrent(room))
         {
             return false;
         }
 
-        BeginReveal(room, roomId, writeFlag);
+        SetCurrentRoom(room);
         return true;
     }
 
-    private void BeginReveal(RoomCameraTrigger room, string roomId, bool writeFlag)
+    private void SetCurrentRoom(RoomCameraTrigger room)
+    {
+        if (room == null || room.gameObject.scene != managedScene)
+        {
+            return;
+        }
+
+        if (!roomIds.TryGetValue(room, out string roomId))
+        {
+            return;
+        }
+
+        if (currentRoom == room &&
+            (visibleRoomIds.Contains(roomId) || pendingRoomIds.Contains(roomId)))
+        {
+            return;
+        }
+
+        RoomCameraTrigger previousRoom = currentRoom;
+        currentRoom = room;
+
+        if (previousRoom != null &&
+            previousRoom != room &&
+            previousRoom.gameObject.scene == managedScene &&
+            roomIds.TryGetValue(previousRoom, out string previousRoomId))
+        {
+            BeginTransition(previousRoom, previousRoomId, false);
+        }
+
+        BeginTransition(room, roomId, true);
+    }
+
+    private void ClearCurrentRoom()
+    {
+        if (currentRoom == null)
+        {
+            return;
+        }
+
+        RoomCameraTrigger previousRoom = currentRoom;
+        currentRoom = null;
+        if (previousRoom.gameObject.scene == managedScene &&
+            roomIds.TryGetValue(previousRoom, out string previousRoomId))
+        {
+            BeginTransition(previousRoom, previousRoomId, false);
+        }
+    }
+
+    private bool ShouldRoomBeCurrent(RoomCameraTrigger room)
+    {
+        RoomCameraTrigger activeRoom = RoomCameraTrigger.ActiveRoom;
+        if (activeRoom != null)
+        {
+            return activeRoom == room;
+        }
+
+        return TryGetPlayerPosition(out Vector3 playerPosition) &&
+            room.ContainsPoint(playerPosition);
+    }
+
+    private void BeginTransition(RoomCameraTrigger room, string roomId, bool revealing)
     {
         if (room == null ||
             string.IsNullOrEmpty(roomId) ||
@@ -336,6 +391,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         {
             return;
         }
+
+        CancelPendingTransition(roomId);
 
         Vector2 center = new Vector2(roomBounds.center.x, roomBounds.center.y);
         if (TryGetPlayerPosition(out Vector3 playerPosition))
@@ -348,7 +405,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         {
             Room = room,
             RoomId = roomId,
-            WriteFlagWhenComplete = writeFlag,
+            Revealing = revealing,
             OriginalBounds = roomBounds,
             RevealBounds = revealBounds,
             Center = center,
@@ -361,6 +418,18 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         ProcessPendingReveals();
     }
 
+    private void CancelPendingTransition(string roomId)
+    {
+        pendingRoomIds.Remove(roomId);
+        for (int i = pendingReveals.Count - 1; i >= 0; i--)
+        {
+            if (string.Equals(pendingReveals[i].RoomId, roomId, StringComparison.Ordinal))
+            {
+                pendingReveals.RemoveAt(i);
+            }
+        }
+    }
+
     private void ProcessPendingReveals()
     {
         if (pendingReveals.Count == 0 || maskTexture == null || maskPixels == null)
@@ -371,35 +440,18 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         bool maskChanged = false;
         for (int i = pendingReveals.Count - 1; i >= 0; i--)
         {
-            PendingReveal reveal = pendingReveals[i];
-            if (reveal.Room == null)
+            if (!pendingReveals[i].Revealing)
             {
-                pendingRoomIds.Remove(reveal.RoomId);
-                pendingReveals.RemoveAt(i);
-                continue;
+                maskChanged |= ProcessPendingRevealAt(i);
             }
+        }
 
-            float rawProgress = Mathf.Clamp01((Time.unscaledTime - reveal.StartedAt) / revealDuration);
-            float progress = Mathf.SmoothStep(0f, 1f, rawProgress);
-
-            if (progress >= 1f)
+        for (int i = pendingReveals.Count - 1; i >= 0; i--)
+        {
+            if (pendingReveals[i].Revealing)
             {
-                PaintRoom(reveal.Room, reveal.OriginalBounds, reveal.RevealBounds);
-                pendingRoomIds.Remove(reveal.RoomId);
-                pendingReveals.RemoveAt(i);
-                revealedRoomIds.Add(reveal.RoomId);
-
-                if (reveal.WriteFlagWhenComplete)
-                {
-                    GameProgressFlags.Set(CreateFlagKey(reveal.RoomId), true);
-                }
-
-                maskChanged = true;
-                continue;
+                maskChanged |= ProcessPendingRevealAt(i);
             }
-
-            PaintRoomRevealProgress(reveal, progress);
-            maskChanged = true;
         }
 
         if (maskChanged)
@@ -408,12 +460,55 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         }
     }
 
+    private bool ProcessPendingRevealAt(int index)
+    {
+        PendingReveal reveal = pendingReveals[index];
+        if (reveal.Room == null)
+        {
+            pendingRoomIds.Remove(reveal.RoomId);
+            pendingReveals.RemoveAt(index);
+            return false;
+        }
+
+        float rawProgress = Mathf.Clamp01((Time.unscaledTime - reveal.StartedAt) / revealDuration);
+        float progress = Mathf.SmoothStep(0f, 1f, rawProgress);
+
+        if (progress >= 1f)
+        {
+            if (reveal.Revealing)
+            {
+                PaintRoom(reveal.Room, reveal.OriginalBounds, reveal.RevealBounds);
+                visibleRoomIds.Add(reveal.RoomId);
+            }
+            else
+            {
+                PaintRoomHidden(reveal.Room, reveal.OriginalBounds, reveal.RevealBounds);
+                visibleRoomIds.Remove(reveal.RoomId);
+            }
+
+            pendingRoomIds.Remove(reveal.RoomId);
+            pendingReveals.RemoveAt(index);
+            return true;
+        }
+
+        if (reveal.Revealing)
+        {
+            PaintRoomRevealProgress(reveal, progress);
+        }
+        else
+        {
+            PaintRoomConcealProgress(reveal, progress);
+        }
+
+        return true;
+    }
+
     private void RevealCurrentRoomFromRuntimeState()
     {
         RoomCameraTrigger activeRoom = RoomCameraTrigger.ActiveRoom;
         if (activeRoom != null && activeRoom.gameObject.scene == managedScene)
         {
-            Reveal(activeRoom, true);
+            SetCurrentRoom(activeRoom);
             return;
         }
 
@@ -425,8 +520,11 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         RoomCameraTrigger containingRoom = ResolveSmallestRoomContaining(playerPosition);
         if (containingRoom != null)
         {
-            Reveal(containingRoom, true);
+            SetCurrentRoom(containingRoom);
+            return;
         }
+
+        ClearCurrentRoom();
     }
 
     private RoomCameraTrigger ResolveSmallestRoomContaining(Vector3 worldPosition)
@@ -596,6 +694,96 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 {
                     maskPixels[pixelIndex] = revealed;
                 }
+            }
+        }
+    }
+
+    private void PaintRoomConcealProgress(PendingReveal reveal, float progress)
+    {
+        if (maskTexture == null || maskPixels == null)
+        {
+            return;
+        }
+
+        int width = maskTexture.width;
+        int height = maskTexture.height;
+        Color32 hidden = new Color32(0, 0, 0, 255);
+
+        int minX = Mathf.Clamp(WorldToPixelX(reveal.RevealBounds.min.x, width) - 1, 0, width - 1);
+        int maxX = Mathf.Clamp(WorldToPixelX(reveal.RevealBounds.max.x, width) + 1, 0, width - 1);
+        int minY = Mathf.Clamp(WorldToPixelY(reveal.RevealBounds.min.y, height) - 1, 0, height - 1);
+        int maxY = Mathf.Clamp(WorldToPixelY(reveal.RevealBounds.max.y, height) + 1, 0, height - 1);
+        float revealFront = Mathf.Lerp(1.12f, -0.12f, progress);
+
+        for (int y = minY; y <= maxY; y++)
+        {
+            float worldY = PixelToWorldY(y, height);
+            int row = y * width;
+
+            for (int x = minX; x <= maxX; x++)
+            {
+                int pixelIndex = row + x;
+                if (maskPixels[pixelIndex].r == 0)
+                {
+                    continue;
+                }
+
+                float worldX = PixelToWorldX(x, width);
+                if (!IsPointInsideRevealArea(
+                        reveal.Room,
+                        new Vector3(worldX, worldY, reveal.OriginalBounds.center.z),
+                        reveal.OriginalBounds,
+                        reveal.RevealBounds))
+                {
+                    continue;
+                }
+
+                float distance = Vector2.Distance(new Vector2(worldX, worldY), reveal.Center);
+                float normalizedDistance = distance / reveal.Radius;
+                float noise = ValueNoise(new Vector2(worldX, worldY) * 0.45f);
+                float noisyDistance = normalizedDistance + (noise - 0.5f) * revealNoiseStrength;
+                if (noisyDistance > revealFront)
+                {
+                    maskPixels[pixelIndex] = hidden;
+                }
+            }
+        }
+    }
+
+    private void PaintRoomHidden(RoomCameraTrigger room, Bounds roomBounds, Bounds revealBounds)
+    {
+        if (room == null || maskTexture == null || maskPixels == null)
+        {
+            return;
+        }
+
+        int width = maskTexture.width;
+        int height = maskTexture.height;
+        Color32 hidden = new Color32(0, 0, 0, 255);
+
+        int minX = Mathf.Clamp(WorldToPixelX(revealBounds.min.x, width) - 1, 0, width - 1);
+        int maxX = Mathf.Clamp(WorldToPixelX(revealBounds.max.x, width) + 1, 0, width - 1);
+        int minY = Mathf.Clamp(WorldToPixelY(revealBounds.min.y, height) - 1, 0, height - 1);
+        int maxY = Mathf.Clamp(WorldToPixelY(revealBounds.max.y, height) + 1, 0, height - 1);
+
+        for (int y = minY; y <= maxY; y++)
+        {
+            float worldY = PixelToWorldY(y, height);
+            int row = y * width;
+
+            for (int x = minX; x <= maxX; x++)
+            {
+                float worldX = PixelToWorldX(x, width);
+                if (!IsPointInsideRevealArea(
+                        room,
+                        new Vector3(worldX, worldY, roomBounds.center.z),
+                        roomBounds,
+                        revealBounds))
+                {
+                    continue;
+                }
+
+                maskPixels[row + x] = hidden;
             }
         }
     }
@@ -978,8 +1166,4 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         return $"{managedScene.name}:{roomName}";
     }
 
-    private static string CreateFlagKey(string roomId)
-    {
-        return RevealedFlagPrefix + roomId;
-    }
 }
