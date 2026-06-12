@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Metroidvania.Managers;
 using Metroidvania.Player;
 using Player;
 using UnityEngine;
@@ -135,8 +136,10 @@ namespace GameName.Enemy
         private SpriteRenderer spriteRenderer;
         private LastBossEffectController effectController;
         private Transform playerTransform;
+        private PlayerController playerController;
         private UmbrellaParryController playerParryController;
         private ParryHitbox playerParryHitbox;
+        private DialogueManager dialogueManager;
         private ContactFilter2D playerContactFilter;
         private Sprite runtimeBoxSprite;
         private GameObject telegraphObject;
@@ -170,6 +173,7 @@ namespace GameName.Enemy
         private float hitStopRestoreTimeScale = 1f;
         private float hitFlashStartTime = -1f;
         private float hitFlashEndTime = -1f;
+        private float nextDialogueManagerSearchTime;
         // 予兆中に成立したジャストパリィを、攻撃発生まで短時間だけ保持する。
         private float justParryValidUntil = -1f;
         private BossAction justParryBufferedAction = BossAction.None;
@@ -304,6 +308,12 @@ namespace GameName.Enemy
                 return;
             }
 
+            if (ShouldPauseForPlayerControlLock())
+            {
+                StopMotion();
+                return;
+            }
+
             CachePlayerReferences();
             if (CanTurnTowardPlayer())
             {
@@ -334,6 +344,12 @@ namespace GameName.Enemy
         {
             if (!encounterActive || state == BossState.Dead)
             {
+                return;
+            }
+
+            if (ShouldPauseForPlayerControlLock())
+            {
+                StopMotion();
                 return;
             }
 
@@ -1014,7 +1030,8 @@ namespace GameName.Enemy
                     i,
                     out Vector2 spawnPosition,
                     out Vector2 targetPoint,
-                    out Vector2 previewAimPoint);
+                    out Vector2 previewAimPoint,
+                    alignSpawnToMagicCircle: true);
                 blade.UpdateRainPreview(spawnPosition, targetPoint, previewAimPoint);
             }
         }
@@ -1024,7 +1041,8 @@ namespace GameName.Enemy
             int slotIndex,
             out Vector2 spawnPosition,
             out Vector2 targetPoint,
-            out Vector2 previewAimPoint)
+            out Vector2 previewAimPoint,
+            bool alignSpawnToMagicCircle = true)
         {
             int bladeCount = Mathf.Max(1, verticalRainBladeCount);
             Vector2 direction = GetAttackBoxDirection(attackBox);
@@ -1039,6 +1057,18 @@ namespace GameName.Enemy
             spawnPosition = topCenter + side * sideOffset;
             targetPoint = bottomCenter + side * sideOffset;
             previewAimPoint = bottomCenter;
+            Vector2 middleSpawnPosition = topCenter;
+            Vector2 previewPivotPosition = middleSpawnPosition;
+
+            if (alignSpawnToMagicCircle && effectController != null)
+            {
+                previewPivotPosition =
+                    effectController.ResolveMagicCircleBladeSpawnOutsidePosition(targetPoint, spawnPosition);
+                Vector2 spawnLineOffset = previewPivotPosition - middleSpawnPosition;
+                spawnPosition += spawnLineOffset;
+            }
+
+            previewAimPoint = spawnPosition + (bottomCenter - previewPivotPosition);
         }
 
         private void BeginHorizontalRangeCharge(AttackBox attackBox)
@@ -1092,7 +1122,8 @@ namespace GameName.Enemy
                 0,
                 out Vector2 spawnPosition,
                 out Vector2 targetPoint,
-                out _);
+                out _,
+                alignSpawnToMagicCircle: false);
             effectController.BeginVerticalRangeCharge(targetPoint, spawnPosition);
         }
 
@@ -1108,7 +1139,8 @@ namespace GameName.Enemy
                 0,
                 out Vector2 spawnPosition,
                 out Vector2 targetPoint,
-                out _);
+                out _,
+                alignSpawnToMagicCircle: false);
             effectController.UpdateVerticalRangeCharge(targetPoint, spawnPosition);
         }
 
@@ -1711,6 +1743,20 @@ namespace GameName.Enemy
                 return;
             }
 
+            if (playerController == null)
+            {
+                playerController = playerTransform.GetComponent<PlayerController>();
+                if (playerController == null)
+                {
+                    playerController = playerTransform.GetComponentInParent<PlayerController>();
+                }
+
+                if (playerController == null)
+                {
+                    playerController = playerTransform.GetComponentInChildren<PlayerController>(true);
+                }
+            }
+
             if (playerParryController == null)
             {
                 playerParryController = playerTransform.GetComponentInChildren<UmbrellaParryController>(true);
@@ -1720,6 +1766,36 @@ namespace GameName.Enemy
             {
                 playerParryHitbox = playerTransform.GetComponentInChildren<ParryHitbox>(true);
             }
+        }
+
+        private bool ShouldPauseForPlayerControlLock()
+        {
+            if (state == BossState.Dead || state == BossState.Downed)
+            {
+                return false;
+            }
+
+            CachePlayerReferences();
+
+            if (playerController != null && playerController.IsExternalControlLocked)
+            {
+                return true;
+            }
+
+            return IsDialogueRunning();
+        }
+
+        private bool IsDialogueRunning()
+        {
+            if (dialogueManager == null && Time.unscaledTime >= nextDialogueManagerSearchTime)
+            {
+                dialogueManager = FindFirstObjectByType<DialogueManager>(FindObjectsInactive.Include);
+                nextDialogueManagerSearchTime = Time.unscaledTime + 0.5f;
+            }
+
+            return dialogueManager != null &&
+                   dialogueManager.Runner != null &&
+                   dialogueManager.Runner.IsDialogueRunning;
         }
 
         private void FacePlayer()
