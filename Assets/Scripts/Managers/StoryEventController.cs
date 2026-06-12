@@ -1769,6 +1769,8 @@ public sealed class StoryEventController : MonoBehaviour
             return;
         }
 
+        AlignEventCameraToCurrentView(activeEventCamera);
+
         cachedEventCameraPriorityValue = activeEventCamera.Priority.Value;
         cachedEventCameraPriorityEnabled = activeEventCamera.Priority.Enabled;
         hasCachedEventCameraPriority = true;
@@ -1787,6 +1789,59 @@ public sealed class StoryEventController : MonoBehaviour
         int desiredPriority = Mathf.Max(eventCameraPriorityFloor, topPriority);
         activeEventCamera.Priority.Value = desiredPriority;
         activeEventCamera.Priority.Enabled = true;
+    }
+
+    private static void AlignEventCameraToCurrentView(CinemachineCamera targetCamera)
+    {
+        if (targetCamera == null)
+        {
+            return;
+        }
+
+        CinemachineCamera currentCamera = FindHighestPriorityCameraExcept(targetCamera);
+        if (currentCamera == null)
+        {
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null)
+            {
+                return;
+            }
+
+            float orthographicSize = mainCamera.orthographic
+                ? mainCamera.orthographicSize
+                : targetCamera.Lens.OrthographicSize;
+            ApplyCameraPose(targetCamera, mainCamera.transform.position, orthographicSize);
+            return;
+        }
+
+        ApplyCameraPose(targetCamera, currentCamera.transform.position, currentCamera.Lens.OrthographicSize);
+    }
+
+    private static CinemachineCamera FindHighestPriorityCameraExcept(CinemachineCamera excludedCamera)
+    {
+        CinemachineCamera bestCamera = null;
+        int bestPriority = int.MinValue;
+        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
+            FindObjectsInactive.Exclude,
+            FindObjectsSortMode.None);
+
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            CinemachineCamera camera = cameras[i];
+            if (camera == null || camera == excludedCamera || IsRuntimeEventCamera(camera))
+            {
+                continue;
+            }
+
+            int priority = camera.Priority.Value;
+            if (bestCamera == null || priority > bestPriority)
+            {
+                bestCamera = camera;
+                bestPriority = priority;
+            }
+        }
+
+        return bestCamera;
     }
 
     private void RestoreEventCameraPriority()
