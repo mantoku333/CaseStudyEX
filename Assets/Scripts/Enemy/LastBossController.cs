@@ -2377,7 +2377,11 @@ namespace GameName.Enemy
         {
             if (rb2D == null)
             {
-                return;
+                rb2D = GetComponent<Rigidbody2D>();
+                if (rb2D == null)
+                {
+                    return;
+                }
             }
 
             Vector2 velocity = rb2D.linearVelocity;

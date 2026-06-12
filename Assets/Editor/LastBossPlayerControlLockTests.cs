@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using GameName.Enemy;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -28,15 +30,51 @@ public sealed class LastBossPlayerControlLockTests
     [Test]
     public void LastBoss_DoesNotLeaveInitialDelayWhilePlayerControlLocked()
     {
-        PlayerController player = CreatePlayer(new Vector2(1f, 0f));
-        LastBossController boss = CreateLastBoss(Vector2.zero);
+        ValidateLastBossPausesForPlayerControlLock(objectsToDestroy);
+    }
+
+    public static void RunCommandLineValidation()
+    {
+        List<Object> createdObjects = new List<Object>();
+        string resultPath = Path.Combine(
+            Directory.GetCurrentDirectory(),
+            "Temp",
+            "LastBossPlayerControlLockValidation.txt");
+
+        try
+        {
+            ValidateLastBossPausesForPlayerControlLock(createdObjects);
+            File.WriteAllText(resultPath, "PASS LastBoss stayed paused while player control was locked and resumed after unlock.");
+            Debug.Log($"LastBoss player control lock validation passed. Results written to {resultPath}");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            File.WriteAllText(resultPath, $"FAIL {exception}");
+            Debug.LogException(exception);
+            EditorApplication.Exit(1);
+        }
+        finally
+        {
+            DestroyCreatedObjects(createdObjects);
+        }
+    }
+
+    private static void ValidateLastBossPausesForPlayerControlLock(List<Object> createdObjects)
+    {
+        PlayerController player = CreatePlayer(new Vector2(1f, 0f), createdObjects);
+        LastBossController boss = CreateLastBoss(Vector2.zero, createdObjects);
+        Rigidbody2D bossRigidbody = boss.GetComponent<Rigidbody2D>();
         SetPrivateField(boss, "initialActionDelay", 0f);
 
         player.SetExternalControlLocked(true);
         boss.ActivateEncounter();
+        bossRigidbody.linearVelocity = Vector2.right * 5f;
 
         InvokePrivate(boss, "Update");
+        InvokePrivate(boss, "FixedUpdate");
 
+        Assert.That(bossRigidbody.linearVelocity.x, Is.EqualTo(0f).Within(0.0001f));
         Assert.That(GetPrivateField(boss, "state").ToString(), Is.EqualTo("InitialDelay"));
 
         player.SetExternalControlLocked(false);
@@ -46,10 +84,10 @@ public sealed class LastBossPlayerControlLockTests
         Assert.That(GetPrivateField(boss, "state").ToString(), Is.Not.EqualTo("InitialDelay"));
     }
 
-    private PlayerController CreatePlayer(Vector2 position)
+    private static PlayerController CreatePlayer(Vector2 position, List<Object> createdObjects)
     {
         GameObject playerObject = new GameObject("Player");
-        objectsToDestroy.Add(playerObject);
+        createdObjects.Add(playerObject);
         playerObject.tag = "Player";
         playerObject.transform.position = position;
         playerObject.AddComponent<Rigidbody2D>();
@@ -57,10 +95,10 @@ public sealed class LastBossPlayerControlLockTests
         return playerObject.AddComponent<PlayerController>();
     }
 
-    private LastBossController CreateLastBoss(Vector2 position)
+    private static LastBossController CreateLastBoss(Vector2 position, List<Object> createdObjects)
     {
         GameObject bossObject = new GameObject("LastBoss");
-        objectsToDestroy.Add(bossObject);
+        createdObjects.Add(bossObject);
         bossObject.transform.position = position;
         Rigidbody2D rigidbody2D = bossObject.AddComponent<Rigidbody2D>();
         rigidbody2D.gravityScale = 0f;
@@ -87,5 +125,18 @@ public sealed class LastBossPlayerControlLockTests
         MethodInfo method = target.GetType().GetMethod(methodName, InstancePrivate);
         Assert.That(method, Is.Not.Null, methodName);
         return method.Invoke(target, null);
+    }
+
+    private static void DestroyCreatedObjects(List<Object> createdObjects)
+    {
+        for (int i = createdObjects.Count - 1; i >= 0; i--)
+        {
+            if (createdObjects[i] != null)
+            {
+                Object.DestroyImmediate(createdObjects[i]);
+            }
+        }
+
+        createdObjects.Clear();
     }
 }
