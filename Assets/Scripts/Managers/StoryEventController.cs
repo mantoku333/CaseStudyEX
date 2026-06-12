@@ -358,6 +358,120 @@ public sealed class StoryEventController : MonoBehaviour
         Debug.LogWarning("[StoryEventController] CameraManager was not found. Shake marker was skipped.");
     }
 
+    private void ApplyObjectMoveMarker(PlayableDirector resolvedDirector, StoryObjectMoveMarker marker)
+    {
+        if (marker == null || !Application.isPlaying)
+        {
+            return;
+        }
+
+        Transform moveTarget = marker.ResolveTarget(resolvedDirector);
+        if (moveTarget == null)
+        {
+            moveTarget = GetActorTransform(marker.ActorKey);
+        }
+
+        if (moveTarget == null)
+        {
+            Debug.LogWarning(
+                $"[StoryEventController] Object Move Point target was not found. actorKey='{marker.ActorKey}'",
+                this);
+            return;
+        }
+
+        Vector3 destination = ResolveObjectMovePointDestination(marker, moveTarget.position);
+        global::PlayerController playerController = ResolvePlayerController(moveTarget);
+        ApplyInstantObjectMove(moveTarget, destination, playerController);
+        ApplyObjectMoveUmbrellaWalkState(moveTarget, marker.UseUmbrellaWalk);
+    }
+
+    private Vector3 ResolveObjectMovePointDestination(StoryObjectMoveMarker marker, Vector3 fallback)
+    {
+        Vector3 resolved = marker.WorldPosition;
+        if (marker.TargetMode == StoryObjectMoveTargetMode.Marker)
+        {
+            Transform destinationMarker = GetMarkerTransform(marker.MarkerNo);
+            resolved = destinationMarker != null ? destinationMarker.position : fallback;
+        }
+
+        if (!marker.MoveX)
+        {
+            resolved.x = fallback.x;
+        }
+
+        if (!marker.MoveY)
+        {
+            resolved.y = fallback.y;
+        }
+
+        if (marker.KeepCurrentZ)
+        {
+            resolved.z = fallback.z;
+        }
+
+        return resolved;
+    }
+
+    private static void ApplyInstantObjectMove(
+        Transform moveTarget,
+        Vector3 destination,
+        global::PlayerController playerController)
+    {
+        moveTarget.position = destination;
+
+        Rigidbody2D rigidbody2D = playerController != null
+            ? playerController.GetComponent<Rigidbody2D>()
+            : moveTarget.GetComponent<Rigidbody2D>();
+        if (rigidbody2D != null)
+        {
+            rigidbody2D.position = new Vector2(destination.x, destination.y);
+            rigidbody2D.linearVelocity = Vector2.zero;
+        }
+
+        if (playerController != null)
+        {
+            playerController.ClearExternalMovementDirection();
+        }
+    }
+
+    private static void ApplyObjectMoveUmbrellaWalkState(Transform moveTarget, bool useUmbrellaWalk)
+    {
+        if (!useUmbrellaWalk)
+        {
+            return;
+        }
+
+        UmbrellaController umbrellaController = ResolveUmbrellaController(moveTarget);
+        if (umbrellaController == null)
+        {
+            return;
+        }
+
+        umbrellaController.SetUmbrellaState(UmbrellaController.UmbrellaState.Open, false);
+    }
+
+    private static global::PlayerController ResolvePlayerController(Transform target)
+    {
+        if (target == null)
+        {
+            return null;
+        }
+
+        global::PlayerController controller = target.GetComponent<global::PlayerController>();
+        return controller != null ? controller : target.GetComponentInParent<global::PlayerController>();
+    }
+
+    private static UmbrellaController ResolveUmbrellaController(Transform target)
+    {
+        if (target == null)
+        {
+            return null;
+        }
+
+        UmbrellaController controller = target.GetComponentInChildren<UmbrellaController>(true);
+        return controller != null ? controller : target.GetComponentInParent<UmbrellaController>(true);
+    }
+
     private static Vector3 ResolveShakeDirection(StoryCameraShakeDirection direction, Vector2 customDirection)
     {
         Vector2 resolved = direction switch
@@ -595,6 +709,17 @@ public sealed class StoryEventController : MonoBehaviour
                     panelPresenterOverride);
             }
 
+            return;
+        }
+
+        if (marker is StoryObjectMoveMarker objectMoveMarker)
+        {
+            if (!(track is StoryObjectMoveTrack))
+            {
+                return;
+            }
+
+            ApplyObjectMoveMarker(resolvedDirector, objectMoveMarker);
             return;
         }
 

@@ -46,79 +46,10 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 0
-    m_ClipIn: 0
-    m_Asset: {fileID: -5446833706761790755}
-    m_Duration: 1
-    m_TimeScale: 1
-    m_ParentTrack: {fileID: -8539405550118696819}
-    m_EaseInDuration: 0
-    m_EaseOutDuration: 0
-    m_BlendInDuration: -1
-    m_BlendOutDuration: -1
-    m_MixInCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_MixOutCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_BlendInCurveMode: 0
-    m_BlendOutCurveMode: 0
-    m_ExposedParameterNames: []
-    m_AnimationCurves: {fileID: 0}
-    m_Recordable: 0
-    m_PostExtrapolationMode: 0
-    m_PreExtrapolationMode: 0
-    m_PostExtrapolationTime: 0
-    m_PreExtrapolationTime: 0
-    m_DisplayName: StoryObjectMoveClip
-  - m_Version: 1
-    m_Start: 2.7333333333333325
+    m_Start: 2.2666666666666666
     m_ClipIn: 0
     m_Asset: {fileID: 8123203323776567416}
-    m_Duration: 3.450000000000001
+    m_Duration: 2.392857074737549
     m_TimeScale: 1
     m_ParentTrack: {fileID: -8539405550118696819}
     m_EaseInDuration: 0
@@ -148,10 +79,10 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: StoryObjectMoveClip
   - m_Version: 1
-    m_Start: 7.766666666666667
+    m_Start: 7.083333333333332
     m_ClipIn: 0
     m_Asset: {fileID: -9149998429818964350}
-    m_Duration: 2.25
+    m_Duration: 3.8499996662139893
     m_TimeScale: 1
     m_ParentTrack: {fileID: -8539405550118696819}
     m_EaseInDuration: 0
@@ -185,72 +116,6 @@ MonoBehaviour:
         weightedMode: 0
         inWeight: 0
         outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_BlendInCurveMode: 0
-    m_BlendOutCurveMode: 0
-    m_ExposedParameterNames: []
-    m_AnimationCurves: {fileID: 0}
-    m_Recordable: 0
-    m_PostExtrapolationMode: 0
-    m_PreExtrapolationMode: 0
-    m_PostExtrapolationTime: 0
-    m_PreExtrapolationTime: 0
-    m_DisplayName: StoryObjectMoveClip
-  - m_Version: 1
-    m_Start: 13.2
-    m_ClipIn: 0
-    m_Asset: {fileID: 522380346425893705}
-    m_Duration: 2.25
-    m_TimeScale: 1
-    m_ParentTrack: {fileID: -8539405550118696819}
-    m_EaseInDuration: 0
-    m_EaseOutDuration: 0
-    m_BlendInDuration: -1
-    m_BlendOutDuration: -1
-    m_MixInCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_MixOutCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_BlendInCurveMode: 0
-    m_BlendOutCurveMode: 0
-    m_ExposedParameterNames: []
-    m_AnimationCurves: {fileID: 0}
-    m_Recordable: 0
-    m_PostExtrapolationMode: 0
-    m_PreExtrapolationMode: 0
-    m_PostExtrapolationTime: 0
-    m_PreExtrapolationTime: 0
-    m_DisplayName: StoryObjectMoveClip
-  - m_Version: 1
-    m_Start: 10.95
-    m_ClipIn: 0
-    m_Asset: {fileID: -7639461516124323065}
-    m_Duration: 1
-    m_TimeScale: 1
-    m_ParentTrack: {fileID: -8539405550118696819}
-    m_EaseInDuration: 0
-    m_EaseOutDuration: 0
-    m_BlendInDuration: -1
-    m_BlendOutDuration: -1
-    m_MixInCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_MixOutCurve:
-      serializedVersion: 2
-      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -265,7 +130,8 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: StoryObjectMoveClip
   m_Markers:
-    m_Objects: []
+    m_Objects:
+    - {fileID: 2094734591089206138}
 --- !u!114 &-8455305301741701886
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -291,7 +157,7 @@ MonoBehaviour:
     m_Start: 0
     m_ClipIn: 0
     m_Asset: {fileID: 428429758641751701}
-    m_Duration: 20
+    m_Duration: 10.933332999547321
     m_TimeScale: 1
     m_ParentTrack: {fileID: -8455305301741701886}
     m_EaseInDuration: 0
@@ -362,30 +228,6 @@ MonoBehaviour:
     volume: 1
     stereoPan: 0
     spatialBlend: 0
---- !u!114 &-7639461516124323065
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
-  m_Name: StoryObjectMoveClip(Clone)(Clone)(Clone)(Clone)
-  m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
-  actorKey: iris
-  target:
-    exposedName: 
-    defaultValue: {fileID: 0}
-  targetMode: 0
-  markerNo: 3
-  worldPosition: {x: 0, y: 0, z: 0}
-  keepCurrentZ: 1
-  moveX: 1
-  moveY: 1
-  smoothStep: 1
-  useUmbrellaWalk: 0
 --- !u!114 &-5675552448397036753
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -414,30 +256,8 @@ MonoBehaviour:
     - {fileID: 4712008911470597878}
     - {fileID: 7958489155081611017}
     - {fileID: 5235183479774473951}
---- !u!114 &-5446833706761790755
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
-  m_Name: StoryObjectMoveClip
-  m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
-  actorKey: iris
-  target:
-    exposedName: 
-    defaultValue: {fileID: 0}
-  targetMode: 0
-  markerNo: 1
-  worldPosition: {x: 0, y: 0, z: 0}
-  keepCurrentZ: 1
-  moveX: 1
-  moveY: 1
-  smoothStep: 1
-  useUmbrellaWalk: 0
+    - {fileID: -3586167338928356410}
+    - {fileID: 2233009849318805858}
 --- !u!114 &-4819130723759348321
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -483,7 +303,7 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 31.45
+    m_Start: 10.933332999547321
     m_ClipIn: 0
     m_Asset: {fileID: -2271708620387033721}
     m_Duration: 0.8166666666666664
@@ -553,6 +373,25 @@ MonoBehaviour:
     m_DisplayName: StoryCameraShakeClip
   m_Markers:
     m_Objects: []
+--- !u!114 &-3586167338928356410
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
+  m_Time: 5.933333333333334
+  markerId: 826dafea458e4da2afff7f889002fba9
+  nodeName: Prologue_Timeline_06
+  useControllerDefaultStyle: 1
+  dialogueStyle: 1
+  pauseTimelineUntilComplete: 1
+  bubbleActorKey: 
 --- !u!114 &-2271708620387033721
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -565,7 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fcc18b8ea041ca4faa26cd6526a44fa, type: 3}
   m_Name: StoryCameraShakeClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryCameraShakeClip
-  force: 1
+  force: 0
   direction: 0
   customDirection: {x: 1, y: 0}
 --- !u!114 &-1849721580852567509
@@ -581,7 +420,7 @@ MonoBehaviour:
   m_Name: StoryCameraMoveClip
   m_EditorClassIdentifier: Assembly-CSharp::StoryCameraMoveClip
   targetMode: 0
-  markerNo: 3
+  markerNo: 4
   worldPosition: {x: 0, y: 0, z: 0}
   keepCurrentZ: 1
   smoothStep: 1
@@ -658,7 +497,7 @@ MonoBehaviour:
     m_Start: 0
     m_ClipIn: 0
     m_Asset: {fileID: -1849721580852567509}
-    m_Duration: 0.5166666666666667
+    m_Duration: 0.11666666666666667
     m_TimeScale: 1
     m_ParentTrack: {fileID: 149827093544674222}
     m_EaseInDuration: 0
@@ -742,30 +581,6 @@ MonoBehaviour:
   m_bufferingTime: 0.1
   m_ClipProperties:
     volume: 1
---- !u!114 &522380346425893705
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64f0e5aa3a174bca82eabf11775fe8e5, type: 3}
-  m_Name: StoryObjectMoveClip(Clone)(Clone)(Clone)(Clone)
-  m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
-  actorKey: iris
-  target:
-    exposedName: 
-    defaultValue: {fileID: 0}
-  targetMode: 0
-  markerNo: 5
-  worldPosition: {x: 0, y: 0, z: 0}
-  keepCurrentZ: 1
-  moveX: 1
-  moveY: 1
-  smoothStep: 1
-  useUmbrellaWalk: 0
 --- !u!114 &918284876119487261
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -778,7 +593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
   m_Name: Story/Yarn Dialogue Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 6.183333333333334
+  m_Time: 4.659523741404215
   markerId: 7513fe00f92d4b49b62bbc3a118c22d1
   nodeName: Prologue_Timeline_02
   useControllerDefaultStyle: 1
@@ -808,6 +623,49 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
+--- !u!114 &2094734591089206138
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b1bb5a71cbb41d6b750d441f3fbf70d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveMarker
+  m_Time: 0.11666666666666667
+  actorKey: iris
+  target:
+    exposedName: 
+    defaultValue: {fileID: 0}
+  targetMode: 0
+  markerNo: 1
+  worldPosition: {x: 0, y: 0, z: 0}
+  keepCurrentZ: 1
+  moveX: 1
+  moveY: 1
+  useUmbrellaWalk: 0
+--- !u!114 &2233009849318805858
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
+  m_Time: 6.266666666666667
+  markerId: f337d54f760f4c8fb5e63d309c58e17d
+  nodeName: Prologue_Timeline_07
+  useControllerDefaultStyle: 1
+  dialogueStyle: 1
+  pauseTimelineUntilComplete: 1
+  bubbleActorKey: 
 --- !u!114 &4712008911470597878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -820,7 +678,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
   m_Name: Story/Yarn Dialogue Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 11.95
+  m_Time: 5.016666666666667
   markerId: 7b01aded1ee946e79aef645640551fe7
   nodeName: Prologue_Timeline_03
   useControllerDefaultStyle: 1
@@ -839,7 +697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
   m_Name: Story/Yarn Dialogue Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 25.066666666666666
+  m_Time: 5.6
   markerId: a4d90624be8e4fe0a753b1bbace19452
   nodeName: Prologue_Timeline_05
   useControllerDefaultStyle: 1
@@ -881,7 +739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
   m_Name: Story/Yarn Dialogue Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 20
+  m_Time: 5.283333333333333
   markerId: 327cc4880c654cfaa8983f037a2f225b
   nodeName: Prologue_Timeline_04
   useControllerDefaultStyle: 1

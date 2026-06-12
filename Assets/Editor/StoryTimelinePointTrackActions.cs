@@ -109,3 +109,9 @@ internal sealed class AddStoryAutoSavePointAction
     : StoryTimelinePointTrackAction<StoryEventTrack, StoryAutoSaveMarker>
 {
 }
+
+[MenuEntry("Add Point/Object Move Point", 3315)]
+internal sealed class AddStoryObjectMovePointAction
+    : StoryTimelinePointTrackAction<StoryObjectMoveTrack, StoryObjectMoveMarker>
+{
+}
