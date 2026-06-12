@@ -119,6 +119,29 @@ public sealed class EventPanelMarkerEditor : MarkerEditor
     }
 }
 
+[CustomTimelineEditor(typeof(StoryObjectMoveMarker))]
+public sealed class StoryObjectMoveMarkerEditor : MarkerEditor
+{
+    private static readonly Color MarkerColor = new Color(0.3f, 0.9f, 0.45f, 0.9f);
+
+    public override MarkerDrawOptions GetMarkerOptions(IMarker marker)
+    {
+        StoryObjectMoveMarker moveMarker = marker as StoryObjectMoveMarker;
+        return new MarkerDrawOptions
+        {
+            tooltip = moveMarker != null
+                ? $"Object Move: {moveMarker.ActorKey} -> {moveMarker.TargetLabel}"
+                : "Object Move",
+            errorText = string.Empty,
+        };
+    }
+
+    public override void DrawOverlay(IMarker marker, MarkerUIStates uiState, MarkerOverlayRegion region)
+    {
+        StoryMarkerEditorDrawing.DrawMarker(region, MarkerColor, uiState);
+    }
+}
+
 internal static class StoryMarkerEditorDrawing
 {
     public static void DrawMarker(MarkerOverlayRegion region, Color color, MarkerUIStates uiState)

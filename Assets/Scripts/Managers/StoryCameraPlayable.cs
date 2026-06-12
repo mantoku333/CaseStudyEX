@@ -18,10 +18,12 @@ public sealed class StoryCameraPlayable : PlayableBehaviour
     private Vector3 startPosition;
     private Vector3 targetPosition;
     private float startOrthographicSize;
+    private bool warnedMissingMarker;
 
     public override void OnBehaviourPlay(Playable playable, FrameData info)
     {
         initialized = false;
+        warnedMissingMarker = false;
     }
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
@@ -82,7 +84,22 @@ public sealed class StoryCameraPlayable : PlayableBehaviour
         if (targetMode == StoryCameraTargetMode.Marker)
         {
             Transform marker = controller.GetMarkerTransform(markerNo);
-            target = marker != null ? marker.position : fallback;
+            if (marker != null)
+            {
+                target = marker.position;
+            }
+            else
+            {
+                if (!warnedMissingMarker)
+                {
+                    Debug.LogWarning(
+                        $"[StoryCameraPlayable] Camera marker was not found. eventId='{controller.EventId}', markerNo={markerNo}",
+                        controller);
+                    warnedMissingMarker = true;
+                }
+
+                target = fallback;
+            }
         }
 
         if (keepCurrentZ)

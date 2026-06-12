@@ -172,6 +172,11 @@ public sealed class MinimapView : MonoBehaviour
             changed = true;
         }
 
+        if (SetMiniMapBackgroundVisible(miniVisible))
+        {
+            changed = true;
+        }
+
         if (changed || fullVisible)
         {
             Refresh();
@@ -856,6 +861,23 @@ public sealed class MinimapView : MonoBehaviour
         {
             miniMapBackgroundCanvasGroup.alpha = alpha;
         }
+    }
+
+    private bool SetMiniMapBackgroundVisible(bool visible)
+    {
+        if (miniMapBackgroundCanvasGroup == null)
+        {
+            miniMapBackgroundCanvasGroup = FindMiniMapBackgroundCanvasGroup();
+        }
+
+        if (miniMapBackgroundCanvasGroup == null ||
+            miniMapBackgroundCanvasGroup.gameObject.activeSelf == visible)
+        {
+            return false;
+        }
+
+        miniMapBackgroundCanvasGroup.gameObject.SetActive(visible);
+        return true;
     }
 
     private bool TryResolvePlayerCollider(out Collider2D playerCollider)
