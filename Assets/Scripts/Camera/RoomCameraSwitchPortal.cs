@@ -14,11 +14,32 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private readonly HashSet<Collider2D> overlappingPlayerColliders2D = new();
     private readonly HashSet<Collider> overlappingPlayerColliders = new();
+    private readonly Collider2D[] polledColliderBuffer2D = new Collider2D[32];
+    private readonly List<Collider2D> portalColliders2D = new();
+    private ContactFilter2D overlapFilter2D;
+    private bool activatedDuringCurrentOverlap;
+
+    private void Awake()
+    {
+        overlapFilter2D = new ContactFilter2D();
+        RefreshPortalColliders2D();
+    }
+
+    private void OnEnable()
+    {
+        RefreshPortalColliders2D();
+    }
 
     private void OnDisable()
     {
         overlappingPlayerColliders2D.Clear();
         overlappingPlayerColliders.Clear();
+        activatedDuringCurrentOverlap = false;
+    }
+
+    private void FixedUpdate()
+    {
+        PollOverlappingPlayerColliders2D();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -42,6 +63,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
         if (TryResolvePlayerTransform(collision.transform, out _))
         {
             overlappingPlayerColliders2D.Remove(collision);
+            ResetActivationWhenOutsidePortal();
         }
     }
 
@@ -72,6 +94,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
             TryResolvePlayerTransform(playerCollider.transform, out _))
         {
             overlappingPlayerColliders2D.Remove(playerCollider);
+            ResetActivationWhenOutsidePortal();
         }
     }
 
@@ -96,6 +119,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
         if (TryResolvePlayerTransform(other.transform, out _))
         {
             overlappingPlayerColliders.Remove(other);
+            ResetActivationWhenOutsidePortal();
         }
     }
 
@@ -126,33 +150,101 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
             TryResolvePlayerTransform(playerCollider.transform, out _))
         {
             overlappingPlayerColliders.Remove(playerCollider);
+            ResetActivationWhenOutsidePortal();
         }
     }
 
     private void HandlePlayerEntered(Collider2D playerCollider)
     {
-        bool wasOutsidePortal =
-            overlappingPlayerColliders2D.Count == 0 &&
-            overlappingPlayerColliders.Count == 0;
         overlappingPlayerColliders2D.Add(playerCollider);
-
-        if (wasOutsidePortal)
-        {
-            ActivateTargetRoom();
-        }
+        ActivateTargetRoomOncePerOverlap();
     }
 
     private void HandlePlayerEntered(Collider playerCollider)
     {
-        bool wasOutsidePortal =
-            overlappingPlayerColliders2D.Count == 0 &&
-            overlappingPlayerColliders.Count == 0;
         overlappingPlayerColliders.Add(playerCollider);
+        ActivateTargetRoomOncePerOverlap();
+    }
 
-        if (wasOutsidePortal)
+    private void PollOverlappingPlayerColliders2D()
+    {
+        if (targetRoom == null)
         {
-            ActivateTargetRoom();
+            return;
         }
+
+        if (portalColliders2D.Count == 0)
+        {
+            RefreshPortalColliders2D();
+        }
+
+        bool foundPlayer = false;
+        overlappingPlayerColliders2D.Clear();
+
+        for (int i = 0; i < portalColliders2D.Count; i++)
+        {
+            Collider2D portalCollider = portalColliders2D[i];
+            if (portalCollider == null || !portalCollider.enabled)
+            {
+                continue;
+            }
+
+            int overlapCount = portalCollider.Overlap(overlapFilter2D, polledColliderBuffer2D);
+
+            for (int j = 0; j < overlapCount; j++)
+            {
+                Collider2D overlap = polledColliderBuffer2D[j];
+                polledColliderBuffer2D[j] = null;
+                if (overlap == null ||
+                    !TryResolvePlayerTransform(overlap.transform, out _))
+                {
+                    continue;
+                }
+
+                foundPlayer = true;
+                overlappingPlayerColliders2D.Add(overlap);
+            }
+        }
+
+        if (foundPlayer)
+        {
+            ActivateTargetRoomOncePerOverlap();
+        }
+        else if (overlappingPlayerColliders.Count == 0)
+        {
+            activatedDuringCurrentOverlap = false;
+        }
+    }
+
+    private void RefreshPortalColliders2D()
+    {
+        portalColliders2D.Clear();
+        GetComponents(portalColliders2D);
+    }
+
+    private void ResetActivationWhenOutsidePortal()
+    {
+        if (overlappingPlayerColliders2D.Count == 0 &&
+            overlappingPlayerColliders.Count == 0)
+        {
+            activatedDuringCurrentOverlap = false;
+        }
+    }
+
+    private void ActivateTargetRoomOncePerOverlap()
+    {
+        if (targetRoom == null || activatedDuringCurrentOverlap)
+        {
+            return;
+        }
+
+        activatedDuringCurrentOverlap = true;
+        if (RoomCameraTrigger.ActiveRoom == targetRoom)
+        {
+            return;
+        }
+
+        ActivateTargetRoom();
     }
 
     private void ActivateTargetRoom()
