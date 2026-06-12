@@ -126,6 +126,12 @@ public class RoomCameraTrigger : MonoBehaviour
         return true;
     }
 
+    public static bool TryGetRoomAtPosition(Vector3 worldPosition, out RoomCameraTrigger room)
+    {
+        room = FindSmallestRoomContaining(worldPosition, out _);
+        return room != null;
+    }
+
     private void Awake()
     {
         if (!_registeredTriggers.Contains(this))

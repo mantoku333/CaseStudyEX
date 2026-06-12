@@ -156,6 +156,7 @@ public sealed class OptionsMenu : MonoBehaviour
     private float nextAudioRefreshTime;
     private float statusHideAt;
     private float keyboardScrollNormalized;
+    private int lastMapKeyboardRequestFrame = -1;
     private ScrollRect decorationScrollRect;
     private DecorationPage decorationPage;
     private string activeRebindPreviousOverridePath = string.Empty;
@@ -683,7 +684,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
         if (Keyboard.current.mKey.wasPressedThisFrame)
         {
-            ShowMapOptionPage();
+            HandleMapKeyboardRequest();
             return;
         }
 
@@ -1150,15 +1151,40 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private void OpenMapFromKeyboard()
     {
-        if (!isOpen)
-        {
-            OpenMenu();
-        }
-        ShowMapOptionPage();
+        HandleMapKeyboardRequest();
     }
 
     public void OpenMap()
     {
+        ShowMapOptionPage();
+    }
+
+    private void HandleMapKeyboardRequest()
+    {
+        if (isRebinding || lastMapKeyboardRequestFrame == Time.frameCount)
+        {
+            return;
+        }
+
+        lastMapKeyboardRequestFrame = Time.frameCount;
+        ResolveReferences();
+        if (!referencesResolved)
+        {
+            return;
+        }
+
+        if (isOpen && currentOptionPage == OptionPage.Map && IsOptionDetailVisible())
+        {
+            CloseMenu();
+            return;
+        }
+
+        if (!isOpen)
+        {
+            OpenMenu();
+        }
+
+        SetFinishPromptVisible(false);
         ShowMapOptionPage();
     }
 
@@ -1210,7 +1236,22 @@ public sealed class OptionsMenu : MonoBehaviour
 
     public void OpenSkillList()
     {
-        Debug.Log("[OptionsMenu] Skill list button pressed, but no dedicated skill list UI is implemented yet.");
+        if (isRebinding)
+        {
+            return;
+        }
+
+        ResolveReferences();
+        if (!referencesResolved)
+        {
+            return;
+        }
+
+        SetMenuVisible(true);
+        SetCursorMenuModeActive(true);
+        isOpen = true;
+        SetFinishPromptVisible(false);
+        ShowDecorationOptionPage();
     }
 
     private void HandleVolumePointerInteraction()
