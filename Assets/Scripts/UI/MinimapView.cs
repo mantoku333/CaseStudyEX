@@ -127,6 +127,20 @@ public sealed class MinimapView : MonoBehaviour
         UpdateMiniMapOverlapFade();
     }
 
+    private void OnValidate()
+    {
+        miniMapSize = ClampPositiveSize(miniMapSize);
+        fullMapSize = ClampPositiveSize(fullMapSize);
+        fullMapScale = Mathf.Max(0.01f, fullMapScale);
+
+        ApplyGeneratedLayout();
+        if (Application.isPlaying && manager != null && miniMapContent != null && fullMapContent != null)
+        {
+            hasDrawnMiniMapOrigin = false;
+            Refresh();
+        }
+    }
+
     public void ToggleFullMap()
     {
         if (fullMapPanel == null)
@@ -194,6 +208,32 @@ public sealed class MinimapView : MonoBehaviour
         fullMapContent = CreateRect("Content", fullMapPanel);
         Stretch(fullMapContent, fullMapContentPadding);
         fullMapPanel.gameObject.SetActive(false);
+        ApplyGeneratedLayout();
+    }
+
+    private void ApplyGeneratedLayout()
+    {
+        if (miniMapPanel != null)
+        {
+            miniMapPanel.sizeDelta = miniMapSize;
+            miniMapPanel.anchoredPosition = miniMapOffset;
+        }
+
+        if (miniMapContent != null)
+        {
+            Stretch(miniMapContent, miniMapContentPadding);
+        }
+
+        if (fullMapPanel != null)
+        {
+            fullMapPanel.sizeDelta = fullMapSize;
+            fullMapPanel.localScale = new Vector3(fullMapScale, fullMapScale, 1f);
+        }
+
+        if (fullMapContent != null)
+        {
+            Stretch(fullMapContent, fullMapContentPadding);
+        }
     }
 
     private void Refresh()
@@ -948,6 +988,13 @@ public sealed class MinimapView : MonoBehaviour
             a.xMax >= b.xMin &&
             a.yMin <= b.yMax &&
             a.yMax >= b.yMin;
+    }
+
+    private static Vector2 ClampPositiveSize(Vector2 size)
+    {
+        return new Vector2(
+            Mathf.Max(1f, size.x),
+            Mathf.Max(1f, size.y));
     }
 
     private CanvasGroup FindMiniMapBackgroundCanvasGroup()
