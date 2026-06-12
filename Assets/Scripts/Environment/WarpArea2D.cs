@@ -222,6 +222,8 @@ public sealed class WarpArea2D : MonoBehaviour
         }
 
         Physics2D.SyncTransforms();
+        RoomCameraTrigger.TryActivateRoomAtPosition(playerToWarp.transform.position, out _);
+        RoomCameraSwitchPortal.TryActivateAtPlayerPosition(playerToWarp.transform);
         currentPlayer = null;
         currentPlayerRigidbody = null;
         interactAction = null;
