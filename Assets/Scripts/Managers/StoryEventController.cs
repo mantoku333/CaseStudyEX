@@ -120,6 +120,8 @@ public sealed class StoryEventController : MonoBehaviour
     [SerializeField] private int eventCameraPriorityFloor = 100;
     [SerializeField] private bool restoreRoomCameraOnExit = true;
     [SerializeField, Min(0f)] private float eventCameraExitEaseSeconds = 0.35f;
+    [SerializeField] private bool alignEventCameraToStartMarker = false;
+    [SerializeField, Min(1)] private int eventCameraStartMarkerNo = 4;
 
     [Header("Bindings")]
     [SerializeField] private List<ActorBinding> actorBindings = new List<ActorBinding>();
@@ -1770,6 +1772,7 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         AlignEventCameraToCurrentView(activeEventCamera);
+        AlignEventCameraToStartMarker(activeEventCamera);
 
         cachedEventCameraPriorityValue = activeEventCamera.Priority.Value;
         cachedEventCameraPriorityEnabled = activeEventCamera.Priority.Enabled;
@@ -1815,6 +1818,27 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         ApplyCameraPose(targetCamera, currentCamera.transform.position, currentCamera.Lens.OrthographicSize);
+    }
+
+    private void AlignEventCameraToStartMarker(CinemachineCamera targetCamera)
+    {
+        if (!alignEventCameraToStartMarker || targetCamera == null)
+        {
+            return;
+        }
+
+        Transform marker = GetMarkerTransform(eventCameraStartMarkerNo);
+        if (marker == null)
+        {
+            Debug.LogWarning(
+                $"[StoryEventController] Event camera start marker was not found. eventId='{EventId}', markerNo={eventCameraStartMarkerNo}",
+                this);
+            return;
+        }
+
+        Vector3 targetPosition = marker.position;
+        targetPosition.z = targetCamera.transform.position.z;
+        ApplyCameraPose(targetCamera, targetPosition, targetCamera.Lens.OrthographicSize);
     }
 
     private static CinemachineCamera FindHighestPriorityCameraExcept(CinemachineCamera excludedCamera)
