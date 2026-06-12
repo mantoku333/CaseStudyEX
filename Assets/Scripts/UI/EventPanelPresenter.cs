@@ -37,8 +37,15 @@ public sealed class EventPanelPresenter : MonoBehaviour
     [SerializeField] private TMP_Text titleLabel;
     [SerializeField] private TMP_Text bodyLabel;
     [SerializeField] private TMP_Text closeButtonLabel;
+    [SerializeField] private Image diaryBackdropImage;
     [SerializeField] private Image illustrationImage;
     [SerializeField] private Image animationImage;
+
+    [Header("Diary Scroll")]
+    [SerializeField] private ScrollRect bodyScrollRect;
+    [SerializeField] private RectTransform bodyScrollViewport;
+    [SerializeField] private RectTransform bodyScrollContent;
+    [SerializeField, Min(0f)] private float bodyScrollSensitivity = 35f;
 
     [Header("Input")]
     [SerializeField] private bool closeOnSpace = true;
@@ -53,6 +60,7 @@ public sealed class EventPanelPresenter : MonoBehaviour
     private float animationLoopIntervalTimer;
     private float currentAnimationFramesPerSecond = 12f;
     private float currentAnimationLoopIntervalSeconds = 0.5f;
+    private bool pendingBodyScrollRefresh;
 
     public bool IsVisible => isVisible;
 
@@ -104,6 +112,11 @@ public sealed class EventPanelPresenter : MonoBehaviour
 
     private void Update()
     {
+        if (pendingBodyScrollRefresh)
+        {
+            RefreshBodyScrollLayout();
+        }
+
         if (isVisible && closeOnSpace && Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             Hide();
@@ -130,6 +143,8 @@ public sealed class EventPanelPresenter : MonoBehaviour
         onClosed = closeCallback;
         ApplyContent(content);
         SetVisible(true);
+        RefreshDiaryBackdropImage();
+        RefreshBodyScrollLayout();
 
         if (closeButton == null && resolvedAutoCloseSeconds > 0f)
         {
@@ -149,6 +164,9 @@ public sealed class EventPanelPresenter : MonoBehaviour
         StopAutoCloseRoutine();
         onClosed = closeCallback;
         SetVisible(true);
+        RefreshDiaryBackdropImage();
+        pendingBodyScrollRefresh = bodyScrollRect != null && bodyScrollContent != null;
+        RefreshBodyScrollLayout();
 
         if (closeButton == null && autoCloseSecondsWhenNoButton > 0f)
         {
@@ -179,6 +197,7 @@ public sealed class EventPanelPresenter : MonoBehaviour
         StopAutoCloseRoutine();
         SetVisible(false);
         currentAnimationFrames = Array.Empty<Sprite>();
+        pendingBodyScrollRefresh = false;
 
         Action callback = onClosed;
         onClosed = null;
@@ -229,6 +248,10 @@ public sealed class EventPanelPresenter : MonoBehaviour
         SetText(titleLabel, ResolveTitle(content));
         SetText(bodyLabel, content.body);
         SetText(closeButtonLabel, ResolveCloseLabel(content));
+        bool isDiary = content.kind == EventPanelKind.Diary;
+        ConfigureBodyLabel(isDiary);
+        RefreshDiaryBackdropImage();
+        pendingBodyScrollRefresh = isDiary && EnsureBodyScrollLayout();
         ApplyImage(illustrationImage, content.illustration);
 
         currentAnimationFrames = content.animationFrames ?? Array.Empty<Sprite>();
@@ -286,6 +309,224 @@ public sealed class EventPanelPresenter : MonoBehaviour
         }
 
         label.text = value ?? string.Empty;
+    }
+
+    private void ConfigureBodyLabel(bool isDiary)
+    {
+        if (!isDiary || bodyLabel == null)
+        {
+            return;
+        }
+
+        bodyLabel.alignment = TextAlignmentOptions.TopLeft;
+        bodyLabel.enableWordWrapping = true;
+        bodyLabel.overflowMode = TextOverflowModes.Overflow;
+        bodyLabel.raycastTarget = false;
+    }
+
+    private bool EnsureBodyScrollLayout()
+    {
+        if (bodyLabel == null)
+        {
+            return false;
+        }
+
+        ResolveBodyScrollReferences();
+        if (bodyScrollRect == null)
+        {
+            CreateBodyScrollLayout();
+        }
+
+        if (bodyScrollRect == null || bodyScrollViewport == null || bodyScrollContent == null)
+        {
+            return false;
+        }
+
+        ConfigureBodyScrollRect();
+        return true;
+    }
+
+    private void ResolveBodyScrollReferences()
+    {
+        if (bodyScrollRect == null)
+        {
+            bodyScrollRect = bodyLabel.GetComponentInParent<ScrollRect>();
+        }
+
+        if (bodyScrollRect == null)
+        {
+            return;
+        }
+
+        if (bodyScrollViewport == null)
+        {
+            bodyScrollViewport = bodyScrollRect.viewport != null
+                ? bodyScrollRect.viewport
+                : bodyScrollRect.GetComponent<RectTransform>();
+        }
+
+        if (bodyScrollContent == null)
+        {
+            bodyScrollContent = bodyScrollRect.content;
+        }
+    }
+
+    private void CreateBodyScrollLayout()
+    {
+        RectTransform bodyRect = bodyLabel.rectTransform;
+        if (bodyRect == null || bodyRect.parent == null)
+        {
+            return;
+        }
+
+        RectTransform parentRect = bodyRect.parent as RectTransform;
+        if (parentRect == null)
+        {
+            return;
+        }
+
+        int siblingIndex = bodyRect.GetSiblingIndex();
+        var viewportObject = new GameObject("DiaryBodyScrollView", typeof(RectTransform), typeof(Image), typeof(RectMask2D), typeof(ScrollRect));
+        viewportObject.layer = bodyLabel.gameObject.layer;
+
+        bodyScrollViewport = viewportObject.GetComponent<RectTransform>();
+        bodyScrollViewport.SetParent(parentRect, worldPositionStays: false);
+        bodyScrollViewport.SetSiblingIndex(siblingIndex);
+        CopyRectTransformLayout(bodyRect, bodyScrollViewport);
+
+        Image raycastImage = viewportObject.GetComponent<Image>();
+        raycastImage.color = new Color(1f, 1f, 1f, 0f);
+        raycastImage.raycastTarget = true;
+
+        var contentObject = new GameObject("DiaryBodyScrollContent", typeof(RectTransform));
+        contentObject.layer = bodyLabel.gameObject.layer;
+        bodyScrollContent = contentObject.GetComponent<RectTransform>();
+        bodyScrollContent.SetParent(bodyScrollViewport, worldPositionStays: false);
+        ConfigureContentRect(bodyScrollContent);
+
+        bodyRect.SetParent(bodyScrollContent, worldPositionStays: false);
+        ConfigureBodyRect(bodyRect);
+
+        bodyScrollRect = viewportObject.GetComponent<ScrollRect>();
+    }
+
+    private static void CopyRectTransformLayout(RectTransform source, RectTransform target)
+    {
+        target.anchorMin = source.anchorMin;
+        target.anchorMax = source.anchorMax;
+        target.anchoredPosition = source.anchoredPosition;
+        target.sizeDelta = source.sizeDelta;
+        target.pivot = source.pivot;
+        target.localRotation = source.localRotation;
+        target.localScale = source.localScale;
+    }
+
+    private static void ConfigureContentRect(RectTransform rect)
+    {
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(1f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = Vector2.zero;
+        rect.sizeDelta = Vector2.zero;
+        rect.localRotation = Quaternion.identity;
+        rect.localScale = Vector3.one;
+    }
+
+    private static void ConfigureBodyRect(RectTransform rect)
+    {
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.pivot = new Vector2(0f, 1f);
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        rect.localRotation = Quaternion.identity;
+        rect.localScale = Vector3.one;
+    }
+
+    private void ConfigureBodyScrollRect()
+    {
+        bodyScrollRect.viewport = bodyScrollViewport;
+        bodyScrollRect.content = bodyScrollContent;
+        bodyScrollRect.horizontal = false;
+        bodyScrollRect.vertical = true;
+        bodyScrollRect.movementType = ScrollRect.MovementType.Clamped;
+        bodyScrollRect.inertia = true;
+        bodyScrollRect.scrollSensitivity = bodyScrollSensitivity;
+        bodyScrollRect.horizontalScrollbar = null;
+        bodyScrollRect.verticalScrollbar = null;
+        bodyScrollRect.horizontalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+        bodyScrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+    }
+
+    private void RefreshBodyScrollLayout()
+    {
+        if (!pendingBodyScrollRefresh)
+        {
+            return;
+        }
+
+        if (!EnsureBodyScrollLayout())
+        {
+            pendingBodyScrollRefresh = false;
+            return;
+        }
+
+        ConfigureBodyLabel(isDiary: true);
+        Canvas.ForceUpdateCanvases();
+
+        float viewportWidth = bodyScrollViewport.rect.width;
+        float viewportHeight = bodyScrollViewport.rect.height;
+        if (viewportWidth <= 0.01f || viewportHeight <= 0.01f)
+        {
+            return;
+        }
+
+        bodyLabel.ForceMeshUpdate(ignoreActiveState: true, forceTextReparsing: true);
+        float preferredHeight = bodyLabel.GetPreferredValues(bodyLabel.text, viewportWidth, Mathf.Infinity).y;
+        float contentHeight = Mathf.Max(viewportHeight, preferredHeight);
+
+        Vector2 contentSize = bodyScrollContent.sizeDelta;
+        contentSize.x = 0f;
+        contentSize.y = contentHeight;
+        bodyScrollContent.sizeDelta = contentSize;
+        bodyScrollContent.anchoredPosition = Vector2.zero;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(bodyScrollContent);
+        bodyScrollRect.velocity = Vector2.zero;
+        bodyScrollRect.verticalNormalizedPosition = 1f;
+        pendingBodyScrollRefresh = false;
+    }
+
+    private void RefreshDiaryBackdropImage()
+    {
+        if (diaryBackdropImage == null)
+        {
+            return;
+        }
+
+        RectTransform backdropRect = diaryBackdropImage.rectTransform;
+        RectTransform panelRect = panelRoot != null ? panelRoot.transform as RectTransform : null;
+
+        if (panelRect != null && backdropRect.parent == panelRect.parent)
+        {
+            if (backdropRect.GetSiblingIndex() > panelRect.GetSiblingIndex())
+            {
+                backdropRect.SetSiblingIndex(panelRect.GetSiblingIndex());
+            }
+
+            backdropRect.position = panelRect.TransformPoint(panelRect.rect.center);
+        }
+        else
+        {
+            backdropRect.anchorMin = new Vector2(0.5f, 0.5f);
+            backdropRect.anchorMax = new Vector2(0.5f, 0.5f);
+            backdropRect.anchoredPosition = Vector2.zero;
+        }
+
+        backdropRect.pivot = new Vector2(0.5f, 0.5f);
+        diaryBackdropImage.preserveAspect = true;
+        diaryBackdropImage.raycastTarget = false;
+        diaryBackdropImage.enabled = isVisible && diaryBackdropImage.sprite != null;
     }
 
     private static void ApplyImage(Image image, Sprite sprite)
@@ -363,6 +604,8 @@ public sealed class EventPanelPresenter : MonoBehaviour
         {
             panelRoot.SetActive(visible);
         }
+
+        RefreshDiaryBackdropImage();
     }
 
     private bool ValidateRequiredReferences(float autoCloseSecondsWhenNoButton)
@@ -429,6 +672,35 @@ public sealed class EventPanelPresenter : MonoBehaviour
         {
             animationImage = FindImageByName(ref images, "Animation", "AnimationImage", "GifImage");
         }
+
+        if (diaryBackdropImage == null)
+        {
+            diaryBackdropImage = FindImageByName(
+                ref images,
+                "DiaryBackdrop",
+                "DiaryBackdropImage",
+                "Backdrop",
+                "BackdropImage",
+                "BackgroundImage");
+        }
+
+        ScrollRect[] scrollRects = null;
+        if (bodyScrollRect == null)
+        {
+            bodyScrollRect = FindScrollRectByName(
+                ref scrollRects,
+                "DiaryBodyScroll",
+                "DiaryBodyScrollView",
+                "BodyScroll",
+                "BodyScrollView");
+        }
+
+        if (bodyScrollRect != null)
+        {
+            ResolveBodyScrollReferences();
+        }
+
+        RefreshDiaryBackdropImage();
     }
 
     private TMP_Text FindLabelByName(ref TMP_Text[] labels, params string[] names)
@@ -496,6 +768,29 @@ public sealed class EventPanelPresenter : MonoBehaviour
                 if (image != null && string.Equals(image.name, targetName, StringComparison.OrdinalIgnoreCase))
                 {
                     return image;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private ScrollRect FindScrollRectByName(ref ScrollRect[] scrollRects, params string[] names)
+    {
+        if (scrollRects == null)
+        {
+            scrollRects = GetComponentsInChildren<ScrollRect>(includeInactive: true);
+        }
+
+        for (int nameIndex = 0; nameIndex < names.Length; nameIndex++)
+        {
+            string targetName = names[nameIndex];
+            for (int i = 0; i < scrollRects.Length; i++)
+            {
+                ScrollRect scrollRect = scrollRects[i];
+                if (scrollRect != null && string.Equals(scrollRect.name, targetName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return scrollRect;
                 }
             }
         }
