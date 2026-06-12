@@ -152,7 +152,7 @@ public sealed class RoomEnemyActivityManagerTests
     }
 
     [Test]
-    public void VisibleEnemyInsideHomeRoom_StaysAwakeWhenPlayerIsOutsideHomeRoom()
+    public void VisibleEnemyInsideHomeRoom_SleepsWhenPlayerIsOutsideHomeRoom()
     {
         SetManagedScene();
         CreateMainCamera(Vector2.zero);
@@ -166,8 +166,8 @@ public sealed class RoomEnemyActivityManagerTests
             new[] { true },
             new[] { rigidbody2D },
             new[] { true },
-            desiredGameplayActive: false,
-            appliedGameplayActive: false,
+            desiredGameplayActive: true,
+            appliedGameplayActive: true,
             room: homeRoom);
 
         AddManagedEnemy(managedEnemy);
@@ -175,12 +175,12 @@ public sealed class RoomEnemyActivityManagerTests
 
         InvokePrivate(manager, "ApplyEnemyActivity");
 
-        Assert.IsTrue((bool)GetPrivateField(managedEnemy, "DesiredGameplayActive"));
+        Assert.IsFalse((bool)GetPrivateField(managedEnemy, "DesiredGameplayActive"));
         Assert.IsTrue((bool)GetPrivateField(manager, "hasPendingEnemyStateChanges"));
     }
 
     [Test]
-    public void VisibleSleepingEnemy_RestoresPhysicsWhenStateChangeIsApplied()
+    public void VisibleSleepingEnemy_RemainsAsleepWhenPlayerIsOutsideHomeRoom()
     {
         SetManagedScene();
         CreateMainCamera(Vector2.zero);
@@ -205,11 +205,12 @@ public sealed class RoomEnemyActivityManagerTests
         SetPrivateField(manager, "gatingActive", true);
 
         InvokePrivate(manager, "ApplyEnemyActivity");
-        InvokePrivate(manager, "ProcessPendingEnemyStateChanges", 8);
 
-        Assert.IsTrue(enemy.enabled);
-        Assert.IsTrue(rigidbody2D.simulated);
-        Assert.IsTrue((bool)GetPrivateField(managedEnemy, "AppliedGameplayActive"));
+        Assert.IsFalse((bool)GetPrivateField(managedEnemy, "DesiredGameplayActive"));
+        Assert.IsFalse((bool)GetPrivateField(manager, "hasPendingEnemyStateChanges"));
+        Assert.IsFalse(enemy.enabled);
+        Assert.IsFalse(rigidbody2D.simulated);
+        Assert.IsFalse((bool)GetPrivateField(managedEnemy, "AppliedGameplayActive"));
     }
 
     [Test]

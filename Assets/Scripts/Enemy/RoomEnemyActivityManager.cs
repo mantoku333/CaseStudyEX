@@ -226,7 +226,6 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         bool hasPlayerPosition = TryGetPlayerPosition(out Vector3 playerPosition);
         // カメラ用のアクティブルームは、敵の所属変更ではなく重なり部から戻す判定にだけ使う。
         RoomCameraTrigger activeRoom = ResolveActiveRoom();
-        Plane[] mainCameraPlanes = TryGetMainCameraPlanes();
         bool shouldQueueStateApplication = false;
 
         for (int i = managedEnemies.Count - 1; i >= 0; i--)
@@ -249,8 +248,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 managedEnemy,
                 activeRoom,
                 hasPlayerPosition,
-                playerPosition,
-                mainCameraPlanes);
+                playerPosition);
 
             shouldQueueStateApplication |= SetDesiredGameplayActive(managedEnemy, shouldRunGameplay);
             shouldQueueStateApplication |= managedEnemy.AppliedGameplayActive != managedEnemy.DesiredGameplayActive;
@@ -313,8 +311,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         ManagedEnemy managedEnemy,
         RoomCameraTrigger activeRoom,
         bool hasPlayerPosition,
-        Vector3 playerPosition,
-        Plane[] mainCameraPlanes)
+        Vector3 playerPosition)
     {
         bool enemyInsideHomeRoom = IsEnemyInsideHomeRoom(managedEnemy);
         bool enemyReturningHome = managedEnemy.Enemy.IsReturningHome;
@@ -327,11 +324,6 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             return true;
         }
 
-        if (IsManagedEnemyVisibleToMainCamera(managedEnemy, mainCameraPlanes))
-        {
-            return true;
-        }
-
         if (hasPlayerPosition)
         {
             // 敵の起床判定はアクティブカメラではなく、プレイヤーが敵の所属ルーム内にいるかで決める。
@@ -339,81 +331,6 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         }
 
         return managedEnemy.DesiredGameplayActive;
-    }
-
-    private static Plane[] TryGetMainCameraPlanes()
-    {
-        Camera mainCamera = Camera.main;
-        return mainCamera != null && mainCamera.isActiveAndEnabled
-            ? GeometryUtility.CalculateFrustumPlanes(mainCamera)
-            : null;
-    }
-
-    private static bool IsManagedEnemyVisibleToMainCamera(ManagedEnemy managedEnemy, Plane[] mainCameraPlanes)
-    {
-        if (managedEnemy == null || mainCameraPlanes == null)
-        {
-            return false;
-        }
-
-        if (HasVisibleRendererBounds(managedEnemy.VisibilityRenderers, mainCameraPlanes))
-        {
-            return true;
-        }
-
-        return HasVisibleColliderBounds(managedEnemy.VisibilityColliders, mainCameraPlanes);
-    }
-
-    private static bool HasVisibleRendererBounds(Renderer[] renderers, Plane[] cameraPlanes)
-    {
-        if (renderers == null)
-        {
-            return false;
-        }
-
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            Renderer targetRenderer = renderers[i];
-            if (targetRenderer == null ||
-                !targetRenderer.enabled ||
-                !targetRenderer.gameObject.activeInHierarchy)
-            {
-                continue;
-            }
-
-            if (GeometryUtility.TestPlanesAABB(cameraPlanes, targetRenderer.bounds))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static bool HasVisibleColliderBounds(Collider2D[] colliders, Plane[] cameraPlanes)
-    {
-        if (colliders == null)
-        {
-            return false;
-        }
-
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            Collider2D targetCollider = colliders[i];
-            if (targetCollider == null ||
-                !targetCollider.enabled ||
-                !targetCollider.gameObject.activeInHierarchy)
-            {
-                continue;
-            }
-
-            if (GeometryUtility.TestPlanesAABB(cameraPlanes, targetCollider.bounds))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private bool IsEnemyInsideOtherActiveRoom(ManagedEnemy managedEnemy, RoomCameraTrigger activeRoom)
@@ -816,9 +733,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             RoomCameraTrigger trigger = allTriggers[i];
             if (trigger == null ||
                 trigger.gameObject.scene != scene ||
-                !trigger.isActiveAndEnabled ||
-                trigger.UsesDefaultCameraWhenEntered ||
-                !trigger.HasAssignedRoomCamera)
+                !trigger.isActiveAndEnabled)
             {
                 continue;
             }

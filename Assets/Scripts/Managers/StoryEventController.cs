@@ -10,6 +10,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Yarn.Unity;
 
 [DisallowMultipleComponent]
@@ -118,6 +119,7 @@ public sealed class StoryEventController : MonoBehaviour
     [SerializeField] private string eventCameraName = "EventCam";
     [SerializeField] private int eventCameraPriorityFloor = 100;
     [SerializeField] private bool restoreRoomCameraOnExit = true;
+    [SerializeField, Min(0f)] private float eventCameraExitEaseSeconds = 0.35f;
 
     [Header("Bindings")]
     [SerializeField] private List<ActorBinding> actorBindings = new List<ActorBinding>();
@@ -155,6 +157,22 @@ public sealed class StoryEventController : MonoBehaviour
     private bool cachedEventCameraPriorityEnabled;
     private bool hasCachedEventCameraPriority;
     private RoomCameraTrigger cachedRoomCameraBeforeEvent;
+    private Canvas cachedHudCanvas;
+    private GraphicRaycaster cachedHudRaycaster;
+    private FlagCanvasGroupVisibility cachedHudVisibilityGate;
+    private CanvasGroup cachedHudCanvasGroup;
+    private bool cachedHudCanvasEnabled;
+    private bool cachedHudRaycasterEnabled;
+    private bool cachedHudVisibilityGateEnabled;
+    private float cachedHudCanvasGroupAlpha = 1f;
+    private bool cachedHudCanvasGroupInteractable;
+    private bool cachedHudCanvasGroupBlocksRaycasts;
+    private MinimapManager cachedMinimapManager;
+    private MinimapView cachedMinimapView;
+    private bool cachedMinimapManagerEnabled;
+    private bool cachedMiniMapVisible;
+    private bool cachedFullMapVisible;
+    private bool hasCachedGameplayUiState;
 
     public string EventId => string.IsNullOrWhiteSpace(eventId) ? name : eventId.Trim();
     public string MemoName => string.IsNullOrWhiteSpace(memoName) ? string.Empty : memoName.Trim();
@@ -247,6 +265,7 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         StoryPauseRuntime.ClearOverride();
+        RestoreGameplayUiVisibility();
         RestoreLetterBoxViewVisibility();
         RestoreEventCameraPriority();
         RestoreRoomCameraOnEventExit();
@@ -357,6 +376,120 @@ public sealed class StoryEventController : MonoBehaviour
         Debug.LogWarning("[StoryEventController] CameraManager was not found. Shake marker was skipped.");
     }
 
+    private void ApplyObjectMoveMarker(PlayableDirector resolvedDirector, StoryObjectMoveMarker marker)
+    {
+        if (marker == null || !Application.isPlaying)
+        {
+            return;
+        }
+
+        Transform moveTarget = marker.ResolveTarget(resolvedDirector);
+        if (moveTarget == null)
+        {
+            moveTarget = GetActorTransform(marker.ActorKey);
+        }
+
+        if (moveTarget == null)
+        {
+            Debug.LogWarning(
+                $"[StoryEventController] Object Move Point target was not found. actorKey='{marker.ActorKey}'",
+                this);
+            return;
+        }
+
+        Vector3 destination = ResolveObjectMovePointDestination(marker, moveTarget.position);
+        global::PlayerController playerController = ResolvePlayerController(moveTarget);
+        ApplyInstantObjectMove(moveTarget, destination, playerController);
+        ApplyObjectMoveUmbrellaWalkState(moveTarget, marker.UseUmbrellaWalk);
+    }
+
+    private Vector3 ResolveObjectMovePointDestination(StoryObjectMoveMarker marker, Vector3 fallback)
+    {
+        Vector3 resolved = marker.WorldPosition;
+        if (marker.TargetMode == StoryObjectMoveTargetMode.Marker)
+        {
+            Transform destinationMarker = GetMarkerTransform(marker.MarkerNo);
+            resolved = destinationMarker != null ? destinationMarker.position : fallback;
+        }
+
+        if (!marker.MoveX)
+        {
+            resolved.x = fallback.x;
+        }
+
+        if (!marker.MoveY)
+        {
+            resolved.y = fallback.y;
+        }
+
+        if (marker.KeepCurrentZ)
+        {
+            resolved.z = fallback.z;
+        }
+
+        return resolved;
+    }
+
+    private static void ApplyInstantObjectMove(
+        Transform moveTarget,
+        Vector3 destination,
+        global::PlayerController playerController)
+    {
+        moveTarget.position = destination;
+
+        Rigidbody2D rigidbody2D = playerController != null
+            ? playerController.GetComponent<Rigidbody2D>()
+            : moveTarget.GetComponent<Rigidbody2D>();
+        if (rigidbody2D != null)
+        {
+            rigidbody2D.position = new Vector2(destination.x, destination.y);
+            rigidbody2D.linearVelocity = Vector2.zero;
+        }
+
+        if (playerController != null)
+        {
+            playerController.ClearExternalMovementDirection();
+        }
+    }
+
+    private static void ApplyObjectMoveUmbrellaWalkState(Transform moveTarget, bool useUmbrellaWalk)
+    {
+        if (!useUmbrellaWalk)
+        {
+            return;
+        }
+
+        UmbrellaController umbrellaController = ResolveUmbrellaController(moveTarget);
+        if (umbrellaController == null)
+        {
+            return;
+        }
+
+        umbrellaController.SetUmbrellaState(UmbrellaController.UmbrellaState.Open, false);
+    }
+
+    private static global::PlayerController ResolvePlayerController(Transform target)
+    {
+        if (target == null)
+        {
+            return null;
+        }
+
+        global::PlayerController controller = target.GetComponent<global::PlayerController>();
+        return controller != null ? controller : target.GetComponentInParent<global::PlayerController>();
+    }
+
+    private static UmbrellaController ResolveUmbrellaController(Transform target)
+    {
+        if (target == null)
+        {
+            return null;
+        }
+
+        UmbrellaController controller = target.GetComponentInChildren<UmbrellaController>(true);
+        return controller != null ? controller : target.GetComponentInParent<UmbrellaController>(true);
+    }
+
     private static Vector3 ResolveShakeDirection(StoryCameraShakeDirection direction, Vector2 customDirection)
     {
         Vector2 resolved = direction switch
@@ -385,6 +518,7 @@ public sealed class StoryEventController : MonoBehaviour
         firedTimelinePointKeys.Clear();
 
         StoryPauseRuntime.SetOverride(pausePolicy);
+        HideGameplayUiForEvent();
         CaptureCinematicState();
         ApplyCinematicState();
         CaptureRoomCameraBeforeEvent();
@@ -429,9 +563,8 @@ public sealed class StoryEventController : MonoBehaviour
         resolvedDirector.stopped -= OnDirectorStopped;
         ApplyCompletionState();
         StoryPauseRuntime.ClearOverride();
-        RestoreLetterBoxViewVisibility();
-        RestoreEventCameraPriority();
-        RestoreRoomCameraOnEventExit();
+        yield return RestorePresentationOnEventExitRoutine();
+        RestoreGameplayUiVisibility();
         RestoreCinematicState();
 
         playRoutine = null;
@@ -596,6 +729,17 @@ public sealed class StoryEventController : MonoBehaviour
                     panelPresenterOverride);
             }
 
+            return;
+        }
+
+        if (marker is StoryObjectMoveMarker objectMoveMarker)
+        {
+            if (!(track is StoryObjectMoveTrack))
+            {
+                return;
+            }
+
+            ApplyObjectMoveMarker(resolvedDirector, objectMoveMarker);
             return;
         }
 
@@ -1328,41 +1472,76 @@ public sealed class StoryEventController : MonoBehaviour
 
     private void RestoreLetterBoxViewVisibility()
     {
-        if (!hasCachedLetterBoxViewState)
+        LetterBoxExitState exitState = BeginLetterBoxExit();
+        if (exitState == null)
         {
             return;
+        }
+
+        StartLetterBoxTransition(exitState.CanvasGroup, 1f, 1f, 1f, 0f, () =>
+        {
+            CompleteLetterBoxExit(exitState);
+        });
+    }
+
+    private LetterBoxExitState BeginLetterBoxExit()
+    {
+        if (!hasCachedLetterBoxViewState)
+        {
+            return null;
         }
 
         GameObject view = ResolveLetterBoxView();
         bool restoreActiveSelf = cachedLetterBoxViewActiveSelf;
         float restoreAlpha = cachedLetterBoxAlpha;
 
-        if (view != null)
+        if (letterBoxFadeRoutine != null)
         {
-            CanvasGroup canvasGroup = EnsureLetterBoxCanvasGroup(view);
-            if (canvasGroup != null)
-            {
-                StartLetterBoxTransition(canvasGroup, canvasGroup.alpha, 0f, 1f, 0f, () =>
-                {
-                    if (view == null)
-                    {
-                        return;
-                    }
+            StopCoroutine(letterBoxFadeRoutine);
+            letterBoxFadeRoutine = null;
+        }
 
-                    RestoreLetterBoxBarPositions();
-                    view.SetActive(restoreActiveSelf);
-                    if (restoreActiveSelf && canvasGroup != null)
-                    {
-                        canvasGroup.alpha = restoreAlpha;
-                    }
-                });
-            }
-            else
+        if (view == null)
+        {
+            ClearLetterBoxCache();
+            return null;
+        }
+
+        CanvasGroup canvasGroup = EnsureLetterBoxCanvasGroup(view);
+        if (canvasGroup == null)
+        {
+            view.SetActive(restoreActiveSelf);
+            ClearLetterBoxCache();
+            return null;
+        }
+
+        canvasGroup.alpha = 1f;
+        SetLetterBoxSlidePosition(1f);
+        return new LetterBoxExitState(view, canvasGroup, restoreActiveSelf, restoreAlpha);
+    }
+
+    private void CompleteLetterBoxExit(LetterBoxExitState exitState)
+    {
+        if (exitState == null)
+        {
+            return;
+        }
+
+        if (exitState.View != null)
+        {
+            RestoreLetterBoxBarPositions();
+            exitState.View.SetActive(exitState.RestoreActiveSelf);
+            if (exitState.RestoreActiveSelf && exitState.CanvasGroup != null)
             {
-                view.SetActive(restoreActiveSelf);
+                exitState.CanvasGroup.alpha = exitState.RestoreAlpha;
             }
         }
 
+        ClearLetterBoxCache();
+    }
+
+    private void ClearLetterBoxCache()
+    {
         cachedLetterBoxViewActiveSelf = false;
         cachedLetterBoxAlpha = 1f;
         cachedLetterBoxTop = null;
@@ -1665,6 +1844,189 @@ public sealed class StoryEventController : MonoBehaviour
         RoomCameraTrigger.TryActivateRoomAtPosition(playerObject.transform.position, out _);
     }
 
+    private IEnumerator RestorePresentationOnEventExitRoutine()
+    {
+        LetterBoxExitState letterBoxExit = BeginLetterBoxExit();
+        CinemachineCamera handoffCamera = activeEventCamera;
+        bool shouldRestoreRoomCamera = restoreRoomCameraOnExit;
+        bool hasHandoffCamera = handoffCamera != null;
+        bool hasCameraTarget = false;
+        bool targetUsesDefaultCamera = false;
+        Vector3 cameraStartPosition = Vector3.zero;
+        Vector3 cameraTargetPosition = Vector3.zero;
+        float cameraStartOrthographicSize = 0f;
+        float cameraTargetOrthographicSize = 0f;
+
+        if (!shouldRestoreRoomCamera)
+        {
+            yield return AnimatePresentationExit(letterBoxExit, false, handoffCamera, cameraStartPosition, cameraTargetPosition, cameraStartOrthographicSize, cameraTargetOrthographicSize);
+            RestoreEventCameraPriority();
+            yield break;
+        }
+
+        if (hasHandoffCamera &&
+            TryResolveEventExitCameraTarget(
+                handoffCamera,
+                out cameraTargetPosition,
+                out cameraTargetOrthographicSize,
+                out targetUsesDefaultCamera))
+        {
+            hasCameraTarget = true;
+            cameraStartPosition = handoffCamera.transform.position;
+            cameraStartOrthographicSize = handoffCamera.Lens.OrthographicSize;
+        }
+
+        bool shouldEaseCamera = hasCameraTarget && !targetUsesDefaultCamera && hasHandoffCamera;
+        if (hasCameraTarget && targetUsesDefaultCamera)
+        {
+            CameraManager.Instance?.TrySetFollowCameraPose(cameraTargetPosition, cameraTargetOrthographicSize);
+        }
+
+        yield return AnimatePresentationExit(
+            letterBoxExit,
+            shouldEaseCamera,
+            handoffCamera,
+            cameraStartPosition,
+            cameraTargetPosition,
+            cameraStartOrthographicSize,
+            cameraTargetOrthographicSize);
+
+        RestoreEventCameraPriority();
+        RestoreRoomCameraOnEventExit();
+    }
+
+    private IEnumerator AnimatePresentationExit(
+        LetterBoxExitState letterBoxExit,
+        bool easeCamera,
+        CinemachineCamera camera,
+        Vector3 cameraStartPosition,
+        Vector3 cameraTargetPosition,
+        float cameraStartOrthographicSize,
+        float cameraTargetOrthographicSize)
+    {
+        bool animateLetterBox = letterBoxExit != null;
+        float duration = animateLetterBox
+            ? Mathf.Max(0f, letterBoxFadeSeconds)
+            : Mathf.Max(0f, eventCameraExitEaseSeconds);
+
+        cameraTargetOrthographicSize = Mathf.Max(0.01f, cameraTargetOrthographicSize);
+        if (easeCamera && camera != null)
+        {
+            bool alreadyAtTarget =
+                (cameraStartPosition - cameraTargetPosition).sqrMagnitude <= 0.0001f &&
+                Mathf.Abs(cameraStartOrthographicSize - cameraTargetOrthographicSize) <= 0.0001f;
+            easeCamera = !alreadyAtTarget;
+        }
+
+        if (duration <= 0f || (!animateLetterBox && !easeCamera))
+        {
+            if (easeCamera && camera != null)
+            {
+                ApplyCameraPose(camera, cameraTargetPosition, cameraTargetOrthographicSize);
+            }
+
+            if (animateLetterBox)
+            {
+                SetLetterBoxSlidePosition(0f);
+                CompleteLetterBoxExit(letterBoxExit);
+            }
+
+            yield break;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float easedT = t * t * (3f - 2f * t);
+
+            if (animateLetterBox)
+            {
+                SetLetterBoxSlidePosition(Mathf.Lerp(1f, 0f, easedT));
+            }
+
+            if (easeCamera && camera != null)
+            {
+                ApplyCameraPose(
+                    camera,
+                    Vector3.Lerp(cameraStartPosition, cameraTargetPosition, easedT),
+                    Mathf.Lerp(cameraStartOrthographicSize, cameraTargetOrthographicSize, easedT));
+            }
+
+            yield return null;
+        }
+
+        if (animateLetterBox)
+        {
+            SetLetterBoxSlidePosition(0f);
+            CompleteLetterBoxExit(letterBoxExit);
+        }
+
+        if (easeCamera && camera != null)
+        {
+            ApplyCameraPose(camera, cameraTargetPosition, cameraTargetOrthographicSize);
+        }
+    }
+
+    private bool TryResolveEventExitCameraTarget(
+        CinemachineCamera handoffCamera,
+        out Vector3 position,
+        out float orthographicSize,
+        out bool targetUsesDefaultCamera)
+    {
+        position = handoffCamera != null ? handoffCamera.transform.position : Vector3.zero;
+        orthographicSize = handoffCamera != null ? handoffCamera.Lens.OrthographicSize : 0f;
+        targetUsesDefaultCamera = false;
+
+        RoomCameraTrigger targetRoom = ResolveEventExitRoom();
+        if (targetRoom == null || !targetRoom.TryGetCameraPose(out Vector3 roomPosition, out float roomOrthographicSize))
+        {
+            return handoffCamera != null;
+        }
+
+        targetUsesDefaultCamera = targetRoom.UsesDefaultCameraWhenEntered;
+        if (targetUsesDefaultCamera)
+        {
+            return handoffCamera != null;
+        }
+
+        position = roomPosition;
+        orthographicSize = roomOrthographicSize;
+        return true;
+    }
+
+    private RoomCameraTrigger ResolveEventExitRoom()
+    {
+        if (cachedRoomCameraBeforeEvent != null && cachedRoomCameraBeforeEvent.isActiveAndEnabled)
+        {
+            return cachedRoomCameraBeforeEvent;
+        }
+
+        GameObject playerObject = ResolvePlayerObjectForCameraRestore();
+        if (playerObject == null)
+        {
+            return null;
+        }
+
+        return RoomCameraTrigger.TryGetRoomAtPosition(playerObject.transform.position, out RoomCameraTrigger room)
+            ? room
+            : null;
+    }
+
+    private static void ApplyCameraPose(CinemachineCamera camera, Vector3 position, float orthographicSize)
+    {
+        if (camera == null)
+        {
+            return;
+        }
+
+        camera.transform.position = position;
+        LensSettings lens = camera.Lens;
+        lens.OrthographicSize = Mathf.Max(0.01f, orthographicSize);
+        camera.Lens = lens;
+    }
+
     private static GameObject ResolvePlayerObjectForCameraRestore()
     {
         GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
@@ -1698,12 +2060,19 @@ public sealed class StoryEventController : MonoBehaviour
         GameObject runtimeCameraObject = Instantiate(sourceCamera.gameObject, sourceCamera.transform.parent);
         runtimeCameraObject.name = $"{sourceCamera.name}_Runtime";
         runtimeCameraObject.hideFlags = HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+        runtimeCameraObject.SetActive(true);
         runtimeEventCamera = runtimeCameraObject.GetComponent<CinemachineCamera>();
         if (runtimeEventCamera == null)
         {
             Destroy(runtimeCameraObject);
             return null;
         }
+
+        runtimeEventCamera.enabled = true;
+        CameraTarget runtimeTarget = runtimeEventCamera.Target;
+        runtimeTarget.TrackingTarget = null;
+        runtimeTarget.LookAtTarget = null;
+        runtimeEventCamera.Target = runtimeTarget;
 
         return runtimeEventCamera;
     }
@@ -1743,23 +2112,42 @@ public sealed class StoryEventController : MonoBehaviour
         string targetName = eventCameraName.Trim();
         CinemachineCamera[] cameras =
             FindObjectsByType<CinemachineCamera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        CinemachineCamera fallbackCamera = null;
         for (int i = 0; i < cameras.Length; i++)
         {
             CinemachineCamera camera = cameras[i];
-            if (camera == null)
+            if (camera == null || IsRuntimeEventCamera(camera))
             {
                 continue;
             }
 
-            if (string.Equals(camera.name, targetName, StringComparison.OrdinalIgnoreCase) ||
-                camera.name.IndexOf(targetName, StringComparison.OrdinalIgnoreCase) >= 0)
+            if (string.Equals(camera.name, targetName, StringComparison.OrdinalIgnoreCase))
             {
                 eventCamera = camera;
                 return eventCamera;
             }
+
+            if (fallbackCamera == null &&
+                camera.name.IndexOf(targetName, StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                fallbackCamera = camera;
+            }
+        }
+
+        if (fallbackCamera != null)
+        {
+            eventCamera = fallbackCamera;
+            return eventCamera;
         }
 
         return null;
+    }
+
+    private static bool IsRuntimeEventCamera(CinemachineCamera camera)
+    {
+        return camera != null &&
+               (camera.name.EndsWith("_Runtime", StringComparison.OrdinalIgnoreCase) ||
+                (camera.gameObject.hideFlags & (HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild)) != 0);
     }
 
     private void UnsubscribeDialogueComplete()
@@ -1771,6 +2159,156 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         waitingDialogueCompletion = false;
+    }
+
+    private void HideGameplayUiForEvent()
+    {
+        RestoreGameplayUiVisibility();
+
+        GameObject hudObject = GameObject.Find("PlayerHUDCanvas");
+        if (hudObject != null)
+        {
+            cachedHudCanvas = hudObject.GetComponent<Canvas>();
+            cachedHudRaycaster = hudObject.GetComponent<GraphicRaycaster>();
+            cachedHudVisibilityGate = hudObject.GetComponent<FlagCanvasGroupVisibility>();
+            cachedHudCanvasGroup = EnsureCanvasGroup(hudObject);
+
+            if (cachedHudVisibilityGate != null)
+            {
+                cachedHudVisibilityGateEnabled = cachedHudVisibilityGate.enabled;
+                cachedHudVisibilityGate.enabled = false;
+                hasCachedGameplayUiState = true;
+            }
+
+            if (cachedHudCanvas != null)
+            {
+                cachedHudCanvasEnabled = cachedHudCanvas.enabled;
+                cachedHudCanvas.enabled = false;
+                hasCachedGameplayUiState = true;
+            }
+
+            if (cachedHudRaycaster != null)
+            {
+                cachedHudRaycasterEnabled = cachedHudRaycaster.enabled;
+                cachedHudRaycaster.enabled = false;
+                hasCachedGameplayUiState = true;
+            }
+
+            if (cachedHudCanvasGroup != null)
+            {
+                cachedHudCanvasGroupAlpha = cachedHudCanvasGroup.alpha;
+                cachedHudCanvasGroupInteractable = cachedHudCanvasGroup.interactable;
+                cachedHudCanvasGroupBlocksRaycasts = cachedHudCanvasGroup.blocksRaycasts;
+                cachedHudCanvasGroup.alpha = 0f;
+                cachedHudCanvasGroup.interactable = false;
+                cachedHudCanvasGroup.blocksRaycasts = false;
+                hasCachedGameplayUiState = true;
+            }
+        }
+
+        cachedMinimapManager = MinimapManager.Instance;
+        if (cachedMinimapManager == null)
+        {
+            cachedMinimapManager = FindFirstObjectByType<MinimapManager>(FindObjectsInactive.Include);
+        }
+
+        if (cachedMinimapManager == null)
+        {
+            return;
+        }
+
+        cachedMinimapManagerEnabled = cachedMinimapManager.enabled;
+        cachedMinimapView = cachedMinimapManager.GetComponent<MinimapView>();
+        if (cachedMinimapView == null)
+        {
+            cachedMinimapView = FindFirstObjectByType<MinimapView>(FindObjectsInactive.Include);
+        }
+
+        if (cachedMinimapView != null)
+        {
+            cachedMiniMapVisible = cachedMinimapView.IsMiniMapVisible;
+            cachedFullMapVisible = cachedMinimapView.IsFullMapVisible;
+            cachedMinimapView.SetPanelVisibility(false, false);
+        }
+
+        cachedMinimapManager.enabled = false;
+        hasCachedGameplayUiState = true;
+    }
+
+    private void RestoreGameplayUiVisibility()
+    {
+        if (!hasCachedGameplayUiState)
+        {
+            return;
+        }
+
+        if (cachedHudCanvas != null)
+        {
+            cachedHudCanvas.enabled = cachedHudCanvasEnabled;
+        }
+
+        if (cachedHudRaycaster != null)
+        {
+            cachedHudRaycaster.enabled = cachedHudRaycasterEnabled;
+        }
+
+        if (cachedHudVisibilityGate != null)
+        {
+            cachedHudVisibilityGate.enabled = cachedHudVisibilityGateEnabled;
+            if (cachedHudVisibilityGate.enabled)
+            {
+                cachedHudVisibilityGate.EvaluateAndApply();
+            }
+        }
+
+        if (cachedHudCanvasGroup != null)
+        {
+            cachedHudCanvasGroup.alpha = cachedHudCanvasGroupAlpha;
+            cachedHudCanvasGroup.interactable = cachedHudCanvasGroupInteractable;
+            cachedHudCanvasGroup.blocksRaycasts = cachedHudCanvasGroupBlocksRaycasts;
+        }
+
+        if (cachedMinimapView != null)
+        {
+            cachedMinimapView.SetPanelVisibility(cachedMiniMapVisible, cachedFullMapVisible);
+        }
+
+        if (cachedMinimapManager != null)
+        {
+            cachedMinimapManager.enabled = cachedMinimapManagerEnabled;
+        }
+
+        cachedHudCanvas = null;
+        cachedHudRaycaster = null;
+        cachedHudVisibilityGate = null;
+        cachedHudCanvasGroup = null;
+        cachedMinimapManager = null;
+        cachedMinimapView = null;
+        cachedHudCanvasEnabled = false;
+        cachedHudRaycasterEnabled = false;
+        cachedHudVisibilityGateEnabled = false;
+        cachedHudCanvasGroupAlpha = 1f;
+        cachedHudCanvasGroupInteractable = false;
+        cachedHudCanvasGroupBlocksRaycasts = false;
+        cachedMinimapManagerEnabled = false;
+        cachedMiniMapVisible = false;
+        cachedFullMapVisible = false;
+        hasCachedGameplayUiState = false;
+    }
+
+    private static CanvasGroup EnsureCanvasGroup(GameObject target)
+    {
+        if (target == null)
+        {
+            return null;
+        }
+
+        if (!target.TryGetComponent(out CanvasGroup canvasGroup))
+        {
+            canvasGroup = target.AddComponent<CanvasGroup>();
+        }
+
+        return canvasGroup;
     }
 
     private PlayableDirector ResolveDirector()
@@ -2355,5 +2893,25 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         return false;
+    }
+
+    private sealed class LetterBoxExitState
+    {
+        public LetterBoxExitState(
+            GameObject view,
+            CanvasGroup canvasGroup,
+            bool restoreActiveSelf,
+            float restoreAlpha)
+        {
+            View = view;
+            CanvasGroup = canvasGroup;
+            RestoreActiveSelf = restoreActiveSelf;
+            RestoreAlpha = restoreAlpha;
+        }
+
+        public GameObject View { get; }
+        public CanvasGroup CanvasGroup { get; }
+        public bool RestoreActiveSelf { get; }
+        public float RestoreAlpha { get; }
     }
 }

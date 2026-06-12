@@ -27,7 +27,7 @@ namespace GameName.Enemy
         [SerializeField] private bool flipSpriteOnTurn = true;
 
         [Header("Performance")]
-        [SerializeField, Min(0.02f)] private float turnCheckInterval = 0.08f;
+        [SerializeField, Min(0.02f)] private float turnCheckInterval = 0.16f;
         [SerializeField] private bool staggerTurnChecks = true;
 
         [Header("Enemy Collision")]
@@ -62,6 +62,7 @@ namespace GameName.Enemy
             damageToPlayer = Mathf.Max(0, damageToPlayer);
             maxHealth = Mathf.Max(1, maxHealth);
             backAttackDamageMultiplier = Mathf.Max(1f, backAttackDamageMultiplier);
+            turnCheckInterval = Mathf.Max(0.02f, turnCheckInterval);
         }
 
         public event Action EnemyCollisionTurned;
