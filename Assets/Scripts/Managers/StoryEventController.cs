@@ -10,6 +10,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Yarn.Unity;
 
 [DisallowMultipleComponent]
@@ -156,12 +157,22 @@ public sealed class StoryEventController : MonoBehaviour
     private bool cachedEventCameraPriorityEnabled;
     private bool hasCachedEventCameraPriority;
     private RoomCameraTrigger cachedRoomCameraBeforeEvent;
+    private Canvas cachedHudCanvas;
+    private GraphicRaycaster cachedHudRaycaster;
+    private FlagCanvasGroupVisibility cachedHudVisibilityGate;
+    private CanvasGroup cachedHudCanvasGroup;
+    private bool cachedHudCanvasEnabled;
+    private bool cachedHudRaycasterEnabled;
+    private bool cachedHudVisibilityGateEnabled;
+    private float cachedHudCanvasGroupAlpha = 1f;
+    private bool cachedHudCanvasGroupInteractable;
+    private bool cachedHudCanvasGroupBlocksRaycasts;
     private MinimapManager cachedMinimapManager;
     private MinimapView cachedMinimapView;
     private bool cachedMinimapManagerEnabled;
     private bool cachedMiniMapVisible;
     private bool cachedFullMapVisible;
-    private bool hasCachedMinimapState;
+    private bool hasCachedGameplayUiState;
 
     public string EventId => string.IsNullOrWhiteSpace(eventId) ? name : eventId.Trim();
     public string MemoName => string.IsNullOrWhiteSpace(memoName) ? string.Empty : memoName.Trim();
@@ -254,7 +265,7 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         StoryPauseRuntime.ClearOverride();
-        RestoreMinimapVisibility();
+        RestoreGameplayUiVisibility();
         RestoreLetterBoxViewVisibility();
         RestoreEventCameraPriority();
         RestoreRoomCameraOnEventExit();
@@ -507,7 +518,7 @@ public sealed class StoryEventController : MonoBehaviour
         firedTimelinePointKeys.Clear();
 
         StoryPauseRuntime.SetOverride(pausePolicy);
-        HideMinimapForEvent();
+        HideGameplayUiForEvent();
         CaptureCinematicState();
         ApplyCinematicState();
         CaptureRoomCameraBeforeEvent();
@@ -553,7 +564,7 @@ public sealed class StoryEventController : MonoBehaviour
         ApplyCompletionState();
         StoryPauseRuntime.ClearOverride();
         yield return RestorePresentationOnEventExitRoutine();
-        RestoreMinimapVisibility();
+        RestoreGameplayUiVisibility();
         RestoreCinematicState();
 
         playRoutine = null;
@@ -2150,9 +2161,50 @@ public sealed class StoryEventController : MonoBehaviour
         waitingDialogueCompletion = false;
     }
 
-    private void HideMinimapForEvent()
+    private void HideGameplayUiForEvent()
     {
-        RestoreMinimapVisibility();
+        RestoreGameplayUiVisibility();
+
+        GameObject hudObject = GameObject.Find("PlayerHUDCanvas");
+        if (hudObject != null)
+        {
+            cachedHudCanvas = hudObject.GetComponent<Canvas>();
+            cachedHudRaycaster = hudObject.GetComponent<GraphicRaycaster>();
+            cachedHudVisibilityGate = hudObject.GetComponent<FlagCanvasGroupVisibility>();
+            cachedHudCanvasGroup = EnsureCanvasGroup(hudObject);
+
+            if (cachedHudVisibilityGate != null)
+            {
+                cachedHudVisibilityGateEnabled = cachedHudVisibilityGate.enabled;
+                cachedHudVisibilityGate.enabled = false;
+                hasCachedGameplayUiState = true;
+            }
+
+            if (cachedHudCanvas != null)
+            {
+                cachedHudCanvasEnabled = cachedHudCanvas.enabled;
+                cachedHudCanvas.enabled = false;
+                hasCachedGameplayUiState = true;
+            }
+
+            if (cachedHudRaycaster != null)
+            {
+                cachedHudRaycasterEnabled = cachedHudRaycaster.enabled;
+                cachedHudRaycaster.enabled = false;
+                hasCachedGameplayUiState = true;
+            }
+
+            if (cachedHudCanvasGroup != null)
+            {
+                cachedHudCanvasGroupAlpha = cachedHudCanvasGroup.alpha;
+                cachedHudCanvasGroupInteractable = cachedHudCanvasGroup.interactable;
+                cachedHudCanvasGroupBlocksRaycasts = cachedHudCanvasGroup.blocksRaycasts;
+                cachedHudCanvasGroup.alpha = 0f;
+                cachedHudCanvasGroup.interactable = false;
+                cachedHudCanvasGroup.blocksRaycasts = false;
+                hasCachedGameplayUiState = true;
+            }
+        }
 
         cachedMinimapManager = MinimapManager.Instance;
         if (cachedMinimapManager == null)
@@ -2180,14 +2232,40 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         cachedMinimapManager.enabled = false;
-        hasCachedMinimapState = true;
+        hasCachedGameplayUiState = true;
     }
 
-    private void RestoreMinimapVisibility()
+    private void RestoreGameplayUiVisibility()
     {
-        if (!hasCachedMinimapState)
+        if (!hasCachedGameplayUiState)
         {
             return;
+        }
+
+        if (cachedHudCanvas != null)
+        {
+            cachedHudCanvas.enabled = cachedHudCanvasEnabled;
+        }
+
+        if (cachedHudRaycaster != null)
+        {
+            cachedHudRaycaster.enabled = cachedHudRaycasterEnabled;
+        }
+
+        if (cachedHudVisibilityGate != null)
+        {
+            cachedHudVisibilityGate.enabled = cachedHudVisibilityGateEnabled;
+            if (cachedHudVisibilityGate.enabled)
+            {
+                cachedHudVisibilityGate.EvaluateAndApply();
+            }
+        }
+
+        if (cachedHudCanvasGroup != null)
+        {
+            cachedHudCanvasGroup.alpha = cachedHudCanvasGroupAlpha;
+            cachedHudCanvasGroup.interactable = cachedHudCanvasGroupInteractable;
+            cachedHudCanvasGroup.blocksRaycasts = cachedHudCanvasGroupBlocksRaycasts;
         }
 
         if (cachedMinimapView != null)
@@ -2200,12 +2278,37 @@ public sealed class StoryEventController : MonoBehaviour
             cachedMinimapManager.enabled = cachedMinimapManagerEnabled;
         }
 
+        cachedHudCanvas = null;
+        cachedHudRaycaster = null;
+        cachedHudVisibilityGate = null;
+        cachedHudCanvasGroup = null;
         cachedMinimapManager = null;
         cachedMinimapView = null;
+        cachedHudCanvasEnabled = false;
+        cachedHudRaycasterEnabled = false;
+        cachedHudVisibilityGateEnabled = false;
+        cachedHudCanvasGroupAlpha = 1f;
+        cachedHudCanvasGroupInteractable = false;
+        cachedHudCanvasGroupBlocksRaycasts = false;
         cachedMinimapManagerEnabled = false;
         cachedMiniMapVisible = false;
         cachedFullMapVisible = false;
-        hasCachedMinimapState = false;
+        hasCachedGameplayUiState = false;
+    }
+
+    private static CanvasGroup EnsureCanvasGroup(GameObject target)
+    {
+        if (target == null)
+        {
+            return null;
+        }
+
+        if (!target.TryGetComponent(out CanvasGroup canvasGroup))
+        {
+            canvasGroup = target.AddComponent<CanvasGroup>();
+        }
+
+        return canvasGroup;
     }
 
     private PlayableDirector ResolveDirector()

@@ -301,13 +301,17 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
 
             if (!string.IsNullOrWhiteSpace(definition.storyEventControllerId))
             {
-                if (!TryPlaySceneStoryEventController(definition.storyEventControllerId))
+                if (!TryFindSceneStoryEventController(definition.storyEventControllerId, out StoryEventController controller) ||
+                    controller == null)
                 {
                     Debug.LogWarning(
                         $"[StoryEventRuntimeService] StoryEventController not found or could not start. " +
                         $"eventId='{definition.eventId}', controllerId='{definition.storyEventControllerId}'");
+                    enqueued = true;
+                    continue;
                 }
 
+                StartCoroutine(PlaySceneStoryEventController(definition, controller));
                 enqueued = true;
                 continue;
             }
@@ -382,8 +386,16 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
 
     private bool TryPlaySceneStoryEventController(string eventId)
     {
+        return TryFindSceneStoryEventController(eventId, out StoryEventController controller) &&
+               controller != null &&
+               controller.PlayEvent();
+    }
+
+    private bool TryFindSceneStoryEventController(string eventId, out StoryEventController matchedController)
+    {
         if (string.IsNullOrWhiteSpace(eventId))
         {
+            matchedController = null;
             return false;
         }
 
@@ -412,13 +424,61 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
             if (controller.gameObject.scene.IsValid() &&
                 string.Equals(controller.gameObject.scene.name, activeSceneName, StringComparison.Ordinal))
             {
-                return controller.PlayEvent();
+                matchedController = controller;
+                return true;
             }
 
             fallbackController ??= controller;
         }
 
-        return fallbackController != null && fallbackController.PlayEvent();
+        matchedController = fallbackController;
+        return matchedController != null;
+    }
+
+    private IEnumerator PlaySceneStoryEventController(StoryEventDefinition definition, StoryEventController controller)
+    {
+        if (definition == null || controller == null)
+        {
+            yield break;
+        }
+
+        if (!controller.PlayEvent())
+        {
+            Debug.LogWarning(
+                $"[StoryEventRuntimeService] StoryEventController could not start. " +
+                $"eventId='{definition.eventId}', controllerId='{definition.storyEventControllerId}'",
+                controller);
+            yield break;
+        }
+
+        definition.onStartMutations?.Apply();
+
+        while (controller != null && controller.IsPlaying)
+        {
+            yield return null;
+        }
+
+        ApplySceneStoryEventCompletionState(definition);
+    }
+
+    private static void ApplySceneStoryEventCompletionState(StoryEventDefinition definition)
+    {
+        if (definition == null)
+        {
+            return;
+        }
+
+        definition.onCompleteMutations?.Apply();
+
+        if (!string.IsNullOrWhiteSpace(definition.runOnceFlagKey))
+        {
+            GameProgressFlags.Set(definition.runOnceFlagKey.Trim(), true);
+        }
+
+        if (definition.autoSaveOnComplete)
+        {
+            SaveManager.TrySaveCurrentGame();
+        }
     }
 
     private static StoryEventController FindPlayingSceneStoryEventController()
