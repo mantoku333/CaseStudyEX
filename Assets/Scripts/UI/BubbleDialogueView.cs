@@ -107,6 +107,16 @@ namespace Metroidvania.UI
             HideView();
         }
 
+        private void OnEnable()
+        {
+            Canvas.willRenderCanvases += OnWillRenderCanvases;
+        }
+
+        private void OnDisable()
+        {
+            Canvas.willRenderCanvases -= OnWillRenderCanvases;
+        }
+
         public void SetTarget(Transform? target)
         {
             _conversationDefaultTarget = target;
@@ -137,6 +147,16 @@ namespace Metroidvania.UI
 
         private void LateUpdate()
         {
+            UpdateBubblePosition();
+        }
+
+        private void OnWillRenderCanvases()
+        {
+            UpdateBubblePosition();
+        }
+
+        private void UpdateBubblePosition()
+        {
             if (bubblePanel == null)
             {
                 return;
@@ -152,9 +172,15 @@ namespace Metroidvania.UI
                 return;
             }
 
+            Camera currentMainCamera = Camera.main;
+            if (currentMainCamera != null && currentMainCamera != _mainCamera)
+            {
+                _mainCamera = currentMainCamera;
+            }
+
             if (_mainCamera == null)
             {
-                _mainCamera = Camera.main;
+                _mainCamera = currentMainCamera;
             }
 
             if (_currentTarget == null || _mainCamera == null)
