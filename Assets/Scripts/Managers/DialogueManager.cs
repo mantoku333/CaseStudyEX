@@ -95,13 +95,27 @@ namespace Metroidvania.Managers
 
             lastAdvanceFrame = Time.frameCount;
 
+            if (dialogueRunner.DialoguePresenters == null)
+            {
+                return;
+            }
+
             // アクティブなViewのみ進行指示を出す
             foreach (var view in dialogueRunner.DialoguePresenters)
             {
-                if (view.gameObject.activeInHierarchy)
+                if (view == null || view.gameObject == null || !view.gameObject.activeInHierarchy)
                 {
-                    if (view is DialogueView dv && dv.IsPresentationEnabled) dv.OnContinueClicked();
-                    if (view is BubbleDialogueView bv && bv.IsPresentationEnabled) bv.OnContinueClicked();
+                    continue;
+                }
+
+                if (view is DialogueView dv && dv.IsPresentationEnabled)
+                {
+                    dv.OnContinueClicked();
+                }
+
+                if (view is BubbleDialogueView bv && bv.IsPresentationEnabled)
+                {
+                    bv.OnContinueClicked();
                 }
             }
         }
