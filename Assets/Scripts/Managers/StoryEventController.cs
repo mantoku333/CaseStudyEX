@@ -118,6 +118,7 @@ public sealed class StoryEventController : MonoBehaviour
     [SerializeField] private string eventCameraName = "EventCam";
     [SerializeField] private int eventCameraPriorityFloor = 100;
     [SerializeField] private bool restoreRoomCameraOnExit = true;
+    [SerializeField, Min(0f)] private float eventCameraExitEaseSeconds = 0.35f;
 
     [Header("Bindings")]
     [SerializeField] private List<ActorBinding> actorBindings = new List<ActorBinding>();
@@ -429,9 +430,7 @@ public sealed class StoryEventController : MonoBehaviour
         resolvedDirector.stopped -= OnDirectorStopped;
         ApplyCompletionState();
         StoryPauseRuntime.ClearOverride();
-        RestoreLetterBoxViewVisibility();
-        RestoreEventCameraPriority();
-        RestoreRoomCameraOnEventExit();
+        yield return RestorePresentationOnEventExitRoutine();
         RestoreCinematicState();
 
         playRoutine = null;
@@ -1328,42 +1327,69 @@ public sealed class StoryEventController : MonoBehaviour
 
     private void RestoreLetterBoxViewVisibility()
     {
-        if (!hasCachedLetterBoxViewState)
+        LetterBoxExitState exitState = BeginLetterBoxExit();
+        if (exitState == null)
         {
             return;
+        }
+
+        StartLetterBoxTransition(exitState.CanvasGroup, 1f, 1f, 1f, 0f, () =>
+        {
+            CompleteLetterBoxExit(exitState);
+        });
+    }
+
+    private LetterBoxExitState BeginLetterBoxExit()
+    {
+        if (!hasCachedLetterBoxViewState)
+        {
+            return null;
         }
 
         GameObject view = ResolveLetterBoxView();
         bool restoreActiveSelf = cachedLetterBoxViewActiveSelf;
         float restoreAlpha = cachedLetterBoxAlpha;
 
-        if (view != null)
+        if (letterBoxFadeRoutine != null)
         {
-            CanvasGroup canvasGroup = EnsureLetterBoxCanvasGroup(view);
-            if (canvasGroup != null)
-            {
-                canvasGroup.alpha = 1f;
-                StartLetterBoxTransition(canvasGroup, 1f, 1f, 1f, 0f, () =>
-                {
-                    if (view == null)
-                    {
-                        ClearLetterBoxCache();
-                        return;
-                    }
+            StopCoroutine(letterBoxFadeRoutine);
+            letterBoxFadeRoutine = null;
+        }
 
-                    RestoreLetterBoxBarPositions();
-                    view.SetActive(restoreActiveSelf);
-                    if (restoreActiveSelf && canvasGroup != null)
-                    {
-                        canvasGroup.alpha = restoreAlpha;
-                    }
+        if (view == null)
+        {
+            ClearLetterBoxCache();
+            return null;
+        }
 
-                    ClearLetterBoxCache();
-                });
-                return;
-            }
-
+        CanvasGroup canvasGroup = EnsureLetterBoxCanvasGroup(view);
+        if (canvasGroup == null)
+        {
             view.SetActive(restoreActiveSelf);
+            ClearLetterBoxCache();
+            return null;
+        }
+
+        canvasGroup.alpha = 1f;
+        SetLetterBoxSlidePosition(1f);
+        return new LetterBoxExitState(view, canvasGroup, restoreActiveSelf, restoreAlpha);
+    }
+
+    private void CompleteLetterBoxExit(LetterBoxExitState exitState)
+    {
+        if (exitState == null)
+        {
+            return;
+        }
+
+        if (exitState.View != null)
+        {
+            RestoreLetterBoxBarPositions();
+            exitState.View.SetActive(exitState.RestoreActiveSelf);
+            if (exitState.RestoreActiveSelf && exitState.CanvasGroup != null)
+            {
+                exitState.CanvasGroup.alpha = exitState.RestoreAlpha;
+            }
         }
 
         ClearLetterBoxCache();
@@ -1671,6 +1697,189 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         RoomCameraTrigger.TryActivateRoomAtPosition(playerObject.transform.position, out _);
+    }
+
+    private IEnumerator RestorePresentationOnEventExitRoutine()
+    {
+        LetterBoxExitState letterBoxExit = BeginLetterBoxExit();
+        CinemachineCamera handoffCamera = activeEventCamera;
+        bool shouldRestoreRoomCamera = restoreRoomCameraOnExit;
+        bool hasHandoffCamera = handoffCamera != null;
+        bool hasCameraTarget = false;
+        bool targetUsesDefaultCamera = false;
+        Vector3 cameraStartPosition = Vector3.zero;
+        Vector3 cameraTargetPosition = Vector3.zero;
+        float cameraStartOrthographicSize = 0f;
+        float cameraTargetOrthographicSize = 0f;
+
+        if (!shouldRestoreRoomCamera)
+        {
+            yield return AnimatePresentationExit(letterBoxExit, false, handoffCamera, cameraStartPosition, cameraTargetPosition, cameraStartOrthographicSize, cameraTargetOrthographicSize);
+            RestoreEventCameraPriority();
+            yield break;
+        }
+
+        if (hasHandoffCamera &&
+            TryResolveEventExitCameraTarget(
+                handoffCamera,
+                out cameraTargetPosition,
+                out cameraTargetOrthographicSize,
+                out targetUsesDefaultCamera))
+        {
+            hasCameraTarget = true;
+            cameraStartPosition = handoffCamera.transform.position;
+            cameraStartOrthographicSize = handoffCamera.Lens.OrthographicSize;
+        }
+
+        bool shouldEaseCamera = hasCameraTarget && !targetUsesDefaultCamera && hasHandoffCamera;
+        if (hasCameraTarget && targetUsesDefaultCamera)
+        {
+            CameraManager.Instance?.TrySetFollowCameraPose(cameraTargetPosition, cameraTargetOrthographicSize);
+        }
+
+        yield return AnimatePresentationExit(
+            letterBoxExit,
+            shouldEaseCamera,
+            handoffCamera,
+            cameraStartPosition,
+            cameraTargetPosition,
+            cameraStartOrthographicSize,
+            cameraTargetOrthographicSize);
+
+        RestoreEventCameraPriority();
+        RestoreRoomCameraOnEventExit();
+    }
+
+    private IEnumerator AnimatePresentationExit(
+        LetterBoxExitState letterBoxExit,
+        bool easeCamera,
+        CinemachineCamera camera,
+        Vector3 cameraStartPosition,
+        Vector3 cameraTargetPosition,
+        float cameraStartOrthographicSize,
+        float cameraTargetOrthographicSize)
+    {
+        bool animateLetterBox = letterBoxExit != null;
+        float duration = animateLetterBox
+            ? Mathf.Max(0f, letterBoxFadeSeconds)
+            : Mathf.Max(0f, eventCameraExitEaseSeconds);
+
+        cameraTargetOrthographicSize = Mathf.Max(0.01f, cameraTargetOrthographicSize);
+        if (easeCamera && camera != null)
+        {
+            bool alreadyAtTarget =
+                (cameraStartPosition - cameraTargetPosition).sqrMagnitude <= 0.0001f &&
+                Mathf.Abs(cameraStartOrthographicSize - cameraTargetOrthographicSize) <= 0.0001f;
+            easeCamera = !alreadyAtTarget;
+        }
+
+        if (duration <= 0f || (!animateLetterBox && !easeCamera))
+        {
+            if (easeCamera && camera != null)
+            {
+                ApplyCameraPose(camera, cameraTargetPosition, cameraTargetOrthographicSize);
+            }
+
+            if (animateLetterBox)
+            {
+                SetLetterBoxSlidePosition(0f);
+                CompleteLetterBoxExit(letterBoxExit);
+            }
+
+            yield break;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float easedT = t * t * (3f - 2f * t);
+
+            if (animateLetterBox)
+            {
+                SetLetterBoxSlidePosition(Mathf.Lerp(1f, 0f, easedT));
+            }
+
+            if (easeCamera && camera != null)
+            {
+                ApplyCameraPose(
+                    camera,
+                    Vector3.Lerp(cameraStartPosition, cameraTargetPosition, easedT),
+                    Mathf.Lerp(cameraStartOrthographicSize, cameraTargetOrthographicSize, easedT));
+            }
+
+            yield return null;
+        }
+
+        if (animateLetterBox)
+        {
+            SetLetterBoxSlidePosition(0f);
+            CompleteLetterBoxExit(letterBoxExit);
+        }
+
+        if (easeCamera && camera != null)
+        {
+            ApplyCameraPose(camera, cameraTargetPosition, cameraTargetOrthographicSize);
+        }
+    }
+
+    private bool TryResolveEventExitCameraTarget(
+        CinemachineCamera handoffCamera,
+        out Vector3 position,
+        out float orthographicSize,
+        out bool targetUsesDefaultCamera)
+    {
+        position = handoffCamera != null ? handoffCamera.transform.position : Vector3.zero;
+        orthographicSize = handoffCamera != null ? handoffCamera.Lens.OrthographicSize : 0f;
+        targetUsesDefaultCamera = false;
+
+        RoomCameraTrigger targetRoom = ResolveEventExitRoom();
+        if (targetRoom == null || !targetRoom.TryGetCameraPose(out Vector3 roomPosition, out float roomOrthographicSize))
+        {
+            return handoffCamera != null;
+        }
+
+        targetUsesDefaultCamera = targetRoom.UsesDefaultCameraWhenEntered;
+        if (targetUsesDefaultCamera)
+        {
+            return handoffCamera != null;
+        }
+
+        position = roomPosition;
+        orthographicSize = roomOrthographicSize;
+        return true;
+    }
+
+    private RoomCameraTrigger ResolveEventExitRoom()
+    {
+        if (cachedRoomCameraBeforeEvent != null && cachedRoomCameraBeforeEvent.isActiveAndEnabled)
+        {
+            return cachedRoomCameraBeforeEvent;
+        }
+
+        GameObject playerObject = ResolvePlayerObjectForCameraRestore();
+        if (playerObject == null)
+        {
+            return null;
+        }
+
+        return RoomCameraTrigger.TryGetRoomAtPosition(playerObject.transform.position, out RoomCameraTrigger room)
+            ? room
+            : null;
+    }
+
+    private static void ApplyCameraPose(CinemachineCamera camera, Vector3 position, float orthographicSize)
+    {
+        if (camera == null)
+        {
+            return;
+        }
+
+        camera.transform.position = position;
+        LensSettings lens = camera.Lens;
+        lens.OrthographicSize = Mathf.Max(0.01f, orthographicSize);
+        camera.Lens = lens;
     }
 
     private static GameObject ResolvePlayerObjectForCameraRestore()
@@ -2363,5 +2572,25 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         return false;
+    }
+
+    private sealed class LetterBoxExitState
+    {
+        public LetterBoxExitState(
+            GameObject view,
+            CanvasGroup canvasGroup,
+            bool restoreActiveSelf,
+            float restoreAlpha)
+        {
+            View = view;
+            CanvasGroup = canvasGroup;
+            RestoreActiveSelf = restoreActiveSelf;
+            RestoreAlpha = restoreAlpha;
+        }
+
+        public GameObject View { get; }
+        public CanvasGroup CanvasGroup { get; }
+        public bool RestoreActiveSelf { get; }
+        public float RestoreAlpha { get; }
     }
 }
