@@ -738,6 +738,13 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(
             shieldBreakRenderer.sprite.textureRect,
             Is.EqualTo(new Rect(0f, shieldBreak.height - shieldBreakFrameHeight, shieldBreakFrameWidth, shieldBreakFrameHeight)));
+        GridSpriteSheetPlayer shieldBreakPlayer = shieldBreakRenderer.GetComponent<GridSpriteSheetPlayer>();
+        IList<Sprite> generatedShieldBreakSprites = GetPrivateField<IList<Sprite>>(shieldBreakPlayer, "generatedSprites");
+        Assert.That(generatedShieldBreakSprites, Has.Count.EqualTo(30));
+        float shieldBreakFinalRowY = shieldBreak.height - (10 * shieldBreakFrameHeight);
+        Assert.That(
+            generatedShieldBreakSprites[29].textureRect,
+            Is.EqualTo(new Rect(2 * shieldBreakFrameWidth, shieldBreakFinalRowY, shieldBreakFrameWidth, shieldBreakFrameHeight)));
         Assert.That(shieldBreakRenderer.sprite.pivot.x / shieldBreakFrameWidth, Is.EqualTo(0.5f).Within(0.001f));
         Assert.That(shieldBreakRenderer.sprite.pivot.y / shieldBreakFrameHeight, Is.EqualTo(0.5f).Within(0.001f));
 
@@ -771,6 +778,11 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(
             deathRenderer.sprite.textureRect,
             Is.EqualTo(new Rect(0f, death.height - deathFrameHeight, deathFrameWidth, deathFrameHeight)));
+        GridSpriteSheetPlayer deathPlayer = deathRenderer.GetComponent<GridSpriteSheetPlayer>();
+        IList<Sprite> generatedSprites = GetPrivateField<IList<Sprite>>(deathPlayer, "generatedSprites");
+        Assert.That(generatedSprites, Has.Count.EqualTo(41));
+        float finalRowY = death.height - (9 * deathFrameHeight);
+        Assert.That(generatedSprites[40].textureRect, Is.EqualTo(new Rect(0f, finalRowY, deathFrameWidth, deathFrameHeight)));
         Assert.That(deathRenderer.sprite.pivot.x / deathFrameWidth, Is.EqualTo(0.5f).Within(0.001f));
         Assert.That(deathRenderer.sprite.pivot.y / deathFrameHeight, Is.EqualTo(0.5f).Within(0.001f));
     }
