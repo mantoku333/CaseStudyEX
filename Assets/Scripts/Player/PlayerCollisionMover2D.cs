@@ -24,6 +24,7 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
 
     private readonly RaycastHit2D[] castHits = new RaycastHit2D[8];
     private readonly Collider2D[] overlapHits = new Collider2D[8];
+    private readonly ContactPoint2D[] contactHits = new ContactPoint2D[8];
 
     private Rigidbody2D rigidBody2d;
     private Collider2D bodyCollider;
@@ -126,7 +127,8 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
             return velocity;
         }
 
-        ResolveInitialOverlaps();
+        RebuildFilterIfNeeded();
+        velocity = ProjectVelocityAwayFromCurrentSolidContacts(velocity);
 
         float fixedDeltaTime = Time.fixedDeltaTime;
         if (fixedDeltaTime <= 0f)
@@ -208,45 +210,51 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
         RebuildFilterIfNeeded();
 
         Vector2 startPosition = rigidBody2d.position;
-        Vector2 totalDelta = Vector2.zero;
-        Vector2 remainingDelta = desiredDelta;
-
-        for (int i = 0; i < slideIterations; i++)
+        try
         {
-            float remainingDistance = remainingDelta.magnitude;
-            if (remainingDistance <= MinMoveDistance)
+            Vector2 totalDelta = Vector2.zero;
+            Vector2 remainingDelta = desiredDelta;
+
+            for (int i = 0; i < slideIterations; i++)
             {
-                break;
+                float remainingDistance = remainingDelta.magnitude;
+                if (remainingDistance <= MinMoveDistance)
+                {
+                    break;
+                }
+
+                rigidBody2d.position = startPosition + totalDelta;
+                Physics2D.SyncTransforms();
+
+                Vector2 direction = remainingDelta / remainingDistance;
+                if (!TryCast(direction, remainingDistance + skinWidth, out RaycastHit2D hit))
+                {
+                    totalDelta += remainingDelta;
+                    break;
+                }
+
+                float safeDistance = Mathf.Max(0f, hit.distance - skinWidth);
+                Vector2 safeDelta = direction * Mathf.Min(safeDistance, remainingDistance);
+                totalDelta += safeDelta;
+
+                float consumedDistance = safeDelta.magnitude;
+                float leftoverDistance = Mathf.Max(0f, remainingDistance - consumedDistance);
+                if (leftoverDistance <= MinMoveDistance)
+                {
+                    break;
+                }
+
+                Vector2 leftoverDelta = direction * leftoverDistance;
+                remainingDelta = ProjectRecoilOntoSurface(leftoverDelta, hit);
             }
 
-            rigidBody2d.position = startPosition + totalDelta;
-            Physics2D.SyncTransforms();
-
-            Vector2 direction = remainingDelta / remainingDistance;
-            if (!TryCast(direction, remainingDistance + skinWidth, out RaycastHit2D hit))
-            {
-                totalDelta += remainingDelta;
-                break;
-            }
-
-            float safeDistance = Mathf.Max(0f, hit.distance - skinWidth);
-            Vector2 safeDelta = direction * Mathf.Min(safeDistance, remainingDistance);
-            totalDelta += safeDelta;
-
-            float consumedDistance = safeDelta.magnitude;
-            float leftoverDistance = Mathf.Max(0f, remainingDistance - consumedDistance);
-            if (leftoverDistance <= MinMoveDistance)
-            {
-                break;
-            }
-
-            Vector2 leftoverDelta = direction * leftoverDistance;
-            remainingDelta = ProjectRecoilOntoSurface(leftoverDelta, hit);
+            return totalDelta;
         }
-
-        rigidBody2d.position = startPosition;
-        Physics2D.SyncTransforms();
-        return totalDelta;
+        finally
+        {
+            rigidBody2d.position = startPosition;
+            Physics2D.SyncTransforms();
+        }
     }
 
     public void ResolveInitialOverlaps()
@@ -518,6 +526,66 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
         return delta - normal * Vector2.Dot(delta, normal);
     }
 
+    private Vector2 ProjectVelocityAwayFromCurrentSolidContacts(Vector2 velocity)
+    {
+        if (velocity.sqrMagnitude <= MinMoveDistance * MinMoveDistance)
+        {
+            return velocity;
+        }
+
+        int contactCount = bodyCollider.GetContacts(solidFilter, contactHits);
+        for (int i = 0; i < contactCount; i++)
+        {
+            ContactPoint2D contact = contactHits[i];
+            contactHits[i] = default;
+
+            if (!IsValidHitCollider(contact.collider) && !IsValidHitCollider(contact.otherCollider))
+            {
+                continue;
+            }
+
+            velocity = ProjectAwayFromContactNormal(velocity, contact.normal, contact.collider, contact.otherCollider);
+        }
+
+        ClearContactBuffer(contactCount);
+        return velocity;
+    }
+
+    private Vector2 ProjectAwayFromContactNormal(
+        Vector2 velocity,
+        Vector2 normal,
+        Collider2D contactCollider,
+        Collider2D otherCollider)
+    {
+        if (normal.sqrMagnitude <= MinMoveDistance * MinMoveDistance)
+        {
+            return velocity;
+        }
+
+        normal.Normalize();
+
+        Collider2D solidCollider = contactCollider == bodyCollider ? otherCollider : contactCollider;
+        if (solidCollider != null)
+        {
+            Vector2 awayFromSolid =
+                (Vector2)bodyCollider.bounds.center -
+                (Vector2)solidCollider.bounds.center;
+
+            if (Vector2.Dot(normal, awayFromSolid) < 0f)
+            {
+                normal = -normal;
+            }
+        }
+
+        float intoContactSpeed = Vector2.Dot(velocity, normal);
+        if (intoContactSpeed >= 0f)
+        {
+            return velocity;
+        }
+
+        return velocity - normal * intoContactSpeed;
+    }
+
     private Vector2 ProjectRecoilOntoSurface(Vector2 delta, RaycastHit2D hit)
     {
         if (IsVerticalSideContact(hit))
@@ -538,6 +606,14 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
         for (int i = usedCount; i < castHits.Length; i++)
         {
             castHits[i] = default;
+        }
+    }
+
+    private void ClearContactBuffer(int usedCount)
+    {
+        for (int i = usedCount; i < contactHits.Length; i++)
+        {
+            contactHits[i] = default;
         }
     }
 

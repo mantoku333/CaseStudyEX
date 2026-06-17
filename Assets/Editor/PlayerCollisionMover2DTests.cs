@@ -105,6 +105,19 @@ public sealed class PlayerCollisionMover2DTests
     }
 
     [Test]
+    public void ProjectRecoilVelocityForNextFixedStep_WhenTouchingThickRightWallAndRecoilingIntoWall_RemovesOnlyIntoWallVelocity()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(new Vector2(0.5f, 0f), out _, out _);
+        CreateGroundBox("ThickWall", new Vector2(3f, 0f), new Vector2(4f, 5f));
+        Physics2D.SyncTransforms();
+
+        Vector2 projectedVelocity = mover.ProjectRecoilVelocityForNextFixedStep(new Vector2(10f, 10f));
+
+        Assert.That(Mathf.Abs(projectedVelocity.x), Is.LessThan(0.01f));
+        Assert.That(projectedVelocity.y, Is.GreaterThan(9.9f));
+    }
+
+    [Test]
     public void ProjectRecoilVelocityForNextFixedStep_WhenTouchingLeftWallAndRecoilingIntoWall_RemovesOnlyIntoWallVelocity()
     {
         PlayerCollisionMover2D mover = CreatePlayer(new Vector2(-1f, 0f), out _, out _);
@@ -115,6 +128,40 @@ public sealed class PlayerCollisionMover2DTests
 
         Assert.That(Mathf.Abs(projectedVelocity.x), Is.LessThan(0.01f));
         Assert.That(projectedVelocity.y, Is.GreaterThan(9.9f));
+    }
+
+    [Test]
+    public void ProjectRecoilVelocityForNextFixedStep_WhenTouchingThickLeftWallAndRecoilingIntoWall_RemovesOnlyIntoWallVelocity()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(new Vector2(-0.5f, 0f), out _, out _);
+        CreateGroundBox("ThickWall", new Vector2(-3f, 0f), new Vector2(4f, 5f));
+        Physics2D.SyncTransforms();
+
+        Vector2 projectedVelocity = mover.ProjectRecoilVelocityForNextFixedStep(new Vector2(-10f, 10f));
+
+        Assert.That(Mathf.Abs(projectedVelocity.x), Is.LessThan(0.01f));
+        Assert.That(projectedVelocity.y, Is.GreaterThan(9.9f));
+    }
+
+    [Test]
+    public void ProjectRecoilVelocityForNextFixedStep_WhenRepeatedAgainstThickWall_DoesNotMoveRigidbody()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(new Vector2(0.5f, 0f), out Rigidbody2D rigidbody2D, out _);
+        CreateGroundBox("ThickWall", new Vector2(3f, 0f), new Vector2(4f, 5f));
+        Physics2D.SyncTransforms();
+
+        Vector2 startPosition = rigidbody2D.position;
+        Vector2 velocity = new Vector2(10f, 10f);
+
+        for (int i = 0; i < 8; i++)
+        {
+            velocity = mover.ProjectRecoilVelocityForNextFixedStep(velocity);
+            Assert.That(rigidbody2D.position.x, Is.EqualTo(startPosition.x).Within(0.0001f));
+            Assert.That(rigidbody2D.position.y, Is.EqualTo(startPosition.y).Within(0.0001f));
+        }
+
+        Assert.That(Mathf.Abs(velocity.x), Is.LessThan(0.01f));
+        Assert.That(velocity.y, Is.GreaterThan(9.9f));
     }
 
     [Test]
