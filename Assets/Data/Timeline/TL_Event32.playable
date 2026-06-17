@@ -408,8 +408,7 @@ MonoBehaviour:
   m_Children: []
   m_Clips: []
   m_Markers:
-    m_Objects:
-    - {fileID: 8561065495896680998}
+    m_Objects: []
 --- !u!114 &149827093544674222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -624,39 +623,6 @@ MonoBehaviour:
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
   bubbleActorKey: 
---- !u!114 &8561065495896680998
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
-  m_Name: Event/Panel Point
-  m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
-  m_Time: 7.25
-  markerId: fd40845972ef46b19fe643c3bb200821
-  markerMode: 0
-  panelObject:
-    exposedName: 75b8291ec6091904284b4ee4445c391d
-    defaultValue: {fileID: 0}
-  panelPresenter:
-    exposedName: 9aadde69bc70a5e469624782ff1bdf36
-    defaultValue: {fileID: 0}
-  panelPresenterName: 
-  panelKind: 0
-  diaryEntryData: {fileID: 0}
-  title: 
-  body: 
-  closeLabel: 
-  illustration: {fileID: 0}
-  animationFrames: []
-  animationFramesPerSecond: 12
-  animationLoopIntervalSeconds: 0.5
-  pauseTimelineUntilClosed: 1
-  autoCloseSecondsWhenNoButton: 3
 --- !u!114 &9018057022353266388
 MonoBehaviour:
   m_ObjectHideFlags: 1
