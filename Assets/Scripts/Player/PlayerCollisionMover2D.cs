@@ -12,6 +12,7 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
     private const string GroundLayerName = "Ground";
     private const float MinMoveDistance = 0.0001f;
     private const float BlockingNormalDotThreshold = -0.0001f;
+    private const float HorizontalProbeVerticalInsetRatio = 0.2f;
 
     // 基本は Ground レイヤーのみを固い壁として扱う。FallThroughFloor やトリガーは移動阻害に使わない。
     [SerializeField] private LayerMask solidLayerMask;
@@ -102,7 +103,8 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
             return velocity;
         }
 
-        ResolveInitialOverlaps();
+        RebuildFilterIfNeeded();
+        velocity = ProjectVectorAwayFromSolidContacts(velocity);
 
         // リコイルの速度を次の FixedUpdate で移動する距離に変換し、同じ壁スライド計算を通す。
         float fixedDeltaTime = Time.fixedDeltaTime;
@@ -128,7 +130,7 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
         }
 
         RebuildFilterIfNeeded();
-        velocity = ProjectVelocityAwayFromCurrentSolidContacts(velocity);
+        velocity = ProjectVectorAwayFromSolidContacts(velocity);
 
         float fixedDeltaTime = Time.fixedDeltaTime;
         if (fixedDeltaTime <= 0f)
@@ -198,6 +200,36 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
         rigidBody2d.position = startPosition;
         Physics2D.SyncTransforms();
         return totalDelta;
+    }
+
+    public Vector2 ProjectVectorAwayFromSolidContacts(Vector2 vector)
+    {
+        if (!CanMove())
+        {
+            return vector;
+        }
+
+        RebuildFilterIfNeeded();
+        return ProjectVectorAwayFromCurrentSolidContacts(vector);
+    }
+
+    public float ProjectHorizontalVelocityForNextFixedStep(float horizontalVelocity)
+    {
+        if (!CanMove() || Mathf.Abs(horizontalVelocity) <= MinMoveDistance)
+        {
+            return horizontalVelocity;
+        }
+
+        float fixedDeltaTime = Time.fixedDeltaTime;
+        if (fixedDeltaTime <= 0f)
+        {
+            return horizontalVelocity;
+        }
+
+        RebuildFilterIfNeeded();
+
+        float distance = Mathf.Abs(horizontalVelocity) * fixedDeltaTime + skinWidth;
+        return IsHorizontalPathBlocked(horizontalVelocity, distance) ? 0f : horizontalVelocity;
     }
 
     private Vector2 CalculateRecoilSlideDelta(Vector2 desiredDelta)
@@ -414,6 +446,44 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
         return foundHit;
     }
 
+    private bool IsHorizontalPathBlocked(float horizontalVelocity, float probeDistance)
+    {
+        if (bodyCollider == null || probeDistance <= MinMoveDistance)
+        {
+            return false;
+        }
+
+        Bounds bodyBounds = bodyCollider.bounds;
+        float verticalInset = Mathf.Max(skinWidth, bodyBounds.size.y * HorizontalProbeVerticalInsetRatio);
+        float probeHeight = Mathf.Max(MinMoveDistance, bodyBounds.size.y - verticalInset * 2f);
+        float probeWidth = Mathf.Max(MinMoveDistance, probeDistance);
+        float probeDirection = horizontalVelocity > 0f ? 1f : -1f;
+        float edgeX = probeDirection > 0f ? bodyBounds.max.x : bodyBounds.min.x;
+        Vector2 probeCenter = new Vector2(
+            edgeX + probeDirection * probeWidth * 0.5f,
+            bodyBounds.center.y);
+        Vector2 probeSize = new Vector2(probeWidth, probeHeight);
+
+        int overlapCount = Physics2D.OverlapBox(probeCenter, probeSize, 0f, solidFilter, overlapHits);
+        bool foundBlocker = false;
+
+        for (int i = 0; i < overlapCount; i++)
+        {
+            Collider2D overlap = overlapHits[i];
+            overlapHits[i] = null;
+
+            if (!IsValidHitCollider(overlap))
+            {
+                continue;
+            }
+
+            foundBlocker = true;
+        }
+
+        ClearOverlapBuffer(overlapCount);
+        return foundBlocker;
+    }
+
     private bool IsValidHitCollider(Collider2D hitCollider)
     {
         if (hitCollider == null ||
@@ -526,11 +596,11 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
         return delta - normal * Vector2.Dot(delta, normal);
     }
 
-    private Vector2 ProjectVelocityAwayFromCurrentSolidContacts(Vector2 velocity)
+    private Vector2 ProjectVectorAwayFromCurrentSolidContacts(Vector2 vector)
     {
-        if (velocity.sqrMagnitude <= MinMoveDistance * MinMoveDistance)
+        if (vector.sqrMagnitude <= MinMoveDistance * MinMoveDistance)
         {
-            return velocity;
+            return vector;
         }
 
         int contactCount = bodyCollider.GetContacts(solidFilter, contactHits);
@@ -544,11 +614,18 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
                 continue;
             }
 
-            velocity = ProjectAwayFromContactNormal(velocity, contact.normal, contact.collider, contact.otherCollider);
+            vector = ProjectAwayFromContactNormal(vector, contact.normal, contact.collider, contact.otherCollider);
         }
 
         ClearContactBuffer(contactCount);
-        return velocity;
+
+        if (Mathf.Abs(vector.x) > MinMoveDistance &&
+            IsHorizontalPathBlocked(vector.x, skinWidth))
+        {
+            vector.x = 0f;
+        }
+
+        return vector;
     }
 
     private Vector2 ProjectAwayFromContactNormal(
