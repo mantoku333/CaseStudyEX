@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private Rigidbody2D rigidBody2d;
     private Collider2D playerCollider;
     private PlayerInput playerInput;
+    private PlayerCollisionMover2D collisionMover;
     private PhysicsMaterial2D runtimeNoFrictionMaterial;
 
     [Header("物理設定")]
@@ -108,6 +109,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         rigidBody2d = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
         playerInput = GetComponent<PlayerInput>();
+        collisionMover = GetComponent<PlayerCollisionMover2D>();
 
         if (rigidBody2d == null)
         {
@@ -263,6 +265,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
     private void FindComponents()
     {
+        if (collisionMover == null)
+        {
+            collisionMover = GetComponent<PlayerCollisionMover2D>();
+        }
+
         groundCheck = GetComponentInChildren<GroundCheck>();
         if (groundCheck == null)
         {
@@ -684,6 +691,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                     velocity.x *= 0.98f;
                 }
             }
+        }
+
+        if (collisionMover != null)
+        {
+            velocity.x = collisionMover.ProjectHorizontalVelocityForNextFixedStep(velocity.x);
         }
 
         rigidBody2d.linearVelocity = velocity;

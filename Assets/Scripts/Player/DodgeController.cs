@@ -189,6 +189,12 @@ public class DodgeController : MonoBehaviour
             return clampedDesiredTarget;
         }
 
+        clampedDesiredDelta = collisionMover.ProjectVectorAwayFromSolidContacts(clampedDesiredDelta);
+        if (clampedDesiredDelta.sqrMagnitude <= 0f)
+        {
+            return startPosition;
+        }
+
         return startPosition + collisionMover.CalculateSlideDelta(clampedDesiredDelta);
     }
 
