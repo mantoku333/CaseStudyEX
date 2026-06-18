@@ -342,9 +342,11 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             return;
         }
 
+        bool targetIsConcealing = HasPendingTransition(roomId, false);
         bool targetAlreadyVisibleOrOpening =
-            visibleRoomIds.Contains(roomId) ||
-            HasPendingTransition(roomId, true);
+            !targetIsConcealing &&
+            (visibleRoomIds.Contains(roomId) ||
+             HasPendingTransition(roomId, true));
 
         if (currentRoom == room && targetAlreadyVisibleOrOpening)
         {
@@ -363,7 +365,10 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             BeginTransition(previousRoom, previousRoomId, false);
         }
 
-        if (!targetAlreadyVisibleOrOpening)
+        // A preview can expire just before the room becomes current. In that
+        // case visibleRoomIds still contains the room while its mask is being
+        // concealed, so the conceal must be replaced with a reveal.
+        if (targetIsConcealing || !targetAlreadyVisibleOrOpening)
         {
             BeginTransition(room, roomId, true);
         }
@@ -790,6 +795,11 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         int minY = Mathf.Clamp(WorldToPixelY(reveal.RevealBounds.min.y, height) - 1, 0, height - 1);
         int maxY = Mathf.Clamp(WorldToPixelY(reveal.RevealBounds.max.y, height) + 1, 0, height - 1);
         float revealFront = Mathf.Lerp(1.12f, -0.12f, progress);
+        bool protectsCurrentRoom = TryGetCurrentRoomRevealArea(
+            reveal.Room,
+            out RoomCameraTrigger protectedRoom,
+            out Bounds protectedRoomBounds,
+            out Bounds protectedRevealBounds);
 
         for (int y = minY; y <= maxY; y++)
         {
@@ -805,11 +815,27 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 }
 
                 float worldX = PixelToWorldX(x, width);
+                Vector3 worldPoint = new Vector3(
+                    worldX,
+                    worldY,
+                    reveal.OriginalBounds.center.z);
                 if (!IsPointInsideRevealArea(
                         reveal.Room,
-                        new Vector3(worldX, worldY, reveal.OriginalBounds.center.z),
+                        worldPoint,
                         reveal.OriginalBounds,
                         reveal.RevealBounds))
+                {
+                    continue;
+                }
+
+                // Adjacent rooms share padded reveal pixels. Never let the
+                // outgoing room's conceal overwrite the room the player is in.
+                if (protectsCurrentRoom &&
+                    IsPointInsideRevealArea(
+                        protectedRoom,
+                        new Vector3(worldX, worldY, protectedRoomBounds.center.z),
+                        protectedRoomBounds,
+                        protectedRevealBounds))
                 {
                     continue;
                 }
@@ -841,6 +867,11 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         int maxX = Mathf.Clamp(WorldToPixelX(revealBounds.max.x, width) + 1, 0, width - 1);
         int minY = Mathf.Clamp(WorldToPixelY(revealBounds.min.y, height) - 1, 0, height - 1);
         int maxY = Mathf.Clamp(WorldToPixelY(revealBounds.max.y, height) + 1, 0, height - 1);
+        bool protectsCurrentRoom = TryGetCurrentRoomRevealArea(
+            room,
+            out RoomCameraTrigger protectedRoom,
+            out Bounds protectedRoomBounds,
+            out Bounds protectedRevealBounds);
 
         for (int y = minY; y <= maxY; y++)
         {
@@ -850,11 +881,22 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             for (int x = minX; x <= maxX; x++)
             {
                 float worldX = PixelToWorldX(x, width);
+                Vector3 worldPoint = new Vector3(worldX, worldY, roomBounds.center.z);
                 if (!IsPointInsideRevealArea(
                         room,
-                        new Vector3(worldX, worldY, roomBounds.center.z),
+                        worldPoint,
                         roomBounds,
                         revealBounds))
+                {
+                    continue;
+                }
+
+                if (protectsCurrentRoom &&
+                    IsPointInsideRevealArea(
+                        protectedRoom,
+                        new Vector3(worldX, worldY, protectedRoomBounds.center.z),
+                        protectedRoomBounds,
+                        protectedRevealBounds))
                 {
                     continue;
                 }
@@ -862,6 +904,28 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 maskPixels[row + x] = hidden;
             }
         }
+    }
+
+    private bool TryGetCurrentRoomRevealArea(
+        RoomCameraTrigger excludedRoom,
+        out RoomCameraTrigger room,
+        out Bounds roomBounds,
+        out Bounds revealBounds)
+    {
+        room = currentRoom;
+        roomBounds = default;
+        revealBounds = default;
+
+        if (currentRoom == null ||
+            currentRoom == excludedRoom ||
+            currentRoom.gameObject.scene != managedScene ||
+            !currentRoom.TryGetAreaBounds(out roomBounds))
+        {
+            return false;
+        }
+
+        revealBounds = CreateRevealBounds(roomBounds);
+        return true;
     }
 
     private Bounds CreateRevealBounds(Bounds roomBounds)
