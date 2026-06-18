@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GameName.Enemy;
+using Metroidvania.Enemy;
 using Metroidvania.Player;
 using Player;
 using Unity.Cinemachine;
@@ -82,6 +83,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     
     private static readonly bool enableWallMechanic = false;
+    private static readonly List<BossAreaController> StageBossIntroWindSuppressors = new List<BossAreaController>();
 
     private bool encounterStarted;
     private bool encounterCompleted;
@@ -97,6 +99,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private StageBossIntroVisualState stageBossIntroVisualState;
     private StageBossIntroPlayerLockState stageBossIntroPlayerLockState;
     private Coroutine stageBossIntroRoutine;
+    private bool suppressWindRiseDuringStageBossIntro;
 
     public int Priority => 240;
     public string BossDisplayName => ResolveBossDisplayName();
@@ -114,6 +117,26 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
                confineBossInsideArea &&
                confineX &&
                hasConfinementBounds;
+    }
+
+    public static bool ShouldSuppressWindRiseAt(Vector3 worldPosition)
+    {
+        for (int i = StageBossIntroWindSuppressors.Count - 1; i >= 0; i--)
+        {
+            BossAreaController bossArea = StageBossIntroWindSuppressors[i];
+            if (bossArea == null || !bossArea.suppressWindRiseDuringStageBossIntro)
+            {
+                StageBossIntroWindSuppressors.RemoveAt(i);
+                continue;
+            }
+
+            if (bossArea.IsSuppressingWindRiseAt(worldPosition))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void Awake()
@@ -245,6 +268,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         {
             // StageBoss は通常BGMを先に薄くして、HP表示完了後にボスBGMへ切り替える。
             stageBgm?.FadeOutCurrent(stageBossNormalBgmFadeOutSeconds);
+            BeginStageBossIntroWindSuppression();
             stageBossIntroRoutine = StartCoroutine(PlayStageBossIntroRoutine());
         }
         else
@@ -330,6 +354,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         RestoreStageBossForCombat();
         stageBossAttack?.ActivateEncounter();
         RestoreStageBossIntroPlayerLock();
+        EndStageBossIntroWindSuppression();
         stageBossIntroRoutine = null;
     }
 
@@ -406,17 +431,49 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     {
         if (stageBossIntroRoutine == null)
         {
+            EndStageBossIntroWindSuppression();
             return;
         }
 
         StopCoroutine(stageBossIntroRoutine);
         stageBossIntroRoutine = null;
+        EndStageBossIntroWindSuppression();
     }
 
     private void RestoreStageBossIntroPlayerLock()
     {
         stageBossIntroPlayerLockState?.Restore();
         stageBossIntroPlayerLockState = null;
+    }
+
+    private void BeginStageBossIntroWindSuppression()
+    {
+        if (!hasConfinementBounds)
+        {
+            CacheConfinementBounds();
+        }
+
+        suppressWindRiseDuringStageBossIntro = true;
+        if (!StageBossIntroWindSuppressors.Contains(this))
+        {
+            StageBossIntroWindSuppressors.Add(this);
+        }
+    }
+
+    private void EndStageBossIntroWindSuppression()
+    {
+        suppressWindRiseDuringStageBossIntro = false;
+        StageBossIntroWindSuppressors.Remove(this);
+    }
+
+    private bool IsSuppressingWindRiseAt(Vector3 worldPosition)
+    {
+        return suppressWindRiseDuringStageBossIntro &&
+               encounterStarted &&
+               !encounterCompleted &&
+               ShouldPlayStageBossIntro() &&
+               hasConfinementBounds &&
+               confinementBounds.Contains(worldPosition);
     }
 
     private void ApplyInitialStageBossIntroVisibility()
@@ -455,11 +512,28 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         // 演出用に無効化した表示・当たり判定・Rigidbodyを戦闘用へ戻す。
         CaptureStageBossIntroVisualState();
         stageBossIntroVisualState?.RestoreForCombat();
+        ReapplyStageBossPassThroughCollision();
 
         if (bossRoot != null && bossRigidbody2D == null)
         {
             bossRigidbody2D = bossRoot.GetComponent<Rigidbody2D>();
         }
+    }
+
+    private void ReapplyStageBossPassThroughCollision()
+    {
+        if (bossRoot == null)
+        {
+            return;
+        }
+
+        EnemyContact enemyContact = bossRoot.GetComponent<EnemyContact>();
+        if (enemyContact == null)
+        {
+            enemyContact = bossRoot.GetComponentInChildren<EnemyContact>(true);
+        }
+
+        enemyContact?.ReapplyPassThroughPlayerCollision();
     }
 
     private void CompleteEncounter()

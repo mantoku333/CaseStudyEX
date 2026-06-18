@@ -31,6 +31,18 @@ namespace Metroidvania.Enemy
 
         public event Action<PlayerHealth, Collider2D> ContactDamageApplied;
 
+        public void ReapplyPassThroughPlayerCollision()
+        {
+            if (!passThroughPlayer)
+            {
+                return;
+            }
+
+            RefreshEnemyColliders();
+            CachePlayerReferences();
+            IgnorePhysicalCollisionWithPlayer();
+        }
+
         private void Awake()
         {
             RefreshEnemyColliders();

@@ -229,6 +229,11 @@ public class WindRiseZone : MonoBehaviour
             return false;
         }
 
+        if (BossAreaController.ShouldSuppressWindRiseAt(windCollider.bounds.center))
+        {
+            return false;
+        }
+
         if (requireUmbrellaOpen)
         {
             // 傘が閉じているときは、通常のジャンプ/落下を邪魔しない。

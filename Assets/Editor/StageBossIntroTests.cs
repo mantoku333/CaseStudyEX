@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using GameName.Enemy;
+using Metroidvania.Enemy;
 using NUnit.Framework;
 using Player;
 using UnityEngine;
@@ -207,6 +208,56 @@ public sealed class StageBossIntroTests
         RunNestedEnumerator(routine.Current);
         Assert.That(routine.MoveNext(), Is.False);
         Assert.That(playerRigidbody.constraints, Is.EqualTo(RigidbodyConstraints2D.None));
+    }
+
+    [Test]
+    public void RestoreStageBossForCombat_ReappliesPassThroughCollisionAfterColliderRestore()
+    {
+        Rigidbody2D playerRigidbody = CreatePlayer(
+            new Vector2(-2f, 0f),
+            out _,
+            addPlayerHealth: true);
+        Collider2D playerCollider = playerRigidbody.GetComponent<Collider2D>();
+
+        StageBossAttack stageBoss = CreateStageBoss(
+            new Vector2(2f, 0f),
+            out _,
+            out Collider2D bossCollider,
+            out _);
+        stageBoss.gameObject.AddComponent<EnemyContact>();
+
+        GameObject areaObject = CreateInactiveBossAreaObject();
+        BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
+        ConfigureStageBossArea(bossArea, stageBoss, revealDuration: 0f, hpLeadInSeconds: 0f);
+        InvokePrivate(bossArea, "Awake");
+
+        Physics2D.IgnoreCollision(bossCollider, playerCollider, false);
+        Assert.That(Physics2D.GetIgnoreCollision(bossCollider, playerCollider), Is.False);
+
+        InvokePrivate(bossArea, "RestoreStageBossForCombat");
+
+        Assert.That(bossCollider.enabled, Is.True);
+        Assert.That(Physics2D.GetIgnoreCollision(bossCollider, playerCollider), Is.True);
+    }
+
+    [Test]
+    public void StageBossIntroWindSuppression_BlocksOnlyWindRiseInsideBossAreaUntilIntroEnds()
+    {
+        StageBossAttack stageBoss = CreateStageBoss(Vector2.zero, out _, out _, out _);
+        GameObject areaObject = CreateInactiveBossAreaObject();
+        BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
+        ConfigureStageBossArea(bossArea, stageBoss, revealDuration: 0f, hpLeadInSeconds: 0f);
+        InvokePrivate(bossArea, "Awake");
+        SetPrivateField(bossArea, "encounterStarted", true);
+
+        InvokePrivate(bossArea, "BeginStageBossIntroWindSuppression");
+
+        Assert.That(BossAreaController.ShouldSuppressWindRiseAt(Vector3.zero), Is.True);
+        Assert.That(BossAreaController.ShouldSuppressWindRiseAt(new Vector3(20f, 0f, 0f)), Is.False);
+
+        InvokePrivate(bossArea, "EndStageBossIntroWindSuppression");
+
+        Assert.That(BossAreaController.ShouldSuppressWindRiseAt(Vector3.zero), Is.False);
     }
 
     [Test]
