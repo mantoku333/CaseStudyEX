@@ -186,6 +186,17 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
             string sourceName,
             bool showDiaryPanel)
         {
+            // Trigger callbacks from the event area and the pickup can occur in the same
+            // physics step. Let the story event start first, then give its presentation
+            // priority while still keeping the diary's collected flag set by the pickup.
+            yield return null;
+            if (StoryEventRuntimeService.HasPendingEvents)
+            {
+                Debug.Log($"Diary pickup presentation skipped during story event: {sourceName}");
+                Cleanup();
+                yield break;
+            }
+
             PausePlayerControl();
 
             if (!string.IsNullOrWhiteSpace(dialogueNodeName))
