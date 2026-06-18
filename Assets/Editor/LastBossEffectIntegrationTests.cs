@@ -715,16 +715,14 @@ public sealed class LastBossEffectIntegrationTests
     [UnityTest]
     public IEnumerator EffectController_ShieldBreakUsesStableFullGridFrames()
     {
-        const string shieldBreakPath = "Assets/Art/Sprites/Effects/eff_boss_shieldbreak.png";
+        const string shieldBreakPath = "Assets/Art/Sprites/Effects/eff_boss_shieldbreak_grid.png";
         Texture2D shieldBreak = AssetDatabase.LoadAssetAtPath<Texture2D>(shieldBreakPath);
         Assert.That(shieldBreak, Is.Not.Null);
+        Assert.That(shieldBreak.width, Is.EqualTo(2304));
+        Assert.That(shieldBreak.height, Is.EqualTo(7680));
         LastBossEffectController effects = CreateEffectController();
         SetPrivateField(effects, "shieldBreakSpriteSheet", shieldBreak);
         InvokePrivate(effects, "OnValidate");
-        Sprite[] shieldBreakFrames = GetPrivateField<Sprite[]>(effects, "shieldBreakSpriteFrames");
-        Sprite[] playableShieldBreakFrames = LoadPrimarySpriteFramesByGrid(shieldBreakPath, 3, 10, 30);
-        Assert.That(shieldBreakFrames, Has.Length.EqualTo(154));
-        Assert.That(playableShieldBreakFrames, Has.Length.EqualTo(30));
 
         effects.HandleDownStarted();
         yield return null;
@@ -733,15 +731,22 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(shieldBreakRenderer, Is.Not.Null);
         int shieldBreakFrameWidth = shieldBreak.width / 3;
         int shieldBreakFrameHeight = shieldBreak.height / 10;
-        Assert.That(shieldBreakRenderer.sprite, Is.Not.SameAs(playableShieldBreakFrames[0]));
+        Assert.That(shieldBreakRenderer.sprite, Is.Not.Null);
         Assert.That(shieldBreakRenderer.sprite.texture, Is.SameAs(shieldBreak));
         Assert.That(
             shieldBreakRenderer.sprite.textureRect,
             Is.EqualTo(new Rect(0f, shieldBreak.height - shieldBreakFrameHeight, shieldBreakFrameWidth, shieldBreakFrameHeight)));
+        GridSpriteSheetPlayer shieldBreakPlayer = shieldBreakRenderer.GetComponent<GridSpriteSheetPlayer>();
+        IList<Sprite> generatedShieldBreakSprites = GetPrivateField<IList<Sprite>>(shieldBreakPlayer, "generatedSprites");
+        Assert.That(generatedShieldBreakSprites, Has.Count.EqualTo(30));
+        float shieldBreakFinalRowY = shieldBreak.height - (10 * shieldBreakFrameHeight);
+        Assert.That(
+            generatedShieldBreakSprites[29].textureRect,
+            Is.EqualTo(new Rect(2 * shieldBreakFrameWidth, shieldBreakFinalRowY, shieldBreakFrameWidth, shieldBreakFrameHeight)));
         Assert.That(shieldBreakRenderer.sprite.pivot.x / shieldBreakFrameWidth, Is.EqualTo(0.5f).Within(0.001f));
         Assert.That(shieldBreakRenderer.sprite.pivot.y / shieldBreakFrameHeight, Is.EqualTo(0.5f).Within(0.001f));
 
-        yield return new WaitForSecondsRealtime((playableShieldBreakFrames.Length / 30f) + 0.2f);
+        yield return new WaitForSecondsRealtime((30f / 30f) + 0.2f);
 
         Assert.That(FindTransformNamed("LastBossShieldBreakEffect"), Is.Null);
     }
@@ -771,6 +776,11 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(
             deathRenderer.sprite.textureRect,
             Is.EqualTo(new Rect(0f, death.height - deathFrameHeight, deathFrameWidth, deathFrameHeight)));
+        GridSpriteSheetPlayer deathPlayer = deathRenderer.GetComponent<GridSpriteSheetPlayer>();
+        IList<Sprite> generatedSprites = GetPrivateField<IList<Sprite>>(deathPlayer, "generatedSprites");
+        Assert.That(generatedSprites, Has.Count.EqualTo(41));
+        float finalRowY = death.height - (9 * deathFrameHeight);
+        Assert.That(generatedSprites[40].textureRect, Is.EqualTo(new Rect(0f, finalRowY, deathFrameWidth, deathFrameHeight)));
         Assert.That(deathRenderer.sprite.pivot.x / deathFrameWidth, Is.EqualTo(0.5f).Within(0.001f));
         Assert.That(deathRenderer.sprite.pivot.y / deathFrameHeight, Is.EqualTo(0.5f).Within(0.001f));
     }
@@ -858,13 +868,15 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [Test]
-    public void EffectController_BladeClipsUseImportedGroundSlicesAndImportedRainSlices()
+    public void EffectController_BladeClipsUseStableGroundGridAndImportedRainSlices()
     {
         const string underAttackPath = "Assets/Art/Sprites/Effects/eff_under_attack.png";
         const string topAttackInPath = "Assets/Art/Sprites/Effects/eff_top_attack_in.png";
         Texture2D underAttack = AssetDatabase.LoadAssetAtPath<Texture2D>(underAttackPath);
         Texture2D topAttackIn = AssetDatabase.LoadAssetAtPath<Texture2D>(topAttackInPath);
         Assert.That(underAttack, Is.Not.Null);
+        Assert.That(underAttack.width, Is.EqualTo(5120));
+        Assert.That(underAttack.height, Is.EqualTo(4096));
         Assert.That(topAttackIn, Is.Not.Null);
         LastBossEffectController effects = CreateEffectController();
         SetPrivateField(effects, "underAttackSpriteSheet", underAttack);
@@ -874,14 +886,17 @@ public sealed class LastBossEffectIntegrationTests
         var generatedSprites = new List<Sprite>();
         Sprite[] groundFrames = GridSpriteSheetUtility.BuildFrames(effects.GroundBladeClip, generatedSprites);
         Sprite[] rainFrames = GridSpriteSheetUtility.BuildFrames(effects.RainBladeInClip, generatedSprites);
-        Sprite[] importedGroundFrames = LoadPrimarySpriteFramesByGrid(underAttackPath, 5, 4, 20);
         Sprite[] importedRainFrames = LoadPrimarySpriteFramesByGrid(topAttackInPath, 5, 5, 23);
         Vector2 groundVisibleSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(effects.GroundBladeClip);
 
-        Assert.That(generatedSprites, Is.Empty);
+        Assert.That(generatedSprites, Has.Count.EqualTo(20));
         Assert.That(groundFrames, Has.Length.EqualTo(20));
         Assert.That(rainFrames, Has.Length.EqualTo(23));
-        Assert.That(groundFrames[0], Is.SameAs(importedGroundFrames[0]));
+        Assert.That(groundFrames[0].texture, Is.SameAs(underAttack));
+        Assert.That(groundFrames[0].textureRect, Is.EqualTo(new Rect(0f, 3072f, 1024f, 1024f)));
+        Assert.That(groundFrames[19].textureRect, Is.EqualTo(new Rect(4096f, 0f, 1024f, 1024f)));
+        Assert.That(groundFrames[0].pivot.x / 1024f, Is.EqualTo(0.5f).Within(0.001f));
+        Assert.That(groundFrames[0].pivot.y / 1024f, Is.EqualTo(0.5f).Within(0.001f));
         Assert.That(rainFrames[0], Is.SameAs(importedRainFrames[0]));
         Assert.That(rainFrames[22], Is.SameAs(importedRainFrames[22]));
         Assert.That(groundVisibleSize.x, Is.EqualTo(1.87f).Within(0.001f));

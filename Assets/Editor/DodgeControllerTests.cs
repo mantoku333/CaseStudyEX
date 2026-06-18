@@ -114,6 +114,28 @@ public sealed class DodgeControllerTests
         Assert.That(CountGroundOverlaps(playerCollider), Is.EqualTo(0));
     }
 
+    [Test]
+    public void ResolveReachableDodgeTarget_WhenAlreadyTouchingThickWallAndDodgingIntoIt_StaysAtStart()
+    {
+        DodgeController dodgeController = CreatePlayer(new Vector2(0.5f, 0f), out Rigidbody2D rigidbody2D);
+        dodgeController.SetDodgeDistance(4f);
+
+        CreateGroundBox("TouchingThickWall", new Vector2(3f, 0f), new Vector2(4f, 5f));
+        Physics2D.SyncTransforms();
+
+        InvokePrivate(dodgeController, "EnsureComponents");
+        Vector2 startPosition = rigidbody2D.position;
+        Vector2 targetPosition = (Vector2)InvokePrivate(
+            dodgeController,
+            "ResolveReachableDodgeTarget",
+            startPosition,
+            Vector2.right * dodgeController.GetDodgeDistance());
+
+        AssertPosition(rigidbody2D, startPosition);
+        Assert.That(targetPosition.x, Is.EqualTo(startPosition.x).Within(0.001f));
+        Assert.That(targetPosition.y, Is.EqualTo(startPosition.y).Within(0.001f));
+    }
+
     private DodgeController CreatePlayer(Vector2 position, out Rigidbody2D rigidbody2D)
     {
         GameObject playerObject = new GameObject("Player");

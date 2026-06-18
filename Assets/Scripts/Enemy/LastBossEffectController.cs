@@ -20,6 +20,15 @@ namespace GameName.Enemy
         private static readonly RectInt ShieldInFrameCropPixels = new RectInt(97, 97, 830, 830);
         private static readonly RectInt ShieldLoopFrameCropPixels = new RectInt(94, 94, 836, 836);
         private static readonly RectInt DeathFrameCropPixels = new RectInt(20, 20, 984, 984);
+        private const int UnderAttackFrameColumns = 5;
+        private const int UnderAttackFrameRows = 4;
+        private const int UnderAttackFrameCount = 20;
+        private const int ShieldBreakFrameColumns = 3;
+        private const int ShieldBreakFrameRows = 10;
+        private const int ShieldBreakFrameCount = 30;
+        private const int DeathFrameColumns = 5;
+        private const int DeathFrameRows = 9;
+        private const int DeathFrameCount = 41;
 
         [Header("Sprite Sheets")]
         [SerializeField] private Texture2D shieldInSpriteSheet;
@@ -123,10 +132,10 @@ namespace GameName.Enemy
 
         public GridSpriteSheetClip GroundBladeClip => CreateStableClip(
             underAttackSpriteSheet,
-            SelectPrimarySpriteFramesByGrid(underAttackSpriteSheet, underAttackSpriteFrames, 5, 4, 20),
-            5,
-            4,
-            20,
+            null,
+            UnderAttackFrameColumns,
+            UnderAttackFrameRows,
+            UnderAttackFrameCount,
             new Vector2(0.5f, 0.5f),
             GroundBladeFrameCropPixels,
             LargeFrameReferencePixels);
@@ -463,7 +472,13 @@ namespace GameName.Enemy
 
         public bool PlayDeath(Action hideBossVisuals, Action completed)
         {
-            GridSpriteSheetClip clip = CreateStableClip(deathSpriteSheet, null, 5, 9, 45, new Vector2(0.5f, 0.5f), DeathFrameCropPixels, LargeFrameReferencePixels);
+            GridSpriteSheetClip clip = CreateClip(
+                deathSpriteSheet,
+                null,
+                DeathFrameColumns,
+                DeathFrameRows,
+                DeathFrameCount,
+                new Vector2(0.5f, 0.5f));
             if (!clip.IsValid)
             {
                 return false;
@@ -756,15 +771,13 @@ namespace GameName.Enemy
 
         private void PlayShieldBreak()
         {
-            GridSpriteSheetClip clip = CreateStableClip(
+            GridSpriteSheetClip clip = CreateClip(
                 shieldBreakSpriteSheet,
                 null,
-                3,
-                10,
-                30,
-                new Vector2(0.5f, 0.5f),
-                LargeFrameCropPixels,
-                LargeFrameReferencePixels);
+                ShieldBreakFrameColumns,
+                ShieldBreakFrameRows,
+                ShieldBreakFrameCount,
+                new Vector2(0.5f, 0.5f));
             if (!clip.IsValid)
             {
                 return;
