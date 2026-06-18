@@ -63,6 +63,13 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     [SerializeField, Range(0f, 1f)] private float bossBgmVolume = 0.2f;
     [SerializeField] private bool returnToNormalAfterBoss;
 
+    [Header("Story Events")]
+    [SerializeField] private string preEncounterStoryEventId = string.Empty;
+    [SerializeField] private bool waitForPreEncounterStoryEvent = true;
+    [SerializeField] private string postDefeatStoryEventId = string.Empty;
+    [SerializeField] private bool waitForPostDefeatStoryEvent = true;
+    [SerializeField] private bool logMissingStoryEvents = true;
+
     [Header("Confinement")]
     // エリア内拘束のマスターON/OFF（戦闘中のみ有効）
     [SerializeField] private bool confineInsideArea = true;
@@ -97,6 +104,8 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private StageBossIntroVisualState stageBossIntroVisualState;
     private StageBossIntroPlayerLockState stageBossIntroPlayerLockState;
     private Coroutine stageBossIntroRoutine;
+    private Coroutine encounterStartRoutine;
+    private Coroutine encounterCompleteRoutine;
 
     public int Priority => 240;
     public string BossDisplayName => ResolveBossDisplayName();
@@ -140,6 +149,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void OnDisable()
     {
+        StopEncounterStoryRoutines();
         StopStageBossIntroRoutine();
         RestoreStageBossIntroPlayerLock();
         ClearActiveDodgeBounds();
@@ -241,6 +251,51 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
         ActivateBossCamera();
 
+        if (disableTriggerAfterStart)
+        {
+            DisableTriggerComponents();
+        }
+
+        if (TryPlayConfiguredStoryEvent(
+                preEncounterStoryEventId,
+                waitForPreEncounterStoryEvent,
+                out IEnumerator preEncounterStoryRoutine))
+        {
+            if (waitForPreEncounterStoryEvent)
+            {
+                encounterStartRoutine = StartCoroutine(StartEncounterAfterStoryRoutine(preEncounterStoryRoutine));
+            }
+            else
+            {
+                BeginBossCombatSequence();
+            }
+        }
+        else
+        {
+            BeginBossCombatSequence();
+        }
+
+        if (verboseLogging)
+        {
+            Debug.Log($"[BossAreaController] Encounter started on {gameObject.name}", this);
+        }
+    }
+
+    private IEnumerator StartEncounterAfterStoryRoutine(IEnumerator storyRoutine)
+    {
+        yield return storyRoutine;
+        encounterStartRoutine = null;
+
+        if (encounterCompleted || !encounterStarted)
+        {
+            yield break;
+        }
+
+        BeginBossCombatSequence();
+    }
+
+    private void BeginBossCombatSequence()
+    {
         if (ShouldPlayStageBossIntro())
         {
             // StageBoss は通常BGMを先に薄くして、HP表示完了後にボスBGMへ切り替える。
@@ -253,16 +308,6 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             stageBgm?.PlayBoss(bossBgm, bossBgmVolume);
             ActivateAssignedBoss();
             EncounterStarted?.Invoke(this);
-        }
-
-        if (disableTriggerAfterStart)
-        {
-            DisableTriggerComponents();
-        }
-
-        if (verboseLogging)
-        {
-            Debug.Log($"[BossAreaController] Encounter started on {gameObject.name}", this);
         }
     }
 
@@ -419,6 +464,69 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         stageBossIntroPlayerLockState = null;
     }
 
+    private void StopEncounterStoryRoutines()
+    {
+        if (encounterStartRoutine != null)
+        {
+            StopCoroutine(encounterStartRoutine);
+            encounterStartRoutine = null;
+        }
+
+        if (encounterCompleteRoutine != null)
+        {
+            StopCoroutine(encounterCompleteRoutine);
+            encounterCompleteRoutine = null;
+        }
+    }
+
+    private bool TryPlayConfiguredStoryEvent(string storyEventId, bool waitForCompletion, out IEnumerator storyRoutine)
+    {
+        storyRoutine = null;
+
+        if (string.IsNullOrWhiteSpace(storyEventId))
+        {
+            return false;
+        }
+
+        string trimmedEventId = storyEventId.Trim();
+        if (waitForCompletion)
+        {
+            storyRoutine = PlayConfiguredStoryEventAndWait(trimmedEventId);
+            return true;
+        }
+
+        bool started = StoryEventRuntimeService.TryPlayEvent(trimmedEventId);
+        if (!started)
+        {
+            LogMissingStoryEvent(trimmedEventId);
+        }
+
+        return started;
+    }
+
+    private IEnumerator PlayConfiguredStoryEventAndWait(string storyEventId)
+    {
+        bool started = false;
+        yield return StoryEventRuntimeService.PlayEventAndWait(storyEventId, result => started = result);
+
+        if (!started)
+        {
+            LogMissingStoryEvent(storyEventId);
+        }
+    }
+
+    private void LogMissingStoryEvent(string storyEventId)
+    {
+        if (!logMissingStoryEvents)
+        {
+            return;
+        }
+
+        Debug.LogWarning(
+            $"[BossAreaController] Story event was not found or could not start. eventId='{storyEventId}', bossArea='{name}'",
+            this);
+    }
+
     private void ApplyInitialStageBossIntroVisibility()
     {
         if (encounterCompleted || !hideStageBossUntilIntro || !ShouldPlayStageBossIntro())
@@ -491,6 +599,42 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             GameProgressFlags.Set(bossDefeatedFlagKey, true);
         }
 
+        EncounterCompleted?.Invoke(this);
+
+        if (TryPlayConfiguredStoryEvent(
+                postDefeatStoryEventId,
+                waitForPostDefeatStoryEvent,
+                out IEnumerator postDefeatStoryRoutine))
+        {
+            if (waitForPostDefeatStoryEvent)
+            {
+                encounterCompleteRoutine = StartCoroutine(FinishEncounterAfterStoryRoutine(postDefeatStoryRoutine));
+            }
+            else
+            {
+                FinishEncounterCompletion();
+            }
+        }
+        else
+        {
+            FinishEncounterCompletion();
+        }
+
+        if (verboseLogging)
+        {
+            Debug.Log($"[BossAreaController] Encounter completed on {gameObject.name}", this);
+        }
+    }
+
+    private IEnumerator FinishEncounterAfterStoryRoutine(IEnumerator storyRoutine)
+    {
+        yield return storyRoutine;
+        encounterCompleteRoutine = null;
+        FinishEncounterCompletion();
+    }
+
+    private void FinishEncounterCompletion()
+    {
         if (enableWallMechanic)
         {
             UnlockArea();
@@ -506,13 +650,6 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         if (returnToNormalAfterBoss)
         {
             stageBgm?.PlayNormal();
-        }
-
-        EncounterCompleted?.Invoke(this);
-
-        if (verboseLogging)
-        {
-            Debug.Log($"[BossAreaController] Encounter completed on {gameObject.name}", this);
         }
     }
 
