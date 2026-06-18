@@ -52,6 +52,31 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
                instance.TryPlaySceneStoryEventController(eventId);
     }
 
+    public static IEnumerator PlayEventAndWait(string eventId, Action<bool> completed = null)
+    {
+        if (string.IsNullOrWhiteSpace(eventId))
+        {
+            completed?.Invoke(false);
+            yield break;
+        }
+
+        bool started = TryPlayEvent(eventId.Trim());
+        if (!started)
+        {
+            completed?.Invoke(false);
+            yield break;
+        }
+
+        yield return null;
+
+        while (HasPendingEvents)
+        {
+            yield return null;
+        }
+
+        completed?.Invoke(true);
+    }
+
     public static bool TryPlayEventFromDebugger(string eventId, bool ignoreFlags)
     {
         EnsureInstance();
