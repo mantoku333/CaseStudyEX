@@ -17,6 +17,11 @@ namespace Metroidvania.Enemy
 
         private void Update()
         {
+            if (GameName.Enemy.EnemyGameplayPause.IsPaused())
+            {
+                return;
+            }
+
             if (Keyboard.current == null)
             {
                 return;
@@ -34,6 +39,11 @@ namespace Metroidvania.Enemy
         /// </summary>
         public void Fire()
         {
+            if (GameName.Enemy.EnemyGameplayPause.IsPaused())
+            {
+                return;
+            }
+
             if (bulletPrefab == null)
             {
                 Debug.LogWarning("Bullet Prefab が設定されていません", this);

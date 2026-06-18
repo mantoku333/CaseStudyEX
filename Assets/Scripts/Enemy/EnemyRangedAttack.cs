@@ -130,6 +130,11 @@ namespace GameName.Enemy
         private void FixedUpdate()
         {
             PauseEnemyMovement();
+            if (EnemyGameplayPause.IsPaused())
+            {
+                return;
+            }
+
             EnsurePlayerTransform();
 
             switch (attackState)

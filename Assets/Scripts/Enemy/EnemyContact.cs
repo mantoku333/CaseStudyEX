@@ -82,6 +82,11 @@ namespace Metroidvania.Enemy
                 return;
             }
 
+            if (GameName.Enemy.EnemyGameplayPause.IsPaused())
+            {
+                return;
+            }
+
             if (!EnsurePlayerReferences())
             {
                 return;
@@ -212,6 +217,11 @@ namespace Metroidvania.Enemy
 
         private void ApplyContactHit()
         {
+            if (GameName.Enemy.EnemyGameplayPause.IsPaused())
+            {
+                return;
+            }
+
             if (enemyController != null && enemyController.IsContactDamageIgnored())
             {
                 Debug.Log($"[EnemyContact] パリィ後なので接触ダメージ無効 frame={Time.frameCount}");

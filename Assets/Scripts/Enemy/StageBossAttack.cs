@@ -183,6 +183,12 @@ namespace GameName.Enemy
                 return;
             }
 
+            if (EnemyGameplayPause.IsPaused())
+            {
+                enemyController?.StopHorizontalMotion();
+                return;
+            }
+
             // ボスの攻撃状態マシン。
             switch (attackState)
             {
@@ -573,7 +579,7 @@ namespace GameName.Enemy
             Gizmos.DrawWireSphere(end, 0.12f);
         }
 
-        public bool IsParryable => attackState == AttackState.Charging;
+        public bool IsParryable => attackState == AttackState.Charging && !EnemyGameplayPause.IsPaused();
 
         /// <summary>
         /// パリィされたときの処理。

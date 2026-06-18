@@ -142,6 +142,12 @@ namespace GameName.Enemy
         /// </summary>
         private void FixedUpdate()
         {
+            if (EnemyGameplayPause.IsPaused())
+            {
+                enemyController?.StopHorizontalMotion();
+                return;
+            }
+
             // 帰還中はタックルの再検知や突進継続で、さらに別ルーム側へ進まないようにする。
             if (enemyController != null && enemyController.IsReturningHome)
             {
@@ -547,7 +553,7 @@ namespace GameName.Enemy
             Gizmos.DrawWireCube(center, size);
         }
 
-        public bool IsParryable => attackState == AttackState.Charging;
+        public bool IsParryable => attackState == AttackState.Charging && !EnemyGameplayPause.IsPaused();
 
         /// <summary>
         /// ルーム帰還へ切り替えるため、予備動作・突進・クールダウンを即座に通常待機へ戻す。
