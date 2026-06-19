@@ -802,15 +802,22 @@ public sealed class StoryEventController : MonoBehaviour
             pauseTimelineUntilComplete,
             resolvedBubbleActorKey);
 
-        if (!firedDialogueClipKeys.Add(resolvedClipKey))
+        // A second marker must never tear down the completion listener for the
+        // dialogue that is currently pausing this event. Doing so leaves Yarn
+        // running while this controller waits forever for a callback it no
+        // longer receives.
+        if (dialogueRoutine != null || waitingDialogueCompletion)
         {
+            Debug.LogWarning(
+                $"[StoryEventController] Dialogue request deferred while another dialogue is active. " +
+                $"node='{resolvedNodeName}', eventId='{EventId}'",
+                this);
             return false;
         }
 
-        if (dialogueRoutine != null)
+        if (!firedDialogueClipKeys.Add(resolvedClipKey))
         {
-            StopCoroutine(dialogueRoutine);
-            UnsubscribeDialogueComplete();
+            return false;
         }
 
         dialogueRoutine = StartCoroutine(PlayDialogueRoutine(
@@ -1122,7 +1129,11 @@ public sealed class StoryEventController : MonoBehaviour
 
         if (shouldPauseTimeline)
         {
-            resolvedDirector.Pause();
+            // A direct Pause issued while the playable graph is evaluating can
+            // be overwritten by that same evaluation. Evaluate once and pause
+            // afterwards so later dialogue markers cannot run underneath the
+            // current conversation.
+            PauseDirectorAfterCurrentEvaluation(resolvedDirector);
         }
 
         ResolveDialogueManagerIfNeeded();
