@@ -28,6 +28,11 @@ public sealed class RainDamageArea : MonoBehaviour
     private BoxCollider2D areaCollider;
     private int cachedRainPathMaskValue = int.MinValue;
     private bool isRainActive;
+    private Collider2D cachedPlayerCandidate;
+    private PlayerHealth cachedPlayerHealth;
+    private PlayerDamageFlash cachedPlayerDamageFlash;
+    private UmbrellaController cachedUmbrellaController;
+    private Collider2D cachedPlayerBodyCollider;
 
     public bool IsRainActive => isRainActive;
 
@@ -116,18 +121,34 @@ public sealed class RainDamageArea : MonoBehaviour
         umbrellaController = null;
         bodyCollider = null;
 
+        if (candidate != null &&
+            candidate == cachedPlayerCandidate &&
+            cachedPlayerHealth != null &&
+            cachedPlayerBodyCollider != null &&
+            cachedPlayerBodyCollider.enabled)
+        {
+            playerHealth = cachedPlayerHealth;
+            playerDamageFlash = cachedPlayerDamageFlash;
+            umbrellaController = cachedUmbrellaController;
+            bodyCollider = cachedPlayerBodyCollider;
+            return true;
+        }
+
         if (!PlayerBodyColliderUtility.TryGetPlayerBodyFromCollider(candidate, out playerHealth, out bodyCollider))
         {
+            ClearCachedPlayer(candidate);
             return false;
         }
 
         if (!MatchesPlayerTag(bodyCollider.gameObject, playerHealth))
         {
+            ClearCachedPlayer(candidate);
             return false;
         }
 
         playerDamageFlash = ResolvePlayerDamageFlash(bodyCollider, playerHealth);
         umbrellaController = ResolveUmbrellaController(bodyCollider, playerHealth);
+        CacheResolvedPlayer(candidate, playerHealth, playerDamageFlash, umbrellaController, bodyCollider);
         return true;
     }
 
@@ -181,7 +202,7 @@ public sealed class RainDamageArea : MonoBehaviour
 
             if (IsBlockingRainPathHit(hit, playerCollider, playerHealth))
             {
-                ClearRainPathHits(0);
+                ClearRainPathHits(hitCount);
                 return true;
             }
         }
@@ -377,10 +398,38 @@ public sealed class RainDamageArea : MonoBehaviour
 
     private void ClearRainPathHits(int usedCount)
     {
-        for (int i = usedCount; i < rainPathHits.Length; i++)
+        for (int i = 0; i < usedCount && i < rainPathHits.Length; i++)
         {
             rainPathHits[i] = default;
         }
+    }
+
+    private void CacheResolvedPlayer(
+        Collider2D candidate,
+        PlayerHealth playerHealth,
+        PlayerDamageFlash playerDamageFlash,
+        UmbrellaController umbrellaController,
+        Collider2D bodyCollider)
+    {
+        cachedPlayerCandidate = candidate;
+        cachedPlayerHealth = playerHealth;
+        cachedPlayerDamageFlash = playerDamageFlash;
+        cachedUmbrellaController = umbrellaController;
+        cachedPlayerBodyCollider = bodyCollider;
+    }
+
+    private void ClearCachedPlayer(Collider2D candidate)
+    {
+        if (candidate != null && candidate != cachedPlayerCandidate)
+        {
+            return;
+        }
+
+        cachedPlayerCandidate = null;
+        cachedPlayerHealth = null;
+        cachedPlayerDamageFlash = null;
+        cachedUmbrellaController = null;
+        cachedPlayerBodyCollider = null;
     }
 
     private static bool IsInLayerMask(int layer, LayerMask layerMask)
