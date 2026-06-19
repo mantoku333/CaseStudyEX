@@ -23,6 +23,8 @@ public sealed class EventPanelContent
     public Sprite[] animationFrames = Array.Empty<Sprite>();
     [Min(0f)] public float animationFramesPerSecond = 12f;
     [Min(0f)] public float animationLoopIntervalSeconds = 0.5f;
+    public bool collectDiaryOnClose;
+    public string diaryProgressFlagKey = string.Empty;
 }
 
 [DisallowMultipleComponent]

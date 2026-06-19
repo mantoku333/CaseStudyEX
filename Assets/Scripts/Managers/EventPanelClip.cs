@@ -10,6 +10,7 @@ public sealed class EventPanelClip : PlayableAsset, ITimelineClipAsset
     [SerializeField] private string panelPresenterName = string.Empty;
     [SerializeField] private EventPanelKind panelKind = EventPanelKind.Custom;
     [SerializeField] private DiaryEntryData diaryEntryData;
+    [SerializeField] private bool collectDiaryOnClose;
     [SerializeField] private string title = string.Empty;
     [SerializeField, TextArea(2, 10)] private string body = string.Empty;
     [SerializeField] private string closeLabel = string.Empty;
@@ -68,7 +69,9 @@ public sealed class EventPanelClip : PlayableAsset, ITimelineClipAsset
             illustration = illustration,
             animationFrames = animationFrames,
             animationFramesPerSecond = animationFramesPerSecond,
-            animationLoopIntervalSeconds = animationLoopIntervalSeconds
+            animationLoopIntervalSeconds = animationLoopIntervalSeconds,
+            collectDiaryOnClose = collectDiaryOnClose,
+            diaryProgressFlagKey = diaryEntryData != null ? diaryEntryData.GetProgressFlagKey() : string.Empty
         };
 
         return content;

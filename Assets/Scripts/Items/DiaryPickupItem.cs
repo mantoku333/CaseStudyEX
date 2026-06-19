@@ -30,11 +30,13 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
 
     private void OnEnable()
     {
+        GameProgressFlags.FlagChanged += OnProgressFlagChanged;
         SaveManager.RegisterModule(this);
     }
 
     private void OnDisable()
     {
+        GameProgressFlags.FlagChanged -= OnProgressFlagChanged;
         SaveManager.UnregisterModule(this);
     }
 
@@ -75,8 +77,13 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
 
         string flagKey = diaryEntryData.GetProgressFlagKey();
 
-        if (GameProgressFlags.Get(flagKey)){ return; }
+        if (GameProgressFlags.Get(flagKey))
+        {
+            RemoveCollectedItem();
+            return;
+        }
 
+        isPickedUp = true;
         GameProgressFlags.Set(flagKey, true);
 
         Debug.Log($"Diary picked up: {diaryEntryData.GetTitle()}");
@@ -114,6 +121,27 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
             return;
         }
 
+        Destroy(gameObject);
+    }
+
+    private void OnProgressFlagChanged(string flagKey, bool value)
+    {
+        if (!value || isPickedUp || diaryEntryData == null)
+        {
+            return;
+        }
+
+        if (!string.Equals(flagKey, diaryEntryData.GetProgressFlagKey(), System.StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        RemoveCollectedItem();
+    }
+
+    private void RemoveCollectedItem()
+    {
+        isPickedUp = true;
         Destroy(gameObject);
     }
 
