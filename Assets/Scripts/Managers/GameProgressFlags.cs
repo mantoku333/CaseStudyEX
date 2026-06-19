@@ -8,6 +8,8 @@ public static class GameProgressFlags
     private static readonly Dictionary<string, bool> flags = new Dictionary<string, bool>(StringComparer.Ordinal);
     private static readonly GameProgressFlagsSaveModule module = new GameProgressFlagsSaveModule();
 
+    public static event Action<string, bool> FlagChanged;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
     {
@@ -38,7 +40,13 @@ public static class GameProgressFlags
             return;
         }
 
+        bool changed = !flags.TryGetValue(flagKey, out bool previousValue) || previousValue != value;
         flags[flagKey] = value;
+
+        if (changed)
+        {
+            FlagChanged?.Invoke(flagKey, value);
+        }
     }
 
     public static void Remove(string flagKey)
