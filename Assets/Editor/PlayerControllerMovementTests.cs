@@ -49,6 +49,34 @@ public sealed class PlayerControllerMovementTests
         Assert.That(rigidbody2D.linearVelocity.y, Is.EqualTo(7f).Within(0.001f));
     }
 
+    [TestCase(1f, true)]
+    [TestCase(-1f, false)]
+    public void AttackFacing_WhenMoving_UsesMovementDirection(float moveInput, bool expectedFacingRight)
+    {
+        PlayerController controller = CreatePlayer(out _);
+        SetPrivateField(controller, "moveInput", moveInput);
+        SetPrivateField(controller, "isFacingRight", !expectedFacingRight);
+
+        InvokePrivate(controller, "UpdateAttackFacingFromMovementOrAim");
+
+        Assert.That(controller.IsFacingRight, Is.EqualTo(expectedFacingRight));
+    }
+
+    [TestCase(1f, 1f)]
+    [TestCase(-1f, -1f)]
+    public void ResolveAttackDirection_WhenMoving_ReturnsHorizontalMovementDirection(
+        float moveInput,
+        float expectedDirectionX)
+    {
+        PlayerController controller = CreatePlayer(out _);
+        SetPrivateField(controller, "moveInput", moveInput);
+
+        bool resolved = InvokeTryResolveAttackDirection(controller, out Vector2 attackDirection);
+
+        Assert.That(resolved, Is.True);
+        Assert.That(attackDirection, Is.EqualTo(new Vector2(expectedDirectionX, 0f)));
+    }
+
     private PlayerController CreatePlayer(out Rigidbody2D rigidbody2D)
     {
         GameObject playerObject = new GameObject("Player");
@@ -92,5 +120,20 @@ public sealed class PlayerControllerMovementTests
         MethodInfo method = target.GetType().GetMethod(methodName, InstancePrivate);
         Assert.That(method, Is.Not.Null, methodName);
         return method.Invoke(target, null);
+    }
+
+    private static bool InvokeTryResolveAttackDirection(
+        PlayerController controller,
+        out Vector2 attackDirection)
+    {
+        MethodInfo method = controller.GetType().GetMethod(
+            "TryResolveAttackDirection",
+            InstancePrivate);
+        Assert.That(method, Is.Not.Null);
+
+        object[] arguments = { Vector2.zero };
+        bool resolved = (bool)method.Invoke(controller, arguments);
+        attackDirection = (Vector2)arguments[0];
+        return resolved;
     }
 }

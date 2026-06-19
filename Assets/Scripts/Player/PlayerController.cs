@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 {
     private const string PlayerActionMapName = "Player";
     private const float ExternalMoveArrivalThreshold = 0.03f;
+    private const float AttackMoveInputDeadZone = 0.01f;
     private const float AimFacingDeadZone = 0.001f;
 
     private static class InputActionNames
@@ -570,7 +571,6 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             if (isPlayerGliding)
             {
                 bool handledGlideShot = false;
-                Camera mainCamera = Camera.main;
                 bool canUseGunRecoil =
                     playerAbilityController != null &&
                     playerAbilityController.GetCanGunRecoil();
@@ -580,17 +580,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                     return;
                 }
 
-                if (mainCamera != null && gunController != null)
+                if (gunController != null && TryResolveAttackDirection(out Vector2 shootDirection))
                 {
-                    if (TryGetAimWorldPosition(mainCamera, out Vector3 aimWorldPosition))
-                    {
-                        handledGlideShot = true;
-
-                        Vector2 shootDirection =
-                            (aimWorldPosition - transform.position).normalized;
-
-                        gunController.Shoot(shootDirection);
-                    }
+                    handledGlideShot = true;
+                    UpdateFacingFromAttackDirection(shootDirection);
+                    gunController.Shoot(shootDirection);
                 }
 
                 if (handledGlideShot)
@@ -610,7 +604,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             // 通常攻撃
             if (umbrellaAttackController != null)
             {
-                UpdateAttackFacingFromAim();
+                UpdateAttackFacingFromMovementOrAim();
                 umbrellaAttackController.Attack();
             }
         }
@@ -917,31 +911,64 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
     }
 
-    private void UpdateAttackFacingFromAim()
+    private void UpdateAttackFacingFromMovementOrAim()
     {
         if (externalFacingLocked)
         {
             return;
         }
 
+        if (!TryResolveAttackDirection(out Vector2 attackDirection))
+        {
+            return;
+        }
+
+        UpdateFacingFromAttackDirection(attackDirection);
+    }
+
+    private bool TryResolveAttackDirection(out Vector2 attackDirection)
+    {
+        float horizontalMoveInput = ResolveHorizontalMoveInput();
+        if (Mathf.Abs(horizontalMoveInput) > AttackMoveInputDeadZone)
+        {
+            attackDirection = horizontalMoveInput > 0.0f
+                ? Vector2.right
+                : Vector2.left;
+            return true;
+        }
+
         Camera mainCamera = Camera.main;
         if (mainCamera == null)
         {
-            return;
+            attackDirection = Vector2.zero;
+            return false;
         }
 
         if (!TryGetAimWorldPosition(mainCamera, out Vector3 aimWorldPosition))
         {
-            return;
+            attackDirection = Vector2.zero;
+            return false;
         }
 
-        float horizontalDelta = aimWorldPosition.x - transform.position.x;
-        if (Mathf.Abs(horizontalDelta) <= AimFacingDeadZone)
+        attackDirection = aimWorldPosition - transform.position;
+        if (attackDirection.sqrMagnitude <= AimFacingDeadZone * AimFacingDeadZone)
+        {
+            attackDirection = Vector2.zero;
+            return false;
+        }
+
+        attackDirection.Normalize();
+        return true;
+    }
+
+    private void UpdateFacingFromAttackDirection(Vector2 attackDirection)
+    {
+        if (externalFacingLocked || Mathf.Abs(attackDirection.x) <= AimFacingDeadZone)
         {
             return;
         }
 
-        isFacingRight = horizontalDelta > 0.0f;
+        isFacingRight = attackDirection.x > 0.0f;
         RefreshParryColliderFacing();
     }
 
