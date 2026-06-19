@@ -229,7 +229,7 @@ public class WindRiseZone : MonoBehaviour
             return false;
         }
 
-        if (BossAreaController.ShouldSuppressWindRiseAt(windCollider.bounds.center))
+        if (BossAreaController.ShouldSuppressWindRise(windCollider))
         {
             return false;
         }
