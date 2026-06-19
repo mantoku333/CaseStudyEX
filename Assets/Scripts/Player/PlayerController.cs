@@ -372,6 +372,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             dodgeController.SetDodgeDistance(playerStatsData.DodgeDistance);
             dodgeController.SetDodgeDuration(playerStatsData.DodgeDuration);
+            dodgeController.SetDodgeCooldown(playerStatsData.DodgeCooldown);
         }
     }
 
@@ -537,7 +538,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                     {
                         if (parryHitbox != null && parryHitbox.TryGetLastParryHitPosition(out Vector2 parryHitPosition))
                         {
-                            umbrellaParryController.Parry(parryHitPosition);
+                            umbrellaParryController.Parry(parryHitPosition, parryHitbox.LastParryWasJust);
                         }
                         else
                         {

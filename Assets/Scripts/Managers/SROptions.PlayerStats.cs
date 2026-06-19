@@ -92,8 +92,18 @@ public partial class SROptions
     }
 
     [Category("プレイヤー調整②")]
-    [DisplayName("攻撃間隔(秒)")]
+    [DisplayName("回避クールタイム")]
     [Sort(2)]
+    [Increment(0.01)]
+    public float DodgeCooldown
+    {
+        get => CurrentPlayerStatsData != null ? CurrentPlayerStatsData.DodgeCooldown : 0f;
+        set => UpdateCurrentPlayerStatsData(stats => stats.SetDodgeCooldown(value));
+    }
+
+    [Category("プレイヤー調整②")]
+    [DisplayName("攻撃間隔(秒)")]
+    [Sort(3)]
     [Increment(0.01)]
     public float AttackSecondsPerAttack
     {
@@ -103,7 +113,7 @@ public partial class SROptions
 
     [Category("プレイヤー調整②")]
     [DisplayName("傘攻撃持続")]
-    [Sort(3)]
+    [Sort(4)]
     [Increment(0.01)]
     public float UmbrellaAttackDuration
     {
@@ -113,7 +123,7 @@ public partial class SROptions
 
     [Category("プレイヤー調整②")]
     [DisplayName("Player Attack Damage")]
-    [Sort(4)]
+    [Sort(5)]
     [Increment(1)]
     public int PlayerAttackDamage
     {
@@ -123,7 +133,7 @@ public partial class SROptions
 
     [Category("プレイヤー調整②")]
     [DisplayName("銃反動")]
-    [Sort(5)]
+    [Sort(6)]
     [Increment(0.1)]
     public float GunRecoilForce
     {

@@ -18,14 +18,15 @@ MonoBehaviour:
   jumpForce: 3
   dodgeDistance: 6
   dodgeDuration: 0.5
+  dodgeCooldown: 3
   attackSecondsPerAttack: 0.5
   umbrellaAttackDuration: 0.3
   gunRecoilForce: 20
   gunRecoilDuration: 0.1
-  firstRecoilCoolTime: 0.5
-  secondRecoilCoolTime: 2.5
   reloadSeconds: 1.5
   parryDuration: 0.1
   parryFlashDuration: 0.1
   maxHealth: 100
   playerAttackDamage: 20
+  firstRecoilCoolTime: 0.5
+  secondRecoilCoolTime: 2.5
