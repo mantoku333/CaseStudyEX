@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 {
     private const string PlayerActionMapName = "Player";
     private const float ExternalMoveArrivalThreshold = 0.03f;
+    private const float AimFacingDeadZone = 0.001f;
 
     private static class InputActionNames
     {
@@ -609,6 +610,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             // 通常攻撃
             if (umbrellaAttackController != null)
             {
+                UpdateAttackFacingFromAim();
                 umbrellaAttackController.Attack();
             }
         }
@@ -913,6 +915,34 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             umbrellaParryController.RefreshParryColliderFacing();
         }
+    }
+
+    private void UpdateAttackFacingFromAim()
+    {
+        if (externalFacingLocked)
+        {
+            return;
+        }
+
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null)
+        {
+            return;
+        }
+
+        if (!TryGetAimWorldPosition(mainCamera, out Vector3 aimWorldPosition))
+        {
+            return;
+        }
+
+        float horizontalDelta = aimWorldPosition.x - transform.position.x;
+        if (Mathf.Abs(horizontalDelta) <= AimFacingDeadZone)
+        {
+            return;
+        }
+
+        isFacingRight = horizontalDelta > 0.0f;
+        RefreshParryColliderFacing();
     }
 
     // 接地遷移(空中 -> 接地)の副作用を集約する場所。

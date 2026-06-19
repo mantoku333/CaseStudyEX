@@ -103,6 +103,7 @@ public sealed class StoryEventController : MonoBehaviour
     [SerializeField] private bool lockPlayerControlDuringEvent = true;
     [SerializeField] private bool lockPlayerFacingDuringEvent = true;
     [SerializeField] private bool restoreActorTransformsOnExit = true;
+    [SerializeField] private bool restorePlayerTransformOnExit;
     [SerializeField] private bool restoreSpriteFacingOnExit = true;
     [SerializeField] private bool restoreRigidbodyVelocityOnExit = false;
 
@@ -446,6 +447,10 @@ public sealed class StoryEventController : MonoBehaviour
         {
             rigidbody2D.position = new Vector2(destination.x, destination.y);
             rigidbody2D.linearVelocity = Vector2.zero;
+            if (playerController != null)
+            {
+                PlayerRigidbodyGroundState.SnapDownToGround(rigidbody2D);
+            }
         }
 
         if (playerController != null)
@@ -1413,6 +1418,7 @@ public sealed class StoryEventController : MonoBehaviour
         cinematicSnapshot = CinematicStateSnapshot.Capture(
             this,
             restoreActorTransformsOnExit,
+            restorePlayerTransformOnExit,
             restoreSpriteFacingOnExit,
             restoreRigidbodyVelocityOnExit);
     }
@@ -2549,10 +2555,12 @@ public sealed class StoryEventController : MonoBehaviour
         public static CinematicStateSnapshot Capture(
             StoryEventController owner,
             bool captureTransforms,
+            bool capturePlayerTransform,
             bool captureSpriteFacing,
             bool captureRigidbodyVelocity)
         {
             GameObject playerObject = ResolvePlayerObject();
+            Transform playerTransform = playerObject != null ? playerObject.transform : null;
             PlayerController playerController = playerObject != null
                 ? playerObject.GetComponent<PlayerController>()
                 : FindFirstObjectByType<PlayerController>(FindObjectsInactive.Include);
@@ -2563,7 +2571,7 @@ public sealed class StoryEventController : MonoBehaviour
             var snapshot = new CinematicStateSnapshot(
                 PlayerControllerState.Capture(playerController),
                 PlayerInputState.Capture(playerInput),
-                PlayerControlBehaviourState.Capture(playerObject));
+                PlayerControlBehaviourState.Capture(playerObject, captureRigidbodyVelocity));
 
             var transforms = new HashSet<Transform>();
             owner.CollectEventActorTransforms(transforms);
@@ -2580,7 +2588,8 @@ public sealed class StoryEventController : MonoBehaviour
                     continue;
                 }
 
-                if (captureTransforms)
+                bool isPlayerTransform = playerTransform != null && target == playerTransform;
+                if (captureTransforms && (!isPlayerTransform || capturePlayerTransform))
                 {
                     snapshot.transformStates.Add(TransformState.Capture(target));
                 }
@@ -2879,9 +2888,9 @@ public sealed class StoryEventController : MonoBehaviour
     private sealed class PlayerControlBehaviourState
     {
         private readonly List<BehaviourState> behaviourStates = new List<BehaviourState>();
-        private readonly Rigidbody2D rigidbody2D;
+        private readonly PlayerRigidbodyGroundState rigidbodyGroundState;
 
-        private PlayerControlBehaviourState(GameObject playerObject)
+        private PlayerControlBehaviourState(GameObject playerObject, bool restoreRigidbodyVelocityOnExit)
         {
             if (playerObject == null)
             {
@@ -2902,12 +2911,16 @@ public sealed class StoryEventController : MonoBehaviour
                 behaviourStates.Add(new BehaviourState(behaviour));
             }
 
-            rigidbody2D = playerObject.GetComponent<Rigidbody2D>();
+            rigidbodyGroundState = PlayerRigidbodyGroundState.Capture(
+                playerObject.GetComponent<Rigidbody2D>(),
+                restoreRigidbodyVelocityOnExit);
         }
 
-        public static PlayerControlBehaviourState Capture(GameObject playerObject)
+        public static PlayerControlBehaviourState Capture(GameObject playerObject, bool restoreRigidbodyVelocityOnExit)
         {
-            return playerObject != null ? new PlayerControlBehaviourState(playerObject) : null;
+            return playerObject != null
+                ? new PlayerControlBehaviourState(playerObject, restoreRigidbodyVelocityOnExit)
+                : null;
         }
 
         public void ApplyLock()
@@ -2917,18 +2930,178 @@ public sealed class StoryEventController : MonoBehaviour
                 behaviourStates[i].ApplyLock();
             }
 
-            if (rigidbody2D != null)
-            {
-                rigidbody2D.linearVelocity = Vector2.zero;
-                rigidbody2D.angularVelocity = 0f;
-            }
+            rigidbodyGroundState?.ApplyLock();
         }
 
         public void Restore()
         {
+            rigidbodyGroundState?.Restore();
+
             for (int i = 0; i < behaviourStates.Count; i++)
             {
                 behaviourStates[i].Restore();
+            }
+        }
+    }
+
+    private sealed class PlayerRigidbodyGroundState
+    {
+        private const string GroundLayerName = "Ground";
+        private const string FallThroughFloorLayerName = "FallThroughFloor";
+        private const float GroundSnapMaxDistance = 12f;
+
+        private readonly Rigidbody2D target;
+        private readonly RaycastHit2D[] castHits = new RaycastHit2D[8];
+        private readonly Vector2 linearVelocity;
+        private readonly float angularVelocity;
+        private readonly bool preserveVelocityOnRestore;
+
+        private PlayerRigidbodyGroundState(Rigidbody2D target, bool preserveVelocityOnRestore)
+        {
+            this.target = target;
+            this.preserveVelocityOnRestore = preserveVelocityOnRestore;
+            linearVelocity = target.linearVelocity;
+            angularVelocity = target.angularVelocity;
+        }
+
+        public static PlayerRigidbodyGroundState Capture(Rigidbody2D target, bool preserveVelocityOnRestore)
+        {
+            return target != null ? new PlayerRigidbodyGroundState(target, preserveVelocityOnRestore) : null;
+        }
+
+        public void ApplyLock()
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            target.linearVelocity = Vector2.zero;
+            target.angularVelocity = 0f;
+            SnapDownToGround();
+        }
+
+        public void Restore()
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            if (preserveVelocityOnRestore)
+            {
+                target.linearVelocity = linearVelocity;
+                target.angularVelocity = angularVelocity;
+            }
+            else
+            {
+                target.linearVelocity = Vector2.zero;
+                target.angularVelocity = 0f;
+            }
+
+            SnapDownToGround();
+            target.WakeUp();
+        }
+
+        public static void SnapDownToGround(Rigidbody2D target)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            new PlayerRigidbodyGroundState(target, preserveVelocityOnRestore: false).SnapDownToGround();
+        }
+
+        private void SnapDownToGround()
+        {
+            Collider2D bodyCollider = ResolveBodyCollider();
+            int groundMask = BuildGroundMask();
+            if (bodyCollider == null || groundMask == 0)
+            {
+                return;
+            }
+
+            Physics2D.SyncTransforms();
+
+            ContactFilter2D filter = new ContactFilter2D
+            {
+                useLayerMask = true,
+                useTriggers = false
+            };
+            filter.SetLayerMask(groundMask);
+
+            int hitCount = bodyCollider.Cast(Vector2.down, filter, castHits, GroundSnapMaxDistance);
+            if (hitCount <= 0)
+            {
+                return;
+            }
+
+            float closestDistance = float.PositiveInfinity;
+            for (int i = 0; i < hitCount; i++)
+            {
+                RaycastHit2D hit = castHits[i];
+                castHits[i] = default;
+                if (hit.collider == null)
+                {
+                    continue;
+                }
+
+                closestDistance = Mathf.Min(closestDistance, Mathf.Max(0f, hit.distance));
+            }
+
+            ClearCastBuffer(hitCount);
+
+            if (float.IsInfinity(closestDistance) || closestDistance <= Mathf.Epsilon)
+            {
+                return;
+            }
+
+            Vector2 nextPosition = target.position + Vector2.down * closestDistance;
+            target.position = nextPosition;
+            Vector3 transformPosition = target.transform.position;
+            target.transform.position = new Vector3(nextPosition.x, nextPosition.y, transformPosition.z);
+            Physics2D.SyncTransforms();
+        }
+
+        private Collider2D ResolveBodyCollider()
+        {
+            Collider2D[] colliders = target.GetComponents<Collider2D>();
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Collider2D collider = colliders[i];
+                if (collider != null && collider.enabled && !collider.isTrigger)
+                {
+                    return collider;
+                }
+            }
+
+            return null;
+        }
+
+        private static int BuildGroundMask()
+        {
+            int mask = 0;
+            int groundLayer = LayerMask.NameToLayer(GroundLayerName);
+            if (groundLayer >= 0)
+            {
+                mask |= 1 << groundLayer;
+            }
+
+            int fallThroughLayer = LayerMask.NameToLayer(FallThroughFloorLayerName);
+            if (fallThroughLayer >= 0)
+            {
+                mask |= 1 << fallThroughLayer;
+            }
+
+            return mask;
+        }
+
+        private void ClearCastBuffer(int usedCount)
+        {
+            for (int i = usedCount; i < castHits.Length; i++)
+            {
+                castHits[i] = default;
             }
         }
     }
