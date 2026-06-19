@@ -18,6 +18,9 @@ namespace Player
         [Header("SE")]
         [SerializeField] private AudioClip playerDamageClip;
 
+        [Header("Debug")]
+        [SerializeField] private bool logHealthDebug;
+
         private int currentHealth;
         private float nextDamageTime;
         private bool deathNotified;
@@ -133,12 +136,12 @@ namespace Player
                 return false;
             }
 
-            Debug.Log($"ダメージ前 HP: {currentHealth} / {MaxHealth}");
-            Debug.Log($"受けるダメージ量: {damage}");
+            LogHealthDebug($"ダメージ前 HP: {currentHealth} / {MaxHealth}");
+            LogHealthDebug($"受けるダメージ量: {damage}");
 
             currentHealth = Mathf.Max(0, currentHealth - damage);
 
-            Debug.Log($"ダメージ後 HP: {currentHealth} / {MaxHealth}");
+            LogHealthDebug($"ダメージ後 HP: {currentHealth} / {MaxHealth}");
 
             nextDamageTime = Time.time + Mathf.Max(0f, cooldownSeconds);
 
@@ -159,11 +162,11 @@ namespace Player
             {
                 return;
             }
-            Debug.Log($"回復前 HP: {currentHealth} / {MaxHealth}");
+            LogHealthDebug($"回復前 HP: {currentHealth} / {MaxHealth}");
 
             currentHealth = Mathf.Min(MaxHealth, currentHealth + value);
 
-            Debug.Log($"回復後 HP: {currentHealth} / {MaxHealth}");
+            LogHealthDebug($"回復後 HP: {currentHealth} / {MaxHealth}");
 
             NotifyHealthChanged();
         }
@@ -194,7 +197,7 @@ namespace Player
         {
             if (value <= 0){ return; }
 
-            Debug.Log($"上限増加前 HP: {currentHealth} / {MaxHealth}");
+            LogHealthDebug($"上限増加前 HP: {currentHealth} / {MaxHealth}");
 
             maxHealthBonus += value;
 
@@ -207,7 +210,7 @@ namespace Player
                 currentHealth = Mathf.Min(currentHealth, MaxHealth);
             }
 
-            Debug.Log($"上限増加後 HP: {currentHealth} / {MaxHealth}");
+            LogHealthDebug($"上限増加後 HP: {currentHealth} / {MaxHealth}");
 
             NotifyHealthChanged();
         }
@@ -349,6 +352,14 @@ namespace Player
             if (audioSource != null)
             {
                 audioSource.PlayOneShot(clip);
+            }
+        }
+
+        private void LogHealthDebug(string message)
+        {
+            if (logHealthDebug)
+            {
+                Debug.Log(message, this);
             }
         }
 
