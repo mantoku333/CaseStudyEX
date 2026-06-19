@@ -252,12 +252,22 @@ public sealed class StageBossIntroTests
 
         InvokePrivate(bossArea, "BeginStageBossIntroWindSuppression");
 
+        GameObject overlappingWindObject = new GameObject("OverlappingWindRise");
+        objectsToDestroy.Add(overlappingWindObject);
+        overlappingWindObject.transform.position = new Vector3(5.6f, 0f, 0f);
+        BoxCollider2D overlappingWindCollider = overlappingWindObject.AddComponent<BoxCollider2D>();
+        overlappingWindCollider.isTrigger = true;
+        overlappingWindCollider.size = new Vector2(2f, 2f);
+        Physics2D.SyncTransforms();
+
         Assert.That(BossAreaController.ShouldSuppressWindRiseAt(Vector3.zero), Is.True);
         Assert.That(BossAreaController.ShouldSuppressWindRiseAt(new Vector3(20f, 0f, 0f)), Is.False);
+        Assert.That(BossAreaController.ShouldSuppressWindRise(overlappingWindCollider), Is.True);
 
         InvokePrivate(bossArea, "EndStageBossIntroWindSuppression");
 
         Assert.That(BossAreaController.ShouldSuppressWindRiseAt(Vector3.zero), Is.False);
+        Assert.That(BossAreaController.ShouldSuppressWindRise(overlappingWindCollider), Is.False);
     }
 
     [Test]
@@ -281,6 +291,7 @@ public sealed class StageBossIntroTests
         Assert.That(GetPrivateField<bool>(bossArea, "encounterStarted"), Is.True);
         Assert.That(encounterStartedCount, Is.EqualTo(0));
         Assert.That(stageBoss.IsEncounterActive, Is.False);
+        Assert.That(BossAreaController.ShouldSuppressWindRiseAt(Vector3.zero), Is.True);
         Assert.That(playerRigidbody.constraints, Is.EqualTo(RigidbodyConstraints2D.None));
         Assert.That(playerController.IsExternalControlLocked, Is.False);
 

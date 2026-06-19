@@ -148,6 +148,32 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         return false;
     }
 
+    public static bool ShouldSuppressWindRise(Collider2D windCollider)
+    {
+        if (windCollider == null)
+        {
+            return false;
+        }
+
+        Bounds windBounds = windCollider.bounds;
+        for (int i = StageBossIntroWindSuppressors.Count - 1; i >= 0; i--)
+        {
+            BossAreaController bossArea = StageBossIntroWindSuppressors[i];
+            if (bossArea == null || !bossArea.suppressWindRiseDuringStageBossIntro)
+            {
+                StageBossIntroWindSuppressors.RemoveAt(i);
+                continue;
+            }
+
+            if (bossArea.IsSuppressingWindRise(windBounds))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void Awake()
     {
         // 後でトリガーを無効化しても拘束範囲を使えるよう、起動時に bounds を確定しておく。
@@ -277,6 +303,11 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         if (disableTriggerAfterStart)
         {
             DisableTriggerComponents();
+        }
+
+        if (ShouldPlayStageBossIntro())
+        {
+            BeginStageBossIntroWindSuppression();
         }
 
         if (TryPlayConfiguredStoryEvent(
@@ -519,6 +550,16 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
                ShouldPlayStageBossIntro() &&
                hasConfinementBounds &&
                confinementBounds.Contains(worldPosition);
+    }
+
+    private bool IsSuppressingWindRise(Bounds windBounds)
+    {
+        return suppressWindRiseDuringStageBossIntro &&
+               encounterStarted &&
+               !encounterCompleted &&
+               ShouldPlayStageBossIntro() &&
+               hasConfinementBounds &&
+               confinementBounds.Intersects(windBounds);
     }
 
     private void StopEncounterStoryRoutines()
