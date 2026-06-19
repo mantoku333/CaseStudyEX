@@ -371,6 +371,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             dodgeController.SetDodgeDistance(playerStatsData.DodgeDistance);
             dodgeController.SetDodgeDuration(playerStatsData.DodgeDuration);
+            dodgeController.SetDodgeCooldown(playerStatsData.DodgeCooldown);
         }
     }
 

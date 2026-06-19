@@ -18,6 +18,7 @@ namespace Player
         [BoxGroup("移動"), Label("ジャンプ力"), Tooltip("地上ジャンプ初速"), SerializeField, Min(0f)] private float jumpForce = 8f;
         [BoxGroup("移動"), Label("回避距離"), Tooltip("回避移動距離"), SerializeField, Min(0f)] private float dodgeDistance = 3f;
         [BoxGroup("移動"), Label("回避時間"), Tooltip("回避時間(秒)"), SerializeField, Min(MinDuration)] private float dodgeDuration = 0.1f;
+        [BoxGroup("移動"), Label("回避クールタイム"), Tooltip("回避開始後、次の回避が可能になるまでの待ち時間(秒)"), SerializeField, Min(0f)] private float dodgeCooldown = 0.5f;
 
         [BoxGroup("戦闘"), Label("攻撃間隔(秒)"), Tooltip("傘攻撃ごとの待ち時間(秒)"), SerializeField, Min(MinDuration)] private float attackSecondsPerAttack = 0.25f;
         [BoxGroup("戦闘"), Label("傘攻撃持続"), Tooltip("傘攻撃当たり判定の継続時間(秒)"), SerializeField, Min(MinDuration)] private float umbrellaAttackDuration = 0.2f;
@@ -40,6 +41,7 @@ namespace Player
         public float JumpForce => jumpForce;
         public float DodgeDistance => dodgeDistance;
         public float DodgeDuration => dodgeDuration;
+        public float DodgeCooldown => dodgeCooldown;
         public float AttackSecondsPerAttack => attackSecondsPerAttack;
         public float UmbrellaAttackDuration => umbrellaAttackDuration;
         public int PlayerAttackDamage => playerAttackDamage;
@@ -85,6 +87,12 @@ namespace Player
         public void SetDodgeDuration(float value)
         {
             dodgeDuration = value;
+            ClampValues();
+        }
+
+        public void SetDodgeCooldown(float value)
+        {
+            dodgeCooldown = value;
             ClampValues();
         }
 
@@ -168,6 +176,7 @@ namespace Player
             jumpForce = Mathf.Max(0f, jumpForce);
             dodgeDistance = Mathf.Max(0f, dodgeDistance);
             dodgeDuration = Mathf.Max(MinDuration, dodgeDuration);
+            dodgeCooldown = Mathf.Max(0f, dodgeCooldown);
 
             attackSecondsPerAttack = Mathf.Max(MinDuration, attackSecondsPerAttack);
             umbrellaAttackDuration = Mathf.Max(MinDuration, umbrellaAttackDuration);

@@ -9,7 +9,11 @@ public class DodgeController : MonoBehaviour
     [Header("回避時間")]
     [SerializeField] private float dodgeDuration = 0.1f;　 //回避にかかる時間
 
+    [Header("回避クールタイム")]
+    [SerializeField, Min(0f)] private float dodgeCooldown = 0.5f;
+
     private bool isDodging = false;   //回避中かどうかのフラグ
+    private float nextDodgeTime;
     private bool dodgeMovementCancelled;
     private Rigidbody2D rigidBody2d;  //Rigidbody2Dコンポーネント
     private PlayerCollisionMover2D collisionMover;
@@ -60,6 +64,21 @@ public class DodgeController : MonoBehaviour
     public float GetDodgeDuration()
     {
         return dodgeDuration;
+    }
+
+    public void SetDodgeCooldown(float cooldown)
+    {
+        dodgeCooldown = Mathf.Max(0f, cooldown);
+    }
+
+    public float GetDodgeCooldown()
+    {
+        return dodgeCooldown;
+    }
+
+    public bool CanDodge()
+    {
+        return !isDodging && Time.time >= nextDodgeTime;
     }
 
     /// <summary>
@@ -128,13 +147,14 @@ public class DodgeController : MonoBehaviour
     /// <param name="direction">回避する方向。</param>
     public async UniTaskVoid Dodge(Vector2 direction)
     {
-        if (isDodging) { return; }
+        if (!CanDodge()) { return; }
 
         EnsureComponents();
 
         if (rigidBody2d == null) { return; }
 
         isDodging = true;
+        nextDodgeTime = Time.time + dodgeCooldown;
         dodgeMovementCancelled = false;
 
         Vector2 velocity = rigidBody2d.linearVelocity;

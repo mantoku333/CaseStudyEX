@@ -61,6 +61,41 @@ public sealed class DodgeControllerTests
         AssertPosition(rigidbody2D, warpDestination);
     }
 
+    [UnityTest]
+    [Timeout(3000)]
+    public IEnumerator Dodge_WhenCooldownIsActive_RejectsNextDodgeUntilCooldownEnds()
+    {
+        DodgeController dodgeController = CreatePlayer(Vector2.zero, out Rigidbody2D rigidbody2D);
+        dodgeController.SetDodgeDistance(1f);
+        dodgeController.SetDodgeDuration(0.02f);
+        dodgeController.SetDodgeCooldown(0.1f);
+
+        dodgeController.Dodge(Vector2.right);
+
+        while (dodgeController.IsDodging())
+        {
+            yield return new WaitForFixedUpdate();
+        }
+
+        Vector2 firstDodgePosition = rigidbody2D.position;
+        Assert.That(dodgeController.CanDodge(), Is.False);
+
+        dodgeController.Dodge(Vector2.right);
+        Assert.That(dodgeController.IsDodging(), Is.False);
+        AssertPosition(rigidbody2D, firstDodgePosition);
+
+        yield return new WaitForSeconds(0.11f);
+
+        Assert.That(dodgeController.CanDodge(), Is.True);
+        dodgeController.Dodge(Vector2.right);
+        Assert.That(dodgeController.IsDodging(), Is.True);
+
+        while (dodgeController.IsDodging())
+        {
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
     [Test]
     public void ResolveReachableDodgeTarget_WhenTargetIsInsideThickWall_StopsBeforeFirstBlockingBlock()
     {
