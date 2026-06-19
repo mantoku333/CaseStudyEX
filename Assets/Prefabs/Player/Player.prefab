@@ -410,6 +410,15 @@ MonoBehaviour:
   parryEffectScale: {x: 2, y: 2, z: 1}
   parryEffectSortingOrderOffset: 4
   copyPlayerMaterial: 1
+  justParryEffectSpriteSheet: {fileID: 2800000, guid: 61db229247d44744c8e66373ff9d9066, type: 3}
+  justParryEffectFrameColumns: 5
+  justParryEffectFrameRows: 4
+  justParryEffectFrameCount: 20
+  justParryEffectFrameSeconds: 0.033
+  justParryEffectSpritePivot: {x: 0.67, y: 0.5}
+  justParryEffectScale: {x: 3, y: 3, z: 1}
+  enableJustParryEffectDebugKey: 1
+  justParryEffectDebugKey: 25
   umbrella_open: {fileID: 8300000, guid: b23093459fc678f498899d1ceed37ba0, type: 3}
   parrySuccessClip: {fileID: 8300000, guid: 8f6922e4da234c34c942ae55fa1e8462, type: 3}
 --- !u!1 &3013482320833118052

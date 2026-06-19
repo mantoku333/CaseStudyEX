@@ -14,6 +14,7 @@ public class ParryHitbox : MonoBehaviour
     private ContactFilter2D overlapFilter;
     private Vector2 lastParryHitPosition;
     private bool hasLastParryHitPosition;
+    private bool lastParryWasJust;
 
     //--------------パリィ関連------------------
     private UmbrellaParryController umbrellaParryController;
@@ -68,6 +69,7 @@ public class ParryHitbox : MonoBehaviour
             Debug.Log("弾を通常パリィしました");
 
             RecordParryHit(collision);
+            lastParryWasJust = false;
             enemyBullet.DestroyByParry();
             umbrellaParryController.PlayParrySuccessEffect(lastParryHitPosition);
             HitStopController.RequestNormalParry();
@@ -89,6 +91,7 @@ public class ParryHitbox : MonoBehaviour
             Debug.Log("突進攻撃をパリィしました");
 
             RecordParryHit(collision);
+            lastParryWasJust = false;
             parryableAttack.StopByParry();
             umbrellaParryController.PlayParrySuccessEffect(lastParryHitPosition);
             HitStopController.RequestNormalParry();
@@ -149,6 +152,8 @@ public class ParryHitbox : MonoBehaviour
         hitPosition = lastParryHitPosition;
         return hasLastParryHitPosition;
     }
+
+    public bool LastParryWasJust => lastParryWasJust;
 
     /// <summary>
     /// 取得した敵の攻撃のリストを返す
@@ -241,6 +246,7 @@ public class ParryHitbox : MonoBehaviour
 
         bool parried = false;
         bool justParried = false;
+        lastParryWasJust = false;
         List<GameObject> parriedAttacks = new List<GameObject>();
 
         for (int i = enemyAttacks.Count - 1; i >= 0; i--)
@@ -289,6 +295,8 @@ public class ParryHitbox : MonoBehaviour
 
         if (parried)
         {
+            lastParryWasJust = justParried;
+
             if (justParried)
             {
                 HitStopController.RequestJustParry();
@@ -341,6 +349,7 @@ public class ParryHitbox : MonoBehaviour
             }
 
             RecordParryHit(hitCollider);
+            lastParryWasJust = false;
             parryableAttack.StopByParry();
             HitStopController.RequestNormalParry();
             return true;

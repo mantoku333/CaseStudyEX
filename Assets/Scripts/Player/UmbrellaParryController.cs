@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Cysharp.Threading.Tasks;
+using UnityEngine.InputSystem;
 using Player;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +31,19 @@ public class UmbrellaParryController : MonoBehaviour
     [SerializeField] private int parryEffectSortingOrderOffset = 4;
     [SerializeField] private bool copyPlayerMaterial = true;
 
+    [Header("ジャストパリィ成功エフェクト")]
+    [SerializeField] private Texture2D justParryEffectSpriteSheet;
+    [SerializeField, Min(1)] private int justParryEffectFrameColumns = 5;
+    [SerializeField, Min(1)] private int justParryEffectFrameRows = 4;
+    [SerializeField, Min(1)] private int justParryEffectFrameCount = 20;
+    [SerializeField, Min(0.01f)] private float justParryEffectFrameSeconds = 0.033f;
+    [SerializeField] private Vector2 justParryEffectSpritePivot = new Vector2(0.67f, 0.5f);
+    [SerializeField] private Vector3 justParryEffectScale = new Vector3(1.5f, 1.5f, 1f);
+
+    [Header("Debug")]
+    [SerializeField] private bool enableJustParryEffectDebugKey = true;
+    [SerializeField] private Key justParryEffectDebugKey = Key.K;
+
     [Header("SE")]
     [SerializeField] private AudioClip umbrella_open;    //パリィ時SE
     [SerializeField] private AudioClip parrySuccessClip; //パリィ成功時SE
@@ -43,6 +57,7 @@ public class UmbrellaParryController : MonoBehaviour
     private bool hasParryColliderDefaultLocalPosition;
     private readonly List<Sprite> generatedParryEffectSprites = new();
     private Sprite[] parryEffectFrames;
+    private Sprite[] justParryEffectFrames;
     private GameObject parryEffectObject;
     private SpriteRenderer parryEffectRenderer;
     private Coroutine parryEffectRoutine;
@@ -73,6 +88,13 @@ public class UmbrellaParryController : MonoBehaviour
         parryEffectFrameCount = Mathf.Max(1, parryEffectFrameCount);
         parryEffectFrameSeconds = Mathf.Max(0.01f, parryEffectFrameSeconds);
         parryEffectPixelsPerUnit = Mathf.Max(1f, parryEffectPixelsPerUnit);
+        justParryEffectFrameColumns = Mathf.Max(1, justParryEffectFrameColumns);
+        justParryEffectFrameRows = Mathf.Max(1, justParryEffectFrameRows);
+        justParryEffectFrameCount = Mathf.Max(1, justParryEffectFrameCount);
+        justParryEffectFrameSeconds = Mathf.Max(0.01f, justParryEffectFrameSeconds);
+        justParryEffectSpritePivot = new Vector2(
+            Mathf.Clamp01(justParryEffectSpritePivot.x),
+            Mathf.Clamp01(justParryEffectSpritePivot.y));
         parryEffectSpritePivot = new Vector2(
             Mathf.Clamp01(parryEffectSpritePivot.x),
             Mathf.Clamp01(parryEffectSpritePivot.y));
@@ -99,6 +121,20 @@ public class UmbrellaParryController : MonoBehaviour
         return flashDuration;
     }
 
+    private void Update()
+    {
+        if (!enableJustParryEffectDebugKey ||
+            Keyboard.current == null ||
+            !Keyboard.current[justParryEffectDebugKey].wasPressedThisFrame)
+        {
+            return;
+        }
+
+        Vector2 fallbackDirection = IsFacingLeft() ? Vector2.left : Vector2.right;
+        Vector2 effectPosition = ResolveParryEffectPosition();
+        PlayJustParrySuccessEffect(effectPosition + fallbackDirection);
+    }
+
     /// <summary>
     /// パリィ時の処理を行う関数
     /// </summary>
@@ -110,7 +146,12 @@ public class UmbrellaParryController : MonoBehaviour
         return Parry(effectPosition + fallbackDirection);
     }
 
-    public async UniTaskVoid Parry(Vector2 hitWorldPosition)
+    public UniTaskVoid Parry(Vector2 hitWorldPosition)
+    {
+        return Parry(hitWorldPosition, false);
+    }
+
+    public async UniTaskVoid Parry(Vector2 hitWorldPosition, bool playJustParryEffect)
     {
         RefreshParryColliderFacing();
 
@@ -129,7 +170,14 @@ public class UmbrellaParryController : MonoBehaviour
 
         //パリィ成功のフラッシュエフェクト
         // FlashEffect().Forget();
-        PlayParrySuccessEffect(hitWorldPosition);
+        if (playJustParryEffect)
+        {
+            PlayJustParrySuccessEffect(hitWorldPosition);
+        }
+        else
+        {
+            PlayParrySuccessEffect(hitWorldPosition);
+        }
 
         //パリィ状態が続く時間待機
         await UniTask.Delay((int)(parryDuration * 1000));
@@ -160,7 +208,43 @@ public class UmbrellaParryController : MonoBehaviour
     public void PlayParrySuccessEffect(Vector2 hitWorldPosition)
     {
         BuildParryEffectFramesIfNeeded();
-        if (parryEffectFrames == null || parryEffectFrames.Length == 0)
+        PlayParrySuccessEffect(
+            hitWorldPosition,
+            parryEffectFrames,
+            parryEffectFrameSeconds,
+            parryEffectScale,
+            "ParrySuccessEffect");
+    }
+
+    public void PlayJustParrySuccessEffect(Vector2 hitWorldPosition)
+    {
+        BuildParryEffectFramesIfNeeded();
+        Sprite[] frames = justParryEffectFrames != null && justParryEffectFrames.Length > 0
+            ? justParryEffectFrames
+            : parryEffectFrames;
+        Vector3 effectScale = justParryEffectFrames != null && justParryEffectFrames.Length > 0
+            ? justParryEffectScale
+            : parryEffectScale;
+        float frameSeconds = justParryEffectFrames != null && justParryEffectFrames.Length > 0
+            ? justParryEffectFrameSeconds
+            : parryEffectFrameSeconds;
+
+        PlayParrySuccessEffect(
+            hitWorldPosition,
+            frames,
+            frameSeconds,
+            effectScale,
+            "JustParrySuccessEffect");
+    }
+
+    private void PlayParrySuccessEffect(
+        Vector2 hitWorldPosition,
+        Sprite[] frames,
+        float frameSeconds,
+        Vector3 effectScale,
+        string effectObjectName)
+    {
+        if (frames == null || frames.Length == 0)
         {
             return;
         }
@@ -176,16 +260,16 @@ public class UmbrellaParryController : MonoBehaviour
 
         bool effectFacesLeft = ResolveParryEffectFacingLeft(direction);
 
-        parryEffectObject = new GameObject("ParrySuccessEffect");
+        parryEffectObject = new GameObject(effectObjectName);
         parryEffectObject.transform.position = effectPosition;
         parryEffectObject.transform.rotation = ResolveParryEffectRotation(direction.normalized, effectFacesLeft);
-        parryEffectObject.transform.localScale = parryEffectScale;
+        parryEffectObject.transform.localScale = effectScale;
         parryEffectObject.transform.SetParent(transform, true);
 
         parryEffectRenderer = parryEffectObject.AddComponent<SpriteRenderer>();
         parryEffectRenderer.flipX = !effectFacesLeft;
         ApplyParryEffectRendererSettings(parryEffectRenderer);
-        parryEffectRoutine = StartCoroutine(PlayParryEffectRoutine());
+        parryEffectRoutine = StartCoroutine(PlayParryEffectRoutine(frames, frameSeconds));
     }
 
     private Vector3 ResolveParryEffectPosition()
@@ -216,22 +300,22 @@ public class UmbrellaParryController : MonoBehaviour
         return Quaternion.Euler(0f, 0f, angleOffset);
     }
 
-    private IEnumerator PlayParryEffectRoutine()
+    private IEnumerator PlayParryEffectRoutine(Sprite[] frames, float frameSeconds)
     {
-        for (int i = 0; i < parryEffectFrames.Length; i++)
+        for (int i = 0; i < frames.Length; i++)
         {
             if (parryEffectRenderer == null)
             {
                 yield break;
             }
 
-            Sprite frame = parryEffectFrames[i];
+            Sprite frame = frames[i];
             if (frame != null)
             {
                 parryEffectRenderer.sprite = frame;
             }
 
-            yield return new WaitForSeconds(parryEffectFrameSeconds);
+            yield return new WaitForSeconds(frameSeconds);
         }
 
         StopAndDestroyParryEffect();
@@ -241,39 +325,63 @@ public class UmbrellaParryController : MonoBehaviour
     {
         if (parryEffectFrames == null || parryEffectFrames.Length == 0)
         {
-            parryEffectFrames = BuildParryEffectFrames(parryEffectSpriteSheet);
+            parryEffectFrames = BuildParryEffectFrames(
+                parryEffectSpriteSheet,
+                parryEffectFrameColumns,
+                parryEffectFrameRows,
+                parryEffectFrameCount);
+        }
+
+        if (justParryEffectFrames == null || justParryEffectFrames.Length == 0)
+        {
+            justParryEffectFrames = BuildParryEffectFrames(
+                justParryEffectSpriteSheet,
+                justParryEffectFrameColumns,
+                justParryEffectFrameRows,
+                justParryEffectFrameCount,
+                justParryEffectSpritePivot);
         }
     }
 
-    private Sprite[] BuildParryEffectFrames(Texture2D spriteSheet)
+    private Sprite[] BuildParryEffectFrames(Texture2D spriteSheet, int columns, int rows, int frameCount)
+    {
+        return BuildParryEffectFrames(spriteSheet, columns, rows, frameCount, parryEffectSpritePivot);
+    }
+
+    private Sprite[] BuildParryEffectFrames(
+        Texture2D spriteSheet,
+        int columns,
+        int rows,
+        int frameCount,
+        Vector2 spritePivot)
     {
         if (spriteSheet == null)
         {
             return System.Array.Empty<Sprite>();
         }
 
-        int frameWidth = spriteSheet.width / parryEffectFrameColumns;
-        int frameHeight = spriteSheet.height / parryEffectFrameRows;
+        int frameWidth = spriteSheet.width / columns;
+        int frameHeight = spriteSheet.height / rows;
         if (frameWidth <= 0 || frameHeight <= 0)
         {
             return System.Array.Empty<Sprite>();
         }
 
-        int maxFrameCount = Mathf.Min(parryEffectFrameCount, parryEffectFrameColumns * parryEffectFrameRows);
+        int maxFrameCount = Mathf.Min(frameCount, columns * rows);
         Sprite[] frames = new Sprite[maxFrameCount];
         int index = 0;
 
-        for (int row = 0; row < parryEffectFrameRows && index < maxFrameCount; row++)
+        for (int row = 0; row < rows && index < maxFrameCount; row++)
         {
             int y = spriteSheet.height - ((row + 1) * frameHeight);
 
-            for (int column = 0; column < parryEffectFrameColumns && index < maxFrameCount; column++)
+            for (int column = 0; column < columns && index < maxFrameCount; column++)
             {
                 Rect rect = new Rect(column * frameWidth, y, frameWidth, frameHeight);
                 Sprite sprite = Sprite.Create(
                     spriteSheet,
                     rect,
-                    parryEffectSpritePivot,
+                    spritePivot,
                     parryEffectPixelsPerUnit,
                     0,
                     SpriteMeshType.FullRect);
