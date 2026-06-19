@@ -563,9 +563,10 @@ namespace GameName.UI
                     return;
                 }
 
-                useImageFill = image != null && image.type == Image.Type.Filled;
+                useImageFill = image != null;
                 if (useImageFill)
                 {
+                    image.type = Image.Type.Filled;
                     image.fillMethod = Image.FillMethod.Horizontal;
                     image.fillOrigin = (int)Image.OriginHorizontal.Left;
                     image.fillAmount = 1f;

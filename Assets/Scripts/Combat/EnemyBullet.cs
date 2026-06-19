@@ -1,6 +1,7 @@
 ﻿using Metroidvania.Player;
 using Player;
 using System.Collections.Generic;
+using GameName.Enemy;
 using UnityEngine;
 
 namespace Metroidvania.Enemy
@@ -95,6 +96,9 @@ namespace Metroidvania.Enemy
         private bool isTerminalImpacting;
         private float terminalImpactTravelDistance;
         private float terminalImpactMaxDistance;
+        private bool enemyPauseApplied;
+        private Vector2 velocityBeforeEnemyPause;
+        private float angularVelocityBeforeEnemyPause;
 
         private sealed class PathNode
         {
@@ -141,6 +145,11 @@ namespace Metroidvania.Enemy
 
         private void FixedUpdate()
         {
+            if (UpdateEnemyPause())
+            {
+                return;
+            }
+
             CountTravelDistance();
             if (aliveTimer >= lifeTime)
             {
@@ -280,6 +289,41 @@ namespace Metroidvania.Enemy
             }
         }
 
+        private bool UpdateEnemyPause()
+        {
+            bool shouldPause = !isReflectedByPlayer && EnemyGameplayPause.IsPaused();
+            if (shouldPause)
+            {
+                if (!enemyPauseApplied)
+                {
+                    velocityBeforeEnemyPause = rb2D != null ? rb2D.linearVelocity : Vector2.zero;
+                    angularVelocityBeforeEnemyPause = rb2D != null ? rb2D.angularVelocity : 0f;
+                    enemyPauseApplied = true;
+                }
+
+                if (rb2D != null)
+                {
+                    rb2D.linearVelocity = Vector2.zero;
+                    rb2D.angularVelocity = 0f;
+                }
+
+                previousPosition = transform.position;
+                return true;
+            }
+
+            if (enemyPauseApplied)
+            {
+                enemyPauseApplied = false;
+                if (rb2D != null)
+                {
+                    rb2D.linearVelocity = velocityBeforeEnemyPause;
+                    rb2D.angularVelocity = angularVelocityBeforeEnemyPause;
+                }
+            }
+
+            return false;
+        }
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.GetComponent<AttackHitbox>() != null)
@@ -385,6 +429,11 @@ namespace Metroidvania.Enemy
                     out _))
             {
                 return false;
+            }
+
+            if (EnemyGameplayPause.IsPaused())
+            {
+                return true;
             }
             
             
@@ -1073,6 +1122,7 @@ namespace Metroidvania.Enemy
             reflectedTravelDistance = 0.0f;
             isReflected = true;
             isReflectedByPlayer = true;
+            enemyPauseApplied = false;
             reflectedDamage = Mathf.CeilToInt(damage * reflectedDamageMultiplier);
 
             target = null;

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GameName.Enemy;
+using Metroidvania.Enemy;
 using Metroidvania.Player;
 using Player;
 using Unity.Cinemachine;
@@ -89,6 +90,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     
     private static readonly bool enableWallMechanic = false;
+    private static readonly List<BossAreaController> StageBossIntroWindSuppressors = new List<BossAreaController>();
 
     private bool encounterStarted;
     private bool encounterCompleted;
@@ -104,6 +106,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private StageBossIntroVisualState stageBossIntroVisualState;
     private StageBossIntroPlayerLockState stageBossIntroPlayerLockState;
     private Coroutine stageBossIntroRoutine;
+    private bool suppressWindRiseDuringStageBossIntro;
     private Coroutine encounterStartRoutine;
     private Coroutine encounterCompleteRoutine;
 
@@ -123,6 +126,26 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
                confineBossInsideArea &&
                confineX &&
                hasConfinementBounds;
+    }
+
+    public static bool ShouldSuppressWindRiseAt(Vector3 worldPosition)
+    {
+        for (int i = StageBossIntroWindSuppressors.Count - 1; i >= 0; i--)
+        {
+            BossAreaController bossArea = StageBossIntroWindSuppressors[i];
+            if (bossArea == null || !bossArea.suppressWindRiseDuringStageBossIntro)
+            {
+                StageBossIntroWindSuppressors.RemoveAt(i);
+                continue;
+            }
+
+            if (bossArea.IsSuppressingWindRiseAt(worldPosition))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void Awake()
@@ -300,6 +323,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         {
             // StageBoss は通常BGMを先に薄くして、HP表示完了後にボスBGMへ切り替える。
             stageBgm?.FadeOutCurrent(stageBossNormalBgmFadeOutSeconds);
+            BeginStageBossIntroWindSuppression();
             stageBossIntroRoutine = StartCoroutine(PlayStageBossIntroRoutine());
         }
         else
@@ -375,6 +399,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         RestoreStageBossForCombat();
         stageBossAttack?.ActivateEncounter();
         RestoreStageBossIntroPlayerLock();
+        EndStageBossIntroWindSuppression();
         stageBossIntroRoutine = null;
     }
 
@@ -451,11 +476,13 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     {
         if (stageBossIntroRoutine == null)
         {
+            EndStageBossIntroWindSuppression();
             return;
         }
 
         StopCoroutine(stageBossIntroRoutine);
         stageBossIntroRoutine = null;
+        EndStageBossIntroWindSuppression();
     }
 
     private void RestoreStageBossIntroPlayerLock()
@@ -464,68 +491,104 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         stageBossIntroPlayerLockState = null;
     }
 
-    private void StopEncounterStoryRoutines()
-    {
-        if (encounterStartRoutine != null)
-        {
-            StopCoroutine(encounterStartRoutine);
-            encounterStartRoutine = null;
-        }
+private void RestoreStageBossIntroPlayerLock()
+{
+    stageBossIntroPlayerLockState?.Restore();
+    stageBossIntroPlayerLockState = null;
+}
 
-        if (encounterCompleteRoutine != null)
-        {
-            StopCoroutine(encounterCompleteRoutine);
-            encounterCompleteRoutine = null;
-        }
+private void BeginStageBossIntroWindSuppression()
+{
+    if (!hasConfinementBounds)
+    {
+        CacheConfinementBounds();
     }
 
-    private bool TryPlayConfiguredStoryEvent(string storyEventId, bool waitForCompletion, out IEnumerator storyRoutine)
+    suppressWindRiseDuringStageBossIntro = true;
+    if (!StageBossIntroWindSuppressors.Contains(this))
     {
-        storyRoutine = null;
+        StageBossIntroWindSuppressors.Add(this);
+    }
+}
 
-        if (string.IsNullOrWhiteSpace(storyEventId))
-        {
-            return false;
-        }
+private void EndStageBossIntroWindSuppression()
+{
+    suppressWindRiseDuringStageBossIntro = false;
+    StageBossIntroWindSuppressors.Remove(this);
+}
 
-        string trimmedEventId = storyEventId.Trim();
-        if (waitForCompletion)
-        {
-            storyRoutine = PlayConfiguredStoryEventAndWait(trimmedEventId);
-            return true;
-        }
+private bool IsSuppressingWindRiseAt(Vector3 worldPosition)
+{
+    return suppressWindRiseDuringStageBossIntro &&
+           encounterStarted &&
+           !encounterCompleted &&
+           ShouldPlayStageBossIntro() &&
+           hasConfinementBounds &&
+           confinementBounds.Contains(worldPosition);
+}
 
-        bool started = StoryEventRuntimeService.TryPlayEvent(trimmedEventId);
-        if (!started)
-        {
-            LogMissingStoryEvent(trimmedEventId);
-        }
-
-        return started;
+private void StopEncounterStoryRoutines()
+{
+    if (encounterStartRoutine != null)
+    {
+        StopCoroutine(encounterStartRoutine);
+        encounterStartRoutine = null;
     }
 
-    private IEnumerator PlayConfiguredStoryEventAndWait(string storyEventId)
+    if (encounterCompleteRoutine != null)
     {
-        bool started = false;
-        yield return StoryEventRuntimeService.PlayEventAndWait(storyEventId, result => started = result);
+        StopCoroutine(encounterCompleteRoutine);
+        encounterCompleteRoutine = null;
+    }
+}
 
-        if (!started)
-        {
-            LogMissingStoryEvent(storyEventId);
-        }
+private bool TryPlayConfiguredStoryEvent(string storyEventId, bool waitForCompletion, out IEnumerator storyRoutine)
+{
+    storyRoutine = null;
+
+    if (string.IsNullOrWhiteSpace(storyEventId))
+    {
+        return false;
     }
 
-    private void LogMissingStoryEvent(string storyEventId)
+    string trimmedEventId = storyEventId.Trim();
+    if (waitForCompletion)
     {
-        if (!logMissingStoryEvents)
-        {
-            return;
-        }
-
-        Debug.LogWarning(
-            $"[BossAreaController] Story event was not found or could not start. eventId='{storyEventId}', bossArea='{name}'",
-            this);
+        storyRoutine = PlayConfiguredStoryEventAndWait(trimmedEventId);
+        return true;
     }
+
+    bool started = StoryEventRuntimeService.TryPlayEvent(trimmedEventId);
+    if (!started)
+    {
+        LogMissingStoryEvent(trimmedEventId);
+    }
+
+    return started;
+}
+
+private IEnumerator PlayConfiguredStoryEventAndWait(string storyEventId)
+{
+    bool started = false;
+    yield return StoryEventRuntimeService.PlayEventAndWait(storyEventId, result => started = result);
+
+    if (!started)
+    {
+        LogMissingStoryEvent(storyEventId);
+    }
+}
+
+private void LogMissingStoryEvent(string storyEventId)
+{
+    if (!logMissingStoryEvents)
+    {
+        return;
+    }
+
+    Debug.LogWarning(
+        $"[BossAreaController] Story event was not found or could not start. eventId='{storyEventId}', bossArea='{name}'",
+        this);
+}
 
     private void ApplyInitialStageBossIntroVisibility()
     {
@@ -563,11 +626,28 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         // 演出用に無効化した表示・当たり判定・Rigidbodyを戦闘用へ戻す。
         CaptureStageBossIntroVisualState();
         stageBossIntroVisualState?.RestoreForCombat();
+        ReapplyStageBossPassThroughCollision();
 
         if (bossRoot != null && bossRigidbody2D == null)
         {
             bossRigidbody2D = bossRoot.GetComponent<Rigidbody2D>();
         }
+    }
+
+    private void ReapplyStageBossPassThroughCollision()
+    {
+        if (bossRoot == null)
+        {
+            return;
+        }
+
+        EnemyContact enemyContact = bossRoot.GetComponent<EnemyContact>();
+        if (enemyContact == null)
+        {
+            enemyContact = bossRoot.GetComponentInChildren<EnemyContact>(true);
+        }
+
+        enemyContact?.ReapplyPassThroughPlayerCollision();
     }
 
     private void CompleteEncounter()

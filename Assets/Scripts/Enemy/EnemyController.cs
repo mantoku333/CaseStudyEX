@@ -139,6 +139,12 @@ namespace GameName.Enemy
         /// </summary>
         private void FixedUpdate()
         {
+            if (EnemyGameplayPause.IsPaused())
+            {
+                StopHorizontalMotion();
+                return;
+            }
+
             if (returningHome)
             {
                 UpdateReturnHome();
@@ -672,6 +678,13 @@ namespace GameName.Enemy
         /// <param name="collision">衝突情報</param>
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            if (EnemyGameplayPause.IsPaused())
+            {
+                StopHorizontalMotion();
+                TryTurnAroundFromEnemyCollision(collision);
+                return;
+            }
+
            bool shouldIgnoreContactDamage = Time.time < ignoreContactDamageUntilTime;
 
             if (shouldIgnoreContactDamage)

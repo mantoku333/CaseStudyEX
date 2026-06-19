@@ -31,6 +31,18 @@ namespace Metroidvania.Enemy
 
         public event Action<PlayerHealth, Collider2D> ContactDamageApplied;
 
+        public void ReapplyPassThroughPlayerCollision()
+        {
+            if (!passThroughPlayer)
+            {
+                return;
+            }
+
+            RefreshEnemyColliders();
+            CachePlayerReferences();
+            IgnorePhysicalCollisionWithPlayer();
+        }
+
         private void Awake()
         {
             RefreshEnemyColliders();
@@ -66,6 +78,11 @@ namespace Metroidvania.Enemy
         private void FixedUpdate()
         {
             if (!passThroughPlayer)
+            {
+                return;
+            }
+
+            if (GameName.Enemy.EnemyGameplayPause.IsPaused())
             {
                 return;
             }
@@ -200,6 +217,11 @@ namespace Metroidvania.Enemy
 
         private void ApplyContactHit()
         {
+            if (GameName.Enemy.EnemyGameplayPause.IsPaused())
+            {
+                return;
+            }
+
             if (enemyController != null && enemyController.IsContactDamageIgnored())
             {
                 Debug.Log($"[EnemyContact] パリィ後なので接触ダメージ無効 frame={Time.frameCount}");
