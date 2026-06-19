@@ -34,11 +34,20 @@ public sealed class StoryEventController : MonoBehaviour
     [Serializable]
     private sealed class ActorBinding
     {
+        private enum ActorResolveMode
+        {
+            PlayerWhenUnassigned,
+            DirectOnly
+        }
+
         public string actorKey = "actor";
         public string displayName = string.Empty;
+        [SerializeField] private ActorResolveMode resolveMode = ActorResolveMode.PlayerWhenUnassigned;
         public Transform actorRoot;
         public Transform bubbleTarget;
         public Vector3 bubbleOffset;
+
+        public bool UsesPlayerWhenUnassigned => resolveMode == ActorResolveMode.PlayerWhenUnassigned;
 
         public bool MatchesActorKey(string key)
         {
@@ -60,10 +69,6 @@ public sealed class StoryEventController : MonoBehaviour
                     string.Equals(displayName.Trim(), speaker, StringComparison.OrdinalIgnoreCase));
         }
 
-        public Transform ResolveBubbleTarget()
-        {
-            return bubbleTarget != null ? bubbleTarget : actorRoot;
-        }
     }
 
     [Header("Identity")]
@@ -302,14 +307,18 @@ public sealed class StoryEventController : MonoBehaviour
         for (int i = 0; i < actorBindings.Count; i++)
         {
             ActorBinding binding = actorBindings[i];
-            if (binding == null || binding.actorRoot == null || string.IsNullOrWhiteSpace(binding.actorKey))
+            if (binding == null || string.IsNullOrWhiteSpace(binding.actorKey))
             {
                 continue;
             }
 
             if (binding.MatchesActorKey(key))
             {
-                return binding.actorRoot;
+                Transform bindingRoot = ResolveBindingActorRoot(binding);
+                if (bindingRoot != null)
+                {
+                    return bindingRoot;
+                }
             }
         }
 
@@ -320,9 +329,7 @@ public sealed class StoryEventController : MonoBehaviour
 
         if (string.Equals(key, "iris", StringComparison.OrdinalIgnoreCase))
         {
-            global::PlayerController player =
-                FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
-            return player != null ? player.transform : null;
+            return ResolvePlayerTransform();
         }
 
         return null;
@@ -1204,7 +1211,7 @@ public sealed class StoryEventController : MonoBehaviour
 
                 if (binding.MatchesActorKey(key))
                 {
-                    Transform bindingTarget = binding.ResolveBubbleTarget();
+                    Transform bindingTarget = ResolveBindingBubbleTarget(binding);
                     if (bindingTarget != null)
                     {
                         return bindingTarget;
@@ -1268,7 +1275,7 @@ public sealed class StoryEventController : MonoBehaviour
                 continue;
             }
 
-            target = binding.ResolveBubbleTarget();
+            target = ResolveBindingBubbleTarget(binding);
             if (target == null)
             {
                 continue;
@@ -1304,6 +1311,40 @@ public sealed class StoryEventController : MonoBehaviour
 
         target = actorTransform;
         return true;
+    }
+
+    private static Transform ResolveBindingActorRoot(ActorBinding binding)
+    {
+        if (binding == null)
+        {
+            return null;
+        }
+
+        if (binding.actorRoot != null)
+        {
+            return binding.actorRoot;
+        }
+
+        return binding.UsesPlayerWhenUnassigned ? ResolvePlayerTransform() : null;
+    }
+
+    private static Transform ResolveBindingBubbleTarget(ActorBinding binding)
+    {
+        if (binding == null)
+        {
+            return null;
+        }
+
+        return binding.bubbleTarget != null
+            ? binding.bubbleTarget
+            : ResolveBindingActorRoot(binding);
+    }
+
+    private static Transform ResolvePlayerTransform()
+    {
+        global::PlayerController player =
+            FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
+        return player != null ? player.transform : null;
     }
 
     private static string ResolveSpeakerActorAlias(string speakerName)
