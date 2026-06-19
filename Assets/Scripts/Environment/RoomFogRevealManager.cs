@@ -405,13 +405,17 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private bool ShouldRoomBeCurrent(RoomCameraTrigger room)
     {
         RoomCameraTrigger activeRoom = RoomCameraTrigger.ActiveRoom;
-        if (activeRoom != null)
+        if (TryGetPlayerPosition(out Vector3 playerPosition))
         {
-            return activeRoom == room;
+            RoomCameraTrigger containingRoom = ResolveSmallestRoomContaining(playerPosition);
+            if (containingRoom != null)
+            {
+                return containingRoom == room;
+            }
         }
 
-        return TryGetPlayerPosition(out Vector3 playerPosition) &&
-            room.ContainsPoint(playerPosition);
+        // In a portal gap the player may temporarily belong to neither room.
+        return activeRoom == room;
     }
 
     private void BeginTransition(RoomCameraTrigger room, string roomId, bool revealing)
@@ -515,6 +519,10 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
         float now = Time.unscaledTime;
         RoomCameraTrigger activeRoom = RoomCameraTrigger.ActiveRoom;
+        bool hasPlayerPosition = TryGetPlayerPosition(out Vector3 playerPosition);
+        RoomCameraTrigger containingRoom = hasPlayerPosition
+            ? ResolveSmallestRoomContaining(playerPosition)
+            : null;
 
         for (int i = rooms.Count - 1; i >= 0; i--)
         {
@@ -528,6 +536,15 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             }
 
             previewRoomExpirations.Remove(roomId);
+
+            // Leaving the portal ends preview refresh. If the player has
+            // already entered this room, promote it instead of cancelling a
+            // reveal that is still in progress.
+            if (room == containingRoom)
+            {
+                SetCurrentRoom(room);
+                continue;
+            }
 
             if (room == currentRoom || room == activeRoom)
             {
@@ -587,21 +604,26 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private void RevealCurrentRoomFromRuntimeState()
     {
         RoomCameraTrigger activeRoom = RoomCameraTrigger.ActiveRoom;
-        if (activeRoom != null && activeRoom.gameObject.scene == managedScene)
+        bool activeRoomIsValid =
+            activeRoom != null &&
+            activeRoom.gameObject.scene == managedScene;
+        bool hasPlayerPosition = TryGetPlayerPosition(out Vector3 playerPosition);
+
+        if (hasPlayerPosition)
+        {
+            RoomCameraTrigger containingRoom = ResolveSmallestRoomContaining(playerPosition);
+            if (containingRoom != null)
+            {
+                SetCurrentRoom(containingRoom);
+                return;
+            }
+        }
+
+        // Portal gaps may briefly belong to neither room. Preserve the camera
+        // room only when containment cannot determine the physical room.
+        if (activeRoomIsValid)
         {
             SetCurrentRoom(activeRoom);
-            return;
-        }
-
-        if (!TryGetPlayerPosition(out Vector3 playerPosition))
-        {
-            return;
-        }
-
-        RoomCameraTrigger containingRoom = ResolveSmallestRoomContaining(playerPosition);
-        if (containingRoom != null)
-        {
-            SetCurrentRoom(containingRoom);
             return;
         }
 
