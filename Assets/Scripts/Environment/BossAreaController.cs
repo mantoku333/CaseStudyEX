@@ -491,104 +491,98 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         stageBossIntroPlayerLockState = null;
     }
 
-private void RestoreStageBossIntroPlayerLock()
-{
-    stageBossIntroPlayerLockState?.Restore();
-    stageBossIntroPlayerLockState = null;
-}
-
-private void BeginStageBossIntroWindSuppression()
-{
-    if (!hasConfinementBounds)
+    private void BeginStageBossIntroWindSuppression()
     {
-        CacheConfinementBounds();
+        if (!hasConfinementBounds)
+        {
+            CacheConfinementBounds();
+        }
+
+        suppressWindRiseDuringStageBossIntro = true;
+        if (!StageBossIntroWindSuppressors.Contains(this))
+        {
+            StageBossIntroWindSuppressors.Add(this);
+        }
     }
 
-    suppressWindRiseDuringStageBossIntro = true;
-    if (!StageBossIntroWindSuppressors.Contains(this))
+    private void EndStageBossIntroWindSuppression()
     {
-        StageBossIntroWindSuppressors.Add(this);
-    }
-}
-
-private void EndStageBossIntroWindSuppression()
-{
-    suppressWindRiseDuringStageBossIntro = false;
-    StageBossIntroWindSuppressors.Remove(this);
-}
-
-private bool IsSuppressingWindRiseAt(Vector3 worldPosition)
-{
-    return suppressWindRiseDuringStageBossIntro &&
-           encounterStarted &&
-           !encounterCompleted &&
-           ShouldPlayStageBossIntro() &&
-           hasConfinementBounds &&
-           confinementBounds.Contains(worldPosition);
-}
-
-private void StopEncounterStoryRoutines()
-{
-    if (encounterStartRoutine != null)
-    {
-        StopCoroutine(encounterStartRoutine);
-        encounterStartRoutine = null;
+        suppressWindRiseDuringStageBossIntro = false;
+        StageBossIntroWindSuppressors.Remove(this);
     }
 
-    if (encounterCompleteRoutine != null)
+    private bool IsSuppressingWindRiseAt(Vector3 worldPosition)
     {
-        StopCoroutine(encounterCompleteRoutine);
-        encounterCompleteRoutine = null;
-    }
-}
-
-private bool TryPlayConfiguredStoryEvent(string storyEventId, bool waitForCompletion, out IEnumerator storyRoutine)
-{
-    storyRoutine = null;
-
-    if (string.IsNullOrWhiteSpace(storyEventId))
-    {
-        return false;
+        return suppressWindRiseDuringStageBossIntro &&
+               encounterStarted &&
+               !encounterCompleted &&
+               ShouldPlayStageBossIntro() &&
+               hasConfinementBounds &&
+               confinementBounds.Contains(worldPosition);
     }
 
-    string trimmedEventId = storyEventId.Trim();
-    if (waitForCompletion)
+    private void StopEncounterStoryRoutines()
     {
-        storyRoutine = PlayConfiguredStoryEventAndWait(trimmedEventId);
-        return true;
+        if (encounterStartRoutine != null)
+        {
+            StopCoroutine(encounterStartRoutine);
+            encounterStartRoutine = null;
+        }
+
+        if (encounterCompleteRoutine != null)
+        {
+            StopCoroutine(encounterCompleteRoutine);
+            encounterCompleteRoutine = null;
+        }
     }
 
-    bool started = StoryEventRuntimeService.TryPlayEvent(trimmedEventId);
-    if (!started)
+    private bool TryPlayConfiguredStoryEvent(string storyEventId, bool waitForCompletion, out IEnumerator storyRoutine)
     {
-        LogMissingStoryEvent(trimmedEventId);
+        storyRoutine = null;
+
+        if (string.IsNullOrWhiteSpace(storyEventId))
+        {
+            return false;
+        }
+
+        string trimmedEventId = storyEventId.Trim();
+        if (waitForCompletion)
+        {
+            storyRoutine = PlayConfiguredStoryEventAndWait(trimmedEventId);
+            return true;
+        }
+
+        bool started = StoryEventRuntimeService.TryPlayEvent(trimmedEventId);
+        if (!started)
+        {
+            LogMissingStoryEvent(trimmedEventId);
+        }
+
+        return started;
     }
 
-    return started;
-}
-
-private IEnumerator PlayConfiguredStoryEventAndWait(string storyEventId)
-{
-    bool started = false;
-    yield return StoryEventRuntimeService.PlayEventAndWait(storyEventId, result => started = result);
-
-    if (!started)
+    private IEnumerator PlayConfiguredStoryEventAndWait(string storyEventId)
     {
-        LogMissingStoryEvent(storyEventId);
-    }
-}
+        bool started = false;
+        yield return StoryEventRuntimeService.PlayEventAndWait(storyEventId, result => started = result);
 
-private void LogMissingStoryEvent(string storyEventId)
-{
-    if (!logMissingStoryEvents)
-    {
-        return;
+        if (!started)
+        {
+            LogMissingStoryEvent(storyEventId);
+        }
     }
 
-    Debug.LogWarning(
-        $"[BossAreaController] Story event was not found or could not start. eventId='{storyEventId}', bossArea='{name}'",
-        this);
-}
+    private void LogMissingStoryEvent(string storyEventId)
+    {
+        if (!logMissingStoryEvents)
+        {
+            return;
+        }
+
+        Debug.LogWarning(
+            $"[BossAreaController] Story event was not found or could not start. eventId='{storyEventId}', bossArea='{name}'",
+            this);
+    }
 
     private void ApplyInitialStageBossIntroVisibility()
     {
