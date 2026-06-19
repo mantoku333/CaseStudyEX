@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using GameName.Enemy;
 using Metroidvania.Enemy;
+using Metroidvania.Managers;
 using Metroidvania.Player;
 using Player;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// ボスエリア侵入で戦闘を開始し、
@@ -91,6 +93,9 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     
     private static readonly bool enableWallMechanic = false;
     private static readonly List<BossAreaController> StageBossIntroWindSuppressors = new List<BossAreaController>();
+#if UNITY_EDITOR
+    private static Func<bool> activeDialogueRunningOverride;
+#endif
 
     private bool encounterStarted;
     private bool encounterCompleted;
@@ -313,6 +318,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         if (TryPlayConfiguredStoryEvent(
                 preEncounterStoryEventId,
                 waitForPreEncounterStoryEvent,
+                waitForExternalTrigger: true,
                 out IEnumerator preEncounterStoryRoutine))
         {
             if (waitForPreEncounterStoryEvent)
@@ -338,14 +344,38 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private IEnumerator StartEncounterAfterStoryRoutine(IEnumerator storyRoutine)
     {
         yield return storyRoutine;
-        encounterStartRoutine = null;
+        yield return WaitForActivePreEncounterDialogueRoutine();
 
+        encounterStartRoutine = null;
         if (encounterCompleted || !encounterStarted)
         {
             yield break;
         }
 
         BeginBossCombatSequence();
+    }
+
+    private IEnumerator WaitForActivePreEncounterDialogueRoutine()
+    {
+        while (encounterStarted && !encounterCompleted && IsActiveDialogueRunning())
+        {
+            yield return null;
+        }
+    }
+
+    private static bool IsActiveDialogueRunning()
+    {
+#if UNITY_EDITOR
+        if (activeDialogueRunningOverride != null)
+        {
+            return activeDialogueRunningOverride();
+        }
+#endif
+
+        DialogueManager dialogueManager = FindFirstObjectByType<DialogueManager>();
+        return dialogueManager != null &&
+               dialogueManager.Runner != null &&
+               dialogueManager.Runner.IsDialogueRunning;
     }
 
     private void BeginBossCombatSequence()
@@ -577,7 +607,11 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         }
     }
 
-    private bool TryPlayConfiguredStoryEvent(string storyEventId, bool waitForCompletion, out IEnumerator storyRoutine)
+    private bool TryPlayConfiguredStoryEvent(
+        string storyEventId,
+        bool waitForCompletion,
+        bool waitForExternalTrigger,
+        out IEnumerator storyRoutine)
     {
         storyRoutine = null;
 
@@ -589,7 +623,9 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         string trimmedEventId = storyEventId.Trim();
         if (waitForCompletion)
         {
-            storyRoutine = PlayConfiguredStoryEventAndWait(trimmedEventId);
+            storyRoutine = waitForExternalTrigger
+                ? WaitForConfiguredStoryEventTriggerAndCompletion(trimmedEventId)
+                : PlayConfiguredStoryEventAndWait(trimmedEventId);
             return true;
         }
 
@@ -611,6 +647,94 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         {
             LogMissingStoryEvent(storyEventId);
         }
+    }
+
+    private IEnumerator WaitForConfiguredStoryEventTriggerAndCompletion(string storyEventId)
+    {
+        bool observedEventRunning = false;
+        bool loggedMissingEvent = false;
+
+        while (encounterStarted && !encounterCompleted)
+        {
+            if (TryFindSceneStoryEventController(storyEventId, out StoryEventController controller) &&
+                controller != null)
+            {
+                if (controller.HasCompleted)
+                {
+                    yield break;
+                }
+
+                if (controller.IsPlaying)
+                {
+                    observedEventRunning = true;
+                }
+            }
+            else if (!loggedMissingEvent)
+            {
+                LogMissingStoryEvent(storyEventId);
+                loggedMissingEvent = true;
+            }
+
+            bool hasRuntimeStoryActivity = StoryEventRuntimeService.HasPendingEvents || IsActiveDialogueRunning();
+            if (hasRuntimeStoryActivity)
+            {
+                observedEventRunning = true;
+            }
+
+            if (observedEventRunning && !hasRuntimeStoryActivity)
+            {
+                yield break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private static bool TryFindSceneStoryEventController(
+        string storyEventId,
+        out StoryEventController matchedController)
+    {
+        matchedController = null;
+
+        if (string.IsNullOrWhiteSpace(storyEventId))
+        {
+            return false;
+        }
+
+        string trimmedEventId = storyEventId.Trim();
+        string activeSceneName = SceneManager.GetActiveScene().name;
+        StoryEventController fallbackController = null;
+
+        StoryEventController[] controllers =
+            FindObjectsByType<StoryEventController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < controllers.Length; i++)
+        {
+            StoryEventController controller = controllers[i];
+            if (controller == null)
+            {
+                continue;
+            }
+
+            bool matchesId =
+                string.Equals(controller.EventId, trimmedEventId, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(controller.name, trimmedEventId, StringComparison.OrdinalIgnoreCase);
+            if (!matchesId)
+            {
+                continue;
+            }
+
+            if (controller.gameObject.scene.IsValid() &&
+                string.Equals(controller.gameObject.scene.name, activeSceneName, StringComparison.Ordinal))
+            {
+                matchedController = controller;
+                return true;
+            }
+
+            fallbackController ??= controller;
+        }
+
+        matchedController = fallbackController;
+        return matchedController != null;
     }
 
     private void LogMissingStoryEvent(string storyEventId)
@@ -719,6 +843,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         if (TryPlayConfiguredStoryEvent(
                 postDefeatStoryEventId,
                 waitForPostDefeatStoryEvent,
+                waitForExternalTrigger: false,
                 out IEnumerator postDefeatStoryRoutine))
         {
             if (waitForPostDefeatStoryEvent)

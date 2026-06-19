@@ -180,6 +180,7 @@ public sealed class StoryEventController : MonoBehaviour
     public string EventId => string.IsNullOrWhiteSpace(eventId) ? name : eventId.Trim();
     public string MemoName => string.IsNullOrWhiteSpace(memoName) ? string.Empty : memoName.Trim();
     public bool IsPlaying => playRoutine != null;
+    public bool HasCompleted => completeMutationsApplied;
     public PlayableDirector Director => ResolveDirector();
 
     private void Reset()
