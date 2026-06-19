@@ -187,6 +187,7 @@ namespace Metroidvania.Managers
 
                 if (bubbleView != null)
                 {
+                    EnsureCanvasHasVisibleScale(bubbleView.transform);
                     bubbleView.gameObject.SetActive(true);
                     bubbleView.SetSpeakerTargetResolver(speakerTargetResolver, speakerTargetResolverOnly);
                     bubbleView.SetPresentationEnabled(true);
@@ -196,6 +197,26 @@ namespace Metroidvania.Managers
 
             ignoreAnyButtonInputFrame = Time.frameCount;
             dialogueRunner.StartDialogue(nodeName);
+        }
+
+        private static void EnsureCanvasHasVisibleScale(Transform viewTransform)
+        {
+            if (viewTransform == null)
+            {
+                return;
+            }
+
+            Canvas parentCanvas = viewTransform.GetComponentInParent<Canvas>(true);
+            Transform canvasTransform = parentCanvas != null ? parentCanvas.transform : null;
+            if (canvasTransform == null || canvasTransform.localScale.sqrMagnitude > 0.000001f)
+            {
+                return;
+            }
+
+            Debug.LogWarning(
+                $"[DialogueManager] Canvas '{canvasTransform.name}' had zero scale. Restoring it so dialogue is visible.",
+                canvasTransform);
+            canvasTransform.localScale = Vector3.one;
         }
 
         private BubbleDialogueView ResolveBubbleView()

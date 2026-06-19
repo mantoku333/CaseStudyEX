@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Title.unity
     guid: 6906eb42d72f7fe439b986a8fefc9eb1
   - enabled: 1
-    path: Assets/Scenes/Fix_Beta03.unity
-    guid: 151a2f340455a7e4692b5246c8e7ffa5
+    path: Assets/Scenes/FixScenes/Fix_Master.unity
+    guid: 1bc31797c8dc34080ad1cad685967d71
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

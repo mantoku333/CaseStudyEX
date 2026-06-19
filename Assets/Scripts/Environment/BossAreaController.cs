@@ -1649,7 +1649,15 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     {
         if (dualTargetCameraTarget == null)
         {
-            return;
+            dualTargetCameraTarget = GetComponentInChildren<DualTargetCameraTarget>(true);
+        }
+
+        if (dualTargetCameraTarget == null && fixedBossCamera != null)
+        {
+            GameObject targetObject = new GameObject("BossCameraTarget");
+            targetObject.transform.SetParent(transform, false);
+            targetObject.transform.position = fixedBossCamera.transform.position;
+            dualTargetCameraTarget = targetObject.AddComponent<DualTargetCameraTarget>();
         }
 
         Transform primary = playerRoot != null ? playerRoot : ResolvePlayerRoot();

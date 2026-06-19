@@ -93,8 +93,7 @@ namespace Metroidvania.UI
             EnsureAutoSizeDefaultsIfMissing();
 
             _mainCamera = Camera.main;
-            _bubbleRectTransform = bubblePanel != null ? bubblePanel.GetComponent<RectTransform>() : null;
-            _textRectTransform = dialogueText != null ? dialogueText.rectTransform : null;
+            RefreshUiReferenceCache();
             ResolveBubbleLayoutElements();
             ResolveSpeakerImages();
             _currentOffset = offset;
@@ -109,6 +108,10 @@ namespace Metroidvania.UI
 
         private void OnEnable()
         {
+            // An inactive prefab can be selected and enabled by DialogueManager
+            // immediately before the first line. Refresh here as well as Awake
+            // so the first conversation does not keep an empty reference cache.
+            RefreshUiReferenceCache();
             Canvas.willRenderCanvases += OnWillRenderCanvases;
         }
 
@@ -323,6 +326,8 @@ namespace Metroidvania.UI
 
         private async UniTaskVoid RunLineInternalAsync(LocalizedLine line, LineCancellationToken token, YarnTaskCompletionSource tcs)
         {
+            RefreshUiReferenceCache();
+
             _currentLineCts?.Cancel();
             _currentLineCts?.Dispose();
             _currentLineCts = new CancellationTokenSource();
@@ -819,6 +824,19 @@ namespace Metroidvania.UI
                     $"[BubbleDialogueView] AutoSize textLen={text.Length}, bubble=({bubbleWidth:0.0},{bubbleHeight:0.0}), " +
                     $"text=({finalTextWidthBubble:0.0},{finalTextHeightBubble:0.0}), lines={measuredLineCount}, " +
                     $"hitMaxW={hitMaxWidth}, hitMaxH={hitMaxHeight}");
+            }
+        }
+
+        private void RefreshUiReferenceCache()
+        {
+            if (bubblePanel != null)
+            {
+                _bubbleRectTransform = bubblePanel.transform as RectTransform;
+            }
+
+            if (dialogueText != null)
+            {
+                _textRectTransform = dialogueText.transform as RectTransform;
             }
         }
 
