@@ -959,6 +959,7 @@ public sealed class StoryEventController : MonoBehaviour
             content,
             () =>
             {
+                ApplyDiaryCollectionOnPanelClose(content);
                 panelClosed = true;
                 if (activePanelPresenter == presenter)
                 {
@@ -986,6 +987,17 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         panelRoutine = null;
+    }
+
+    private static void ApplyDiaryCollectionOnPanelClose(EventPanelContent content)
+    {
+        if (content == null || !content.collectDiaryOnClose ||
+            string.IsNullOrWhiteSpace(content.diaryProgressFlagKey))
+        {
+            return;
+        }
+
+        GameProgressFlags.Set(content.diaryProgressFlagKey.Trim(), true);
     }
 
     private IEnumerator ShowExistingPanelRoutine(
