@@ -131,7 +131,9 @@ public sealed class DualTargetCameraTarget : MonoBehaviour
             follow = controlledCamera.gameObject.AddComponent<CinemachineFollow>();
         }
 
-        follow.FollowOffset = new Vector3(0f, 0f, -10f);
+        Vector3 followOffset = follow.FollowOffset;
+        followOffset.z = -10f;
+        follow.FollowOffset = followOffset;
 
         var trackerSettings = follow.TrackerSettings;
         trackerSettings.PositionDamping = Vector3.zero;
