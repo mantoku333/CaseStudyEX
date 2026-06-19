@@ -144,7 +144,7 @@ MonoBehaviour:
     m_Start: 0.11666666666666667
     m_ClipIn: 0
     m_Asset: {fileID: 2869561812980922962}
-    m_Duration: 2.466666666666667
+    m_Duration: 1.15
     m_TimeScale: 1
     m_ParentTrack: {fileID: -5675552448397036753}
     m_EaseInDuration: 0
@@ -513,7 +513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
   m_Name: Story/Yarn Dialogue Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 2.5833333333333335
+  m_Time: 1.2666666666666666
   markerId: af28a1b8189b45c9acbfdb853ab727e8
   nodeName: test_01
   useControllerDefaultStyle: 1
