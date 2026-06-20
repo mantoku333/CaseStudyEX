@@ -735,6 +735,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DodgeController
   dodgeDistance: 5
   dodgeDuration: 0.3
+  dodgeCooldown: 0.5
+  dodgeClip: {fileID: 8300000, guid: 3098a75f2d936463696c4c913c4d80c9, type: 3}
+  dodgeVolume: 1
 --- !u!82 &7711066996538408739
 AudioSource:
   m_ObjectHideFlags: 0

@@ -38,6 +38,15 @@ public sealed class MinimapView : MonoBehaviour
     [SerializeField] private Color lineColor = new Color(1f, 1f, 1f, 0.72f);
     [SerializeField] private float minimapFollowSmoothTime = 0.22f;
 
+    [Header("Unvisited Connection Hint")]
+    [SerializeField] private bool showUnvisitedConnectionHints = true;
+    [SerializeField, Range(0f, 1f)] private float hintLineStartAlpha = 0.55f;
+    [SerializeField, Range(0f, 1f)] private float hintLineEndAlpha = 0.05f;
+    [SerializeField, Min(2f)] private float hintGradientStepPixels = 10f;
+    [SerializeField, Range(0f, 1f)] private float hintWallAlpha = 0.2f;
+    [SerializeField, Min(0f)] private float hintWallLengthPixels = 42f;
+    [SerializeField, Range(2, 12)] private int hintWallGradientSteps = 6;
+
     [Header("Player Overlap Fade")]
     [SerializeField] private bool enablePlayerOverlapFade = true;
     [SerializeField, Range(0f, 1f)] private float occludedAlpha = 0.25f;
@@ -132,6 +141,9 @@ public sealed class MinimapView : MonoBehaviour
         miniMapSize = ClampPositiveSize(miniMapSize);
         fullMapSize = ClampPositiveSize(fullMapSize);
         fullMapScale = Mathf.Max(0.01f, fullMapScale);
+        hintGradientStepPixels = Mathf.Max(2f, hintGradientStepPixels);
+        hintWallLengthPixels = Mathf.Max(0f, hintWallLengthPixels);
+        hintWallGradientSteps = Mathf.Clamp(hintWallGradientSteps, 2, 12);
 
         ApplyGeneratedLayout();
         if (Application.isPlaying && manager != null && miniMapContent != null && fullMapContent != null)
@@ -506,10 +518,30 @@ public sealed class MinimapView : MonoBehaviour
             MinimapLinkDefinition link = links[i];
             if (link == null ||
                 !TryFindDrawRoom(rooms, link.FromRoomId, out MinimapRoomDefinition fromRoom) ||
-                !TryFindDrawRoom(rooms, link.ToRoomId, out MinimapRoomDefinition toRoom) ||
-                !ShouldDrawRoom(fromRoom) ||
-                !ShouldDrawRoom(toRoom))
+                !TryFindDrawRoom(rooms, link.ToRoomId, out MinimapRoomDefinition toRoom))
             {
+                continue;
+            }
+
+            bool drawFromRoom = ShouldDrawRoom(fromRoom);
+            bool drawToRoom = ShouldDrawRoom(toRoom);
+
+            if (!drawFromRoom || !drawToRoom)
+            {
+                if (showUnvisitedConnectionHints)
+                {
+                    DrawUnvisitedConnectionHint(
+                        parent,
+                        link,
+                        fromRoom,
+                        toRoom,
+                        bounds,
+                        origin,
+                        boardScale,
+                        lineThickness,
+                        i);
+                }
+
                 continue;
             }
 
@@ -531,6 +563,181 @@ public sealed class MinimapView : MonoBehaviour
                 DrawLineSegment(parent, "Link_" + i + "_" + pointIndex, startInset, endInset, lineThickness, lineColor);
             }
         }
+    }
+
+    private void DrawUnvisitedConnectionHint(
+        RectTransform parent,
+        MinimapLinkDefinition link,
+        MinimapRoomDefinition fromRoom,
+        MinimapRoomDefinition toRoom,
+        Rect bounds,
+        Vector2 origin,
+        float boardScale,
+        float lineThickness,
+        int linkIndex)
+    {
+        bool currentIsFrom = manager.IsCurrent(fromRoom.RoomId);
+        bool currentIsTo = manager.IsCurrent(toRoom.RoomId);
+        if (currentIsFrom == currentIsTo)
+        {
+            return;
+        }
+
+        MinimapRoomDefinition hiddenRoom = currentIsFrom ? toRoom : fromRoom;
+        if (ShouldDrawRoom(hiddenRoom))
+        {
+            return;
+        }
+
+        List<Vector2> boardPoints = BuildBoardPath(link, fromRoom, toRoom);
+        if (currentIsTo)
+        {
+            boardPoints.Reverse();
+        }
+
+        var anchoredPoints = new List<Vector2>(boardPoints.Count);
+        float totalLength = 0f;
+        for (int i = 0; i < boardPoints.Count; i++)
+        {
+            Vector2 point = AreaToAnchored(boardPoints[i], origin, bounds, boardScale);
+            anchoredPoints.Add(point);
+            if (i > 0)
+            {
+                totalLength += Vector2.Distance(anchoredPoints[i - 1], point);
+            }
+        }
+
+        if (totalLength <= 0.1f)
+        {
+            return;
+        }
+
+        float travelled = 0f;
+        for (int segmentIndex = 0; segmentIndex < anchoredPoints.Count - 1; segmentIndex++)
+        {
+            Vector2 start = anchoredPoints[segmentIndex];
+            Vector2 end = anchoredPoints[segmentIndex + 1];
+            Vector2 delta = end - start;
+            float segmentLength = delta.magnitude;
+            if (segmentLength <= 0.1f)
+            {
+                continue;
+            }
+
+            Vector2 direction = delta / segmentLength;
+            if (segmentIndex == 0)
+            {
+                start += direction * Mathf.Min(connectorEndInset, segmentLength * 0.4f);
+            }
+
+            if (segmentIndex == anchoredPoints.Count - 2)
+            {
+                end -= direction * Mathf.Min(connectorEndInset, segmentLength * 0.4f);
+            }
+
+            float drawableLength = Vector2.Distance(start, end);
+            int stepCount = Mathf.Max(1, Mathf.CeilToInt(drawableLength / hintGradientStepPixels));
+            for (int stepIndex = 0; stepIndex < stepCount; stepIndex++)
+            {
+                float localStart = stepIndex / (float)stepCount;
+                float localEnd = (stepIndex + 1f) / stepCount;
+                Vector2 stepStart = Vector2.Lerp(start, end, localStart);
+                Vector2 stepEnd = Vector2.Lerp(start, end, localEnd);
+                float stepDistance = travelled + (segmentLength * ((localStart + localEnd) * 0.5f));
+                float progress = Mathf.Clamp01(stepDistance / totalLength);
+                float alpha = Mathf.Lerp(hintLineStartAlpha, hintLineEndAlpha, progress);
+                Color hintColor = WithMultipliedAlpha(lineColor, alpha);
+
+                DrawLineSegment(
+                    parent,
+                    "HintLink_" + linkIndex + "_" + segmentIndex + "_" + stepIndex,
+                    stepStart,
+                    stepEnd,
+                    lineThickness,
+                    hintColor);
+            }
+
+            travelled += segmentLength;
+        }
+
+        DrawHintWall(
+            parent,
+            hiddenRoom,
+            boardPoints[boardPoints.Count - 1],
+            bounds,
+            origin,
+            boardScale,
+            lineThickness,
+            linkIndex);
+    }
+
+    private void DrawHintWall(
+        RectTransform parent,
+        MinimapRoomDefinition room,
+        Vector2 entryPoint,
+        Rect bounds,
+        Vector2 origin,
+        float boardScale,
+        float thickness,
+        int linkIndex)
+    {
+        if (hintWallLengthPixels <= 0f || hintWallAlpha <= 0f || boardScale <= 0f)
+        {
+            return;
+        }
+
+        float minX = room.AreaPosition.x;
+        float maxX = room.AreaPosition.x + room.AreaSize.x;
+        float minY = room.AreaPosition.y;
+        float maxY = room.AreaPosition.y + room.AreaSize.y;
+        float xEdgeDistance = Mathf.Min(Mathf.Abs(entryPoint.x - minX), Mathf.Abs(entryPoint.x - maxX));
+        float yEdgeDistance = Mathf.Min(Mathf.Abs(entryPoint.y - minY), Mathf.Abs(entryPoint.y - maxY));
+        bool verticalWall = xEdgeDistance <= yEdgeDistance;
+
+        float availableLength = (verticalWall ? room.AreaSize.y : room.AreaSize.x) * boardScale;
+        float wallLength = Mathf.Min(hintWallLengthPixels, availableLength);
+        if (wallLength <= 0.1f)
+        {
+            return;
+        }
+
+        float halfLength = wallLength * 0.5f;
+        float halfBoardLength = halfLength / boardScale;
+        Vector2 wallCenterPoint = entryPoint;
+        if (verticalWall)
+        {
+            wallCenterPoint.y = Mathf.Clamp(entryPoint.y, minY + halfBoardLength, maxY - halfBoardLength);
+        }
+        else
+        {
+            wallCenterPoint.x = Mathf.Clamp(entryPoint.x, minX + halfBoardLength, maxX - halfBoardLength);
+        }
+
+        Vector2 entry = AreaToAnchored(wallCenterPoint, origin, bounds, boardScale);
+        Vector2 tangent = verticalWall ? Vector2.up : Vector2.right;
+        int stepCount = hintWallGradientSteps;
+
+        for (int stepIndex = 0; stepIndex < stepCount; stepIndex++)
+        {
+            float startOffset = Mathf.Lerp(-halfLength, halfLength, stepIndex / (float)stepCount);
+            float endOffset = Mathf.Lerp(-halfLength, halfLength, (stepIndex + 1f) / stepCount);
+            float centerRatio = Mathf.Abs((startOffset + endOffset) * 0.5f) / halfLength;
+            float alpha = hintWallAlpha * (1f - centerRatio);
+
+            DrawLineSegment(
+                parent,
+                "HintWall_" + linkIndex + "_" + stepIndex,
+                entry + (tangent * startOffset),
+                entry + (tangent * endOffset),
+                thickness,
+                WithMultipliedAlpha(visitedColor, alpha));
+        }
+    }
+
+    private static Color WithMultipliedAlpha(Color color, float alphaMultiplier)
+    {
+        color.a *= Mathf.Clamp01(alphaMultiplier);
+        return color;
     }
 
     private static bool TryFindDrawRoom(

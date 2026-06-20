@@ -12,11 +12,16 @@ public class DodgeController : MonoBehaviour
     [Header("回避クールタイム")]
     [SerializeField, Min(0f)] private float dodgeCooldown = 0.5f;
 
+    [Header("SE")]
+    [SerializeField] private AudioClip dodgeClip;
+    [SerializeField, Range(0f, 1f)] private float dodgeVolume = 1f;
+
     private bool isDodging = false;   //回避中かどうかのフラグ
     private float nextDodgeTime;
     private bool dodgeMovementCancelled;
     private Rigidbody2D rigidBody2d;  //Rigidbody2Dコンポーネント
     private PlayerCollisionMover2D collisionMover;
+    private AudioSource audioSource;
 
     // ロック中のエリアから渡される、回避移動専用の境界情報。
     // 回避の目標地点を先に切り詰めることで、エリア拘束との押し戻し競合を防ぐ。
@@ -38,6 +43,7 @@ public class DodgeController : MonoBehaviour
     {
         rigidBody2d = GetComponent<Rigidbody2D>();
         collisionMover = GetComponent<PlayerCollisionMover2D>();
+        audioSource = GetComponent<AudioSource>();
 
         if (collisionMover == null)
         {
@@ -156,6 +162,7 @@ public class DodgeController : MonoBehaviour
         isDodging = true;
         nextDodgeTime = Time.time + dodgeCooldown;
         dodgeMovementCancelled = false;
+        PlayDodgeSe();
 
         Vector2 velocity = rigidBody2d.linearVelocity;
         velocity.x = 0.0f;
@@ -188,6 +195,24 @@ public class DodgeController : MonoBehaviour
 
         dodgeMovementCancelled = false;
         isDodging = false;
+    }
+
+    private void PlayDodgeSe()
+    {
+        if (dodgeClip == null)
+        {
+            return;
+        }
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+
+        if (audioSource != null)
+        {
+            audioSource.PlayOneShot(dodgeClip, Mathf.Clamp01(dodgeVolume));
+        }
     }
 
     /// <summary>
