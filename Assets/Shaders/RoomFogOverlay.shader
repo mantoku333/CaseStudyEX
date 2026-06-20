@@ -3,6 +3,7 @@ Shader "CaseStudy/RoomFogOverlay"
     Properties
     {
         _MaskTex ("Reveal Mask", 2D) = "black" {}
+        _EntranceMaskTex ("Portal Entrance Mask", 2D) = "black" {}
         _FogColor ("Fog Color", Color) = (0, 0, 0, 0.92)
         _FogAlpha ("Fog Alpha", Range(0, 1)) = 1
         _EdgeSoftness ("Edge Softness", Range(0.01, 1)) = 0.22
@@ -34,6 +35,7 @@ Shader "CaseStudy/RoomFogOverlay"
             #include "UnityCG.cginc"
 
             sampler2D _MaskTex;
+            sampler2D _EntranceMaskTex;
             fixed4 _FogColor;
             float _FogAlpha;
             float _EdgeSoftness;
@@ -105,7 +107,9 @@ Shader "CaseStudy/RoomFogOverlay"
             fixed4 frag(v2f i) : SV_Target
             {
                 float2 maskUv = (i.worldPos.xy - _WorldMin.xy) / max(_WorldSize.xy, float2(0.001, 0.001));
-                float revealed = tex2D(_MaskTex, maskUv).r;
+                float revealed = max(
+                    tex2D(_MaskTex, maskUv).r,
+                    tex2D(_EntranceMaskTex, maskUv).r);
                 float hidden = 1.0 - smoothstep(0.01, max(_EdgeSoftness, 0.011), revealed);
 
                 float noise = Fbm(i.worldPos.xy * _NoiseScale + _Time.y * 0.04);
