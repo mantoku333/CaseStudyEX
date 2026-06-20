@@ -24,7 +24,7 @@ public class GunController : MonoBehaviour
     };
 
     [Header("銃の設定")]
-    [SerializeField] private float secondRecoilPowerMultiplier = 0.5f;
+    [SerializeField, Min(0f)] private float secondRecoilPowerMultiplier = 1.0f;
     [SerializeField] private float airRecoilPower  = 25.0f;   //銃反動/リコイルジャンプ共通の反動量
     [SerializeField] private float recoilDuration = 0.1f;      //反動状態の時間
 
@@ -43,6 +43,7 @@ public class GunController : MonoBehaviour
     [SerializeField] private int recoilEffectSortingOrderOffset = 3;
 
     private bool isRecoiling = false;   　//反動が起きているかどうか
+    private bool preserveHorizontalRecoilMomentum = false;
     private float firstRecoilCoolTime = 0.5f;
     private float secondRecoilCoolTime = 2.5f;
     private float currentCoolTime = 0.0f; //クールタイムの残り時間    
@@ -56,6 +57,7 @@ public class GunController : MonoBehaviour
     private AudioSource audioSource;      //AudioSource
     private SpriteRenderer sourceSpriteRenderer;
     private Sprite[] recoilEffectSprites;
+    private RecoilTrajectoryPreview trajectoryPreview;
 
     public float CurrentCoolTime => Mathf.Max(0.0f, currentCoolTime);
     public float ReloadDuration => Mathf.Max(0.0f, currentCoolTimeDuration);
@@ -78,6 +80,14 @@ public class GunController : MonoBehaviour
         //AudioSourceの取得
         audioSource = GetComponentInParent<AudioSource>();
         sourceSpriteRenderer = GetComponent<SpriteRenderer>();
+
+        trajectoryPreview = GetComponent<RecoilTrajectoryPreview>();
+        if (trajectoryPreview == null)
+        {
+            trajectoryPreview = gameObject.AddComponent<RecoilTrajectoryPreview>();
+        }
+
+        trajectoryPreview.Initialize(this);
     }
 
     void Update()
@@ -105,6 +115,25 @@ public class GunController : MonoBehaviour
         return isRecoiling;
     }
 
+    /// <summary>
+    /// 通常の空中移動速度まで減速する間、移動入力による横速度の上書きを防ぐ。
+    /// </summary>
+    public bool ShouldPreserveHorizontalRecoil(float horizontalControlSpeed)
+    {
+        if (!preserveHorizontalRecoilMomentum || rigidBody2d == null)
+        {
+            return false;
+        }
+
+        if (Mathf.Abs(rigidBody2d.linearVelocity.x) <= Mathf.Max(0.0f, horizontalControlSpeed))
+        {
+            preserveHorizontalRecoilMomentum = false;
+            return false;
+        }
+
+        return true;
+    }
+
     public void SetAirRecoilPower(float force)
     {
         airRecoilPower = force;
@@ -112,6 +141,18 @@ public class GunController : MonoBehaviour
     public float GetAirRecoilPower()
     {
         return airRecoilPower;
+    }
+
+    public Vector2 GetCurrentRecoilLaunchVelocity(Vector2 shotDirection)
+    {
+        if (shotDirection.sqrMagnitude <= 0.0f)
+        {
+            return Vector2.zero;
+        }
+
+        return -shotDirection.normalized *
+            GetModifiedAirRecoilPower() *
+            GetCurrentRecoilPowerMultiplier();
     }
 
     public void SetRecoilForceBonus(float bonus)
@@ -139,6 +180,7 @@ public class GunController : MonoBehaviour
     public void ResetRecoilCycle()
     {
         isSecondRecoilNext = false;
+        preserveHorizontalRecoilMomentum = false;
     }
 
 
@@ -183,12 +225,15 @@ public class GunController : MonoBehaviour
         //反動中は空気抵抗を増やす
         rigidBody2d.linearDamping = 2.0f;
 
-        //現在の速度を取得
-        Vector2 recoil = -direction.normalized * GetModifiedAirRecoilPower() * powerMultiplier;
-        rigidBody2d.AddForce(recoil, ForceMode2D.Impulse);
+        // 射撃前の移動速度を引き継ぐと、同じ照準でも移動キーの向きによって
+        // 飛距離が変わってしまう。反動量を初速として直接設定し、毎回同じ軌道にする。
+        Vector2 recoilVelocity =
+            -direction.normalized * GetModifiedAirRecoilPower() * powerMultiplier;
+        rigidBody2d.linearVelocity = recoilVelocity;
+        preserveHorizontalRecoilMomentum = Mathf.Abs(recoilVelocity.x) > 0.0f;
 
         BeginRecoil(recoilDuration);
-        // AddForce直後にも補正して、次の物理ステップ前に壁方向の速度が残らないようにする。
+        // 速度設定直後にも補正して、次の物理ステップ前に壁方向の速度が残らないようにする。
         ProjectRecoilVelocityForNextFixedStep();
         return true;
     }
@@ -204,12 +249,10 @@ public class GunController : MonoBehaviour
 
         float recoilPowerMultiplier = GetCurrentRecoilPowerMultiplier();
 
-        // リコイルジャンプ中は移動入力と混ざらないように速度をリセットしてからインパルスを与える
-        Vector2 velocity = rigidBody2d.linearVelocity;
-        velocity.x = 0.0f;
-        velocity.y = 0.0f;
-        rigidBody2d.linearVelocity = velocity;
-        rigidBody2d.AddForce(Vector2.up * GetModifiedAirRecoilPower() * recoilPowerMultiplier, ForceMode2D.Impulse);
+        // 射撃反動と同様に初速を直接設定し、直前の移動や Rigidbody の質量に左右されないようにする。
+        rigidBody2d.linearVelocity =
+            Vector2.up * GetModifiedAirRecoilPower() * recoilPowerMultiplier;
+        preserveHorizontalRecoilMomentum = false;
         BeginRecoil(recoilDuration);
         // リコイルジャンプも同じ補正を通し、天井や角で押し込まれないようにする。
         ProjectRecoilVelocityForNextFixedStep();

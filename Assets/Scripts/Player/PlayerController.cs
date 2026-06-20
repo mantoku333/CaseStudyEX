@@ -581,7 +581,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                     return;
                 }
 
-                if (gunController != null && TryResolveAttackDirection(out Vector2 shootDirection))
+                if (gunController != null && TryResolveRecoilDirection(out Vector2 shootDirection))
                 {
                     handledGlideShot = true;
                     UpdateFacingFromAttackDirection(shootDirection);
@@ -659,16 +659,21 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         bool isGliding = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open && !isGround;
 
         float horizontalInput = ResolveHorizontalMoveInput();
+        float moveSpeed = isGliding
+            ? umbrellaController.GetGlideMoveSpeed()
+            : playerStatsData.MoveSpeed;
+        bool preserveRecoilMomentum =
+            !isGround &&
+            gunController != null &&
+            gunController.ShouldPreserveHorizontalRecoil(moveSpeed);
 
-        if (horizontalInput != 0.0f)
+        if (preserveRecoilMomentum)
         {
-            float moveSpeed = playerStatsData.MoveSpeed;
-
-            if (isGliding)
-            {
-                moveSpeed = umbrellaController.GetGlideMoveSpeed();
-            }
-
+            // 入力の有無にかかわらず同じ割合で減速させ、反動の飛距離を一定にする。
+            velocity.x *= isGliding ? 0.95f : 0.98f;
+        }
+        else if (horizontalInput != 0.0f)
+        {
             velocity.x = horizontalInput * moveSpeed;
         }
         else
@@ -938,28 +943,58 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return true;
         }
 
+        return TryResolveAimDirection(out attackDirection);
+    }
+
+    private bool TryResolveRecoilDirection(out Vector2 recoilDirection)
+    {
+        // 反動移動では移動と照準を分離する。移動キーを押したまま撃っても照準方向を維持し、
+        // 照準を取得できない場合だけ移動方向をフォールバックとして使う。
+        if (TryResolveAimDirection(out recoilDirection))
+        {
+            return true;
+        }
+
+        float horizontalMoveInput = ResolveHorizontalMoveInput();
+        if (Mathf.Abs(horizontalMoveInput) > AttackMoveInputDeadZone)
+        {
+            recoilDirection = horizontalMoveInput > 0.0f
+                ? Vector2.right
+                : Vector2.left;
+            return true;
+        }
+
+        recoilDirection = Vector2.zero;
+        return false;
+    }
+
+    public bool TryGetRecoilDirectionForPreview(out Vector2 recoilDirection)
+    {
+        if (externalControlLocked)
+        {
+            recoilDirection = Vector2.zero;
+            return false;
+        }
+
+        return TryResolveRecoilDirection(out recoilDirection);
+    }
+
+    private bool TryResolveAimDirection(out Vector2 aimDirection)
+    {
         Camera mainCamera = Camera.main;
-        if (mainCamera == null)
+        if (mainCamera != null &&
+            TryGetAimWorldPosition(mainCamera, out Vector3 aimWorldPosition))
         {
-            attackDirection = Vector2.zero;
-            return false;
+            aimDirection = aimWorldPosition - transform.position;
+            if (aimDirection.sqrMagnitude > AimFacingDeadZone * AimFacingDeadZone)
+            {
+                aimDirection.Normalize();
+                return true;
+            }
         }
 
-        if (!TryGetAimWorldPosition(mainCamera, out Vector3 aimWorldPosition))
-        {
-            attackDirection = Vector2.zero;
-            return false;
-        }
-
-        attackDirection = aimWorldPosition - transform.position;
-        if (attackDirection.sqrMagnitude <= AimFacingDeadZone * AimFacingDeadZone)
-        {
-            attackDirection = Vector2.zero;
-            return false;
-        }
-
-        attackDirection.Normalize();
-        return true;
+        aimDirection = Vector2.zero;
+        return false;
     }
 
     private void UpdateFacingFromAttackDirection(Vector2 attackDirection)

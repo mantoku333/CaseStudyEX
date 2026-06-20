@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: adab7e5b3d4b0c04c9078e8e8d2a1b60, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ParryHitbox
 --- !u!58 &5261322581532133394
 CircleCollider2D:
@@ -996,6 +996,7 @@ GameObject:
   - component: {fileID: 8164235665301530573}
   - component: {fileID: 1817913244773617834}
   - component: {fileID: 8928624073132878326}
+  - component: {fileID: 7743184298102635112}
   m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
@@ -1089,7 +1090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c007f56cecae97b4c9baa22a084c5528, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunController
-  secondRecoilPowerMultiplier: 0.5
+  secondRecoilPowerMultiplier: 1
   airRecoilPower: 25
   recoilDuration: 0.1
   groundCheck: {fileID: 4002620521091409378}
@@ -1100,6 +1101,23 @@ MonoBehaviour:
   recoilEffectWorldOffset: {x: 0, y: 0, z: 0}
   recoilEffectScale: {x: 1, y: 1, z: 1}
   recoilEffectSortingOrderOffset: 3
+--- !u!114 &7743184298102635112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5437759847484700699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bb4d642cfe14c34809000abed88a48f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::RecoilTrajectoryPreview
+  predictionSeconds: 1.25
+  maxPointCount: 64
+  lineWidth: 0.07
+  arrowSize: 0.28
+  trajectoryColor: {r: 0.75, g: 0.95, b: 1, a: 0.72}
 --- !u!1 &6862321633324178330
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1750086001492181941}
   - component: {fileID: 1750086001492181942}
   - component: {fileID: 1750086001492181943}
+  - component: {fileID: 1750086001492181944}
   m_Layer: 0
   m_Name: BgmAreaTrigger
   m_TagString: Untagged
@@ -89,9 +90,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 603244d46e12490999eef6b67dfa412d, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::BgmAreaTrigger
   stageBgm: {fileID: 0}
   bgmClip: {fileID: 0}
   volume: 0.2
   priority: 0
+--- !u!114 &1750086001492181944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1750086001492181940}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea0bc5e707c34f12bb5f183ffc0e828c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::RainStartAreaTrigger
+  rainController: {fileID: 0}
+  rainDurationSeconds: 30
+  triggerOnlyOnce: 1
