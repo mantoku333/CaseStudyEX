@@ -1134,6 +1134,9 @@ MonoBehaviour:
   maxPointCount: 64
   lineWidth: 0.07
   arrowSize: 0.28
+  startOffset: 0.9
+  dashLength: 0.18
+  dashGap: 0.12
   trajectoryColor: {r: 0.75, g: 0.95, b: 1, a: 0.72}
 --- !u!1 &6862321633324178330
 GameObject:

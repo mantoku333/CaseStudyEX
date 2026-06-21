@@ -19,9 +19,20 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
     [SerializeField, Range(8, 96)] private int maxPointCount = 64;
     [SerializeField, Min(0.005f)] private float lineWidth = 0.07f;
     [SerializeField, Min(0.02f)] private float arrowSize = 0.28f;
+
+    [Header("点線デザイン")]
+    [Tooltip("プレイヤー中心から軌道線の描画を開始するまでの距離")]
+    [SerializeField, Range(0f, 3f)] private float startOffset = 0.9f;
+    [Tooltip("点線1本あたりの長さ")]
+    [SerializeField, Range(0.02f, 1f)] private float dashLength = 0.18f;
+    [Tooltip("点線同士の空白の長さ")]
+    [SerializeField, Range(0.02f, 1f)] private float dashGap = 0.12f;
     [SerializeField] private Color trajectoryColor = new Color(0.75f, 0.95f, 1.0f, 0.72f);
 
     private readonly List<Vector3> trajectoryPoints = new List<Vector3>(64);
+    private readonly List<Vector3> displayPoints = new List<Vector3>(64);
+    private readonly List<Vector3> currentDashPoints = new List<Vector3>(8);
+    private readonly List<LineRenderer> dashRenderers = new List<LineRenderer>(32);
 
     private GunController gunController;
     private PlayerController playerController;
@@ -29,10 +40,11 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
     private UmbrellaController umbrellaController;
     private Rigidbody2D playerRigidbody;
     private CapsuleCollider2D playerCollider;
-    private LineRenderer trajectoryLine;
+    private Transform dashRoot;
     private LineRenderer arrowLine;
     private Material previewMaterial;
     private LayerMask solidLayerMask;
+    private int activeDashCount;
 
     public void Initialize(GunController gun)
     {
@@ -112,7 +124,7 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
 
     private void EnsureRenderers()
     {
-        if (trajectoryLine != null && arrowLine != null)
+        if (dashRoot != null && arrowLine != null)
         {
             return;
         }
@@ -129,7 +141,13 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
             previewObject.transform.SetParent(transform, false);
         }
 
-        trajectoryLine = GetOrCreateLineRenderer(previewObject.transform, "TrajectoryLine");
+        Transform oldTrajectoryLine = previewObject.transform.Find("TrajectoryLine");
+        if (oldTrajectoryLine != null)
+        {
+            oldTrajectoryLine.gameObject.SetActive(false);
+        }
+
+        dashRoot = GetOrCreateChild(previewObject.transform, "TrajectoryDashes");
         arrowLine = GetOrCreateLineRenderer(previewObject.transform, "ArrowLine");
 
         Shader shader = Shader.Find("Sprites/Default");
@@ -139,13 +157,24 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
             {
                 name = "RecoilTrajectoryPreviewMaterial"
             };
-            trajectoryLine.sharedMaterial = previewMaterial;
             arrowLine.sharedMaterial = previewMaterial;
         }
 
-        ConfigureRenderer(trajectoryLine, lineWidth);
         ConfigureRenderer(arrowLine, lineWidth * 1.35f);
         arrowLine.positionCount = 3;
+    }
+
+    private static Transform GetOrCreateChild(Transform parent, string objectName)
+    {
+        Transform existing = parent.Find(objectName);
+        if (existing != null)
+        {
+            return existing;
+        }
+
+        GameObject child = new GameObject(objectName);
+        child.transform.SetParent(parent, false);
+        return child.transform;
     }
 
     private static LineRenderer GetOrCreateLineRenderer(Transform parent, string objectName)
@@ -241,7 +270,7 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
             return false;
         }
 
-        Vector2 lossyScale = transform.root.lossyScale;
+        Vector2 lossyScale = playerCollider.transform.lossyScale;
         Vector2 capsuleSize = Vector2.Scale(
             playerCollider.size,
             new Vector2(Mathf.Abs(lossyScale.x), Mathf.Abs(lossyScale.y)));
@@ -272,17 +301,17 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
 
     private void DrawTrajectory()
     {
-        if (trajectoryPoints.Count < 2)
+        BuildDisplayPoints();
+        if (displayPoints.Count < 2)
         {
             SetVisible(false);
             return;
         }
 
-        trajectoryLine.positionCount = trajectoryPoints.Count;
-        trajectoryLine.SetPositions(trajectoryPoints.ToArray());
+        DrawDashSegments();
 
-        Vector3 end = trajectoryPoints[trajectoryPoints.Count - 1];
-        Vector2 tangent = end - trajectoryPoints[trajectoryPoints.Count - 2];
+        Vector3 end = displayPoints[displayPoints.Count - 1];
+        Vector2 tangent = end - displayPoints[displayPoints.Count - 2];
         if (tangent.sqrMagnitude <= 0.0001f)
         {
             tangent = Vector2.right;
@@ -298,11 +327,142 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
         SetVisible(true);
     }
 
+    private void DrawDashSegments()
+    {
+        activeDashCount = 0;
+        currentDashPoints.Clear();
+        bool drawingDash = true;
+        float patternRemaining = Mathf.Max(0.01f, dashLength);
+
+        for (int i = 1; i < displayPoints.Count; i++)
+        {
+            Vector3 cursor = displayPoints[i - 1];
+            Vector3 segmentEnd = displayPoints[i];
+            Vector3 segment = segmentEnd - cursor;
+            float segmentRemaining = segment.magnitude;
+            if (segmentRemaining <= 0.0001f)
+            {
+                continue;
+            }
+
+            Vector3 direction = segment / segmentRemaining;
+            while (segmentRemaining > 0.0001f)
+            {
+                float step = Mathf.Min(segmentRemaining, patternRemaining);
+                Vector3 next = cursor + direction * step;
+
+                if (drawingDash)
+                {
+                    if (currentDashPoints.Count == 0)
+                    {
+                        currentDashPoints.Add(cursor);
+                    }
+                    currentDashPoints.Add(next);
+                }
+
+                cursor = next;
+                segmentRemaining -= step;
+                patternRemaining -= step;
+
+                if (patternRemaining <= 0.0001f)
+                {
+                    if (drawingDash)
+                    {
+                        CommitCurrentDash();
+                    }
+
+                    drawingDash = !drawingDash;
+                    patternRemaining = drawingDash
+                        ? Mathf.Max(0.01f, dashLength)
+                        : Mathf.Max(0.01f, dashGap);
+                }
+            }
+        }
+
+        if (drawingDash)
+        {
+            CommitCurrentDash();
+        }
+
+        for (int i = activeDashCount; i < dashRenderers.Count; i++)
+        {
+            dashRenderers[i].enabled = false;
+        }
+    }
+
+    private void CommitCurrentDash()
+    {
+        if (currentDashPoints.Count < 2)
+        {
+            currentDashPoints.Clear();
+            return;
+        }
+
+        LineRenderer renderer = GetDashRenderer(activeDashCount);
+        renderer.positionCount = currentDashPoints.Count;
+        renderer.SetPositions(currentDashPoints.ToArray());
+        renderer.enabled = true;
+        activeDashCount++;
+        currentDashPoints.Clear();
+    }
+
+    private LineRenderer GetDashRenderer(int index)
+    {
+        while (dashRenderers.Count <= index)
+        {
+            LineRenderer renderer = GetOrCreateLineRenderer(
+                dashRoot,
+                $"Dash_{dashRenderers.Count:00}");
+            ConfigureRenderer(renderer, lineWidth);
+            if (previewMaterial != null)
+            {
+                renderer.sharedMaterial = previewMaterial;
+            }
+            dashRenderers.Add(renderer);
+        }
+
+        return dashRenderers[index];
+    }
+
+    private void BuildDisplayPoints()
+    {
+        displayPoints.Clear();
+        if (trajectoryPoints.Count < 2)
+        {
+            return;
+        }
+
+        float remainingOffset = Mathf.Max(0.0f, startOffset);
+        for (int i = 1; i < trajectoryPoints.Count; i++)
+        {
+            Vector3 segmentStart = trajectoryPoints[i - 1];
+            Vector3 segmentEnd = trajectoryPoints[i];
+            float segmentLength = Vector3.Distance(segmentStart, segmentEnd);
+
+            if (remainingOffset >= segmentLength)
+            {
+                remainingOffset -= segmentLength;
+                continue;
+            }
+
+            if (displayPoints.Count == 0)
+            {
+                float ratio = segmentLength > 0.0001f
+                    ? remainingOffset / segmentLength
+                    : 0.0f;
+                displayPoints.Add(Vector3.Lerp(segmentStart, segmentEnd, ratio));
+                remainingOffset = 0.0f;
+            }
+
+            displayPoints.Add(segmentEnd);
+        }
+    }
+
     private void SetVisible(bool visible)
     {
-        if (trajectoryLine != null)
+        for (int i = 0; i < dashRenderers.Count; i++)
         {
-            trajectoryLine.enabled = visible;
+            dashRenderers[i].enabled = visible && i < activeDashCount;
         }
 
         if (arrowLine != null)
@@ -318,11 +478,6 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (previewMaterial == null)
-        {
-            return;
-        }
-
         if (Application.isPlaying)
         {
             Destroy(previewMaterial);
