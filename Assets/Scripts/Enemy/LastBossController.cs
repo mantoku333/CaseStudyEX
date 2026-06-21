@@ -1325,6 +1325,7 @@ namespace GameName.Enemy
                 if (targetHealth.TryTakeDamage(GetAttackDamage(action)))
                 {
                     HitStopController.RequestEnemyToPlayer();
+                    targetHealth.ApplyDamageKnockbackFrom(attackBox.Center);
 
                     // HP クールダウンを通過した実ダメージだけ、被弾フラッシュを強制再生する。
                     PlayerDamageFlash damageFlash = targetHealth.GetComponent<PlayerDamageFlash>();
@@ -1362,6 +1363,8 @@ namespace GameName.Enemy
             {
                 return false;
             }
+
+            targetHealth.ApplyDamageKnockbackFrom(blade.transform.position);
 
             if (blade.Kind == LastBossBladeAttack.BladeKind.Ground)
             {

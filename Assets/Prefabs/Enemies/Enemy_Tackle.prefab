@@ -319,7 +319,9 @@ MonoBehaviour:
   blockedStopDelay: 0.1
   chargeEndingLeadDistance: 1.2
   drawViewGizmo: 1
-  parryKnockbackDistance: 0.5
+  parryKnockbackDistance: 4.5
+  parryKnockbackUpwardSpeed: 4
+  parryKnockbackDuration: 0.25
 --- !u!114 &1141293357520890712
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -40,7 +40,9 @@ namespace GameName.Enemy
         [SerializeField] private bool drawViewGizmo = true;
 
         [Header("Parry")]
-        [SerializeField, Min(0.0f)] private float parryKnockbackDistance = 0.5f;
+        [SerializeField, Min(0.0f)] private float parryKnockbackDistance = 4.5f;
+        [SerializeField, Min(0.0f)] private float parryKnockbackUpwardSpeed = 4f;
+        [SerializeField, Min(0.02f)] private float parryKnockbackDuration = 0.25f;
 
         private enum AttackState
         {
@@ -65,6 +67,8 @@ namespace GameName.Enemy
         private float previousChargeX;
         private float blockedTimer;
         private bool chargeEndingNotified;
+        private float parryKnockbackEndTime;
+        private float parryKnockbackVelocityX;
 
         /// <summary>
         /// 予備動作ではなく、実際に突進状態へ入った瞬間に通知する。
@@ -135,6 +139,8 @@ namespace GameName.Enemy
             attackState = AttackState.Idle;
             stateTimer = 0f;
             chargeEndingNotified = false;
+            parryKnockbackEndTime = 0f;
+            parryKnockbackVelocityX = 0f;
         }
 
         /// <summary>
@@ -156,6 +162,11 @@ namespace GameName.Enemy
                     CancelForLeashReturn();
                 }
 
+                return;
+            }
+
+            if (UpdateParryKnockback())
+            {
                 return;
             }
 
@@ -233,6 +244,8 @@ namespace GameName.Enemy
             previousChargeX = chargeStartX;
             blockedTimer = 0f;
             chargeEndingNotified = false;
+            parryKnockbackEndTime = 0f;
+            parryKnockbackVelocityX = 0f;
 
             attackState = AttackState.Charging;
             // 突進開始SEはこのタイミングで1回だけ鳴らす。
@@ -571,6 +584,8 @@ namespace GameName.Enemy
             vibrationElapsed = 0f;
             blockedTimer = 0f;
             chargeEndingNotified = false;
+            parryKnockbackEndTime = 0f;
+            parryKnockbackVelocityX = 0f;
         }
 
         /// <summary>
@@ -593,13 +608,40 @@ namespace GameName.Enemy
                 enemyController.IgnoreContactDamage(0.3f);
 
                 int knockbackDirection = -chargeDirection;
-                float knockbackX = enemyController.CurrentX + knockbackDirection * parryKnockbackDistance;
-
-                enemyController.StopHorizontalMotion();
-                enemyController.SetHorizontalPosition(knockbackX);
+                EnterCooldownState();
+                BeginParryKnockback(knockbackDirection);
+                return;
             }
 
             EnterCooldownState();
+        }
+
+        private void BeginParryKnockback(int direction)
+        {
+            float duration = Mathf.Max(0.02f, parryKnockbackDuration);
+            parryKnockbackVelocityX = (direction >= 0 ? 1f : -1f) * parryKnockbackDistance / duration;
+            parryKnockbackEndTime = Time.time + duration;
+
+            enemyController.SetWorldHorizontalVelocity(parryKnockbackVelocityX);
+            enemyController.SetVerticalVelocity(parryKnockbackUpwardSpeed);
+        }
+
+        private bool UpdateParryKnockback()
+        {
+            if (enemyController == null || Time.time >= parryKnockbackEndTime)
+            {
+                if (parryKnockbackEndTime > 0f)
+                {
+                    enemyController?.StopHorizontalMotion();
+                    parryKnockbackEndTime = 0f;
+                    parryKnockbackVelocityX = 0f;
+                }
+
+                return false;
+            }
+
+            enemyController.SetWorldHorizontalVelocity(parryKnockbackVelocityX);
+            return true;
         }
     }
 }

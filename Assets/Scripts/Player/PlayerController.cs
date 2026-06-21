@@ -56,6 +56,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private float externalMoveInput;
     private bool externalMovementHasTarget;
     private float externalMovementTargetX;
+    private float damageKnockbackEndTime;
+    private float damageKnockbackVelocityX;
 
     //-------各種コンポーネント参照関連--------
     private GroundCheck groundCheck;                           //地面判定のスクリプト
@@ -105,6 +107,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsExternalControlLocked => externalControlLocked;
     public bool IsExternalFacingLocked => externalFacingLocked;
     public bool IsExternalMovementActive => externalMovementActive;
+    public bool IsDamageKnockbackActive => Time.time < damageKnockbackEndTime;
 
     private void Awake()
     {
@@ -145,6 +148,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         externalMoveInput = 0.0f;
         externalMovementHasTarget = false;
         externalMovementTargetX = 0.0f;
+        damageKnockbackEndTime = 0f;
+        damageKnockbackVelocityX = 0f;
     }
 
     private void Start()
@@ -170,6 +175,12 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         RefreshGroundState();
         HandleGroundTransition();
 
+        if (UpdateDamageKnockback())
+        {
+            jumpInput = false;
+            return;
+        }
+
         if (externalMovementActive)
         {
             UpdateExternalTargetMovement();
@@ -187,6 +198,44 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         Move();
         Jump();
+    }
+
+    /// <summary>
+    /// 被弾元から離れる方向へ、短時間だけ操作入力より優先するノックバックを適用する。
+    /// </summary>
+    public void ApplyDamageKnockback(
+        float horizontalDirection,
+        float speed,
+        float duration,
+        float upwardSpeed)
+    {
+        if (rigidBody2d == null || speed <= 0f || duration <= 0f)
+        {
+            return;
+        }
+
+        float direction = horizontalDirection >= 0f ? 1f : -1f;
+        damageKnockbackVelocityX = direction * speed;
+        damageKnockbackEndTime = Time.time + duration;
+
+        Vector2 velocity = rigidBody2d.linearVelocity;
+        velocity.y = Mathf.Max(velocity.y, Mathf.Max(0f, upwardSpeed));
+        rigidBody2d.linearVelocity = velocity;
+
+        UpdateDamageKnockback();
+    }
+
+    private bool UpdateDamageKnockback()
+    {
+        if (rigidBody2d == null || Time.time >= damageKnockbackEndTime)
+        {
+            return false;
+        }
+
+        Vector2 velocity = rigidBody2d.linearVelocity;
+        velocity.x = damageKnockbackVelocityX;
+        rigidBody2d.linearVelocity = velocity;
+        return true;
     }
 
     private void RefreshGroundState()
@@ -399,6 +448,15 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     // - 地上攻撃は傘攻撃
     private void GetInput()
     {
+        // 被弾ノックバック中は移動だけでなく、攻撃・回避・パリィなどの新規入力も受け付けない。
+        if (IsDamageKnockbackActive)
+        {
+            moveInput = 0.0f;
+            jumpInput = false;
+            wasDownHeld = false;
+            return;
+        }
+
         if (externalControlLocked)
         {
             moveInput = 0.0f;
