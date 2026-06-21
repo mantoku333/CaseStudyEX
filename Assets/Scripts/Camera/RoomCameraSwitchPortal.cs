@@ -300,7 +300,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private void ActivateTargetRoomFromTeleport()
     {
-        if (targetRoom == null)
+        if (targetRoom == null || !CanActivateTargetRoom())
         {
             return;
         }
@@ -331,7 +331,9 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private void ActivateTargetRoomOncePerOverlap()
     {
-        if (targetRoom == null || activatedDuringCurrentOverlap)
+        if (targetRoom == null ||
+            activatedDuringCurrentOverlap ||
+            !CanActivateTargetRoom())
         {
             return;
         }
@@ -353,6 +355,14 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
         }
 
         targetRoom.ActivateCamera();
+    }
+
+    private bool CanActivateTargetRoom()
+    {
+        return RoomPortalAccessCondition.AllowsPreview(
+            this,
+            RoomCameraTrigger.ActiveRoom,
+            targetRoom);
     }
 
     private bool TryResolvePlayerTransform(Transform source, out Transform resolvedPlayer)

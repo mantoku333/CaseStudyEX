@@ -11,6 +11,7 @@ public sealed class RainStartAreaTrigger : MonoBehaviour
     [SerializeField] private bool triggerOnlyOnce = true;
 
     private bool hasTriggered;
+    private Collider2D playerBodyCollider;
 
     private void Awake()
     {
@@ -37,7 +38,27 @@ public sealed class RainStartAreaTrigger : MonoBehaviour
         }
 
         hasTriggered = true;
+        playerBodyCollider = other;
+        rainController.SetRainAreaActive(true);
         rainController.StartRainFor(rainDurationSeconds);
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other != playerBodyCollider && !PlayerBodyColliderUtility.IsPlayerBodyCollider(other))
+        {
+            return;
+        }
+
+        playerBodyCollider = null;
+        ResolveRainController();
+        rainController?.SetRainAreaActive(false);
+    }
+
+    private void OnDisable()
+    {
+        playerBodyCollider = null;
+        rainController?.SetRainAreaActive(false);
     }
 
     private void ResolveRainController()

@@ -16,6 +16,7 @@ public sealed class RainCycleController : MonoBehaviour
     [SerializeField] private ParticleSystem[] rainParticleSystems = new ParticleSystem[0];
     [SerializeField] private RainDamageArea[] rainDamageAreas = new RainDamageArea[0];
     [SerializeField] private bool enableScheduledRain = true;
+    [SerializeField] private bool limitRainToActiveArea;
     [SerializeField, Min(0.01f)] private float rainDurationSeconds = 30f;
     [SerializeField, Min(0.01f)] private float cycleIntervalSeconds = 180f;
     [SerializeField] private InitialRainMode initialRainMode = InitialRainMode.StartAfterInterval;
@@ -32,10 +33,17 @@ public sealed class RainCycleController : MonoBehaviour
     private bool initialized;
     private bool hasAppliedRainState;
     private float forcedRainUntil = -1f;
+    private bool isRainAreaActive;
     private readonly List<Renderer> cachedRainRenderers = new List<Renderer>();
     private readonly List<ParticleSystem> cachedRainParticleSystems = new List<ParticleSystem>();
 
     public bool IsRaining => isRaining;
+
+    public void SetRainAreaActive(bool active)
+    {
+        isRainAreaActive = active;
+        RefreshRainState();
+    }
 
     public void StartRainFor(float durationSeconds)
     {
@@ -79,6 +87,11 @@ public sealed class RainCycleController : MonoBehaviour
 
     private bool ShouldRainAt(float time)
     {
+        if (limitRainToActiveArea && !isRainAreaActive)
+        {
+            return false;
+        }
+
         if (time < forcedRainUntil)
         {
             return true;

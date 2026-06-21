@@ -2039,6 +2039,12 @@ public sealed class OptionsMenu : MonoBehaviour
             return AudioChannel.Se;
         }
 
+        // 滑空風音はループ素材だが、BGMではなくプレイヤーSEとして扱う。
+        if (source.GetComponent<PlayerGlideAudioController>() != null)
+        {
+            return AudioChannel.Se;
+        }
+
         if (source.loop)
         {
             return AudioChannel.Bgm;

@@ -13,6 +13,8 @@ namespace GameName.Enemy
     {
         [SerializeField] private float moveSpeed = 2f;
         [SerializeField] private float patrolDistance = 2f;
+        [SerializeField, Tooltip("有効時、生成時の巡回方向を左右からランダムに選びます。")]
+        private bool randomizeInitialDirection;
         [SerializeField, Min(0)] private int damageToPlayer = 1;
         [SerializeField, Min(1)] private int maxHealth = 1;
         [SerializeField, Min(1f)] private float backAttackDamageMultiplier = 2f;
@@ -112,6 +114,11 @@ namespace GameName.Enemy
             currentHealth = MaxHealth;
             CaptureOriginalStartPositionIfNeeded();
             startPosition = originalStartPosition;
+
+            if (randomizeInitialDirection)
+            {
+                moveDirection = UnityEngine.Random.value < 0.5f ? -1 : 1;
+            }
 
             if (stageLayerMask.value == 0)
             {

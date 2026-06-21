@@ -121,6 +121,8 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     public StageBossAttack StageBossAttack => stageBossAttack;
     public LastBossController LastBossController => lastBossController;
     public IBossHealthSource BossHealthSource => ResolveBossHealthSource();
+    public bool IsEncounterCompleted =>
+        encounterCompleted || IsBossDefeatedInSavedProgress();
 
     public bool TryGetActiveBossHorizontalConfinementBounds(out Bounds bounds)
     {

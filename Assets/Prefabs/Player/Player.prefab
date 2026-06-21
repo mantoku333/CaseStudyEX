@@ -539,6 +539,7 @@ GameObject:
   - component: {fileID: 6628913746285037194}
   - component: {fileID: 1661112223334445556}
   - component: {fileID: 2558782520259632627}
+  - component: {fileID: 6872356164271042961}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -721,6 +722,22 @@ MonoBehaviour:
   damageCooldownSeconds: 3
   maxHealthBonus: 0
   playerDamageClip: {fileID: 8300000, guid: 5d07316111d5d54458cae5d7e4158754, type: 3}
+--- !u!114 &6872356164271042961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e264f05f19c542a2996e357d267bd47f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGlideAudioController
+  glideLoopClip: {fileID: 8300000, guid: 6777b9b5926c4432f99243f72c150e47, type: 3}
+  playDelay: 0.2
+  fadeOutDuration: 0.35
+  volume: 1
 --- !u!114 &2152828851043830257
 MonoBehaviour:
   m_ObjectHideFlags: 0

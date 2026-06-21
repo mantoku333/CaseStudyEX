@@ -100,7 +100,10 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
         }
 
         BeginTransition(player.position);
-        StartTransitionCamera(player.position);
+        if (CanPreviewLowerRoom())
+        {
+            StartTransitionCamera(player.position);
+        }
     }
 
     private void BeginTransition(Vector3 playerPosition)
@@ -113,6 +116,11 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
     private void CommitExit(Vector3 playerPosition)
     {
         RoomCameraTrigger finalRoom = ResolveExitRoom(playerPosition);
+        if (finalRoom == lowerRoom && !CanPreviewLowerRoom())
+        {
+            finalRoom = upperRoom;
+        }
+
         CommitToRoom(finalRoom);
     }
 
@@ -167,9 +175,28 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
 
     private void UpdateTransitionCamera()
     {
-        if (transitionCommitted || !transitionActive || playerTransform == null)
+        if (transitionCommitted || playerTransform == null)
         {
             return;
+        }
+
+        if (!CanPreviewLowerRoom())
+        {
+            if (transitionActive)
+            {
+                StopTransitionCamera();
+            }
+
+            return;
+        }
+
+        if (!transitionActive)
+        {
+            StartTransitionCamera(playerTransform.position);
+            if (!transitionActive)
+            {
+                return;
+            }
         }
 
         if (TryCommitFullyEnteredLowerRoom())
@@ -397,6 +424,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
         if (!commitWhenPlayerFullyInsideLowerRoom ||
             playerTransform == null ||
             lowerRoom == null ||
+            !CanPreviewLowerRoom() ||
             !IsPlayerFullyInsideRoom(lowerRoom))
         {
             return false;
@@ -417,6 +445,14 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
         room.ActivateCamera();
         StopTransitionCamera();
         transitionCommitted = true;
+    }
+
+    private bool CanPreviewLowerRoom()
+    {
+        return RoomPortalAccessCondition.AllowsPreview(
+            this,
+            upperRoom,
+            lowerRoom);
     }
 
     private bool IsPlayerFullyInsideRoom(RoomCameraTrigger room)
