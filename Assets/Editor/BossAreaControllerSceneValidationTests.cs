@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using GameName.Enemy;
 using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -10,6 +11,10 @@ public sealed class BossAreaControllerSceneValidationTests
     private const string ScenePath = "Assets/Scenes/Fix_Alpha4_Fuyuno.unity";
     private static readonly FieldInfo BossDefeatedFlagKeyField =
         typeof(BossAreaController).GetField("bossDefeatedFlagKey", BindingFlags.Instance | BindingFlags.NonPublic);
+    private static readonly FieldInfo BossRootField =
+        typeof(BossAreaController).GetField("bossRoot", BindingFlags.Instance | BindingFlags.NonPublic);
+    private static readonly FieldInfo BossBgmField =
+        typeof(BossAreaController).GetField("bossBgm", BindingFlags.Instance | BindingFlags.NonPublic);
 
     [Test]
     public void FixAlpha4Fuyuno_BossAreasUseUniqueDefeatedFlags()
@@ -37,5 +42,37 @@ public sealed class BossAreaControllerSceneValidationTests
         Assert.Contains(GameProgressKeys.Boss01Defeated, flags);
         Assert.Contains(GameProgressKeys.Boss02Defeated, flags);
         Assert.Contains(GameProgressKeys.LastBossDefeated, flags);
+    }
+
+    [TestCase("Assets/Scenes/FixScenes/Fix_Master.unity")]
+    [TestCase("Assets/Scenes/FixScenes/future_fuyuno_master.unity")]
+    public void Scene_AllLastBossAreasUseLastBossBgm(string scenePath)
+    {
+        Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+        Assert.IsTrue(scene.IsValid(), $"Scene could not be opened: {scenePath}");
+        Assert.That(BossRootField, Is.Not.Null);
+        Assert.That(BossBgmField, Is.Not.Null);
+
+        BossAreaController[] bossAreas =
+            Object.FindObjectsByType<BossAreaController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        int lastBossAreaCount = 0;
+
+        for (int i = 0; i < bossAreas.Length; i++)
+        {
+            Transform bossRoot = (Transform)BossRootField.GetValue(bossAreas[i]);
+            if (bossRoot == null || bossRoot.GetComponent<LastBossController>() == null)
+            {
+                continue;
+            }
+
+            lastBossAreaCount++;
+            AudioClip bossBgm = (AudioClip)BossBgmField.GetValue(bossAreas[i]);
+            Assert.That(bossBgm, Is.Not.Null, $"{bossAreas[i].name} has no LastBoss BGM assigned.");
+            Assert.That(bossBgm.name, Is.EqualTo("lastbossBGM"),
+                $"{bossAreas[i].name} uses the wrong LastBoss BGM.");
+        }
+
+        Assert.That(lastBossAreaCount, Is.EqualTo(1),
+            $"{scenePath} must contain exactly one BossAreaController for LastBoss.");
     }
 }
