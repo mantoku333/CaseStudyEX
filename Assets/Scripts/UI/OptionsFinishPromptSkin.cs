@@ -255,6 +255,7 @@ public sealed class OptionsFinishPromptSkin : MonoBehaviour
 
         button.onClick.RemoveListener(action);
         button.onClick.AddListener(action);
+        UIButtonSfxPlayer.Register(button);
     }
 
     private static void Unbind(Button button, UnityEngine.Events.UnityAction action)

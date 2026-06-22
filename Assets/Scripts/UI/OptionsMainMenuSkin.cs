@@ -241,6 +241,8 @@ public sealed class OptionsMainMenuSkin : MonoBehaviour
 
         button.onClick.RemoveListener(action);
         button.onClick.AddListener(action);
+        UIButtonSfxPlayer.Register(button);
+        UIButtonSfxPlayer.RegisterHover(button);
     }
 
     private static void Unbind(Button button, UnityEngine.Events.UnityAction action)
