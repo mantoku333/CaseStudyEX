@@ -28,6 +28,7 @@ namespace Player
 
         private int currentHealth;
         private float nextDamageTime;
+        private float attackPriorityInvulnerableUntilTime;
         private bool deathNotified;
         private bool restoredFromSave;
         private AudioSource audioSource;
@@ -136,6 +137,11 @@ namespace Player
                 return false;
             }
 
+            if (Time.time < attackPriorityInvulnerableUntilTime)
+            {
+                return false;
+            }
+
             if (Time.time < nextDamageTime)
             {
                 return false;
@@ -153,6 +159,27 @@ namespace Player
             PlaySE(playerDamageClip);
             NotifyHealthChanged();
             return true;
+        }
+
+        /// <summary>
+        /// プレイヤー側の攻撃成立を優先したい短い瞬間だけ、敵からの被弾を無効化する。
+        /// 落下攻撃の着地判定など、「相打ちで気持ちよさが消える」箇所向け。
+        /// </summary>
+        public void RequestAttackPriorityInvulnerability(float duration)
+        {
+            if (duration <= 0f)
+            {
+                return;
+            }
+
+            attackPriorityInvulnerableUntilTime = Mathf.Max(
+                attackPriorityInvulnerableUntilTime,
+                Time.time + duration);
+        }
+
+        public void ClearAttackPriorityInvulnerability()
+        {
+            attackPriorityInvulnerableUntilTime = 0f;
         }
 
         /// <summary>

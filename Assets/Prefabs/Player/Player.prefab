@@ -531,6 +531,7 @@ GameObject:
   - component: {fileID: 3047304842873908124}
   - component: {fileID: 4202108349721021491}
   - component: {fileID: 2152828851043830257}
+  - component: {fileID: 9016234512487790021}
   - component: {fileID: 7711066996538408739}
   - component: {fileID: 1226412498639681019}
   - component: {fileID: 234568476194810981}
@@ -758,6 +759,53 @@ MonoBehaviour:
   dodgeCooldown: 0.5
   dodgeClip: {fileID: 8300000, guid: 3098a75f2d936463696c4c913c4d80c9, type: 3}
   dodgeVolume: 1
+--- !u!114 &9016234512487790021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bb7d3a9ef364d9ab0319b31a4b0b9e2, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDiveAttackController
+  "\u843D\u4E0B\u653B\u6483\u3092\u4F7F\u7528\u3059\u308B": 1
+  "\u767A\u52D5\u306B\u5FC5\u8981\u306A\u5730\u9762\u304B\u3089\u306E\u9AD8\u3055\u30B0\u30EA\u30C3\u30C9\u6570": 2
+  "\u9AD8\u3055\u5224\u5B9A\u306B\u4F7F\u3046\u30B0\u30EA\u30C3\u30C9": {fileID: 0}
+  "\u9AD8\u3055\u5224\u5B9A\u7528\u5730\u9762\u30EC\u30A4\u30E4\u30FC":
+    serializedVersion: 2
+    m_Bits: 0
+  "\u9AD8\u3055\u5224\u5B9A\u6700\u5927\u8DDD\u96E2": 30
+  "\u843D\u4E0B\u901F\u5EA6": 24
+  "\u843D\u4E0B\u4E2D\u306E\u6A2A\u901F\u5EA6\u7DAD\u6301\u7387": 0.1
+  "\u6700\u5927\u843D\u4E0B\u6642\u9593": 1.2
+  "\u30C0\u30E1\u30FC\u30B8\u91CF": 40
+  "\u653B\u6483\u534A\u5F84": 1.25
+  "\u653B\u6483\u5BFE\u8C61\u30EC\u30A4\u30E4\u30FC":
+    serializedVersion: 2
+    m_Bits: 4294967295
+  "\u843D\u4E0B\u4E2D\u306B\u3082\u653B\u6483\u5224\u5B9A\u3092\u51FA\u3059": 1
+  "\u843D\u4E0B\u4E2D\u653B\u6483\u534A\u5F84": 0.85
+  "\u843D\u4E0B\u4E2D\u653B\u6483\u5224\u5B9A\u30AA\u30D5\u30BB\u30C3\u30C8": {x: 0, y: -0.9}
+  "\u6575\u6483\u7834\u6642\u306B\u8DF3\u306D\u308B": 1
+  "\u8DF3\u306D\u4E0A\u304C\u308A\u901F\u5EA6": 12
+  "\u8DF3\u306D\u4E0A\u304C\u308A\u64CD\u4F5C\u6642\u9593": 0.35
+  "\u8DF3\u306D\u4E0A\u304C\u308A\u5DE6\u53F3\u8ABF\u6574\u901F\u5EA6": 4
+  "\u653B\u6483\u6210\u7ACB\u6642\u306E\u88AB\u5F3E\u7121\u52B9\u6642\u9593": 0.16
+  "\u843D\u4E0B\u653B\u6483\u30B9\u30D7\u30E9\u30A4\u30C8": {fileID: 8949642878230496639, guid: c687748d34f2c4f4b9c46603c2c38b49, type: 3}
+  "\u5BFE\u8C61\u30B9\u30D7\u30E9\u30A4\u30C8\u30EC\u30F3\u30C0\u30E9\u30FC": {fileID: 4532821241702585450}
+  "\u843D\u4E0B\u4E2D\u306FAnimator\u3092\u505C\u6B62\u3059\u308B": 1
+  "\u30B9\u30D7\u30E9\u30A4\u30C8\u4F4D\u7F6E\u88DC\u6B63": {x: 0, y: 0, z: 0}
+  "\u30B9\u30D7\u30E9\u30A4\u30C8\u30B9\u30B1\u30FC\u30EB\u500D\u7387": {x: 1, y: 1, z: 1}
+  "SE\u518D\u751FAudioSource": {fileID: 7711066996538408739}
+  "\u843D\u4E0B\u958B\u59CBSE": {fileID: 8300000, guid: 94db4f7e9ac24015be724d4df49710dd, type: 3}
+  "\u7740\u5730SE": {fileID: 8300000, guid: c0d526a935684c5c8b6ed8ee8dc8d01f, type: 3}
+  "\u6575\u30D2\u30C3\u30C8SE": {fileID: 8300000, guid: 468d982f4cce40d4872f5f6b64c0b9cb, type: 3}
+  "\u843D\u4E0B\u958B\u59CBSE\u97F3\u91CF": 1
+  "\u7740\u5730SE\u97F3\u91CF": 1
+  "\u6575\u30D2\u30C3\u30C8SE\u97F3\u91CF": 1
 --- !u!82 &7711066996538408739
 AudioSource:
   m_ObjectHideFlags: 0

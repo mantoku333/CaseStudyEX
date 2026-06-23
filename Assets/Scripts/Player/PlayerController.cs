@@ -65,6 +65,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private UmbrellaController umbrellaController;             //傘関連のスクリプト
     private UmbrellaAttackController umbrellaAttackController; //傘攻撃関連のスクリプト
     private UmbrellaParryController  umbrellaParryController;  //パリィ関連のスクリプト
+    private PlayerDiveAttackController diveAttackController;   //落下攻撃関連のスクリプト
     private ParryHitbox parryHitbox;
     private AttackHitbox[] attackHitboxes;
     private DodgeController dodgeController;                   //回避関連のスクリプト
@@ -108,6 +109,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsExternalFacingLocked => externalFacingLocked;
     public bool IsExternalMovementActive => externalMovementActive;
     public bool IsDamageKnockbackActive => Time.time < damageKnockbackEndTime;
+    public bool IsDiveAttacking => diveAttackController != null && diveAttackController.IsDiveAttacking;
 
     private void Awake()
     {
@@ -351,6 +353,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             Debug.LogError("UmbrellaParryControllerが見つかっていません");
         }
 
+        diveAttackController = GetComponent<PlayerDiveAttackController>();
+
         parryHitbox = GetComponentInChildren<ParryHitbox>();
         if (parryHitbox == null)
         {
@@ -491,6 +495,13 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             moveInput = Mathf.Clamp(move.x, -1.0f, 1.0f);
         }
 
+        if (diveAttackController != null && diveAttackController.IsDiveAttacking)
+        {
+            jumpInput = false;
+            wasDownHeld = false;
+            return;
+        }
+
         UpdateFacingDirection();
         RefreshParryColliderFacing();
 
@@ -626,6 +637,18 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                 isUmbrellaOpen &&
                 !isGround;
 
+            // 空中落下攻撃：S(下入力) + 攻撃。
+            // 傘の開閉状態ではなく、地面からグリッド2ブロック以上離れているかで発動可否を決める。
+            if (!isGround && isDownHeld)
+            {
+                if (diveAttackController != null &&
+                    diveAttackController.CanStartDiveAttackFromAir() &&
+                    diveAttackController.TryStartDiveAttack())
+                {
+                    return;
+                }
+            }
+
             // 滑空中射撃
             if (isPlayerGliding)
             {
@@ -706,6 +729,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         if (gunController != null && gunController.GetRecoiling()) { return; }
 
+        if (diveAttackController != null && diveAttackController.IsDiveAttacking) { return; }
+
         if (rigidBody2d == null) { return; }
 
         if (playerStatsData == null) { return; }
@@ -717,6 +742,13 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         bool isGliding = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open && !isGround;
 
         float horizontalInput = ResolveHorizontalMoveInput();
+
+        if (diveAttackController != null && diveAttackController.IsBounceControlActive)
+        {
+            diveAttackController.ApplyBounceHorizontalControl(horizontalInput);
+            return;
+        }
+
         float moveSpeed = isGliding
             ? umbrellaController.GetGlideMoveSpeed()
             : playerStatsData.MoveSpeed;
