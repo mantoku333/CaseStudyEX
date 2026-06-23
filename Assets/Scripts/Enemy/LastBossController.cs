@@ -24,6 +24,7 @@ namespace GameName.Enemy
         [Header("Stats")]
         [SerializeField, Min(1)] private int maxHealth = 100;
         [SerializeField, Min(1f)] private float backAttackDamageMultiplier = 2f;
+        [SerializeField, Range(0.01f, 1f)] private float shieldDamageMultiplier = 0.5f;
         [SerializeField, Min(0f)] private float moveSpeed = 8f;
         [SerializeField, Range(0.01f, 1f)] private float enrageHealthRate = 0.4f;
         [SerializeField, Min(1f)] private float enragedAttackMultiplier = 1.1f;
@@ -242,6 +243,7 @@ namespace GameName.Enemy
         {
             maxHealth = Mathf.Max(1, maxHealth);
             backAttackDamageMultiplier = Mathf.Max(1f, backAttackDamageMultiplier);
+            shieldDamageMultiplier = Mathf.Clamp(shieldDamageMultiplier, 0.01f, 1f);
             normalAttackSize.x = Mathf.Max(0.1f, normalAttackSize.x);
             normalAttackSize.y = Mathf.Max(0.1f, normalAttackSize.y);
             normalAttackForwardInset = Mathf.Max(0f, normalAttackForwardInset);
@@ -1862,12 +1864,26 @@ namespace GameName.Enemy
             }
 
             int baseDamage = attacker.PlayerAttackDamage;
-            if (baseDamage <= 0 || !isBackAttack)
+            if (baseDamage <= 0)
             {
                 return baseDamage;
             }
 
-            return Mathf.CeilToInt(baseDamage * Mathf.Max(1f, backAttackDamageMultiplier));
+            int damage = isBackAttack
+                ? Mathf.CeilToInt(baseDamage * Mathf.Max(1f, backAttackDamageMultiplier))
+                : baseDamage;
+
+            if (IsShieldDamageReductionActive())
+            {
+                damage = Mathf.CeilToInt(damage * Mathf.Clamp(shieldDamageMultiplier, 0.01f, 1f));
+            }
+
+            return damage;
+        }
+
+        private bool IsShieldDamageReductionActive()
+        {
+            return encounterActive && state != BossState.Downed && state != BossState.Dead;
         }
 
         private bool AddDownCount(int amount)
