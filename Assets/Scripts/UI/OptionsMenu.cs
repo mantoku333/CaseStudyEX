@@ -41,6 +41,8 @@ public sealed class OptionsMenu : MonoBehaviour
         "UmbrellaParryController"
     };
 
+    private static readonly List<Graphic> GraphicSearchBuffer = new List<Graphic>(16);
+
     private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
     private readonly List<MonoBehaviour> playerBehaviourBuffer = new List<MonoBehaviour>();
     private readonly Dictionary<int, float> capturedAudioBaseVolumes = new Dictionary<int, float>();
@@ -2223,17 +2225,18 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private static Graphic FindLargestGraphic(Transform root)
     {
-        Graphic[] graphics = root.GetComponentsInChildren<Graphic>(true);
-        if (graphics.Length == 0)
+        GraphicSearchBuffer.Clear();
+        root.GetComponentsInChildren(true, GraphicSearchBuffer);
+        if (GraphicSearchBuffer.Count == 0)
         {
             return null;
         }
 
         Graphic bestGraphic = null;
         float bestArea = float.MinValue;
-        for (int i = 0; i < graphics.Length; i++)
+        for (int i = 0; i < GraphicSearchBuffer.Count; i++)
         {
-            Graphic graphic = graphics[i];
+            Graphic graphic = GraphicSearchBuffer[i];
             if (graphic == null)
             {
                 continue;
@@ -2249,6 +2252,7 @@ public sealed class OptionsMenu : MonoBehaviour
             }
         }
 
+        GraphicSearchBuffer.Clear();
         return bestGraphic;
     }
 

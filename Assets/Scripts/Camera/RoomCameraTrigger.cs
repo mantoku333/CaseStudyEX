@@ -714,11 +714,9 @@ public class RoomCameraTrigger : MonoBehaviour
 
         followCamera = null;
         directFollowCamera = null;
-        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
+        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get(includeInactive: true);
 
-        for (int i = 0; i < cameras.Length; i++)
+        for (int i = 0; i < cameras.Count; i++)
         {
             CinemachineCamera camera = cameras[i];
             if (camera == null)

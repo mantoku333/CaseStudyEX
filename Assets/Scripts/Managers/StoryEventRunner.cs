@@ -19,6 +19,7 @@ public sealed class StoryEventRunner : MonoBehaviour
     [SerializeField] private float letterBoxSlidePixels = 120f;
 
     private readonly Queue<StoryEventDefinition> queuedEvents = new Queue<StoryEventDefinition>();
+    private readonly List<RectTransform> letterBoxRectTransformBuffer = new List<RectTransform>(8);
     private StoryEventDefinition activeEvent;
     private DialogueRunner activeDialogueRunner;
     private Coroutine activeRoutine;
@@ -342,8 +343,8 @@ public sealed class StoryEventRunner : MonoBehaviour
             return;
         }
 
-        CinemachineCamera[] cameras = Object.FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
-        for (int i = 0; i < cameras.Length; i++)
+        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get();
+        for (int i = 0; i < cameras.Count; i++)
         {
             if (cameras[i] == null)
             {
@@ -563,10 +564,10 @@ public sealed class StoryEventRunner : MonoBehaviour
         }
 
         string targetName = eventCameraName.Trim();
-        CinemachineCamera[] cameras = Object.FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get(forceRefresh: true);
         int maxPriority = int.MinValue;
 
-        for (int i = 0; i < cameras.Length; i++)
+        for (int i = 0; i < cameras.Count; i++)
         {
             if (cameras[i] == null)
             {
@@ -738,16 +739,19 @@ public sealed class StoryEventRunner : MonoBehaviour
             return child as RectTransform;
         }
 
-        RectTransform[] rectTransforms = root.GetComponentsInChildren<RectTransform>(true);
-        for (int i = 0; i < rectTransforms.Length; i++)
+        letterBoxRectTransformBuffer.Clear();
+        root.GetComponentsInChildren(true, letterBoxRectTransformBuffer);
+        for (int i = 0; i < letterBoxRectTransformBuffer.Count; i++)
         {
-            RectTransform candidate = rectTransforms[i];
+            RectTransform candidate = letterBoxRectTransformBuffer[i];
             if (candidate != null && candidate.name == barName)
             {
+                letterBoxRectTransformBuffer.Clear();
                 return candidate;
             }
         }
 
+        letterBoxRectTransformBuffer.Clear();
         return null;
     }
 

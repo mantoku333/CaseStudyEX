@@ -31,6 +31,8 @@ public sealed class StoryEventController : MonoBehaviour
         "UmbrellaParryController"
     };
 
+    private static readonly List<RectTransform> LetterBoxRectTransformBuffer = new List<RectTransform>(8);
+
     [Serializable]
     private sealed class ActorBinding
     {
@@ -1670,16 +1672,19 @@ public sealed class StoryEventController : MonoBehaviour
             return child as RectTransform;
         }
 
-        RectTransform[] rectTransforms = root.GetComponentsInChildren<RectTransform>(includeInactive: true);
-        for (int i = 0; i < rectTransforms.Length; i++)
+        LetterBoxRectTransformBuffer.Clear();
+        root.GetComponentsInChildren(true, LetterBoxRectTransformBuffer);
+        for (int i = 0; i < LetterBoxRectTransformBuffer.Count; i++)
         {
-            RectTransform candidate = rectTransforms[i];
+            RectTransform candidate = LetterBoxRectTransformBuffer[i];
             if (candidate != null && candidate.name == barName)
             {
+                LetterBoxRectTransformBuffer.Clear();
                 return candidate;
             }
         }
 
+        LetterBoxRectTransformBuffer.Clear();
         return null;
     }
 
@@ -1849,8 +1854,8 @@ public sealed class StoryEventController : MonoBehaviour
         hasCachedEventCameraPriority = true;
 
         int maxPriority = int.MinValue;
-        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
-        for (int i = 0; i < cameras.Length; i++)
+        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get(forceRefresh: true);
+        for (int i = 0; i < cameras.Count; i++)
         {
             if (cameras[i] != null)
             {
@@ -1915,11 +1920,9 @@ public sealed class StoryEventController : MonoBehaviour
     {
         CinemachineCamera bestCamera = null;
         int bestPriority = int.MinValue;
-        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
-            FindObjectsInactive.Exclude,
-            FindObjectsSortMode.None);
+        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get();
 
-        for (int i = 0; i < cameras.Length; i++)
+        for (int i = 0; i < cameras.Count; i++)
         {
             CinemachineCamera camera = cameras[i];
             if (camera == null || camera == excludedCamera || IsRuntimeEventCamera(camera))
@@ -2178,7 +2181,7 @@ public sealed class StoryEventController : MonoBehaviour
 
     private static GameObject ResolvePlayerObjectForCameraRestore()
     {
-        GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
+        GameObject taggedPlayer = global::PlayerReferenceCache.GetGameObject();
         if (taggedPlayer != null)
         {
             return taggedPlayer;
@@ -2259,10 +2262,10 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         string targetName = eventCameraName.Trim();
-        CinemachineCamera[] cameras =
-            FindObjectsByType<CinemachineCamera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        IReadOnlyList<CinemachineCamera> cameras =
+            CinemachineCameraCache.Get(includeInactive: true, forceRefresh: true);
         CinemachineCamera fallbackCamera = null;
-        for (int i = 0; i < cameras.Length; i++)
+        for (int i = 0; i < cameras.Count; i++)
         {
             CinemachineCamera camera = cameras[i];
             if (camera == null || IsRuntimeEventCamera(camera))

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -55,9 +56,15 @@ public class CameraManager : MonoBehaviour
 
     private void FindCameras()
     {
-        var cameras = Object.FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
-        foreach (CinemachineCamera cam in cameras)
+        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get();
+        for (int i = 0; i < cameras.Count; i++)
         {
+            CinemachineCamera cam = cameras[i];
+            if (cam == null)
+            {
+                continue;
+            }
+
             if (cam.gameObject.name == "CN_FollowCam")
             {
                 followCam = cam;
@@ -345,14 +352,13 @@ public class CameraManager : MonoBehaviour
 
     private static Vector3 ResolveImpulsePosition()
     {
-        CinemachineCamera[] cameras = Object.FindObjectsByType<CinemachineCamera>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
+        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get(includeInactive: true);
 
         CinemachineCamera activeCamera = null;
         int activePriority = int.MinValue;
-        foreach (CinemachineCamera camera in cameras)
+        for (int i = 0; i < cameras.Count; i++)
         {
+            CinemachineCamera camera = cameras[i];
             if (camera == null || !camera.isActiveAndEnabled)
             {
                 continue;
@@ -377,12 +383,11 @@ public class CameraManager : MonoBehaviour
 
     private static void EnsureImpulseListeners(int channelMask)
     {
-        var cameras = Object.FindObjectsByType<CinemachineCamera>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
+        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get(includeInactive: true);
 
-        foreach (CinemachineCamera camera in cameras)
+        for (int i = 0; i < cameras.Count; i++)
         {
+            CinemachineCamera camera = cameras[i];
             if (camera == null)
             {
                 continue;
@@ -462,6 +467,83 @@ public static class MainCameraCache
     {
         cachedCamera = null;
         nextRefreshTime = 0f;
+    }
+
+    private static void HandleActiveSceneChanged(
+        UnityEngine.SceneManagement.Scene previous,
+        UnityEngine.SceneManagement.Scene current)
+    {
+        Invalidate();
+    }
+}
+
+public static class CinemachineCameraCache
+{
+    private const float RefreshInterval = 0.5f;
+
+    private static readonly System.Collections.Generic.List<CinemachineCamera> activeCameras =
+        new System.Collections.Generic.List<CinemachineCamera>();
+    private static readonly System.Collections.Generic.List<CinemachineCamera> allCameras =
+        new System.Collections.Generic.List<CinemachineCamera>();
+
+    private static float nextActiveRefreshTime;
+    private static float nextAllRefreshTime;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void Reset()
+    {
+        activeCameras.Clear();
+        allCameras.Clear();
+        nextActiveRefreshTime = 0f;
+        nextAllRefreshTime = 0f;
+        UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= HandleActiveSceneChanged;
+        UnityEngine.SceneManagement.SceneManager.activeSceneChanged += HandleActiveSceneChanged;
+    }
+
+    public static IReadOnlyList<CinemachineCamera> Get(bool includeInactive = false, bool forceRefresh = false)
+    {
+        float now = Time.unscaledTime;
+        if (includeInactive)
+        {
+            if (forceRefresh || now >= nextAllRefreshTime)
+            {
+                Refresh(allCameras, FindObjectsInactive.Include);
+                nextAllRefreshTime = now + RefreshInterval;
+            }
+
+            return allCameras;
+        }
+
+        if (forceRefresh || now >= nextActiveRefreshTime)
+        {
+            Refresh(activeCameras, FindObjectsInactive.Exclude);
+            nextActiveRefreshTime = now + RefreshInterval;
+        }
+
+        return activeCameras;
+    }
+
+    public static void Invalidate()
+    {
+        nextActiveRefreshTime = 0f;
+        nextAllRefreshTime = 0f;
+    }
+
+    private static void Refresh(
+        System.Collections.Generic.List<CinemachineCamera> target,
+        FindObjectsInactive inactiveMode)
+    {
+        target.Clear();
+        CinemachineCamera[] cameras = Object.FindObjectsByType<CinemachineCamera>(
+            inactiveMode,
+            FindObjectsSortMode.None);
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            if (cameras[i] != null)
+            {
+                target.Add(cameras[i]);
+            }
+        }
     }
 
     private static void HandleActiveSceneChanged(

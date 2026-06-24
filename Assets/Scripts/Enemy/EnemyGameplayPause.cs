@@ -5,7 +5,6 @@ namespace GameName.Enemy
 {
     public static class EnemyGameplayPause
     {
-        private const string PlayerTag = "Player";
         private const float LookupInterval = 0.5f;
 
         private static global::PlayerController cachedPlayerController;
@@ -53,32 +52,9 @@ namespace GameName.Enemy
 
         private static global::PlayerController ResolvePlayerController()
         {
-            GameObject taggedPlayer = global::PlayerReferenceCache.GetGameObject(PlayerTag);
-            if (taggedPlayer != null)
-            {
-                global::PlayerController taggedController = taggedPlayer.GetComponent<global::PlayerController>();
-                if (taggedController == null)
-                {
-                    taggedController = taggedPlayer.GetComponentInParent<global::PlayerController>();
-                }
-
-                if (IsPlayerControllerUsable(taggedController))
-                {
-                    return taggedController;
-                }
-            }
-
-            global::PlayerController[] candidates =
-                Object.FindObjectsByType<global::PlayerController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            for (int i = 0; i < candidates.Length; i++)
-            {
-                if (IsPlayerControllerUsable(candidates[i]))
-                {
-                    return candidates[i];
-                }
-            }
-
-            return null;
+            global::PlayerController playerController =
+                global::PlayerReferenceCache.GetController(forceRefresh: true);
+            return IsPlayerControllerUsable(playerController) ? playerController : null;
         }
 
         private static bool IsPlayerControllerUsable(global::PlayerController playerController)

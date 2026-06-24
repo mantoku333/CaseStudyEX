@@ -363,7 +363,7 @@ public partial class SROptions
 
     private static PlayerHealth ResolvePlayerHealth()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        GameObject playerObject = global::PlayerReferenceCache.GetGameObject();
         if (playerObject != null)
         {
             PlayerHealth playerHealth = playerObject.GetComponent<PlayerHealth>();
@@ -472,7 +472,7 @@ public partial class SROptions
 
     private static global::PlayerController ResolvePlayerController()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        GameObject playerObject = global::PlayerReferenceCache.GetGameObject();
         if (playerObject != null)
         {
             global::PlayerController player = playerObject.GetComponent<global::PlayerController>();

@@ -26,6 +26,8 @@ namespace Metroidvania.UI
     public class BubbleDialogueView : DialoguePresenterBase
     {
         private const float MainCameraRefreshInterval = 0.5f;
+        private static readonly List<RectTransform> RectTransformSearchBuffer = new List<RectTransform>(16);
+        private static readonly List<Transform> TransformSearchBuffer = new List<Transform>(32);
 
         public delegate bool SpeakerTargetResolver(string characterName, out Transform? target, out Vector3 offset);
 
@@ -963,16 +965,19 @@ namespace Metroidvania.UI
                 return null;
             }
 
-            RectTransform[] rects = root.GetComponentsInChildren<RectTransform>(true);
-            for (int i = 0; i < rects.Length; i++)
+            RectTransformSearchBuffer.Clear();
+            root.GetComponentsInChildren(true, RectTransformSearchBuffer);
+            for (int i = 0; i < RectTransformSearchBuffer.Count; i++)
             {
-                RectTransform rect = rects[i];
+                RectTransform rect = RectTransformSearchBuffer[i];
                 if (rect != null && string.Equals(rect.name, objectName, StringComparison.OrdinalIgnoreCase))
                 {
+                    RectTransformSearchBuffer.Clear();
                     return rect;
                 }
             }
 
+            RectTransformSearchBuffer.Clear();
             return null;
         }
 
@@ -983,16 +988,19 @@ namespace Metroidvania.UI
                 return null;
             }
 
-            Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
-            for (int i = 0; i < transforms.Length; i++)
+            TransformSearchBuffer.Clear();
+            root.GetComponentsInChildren(true, TransformSearchBuffer);
+            for (int i = 0; i < TransformSearchBuffer.Count; i++)
             {
-                Transform tf = transforms[i];
+                Transform tf = TransformSearchBuffer[i];
                 if (tf != null && string.Equals(tf.name, objectName, StringComparison.OrdinalIgnoreCase))
                 {
+                    TransformSearchBuffer.Clear();
                     return tf.gameObject;
                 }
             }
 
+            TransformSearchBuffer.Clear();
             return null;
         }
 

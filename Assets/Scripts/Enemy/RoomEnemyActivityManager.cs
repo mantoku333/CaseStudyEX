@@ -421,7 +421,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         cachedPlayerColliderRoot = null;
         cachedPlayerColliders.Clear();
 
-        GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
+        GameObject taggedPlayer = global::PlayerReferenceCache.GetGameObject();
         if (taggedPlayer != null && taggedPlayer.scene == managedScene)
         {
             playerTransform = taggedPlayer.transform;
@@ -429,16 +429,10 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             return true;
         }
 
-        PlayerHealth[] players = FindObjectsByType<PlayerHealth>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < players.Length; i++)
+        PlayerHealth playerHealth = Object.FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        if (playerHealth != null && playerHealth.gameObject.scene == managedScene)
         {
-            PlayerHealth player = players[i];
-            if (player == null || player.gameObject.scene != managedScene)
-            {
-                continue;
-            }
-
-            playerTransform = player.transform;
+            playerTransform = playerHealth.transform;
             playerPosition = ResolvePlayerReferencePoint(playerTransform, playerTransform.position);
             return true;
         }
@@ -735,8 +729,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
     private static void FindRoomTriggers(Scene scene, List<RoomCameraTrigger> validTriggers)
     {
         validTriggers.Clear();
-        RoomCameraTrigger[] allTriggers = FindObjectsByType<RoomCameraTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < allTriggers.Length; i++)
+        IReadOnlyList<RoomCameraTrigger> allTriggers = RoomCameraTrigger.RegisteredTriggers;
+        for (int i = 0; i < allTriggers.Count; i++)
         {
             RoomCameraTrigger trigger = allTriggers[i];
             if (trigger == null ||

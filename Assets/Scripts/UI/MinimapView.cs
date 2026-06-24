@@ -9,6 +9,7 @@ public sealed class MinimapView : MonoBehaviour
     private const string MiniMapBackgroundName = "MiniMapBackGround";
     private const float MainCameraRefreshInterval = 0.5f;
     private const float PlayerReferenceSearchInterval = 0.25f;
+    private static readonly List<RectTransform> RectTransformSearchBuffer = new List<RectTransform>(32);
 
     [Header("Minimap Panel")]
     [SerializeField] private Vector2 miniMapSize = new Vector2(290f, 170f);
@@ -1089,15 +1090,19 @@ public sealed class MinimapView : MonoBehaviour
             return null;
         }
 
-        RectTransform[] children = root.GetComponentsInChildren<RectTransform>(true);
-        for (int i = 0; i < children.Length; i++)
+        RectTransformSearchBuffer.Clear();
+        root.GetComponentsInChildren(true, RectTransformSearchBuffer);
+        for (int i = 0; i < RectTransformSearchBuffer.Count; i++)
         {
-            if (children[i] != null && children[i].gameObject.name == objectName)
+            RectTransform child = RectTransformSearchBuffer[i];
+            if (child != null && child.gameObject.name == objectName)
             {
-                return children[i];
+                RectTransformSearchBuffer.Clear();
+                return child;
             }
         }
 
+        RectTransformSearchBuffer.Clear();
         return null;
     }
 
