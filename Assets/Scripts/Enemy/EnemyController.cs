@@ -54,6 +54,7 @@ namespace GameName.Enemy
         private bool turnCheckScheduled;
 
         private static readonly System.Collections.Generic.List<Collider2D> ShutterWallColliders = new System.Collections.Generic.List<Collider2D>();
+        private static readonly System.Collections.Generic.List<Collider2D> ShutterWallColliderBuffer = new System.Collections.Generic.List<Collider2D>();
         private static Scene cachedShutterWallScene;
         private static bool shutterWallCacheValid;
 
@@ -546,10 +547,11 @@ namespace GameName.Enemy
                     continue;
                 }
 
-                Collider2D[] colliders = shutterWall.GetComponentsInChildren<Collider2D>(true);
-                for (int j = 0; j < colliders.Length; j++)
+                ShutterWallColliderBuffer.Clear();
+                shutterWall.GetComponentsInChildren(true, ShutterWallColliderBuffer);
+                for (int j = 0; j < ShutterWallColliderBuffer.Count; j++)
                 {
-                    Collider2D collider = colliders[j];
+                    Collider2D collider = ShutterWallColliderBuffer[j];
                     if (collider != null && !collider.isTrigger)
                     {
                         ShutterWallColliders.Add(collider);

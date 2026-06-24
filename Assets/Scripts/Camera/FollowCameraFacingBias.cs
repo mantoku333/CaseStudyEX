@@ -1,6 +1,7 @@
 using Unity.Cinemachine;
 using UnityEngine;
 using Player;
+using System.Collections.Generic;
 
 /// <summary>
 /// Shifts the follow target slightly ahead of the player based on facing.
@@ -24,6 +25,7 @@ public sealed class FollowCameraFacingBias : MonoBehaviour
     private IPlayerViewStateProvider facingProvider;
     private Rigidbody2D targetRigidbody;
     private Transform cachedTrackingTarget;
+    private static readonly List<MonoBehaviour> BehaviourBuffer = new List<MonoBehaviour>();
     private float baseComposerOffsetY;
     private Vector3 baseComposerDamping;
     private Vector3 baseDirectFollowOffset;
@@ -208,10 +210,11 @@ public sealed class FollowCameraFacingBias : MonoBehaviour
         Transform current = trackingTarget;
         while (current != null)
         {
-            MonoBehaviour[] behaviours = current.GetComponents<MonoBehaviour>();
-            for (int i = 0; i < behaviours.Length; i++)
+            BehaviourBuffer.Clear();
+            current.GetComponents(BehaviourBuffer);
+            for (int i = 0; i < BehaviourBuffer.Count; i++)
             {
-                if (behaviours[i] is IPlayerViewStateProvider stateProvider)
+                if (BehaviourBuffer[i] is IPlayerViewStateProvider stateProvider)
                 {
                     return stateProvider;
                 }

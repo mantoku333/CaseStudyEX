@@ -3017,6 +3017,7 @@ public sealed class StoryEventController : MonoBehaviour
 
         private readonly Rigidbody2D target;
         private readonly RaycastHit2D[] castHits = new RaycastHit2D[8];
+        private readonly List<Collider2D> colliderBuffer = new List<Collider2D>();
         private readonly Vector2 linearVelocity;
         private readonly float angularVelocity;
         private readonly bool preserveVelocityOnRestore;
@@ -3131,10 +3132,11 @@ public sealed class StoryEventController : MonoBehaviour
 
         private Collider2D ResolveBodyCollider()
         {
-            Collider2D[] colliders = target.GetComponents<Collider2D>();
-            for (int i = 0; i < colliders.Length; i++)
+            colliderBuffer.Clear();
+            target.GetComponents(colliderBuffer);
+            for (int i = 0; i < colliderBuffer.Count; i++)
             {
-                Collider2D collider = colliders[i];
+                Collider2D collider = colliderBuffer[i];
                 if (collider != null && collider.enabled && !collider.isTrigger)
                 {
                     return collider;
