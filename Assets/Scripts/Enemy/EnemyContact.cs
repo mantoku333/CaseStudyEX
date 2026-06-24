@@ -92,6 +92,11 @@ namespace Metroidvania.Enemy
                 return;
             }
 
+            if (Time.time < nextHitTime)
+            {
+                return;
+            }
+
             if (!IsOverlappingPlayer())
             {
                 return;
@@ -227,16 +232,6 @@ namespace Metroidvania.Enemy
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log($"[EnemyContact] パリィ後なので接触ダメージ無効 frame={Time.frameCount}");
 #endif
-                return;
-            }
-
-            if (Time.time < nextHitTime)
-            {
-                return;
-            }
-
-            if (Time.time < nextHitTime)
-            {
                 return;
             }
 

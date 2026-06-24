@@ -21,6 +21,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
     private bool sceneHasPrologueSource;
     private bool gatingActive;
     private Transform playerTransform;
+    private Transform cachedPlayerColliderRoot;
+    private Collider2D[] cachedPlayerColliders = new Collider2D[0];
     private RoomCameraTrigger inferredActiveRoom;
     private RoomCameraTrigger lastResolvedActiveRoom;
     private float nextPlayerRoomRefreshTime;
@@ -133,6 +135,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         sceneHasPrologueSource = HasScenePrologueSource(managedScene);
         roomTriggers = FindRoomTriggers(managedScene);
         playerTransform = null;
+        cachedPlayerColliderRoot = null;
+        cachedPlayerColliders = new Collider2D[0];
         inferredActiveRoom = ResolveActiveRoomFromPlayer();
         lastResolvedActiveRoom = inferredActiveRoom;
         nextPlayerRoomRefreshTime = Time.unscaledTime + PlayerRoomRefreshInterval;
@@ -418,6 +422,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         }
 
         playerTransform = null;
+        cachedPlayerColliderRoot = null;
+        cachedPlayerColliders = new Collider2D[0];
 
         GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
         if (taggedPlayer != null && taggedPlayer.scene == managedScene)
@@ -445,16 +451,21 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         return false;
     }
 
-    private static Vector3 ResolvePlayerReferencePoint(Transform player, Vector3 fallbackPosition)
+    private Vector3 ResolvePlayerReferencePoint(Transform player, Vector3 fallbackPosition)
     {
         if (player == null)
         {
             return fallbackPosition;
         }
 
-        Collider2D[] colliders = player.GetComponentsInChildren<Collider2D>();
-        if (TryResolveBoundsCenter(colliders, false, out Vector3 center) ||
-            TryResolveBoundsCenter(colliders, true, out center))
+        if (cachedPlayerColliderRoot != player)
+        {
+            cachedPlayerColliderRoot = player;
+            cachedPlayerColliders = player.GetComponentsInChildren<Collider2D>();
+        }
+
+        if (TryResolveBoundsCenter(cachedPlayerColliders, false, out Vector3 center) ||
+            TryResolveBoundsCenter(cachedPlayerColliders, true, out center))
         {
             return center;
         }

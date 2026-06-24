@@ -25,6 +25,8 @@ namespace Metroidvania.UI
     /// </summary>
     public class BubbleDialogueView : DialoguePresenterBase
     {
+        private const float MainCameraRefreshInterval = 0.5f;
+
         public delegate bool SpeakerTargetResolver(string characterName, out Transform? target, out Vector3 offset);
 
         [Header("UI Elements")]
@@ -87,6 +89,7 @@ namespace Metroidvania.UI
         private bool _hasLoggedAutoSizeSkipReason;
         private bool _lineIsVisible;
         private bool _presentationEnabled = true;
+        private float _nextMainCameraRefreshTime;
 
         private void Awake()
         {
@@ -175,16 +178,7 @@ namespace Metroidvania.UI
                 return;
             }
 
-            Camera currentMainCamera = Camera.main;
-            if (currentMainCamera != null && currentMainCamera != _mainCamera)
-            {
-                _mainCamera = currentMainCamera;
-            }
-
-            if (_mainCamera == null)
-            {
-                _mainCamera = currentMainCamera;
-            }
+            RefreshMainCameraIfNeeded();
 
             if (_currentTarget == null || _mainCamera == null)
             {
@@ -221,6 +215,21 @@ namespace Metroidvania.UI
             }
 
             bubblePanel.transform.position = screenPos;
+        }
+
+        private void RefreshMainCameraIfNeeded()
+        {
+            if (_mainCamera != null && _mainCamera.isActiveAndEnabled && Time.unscaledTime < _nextMainCameraRefreshTime)
+            {
+                return;
+            }
+
+            _nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
+            Camera currentMainCamera = Camera.main;
+            if (currentMainCamera != null)
+            {
+                _mainCamera = currentMainCamera;
+            }
         }
 
         private Vector3 ClampToScreen(Vector3 screenPos)
