@@ -21,7 +21,7 @@ MonoBehaviour:
   dodgeCooldown: 3
   attackSecondsPerAttack: 0.5
   umbrellaAttackDuration: 0.3
-  gunRecoilForce: 20
+  gunRecoilForce: 25
   gunRecoilDuration: 0.1
   reloadSeconds: 1.5
   parryDuration: 0.1

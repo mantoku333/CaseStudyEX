@@ -9,6 +9,7 @@ public class UmbrellaController : MonoBehaviour
 
     //--------------能力関連------------------
     private Player.PlayerAbilityController playerAbilityController;
+    private PlayerDiveAttackController diveAttackController;
 
     /// <summary>
     /// 傘状態関連
@@ -46,6 +47,7 @@ public class UmbrellaController : MonoBehaviour
         gunController = GetComponentInParent<GunController>();
         audioSource = GetComponentInParent<AudioSource>();
         playerAbilityController = GetComponentInParent<Player.PlayerAbilityController>();
+        diveAttackController = GetComponentInParent<PlayerDiveAttackController>();
 
         if (openDebugSprite == null && spriteRenderer != null)
         {
@@ -181,6 +183,8 @@ public class UmbrellaController : MonoBehaviour
         if (umbrellaState != UmbrellaState.Open) {  return; }
 
         if (gunController != null && gunController.GetRecoiling()) { return; }
+
+        if (diveAttackController != null && diveAttackController.IsDiveAttacking) { return; }
 
         if (rigidBody2D.linearVelocity.y >= 0) { return; }
 

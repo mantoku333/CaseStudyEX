@@ -1,0 +1,136 @@
+{"kind":"deck","id":"pr/9873fz","name":"Deck"}
+{"kind":"layout","layoutId":"/ppt/slideMasters/slideMaster1.xml","name":"","type":"master","placeholders":[{"name":"title","type":"title","textPreview":"Click to edit Master title style"},{"name":"body","type":"body","textPreview":"Click to edit Master text styles | Second level | Third level | Fourth level | Fifth level"},{"name":"footer","type":"footer"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout1.xml","name":"Title Slide","placeholders":[{"name":"title","type":"title","textPreview":"Click to edit Master title style"},{"name":"subtitle","type":"subtitle","textPreview":"Click to edit Master subtitle style"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout2.xml","name":"Title and Content","placeholders":[{"name":"text placeholder 2","textPreview":"Click to edit Master text styles | Second level | Third level | Fourth level | Fifth level"},{"name":"footer","type":"footer"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"},{"name":"title","type":"title","textPreview":"Click to edit Master title style"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout3.xml","name":"Two Content","placeholders":[{"name":"text placeholder 2","textPreview":"Click to edit Master text styles | Second level | Third level | Fourth level | Fifth level"},{"name":"footer","type":"footer"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"},{"name":"text placeholder 2","textPreview":"Click to edit Master text styles | Second level | Third level | Fourth level | Fifth level"},{"name":"title","type":"title","textPreview":"Click to edit Master title style"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout4.xml","name":"Three Content","placeholders":[{"name":"text placeholder 2","textPreview":"Click to edit Master text styles | Second level | Third level | Fourth level | Fifth level"},{"name":"footer","type":"footer"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"},{"name":"text placeholder 2","textPreview":"Click to edit Master text styles | Second level | Third level | Fourth level | Fifth level"},{"name":"text placeholder 2","textPreview":"Click to edit Master text styles | Second level | Third level | Fourth level | Fifth level"},{"name":"title","type":"title","textPreview":"Click to edit Master title style"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout5.xml","name":"Four Content","placeholders":[{"name":"text placeholder 2","textPreview":"Click to edit Master"},{"name":"footer","type":"footer"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"},{"name":"title","type":"title","textPreview":"Click to edit Master title style"},{"name":"body","type":"body","textPreview":"Click to edit Master"},{"name":"text placeholder 2","textPreview":"Click to edit Master"},{"name":"body","type":"body","textPreview":"Click to edit Master"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout6.xml","name":"Title Only","placeholders":[{"name":"footer","type":"footer"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"},{"name":"title","type":"title","textPreview":"Click to edit Master title style"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout7.xml","name":"Footer Only","placeholders":[{"name":"footer","type":"footer"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout8.xml","name":"Blank"}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout9.xml","name":"36 Field Grid"}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout10.xml","name":"48 Field Grid"}
+{"kind":"slide","id":"sl/2x4nap4r","slide":1,"title":"1","textShapes":3}
+{"kind":"textbox","id":"sh/0z61032l","slide":1,"name":"Google Shape;532;p58","placeholder":"slideNumber","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/pkzupwb2","slide":1,"name":"Google Shape;533;p58","placeholder":"title","text":"優雅に、\n戦場を通り抜ける。","textPreview":"優雅に、 | 戦場を通り抜ける。","textChars":14,"textLines":2,"bbox":[41.33,36.12,581.33,281.22]}
+{"kind":"textbox","id":"sh/5gbq1ory","slide":1,"name":"Google Shape;533;p58","text":"戦闘アクション再設計仕様書\nConcept / Combat Loop / Prototype","textPreview":"戦闘アクション再設計仕様書 | Concept / Combat Loop / Prototype","textChars":47,"textLines":2,"bbox":[657.33,451.14,581.33,222.32]}
+{"kind":"image","id":"im/j6tovaho","slide":1,"name":"","geometry":"rect","alt":"傘を差して進むイリスのタイトルイラスト","bbox":[622.67,0,657.33,720]}
+{"kind":"notes","id":"nt/2x4nap4r","slide":1,"text":""}
+{"kind":"slide","id":"sl/pg3ex0nu","slide":2,"title":"2","textShapes":8}
+{"kind":"textbox","id":"sh/p0bi9s36","slide":2,"name":"Google Shape;532;p58","placeholder":"slideNumber","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/0fepkzup","slide":2,"name":"Google Shape;533;p58","placeholder":"title","text":"なぜ、今の戦闘は噛み合わないのか","textPreview":"なぜ、今の戦闘は噛み合わないのか","textChars":16,"textLines":1,"bbox":[41.33,36.12,822.67,61.06]}
+{"kind":"shape","id":"sh/5o7qpg3e","slide":2,"name":"Rounded Rectangle 1","bbox":[41.68,317.62,580.99,138.67]}
+{"kind":"textbox","id":"sh/g3ex0nux","slide":2,"name":"Content Placeholder 10","text":"個別の便利技","textPreview":"個別の便利技","textChars":6,"textLines":1,"bbox":[72.89,343.75,523.56,92.16]}
+{"kind":"textbox","id":"sh/r65wjudg","slide":2,"name":"Content Placeholder 15","text":"成功しても中立へ戻る\n結局は通常攻撃でHPを削る\n次の行動へつながらない","textPreview":"成功しても中立へ戻る | 結局は通常攻撃でHPを削る | 次の行動へつながらない","textChars":36,"textLines":3,"bbox":[72.89,474,549.78,102.67]}
+{"kind":"shape","id":"sh/rytsvu9k","slide":2,"name":"Rounded Rectangle 7","bbox":[657.3,317.62,580.99,138.67]}
+{"kind":"textbox","id":"sh/lwval87e","slide":2,"name":"Content Placeholder 10","text":"ひと続きの舞踏","textPreview":"ひと続きの舞踏","textChars":7,"textLines":1,"bbox":[688.51,343.75,523.56,92.16]}
+{"kind":"textbox","id":"sh/3q5o7qpg","slide":2,"name":"Content Placeholder 15","text":"敵の攻撃を移動に利用する\n成功が次の行動を開く\n流れの中で敵が倒れる","textPreview":"敵の攻撃を移動に利用する | 成功が次の行動を開く | 流れの中で敵が倒れる","textChars":34,"textLines":3,"bbox":[688.51,474,549.78,102.67]}
+{"kind":"textbox","id":"sh/w3m94fu1","slide":2,"name":"Content Placeholder 15","text":"現状\n滑空・銃反動・ブリンク・パリィは、どれも単体では優雅に見える。\nしかし戦闘では「危険を避ける別々の便利技」になり、倒し方へ収束していない。","textPreview":"現状 | 滑空・銃反動・ブリンク・パリィは、どれも単体では優雅に見える。 | しかし戦闘では「危険を避ける別々の便利技」になり、倒し方へ収束していない。","textChars":72,"textLines":3,"bbox":[42.09,121.52,1197.33,171.05]}
+{"kind":"textbox","id":"sh/7u54zido","slide":2,"name":"Content Placeholder 15","text":"不足しているのはアクション数ではなく、全アクションを束ねる「戦闘の文法」である。","textPreview":"不足しているのはアクション数ではなく、全アクションを束ねる「戦闘の文法」である。","textChars":40,"textLines":1,"bbox":[42.09,589.81,1197.33,55.62]}
+{"kind":"notes","id":"nt/pg3ex0nu","slide":2,"text":""}
+{"kind":"slide","id":"sl/s72x4nap","slide":3,"title":"3","textShapes":4}
+{"kind":"textbox","id":"sh/0nuxc3yl","slide":3,"name":"Google Shape;532;p58","placeholder":"slideNumber","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/p8nqxs72","slide":3,"name":"Google Shape;533;p58","placeholder":"title","text":"優雅さは、イリスとプレイヤーが\n同時に身につけていくもの。","textPreview":"優雅さは、イリスとプレイヤーが | 同時に身につけていくもの。","textChars":29,"textLines":2,"bbox":[41.33,36.12,992,385.22]}
+{"kind":"shape","id":"sh/vy90je9c","slide":3,"name":"Rounded Rectangle 9","bbox":[452.38,353.33,374.67,276]}
+{"kind":"shape","id":"sh/6dcbulwv","slide":3,"name":"Rounded Rectangle 10","bbox":[864,353.33,374.67,276]}
+{"kind":"textbox","id":"sh/d4vmtwra","slide":3,"name":"Content Placeholder 9","text":"イリスの変化\n臆病で逃げるだけだった少女が、ノクスを信頼し、敵の前でも歩みを止めなくなる。","textPreview":"イリスの変化 | 臆病で逃げるだけだった少女が、ノクスを信頼し、敵の前でも歩みを止めなくなる。","textChars":45,"textLines":2,"bbox":[485.23,435.29,309.64,150.43]}
+{"kind":"textbox","id":"sh/oj2t83it","slide":3,"name":"Content Placeholder 10","text":"プレイヤーの変化\n単独の回避技として覚えた力が、解放のたびに結びつき、一つの舞踏へ変わる。","textPreview":"プレイヤーの変化 | 単独の回避技として覚えた力が、解放のたびに結びつき、一つの舞踏へ変わる。","textChars":45,"textLines":2,"bbox":[896.18,435.29,309.64,150.43]}
+{"kind":"shape","id":"sh/vmtwra5g","slide":3,"name":"Google Shape;340;p61","bbox":[485.84,387.83,24.55,24.54]}
+{"kind":"shape","id":"sh/61032lsz","slide":3,"name":"Google Shape;340;p61","bbox":[895.88,387.83,24.55,24.54]}
+{"kind":"notes","id":"nt/s72x4nap","slide":3,"text":""}
+{"kind":"slide","id":"sl/val87ed8","slide":4,"title":"4","textShapes":14}
+{"kind":"textbox","id":"sh/at47y1kr","slide":4,"name":"Google Shape;532;p58","placeholder":"slideNumber","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":4,"name":"Google Shape;533;p58","placeholder":"title","text":"成長：逃走が、\n優雅な前進へ変わる","textPreview":"成長：逃走が、 | 優雅な前進へ変わる","textChars":17,"textLines":2,"bbox":[41.33,36.12,374.67,109.97]}
+{"kind":"textbox","id":"sh/1w7mp0bi","slide":4,"name":"Content Placeholder 10","text":"空中で攻撃を待ち、敵配置を読み、連携時間を維持する。","textPreview":"空中で攻撃を待ち、敵配置を読み、連携時間を維持する。","textChars":26,"textLines":1,"bbox":[660.62,41.33,578.04,68]}
+{"kind":"textbox","id":"sh/qtcj6tov","slide":4,"name":"Content Placeholder 10","text":"滑空","textPreview":"滑空","textChars":2,"textLines":1,"bbox":[452.62,41.33,187.38,68]}
+{"kind":"textbox","id":"sh/fmlkjm1c","slide":4,"name":"Content Placeholder 10","text":"射線へ入り、敵と敵の間を渡るための空中軌道制御。","textPreview":"射線へ入り、敵と敵の間を渡るための空中軌道制御。","textChars":24,"textLines":1,"bbox":[660.62,146.67,578.04,68]}
+{"kind":"textbox","id":"sh/x4nap4r6","slide":4,"name":"Content Placeholder 10","text":"銃反動","textPreview":"銃反動","textChars":3,"textLines":1,"bbox":[452.62,146.67,187.38,68]}
+{"kind":"textbox","id":"sh/jqh0fepk","slide":4,"name":"Content Placeholder 10","text":"突進をすり抜け、敵の狙いを壁や別の敵へ誤誘導する。","textPreview":"突進をすり抜け、敵の狙いを壁や別の敵へ誤誘導する。","textChars":25,"textLines":1,"bbox":[660.62,249.33,578.04,68]}
+{"kind":"textbox","id":"sh/8nqxs72x","slide":4,"name":"Content Placeholder 10","text":"ブリンク","textPreview":"ブリンク","textChars":4,"textLines":1,"bbox":[452.62,249.33,187.38,68]}
+{"kind":"textbox","id":"sh/j2t83itg","slide":4,"name":"Content Placeholder 10","text":"敵の力を無効化せず、発射元や別の敵へ返す。","textPreview":"敵の力を無効化せず、発射元や別の敵へ返す。","textChars":21,"textLines":1,"bbox":[660.62,353.33,578.04,68]}
+{"kind":"textbox","id":"sh/qh0fepkz","slide":4,"name":"Content Placeholder 10","text":"パリィ","textPreview":"パリィ","textChars":3,"textLines":1,"bbox":[452.62,353.33,187.38,68]}
+{"kind":"textbox","id":"sh/1cfa9w3m","slide":4,"name":"Content Placeholder 10","text":"崩れた敵を一撃で締める。通常時の削り性能は主役にしない。","textPreview":"崩れた敵を一撃で締める。通常時の削り性能は主役にしない。","textChars":28,"textLines":1,"bbox":[660.62,457.33,578.04,68]}
+{"kind":"textbox","id":"sh/crmhk3q5","slide":4,"name":"Content Placeholder 10","text":"傘攻撃","textPreview":"傘攻撃","textChars":3,"textLines":1,"bbox":[452.62,457.33,187.38,68]}
+{"kind":"textbox","id":"sh/sfil0rqd","slide":4,"name":"Content Placeholder 10","text":"能力解放はボタンの追加ではない。以前の能力の意味まで更新する。","textPreview":"能力解放はボタンの追加ではない。以前の能力の意味まで更新する。","textChars":31,"textLines":1,"bbox":[660.62,562.67,578.04,68]}
+{"kind":"textbox","id":"sh/h0fepkzu","slide":4,"name":"Content Placeholder 10","text":"共通原則","textPreview":"共通原則","textChars":4,"textLines":1,"bbox":[452.62,562.67,187.38,68]}
+{"kind":"notes","id":"nt/val87ed8","slide":4,"text":""}
+{"kind":"slide","id":"sl/mlkjm1cf","slide":5,"title":"5","textShapes":11}
+{"kind":"textbox","id":"sh/6hcrmhk3","slide":5,"name":"Slide Number Placeholder 3","placeholder":"slideNumber","text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/y90je9cv","slide":5,"name":"Title 10","placeholder":"title","text":"戦闘ループ：誘う → いなす → 崩す → 締める","textPreview":"戦闘ループ：誘う → いなす → 崩す → 締める","textChars":25,"textLines":1,"bbox":[41.33,36.12,581.02,109.97]}
+{"kind":"shape","id":"sh/dg7adsji","slide":5,"name":"Rounded Rectangle 2","bbox":[41.33,213.33,271.07,278.9]}
+{"kind":"shape","id":"sh/ovahoza1","slide":5,"name":"Rounded Rectangle 1","bbox":[0,565.45,1280,156]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":5,"name":"Content Placeholder 9","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[66.25,236.42,223.97,94.88]}
+{"kind":"textbox","id":"sh/58z25kb6","slide":5,"name":"Content Placeholder 15","text":"誘う\n滑空で待ち、射線と突進方向を作る","textPreview":"誘う | 滑空で待ち、射線と突進方向を作る","textChars":19,"textLines":2,"bbox":[73.25,392.67,216.98,64.67]}
+{"kind":"shape","id":"sh/lszqtcj6","slide":5,"name":"Rounded Rectangle 33","bbox":[351.28,213.33,271.07,278.9]}
+{"kind":"textbox","id":"sh/s72x4nap","slide":5,"name":"Content Placeholder 9","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[376.19,236.42,223.97,94.88]}
+{"kind":"textbox","id":"sh/3m94fu18","slide":5,"name":"Content Placeholder 15","text":"いなす\nブリンク／パリィで攻撃を通過させる","textPreview":"いなす | ブリンク／パリィで攻撃を通過させる","textChars":21,"textLines":2,"bbox":[383.19,392.67,216.98,64.67]}
+{"kind":"shape","id":"sh/a5gbq1or","slide":5,"name":"Rounded Rectangle 36","bbox":[658.48,213.33,271.07,278.9]}
+{"kind":"textbox","id":"sh/hoza1gvy","slide":5,"name":"Content Placeholder 9","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[683.4,236.42,223.97,94.88]}
+{"kind":"textbox","id":"sh/s36hcrmh","slide":5,"name":"Content Placeholder 15","text":"崩す\n壁・敵・発射元へ衝突させる","textPreview":"崩す | 壁・敵・発射元へ衝突させる","textChars":16,"textLines":2,"bbox":[690.39,392.67,216.98,64.67]}
+{"kind":"shape","id":"sh/wval87ed","slide":5,"name":"Rounded Rectangle 39","bbox":[968.42,213.33,271.07,278.9]}
+{"kind":"textbox","id":"sh/pg3ex0nu","slide":5,"name":"Content Placeholder 9","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[993.34,236.42,223.97,94.88]}
+{"kind":"textbox","id":"sh/epkzupwb","slide":5,"name":"Content Placeholder 15","text":"締める\n傘の一撃で次の敵へ移る","textPreview":"締める | 傘の一撃で次の敵へ移る","textChars":15,"textLines":2,"bbox":[1000.33,392.67,216.98,64.67]}
+{"kind":"textbox","id":"sh/7adsji5s","slide":5,"name":"Content Placeholder 2","text":"敵を倒しに近づくのではなく、敵の攻撃が最も美しく交差する場所へ移動する。","textPreview":"敵を倒しに近づくのではなく、敵の攻撃が最も美しく交差する場所へ移動する。","textChars":36,"textLines":1,"bbox":[657.33,42.09,581.61,104]}
+{"kind":"notes","id":"nt/mlkjm1cf","slide":5,"text":""}
+{"kind":"slide","id":"sl/58z25kb6","slide":6,"title":"敵はHPを削る対象ではなく、","textShapes":5}
+{"kind":"textbox","id":"sh/0je9cvix","slide":6,"name":"Google Shape;534;p58","text":"敵はHPを削る対象ではなく、\nプレイヤーの軌道を作る「舞踏の相手」。\n\n正解時には攻撃が止まり、姿勢が崩れ、明確な攻撃権が発生する。","textPreview":"敵はHPを削る対象ではなく、 | プレイヤーの軌道を作る「舞踏の相手」。 |  | 正解時には攻撃が止まり、姿勢が崩れ、明確な攻撃権が発生する。","textChars":66,"textLines":4,"bbox":[41.33,207.57,581.33,416]}
+{"kind":"textbox","id":"sh/il0rqd4v","slide":6,"name":"Google Shape;532;p58","placeholder":"slideNumber","text":"6","textPreview":"6","textChars":1,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":6,"name":"Google Shape;533;p58","placeholder":"title","text":"敵別仕様：攻撃そのものを攻略資源にする","textPreview":"敵別仕様：攻撃そのものを攻略資源にする","textChars":19,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/g3ex0nux","slide":6,"name":"Content Placeholder 17","text":"タックル敵\n予備動作で方向固定。ブリンクですれ違うと壁／敵へ激突しブレイク。","textPreview":"タックル敵 | 予備動作で方向固定。ブリンクですれ違うと壁／敵へ激突しブレイク。","textChars":38,"textLines":2,"bbox":[685.17,441.39,225.24,167.88]}
+{"kind":"textbox","id":"sh/5o7qpg3e","slide":6,"name":"Text Placeholder 18","text":"遠距離敵\n通常パリィは逸らす。ジャストパリィは発射元へ返し、命中で即ブレイク。","textPreview":"遠距離敵 | 通常パリィは逸らす。ジャストパリィは発射元へ返し、命中で即ブレイク。","textChars":39,"textLines":2,"bbox":[993.51,441.39,225.65,167.88]}
+{"kind":"image","id":"im/kf6dcbul","slide":6,"name":"","geometry":"rect","alt":"タックル敵の攻撃アニメーション","bbox":[657.33,213.33,271.07,205]}
+{"kind":"image","id":"im/vu9knih4","slide":6,"name":"","geometry":"rect","alt":"遠距離敵の攻撃アニメーション","bbox":[965.98,213.33,272.69,205]}
+{"kind":"notes","id":"nt/58z25kb6","slide":6,"text":""}
+{"kind":"slide","id":"sl/0z61032l","slide":7,"title":"7","textShapes":5}
+{"kind":"shape","id":"sh/fa9w3m94","slide":7,"name":"Rounded Rectangle 3","bbox":[622.67,41.33,616,172]}
+{"kind":"shape","id":"sh/qpg3ex0n","slide":7,"name":"Rounded Rectangle 4","bbox":[622.67,248.8,616,172]}
+{"kind":"shape","id":"sh/xczed8v6","slide":7,"name":"Rounded Rectangle 5","bbox":[622.67,457.33,616,172]}
+{"kind":"textbox","id":"sh/x4nap4r6","slide":7,"name":"Slide Number Placeholder 1","placeholder":"slideNumber","text":"7","textPreview":"7","textChars":1,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/8jqh0fep","slide":7,"name":"Title 2","placeholder":"title","text":"ブレイクとは\n「正解が形になる瞬間」","textPreview":"ブレイクとは | 「正解が形になる瞬間」","textChars":18,"textLines":2,"bbox":[41.33,36.12,517.39,109.97]}
+{"kind":"textbox","id":"sh/hgn29gr2","slide":7,"name":"Content Placeholder 10","text":"01　攻撃が止まる\n敵の勢いが反転し、プレイヤーへ明確に手番を渡す。","textPreview":"01　攻撃が止まる | 敵の勢いが反転し、プレイヤーへ明確に手番を渡す。","textChars":34,"textLines":2,"bbox":[657.33,70.65,555.11,113.36]}
+{"kind":"textbox","id":"sh/je9cvixc","slide":7,"name":"Content Placeholder 10","text":"02　姿勢が変わる\n転倒・目眩・傘や弾の残光で、追撃可能を一目で伝える。","textPreview":"02　姿勢が変わる | 転倒・目眩・傘や弾の残光で、追撃可能を一目で伝える。","textChars":36,"textLines":2,"bbox":[657.33,279.77,555.11,110.07]}
+{"kind":"textbox","id":"sh/qtcj6tov","slide":7,"name":"Content Placeholder 10","text":"03　一撃で締まる\nブレイク中の傘攻撃は即死級。次の移動へテンポよく戻る。","textPreview":"03　一撃で締まる | ブレイク中の傘攻撃は即死級。次の移動へテンポよく戻る。","textChars":37,"textLines":2,"bbox":[657.33,488.85,555.11,108.97]}
+{"kind":"notes","id":"nt/0z61032l","slide":7,"text":""}
+{"kind":"slide","id":"sl/fu18jqh0","slide":8,"title":"01","textShapes":5}
+{"kind":"textbox","id":"sh/sji5snel","slide":8,"name":"Google Shape;534;p58","text":"01\n回復ルール\n成功でクールダウンを戻す\nパリィ → 銃反動を1回回復\nブレイク撃破 → ブリンク回復\n時間回復は保険","textPreview":"01 | 回復ルール | 成功でクールダウンを戻す | パリィ → 銃反動を1回回復 | ブレイク撃破 → ブリンク回復 | 時間回復は保険","textChars":60,"textLines":6,"bbox":[41.33,251.11,374.67,378.22]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":8,"name":"Google Shape;532;p58","placeholder":"slideNumber","text":"8","textPreview":"8","textChars":1,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/u9knih4b","slide":8,"name":"Content Placeholder 1","text":"02\n継続ルール\n空中で流れを維持する\n滑空中は連携猶予を維持\n着地までは流れを切らない\n成功直後の入力受付を広げる","textPreview":"02 | 継続ルール | 空中で流れを維持する | 滑空中は連携猶予を維持 | 着地までは流れを切らない | 成功直後の入力受付を広げる","textChars":58,"textLines":6,"bbox":[453.33,249.33,374.67,380]}
+{"kind":"textbox","id":"sh/judg7ads","slide":8,"name":"Content Placeholder 2","text":"03\n終了条件\n失敗時だけ連携を区切る\n被弾／着地で連携終了\n通常クールダウンは保険\n待ち時間を主な回復手段にしない","textPreview":"03 | 終了条件 | 失敗時だけ連携を区切る | 被弾／着地で連携終了 | 通常クールダウンは保険 | 待ち時間を主な回復手段にしない","textChars":58,"textLines":6,"bbox":[864.28,249.33,374.67,380]}
+{"kind":"textbox","id":"sh/3m94fu18","slide":8,"name":"Google Shape;533;p58","placeholder":"title","text":"成功が、次のアクションを開く","textPreview":"成功が、次のアクションを開く","textChars":14,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"notes","id":"nt/fu18jqh0","slide":8,"text":""}
+{"kind":"slide","id":"sl/qh0fepkz","slide":9,"title":"PHASE 3","textShapes":8}
+{"kind":"shape","id":"sh/ytsvu9kn","slide":9,"name":"Rounded Rectangle 18","bbox":[864.39,317.33,271.07,312]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":9,"name":"Content Placeholder 15","text":"PHASE 3\n気持ちよさを調整\n\n硬直、SE、残光、吹き飛び、カメラ反応を成功結果へ集中。","textPreview":"PHASE 3 | 気持ちよさを調整 |  | 硬直、SE、残光、吹き飛び、カメラ反応を成功結果へ集中。","textChars":46,"textLines":4,"bbox":[888.04,349.17,225.24,176.17]}
+{"kind":"textbox","id":"sh/dcbulwva","slide":9,"name":"Text Placeholder 16","text":"1–2日","textPreview":"1–2日","textChars":4,"textLines":1,"bbox":[891.06,582.12,177.1,21.73]}
+{"kind":"shape","id":"sh/2lszqtcj","slide":9,"name":"Google Shape;2261;p159","bbox":[888.26,555.18,11.24,11.24]}
+{"kind":"shape","id":"sh/5wjudg7a","slide":9,"name":"Rounded Rectangle 11","bbox":[450.75,317.33,271.07,312]}
+{"kind":"textbox","id":"sh/gbq1oryt","slide":9,"name":"Content Placeholder 15","text":"PHASE 2\n行動を循環させる\n\nパリィで銃反動回復。ブレイク撃破でブリンク回復。","textPreview":"PHASE 2 | 行動を循環させる |  | パリィで銃反動回復。ブレイク撃破でブリンク回復。","textChars":42,"textLines":4,"bbox":[474.4,349.17,225.24,176.17]}
+{"kind":"shape","id":"sh/d8v6psfi","slide":9,"name":"Rounded Rectangle 6","bbox":[41.33,317.33,271.07,312]}
+{"kind":"textbox","id":"sh/58z25kb6","slide":9,"name":"Content Placeholder 15","text":"1–2日","textPreview":"1–2日","textChars":4,"textLines":1,"bbox":[64.98,582.65,181.68,20.25]}
+{"kind":"textbox","id":"sh/6hcrmhk3","slide":9,"name":"Slide Number Placeholder 3","placeholder":"slideNumber","text":"9","textPreview":"9","textChars":1,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/y90je9cv","slide":9,"name":"Title 10","placeholder":"title","text":"最小プロトタイプ：新アクションは増やさない","textPreview":"最小プロトタイプ：新アクションは増やさない","textChars":21,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/gn29gr2p","slide":9,"name":"Text Placeholder 16","placeholder":"body","text":"1日","textPreview":"1日","textChars":2,"textLines":1,"bbox":[477.41,582.12,177.1,21.73]}
+{"kind":"shape","id":"sh/wval87ed","slide":9,"name":"Google Shape;2259;p159","bbox":[64.98,560.8,1285.61,0.03]}
+{"kind":"shape","id":"sh/dg7adsji","slide":9,"name":"Google Shape;2260;p159","bbox":[64.98,555.18,11.24,11.24]}
+{"kind":"shape","id":"sh/z25kb6xk","slide":9,"name":"Google Shape;2261;p159","bbox":[474.61,555.18,11.24,11.24]}
+{"kind":"textbox","id":"sh/6dcbulwv","slide":9,"name":"Content Placeholder 15","text":"PHASE 1\n敵側の正解を作る\n\nタックルの壁／敵衝突ブレイク。反射弾の発射元命中ブレイク。","textPreview":"PHASE 1 | 敵側の正解を作る |  | タックルの壁／敵衝突ブレイク。反射弾の発射元命中ブレイク。","textChars":47,"textLines":4,"bbox":[64.98,349.17,225.24,176.17]}
+{"kind":"notes","id":"nt/qh0fepkz","slide":9,"text":""}
+{"kind":"slide","id":"sl/29gr2p8n","slide":10,"title":"立ち止まらない戦闘率","textShapes":8}
+{"kind":"shape","id":"sh/94fu18jq","slide":10,"name":"Rounded Rectangle 5","bbox":[41.33,249.33,374.67,380]}
+{"kind":"shape","id":"sh/kjm1cfa9","slide":10,"name":"Rounded Rectangle 6","bbox":[452.67,249.33,374.67,380]}
+{"kind":"shape","id":"sh/rqd4vmtw","slide":10,"name":"Rounded Rectangle 7","bbox":[864.28,249.33,374.67,380]}
+{"kind":"textbox","id":"sh/4fu18jqh","slide":10,"name":"Content Placeholder 9","text":"立ち止まらない戦闘率","textPreview":"立ち止まらない戦闘率","textChars":10,"textLines":1,"bbox":[73.85,294.05,309.64,104]}
+{"kind":"textbox","id":"sh/9gr2p8nq","slide":10,"name":"Slide Number Placeholder 1","placeholder":"slideNumber","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":10,"name":"Content Placeholder 10","text":"敵攻撃を利用した撃破","textPreview":"敵攻撃を利用した撃破","textChars":10,"textLines":1,"bbox":[485.85,294.05,309.64,104]}
+{"kind":"textbox","id":"sh/m94fu18j","slide":10,"name":"Content Placeholder 11","text":"「優雅」と感じる","textPreview":"「優雅」と感じる","textChars":8,"textLines":1,"bbox":[896.79,294.05,309.64,104]}
+{"kind":"textbox","id":"sh/gvy90je9","slide":10,"name":"Title 2","placeholder":"title","text":"プレイテストで確認する成功条件","textPreview":"プレイテストで確認する成功条件","textChars":15,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":10,"name":"Content Placeholder 9","text":"70%","textPreview":"70%","textChars":3,"textLines":1,"bbox":[73.74,386.22,308.67,202.8]}
+{"kind":"textbox","id":"sh/r2p8nqxs","slide":10,"name":"Content Placeholder 9","text":"1回","textPreview":"1回","textChars":2,"textLines":1,"bbox":[484.3,386.22,308.67,202.8]}
+{"kind":"textbox","id":"sh/2hwfyxob","slide":10,"name":"Content Placeholder 9","text":"4 / 5","textPreview":"4 / 5","textChars":5,"textLines":1,"bbox":[898.94,386.22,308.67,202.8]}
+{"kind":"notes","id":"nt/29gr2p8n","slide":10,"text":""}
+{"kind":"slide","id":"sl/re1w7mp0","slide":11,"title":"11","textShapes":3}
+{"kind":"textbox","id":"sh/ixczed8v","slide":11,"name":"Google Shape;532;p58","placeholder":"slideNumber","text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[0,0,0,0]}
+{"kind":"textbox","id":"sh/bi9s36hc","slide":11,"name":"Google Shape;533;p58","placeholder":"title","text":"敵の攻撃すら、\n彼女の振付になる。","textPreview":"敵の攻撃すら、 | 彼女の振付になる。","textChars":17,"textLines":2,"bbox":[41.33,36.12,581.33,281.22]}
+{"kind":"textbox","id":"sh/vahoza1g","slide":11,"name":"Google Shape;533;p58","text":"優雅さは演出ではなく、\n慌てず、止まらず、力まずに勝てる戦闘ルールから生まれる。","textPreview":"優雅さは演出ではなく、 | 慌てず、止まらず、力まずに勝てる戦闘ルールから生まれる。","textChars":40,"textLines":2,"bbox":[657.33,451.14,581.33,222.32]}
+{"kind":"image","id":"im/lc7u54zi","slide":11,"name":"","geometry":"rect","alt":"静かな森の背景","bbox":[622.67,0,657.33,720]}
+{"kind":"notes","id":"nt/re1w7mp0","slide":11,"text":""}

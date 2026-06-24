@@ -15,6 +15,12 @@ public sealed class MinimapRoom : MonoBehaviour
     [SerializeField, Tooltip("Display name shown by tools or debug UI. Uses Room ID when empty.")]
     private string displayName;
 
+    [SerializeField, InspectorName("ボスエリア"), Tooltip("有効にすると、このエリアを下のボスエリア色で表示します。")]
+    private bool isBossRoom;
+
+    [SerializeField, InspectorName("ボスエリアの色"), Tooltip("ミニマップで使用するボスエリアの色です。")]
+    private Color bossRoomColor = new Color(1f, 0.12f, 0.12f, 1f);
+
     [Header("Map Layout")]
     [SerializeField, Tooltip("Manual map position. X moves left/right, Y moves up/down.")]
     private Vector2Int mapPosition;
@@ -49,6 +55,8 @@ public sealed class MinimapRoom : MonoBehaviour
     public Vector2 AreaSize => usesFreeformLayout
         ? new Vector2(Mathf.Max(0.1f, areaSize.x), Mathf.Max(0.1f, areaSize.y))
         : new Vector2(MapSize.x, MapSize.y);
+    public bool IsBossRoom => isBossRoom;
+    public Color BossRoomColor => bossRoomColor;
 
     public MinimapRoomDefinition Definition => new MinimapRoomDefinition(
         RoomId,
@@ -58,7 +66,9 @@ public sealed class MinimapRoom : MonoBehaviour
         Connections,
         AreaPosition,
         AreaSize,
-        usesFreeformLayout);
+        usesFreeformLayout,
+        isBossRoom,
+        bossRoomColor);
 
     private void OnEnable()
     {
@@ -126,6 +136,8 @@ public sealed class MinimapRoom : MonoBehaviour
         usesFreeformLayout = definition.UsesFreeformLayout;
         areaPosition = definition.AreaPosition;
         areaSize = definition.AreaSize;
+        isBossRoom = definition.IsBossRoom;
+        bossRoomColor = definition.BossRoomColor;
         playerTag = string.IsNullOrWhiteSpace(playerTagName) ? "Player" : playerTagName;
 
         if (isActiveAndEnabled && MinimapManager.Instance != null)
@@ -146,6 +158,8 @@ public sealed class MinimapRoom : MonoBehaviour
         areaPosition = Vector2.zero;
         areaSize = DefaultFreeformRoomSize;
         connections = MinimapConnection.None;
+        isBossRoom = false;
+        bossRoomColor = new Color(1f, 0.12f, 0.12f, 1f);
     }
 
     // Shared entry point used by editor tools and scene bootstrap code.

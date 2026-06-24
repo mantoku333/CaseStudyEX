@@ -44,6 +44,7 @@ public sealed class OptionsMenu : MonoBehaviour
     private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
     private readonly Dictionary<int, float> capturedAudioBaseVolumes = new Dictionary<int, float>();
     private readonly Dictionary<int, float> lastAppliedAudioVolumes = new Dictionary<int, float>();
+    private readonly HashSet<int> audioSourcesMutedByOptions = new HashSet<int>();
     private GameObject menuRoot;
     private GameObject optionPanel;
     private GameObject mainMenuPanel;
@@ -230,6 +231,7 @@ public sealed class OptionsMenu : MonoBehaviour
         if (!isRebinding && ShouldToggleMenu())
         {
             HandleToggleRequest();
+            UIButtonSfxPlayer.PlayClick();
         }
 
         if (!isRebinding)
@@ -250,6 +252,21 @@ public sealed class OptionsMenu : MonoBehaviour
         {
             ApplyAudioSettingsToScene(forceRefreshAll: false);
             nextAudioRefreshTime = Time.unscaledTime + AudioRefreshInterval;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (!referencesResolved)
+        {
+            return;
+        }
+
+        // 0設定中は、そのフレームに新規生成・再設定されたAudioSourceも音声出力前にmuteする。
+        if (ReadVolume(SeVolumeKey, 1f) <= 0.0001f ||
+            ReadVolume(SystemVolumeKey, 1f) <= 0.0001f)
+        {
+            ApplyAudioSettingsToScene(forceRefreshAll: false);
         }
     }
 
@@ -684,7 +701,10 @@ public sealed class OptionsMenu : MonoBehaviour
 
         if (Keyboard.current.mKey.wasPressedThisFrame)
         {
-            HandleMapKeyboardRequest();
+            if (HandleMapKeyboardRequest())
+            {
+                UIButtonSfxPlayer.PlayClick();
+            }
             return;
         }
 
@@ -696,10 +716,12 @@ public sealed class OptionsMenu : MonoBehaviour
         if (Keyboard.current.qKey.wasPressedThisFrame)
         {
             ShowPreviousOptionPage();
+            UIButtonSfxPlayer.PlayClick();
         }
         else if (Keyboard.current.eKey.wasPressedThisFrame)
         {
             ShowNextOptionPage();
+            UIButtonSfxPlayer.PlayClick();
         }
     }
 
@@ -1151,7 +1173,10 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private void OpenMapFromKeyboard()
     {
-        HandleMapKeyboardRequest();
+        if (HandleMapKeyboardRequest())
+        {
+            UIButtonSfxPlayer.PlayClick();
+        }
     }
 
     public void OpenMap()
@@ -1159,24 +1184,24 @@ public sealed class OptionsMenu : MonoBehaviour
         ShowMapOptionPage();
     }
 
-    private void HandleMapKeyboardRequest()
+    private bool HandleMapKeyboardRequest()
     {
         if (isRebinding || lastMapKeyboardRequestFrame == Time.frameCount)
         {
-            return;
+            return false;
         }
 
         lastMapKeyboardRequestFrame = Time.frameCount;
         ResolveReferences();
         if (!referencesResolved)
         {
-            return;
+            return false;
         }
 
         if (isOpen && currentOptionPage == OptionPage.Map && IsOptionDetailVisible())
         {
             CloseMenu();
-            return;
+            return true;
         }
 
         if (!isOpen)
@@ -1186,6 +1211,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
         SetFinishPromptVisible(false);
         ShowMapOptionPage();
+        return true;
     }
 
     public void ShowFinishPrompt()
@@ -1418,6 +1444,18 @@ public sealed class OptionsMenu : MonoBehaviour
 
             int id = source.GetInstanceID();
             float currentVolume = source.volume;
+
+            // volume を再生直前に上書きするSE（足音・滑空音など）も、0設定では確実に消音する。
+            bool shouldMute = multiplier <= 0.0001f;
+            if (shouldMute)
+            {
+                audioSourcesMutedByOptions.Add(id);
+                source.mute = true;
+            }
+            else if (audioSourcesMutedByOptions.Remove(id))
+            {
+                source.mute = false;
+            }
 
             if (!capturedAudioBaseVolumes.TryGetValue(id, out float baseVolume))
             {
@@ -2039,6 +2077,12 @@ public sealed class OptionsMenu : MonoBehaviour
             return AudioChannel.Se;
         }
 
+        // 滑空風音はループ素材だが、BGMではなくプレイヤーSEとして扱う。
+        if (source.GetComponent<PlayerGlideAudioController>() != null)
+        {
+            return AudioChannel.Se;
+        }
+
         if (source.loop)
         {
             return AudioChannel.Bgm;
@@ -2339,6 +2383,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
         button.onClick.RemoveListener(action);
         button.onClick.AddListener(action);
+        UIButtonSfxPlayer.Register(button);
     }
 
     private void UnbindButton(Button button, UnityEngine.Events.UnityAction action)

@@ -34,9 +34,20 @@ public sealed class MinimapView : MonoBehaviour
     [SerializeField] private Color visitedColor = new Color(1f, 1f, 1f, 0.92f);
     [SerializeField] private Color currentRoomBorderColor = new Color(0.12f, 0.95f, 0.72f, 1f);
     [SerializeField] private Color currentRoomFillColor = new Color(0.04f, 0.42f, 0.32f, 0.78f);
+    [SerializeField, InspectorName("ボスエリア現在地の塗り透明度"), Range(0f, 1f)]
+    private float bossRoomFillAlpha = 0.68f;
     [SerializeField] private Color currentMarkerColor = Color.white;
     [SerializeField] private Color lineColor = new Color(1f, 1f, 1f, 0.72f);
     [SerializeField] private float minimapFollowSmoothTime = 0.22f;
+
+    [Header("Unvisited Connection Hint")]
+    [SerializeField] private bool showUnvisitedConnectionHints = true;
+    [SerializeField, Range(0f, 1f)] private float hintLineStartAlpha = 0.55f;
+    [SerializeField, Range(0f, 1f)] private float hintLineEndAlpha = 0.05f;
+    [SerializeField, Min(2f)] private float hintGradientStepPixels = 10f;
+    [SerializeField, Range(0f, 1f)] private float hintWallAlpha = 0.2f;
+    [SerializeField, Range(0f, 1f)] private float hintRoomRevealRatio = 0.33f;
+    [SerializeField, Range(2, 12)] private int hintWallGradientSteps = 6;
 
     [Header("Player Overlap Fade")]
     [SerializeField] private bool enablePlayerOverlapFade = true;
@@ -132,6 +143,9 @@ public sealed class MinimapView : MonoBehaviour
         miniMapSize = ClampPositiveSize(miniMapSize);
         fullMapSize = ClampPositiveSize(fullMapSize);
         fullMapScale = Mathf.Max(0.01f, fullMapScale);
+        hintGradientStepPixels = Mathf.Max(2f, hintGradientStepPixels);
+        hintRoomRevealRatio = Mathf.Clamp01(hintRoomRevealRatio);
+        hintWallGradientSteps = Mathf.Clamp(hintWallGradientSteps, 2, 12);
 
         ApplyGeneratedLayout();
         if (Application.isPlaying && manager != null && miniMapContent != null && fullMapContent != null)
@@ -446,7 +460,10 @@ public sealed class MinimapView : MonoBehaviour
 
         if (manager.IsCurrent(room.RoomId))
         {
-            RectTransform fill = CreateImage("Fill_" + room.RoomId, parent, currentRoomFillColor);
+            Color fillColor = room.IsBossRoom
+                ? WithAlpha(room.BossRoomColor, bossRoomFillAlpha)
+                : currentRoomFillColor;
+            RectTransform fill = CreateImage("Fill_" + room.RoomId, parent, fillColor);
             fill.anchoredPosition = center;
             fill.sizeDelta = size;
             generatedObjects.Add(fill.gameObject);
@@ -506,10 +523,30 @@ public sealed class MinimapView : MonoBehaviour
             MinimapLinkDefinition link = links[i];
             if (link == null ||
                 !TryFindDrawRoom(rooms, link.FromRoomId, out MinimapRoomDefinition fromRoom) ||
-                !TryFindDrawRoom(rooms, link.ToRoomId, out MinimapRoomDefinition toRoom) ||
-                !ShouldDrawRoom(fromRoom) ||
-                !ShouldDrawRoom(toRoom))
+                !TryFindDrawRoom(rooms, link.ToRoomId, out MinimapRoomDefinition toRoom))
             {
+                continue;
+            }
+
+            bool drawFromRoom = ShouldDrawRoom(fromRoom);
+            bool drawToRoom = ShouldDrawRoom(toRoom);
+
+            if (!drawFromRoom || !drawToRoom)
+            {
+                if (showUnvisitedConnectionHints)
+                {
+                    DrawUnvisitedConnectionHint(
+                        parent,
+                        link,
+                        fromRoom,
+                        toRoom,
+                        bounds,
+                        origin,
+                        boardScale,
+                        lineThickness,
+                        i);
+                }
+
                 continue;
             }
 
@@ -531,6 +568,241 @@ public sealed class MinimapView : MonoBehaviour
                 DrawLineSegment(parent, "Link_" + i + "_" + pointIndex, startInset, endInset, lineThickness, lineColor);
             }
         }
+    }
+
+    private void DrawUnvisitedConnectionHint(
+        RectTransform parent,
+        MinimapLinkDefinition link,
+        MinimapRoomDefinition fromRoom,
+        MinimapRoomDefinition toRoom,
+        Rect bounds,
+        Vector2 origin,
+        float boardScale,
+        float lineThickness,
+        int linkIndex)
+    {
+        bool currentIsFrom = manager.IsCurrent(fromRoom.RoomId);
+        bool currentIsTo = manager.IsCurrent(toRoom.RoomId);
+        if (currentIsFrom == currentIsTo)
+        {
+            return;
+        }
+
+        MinimapRoomDefinition hiddenRoom = currentIsFrom ? toRoom : fromRoom;
+        if (ShouldDrawRoom(hiddenRoom))
+        {
+            return;
+        }
+
+        List<Vector2> boardPoints = BuildBoardPath(link, fromRoom, toRoom);
+        if (currentIsTo)
+        {
+            boardPoints.Reverse();
+        }
+
+        var anchoredPoints = new List<Vector2>(boardPoints.Count);
+        float totalLength = 0f;
+        for (int i = 0; i < boardPoints.Count; i++)
+        {
+            Vector2 point = AreaToAnchored(boardPoints[i], origin, bounds, boardScale);
+            anchoredPoints.Add(point);
+            if (i > 0)
+            {
+                totalLength += Vector2.Distance(anchoredPoints[i - 1], point);
+            }
+        }
+
+        if (totalLength <= 0.1f)
+        {
+            return;
+        }
+
+        float travelled = 0f;
+        for (int segmentIndex = 0; segmentIndex < anchoredPoints.Count - 1; segmentIndex++)
+        {
+            Vector2 start = anchoredPoints[segmentIndex];
+            Vector2 end = anchoredPoints[segmentIndex + 1];
+            Vector2 delta = end - start;
+            float segmentLength = delta.magnitude;
+            if (segmentLength <= 0.1f)
+            {
+                continue;
+            }
+
+            Vector2 direction = delta / segmentLength;
+            if (segmentIndex == 0)
+            {
+                start += direction * Mathf.Min(connectorEndInset, segmentLength * 0.4f);
+            }
+
+            if (segmentIndex == anchoredPoints.Count - 2)
+            {
+                end -= direction * Mathf.Min(connectorEndInset, segmentLength * 0.4f);
+            }
+
+            float drawableLength = Vector2.Distance(start, end);
+            int stepCount = Mathf.Max(1, Mathf.CeilToInt(drawableLength / hintGradientStepPixels));
+            for (int stepIndex = 0; stepIndex < stepCount; stepIndex++)
+            {
+                float localStart = stepIndex / (float)stepCount;
+                float localEnd = (stepIndex + 1f) / stepCount;
+                Vector2 stepStart = Vector2.Lerp(start, end, localStart);
+                Vector2 stepEnd = Vector2.Lerp(start, end, localEnd);
+                float stepDistance = travelled + (segmentLength * ((localStart + localEnd) * 0.5f));
+                float progress = Mathf.Clamp01(stepDistance / totalLength);
+                float alpha = Mathf.Lerp(hintLineStartAlpha, hintLineEndAlpha, progress);
+                Color hintColor = WithMultipliedAlpha(lineColor, alpha);
+
+                DrawLineSegment(
+                    parent,
+                    "HintLink_" + linkIndex + "_" + segmentIndex + "_" + stepIndex,
+                    stepStart,
+                    stepEnd,
+                    lineThickness,
+                    hintColor);
+            }
+
+            travelled += segmentLength;
+        }
+
+        DrawHintRoomPreview(
+            parent,
+            hiddenRoom,
+            boardPoints[boardPoints.Count - 1],
+            bounds,
+            origin,
+            boardScale,
+            lineThickness,
+            linkIndex);
+    }
+
+    private void DrawHintRoomPreview(
+        RectTransform parent,
+        MinimapRoomDefinition room,
+        Vector2 entryPoint,
+        Rect bounds,
+        Vector2 origin,
+        float boardScale,
+        float thickness,
+        int linkIndex)
+    {
+        if (hintRoomRevealRatio <= 0f || hintWallAlpha <= 0f || boardScale <= 0f)
+        {
+            return;
+        }
+
+        float minX = room.AreaPosition.x;
+        float maxX = room.AreaPosition.x + room.AreaSize.x;
+        float minY = room.AreaPosition.y;
+        float maxY = room.AreaPosition.y + room.AreaSize.y;
+        float xEdgeDistance = Mathf.Min(Mathf.Abs(entryPoint.x - minX), Mathf.Abs(entryPoint.x - maxX));
+        float yEdgeDistance = Mathf.Min(Mathf.Abs(entryPoint.y - minY), Mathf.Abs(entryPoint.y - maxY));
+        bool verticalWall = xEdgeDistance <= yEdgeDistance;
+
+        Vector2 wallStart;
+        Vector2 wallEnd;
+        Vector2 inwardDirection;
+        float revealDepth;
+
+        if (verticalWall)
+        {
+            bool entersFromLeft = Mathf.Abs(entryPoint.x - minX) <= Mathf.Abs(entryPoint.x - maxX);
+            float wallX = entersFromLeft ? minX : maxX;
+            wallStart = new Vector2(wallX, minY);
+            wallEnd = new Vector2(wallX, maxY);
+            inwardDirection = entersFromLeft ? Vector2.right : Vector2.left;
+            revealDepth = room.AreaSize.x * hintRoomRevealRatio;
+        }
+        else
+        {
+            bool entersFromTop = Mathf.Abs(entryPoint.y - minY) <= Mathf.Abs(entryPoint.y - maxY);
+            float wallY = entersFromTop ? minY : maxY;
+            wallStart = new Vector2(minX, wallY);
+            wallEnd = new Vector2(maxX, wallY);
+            inwardDirection = entersFromTop ? Vector2.up : Vector2.down;
+            revealDepth = room.AreaSize.y * hintRoomRevealRatio;
+        }
+
+        Vector2 anchoredWallStart = AreaToAnchored(wallStart, origin, bounds, boardScale);
+        Vector2 anchoredWallEnd = AreaToAnchored(wallEnd, origin, bounds, boardScale);
+        Color previewColor = room.IsBossRoom ? room.BossRoomColor : visitedColor;
+        DrawLineSegment(
+            parent,
+            "HintWall_" + linkIndex,
+            anchoredWallStart,
+            anchoredWallEnd,
+            thickness,
+            WithMultipliedAlpha(previewColor, hintWallAlpha));
+
+        if (revealDepth <= 0f)
+        {
+            return;
+        }
+
+        Vector2 depthOffset = inwardDirection * revealDepth;
+        DrawFadingHintEdge(
+            parent,
+            "HintRoomSideA_" + linkIndex,
+            wallStart,
+            wallStart + depthOffset,
+            bounds,
+            origin,
+            boardScale,
+            thickness,
+            previewColor);
+        DrawFadingHintEdge(
+            parent,
+            "HintRoomSideB_" + linkIndex,
+            wallEnd,
+            wallEnd + depthOffset,
+            bounds,
+            origin,
+            boardScale,
+            thickness,
+            previewColor);
+    }
+
+    private void DrawFadingHintEdge(
+        RectTransform parent,
+        string objectName,
+        Vector2 boardStart,
+        Vector2 boardEnd,
+        Rect bounds,
+        Vector2 origin,
+        float boardScale,
+        float thickness,
+        Color color)
+    {
+        Vector2 start = AreaToAnchored(boardStart, origin, bounds, boardScale);
+        Vector2 end = AreaToAnchored(boardEnd, origin, bounds, boardScale);
+
+        for (int stepIndex = 0; stepIndex < hintWallGradientSteps; stepIndex++)
+        {
+            float startRatio = stepIndex / (float)hintWallGradientSteps;
+            float endRatio = (stepIndex + 1f) / hintWallGradientSteps;
+            float progress = (startRatio + endRatio) * 0.5f;
+            float alpha = hintWallAlpha * (1f - progress);
+
+            DrawLineSegment(
+                parent,
+                objectName + "_" + stepIndex,
+                Vector2.Lerp(start, end, startRatio),
+                Vector2.Lerp(start, end, endRatio),
+                thickness,
+                WithMultipliedAlpha(color, alpha));
+        }
+    }
+
+    private static Color WithMultipliedAlpha(Color color, float alphaMultiplier)
+    {
+        color.a *= Mathf.Clamp01(alphaMultiplier);
+        return color;
+    }
+
+    private static Color WithAlpha(Color color, float alpha)
+    {
+        color.a = Mathf.Clamp01(alpha);
+        return color;
     }
 
     private static bool TryFindDrawRoom(
@@ -664,6 +936,11 @@ public sealed class MinimapView : MonoBehaviour
 
     private Color RoomColor(MinimapRoomDefinition room)
     {
+        if (room.IsBossRoom)
+        {
+            return room.BossRoomColor;
+        }
+
         if (manager.IsCurrent(room.RoomId))
         {
             return currentRoomBorderColor;

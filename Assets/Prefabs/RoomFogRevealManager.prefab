@@ -59,3 +59,8 @@ MonoBehaviour:
   overlayZ: -1
   revealDuration: 2.55
   revealNoiseStrength: 0.18
+  revealPortalEntrances: 1
+  portalEntranceDepth: 2.5
+  portalEntranceWidthPadding: 0.35
+  portalEntranceEdgeNoise: 0.15
+  portalEntranceNoiseScale: 1.2

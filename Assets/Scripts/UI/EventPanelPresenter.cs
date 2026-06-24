@@ -99,6 +99,7 @@ public sealed class EventPanelPresenter : MonoBehaviour
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(Hide);
+            UIButtonSfxPlayer.Register(closeButton);
         }
     }
 
@@ -142,11 +143,18 @@ public sealed class EventPanelPresenter : MonoBehaviour
         }
 
         StopAutoCloseRoutine();
+        bool wasVisible = isVisible;
+        bool isDiaryContent = content != null && content.kind == EventPanelKind.Diary;
         onClosed = closeCallback;
         ApplyContent(content);
         SetVisible(true);
         RefreshDiaryBackdropImage();
         RefreshBodyScrollLayout();
+
+        if (!wasVisible && isVisible && isDiaryContent)
+        {
+            UIButtonSfxPlayer.PlayDiaryOpen();
+        }
 
         if (closeButton == null && resolvedAutoCloseSeconds > 0f)
         {

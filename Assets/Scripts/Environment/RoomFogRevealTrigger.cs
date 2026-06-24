@@ -94,6 +94,14 @@ public sealed class RoomFogRevealTrigger : MonoBehaviour
                 continue;
             }
 
+            if (!RoomPortalAccessCondition.AllowsPreview(
+                    this,
+                    activeRoom,
+                    targetRoom))
+            {
+                continue;
+            }
+
             RoomFogRevealManager.RevealRoom(targetRoom);
         }
     }

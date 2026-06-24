@@ -15,20 +15,42 @@ public sealed class RainCycleController : MonoBehaviour
     [SerializeField] private Renderer[] rainRenderers = new Renderer[0];
     [SerializeField] private ParticleSystem[] rainParticleSystems = new ParticleSystem[0];
     [SerializeField] private RainDamageArea[] rainDamageAreas = new RainDamageArea[0];
+    [SerializeField] private bool enableScheduledRain = true;
+    [SerializeField] private bool limitRainToActiveArea;
     [SerializeField, Min(0.01f)] private float rainDurationSeconds = 30f;
     [SerializeField, Min(0.01f)] private float cycleIntervalSeconds = 180f;
     [SerializeField] private InitialRainMode initialRainMode = InitialRainMode.StartAfterInterval;
     [SerializeField, Min(0f)] private float rainDrainOutSeconds = 1.5f;
+
+    [Header("Rain Start SE")]
+    [SerializeField] private AudioSource rainSeSource;
+    [SerializeField] private AudioClip rainStartThunderClip;
+    [SerializeField, Range(0f, 1f)] private float rainStartThunderVolume = 1f;
 
     private float firstRainStartTime;
     private float hideRainRenderersAtTime = -1f;
     private bool isRaining;
     private bool initialized;
     private bool hasAppliedRainState;
+    private float forcedRainUntil = -1f;
+    private bool isRainAreaActive;
     private readonly List<Renderer> cachedRainRenderers = new List<Renderer>();
     private readonly List<ParticleSystem> cachedRainParticleSystems = new List<ParticleSystem>();
 
     public bool IsRaining => isRaining;
+
+    public void SetRainAreaActive(bool active)
+    {
+        isRainAreaActive = active;
+        RefreshRainState();
+    }
+
+    public void StartRainFor(float durationSeconds)
+    {
+        float duration = Mathf.Max(0.01f, durationSeconds);
+        forcedRainUntil = Mathf.Max(forcedRainUntil, Time.time + duration);
+        SetRainActive(true);
+    }
 
     private void Awake()
     {
@@ -65,6 +87,21 @@ public sealed class RainCycleController : MonoBehaviour
 
     private bool ShouldRainAt(float time)
     {
+        if (limitRainToActiveArea && !isRainAreaActive)
+        {
+            return false;
+        }
+
+        if (time < forcedRainUntil)
+        {
+            return true;
+        }
+
+        if (!enableScheduledRain)
+        {
+            return false;
+        }
+
         if (time < firstRainStartTime)
         {
             return false;
@@ -95,6 +132,7 @@ public sealed class RainCycleController : MonoBehaviour
             hideRainRenderersAtTime = -1f;
             SetRainRenderersEnabled(true);
             PlayRainParticleSystems();
+            PlayRainStartThunder();
             return;
         }
 
@@ -112,6 +150,29 @@ public sealed class RainCycleController : MonoBehaviour
 
         hideRainRenderersAtTime = -1f;
         SetRainRenderersEnabled(false);
+    }
+
+    private void PlayRainStartThunder()
+    {
+        if (rainStartThunderClip == null)
+        {
+            return;
+        }
+
+        if (rainSeSource == null)
+        {
+            rainSeSource = GetComponent<AudioSource>();
+        }
+
+        if (rainSeSource == null)
+        {
+            rainSeSource = gameObject.AddComponent<AudioSource>();
+            rainSeSource.playOnAwake = false;
+            rainSeSource.loop = false;
+            rainSeSource.spatialBlend = 0f;
+        }
+
+        rainSeSource.PlayOneShot(rainStartThunderClip, Mathf.Clamp01(rainStartThunderVolume));
     }
 
     private void RefreshRainDrainOut()
@@ -299,6 +360,7 @@ public sealed class RainCycleController : MonoBehaviour
         rainDurationSeconds = Mathf.Max(0.01f, rainDurationSeconds);
         cycleIntervalSeconds = Mathf.Max(0.01f, cycleIntervalSeconds);
         rainDrainOutSeconds = Mathf.Max(0f, rainDrainOutSeconds);
+        rainStartThunderVolume = Mathf.Clamp01(rainStartThunderVolume);
     }
 #endif
 }
