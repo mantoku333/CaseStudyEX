@@ -27,6 +27,7 @@ public class AttackHitbox : MonoBehaviour
     private int cachedWallMaskValue = int.MinValue;
     private int fallThroughFloorLayer = -1;
     private PlayerStatsData statsData;
+    private PlayerAttackPower attackPower;
     private PlayerEquipmentController equipmentController;
 
     public event Action<Collider2D> OnHit;
@@ -35,7 +36,7 @@ public class AttackHitbox : MonoBehaviour
     {
         get
         {
-            int baseDamage = statsData != null ? statsData.PlayerAttackDamage : 0;
+            int baseDamage = ResolveBaseAttackDamage();
             if (baseDamage <= 0)
             {
                 return 0;
@@ -85,6 +86,21 @@ public class AttackHitbox : MonoBehaviour
     public void SetPlayerStatsData(PlayerStatsData playerData)
     {
         statsData = playerData;
+    }
+
+    private int ResolveBaseAttackDamage()
+    {
+        if (attackPower == null)
+        {
+            attackPower = GetComponentInParent<PlayerAttackPower>();
+        }
+
+        if (attackPower != null)
+        {
+            return attackPower.AttackDamage;
+        }
+
+        return statsData != null ? statsData.PlayerAttackDamage : 0;
     }
 
     private float GetEquipmentAttackMultiplier()
