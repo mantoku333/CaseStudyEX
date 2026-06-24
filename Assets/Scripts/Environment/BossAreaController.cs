@@ -114,6 +114,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private bool suppressWindRiseDuringStageBossIntro;
     private Coroutine encounterStartRoutine;
     private Coroutine encounterCompleteRoutine;
+    private readonly List<Collider2D> confinementCollider2DBuffer = new List<Collider2D>();
 
     public int Priority => 240;
     public string BossDisplayName => ResolveBossDisplayName();
@@ -1318,10 +1319,11 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         return confineYForDynamicBodies;
     }
 
-    private static Vector2 ResolveColliderExtents(Transform target)
+    private Vector2 ResolveColliderExtents(Transform target)
     {
-        Collider2D[] colliders = target.GetComponentsInChildren<Collider2D>(includeInactive: false);
-        if (colliders == null || colliders.Length == 0)
+        confinementCollider2DBuffer.Clear();
+        target.GetComponentsInChildren(false, confinementCollider2DBuffer);
+        if (confinementCollider2DBuffer.Count == 0)
         {
             return Vector2.zero;
         }
@@ -1329,9 +1331,9 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         bool hasBounds = false;
         Bounds merged = default;
 
-        for (int i = 0; i < colliders.Length; i++)
+        for (int i = 0; i < confinementCollider2DBuffer.Count; i++)
         {
-            Collider2D collider = colliders[i];
+            Collider2D collider = confinementCollider2DBuffer[i];
             if (collider == null || !collider.enabled)
             {
                 continue;
@@ -1703,6 +1705,11 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private sealed class StageBossIntroVisualState
     {
+        private static readonly List<Renderer> RendererBuffer = new List<Renderer>();
+        private static readonly List<SpriteRenderer> SpriteRendererBuffer = new List<SpriteRenderer>();
+        private static readonly List<Collider2D> Collider2DBuffer = new List<Collider2D>();
+        private static readonly List<Collider> ColliderBuffer = new List<Collider>();
+
         // SpriteRenderer以外のRendererでも色フェードできるよう、代表的な色プロパティを探す。
         private static readonly int BaseColorPropertyId = Shader.PropertyToID("_BaseColor");
         private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
@@ -1745,32 +1752,36 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             }
 
             // 元の表示・当たり判定状態を保存し、演出後にPrefab/シーン設定へ戻せるようにする。
-            Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
-            RendererState[] rendererStates = new RendererState[renderers.Length];
-            for (int i = 0; i < renderers.Length; i++)
+            RendererBuffer.Clear();
+            root.GetComponentsInChildren(true, RendererBuffer);
+            RendererState[] rendererStates = new RendererState[RendererBuffer.Count];
+            for (int i = 0; i < RendererBuffer.Count; i++)
             {
-                rendererStates[i] = new RendererState(renderers[i]);
+                rendererStates[i] = new RendererState(RendererBuffer[i]);
             }
 
-            SpriteRenderer[] spriteRenderers = root.GetComponentsInChildren<SpriteRenderer>(true);
-            SpriteRendererState[] spriteRendererStates = new SpriteRendererState[spriteRenderers.Length];
-            for (int i = 0; i < spriteRenderers.Length; i++)
+            SpriteRendererBuffer.Clear();
+            root.GetComponentsInChildren(true, SpriteRendererBuffer);
+            SpriteRendererState[] spriteRendererStates = new SpriteRendererState[SpriteRendererBuffer.Count];
+            for (int i = 0; i < SpriteRendererBuffer.Count; i++)
             {
-                spriteRendererStates[i] = new SpriteRendererState(spriteRenderers[i]);
+                spriteRendererStates[i] = new SpriteRendererState(SpriteRendererBuffer[i]);
             }
 
-            Collider2D[] colliders2D = root.GetComponentsInChildren<Collider2D>(true);
-            Collider2DState[] collider2DStates = new Collider2DState[colliders2D.Length];
-            for (int i = 0; i < colliders2D.Length; i++)
+            Collider2DBuffer.Clear();
+            root.GetComponentsInChildren(true, Collider2DBuffer);
+            Collider2DState[] collider2DStates = new Collider2DState[Collider2DBuffer.Count];
+            for (int i = 0; i < Collider2DBuffer.Count; i++)
             {
-                collider2DStates[i] = new Collider2DState(colliders2D[i]);
+                collider2DStates[i] = new Collider2DState(Collider2DBuffer[i]);
             }
 
-            Collider[] colliders = root.GetComponentsInChildren<Collider>(true);
-            ColliderState[] colliderStates = new ColliderState[colliders.Length];
-            for (int i = 0; i < colliders.Length; i++)
+            ColliderBuffer.Clear();
+            root.GetComponentsInChildren(true, ColliderBuffer);
+            ColliderState[] colliderStates = new ColliderState[ColliderBuffer.Count];
+            for (int i = 0; i < ColliderBuffer.Count; i++)
             {
-                colliderStates[i] = new ColliderState(colliders[i]);
+                colliderStates[i] = new ColliderState(ColliderBuffer[i]);
             }
 
             return new StageBossIntroVisualState(
@@ -2284,6 +2295,8 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private sealed class StageBossIntroPlayerLockState
     {
+        private static readonly List<MonoBehaviour> BehaviourBuffer = new List<MonoBehaviour>();
+
         // 入力だけでなく攻撃・回避などの能動アクションも一時停止する対象。
         private static readonly string[] PlayerActionBehaviourNames =
         {
@@ -2359,10 +2372,11 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             Rigidbody2D rigidbody2D = playerRoot.GetComponent<Rigidbody2D>();
             List<BehaviourState> behaviourStates = new List<BehaviourState>();
             // 復帰時に元のenabled状態へ戻せるよう、ロック対象の状態を先に保存する。
-            MonoBehaviour[] behaviours = playerRoot.GetComponentsInChildren<MonoBehaviour>(true);
-            for (int i = 0; i < behaviours.Length; i++)
+            BehaviourBuffer.Clear();
+            playerRoot.GetComponentsInChildren(true, BehaviourBuffer);
+            for (int i = 0; i < BehaviourBuffer.Count; i++)
             {
-                MonoBehaviour behaviour = behaviours[i];
+                MonoBehaviour behaviour = BehaviourBuffer[i];
                 if (behaviour == null || behaviour == playerController || !IsPlayerActionBehaviour(behaviour))
                 {
                     continue;
