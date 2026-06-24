@@ -93,12 +93,14 @@ public sealed class RainDamageArea : MonoBehaviour
             return;
         }
 
-        if (!CanRainReachPlayer(bodyCollider, playerHealth))
+        // Performance-critical: an open umbrella already guarantees protection, so avoid
+        // the long rain-path physics probes (especially near the bottom of large rain areas).
+        if (IsProtectedByUmbrella(umbrellaController))
         {
             return;
         }
 
-        if (IsProtectedByUmbrella(umbrellaController))
+        if (!CanRainReachPlayer(bodyCollider, playerHealth))
         {
             return;
         }
