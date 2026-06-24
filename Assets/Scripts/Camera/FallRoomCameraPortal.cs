@@ -16,6 +16,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
     }
 
     private static CinemachineCamera runtimeTransitionCamera;
+    private const float MainCameraRefreshInterval = 0.5f;
 
     [Header("Rooms")]
     [SerializeField] private RoomCameraTrigger upperRoom;
@@ -37,6 +38,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
     [SerializeField] private string playerTag = "Player";
 
     private readonly HashSet<Collider2D> overlappingPlayerColliders = new();
+    private readonly List<Collider2D> playerColliderBuffer = new();
     private Transform playerTransform;
     private CameraPose upperPoseAtEntry;
     private CameraPose lowerPoseAtEntry;
@@ -44,6 +46,8 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
     private Vector3 transitionVelocity;
     private float transitionZoomVelocity;
     private float transitionElapsed;
+    private Camera cachedMainCamera;
+    private float nextMainCameraRefreshTime;
     private bool transitionActive;
     private bool transitionCommitted;
 
@@ -241,8 +245,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
             return pose;
         }
 
-        Camera mainCamera = Camera.main;
-        if (mainCamera != null)
+        if (TryGetMainCamera(out Camera mainCamera))
         {
             pose.Position = mainCamera.transform.position;
             pose.OrthographicSize = mainCamera.orthographic ? mainCamera.orthographicSize : 10f;
@@ -257,8 +260,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
 
     private CameraPose ResolveCurrentViewPose(Vector3 fallbackPosition)
     {
-        Camera mainCamera = Camera.main;
-        if (mainCamera != null)
+        if (TryGetMainCamera(out Camera mainCamera))
         {
             CameraPose pose;
             pose.Position = mainCamera.transform.position;
@@ -309,7 +311,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
         previewCenter.z = poseAtEntry.Position.z;
         poseAtEntry.Position = previewCenter;
 
-        float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+        float aspect = ResolveAspect();
         float boundsSize = Mathf.Max(bounds.extents.y, bounds.extents.x / aspect);
         float previewSize = Mathf.Lerp(
             poseAtEntry.OrthographicSize,
@@ -369,7 +371,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
 
     private void KeepPlayerInsideView(ref CameraPose pose, Vector3 playerPosition)
     {
-        float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+        float aspect = ResolveAspect();
         float halfHeight = Mathf.Max(0.1f, pose.OrthographicSize - playerPadding);
         float halfWidth = Mathf.Max(0.1f, pose.OrthographicSize * aspect - playerPadding);
 
@@ -421,12 +423,12 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
 
     private bool IsPlayerFullyInsideRoom(RoomCameraTrigger room)
     {
-        Collider2D[] colliders = playerTransform.GetComponentsInChildren<Collider2D>();
+        FillPlayerColliderBuffer(playerTransform);
         bool checkedCollider = false;
 
-        for (int i = 0; i < colliders.Length; i++)
+        for (int i = 0; i < playerColliderBuffer.Count; i++)
         {
-            Collider2D collider = colliders[i];
+            Collider2D collider = playerColliderBuffer[i];
             if (collider == null || !collider.enabled || collider.isTrigger)
             {
                 continue;
@@ -525,5 +527,38 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void FillPlayerColliderBuffer(Transform player)
+    {
+        playerColliderBuffer.Clear();
+        if (player != null)
+        {
+            player.GetComponentsInChildren(false, playerColliderBuffer);
+        }
+    }
+
+    private float ResolveAspect()
+    {
+        if (TryGetMainCamera(out Camera mainCamera))
+        {
+            return mainCamera.aspect;
+        }
+
+        return Screen.height > 0 ? (float)Screen.width / Screen.height : 16f / 9f;
+    }
+
+    private bool TryGetMainCamera(out Camera mainCamera)
+    {
+        if (cachedMainCamera != null && Time.unscaledTime < nextMainCameraRefreshTime)
+        {
+            mainCamera = cachedMainCamera;
+            return true;
+        }
+
+        cachedMainCamera = Camera.main;
+        nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
+        mainCamera = cachedMainCamera;
+        return mainCamera != null;
     }
 }

@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private const float ExternalMoveArrivalThreshold = 0.03f;
     private const float AttackMoveInputDeadZone = 0.01f;
     private const float AimFacingDeadZone = 0.001f;
+    private const float MainCameraRefreshInterval = 0.5f;
 
     private static class InputActionNames
     {
@@ -68,6 +69,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private DodgeController dodgeController;                   //回避関連のスクリプト
     private MonoBehaviour fallThroughController;               //床すり抜け関連のスクリプト
     private PlayerAbilityController playerAbilityController;   //能力管理のスクリプト
+    private Camera cachedMainCamera;
+    private float nextMainCameraRefreshTime;
 
     //-------入力関連--------
     private InputAction moveAction;
@@ -873,8 +876,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                 return;
             }
 
-            Camera mainCamera = Camera.main;
-            if (mainCamera == null)
+            if (!TryGetMainCamera(out Camera mainCamera))
             {
                 return;
             }
@@ -938,8 +940,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return true;
         }
 
-        Camera mainCamera = Camera.main;
-        if (mainCamera == null)
+        if (!TryGetMainCamera(out Camera mainCamera))
         {
             attackDirection = Vector2.zero;
             return false;
@@ -1092,6 +1093,20 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                 Mathf.Abs(mainCamera.transform.position.z - transform.position.z)));
         worldPosition.z = transform.position.z;
         return true;
+    }
+
+    private bool TryGetMainCamera(out Camera mainCamera)
+    {
+        if (cachedMainCamera != null && Time.unscaledTime < nextMainCameraRefreshTime)
+        {
+            mainCamera = cachedMainCamera;
+            return true;
+        }
+
+        cachedMainCamera = Camera.main;
+        nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
+        mainCamera = cachedMainCamera;
+        return mainCamera != null;
     }
 
     // 必須Actionの取得+有効化ヘルパー。

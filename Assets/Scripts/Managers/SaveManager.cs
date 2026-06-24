@@ -64,19 +64,12 @@ public sealed class SaveManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        TraceLoadedPlayerPosition("Update");
-    }
-
-    private void FixedUpdate()
-    {
-        TraceLoadedPlayerPosition("FixedUpdate");
-    }
-
     private void LateUpdate()
     {
-        TraceLoadedPlayerPosition("LateUpdate");
+        if (EnableLoadTrace)
+        {
+            TraceLoadedPlayerPosition("LateUpdate");
+        }
 
         if (pendingLoadData != null)
         {
