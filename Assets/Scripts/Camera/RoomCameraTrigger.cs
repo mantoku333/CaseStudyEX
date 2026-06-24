@@ -11,6 +11,11 @@ public class RoomCameraTrigger : MonoBehaviour
 {
     private static RoomCameraTrigger _activeTrigger;
     private static readonly List<RoomCameraTrigger> _registeredTriggers = new();
+    private const float MainCameraRefreshInterval = 0.5f;
+    private static Camera _cachedMainCamera;
+    private static float _nextMainCameraRefreshTime;
+    private static CinemachineCamera _cachedFollowCamera;
+    private static CinemachineCamera _cachedDirectFollowCamera;
 
     public static event Action<RoomCameraTrigger> ActiveRoomChanged;
 
@@ -47,6 +52,9 @@ public class RoomCameraTrigger : MonoBehaviour
     [SerializeField]
     private Collider[] _areaColliders;
 
+    private readonly List<Collider2D> _runtimeColliders2D = new();
+    private readonly List<Collider> _runtimeColliders = new();
+
     private bool IsDefaultTrigger => _useDefaultCameraWhenEntered;
     private bool HasRoomCamera => _roomCamera != null;
 
@@ -75,16 +83,16 @@ public class RoomCameraTrigger : MonoBehaviour
 
         if (TryGetAreaBounds(out Bounds bounds))
         {
-            float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+            float aspect = ResolveMainCameraAspect();
             position = bounds.center;
-            position.z = Camera.main != null ? Camera.main.transform.position.z : transform.position.z;
+            position.z = TryGetMainCamera(out Camera mainCamera) ? mainCamera.transform.position.z : transform.position.z;
             orthographicSize = Mathf.Max(bounds.extents.y, bounds.extents.x / aspect);
             return true;
         }
 
         position = transform.position;
-        orthographicSize = Camera.main != null && Camera.main.orthographic
-            ? Camera.main.orthographicSize
+        orthographicSize = TryGetMainCamera(out Camera fallbackCamera) && fallbackCamera.orthographic
+            ? fallbackCamera.orthographicSize
             : 10f;
         return false;
     }
@@ -102,8 +110,9 @@ public class RoomCameraTrigger : MonoBehaviour
             return true;
         }
 
-        AddColliderBounds(GetComponents<Collider2D>(), ref bounds, ref hasBounds);
-        AddColliderBounds(GetComponents<Collider>(), ref bounds, ref hasBounds);
+        EnsureRuntimeColliders();
+        AddColliderBounds(_runtimeColliders2D, ref bounds, ref hasBounds);
+        AddColliderBounds(_runtimeColliders, ref bounds, ref hasBounds);
         return hasBounds;
     }
 
@@ -134,6 +143,8 @@ public class RoomCameraTrigger : MonoBehaviour
 
     private void Awake()
     {
+        RefreshRuntimeColliders();
+
         if (!_registeredTriggers.Contains(this))
         {
             _registeredTriggers.Add(this);
@@ -214,10 +225,10 @@ public class RoomCameraTrigger : MonoBehaviour
         }
 
         Vector2 point2D = new Vector2(worldPosition.x, worldPosition.y);
-        Collider2D[] colliders2D = GetComponents<Collider2D>();
-        for (int i = 0; i < colliders2D.Length; i++)
+        EnsureRuntimeColliders();
+        for (int i = 0; i < _runtimeColliders2D.Count; i++)
         {
-            Collider2D roomCollider = colliders2D[i];
+            Collider2D roomCollider = _runtimeColliders2D[i];
             if (roomCollider != null &&
                 roomCollider.enabled &&
                 roomCollider.OverlapPoint(point2D))
@@ -226,10 +237,9 @@ public class RoomCameraTrigger : MonoBehaviour
             }
         }
 
-        Collider[] colliders = GetComponents<Collider>();
-        for (int i = 0; i < colliders.Length; i++)
+        for (int i = 0; i < _runtimeColliders.Count; i++)
         {
-            Collider roomCollider = colliders[i];
+            Collider roomCollider = _runtimeColliders[i];
             if (roomCollider != null &&
                 roomCollider.enabled &&
                 roomCollider.bounds.Contains(worldPosition))
@@ -286,31 +296,7 @@ public class RoomCameraTrigger : MonoBehaviour
             return;
         }
 
-        CinemachineCamera followCamera = null;
-        CinemachineCamera directFollowCamera = null;
-        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
-
-        for (int i = 0; i < cameras.Length; i++)
-        {
-            CinemachineCamera camera = cameras[i];
-            if (camera == null)
-            {
-                continue;
-            }
-
-            if (camera.gameObject.name == "CN_FollowCam")
-            {
-                followCamera = camera;
-            }
-            else if (camera.gameObject.name == "CN_DirectFollowCam")
-            {
-                directFollowCamera = camera;
-            }
-        }
-
-        if (followCamera == null)
+        if (!TryGetDefaultFollowCameras(out CinemachineCamera followCamera, out CinemachineCamera directFollowCamera))
         {
             Debug.LogWarning(
                 $"[{defaultTrigger.name}] Use Default Camera is enabled, but CN_FollowCam was not found.",
@@ -463,21 +449,32 @@ public class RoomCameraTrigger : MonoBehaviour
             return bestArea;
         }
 
-        Collider2D collider2D = GetComponent<Collider2D>();
-        if (collider2D != null && collider2D.enabled)
+        EnsureRuntimeColliders();
+        for (int i = 0; i < _runtimeColliders2D.Count; i++)
         {
+            Collider2D collider2D = _runtimeColliders2D[i];
+            if (collider2D == null || !collider2D.enabled)
+            {
+                continue;
+            }
+
             Bounds bounds = collider2D.bounds;
-            return bounds.size.x * bounds.size.y;
+            bestArea = Mathf.Min(bestArea, bounds.size.x * bounds.size.y);
         }
 
-        Collider collider = GetComponent<Collider>();
-        if (collider != null && collider.enabled)
+        for (int i = 0; i < _runtimeColliders.Count; i++)
         {
+            Collider collider = _runtimeColliders[i];
+            if (collider == null || !collider.enabled)
+            {
+                continue;
+            }
+
             Bounds bounds = collider.bounds;
-            return bounds.size.x * bounds.size.y;
+            bestArea = Mathf.Min(bestArea, bounds.size.x * bounds.size.y);
         }
 
-        return float.MaxValue;
+        return !float.IsPositiveInfinity(bestArea) ? bestArea : float.MaxValue;
     }
 
     private static bool HasConfiguredBounds(Collider2D[] colliders)
@@ -524,20 +521,10 @@ public class RoomCameraTrigger : MonoBehaviour
             return true;
         }
 
-        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
-
-        for (int i = 0; i < cameras.Length; i++)
+        if (TryGetDefaultFollowCameras(out CinemachineCamera followCamera, out _))
         {
-            CinemachineCamera camera = cameras[i];
-            if (camera == null || camera.gameObject.name != "CN_FollowCam")
-            {
-                continue;
-            }
-
-            position = camera.transform.position;
-            orthographicSize = camera.Lens.OrthographicSize;
+            position = followCamera.transform.position;
+            orthographicSize = followCamera.Lens.OrthographicSize;
             return true;
         }
 
@@ -565,6 +552,25 @@ public class RoomCameraTrigger : MonoBehaviour
         }
     }
 
+    private static void AddColliderBounds(List<Collider2D> colliders, ref Bounds bounds, ref bool hasBounds)
+    {
+        if (colliders == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < colliders.Count; i++)
+        {
+            Collider2D collider = colliders[i];
+            if (collider == null || !collider.enabled)
+            {
+                continue;
+            }
+
+            AddBounds(collider.bounds, ref bounds, ref hasBounds);
+        }
+    }
+
     private static void AddColliderBounds(Collider[] colliders, ref Bounds bounds, ref bool hasBounds)
     {
         if (colliders == null)
@@ -573,6 +579,25 @@ public class RoomCameraTrigger : MonoBehaviour
         }
 
         for (int i = 0; i < colliders.Length; i++)
+        {
+            Collider collider = colliders[i];
+            if (collider == null || !collider.enabled)
+            {
+                continue;
+            }
+
+            AddBounds(collider.bounds, ref bounds, ref hasBounds);
+        }
+    }
+
+    private static void AddColliderBounds(List<Collider> colliders, ref Bounds bounds, ref bool hasBounds)
+    {
+        if (colliders == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < colliders.Count; i++)
         {
             Collider collider = colliders[i];
             if (collider == null || !collider.enabled)
@@ -633,5 +658,85 @@ public class RoomCameraTrigger : MonoBehaviour
             gameObject.name.StartsWith("CN_", StringComparison.OrdinalIgnoreCase);
         return looksLikeAreaChild &&
                parent.GetComponentInChildren<BossAreaController>(true) != null;
+    }
+
+    private void RefreshRuntimeColliders()
+    {
+        _runtimeColliders2D.Clear();
+        _runtimeColliders.Clear();
+        GetComponents(_runtimeColliders2D);
+        GetComponents(_runtimeColliders);
+    }
+
+    private void EnsureRuntimeColliders()
+    {
+        if (_runtimeColliders2D.Count == 0 && _runtimeColliders.Count == 0)
+        {
+            RefreshRuntimeColliders();
+        }
+    }
+
+    private static float ResolveMainCameraAspect()
+    {
+        if (TryGetMainCamera(out Camera mainCamera))
+        {
+            return mainCamera.aspect;
+        }
+
+        return Screen.height > 0 ? (float)Screen.width / Screen.height : 16f / 9f;
+    }
+
+    private static bool TryGetMainCamera(out Camera mainCamera)
+    {
+        if (_cachedMainCamera != null && Time.unscaledTime < _nextMainCameraRefreshTime)
+        {
+            mainCamera = _cachedMainCamera;
+            return true;
+        }
+
+        _cachedMainCamera = Camera.main;
+        _nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
+        mainCamera = _cachedMainCamera;
+        return mainCamera != null;
+    }
+
+    private static bool TryGetDefaultFollowCameras(
+        out CinemachineCamera followCamera,
+        out CinemachineCamera directFollowCamera)
+    {
+        if (_cachedFollowCamera != null)
+        {
+            followCamera = _cachedFollowCamera;
+            directFollowCamera = _cachedDirectFollowCamera;
+            return true;
+        }
+
+        followCamera = null;
+        directFollowCamera = null;
+        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            CinemachineCamera camera = cameras[i];
+            if (camera == null)
+            {
+                continue;
+            }
+
+            if (camera.gameObject.name == "CN_FollowCam")
+            {
+                followCamera = camera;
+            }
+            else if (camera.gameObject.name == "CN_DirectFollowCam")
+            {
+                directFollowCamera = camera;
+            }
+        }
+
+        _cachedFollowCamera = followCamera;
+        _cachedDirectFollowCamera = directFollowCamera;
+        return followCamera != null;
     }
 }
