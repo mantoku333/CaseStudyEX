@@ -53,7 +53,7 @@ namespace GameName.Enemy
 
         private static global::PlayerController ResolvePlayerController()
         {
-            GameObject taggedPlayer = GameObject.FindGameObjectWithTag(PlayerTag);
+            GameObject taggedPlayer = global::PlayerReferenceCache.GetGameObject(PlayerTag);
             if (taggedPlayer != null)
             {
                 global::PlayerController taggedController = taggedPlayer.GetComponent<global::PlayerController>();

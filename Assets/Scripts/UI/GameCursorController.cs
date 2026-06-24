@@ -393,7 +393,7 @@ public sealed class GameCursorController : MonoBehaviour
             }
 
             nextPlayerReferenceSearchTime = Time.unscaledTime + PlayerReferenceSearchInterval;
-            activePlayer = FindFirstObjectByType<PlayerController>(FindObjectsInactive.Exclude);
+            activePlayer = global::PlayerReferenceCache.GetController();
         }
 
         if (activePlayer == null)

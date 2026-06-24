@@ -192,8 +192,8 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
         targetRoomColliders2D.Clear();
         targetRoomColliders.Clear();
 
-        MinimapRoom[] rooms = FindObjectsByType<MinimapRoom>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        for (int i = 0; i < rooms.Length; i++)
+        System.Collections.Generic.IReadOnlyList<MinimapRoom> rooms = MinimapRoom.RegisteredRooms;
+        for (int i = 0; i < rooms.Count; i++)
         {
             MinimapRoom room = rooms[i];
             if (room == null || !MatchesRoomId(room.RoomId))

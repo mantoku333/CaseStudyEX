@@ -1211,6 +1211,20 @@ public static class PlayerReferenceCache
         return playerObject != null ? playerObject.transform : null;
     }
 
+    public static global::PlayerController GetController(bool forceRefresh = false)
+    {
+        GameObject playerObject = GetGameObject(DefaultPlayerTag, forceRefresh);
+        if (playerObject == null)
+        {
+            return null;
+        }
+
+        global::PlayerController playerController = playerObject.GetComponent<global::PlayerController>();
+        return playerController != null
+            ? playerController
+            : playerObject.GetComponentInParent<global::PlayerController>();
+    }
+
     public static void Invalidate()
     {
         cachedPlayerObject = null;

@@ -1353,8 +1353,7 @@ public sealed class StoryEventController : MonoBehaviour
 
     private static Transform ResolvePlayerTransform()
     {
-        global::PlayerController player =
-            FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
+        global::PlayerController player = global::PlayerReferenceCache.GetController();
         return player != null ? player.transform : null;
     }
 
@@ -2186,7 +2185,7 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         global::PlayerController playerController =
-            FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
+            global::PlayerReferenceCache.GetController();
         return playerController != null ? playerController.gameObject : null;
     }
 
@@ -2628,7 +2627,7 @@ public sealed class StoryEventController : MonoBehaviour
             Transform playerTransform = playerObject != null ? playerObject.transform : null;
             PlayerController playerController = playerObject != null
                 ? playerObject.GetComponent<PlayerController>()
-                : FindFirstObjectByType<PlayerController>(FindObjectsInactive.Include);
+                : global::PlayerReferenceCache.GetController();
             PlayerInput playerInput = playerObject != null
                 ? playerObject.GetComponent<PlayerInput>()
                 : FindFirstObjectByType<PlayerInput>(FindObjectsInactive.Include);
@@ -2718,14 +2717,14 @@ public sealed class StoryEventController : MonoBehaviour
 
         private static GameObject ResolvePlayerObject()
         {
-            GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
-            if (taggedPlayer != null)
+            GameObject cachedPlayer = global::PlayerReferenceCache.GetGameObject();
+            if (cachedPlayer != null)
             {
-                return taggedPlayer;
+                return cachedPlayer;
             }
 
             PlayerController playerController =
-                FindFirstObjectByType<PlayerController>(FindObjectsInactive.Include);
+                global::PlayerReferenceCache.GetController();
             if (playerController != null)
             {
                 return playerController.gameObject;

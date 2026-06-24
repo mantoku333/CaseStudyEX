@@ -24,14 +24,14 @@ public static class MinimapSceneBootstrap
             return;
         }
 
-        MinimapRoom[] rooms = Object.FindObjectsByType<MinimapRoom>(FindObjectsSortMode.None);
-        if (rooms == null || rooms.Length == 0)
+        IReadOnlyList<MinimapRoom> rooms = MinimapRoom.RegisteredRooms;
+        if (rooms.Count == 0)
         {
             return;
         }
 
-        List<MinimapRoomDefinition> definitions = new List<MinimapRoomDefinition>(rooms.Length);
-        for (int i = 0; i < rooms.Length; i++)
+        List<MinimapRoomDefinition> definitions = new List<MinimapRoomDefinition>(rooms.Count);
+        for (int i = 0; i < rooms.Count; i++)
         {
             MinimapRoom room = rooms[i];
             if (room == null || string.IsNullOrWhiteSpace(room.RoomId))
@@ -59,14 +59,10 @@ public static class MinimapSceneBootstrap
 
     private static List<MinimapLinkDefinition> CollectLinkDefinitions()
     {
-        MinimapLink[] links = Object.FindObjectsByType<MinimapLink>(FindObjectsSortMode.None);
+        IReadOnlyList<MinimapLink> links = MinimapLink.RegisteredLinks;
         var definitions = new List<MinimapLinkDefinition>();
-        if (links == null)
-        {
-            return definitions;
-        }
 
-        for (int i = 0; i < links.Length; i++)
+        for (int i = 0; i < links.Count; i++)
         {
             MinimapLink link = links[i];
             if (link == null || !link.IsValid || link.Definition == null)

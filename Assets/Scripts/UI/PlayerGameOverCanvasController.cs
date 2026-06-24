@@ -147,7 +147,7 @@ namespace GameName.UI
                 }
             }
 
-            var playerController = FindFirstObjectByType<global::PlayerController>();
+            var playerController = global::PlayerReferenceCache.GetController();
             playerInput = playerController != null ? playerController.GetComponent<PlayerInput>() : null;
             playerRigidbody = playerController != null ? playerController.GetComponent<Rigidbody2D>() : null;
 

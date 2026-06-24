@@ -2267,13 +2267,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private GameObject ResolvePlayerObject()
     {
-        GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
-        if (taggedPlayer != null)
-        {
-            return taggedPlayer;
-        }
-
-        global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
+        global::PlayerController playerController = global::PlayerReferenceCache.GetController();
         if (playerController != null)
         {
             return playerController.gameObject;

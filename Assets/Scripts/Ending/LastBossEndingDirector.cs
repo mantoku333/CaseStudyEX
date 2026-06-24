@@ -461,7 +461,7 @@ namespace GameName.Ending
         {
             disabledGameplayBehaviours.Clear();
 
-            global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Exclude);
+            global::PlayerController playerController = global::PlayerReferenceCache.GetController();
             if (playerController == null)
             {
                 return;
@@ -590,7 +590,7 @@ namespace GameName.Ending
 
             global::PlayerController playerController = endingPlayerController != null
                 ? endingPlayerController
-                : FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
+                : global::PlayerReferenceCache.GetController();
 
             if (playerController == null)
             {

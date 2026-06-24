@@ -440,7 +440,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
             }
         }
 
-        global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
+        global::PlayerController playerController = global::PlayerReferenceCache.GetController();
         return playerController != null ? playerController.gameObject : null;
     }
 

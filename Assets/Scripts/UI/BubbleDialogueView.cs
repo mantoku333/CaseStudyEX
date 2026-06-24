@@ -738,7 +738,7 @@ namespace Metroidvania.UI
         private static Transform? FindPlayerTransform()
         {
             global::PlayerController player =
-                UnityEngine.Object.FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
+                global::PlayerReferenceCache.GetController();
             return player != null ? player.transform : null;
         }
 

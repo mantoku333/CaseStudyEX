@@ -7,6 +7,7 @@ public sealed class MinimapRoom : MonoBehaviour
 {
     private static readonly Vector2 DefaultFreeformRoomSize = new Vector2(1.5f, 1f);
     private static readonly List<MinimapRoom> OccupiedRooms = new List<MinimapRoom>();
+    private static readonly List<MinimapRoom> ActiveRooms = new List<MinimapRoom>();
 
     [Header("Room Identity")]
     [SerializeField, Tooltip("Unique room id for the minimap. Uses the GameObject name when empty.")]
@@ -46,6 +47,7 @@ public sealed class MinimapRoom : MonoBehaviour
     public Vector2Int MapPosition => mapPosition;
     public Vector2Int MapSize => new Vector2Int(Mathf.Max(1, mapSize.x), Mathf.Max(1, mapSize.y));
     public MinimapConnection Connections => connections;
+    public static IReadOnlyList<MinimapRoom> RegisteredRooms => ActiveRooms;
     public bool UsesFreeformLayout => usesFreeformLayout;
     public Vector2 AreaPosition => usesFreeformLayout ? areaPosition : LegacyGridToBoardPosition(mapPosition, MapSize);
     public Vector2 AreaSize => usesFreeformLayout
@@ -64,6 +66,11 @@ public sealed class MinimapRoom : MonoBehaviour
 
     private void OnEnable()
     {
+        if (!ActiveRooms.Contains(this))
+        {
+            ActiveRooms.Add(this);
+        }
+
         if (MinimapManager.Instance != null)
         {
             MinimapManager.Instance.RegisterRoom(this);
@@ -72,6 +79,8 @@ public sealed class MinimapRoom : MonoBehaviour
 
     private void OnDisable()
     {
+        ActiveRooms.Remove(this);
+
         if (MinimapManager.Instance != null)
         {
             MinimapManager.Instance.UnregisterRoom(this);

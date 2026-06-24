@@ -609,7 +609,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
             }
         }
 
-        global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
+        global::PlayerController playerController = global::PlayerReferenceCache.GetController();
         if (playerController != null)
         {
             return playerController.gameObject;

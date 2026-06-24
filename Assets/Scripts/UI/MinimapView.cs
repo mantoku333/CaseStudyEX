@@ -899,7 +899,7 @@ public sealed class MinimapView : MonoBehaviour
             }
 
             nextPlayerReferenceSearchTime = Time.unscaledTime + PlayerReferenceSearchInterval;
-            cachedPlayer = FindFirstObjectByType<PlayerController>();
+            cachedPlayer = global::PlayerReferenceCache.GetController();
         }
 
         if (cachedPlayer == null)

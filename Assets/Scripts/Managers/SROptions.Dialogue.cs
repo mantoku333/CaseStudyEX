@@ -17,7 +17,7 @@ public partial class SROptions
     public void PlaySampleDialogue()
     {
         var manager = Object.FindFirstObjectByType<Metroidvania.Managers.DialogueManager>();
-        var player = Object.FindFirstObjectByType<global::PlayerController>();
+        var player = global::PlayerReferenceCache.GetController();
 
         if (manager == null)
         {

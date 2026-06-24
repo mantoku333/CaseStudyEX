@@ -66,6 +66,7 @@ public class RoomCameraTrigger : MonoBehaviour
     public float DefaultCameraPreviewWeight => _defaultCameraPreviewWeight;
     public float DefaultCameraPreviewZoomWeight => _defaultCameraPreviewZoomWeight;
     public float MaxDefaultCameraPreviewSize => _maxDefaultCameraPreviewSize;
+    public static IReadOnlyList<RoomCameraTrigger> RegisteredTriggers => _registeredTriggers;
 
     public bool TryGetCameraPose(out Vector3 position, out float orthographicSize)
     {

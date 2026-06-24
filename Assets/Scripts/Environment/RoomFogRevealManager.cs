@@ -219,14 +219,12 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         currentRoom = null;
         hasRooms = false;
 
-        RoomCameraTrigger[] allRooms = FindObjectsByType<RoomCameraTrigger>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
+        IReadOnlyList<RoomCameraTrigger> allRooms = RoomCameraTrigger.RegisteredTriggers;
 
         bool hasBounds = false;
         worldBounds = default;
 
-        for (int i = 0; i < allRooms.Length; i++)
+        for (int i = 0; i < allRooms.Count; i++)
         {
             RoomCameraTrigger room = allRooms[i];
             if (room == null ||
@@ -1296,23 +1294,14 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     {
         position = Vector3.zero;
 
-        GameObject taggedPlayer = null;
-        try
+        Transform playerTransform = global::PlayerReferenceCache.GetTransform();
+        if (playerTransform != null)
         {
-            taggedPlayer = GameObject.FindGameObjectWithTag("Player");
-        }
-        catch (UnityException)
-        {
-            taggedPlayer = null;
-        }
-
-        if (taggedPlayer != null)
-        {
-            position = taggedPlayer.transform.position;
+            position = playerTransform.position;
             return true;
         }
 
-        PlayerController player = FindFirstObjectByType<PlayerController>(FindObjectsInactive.Exclude);
+        PlayerController player = global::PlayerReferenceCache.GetController();
         if (player == null)
         {
             return false;

@@ -215,13 +215,7 @@ namespace Metroidvania.Managers
 
         private GameObject ResolvePlayerObject()
         {
-            GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
-            if (taggedPlayer != null)
-            {
-                return taggedPlayer;
-            }
-
-            global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
+            global::PlayerController playerController = global::PlayerReferenceCache.GetController();
             return playerController != null ? playerController.gameObject : null;
         }
 
