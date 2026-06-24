@@ -453,6 +453,17 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
             return false;
         }
 
+        Vector2 direction = horizontalVelocity > 0f ? Vector2.right : Vector2.left;
+        if (TryCast(direction, probeDistance, out _))
+        {
+            return true;
+        }
+
+        return IsHorizontalProbeOverlappingBlocker(horizontalVelocity, probeDistance);
+    }
+
+    private bool IsHorizontalProbeOverlappingBlocker(float horizontalVelocity, float probeDistance)
+    {
         Bounds bodyBounds = bodyCollider.bounds;
         float verticalInset = Mathf.Max(skinWidth, bodyBounds.size.y * HorizontalProbeVerticalInsetRatio);
         float probeHeight = Mathf.Max(MinMoveDistance, bodyBounds.size.y - verticalInset * 2f);
