@@ -31,6 +31,8 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
     private Coroutine visibilityRoutine;
     private readonly System.Collections.Generic.List<Collider2D> targetRoomColliders2D = new System.Collections.Generic.List<Collider2D>();
     private readonly System.Collections.Generic.List<Collider> targetRoomColliders = new System.Collections.Generic.List<Collider>();
+    private readonly System.Collections.Generic.List<Collider2D> roomCollider2DBuffer = new System.Collections.Generic.List<Collider2D>();
+    private readonly System.Collections.Generic.List<Collider> roomColliderBuffer = new System.Collections.Generic.List<Collider>();
     private GameObject cachedPlayerObject;
     private float nextEvaluationTime;
     private bool targetRoomColliderCacheValid;
@@ -199,16 +201,18 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
                 continue;
             }
 
-            Collider2D[] colliders2D = room.GetComponents<Collider2D>();
-            for (int colliderIndex = 0; colliderIndex < colliders2D.Length; colliderIndex++)
+            roomCollider2DBuffer.Clear();
+            room.GetComponents(roomCollider2DBuffer);
+            for (int colliderIndex = 0; colliderIndex < roomCollider2DBuffer.Count; colliderIndex++)
             {
-                targetRoomColliders2D.Add(colliders2D[colliderIndex]);
+                targetRoomColliders2D.Add(roomCollider2DBuffer[colliderIndex]);
             }
 
-            Collider[] colliders = room.GetComponents<Collider>();
-            for (int colliderIndex = 0; colliderIndex < colliders.Length; colliderIndex++)
+            roomColliderBuffer.Clear();
+            room.GetComponents(roomColliderBuffer);
+            for (int colliderIndex = 0; colliderIndex < roomColliderBuffer.Count; colliderIndex++)
             {
-                targetRoomColliders.Add(colliders[colliderIndex]);
+                targetRoomColliders.Add(roomColliderBuffer[colliderIndex]);
             }
         }
 

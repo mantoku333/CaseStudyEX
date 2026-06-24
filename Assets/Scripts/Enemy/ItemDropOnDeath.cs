@@ -35,6 +35,8 @@ namespace GameName.Enemy
         private IBossHealthSource healthSource;
         private IBossHealthSource subscribedHealthSource;
         private Collider2D bodyCollider;
+        private readonly System.Collections.Generic.List<MonoBehaviour> behaviourBuffer =
+            new System.Collections.Generic.List<MonoBehaviour>();
         private bool hasDropped;
 
         private void Awake()
@@ -85,11 +87,12 @@ namespace GameName.Enemy
 
         private IBossHealthSource FindHealthSourceOnThisObject()
         {
-            MonoBehaviour[] behaviours = GetComponents<MonoBehaviour>();
-            for (int i = 0; i < behaviours.Length; i++)
+            behaviourBuffer.Clear();
+            GetComponents(behaviourBuffer);
+            for (int i = 0; i < behaviourBuffer.Count; i++)
             {
                 // UnityのGetComponent<T>ではInterface検索が読みづらくなるため、MonoBehaviour一覧から判定する。
-                if (behaviours[i] is IBossHealthSource source)
+                if (behaviourBuffer[i] is IBossHealthSource source)
                 {
                     return source;
                 }
