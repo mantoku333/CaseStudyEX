@@ -276,6 +276,7 @@ namespace Metroidvania.UI
             if (dialogueText != null)
             {
                 dialogueText.text = string.Empty;
+                dialogueText.maxVisibleCharacters = int.MaxValue;
             }
 
             if (_currentTarget == null)
@@ -343,12 +344,6 @@ namespace Metroidvania.UI
             ApplySpeakerNameImage(line.CharacterName);
             _lineIsVisible = true;
 
-            if (dialogueText != null)
-            {
-                ApplyTextLayoutDefaults();
-                dialogueText.text = string.Empty;
-            }
-
             if (bubblePanel != null)
             {
                 bubblePanel.SetActive(true);
@@ -356,6 +351,13 @@ namespace Metroidvania.UI
 
             string text = line.TextWithoutCharacterName.Text;
             UpdateBubbleSizeForText(text);
+
+            if (dialogueText != null)
+            {
+                ApplyTextLayoutDefaults();
+                dialogueText.text = text;
+                dialogueText.maxVisibleCharacters = 0;
+            }
 
             try
             {
@@ -366,14 +368,14 @@ namespace Metroidvania.UI
                 {
                     if (dialogueText != null)
                     {
-                        dialogueText.text = text.Substring(0, i + 1);
+                        dialogueText.maxVisibleCharacters = i + 1;
                     }
 
                     if (token.HurryUpToken.IsCancellationRequested)
                     {
                         if (dialogueText != null)
                         {
-                            dialogueText.text = text;
+                            dialogueText.maxVisibleCharacters = textLength;
                         }
                         break;
                     }
@@ -390,7 +392,7 @@ namespace Metroidvania.UI
             {
                 if (dialogueText != null)
                 {
-                    dialogueText.text = text;
+                    dialogueText.maxVisibleCharacters = text.Length;
                 }
             }
 
@@ -433,6 +435,7 @@ namespace Metroidvania.UI
             if (dialogueText != null)
             {
                 dialogueText.text = string.Empty;
+                dialogueText.maxVisibleCharacters = int.MaxValue;
             }
 
             _currentTarget = null;
@@ -770,6 +773,7 @@ namespace Metroidvania.UI
             // 1) Measure text at max width.
             _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, clampedMaxTextWidthText);
             dialogueText.text = measureText;
+            dialogueText.maxVisibleCharacters = int.MaxValue;
             dialogueText.ForceMeshUpdate();
 
             float measuredTextWidthText = Mathf.Clamp(dialogueText.preferredWidth, 8f, clampedMaxTextWidthText);
@@ -817,6 +821,7 @@ namespace Metroidvania.UI
 
             // Keep typewriter behavior intact.
             dialogueText.text = string.Empty;
+            dialogueText.maxVisibleCharacters = int.MaxValue;
 
             if (logAutoSizeResult)
             {

@@ -7,8 +7,8 @@ public class AttackHitbox : MonoBehaviour
 {
     private const string GroundLayerName = "Ground";
     private const string FallThroughFloorLayerName = "FallThroughFloor";
-
     private readonly HashSet<MonoBehaviour> hitReceivers = new HashSet<MonoBehaviour>();
+    private readonly List<MonoBehaviour> receiverLookupBuffer = new List<MonoBehaviour>();
     private readonly Collider2D[] overlapResults = new Collider2D[16];
     private readonly RaycastHit2D[] wallProbeResults = new RaycastHit2D[16];
 
@@ -136,16 +136,20 @@ public class AttackHitbox : MonoBehaviour
             return;
         }
 
-        MonoBehaviour[] behaviours = collision.GetComponentsInParent<MonoBehaviour>();
+        receiverLookupBuffer.Clear();
+        collision.GetComponentsInParent(false, receiverLookupBuffer);
 
-        for (int i = 0; i < behaviours.Length; i++)
+        for (int i = 0; i < receiverLookupBuffer.Count; i++)
         {
-            if (behaviours[i] is IAttackReceiver receiver && hitReceivers.Add(behaviours[i]))
+            MonoBehaviour behaviour = receiverLookupBuffer[i];
+            if (behaviour is IAttackReceiver receiver && hitReceivers.Add(behaviour))
             {
                 receiver.OnAttacked(this, collision);
                 OnHit?.Invoke(collision);
             }
         }
+
+        receiverLookupBuffer.Clear();
     }
 
     private bool IsHitBlockedByVerticalWall(Collider2D targetCollider)

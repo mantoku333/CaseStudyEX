@@ -48,7 +48,7 @@ namespace GameName.UI
         private void OnHealthChanged(int currentHealth, int maxHealth)
         {
             // 今回の要件では左上に単純な数字だけ表示すればよいため currentHealth のみ表示
-            healthText.text = currentHealth.ToString();
+            healthText.SetText("{0}", currentHealth);
         }
     }
 }
