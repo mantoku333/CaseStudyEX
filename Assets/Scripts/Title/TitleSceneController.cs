@@ -27,6 +27,11 @@ public class TitleSceneController : MonoBehaviour
 
     private int selectedSaveSlotIndex = SaveManager.DefaultSlotIndex;
 
+    private void OnEnable()
+    {
+        RefreshContinueButtonState();
+    }
+
     private void Start()
     {
         if (quitConfirmPanel != null)
@@ -45,11 +50,8 @@ public class TitleSceneController : MonoBehaviour
         }
 
         ResolveButtonReferences();
-
-        if (continueButton != null)
-        {
-            continueButton.interactable = SaveManager.HasAnySave();
-        }
+        BindContinueButton();
+        RefreshContinueButtonState();
     }
 
     public void OnClickStartButton()
@@ -129,6 +131,28 @@ public class TitleSceneController : MonoBehaviour
         if (yesButton == null && quitConfirmPanel != null)
         {
             yesButton = FindButtonInChildren(quitConfirmPanel.transform, "Btn_YES");
+        }
+    }
+
+    private void BindContinueButton()
+    {
+        if (continueButton == null)
+        {
+            return;
+        }
+
+        continueButton.onClick.RemoveListener(OnClickContinueButton);
+        continueButton.onClick.AddListener(OnClickContinueButton);
+    }
+
+    private void RefreshContinueButtonState()
+    {
+        ResolveButtonReferences();
+        BindContinueButton();
+
+        if (continueButton != null)
+        {
+            continueButton.interactable = SaveManager.HasAnySave();
         }
     }
 
