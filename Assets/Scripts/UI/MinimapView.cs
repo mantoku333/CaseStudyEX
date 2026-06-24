@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public sealed class MinimapView : MonoBehaviour
 {
     private const string MiniMapBackgroundName = "MiniMapBackGround";
+    private const float MainCameraRefreshInterval = 0.5f;
+    private const float PlayerReferenceSearchInterval = 0.25f;
 
     [Header("Minimap Panel")]
     [SerializeField] private Vector2 miniMapSize = new Vector2(290f, 170f);
@@ -56,6 +58,9 @@ public sealed class MinimapView : MonoBehaviour
     private CanvasGroup miniMapBackgroundCanvasGroup;
     private PlayerController cachedPlayer;
     private Collider2D cachedPlayerCollider;
+    private Camera cachedMainCamera;
+    private float nextMainCameraRefreshTime;
+    private float nextPlayerReferenceSearchTime;
     private Sprite whiteSprite;
     private Sprite circleSprite;
     private Vector2 miniMapOrigin;
@@ -836,8 +841,8 @@ public sealed class MinimapView : MonoBehaviour
 
     private bool IsPlayerTouchingMiniMap()
     {
-        Camera mainCamera = Camera.main;
-        if (mainCamera == null || !TryResolvePlayerCollider(out Collider2D playerCollider))
+        if (!TryGetMainCamera(out Camera mainCamera) ||
+            !TryResolvePlayerCollider(out Collider2D playerCollider))
         {
             return false;
         }
@@ -882,10 +887,19 @@ public sealed class MinimapView : MonoBehaviour
 
     private bool TryResolvePlayerCollider(out Collider2D playerCollider)
     {
-        if (cachedPlayer == null)
+        if (cachedPlayer == null || !cachedPlayer.isActiveAndEnabled)
         {
-            cachedPlayer = FindFirstObjectByType<PlayerController>();
+            cachedPlayer = null;
             cachedPlayerCollider = null;
+
+            if (Time.unscaledTime < nextPlayerReferenceSearchTime)
+            {
+                playerCollider = null;
+                return false;
+            }
+
+            nextPlayerReferenceSearchTime = Time.unscaledTime + PlayerReferenceSearchInterval;
+            cachedPlayer = FindFirstObjectByType<PlayerController>();
         }
 
         if (cachedPlayer == null)
@@ -901,6 +915,22 @@ public sealed class MinimapView : MonoBehaviour
 
         playerCollider = cachedPlayerCollider;
         return playerCollider != null && playerCollider.enabled;
+    }
+
+    private bool TryGetMainCamera(out Camera mainCamera)
+    {
+        if (cachedMainCamera != null &&
+            cachedMainCamera.isActiveAndEnabled &&
+            Time.unscaledTime < nextMainCameraRefreshTime)
+        {
+            mainCamera = cachedMainCamera;
+            return true;
+        }
+
+        nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
+        cachedMainCamera = Camera.main;
+        mainCamera = cachedMainCamera;
+        return mainCamera != null;
     }
 
     private Rect CalculatePlayerScreenRect(Bounds bounds, Camera mainCamera)
@@ -961,7 +991,14 @@ public sealed class MinimapView : MonoBehaviour
         Camera uiCamera = null;
         if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
         {
-            uiCamera = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
+            if (canvas.worldCamera != null)
+            {
+                uiCamera = canvas.worldCamera;
+            }
+            else if (TryGetMainCamera(out Camera mainCamera))
+            {
+                uiCamera = mainCamera;
+            }
         }
 
         float minX = float.PositiveInfinity;
