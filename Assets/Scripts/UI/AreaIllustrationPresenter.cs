@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public sealed class AreaIllustrationPresenter : MonoBehaviour
 {
     private const string DefaultTargetSceneName = "Fix_Alpha2_Fuyuno";
+    private const float EvaluationInterval = 0.1f;
 
     [Header("Display Conditions")]
     [SerializeField] private string targetSceneName = DefaultTargetSceneName;
@@ -28,6 +29,11 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
 
     private MinimapManager subscribedManager;
     private Coroutine visibilityRoutine;
+    private readonly System.Collections.Generic.List<Collider2D> targetRoomColliders2D = new System.Collections.Generic.List<Collider2D>();
+    private readonly System.Collections.Generic.List<Collider> targetRoomColliders = new System.Collections.Generic.List<Collider>();
+    private GameObject cachedPlayerObject;
+    private float nextEvaluationTime;
+    private bool targetRoomColliderCacheValid;
     private bool isVisible;
 
     private void Awake()
@@ -40,11 +46,15 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
     private void OnEnable()
     {
         SubscribeToMinimap();
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+        targetRoomColliderCacheValid = false;
         EvaluateAndApply();
     }
 
     private void OnDisable()
     {
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+
         if (subscribedManager != null)
         {
             subscribedManager.Changed -= EvaluateAndApply;
@@ -54,6 +64,20 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
 
     private void Update()
     {
+        SubscribeToMinimap();
+        if (Time.unscaledTime < nextEvaluationTime)
+        {
+            return;
+        }
+
+        nextEvaluationTime = Time.unscaledTime + EvaluationInterval;
+        EvaluateAndApply();
+    }
+
+    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        cachedPlayerObject = null;
+        targetRoomColliderCacheValid = false;
         SubscribeToMinimap();
         EvaluateAndApply();
     }
@@ -112,7 +136,7 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
 
     private bool IsPlayerInsideTargetRoom()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
+        GameObject playerObject = ResolvePlayerObject();
         if (playerObject == null)
         {
             return false;
@@ -120,8 +144,53 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
 
         Vector3 playerPosition = playerObject.transform.position;
         Vector2 playerPosition2D = new Vector2(playerPosition.x, playerPosition.y);
-        MinimapRoom[] rooms = FindObjectsByType<MinimapRoom>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        EnsureTargetRoomColliderCache();
 
+        for (int i = 0; i < targetRoomColliders2D.Count; i++)
+        {
+            Collider2D roomCollider = targetRoomColliders2D[i];
+            if (roomCollider != null && roomCollider.enabled && roomCollider.OverlapPoint(playerPosition2D))
+            {
+                return true;
+            }
+        }
+
+        for (int i = 0; i < targetRoomColliders.Count; i++)
+        {
+            Collider roomCollider = targetRoomColliders[i];
+            if (roomCollider != null && roomCollider.enabled && roomCollider.bounds.Contains(playerPosition))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private GameObject ResolvePlayerObject()
+    {
+        if (cachedPlayerObject != null && cachedPlayerObject.activeInHierarchy)
+        {
+            return cachedPlayerObject;
+        }
+
+        cachedPlayerObject = !string.IsNullOrWhiteSpace(playerTag)
+            ? GameObject.FindGameObjectWithTag(playerTag)
+            : null;
+        return cachedPlayerObject;
+    }
+
+    private void EnsureTargetRoomColliderCache()
+    {
+        if (targetRoomColliderCacheValid)
+        {
+            return;
+        }
+
+        targetRoomColliders2D.Clear();
+        targetRoomColliders.Clear();
+
+        MinimapRoom[] rooms = FindObjectsByType<MinimapRoom>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         for (int i = 0; i < rooms.Length; i++)
         {
             MinimapRoom room = rooms[i];
@@ -133,25 +202,17 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
             Collider2D[] colliders2D = room.GetComponents<Collider2D>();
             for (int colliderIndex = 0; colliderIndex < colliders2D.Length; colliderIndex++)
             {
-                Collider2D roomCollider = colliders2D[colliderIndex];
-                if (roomCollider != null && roomCollider.enabled && roomCollider.OverlapPoint(playerPosition2D))
-                {
-                    return true;
-                }
+                targetRoomColliders2D.Add(colliders2D[colliderIndex]);
             }
 
             Collider[] colliders = room.GetComponents<Collider>();
             for (int colliderIndex = 0; colliderIndex < colliders.Length; colliderIndex++)
             {
-                Collider roomCollider = colliders[colliderIndex];
-                if (roomCollider != null && roomCollider.enabled && roomCollider.bounds.Contains(playerPosition))
-                {
-                    return true;
-                }
+                targetRoomColliders.Add(colliders[colliderIndex]);
             }
         }
 
-        return false;
+        targetRoomColliderCacheValid = true;
     }
 
     private void SubscribeToMinimap()
