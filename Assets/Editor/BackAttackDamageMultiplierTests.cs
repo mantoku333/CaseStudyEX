@@ -87,6 +87,78 @@ public sealed class BackAttackDamageMultiplierTests
         Assert.That(GetPrivateField<int>(boss, "downCount"), Is.EqualTo(2));
     }
 
+    [TestCase(10, 0.5f, 5)]
+    [TestCase(5, 0.5f, 3)]
+    [TestCase(1, 0.5f, 1)]
+    [TestCase(8, 0.25f, 2)]
+    public void LastBoss_ShieldedDamage_UsesConfiguredMultiplierAndRoundsUp(
+        int attackDamage,
+        float shieldMultiplier,
+        int expectedDamage)
+    {
+        LastBossController boss = CreateLastBossController(20, 2f, shieldMultiplier);
+        AttackHitbox attacker = CreateAttackHitbox(new Vector2(1f, 0f), attackDamage);
+        boss.ActivateEncounter();
+
+        boss.OnAttacked(attacker, null);
+
+        Assert.That(boss.CurrentHealth, Is.EqualTo(20 - expectedDamage));
+        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.EqualTo(1));
+    }
+
+    [Test]
+    public void LastBoss_DownedDamage_DoesNotUseShieldMultiplier()
+    {
+        LastBossController boss = CreateLastBossController(20, 2f);
+        AttackHitbox attacker = CreateAttackHitbox(new Vector2(1f, 0f), 10);
+        boss.ActivateEncounter();
+        SetPrivateEnumField(boss, "state", "Downed");
+
+        boss.OnAttacked(attacker, null);
+
+        Assert.That(boss.CurrentHealth, Is.EqualTo(10));
+        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.Zero);
+    }
+
+    [Test]
+    public void LastBoss_ShieldedBackAttack_AppliesBackMultiplierBeforeShieldReduction()
+    {
+        LastBossController boss = CreateLastBossController(20, 2f);
+        AttackHitbox attacker = CreateAttackHitbox(new Vector2(-1f, 0f), 5);
+        boss.ActivateEncounter();
+
+        boss.OnAttacked(attacker, null);
+
+        Assert.That(boss.CurrentHealth, Is.EqualTo(15));
+        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.EqualTo(2));
+    }
+
+    [Test]
+    public void LastBoss_HitThatTriggersDown_IsStillShieldReduced()
+    {
+        LastBossController boss = CreateLastBossController(20, 2f);
+        AttackHitbox attacker = CreateAttackHitbox(new Vector2(1f, 0f), 10);
+        SetPrivateField(boss, "downCountThreshold", 1);
+        boss.ActivateEncounter();
+
+        boss.OnAttacked(attacker, null);
+
+        Assert.That(boss.CurrentHealth, Is.EqualTo(15));
+        Assert.That(GetPrivateField<object>(boss, "state").ToString(), Is.EqualTo("Downed"));
+    }
+
+    [Test]
+    public void LastBoss_ShieldedLethalDamage_StillTriggersDeath()
+    {
+        LastBossController boss = CreateLastBossController(4, 2f);
+        AttackHitbox attacker = CreateAttackHitbox(new Vector2(1f, 0f), 8);
+        boss.ActivateEncounter();
+
+        boss.OnAttacked(attacker, null);
+
+        Assert.That(boss.CurrentHealth, Is.Zero);
+    }
+
     [Test]
     public void AttackDestructible_AttackDamageIgnoresBackAttackMultiplier()
     {
@@ -126,7 +198,10 @@ public sealed class BackAttackDamageMultiplierTests
         return enemy;
     }
 
-    private LastBossController CreateLastBossController(int maxHealth, float backAttackMultiplier)
+    private LastBossController CreateLastBossController(
+        int maxHealth,
+        float backAttackMultiplier,
+        float shieldMultiplier = 0.5f)
     {
         GameObject bossObject = CreateObject("LastBoss", Vector2.zero);
         bossObject.AddComponent<Rigidbody2D>().gravityScale = 0f;
@@ -134,6 +209,7 @@ public sealed class BackAttackDamageMultiplierTests
         LastBossController boss = bossObject.AddComponent<LastBossController>();
         SetPrivateField(boss, "maxHealth", maxHealth);
         SetPrivateField(boss, "backAttackDamageMultiplier", backAttackMultiplier);
+        SetPrivateField(boss, "shieldDamageMultiplier", shieldMultiplier);
         SetPrivateField(boss, "downCountThreshold", 20);
         SetPrivateField(boss, "facingDirection", 1);
         InvokePrivate(boss, "Awake");
@@ -200,6 +276,13 @@ public sealed class BackAttackDamageMultiplierTests
         FieldInfo field = target.GetType().GetField(fieldName, InstancePrivate);
         Assert.That(field, Is.Not.Null, $"Private field '{fieldName}' must exist.");
         return (T)field.GetValue(target);
+    }
+
+    private static void SetPrivateEnumField(object target, string fieldName, string enumValue)
+    {
+        FieldInfo field = target.GetType().GetField(fieldName, InstancePrivate);
+        Assert.That(field, Is.Not.Null, $"Private field '{fieldName}' must exist.");
+        field.SetValue(target, System.Enum.Parse(field.FieldType, enumValue));
     }
 
     private static void InvokePrivate(object target, string methodName)

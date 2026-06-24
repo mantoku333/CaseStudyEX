@@ -528,6 +528,14 @@ public sealed class MinimapEditorWindow : EditorWindow
         Color fillColor = new Color(0.2f, 0.39f, 0.62f, 0.78f);
         Color borderColor = new Color(0.82f, 0.9f, 1f, 1f);
 
+        if (room.IsBossRoom)
+        {
+            fillColor = room.BossRoomColor;
+            fillColor.a = 0.82f;
+            borderColor = room.BossRoomColor;
+            borderColor.a = 1f;
+        }
+
         if (isDuplicate)
         {
             fillColor = new Color(0.74f, 0.42f, 0.16f, 0.82f);
@@ -542,8 +550,12 @@ public sealed class MinimapEditorWindow : EditorWindow
 
         if (isSelected)
         {
-            fillColor = new Color(0.1f, 0.58f, 0.56f, 0.9f);
-            borderColor = new Color(0.84f, 1f, 0.96f, 1f);
+            fillColor = room.IsBossRoom
+                ? new Color(room.BossRoomColor.r, room.BossRoomColor.g, room.BossRoomColor.b, 0.9f)
+                : new Color(0.1f, 0.58f, 0.56f, 0.9f);
+            borderColor = room.IsBossRoom
+                ? Color.Lerp(room.BossRoomColor, Color.white, 0.45f)
+                : new Color(0.84f, 1f, 0.96f, 1f);
         }
 
         EditorGUI.DrawRect(rect, fillColor);

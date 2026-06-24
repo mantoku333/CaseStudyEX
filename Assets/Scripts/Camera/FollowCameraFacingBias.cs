@@ -1,5 +1,6 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Player;
 using System.Collections.Generic;
 
@@ -11,13 +12,15 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CinemachineCamera))]
 public sealed class FollowCameraFacingBias : MonoBehaviour
 {
+    private const string FollowCameraName = "CN_FollowCam";
+
     [SerializeField, Min(0f)] private float horizontalLookAheadOffset = 2.25f;
     [SerializeField] private bool recenterWhenIdle = true;
     [SerializeField] private float idleOffsetX = 0f;
     [SerializeField, Min(0f)] private float fallingLookAheadOffsetY = 3f;
     [SerializeField, Min(0f)] private float fallingVelocityThreshold = 0.01f;
-    [SerializeField, Min(0f)] private float verticalOffsetSpeed = 18f;
-    [SerializeField, Min(0f)] private float fallingDampingY = 0.25f;
+    [SerializeField, Min(0.01f)] private float verticalOffsetSmoothTime = 0.4f;
+    [SerializeField, Min(0f)] private float downwardViewReleaseDelay = 0.35f;
 
     private CinemachineCamera followCamera;
     private CinemachinePositionComposer positionComposer;
@@ -30,6 +33,36 @@ public sealed class FollowCameraFacingBias : MonoBehaviour
     private Vector3 baseComposerDamping;
     private Vector3 baseDirectFollowOffset;
     private Vector3 baseDirectFollowPositionDamping;
+    private float currentDownwardCameraOffset;
+    private float downwardCameraOffsetVelocity;
+    private bool wasLookingDown;
+    private float lastDescendingTime = float.NegativeInfinity;
+    private Transform sourceTrackingTarget;
+    private Transform lookAheadTrackingTarget;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RegisterSceneLoadedHandler()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        CinemachineCamera[] cameras =
+            Object.FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            CinemachineCamera camera = cameras[i];
+            if (camera != null &&
+                camera.gameObject.name == FollowCameraName &&
+                camera.GetComponent<FollowCameraFacingBias>() == null)
+            {
+                camera.gameObject.AddComponent<FollowCameraFacingBias>();
+            }
+        }
+    }
 
     private void Awake()
     {
@@ -45,8 +78,13 @@ public sealed class FollowCameraFacingBias : MonoBehaviour
             : Vector3.zero;
     }
 
-    private void LateUpdate()
+    private void Update()
     {
+        if (!EnsureLookAheadTrackingTarget())
+        {
+            return;
+        }
+
         if ((positionComposer == null && directFollow == null) ||
             !TryResolveTargetState(out IPlayerViewStateProvider provider))
         {
@@ -67,13 +105,88 @@ public sealed class FollowCameraFacingBias : MonoBehaviour
                 : -horizontalLookAheadOffset;
         }
 
-        bool isFalling = IsFalling(provider);
+        bool isDescendingNow = IsDescendingNow(provider);
+        if (isDescendingNow)
+        {
+            lastDescendingTime = Time.time;
+        }
 
-        UpdatePositionComposer(desiredOffsetX, isFalling);
-        UpdateDirectFollow(isFalling);
+        // Glide velocity oscillates around zero because of collision/ground correction.
+        // Keep the downward view latched briefly instead of cancelling it every frame.
+        bool isFalling = isDescendingNow ||
+            (wasLookingDown && Time.time - lastDescendingTime <= downwardViewReleaseDelay);
+        if (isFalling != wasLookingDown)
+        {
+            wasLookingDown = isFalling;
+            float velocityY = targetRigidbody != null ? targetRigidbody.linearVelocity.y : 0f;
+            Debug.Log(
+                $"[FollowCameraFacingBias] Downward view {(isFalling ? "started" : "ended")}. " +
+                $"umbrellaOpen={provider.IsUmbrellaOpen}, grounded={provider.IsGrounded}, velocityY={velocityY:0.0000}",
+                this);
+        }
+
+        float desiredDownwardCameraOffset = isFalling ? fallingLookAheadOffsetY : 0f;
+        currentDownwardCameraOffset = Mathf.SmoothDamp(
+            currentDownwardCameraOffset,
+            desiredDownwardCameraOffset,
+            ref downwardCameraOffsetVelocity,
+            verticalOffsetSmoothTime,
+            Mathf.Infinity,
+            Time.deltaTime);
+
+        lookAheadTrackingTarget.localPosition =
+            Vector3.down * currentDownwardCameraOffset;
+
+        UpdatePositionComposer(desiredOffsetX);
+        RestoreDirectFollowOffset();
     }
 
-    private void UpdatePositionComposer(float desiredOffsetX, bool isFalling)
+    private bool EnsureLookAheadTrackingTarget()
+    {
+        if (followCamera == null)
+        {
+            return false;
+        }
+
+        if (lookAheadTrackingTarget != null &&
+            followCamera.Target.TrackingTarget == lookAheadTrackingTarget)
+        {
+            return true;
+        }
+
+        Transform currentTarget = followCamera.Target.TrackingTarget;
+        if (currentTarget == null)
+        {
+            return false;
+        }
+
+        sourceTrackingTarget = currentTarget;
+        GameObject targetObject = new GameObject("FollowCameraDownwardLookAheadTarget");
+        targetObject.hideFlags = HideFlags.HideAndDontSave;
+        lookAheadTrackingTarget = targetObject.transform;
+        lookAheadTrackingTarget.SetParent(sourceTrackingTarget, false);
+        lookAheadTrackingTarget.localPosition = Vector3.zero;
+        followCamera.Target.TrackingTarget = lookAheadTrackingTarget;
+        ClearCachedTargetState();
+        return true;
+    }
+
+    private void OnDestroy()
+    {
+        if (followCamera != null &&
+            lookAheadTrackingTarget != null &&
+            followCamera.Target.TrackingTarget == lookAheadTrackingTarget)
+        {
+            followCamera.Target.TrackingTarget = sourceTrackingTarget;
+        }
+
+        if (lookAheadTrackingTarget != null)
+        {
+            Destroy(lookAheadTrackingTarget.gameObject);
+        }
+    }
+
+    private void UpdatePositionComposer(float desiredOffsetX)
     {
         if (positionComposer == null)
         {
@@ -81,26 +194,21 @@ public sealed class FollowCameraFacingBias : MonoBehaviour
         }
 
         Vector3 targetOffset = positionComposer.TargetOffset;
-        float desiredOffsetY = isFalling
-            ? baseComposerOffsetY - fallingLookAheadOffsetY
-            : baseComposerOffsetY;
-        float nextOffsetY = MoveVerticalOffset(targetOffset.y, desiredOffsetY);
-        Vector3 nextDamping = GetDesiredComposerDamping(isFalling);
 
         if (Mathf.Approximately(targetOffset.x, desiredOffsetX) &&
-            Mathf.Approximately(targetOffset.y, nextOffsetY) &&
-            positionComposer.Damping == nextDamping)
+            Mathf.Approximately(targetOffset.y, baseComposerOffsetY) &&
+            positionComposer.Damping == baseComposerDamping)
         {
             return;
         }
 
         targetOffset.x = desiredOffsetX;
-        targetOffset.y = nextOffsetY;
+        targetOffset.y = baseComposerOffsetY;
         positionComposer.TargetOffset = targetOffset;
-        positionComposer.Damping = nextDamping;
+        positionComposer.Damping = baseComposerDamping;
     }
 
-    private void UpdateDirectFollow(bool isFalling)
+    private void RestoreDirectFollowOffset()
     {
         if (directFollow == null)
         {
@@ -108,68 +216,44 @@ public sealed class FollowCameraFacingBias : MonoBehaviour
         }
 
         Vector3 followOffset = directFollow.FollowOffset;
-        float desiredOffsetY = isFalling
-            ? baseDirectFollowOffset.y - fallingLookAheadOffsetY
-            : baseDirectFollowOffset.y;
-        float nextOffsetY = MoveVerticalOffset(followOffset.y, desiredOffsetY);
-        Vector3 nextDamping = GetDesiredDirectFollowPositionDamping(isFalling);
 
-        if (Mathf.Approximately(followOffset.y, nextOffsetY) &&
-            directFollow.TrackerSettings.PositionDamping == nextDamping)
+        if (Mathf.Approximately(followOffset.y, baseDirectFollowOffset.y) &&
+            directFollow.TrackerSettings.PositionDamping == baseDirectFollowPositionDamping)
         {
             return;
         }
 
-        followOffset.y = nextOffsetY;
+        followOffset.y = baseDirectFollowOffset.y;
         directFollow.FollowOffset = followOffset;
 
         var trackerSettings = directFollow.TrackerSettings;
-        trackerSettings.PositionDamping = nextDamping;
+        trackerSettings.PositionDamping = baseDirectFollowPositionDamping;
         directFollow.TrackerSettings = trackerSettings;
     }
 
-    private float MoveVerticalOffset(float currentOffsetY, float desiredOffsetY)
+    private bool IsDescendingNow(IPlayerViewStateProvider provider)
     {
-        return verticalOffsetSpeed > 0f
-            ? Mathf.MoveTowards(currentOffsetY, desiredOffsetY, verticalOffsetSpeed * Time.deltaTime)
-            : desiredOffsetY;
-    }
-
-    private bool IsFalling(IPlayerViewStateProvider provider)
-    {
-        return
-            targetRigidbody != null &&
-            !provider.IsGrounded &&
-            targetRigidbody.linearVelocity.y < -fallingVelocityThreshold;
-    }
-
-    private Vector3 GetDesiredComposerDamping(bool isFalling)
-    {
-        Vector3 desiredDamping = baseComposerDamping;
-        if (isFalling)
+        if (targetRigidbody == null)
         {
-            desiredDamping.y = Mathf.Min(baseComposerDamping.y, fallingDampingY);
+            return false;
         }
 
-        return desiredDamping;
-    }
+        float verticalVelocity = targetRigidbody.linearVelocity.y;
 
-    private Vector3 GetDesiredDirectFollowPositionDamping(bool isFalling)
-    {
-        Vector3 desiredDamping = baseDirectFollowPositionDamping;
-        if (isFalling)
-        {
-            desiredDamping.y = Mathf.Min(baseDirectFollowPositionDamping.y, fallingDampingY);
-        }
+        // Glide descent is extremely slow (-0.001 in the current player prefab).
+        // Do not gate it behind the ground state: that state can lag briefly while
+        // leaving a platform.  The open umbrella plus negative velocity is enough.
+        bool isDescendingWithUmbrella =
+            provider.IsUmbrellaOpen && verticalVelocity < 0f;
+        bool isOrdinaryFall =
+            !provider.IsGrounded && verticalVelocity < -fallingVelocityThreshold;
 
-        return desiredDamping;
+        return isDescendingWithUmbrella || isOrdinaryFall;
     }
 
     private bool TryResolveTargetState(out IPlayerViewStateProvider provider)
     {
-        Transform trackingTarget = followCamera != null
-            ? followCamera.Target.TrackingTarget
-            : null;
+        Transform trackingTarget = sourceTrackingTarget;
 
         if (trackingTarget == null)
         {

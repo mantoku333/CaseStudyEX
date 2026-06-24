@@ -523,6 +523,7 @@ namespace GameName.UI
 
             button.onClick.RemoveListener(action);
             button.onClick.AddListener(action);
+            UIButtonSfxPlayer.Register(button);
         }
 
         private static void UnbindButton(Button button, UnityEngine.Events.UnityAction action)

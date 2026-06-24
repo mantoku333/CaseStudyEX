@@ -272,6 +272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyController2D
   moveSpeed: 2
   patrolDistance: 7
+  randomizeInitialDirection: 1
   damageToPlayer: 5
   maxHealth: 40
   backAttackDamageMultiplier: 2
@@ -318,7 +319,9 @@ MonoBehaviour:
   blockedStopDelay: 0.1
   chargeEndingLeadDistance: 1.2
   drawViewGizmo: 1
-  parryKnockbackDistance: 0.5
+  parryKnockbackDistance: 4.5
+  parryKnockbackUpwardSpeed: 4
+  parryKnockbackDuration: 0.25
 --- !u!114 &1141293357520890712
 MonoBehaviour:
   m_ObjectHideFlags: 0

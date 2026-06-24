@@ -221,6 +221,14 @@ namespace Player
 
         private SurfaceAudioProfile ResolveCurrentSurfaceProfile()
         {
+            // SurfaceAudioZone はエリア全体を覆う用途なので、足元Raycastより先に解決する。
+            // 段差や特殊床でRaycastが届かない場合でも、エリアに設定された足音を維持できる。
+            SurfaceAudioProfile zoneProfile = ResolveZoneProfile(transform.position);
+            if (zoneProfile != null)
+            {
+                return zoneProfile;
+            }
+
             SurfaceAudioProfile profile = FindSurfaceProfileBelow();
             if (profile != null)
             {
@@ -407,6 +415,8 @@ namespace Player
             }
 
             float pitchOffset = Random.Range(-pitchRandomRange, pitchRandomRange);
+            // 足音専用AudioSourceなので、前の足音の余韻を止めて多重再生を防ぐ。
+            footstepAudioSource.Stop();
             footstepAudioSource.volume = 1f;
             footstepAudioSource.loop = false;
             footstepAudioSource.pitch = Mathf.Max(0.01f, defaultPitch + pitchOffset);

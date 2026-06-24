@@ -160,6 +160,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(HandleCloseButtonClicked);
+            UIButtonSfxPlayer.Register(closeButton);
         }
     }
 
@@ -209,6 +210,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
             return;
         }
 
+        bool wasPanelVisible = panelRoot != null && panelRoot.activeInHierarchy;
         GameObject root = ResolveViewRoot();
         if (root != null && !root.activeSelf)
         {
@@ -220,6 +222,11 @@ public sealed class TutorialOverlayController : MonoBehaviour
         if (panelRoot != null)
         {
             panelRoot.SetActive(true);
+        }
+
+        if (!wasPanelVisible && panelRoot != null && panelRoot.activeInHierarchy)
+        {
+            UIButtonSfxPlayer.PlayPanelOpen();
         }
 
         RefreshPromptText();

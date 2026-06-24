@@ -94,7 +94,14 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
             abilityController = other.GetComponentInParent<PlayerAbilityController>();
         }
 
-        bool isApplied = ApplyItem(playerHealth, abilityController);
+        PlayerAttackPower attackPower = other.GetComponent<PlayerAttackPower>();
+
+        if (attackPower == null)
+        {
+            attackPower = other.GetComponentInParent<PlayerAttackPower>();
+        }
+
+        bool isApplied = ApplyItem(playerHealth, abilityController, attackPower);
 
         if (!isApplied) { return; }
 
@@ -106,10 +113,14 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
         Debug.Log($"{itemData.itemName} を取得しました！");
         PlayEquipmentPickupNotification();
 
-        CompletePickup(playerHealth);
+        Transform pickupEffectTarget = playerHealth != null ? playerHealth.transform : other.transform;
+        CompletePickup(playerHealth, pickupEffectTarget);
     }
 
-    private bool ApplyItem(PlayerHealth playerHealth, PlayerAbilityController abilityController)
+    private bool ApplyItem(
+        PlayerHealth playerHealth,
+        PlayerAbilityController abilityController,
+        PlayerAttackPower attackPower)
     {
         bool isApplied = false;
 
@@ -126,6 +137,14 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
             if (playerHealth == null) { return false; }
 
             playerHealth.AddMaxHealth(itemData.maxHealthBonus, true);
+            isApplied = true;
+        }
+
+        if (itemData.attackDamageBonus > 0)
+        {
+            if (attackPower == null) { return false; }
+
+            attackPower.AddAttackDamage(itemData.attackDamageBonus);
             isApplied = true;
         }
 
@@ -226,6 +245,11 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
             return true;
         }
 
+        if (itemData.attackDamageBonus > 0)
+        {
+            return true;
+        }
+
         if (IsInventoryItem())
         {
             return true;
@@ -246,7 +270,7 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
                itemData.itemType == ItemType.Collectible;
     }
 
-    private void CompletePickup(PlayerHealth playerHealth)
+    private void CompletePickup(PlayerHealth playerHealth, Transform pickupEffectTarget)
     {
         isPickedUp = true;
 
@@ -258,7 +282,7 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
                 effectController.PlayHealEffectOnPlayer(playerHealth);
             }
 
-            if (effectController.PlayPickupEffectAndDestroy())
+            if (effectController.PlayPickupEffectAndDestroy(pickupEffectTarget))
             {
                 return;
             }

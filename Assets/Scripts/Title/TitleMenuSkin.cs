@@ -198,6 +198,8 @@ public sealed class TitleMenuSkin : MonoBehaviour
 
         button.onClick.RemoveListener(action);
         button.onClick.AddListener(action);
+        UIButtonSfxPlayer.Register(button);
+        UIButtonSfxPlayer.RegisterHover(button);
     }
 
     private static void Unbind(Button button, UnityAction action)

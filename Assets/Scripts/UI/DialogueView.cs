@@ -271,6 +271,8 @@ namespace Metroidvania.UI
                 var buttonComp = buttonObj.GetComponent<Button>();
                 if (buttonComp != null)
                 {
+                    UIButtonSfxPlayer.Register(buttonComp);
+
                     int index = i;
                     buttonComp.onClick.AddListener(() =>
                     {

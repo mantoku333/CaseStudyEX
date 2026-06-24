@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private const float ExternalMoveArrivalThreshold = 0.03f;
     private const float AttackMoveInputDeadZone = 0.01f;
     private const float AimFacingDeadZone = 0.001f;
-    private const float MainCameraRefreshInterval = 0.5f;
 
     private static class InputActionNames
     {
@@ -40,6 +39,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     [Header("物理設定")]
     [SerializeField] private bool applyNoFrictionMaterial = true;
 
+    [Header("接地安定化")]
+    [SerializeField, Min(0f)] private float groundedLossGraceSeconds = 0.08f;
+
     [Header("プレイヤーステータス")]
     [SerializeField, Required, Expandable] private PlayerStatsData playerStatsData;
 
@@ -47,6 +49,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private float moveInput;
     private bool jumpInput;
     private bool isGround;
+    private float groundedLossGraceRemaining;
     private bool hasPreviousGroundState;
     private bool previousGroundState;
     private bool isFacingRight = true;
@@ -57,6 +60,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private float externalMoveInput;
     private bool externalMovementHasTarget;
     private float externalMovementTargetX;
+    private float damageKnockbackEndTime;
+    private float damageKnockbackVelocityX;
 
     //-------各種コンポーネント参照関連--------
     private GroundCheck groundCheck;                           //地面判定のスクリプト
@@ -64,13 +69,12 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private UmbrellaController umbrellaController;             //傘関連のスクリプト
     private UmbrellaAttackController umbrellaAttackController; //傘攻撃関連のスクリプト
     private UmbrellaParryController  umbrellaParryController;  //パリィ関連のスクリプト
+    private PlayerDiveAttackController diveAttackController;   //落下攻撃関連のスクリプト
     private ParryHitbox parryHitbox;
     private AttackHitbox[] attackHitboxes;
     private DodgeController dodgeController;                   //回避関連のスクリプト
     private MonoBehaviour fallThroughController;               //床すり抜け関連のスクリプト
     private PlayerAbilityController playerAbilityController;   //能力管理のスクリプト
-    private Camera cachedMainCamera;
-    private float nextMainCameraRefreshTime;
 
     //-------入力関連--------
     private InputAction moveAction;
@@ -108,6 +112,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsExternalControlLocked => externalControlLocked;
     public bool IsExternalFacingLocked => externalFacingLocked;
     public bool IsExternalMovementActive => externalMovementActive;
+    public bool IsDamageKnockbackActive => Time.time < damageKnockbackEndTime;
+    public bool IsDiveAttacking => diveAttackController != null && diveAttackController.IsDiveAttacking;
 
     private void Awake()
     {
@@ -136,6 +142,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     {
         BindInputActions();
         hasPreviousGroundState = false;
+        groundedLossGraceRemaining = 0f;
     }
 
     private void OnDisable()
@@ -148,6 +155,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         externalMoveInput = 0.0f;
         externalMovementHasTarget = false;
         externalMovementTargetX = 0.0f;
+        damageKnockbackEndTime = 0f;
+        damageKnockbackVelocityX = 0f;
     }
 
     private void Start()
@@ -173,6 +182,12 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         RefreshGroundState();
         HandleGroundTransition();
 
+        if (UpdateDamageKnockback())
+        {
+            jumpInput = false;
+            return;
+        }
+
         if (externalMovementActive)
         {
             UpdateExternalTargetMovement();
@@ -192,16 +207,73 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         Jump();
     }
 
+    /// <summary>
+    /// 被弾元から離れる方向へ、短時間だけ操作入力より優先するノックバックを適用する。
+    /// </summary>
+    public void ApplyDamageKnockback(
+        float horizontalDirection,
+        float speed,
+        float duration,
+        float upwardSpeed)
+    {
+        if (rigidBody2d == null || speed <= 0f || duration <= 0f)
+        {
+            return;
+        }
+
+        float direction = horizontalDirection >= 0f ? 1f : -1f;
+        damageKnockbackVelocityX = direction * speed;
+        damageKnockbackEndTime = Time.time + duration;
+
+        Vector2 velocity = rigidBody2d.linearVelocity;
+        velocity.y = Mathf.Max(velocity.y, Mathf.Max(0f, upwardSpeed));
+        rigidBody2d.linearVelocity = velocity;
+
+        UpdateDamageKnockback();
+    }
+
+    private bool UpdateDamageKnockback()
+    {
+        if (rigidBody2d == null || Time.time >= damageKnockbackEndTime)
+        {
+            return false;
+        }
+
+        Vector2 velocity = rigidBody2d.linearVelocity;
+        velocity.x = damageKnockbackVelocityX;
+        rigidBody2d.linearVelocity = velocity;
+        return true;
+    }
+
     private void RefreshGroundState()
     {
-        if (groundCheck != null)
+        bool detectedGround = groundCheck != null && groundCheck.IsGround();
+        ApplyGroundSample(detectedGround, Time.fixedDeltaTime);
+    }
+
+    private void ApplyGroundSample(bool detectedGround, float fixedDeltaTime)
+    {
+        if (detectedGround)
         {
-            isGround = groundCheck.IsGround();
+            isGround = true;
+            groundedLossGraceRemaining = Mathf.Max(0f, groundedLossGraceSeconds);
+            return;
         }
-        else
+
+        // Upward motion is an intentional departure (jump/recoil), so it must not
+        // inherit landing grace. The grace only filters brief downward/idle misses
+        // from the very thin GroundCheck while the physics solver settles.
+        if (rigidBody2d != null && rigidBody2d.linearVelocity.y > 0.01f)
         {
             isGround = false;
+            groundedLossGraceRemaining = 0f;
+            return;
         }
+
+        groundedLossGraceRemaining = Mathf.Max(
+            0f,
+            groundedLossGraceRemaining - Mathf.Max(0f, fixedDeltaTime));
+        isGround = isGround && groundedLossGraceRemaining > 0f;
     }
 
     public void SetPlayerStatsData(PlayerStatsData playerData)
@@ -305,6 +377,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             Debug.LogError("UmbrellaParryControllerが見つかっていません");
         }
 
+        diveAttackController = GetComponent<PlayerDiveAttackController>();
+
         parryHitbox = GetComponentInChildren<ParryHitbox>();
         if (parryHitbox == null)
         {
@@ -402,6 +476,15 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     // - 地上攻撃は傘攻撃
     private void GetInput()
     {
+        // 被弾ノックバック中は移動だけでなく、攻撃・回避・パリィなどの新規入力も受け付けない。
+        if (IsDamageKnockbackActive)
+        {
+            moveInput = 0.0f;
+            jumpInput = false;
+            wasDownHeld = false;
+            return;
+        }
+
         if (externalControlLocked)
         {
             moveInput = 0.0f;
@@ -434,6 +517,13 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             move = moveAction.ReadValue<Vector2>();
             moveInput = Mathf.Clamp(move.x, -1.0f, 1.0f);
+        }
+
+        if (diveAttackController != null && diveAttackController.IsDiveAttacking)
+        {
+            jumpInput = false;
+            wasDownHeld = false;
+            return;
         }
 
         UpdateFacingDirection();
@@ -571,6 +661,18 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                 isUmbrellaOpen &&
                 !isGround;
 
+            // 空中落下攻撃：S(下入力) + 攻撃。
+            // 傘の開閉状態ではなく、地面からグリッド2ブロック以上離れているかで発動可否を決める。
+            if (!isGround && isDownHeld)
+            {
+                if (diveAttackController != null &&
+                    diveAttackController.CanStartDiveAttackFromAir() &&
+                    diveAttackController.TryStartDiveAttack())
+                {
+                    return;
+                }
+            }
+
             // 滑空中射撃
             if (isPlayerGliding)
             {
@@ -584,7 +686,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                     return;
                 }
 
-                if (gunController != null && TryResolveAttackDirection(out Vector2 shootDirection))
+                if (gunController != null && TryResolveRecoilDirection(out Vector2 shootDirection))
                 {
                     handledGlideShot = true;
                     UpdateFacingFromAttackDirection(shootDirection);
@@ -651,6 +753,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         if (gunController != null && gunController.GetRecoiling()) { return; }
 
+        if (diveAttackController != null && diveAttackController.IsDiveAttacking) { return; }
+
         if (rigidBody2d == null) { return; }
 
         if (playerStatsData == null) { return; }
@@ -663,15 +767,27 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         float horizontalInput = ResolveHorizontalMoveInput();
 
-        if (horizontalInput != 0.0f)
+        if (diveAttackController != null && diveAttackController.IsBounceControlActive)
         {
-            float moveSpeed = playerStatsData.MoveSpeed;
+            diveAttackController.ApplyBounceHorizontalControl(horizontalInput);
+            return;
+        }
 
-            if (isGliding)
-            {
-                moveSpeed = umbrellaController.GetGlideMoveSpeed();
-            }
+        float moveSpeed = isGliding
+            ? umbrellaController.GetGlideMoveSpeed()
+            : playerStatsData.MoveSpeed;
+        bool preserveRecoilMomentum =
+            !isGround &&
+            gunController != null &&
+            gunController.ShouldPreserveHorizontalRecoil(moveSpeed);
 
+        if (preserveRecoilMomentum)
+        {
+            // 入力の有無にかかわらず同じ割合で減速させ、反動の飛距離を一定にする。
+            velocity.x *= isGliding ? 0.95f : 0.98f;
+        }
+        else if (horizontalInput != 0.0f)
+        {
             velocity.x = horizontalInput * moveSpeed;
         }
         else
@@ -876,7 +992,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
                 return;
             }
 
-            if (!TryGetMainCamera(out Camera mainCamera))
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null)
             {
                 return;
             }
@@ -940,27 +1057,58 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return true;
         }
 
-        if (!TryGetMainCamera(out Camera mainCamera))
+        return TryResolveAimDirection(out attackDirection);
+    }
+
+    private bool TryResolveRecoilDirection(out Vector2 recoilDirection)
+    {
+        // 反動移動では移動と照準を分離する。移動キーを押したまま撃っても照準方向を維持し、
+        // 照準を取得できない場合だけ移動方向をフォールバックとして使う。
+        if (TryResolveAimDirection(out recoilDirection))
         {
-            attackDirection = Vector2.zero;
+            return true;
+        }
+
+        float horizontalMoveInput = ResolveHorizontalMoveInput();
+        if (Mathf.Abs(horizontalMoveInput) > AttackMoveInputDeadZone)
+        {
+            recoilDirection = horizontalMoveInput > 0.0f
+                ? Vector2.right
+                : Vector2.left;
+            return true;
+        }
+
+        recoilDirection = Vector2.zero;
+        return false;
+    }
+
+    public bool TryGetRecoilDirectionForPreview(out Vector2 recoilDirection)
+    {
+        if (externalControlLocked)
+        {
+            recoilDirection = Vector2.zero;
             return false;
         }
 
-        if (!TryGetAimWorldPosition(mainCamera, out Vector3 aimWorldPosition))
+        return TryResolveRecoilDirection(out recoilDirection);
+    }
+
+    private bool TryResolveAimDirection(out Vector2 aimDirection)
+    {
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null &&
+            TryGetAimWorldPosition(mainCamera, out Vector3 aimWorldPosition))
         {
-            attackDirection = Vector2.zero;
-            return false;
+            aimDirection = aimWorldPosition - transform.position;
+            if (aimDirection.sqrMagnitude > AimFacingDeadZone * AimFacingDeadZone)
+            {
+                aimDirection.Normalize();
+                return true;
+            }
         }
 
-        attackDirection = aimWorldPosition - transform.position;
-        if (attackDirection.sqrMagnitude <= AimFacingDeadZone * AimFacingDeadZone)
-        {
-            attackDirection = Vector2.zero;
-            return false;
-        }
-
-        attackDirection.Normalize();
-        return true;
+        aimDirection = Vector2.zero;
+        return false;
     }
 
     private void UpdateFacingFromAttackDirection(Vector2 attackDirection)
@@ -1095,20 +1243,6 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         return true;
     }
 
-    private bool TryGetMainCamera(out Camera mainCamera)
-    {
-        if (cachedMainCamera != null && Time.unscaledTime < nextMainCameraRefreshTime)
-        {
-            mainCamera = cachedMainCamera;
-            return true;
-        }
-
-        cachedMainCamera = MainCameraCache.Get();
-        nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
-        mainCamera = cachedMainCamera;
-        return mainCamera != null;
-    }
-
     // 必須Actionの取得+有効化ヘルパー。
     // ここで失敗したActionがある場合は入力系をReadyにしない設計。
     private bool TryBindRequiredAction(InputActionMap actionMap, string actionName, ref InputAction targetAction)
@@ -1154,95 +1288,5 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             bounciness = 0f
         };
         playerCollider.sharedMaterial = runtimeNoFrictionMaterial;
-    }
-}
-
-public static class PlayerReferenceCache
-{
-    private const string DefaultPlayerTag = "Player";
-    private const float RefreshInterval = 0.5f;
-
-    private static GameObject cachedPlayerObject;
-    private static global::PlayerController cachedPlayerController;
-    private static float nextRefreshTime;
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void Reset()
-    {
-        cachedPlayerObject = null;
-        cachedPlayerController = null;
-        nextRefreshTime = 0f;
-        UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= HandleActiveSceneChanged;
-        UnityEngine.SceneManagement.SceneManager.activeSceneChanged += HandleActiveSceneChanged;
-    }
-
-    public static GameObject GetGameObject(string playerTag = DefaultPlayerTag, bool forceRefresh = false)
-    {
-        playerTag = string.IsNullOrWhiteSpace(playerTag) ? DefaultPlayerTag : playerTag;
-        if (!forceRefresh &&
-            IsUsable(cachedPlayerObject, playerTag) &&
-            Time.unscaledTime < nextRefreshTime)
-        {
-            return cachedPlayerObject;
-        }
-
-        nextRefreshTime = Time.unscaledTime + RefreshInterval;
-        if (!IsUsable(cachedPlayerController != null ? cachedPlayerController.gameObject : null, playerTag))
-        {
-            cachedPlayerController = Object.FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Exclude);
-        }
-
-        if (cachedPlayerController != null && IsUsable(cachedPlayerController.gameObject, playerTag))
-        {
-            cachedPlayerObject = cachedPlayerController.gameObject;
-            return cachedPlayerObject;
-        }
-
-        cachedPlayerObject = GameObject.FindGameObjectWithTag(playerTag);
-        cachedPlayerController = cachedPlayerObject != null
-            ? cachedPlayerObject.GetComponent<global::PlayerController>()
-            : null;
-        return cachedPlayerObject;
-    }
-
-    public static Transform GetTransform(string playerTag = DefaultPlayerTag, bool forceRefresh = false)
-    {
-        GameObject playerObject = GetGameObject(playerTag, forceRefresh);
-        return playerObject != null ? playerObject.transform : null;
-    }
-
-    public static global::PlayerController GetController(bool forceRefresh = false)
-    {
-        GameObject playerObject = GetGameObject(DefaultPlayerTag, forceRefresh);
-        if (playerObject == null)
-        {
-            return null;
-        }
-
-        global::PlayerController playerController = playerObject.GetComponent<global::PlayerController>();
-        return playerController != null
-            ? playerController
-            : playerObject.GetComponentInParent<global::PlayerController>();
-    }
-
-    public static void Invalidate()
-    {
-        cachedPlayerObject = null;
-        cachedPlayerController = null;
-        nextRefreshTime = 0f;
-    }
-
-    private static bool IsUsable(GameObject playerObject, string playerTag)
-    {
-        return playerObject != null &&
-               playerObject.activeInHierarchy &&
-               playerObject.CompareTag(playerTag);
-    }
-
-    private static void HandleActiveSceneChanged(
-        UnityEngine.SceneManagement.Scene previous,
-        UnityEngine.SceneManagement.Scene current)
-    {
-        Invalidate();
     }
 }

@@ -81,7 +81,6 @@ public class CameraManager : MonoBehaviour
     private void EnsurePlayerFollowBiasComponents()
     {
         EnsurePlayerFollowBiasComponent(followCam);
-        EnsurePlayerFollowBiasComponent(directFollowCam);
     }
 
     private static void EnsurePlayerFollowBiasComponent(CinemachineCamera camera)

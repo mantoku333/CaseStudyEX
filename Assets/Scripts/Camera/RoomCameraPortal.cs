@@ -116,7 +116,10 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
         Vector3 playerCommitPoint = ResolvePlayerCommitPoint(player, player.position);
         BeginPendingTransition(playerCommitPoint);
-        StartTransitionCamera(playerCommitPoint);
+        if (CanPreviewPendingRoom())
+        {
+            StartTransitionCamera(playerCommitPoint);
+        }
     }
 
     private void BeginPendingTransition(Vector3 playerPosition)
@@ -141,6 +144,11 @@ public sealed class RoomCameraPortal : MonoBehaviour
             pendingToRoom != null &&
             finalRoom != pendingFromRoom &&
             finalRoom != pendingToRoom)
+        {
+            finalRoom = pendingFromRoom;
+        }
+
+        if (finalRoom == pendingToRoom && !CanPreviewPendingRoom())
         {
             finalRoom = pendingFromRoom;
         }
@@ -177,9 +185,31 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
     private void UpdateTransitionCamera()
     {
-        if (transitionCommitted || !transitionActive || playerTransform == null)
+        if (transitionCommitted || playerTransform == null)
         {
             return;
+        }
+
+        if (!CanPreviewPendingRoom())
+        {
+            if (transitionActive)
+            {
+                StopTransitionCamera();
+            }
+
+            return;
+        }
+
+        if (!transitionActive)
+        {
+            Vector3 startPosition = ResolvePlayerCommitPoint(
+                playerTransform,
+                playerTransform.position);
+            StartTransitionCamera(startPosition);
+            if (!transitionActive)
+            {
+                return;
+            }
         }
 
         if (TryCommitFullyEnteredRoom())
@@ -632,7 +662,9 @@ public sealed class RoomCameraPortal : MonoBehaviour
             return false;
         }
 
-        if (pendingToRoom == null || !IsPlayerFullyInsideRoom(pendingToRoom))
+        if (pendingToRoom == null ||
+            !CanPreviewPendingRoom() ||
+            !IsPlayerFullyInsideRoom(pendingToRoom))
         {
             return false;
         }
@@ -652,6 +684,14 @@ public sealed class RoomCameraPortal : MonoBehaviour
         room.ActivateCamera();
         StopTransitionCamera();
         transitionCommitted = true;
+    }
+
+    private bool CanPreviewPendingRoom()
+    {
+        return RoomPortalAccessCondition.AllowsPreview(
+            this,
+            pendingFromRoom,
+            pendingToRoom);
     }
 
     private bool IsPlayerFullyInsideRoom(RoomCameraTrigger room)

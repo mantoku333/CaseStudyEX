@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a596a0122d176fd4d81638a716f851d2, type: 3}
+  m_Name: AttackPowerUpItem
+  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
+  itemName: "\u653B\u6483\u529B\u4E0A\u6607\u30A2\u30A4\u30C6\u30E0"
+  itemId: attack_power_up_001
+  description: 
+  icon: {fileID: 0}
+  illustration: {fileID: 0}
+  itemType: 0
+  healAmount: 0
+  staminaAmount: 0
+  maxHealthBonus: 0
+  attackDamageBonus: 5
+  abilityType: 0
+  stackable: 1
+  maxStackSize: 99
+  pickupSound: {fileID: 0}
+  equipmentBadge: {fileID: 0}
+  equipmentAbility: []
+  equipmentVisualLayers: []

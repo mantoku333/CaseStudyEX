@@ -470,6 +470,7 @@ namespace Metroidvania.Enemy
             if (playerHealth.TryTakeDamage(damage))
             {
                 HitStopController.RequestEnemyToPlayer();
+                playerHealth.ApplyDamageKnockbackFrom(transform.position);
 
                 PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
                 if (damageFlash == null)

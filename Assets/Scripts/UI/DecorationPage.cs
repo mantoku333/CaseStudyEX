@@ -44,9 +44,15 @@ public sealed class DecorationPage : MonoBehaviour
         }
 
         if (confirmButton != null)
+        {
             confirmButton.onClick.AddListener(OnConfirmClicked);
+            UIButtonSfxPlayer.Register(confirmButton);
+        }
         if (removeButton != null)
+        {
             removeButton.onClick.AddListener(OnRemoveClicked);
+            UIButtonSfxPlayer.Register(removeButton);
+        }
         ClearRightPanel();
     }
 

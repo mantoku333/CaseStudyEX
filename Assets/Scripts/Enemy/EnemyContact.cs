@@ -250,6 +250,7 @@ namespace Metroidvania.Enemy
             {
                 HitStopController.RequestEnemyToPlayer();
                 cachedPlayerFlash?.PlayFlashForced();
+                ApplyPlayerKnockback();
                 ContactDamageApplied?.Invoke(cachedPlayerHealth, playerBodyCollider);
             }
 
@@ -286,6 +287,16 @@ namespace Metroidvania.Enemy
             }
 
             enemyController = GetComponent<GameName.Enemy.EnemyController>();
+        }
+
+        private void ApplyPlayerKnockback()
+        {
+            if (cachedPlayerHealth == null)
+            {
+                return;
+            }
+
+            cachedPlayerHealth.ApplyDamageKnockbackFrom(transform.position);
         }
 
         private static bool TryGetBodyHitFlash(Collider2D hitCollider, out PlayerDamageFlash damageFlash)

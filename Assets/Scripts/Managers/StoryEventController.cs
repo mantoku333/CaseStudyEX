@@ -115,6 +115,7 @@ public sealed class StoryEventController : MonoBehaviour
     [SerializeField] private StoryPausePolicy pausePolicy = StoryPausePolicy.GameplayOnly;
     [SerializeField] private bool autoSaveOnComplete = true;
     [SerializeField] private bool markRunOnceFlagOnComplete = true;
+    [SerializeField] private string nextEventIdOnComplete = string.Empty;
     [SerializeField] private List<GameObject> deactivateObjectsOnComplete = new List<GameObject>();
 
     [Header("Cinematic State")]
@@ -627,6 +628,7 @@ public sealed class StoryEventController : MonoBehaviour
         RestoreCinematicState();
 
         playRoutine = null;
+        PlayNextEventOnCompleteIfNeeded();
     }
 
     private void ProcessTimelinePoints(PlayableDirector resolvedDirector, double previousTime, double currentTime)
@@ -1447,6 +1449,31 @@ public sealed class StoryEventController : MonoBehaviour
         if (autoSaveOnComplete)
         {
             SaveManager.TrySaveCurrentGame();
+        }
+    }
+
+    private void PlayNextEventOnCompleteIfNeeded()
+    {
+        if (string.IsNullOrWhiteSpace(nextEventIdOnComplete))
+        {
+            return;
+        }
+
+        string nextEventId = nextEventIdOnComplete.Trim();
+        if (string.Equals(nextEventId, EventId, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(nextEventId, name, StringComparison.OrdinalIgnoreCase))
+        {
+            Debug.LogWarning(
+                $"[StoryEventController] nextEventIdOnComplete points to itself. eventId='{EventId}'",
+                this);
+            return;
+        }
+
+        if (!StoryEventRuntimeService.TryPlayEvent(nextEventId))
+        {
+            Debug.LogWarning(
+                $"[StoryEventController] Next event could not start. eventId='{EventId}', nextEventId='{nextEventId}'",
+                this);
         }
     }
 

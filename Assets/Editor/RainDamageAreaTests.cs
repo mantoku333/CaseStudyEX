@@ -74,6 +74,20 @@ public sealed class RainDamageAreaTests
         Assert.That(playerHealth.CurrentHealth, Is.EqualTo(1));
     }
 
+    [Test]
+    public void FixedUpdate_WhenUmbrellaIsOpen_DoesNotDamagePlayer()
+    {
+        RainDamageArea rainArea = CreateRainDamageArea(true);
+        PlayerHealth playerHealth = CreatePlayer(Vector2.zero);
+        UmbrellaController umbrellaController = playerHealth.gameObject.AddComponent<UmbrellaController>();
+        umbrellaController.SetUmbrellaState(UmbrellaController.UmbrellaState.Open, false);
+        Physics2D.SyncTransforms();
+
+        InvokeFixedUpdate(rainArea);
+
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(1));
+    }
+
     private RainDamageArea CreateRainDamageArea(bool active)
     {
         // 実シーンを開かず、雨エリア・プレイヤー・屋根だけを作って到達判定を検証する。
