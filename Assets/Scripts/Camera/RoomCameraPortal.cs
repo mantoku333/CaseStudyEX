@@ -10,6 +10,9 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class RoomCameraPortal : MonoBehaviour
 {
+    private static readonly List<RoomCameraPortal> RegisteredPortalsInternal = new List<RoomCameraPortal>();
+    public static IReadOnlyList<RoomCameraPortal> RegisteredPortals => RegisteredPortalsInternal;
+
     private struct CameraPose
     {
         public Vector3 Position;
@@ -58,6 +61,30 @@ public sealed class RoomCameraPortal : MonoBehaviour
     private float nextMainCameraRefreshTime;
     private bool transitionActive;
     private bool transitionCommitted;
+
+    private void Awake()
+    {
+        RegisterPortal(this);
+    }
+
+    private void OnDestroy()
+    {
+        RegisteredPortalsInternal.Remove(this);
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetRegisteredPortals()
+    {
+        RegisteredPortalsInternal.Clear();
+    }
+
+    private static void RegisterPortal(RoomCameraPortal portal)
+    {
+        if (portal != null && !RegisteredPortalsInternal.Contains(portal))
+        {
+            RegisteredPortalsInternal.Add(portal);
+        }
+    }
 
     private void OnDisable()
     {

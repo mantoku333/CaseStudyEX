@@ -141,10 +141,6 @@ namespace GameName.UI
                     }
                 }
 
-                if (targetHealth == null)
-                {
-                    targetHealth = FindFirstObjectByType<PlayerHealth>();
-                }
             }
 
             var playerController = global::PlayerReferenceCache.GetController();

@@ -429,7 +429,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             return true;
         }
 
-        PlayerHealth playerHealth = Object.FindFirstObjectByType<PlayerHealth>(FindObjectsInactive.Include);
+        GameObject playerObject = global::PlayerReferenceCache.GetGameObject(forceRefresh: true);
+        PlayerHealth playerHealth = playerObject != null ? playerObject.GetComponentInChildren<PlayerHealth>(true) : null;
         if (playerHealth != null && playerHealth.gameObject.scene == managedScene)
         {
             playerTransform = playerHealth.transform;
@@ -713,8 +714,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
     private static bool HasScenePrologueSource(Scene scene)
     {
-        SceneStartStoryEventSource[] sources = FindObjectsByType<SceneStartStoryEventSource>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < sources.Length; i++)
+        IReadOnlyList<SceneStartStoryEventSource> sources = SceneStartStoryEventSource.RegisteredSources;
+        for (int i = 0; i < sources.Count; i++)
         {
             SceneStartStoryEventSource source = sources[i];
             if (source != null && source.gameObject.scene == scene)

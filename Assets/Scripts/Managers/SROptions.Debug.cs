@@ -379,7 +379,7 @@ public partial class SROptions
             }
         }
 
-        return UnityEngine.Object.FindFirstObjectByType<PlayerHealth>();
+        return null;
     }
 
     private DebugTeleportPoint2D[] CollectDebugTeleportPoints()

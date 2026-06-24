@@ -1184,8 +1184,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void ConfigureRoomCameraPortals()
     {
-        RoomCameraPortal[] portals = FindObjectsByType<RoomCameraPortal>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < portals.Length; i++)
+        IReadOnlyList<RoomCameraPortal> portals = RoomCameraPortal.RegisteredPortals;
+        for (int i = 0; i < portals.Count; i++)
         {
             RoomCameraPortal portal = portals[i];
             if (portal == null || portal.gameObject.scene != managedScene)
@@ -1199,8 +1199,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void ConfigureVerticalRoomCameraPortals()
     {
-        VerticalRoomCameraPortal[] portals = FindObjectsByType<VerticalRoomCameraPortal>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < portals.Length; i++)
+        IReadOnlyList<VerticalRoomCameraPortal> portals = VerticalRoomCameraPortal.RegisteredPortals;
+        for (int i = 0; i < portals.Count; i++)
         {
             VerticalRoomCameraPortal portal = portals[i];
             if (portal == null || portal.gameObject.scene != managedScene)
@@ -1214,8 +1214,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void ConfigureFallRoomCameraPortals()
     {
-        FallRoomCameraPortal[] portals = FindObjectsByType<FallRoomCameraPortal>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < portals.Length; i++)
+        IReadOnlyList<FallRoomCameraPortal> portals = FallRoomCameraPortal.RegisteredPortals;
+        for (int i = 0; i < portals.Count; i++)
         {
             FallRoomCameraPortal portal = portals[i];
             if (portal == null || portal.gameObject.scene != managedScene)
@@ -1229,8 +1229,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void ConfigureSwitchPortals()
     {
-        RoomCameraSwitchPortal[] portals = FindObjectsByType<RoomCameraSwitchPortal>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < portals.Length; i++)
+        IReadOnlyList<RoomCameraSwitchPortal> portals = RoomCameraSwitchPortal.RegisteredPortals;
+        for (int i = 0; i < portals.Count; i++)
         {
             RoomCameraSwitchPortal portal = portals[i];
             if (portal == null || portal.gameObject.scene != managedScene)

@@ -18,6 +18,17 @@ using Yarn.Unity;
 [AddComponentMenu("CaseStudy/Story/Story Event Controller")]
 public sealed class StoryEventController : MonoBehaviour
 {
+    private static readonly List<StoryEventController> RegisteredControllersInternal = new List<StoryEventController>();
+
+    public static IReadOnlyList<StoryEventController> RegisteredControllers
+    {
+        get
+        {
+            PruneRegisteredControllers();
+            return RegisteredControllersInternal;
+        }
+    }
+
     private static readonly string[] PlayerControlBehaviourNames =
     {
         "PlayerController",
@@ -204,6 +215,7 @@ public sealed class StoryEventController : MonoBehaviour
 
     private void Awake()
     {
+        RegisterController(this);
         ResolveDirector();
         DisableDirectorPlayOnAwakeIfNeeded();
         RebuildLookupCache();
@@ -220,6 +232,36 @@ public sealed class StoryEventController : MonoBehaviour
     private void OnDisable()
     {
         StopEvent();
+    }
+
+    private void OnDestroy()
+    {
+        RegisteredControllersInternal.Remove(this);
+    }
+
+    private static void RegisterController(StoryEventController controller)
+    {
+        if (controller != null && !RegisteredControllersInternal.Contains(controller))
+        {
+            RegisteredControllersInternal.Add(controller);
+        }
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetRegisteredControllers()
+    {
+        RegisteredControllersInternal.Clear();
+    }
+
+    private static void PruneRegisteredControllers()
+    {
+        for (int i = RegisteredControllersInternal.Count - 1; i >= 0; i--)
+        {
+            if (RegisteredControllersInternal[i] == null)
+            {
+                RegisteredControllersInternal.RemoveAt(i);
+            }
+        }
     }
 
     public bool PlayEvent()
@@ -2633,7 +2675,7 @@ public sealed class StoryEventController : MonoBehaviour
                 : global::PlayerReferenceCache.GetController();
             PlayerInput playerInput = playerObject != null
                 ? playerObject.GetComponent<PlayerInput>()
-                : FindFirstObjectByType<PlayerInput>(FindObjectsInactive.Include);
+                : null;
 
             var snapshot = new CinematicStateSnapshot(
                 PlayerControllerState.Capture(playerController),

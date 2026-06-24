@@ -441,9 +441,8 @@ public sealed class StoryEventRunner : MonoBehaviour
         }
 
         string trimmedName = eventNameOrId.Trim();
-        StoryEventController[] controllers =
-            Object.FindObjectsByType<StoryEventController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < controllers.Length; i++)
+        IReadOnlyList<StoryEventController> controllers = StoryEventController.RegisteredControllers;
+        for (int i = 0; i < controllers.Count; i++)
         {
             StoryEventController controller = controllers[i];
             if (controller == null)

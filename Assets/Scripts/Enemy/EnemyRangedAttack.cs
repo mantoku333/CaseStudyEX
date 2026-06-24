@@ -384,8 +384,7 @@ namespace GameName.Enemy
                 return;
             }
 
-            PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
-            playerTransform = playerHealth != null ? playerHealth.transform : null;
+            playerTransform = null;
         }
 
         private static LayerMask BuildDefaultObstacleMask()

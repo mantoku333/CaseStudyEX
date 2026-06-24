@@ -1027,7 +1027,8 @@ public sealed class OptionsMenu : MonoBehaviour
             cachedMinimapManager.enabled = false;
         }
 
-        pausedPlayerInput = FindFirstObjectByType<PlayerInput>();
+        GameObject playerObject = ResolvePlayerObject();
+        pausedPlayerInput = playerObject != null ? playerObject.GetComponentInChildren<PlayerInput>(true) : null;
         if (pausedPlayerInput != null)
         {
             previousPlayerInputEnabled = pausedPlayerInput.enabled;
@@ -1035,7 +1036,6 @@ public sealed class OptionsMenu : MonoBehaviour
         }
 
         pausedBehaviours.Clear();
-        GameObject playerObject = ResolvePlayerObject();
         if (playerObject == null)
         {
             return;
@@ -1823,7 +1823,8 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private InputActionAsset ResolvePlayerActions()
     {
-        PlayerInput playerInput = FindFirstObjectByType<PlayerInput>();
+        GameObject playerObject = ResolvePlayerObject();
+        PlayerInput playerInput = playerObject != null ? playerObject.GetComponentInChildren<PlayerInput>(true) : null;
         if (playerInput == null)
         {
             return null;

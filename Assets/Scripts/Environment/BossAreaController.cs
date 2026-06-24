@@ -706,9 +706,8 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         string activeSceneName = SceneManager.GetActiveScene().name;
         StoryEventController fallbackController = null;
 
-        StoryEventController[] controllers =
-            FindObjectsByType<StoryEventController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < controllers.Length; i++)
+        IReadOnlyList<StoryEventController> controllers = StoryEventController.RegisteredControllers;
+        for (int i = 0; i < controllers.Count; i++)
         {
             StoryEventController controller = controllers[i];
             if (controller == null)

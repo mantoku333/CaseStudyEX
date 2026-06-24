@@ -589,12 +589,6 @@ public sealed class TutorialOverlayController : MonoBehaviour
             }
         }
 
-        PlayerInput playerInput = FindFirstObjectByType<PlayerInput>();
-        if (playerInput != null)
-        {
-            return playerInput;
-        }
-
         return null;
     }
 

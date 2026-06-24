@@ -112,14 +112,14 @@ namespace Metroidvania.Managers
             gameplayPaused = true;
             pausedBehaviours.Clear();
 
-            pausedPlayerInput = FindFirstObjectByType<PlayerInput>();
+            GameObject player = ResolvePlayerObject();
+            pausedPlayerInput = player != null ? player.GetComponentInChildren<PlayerInput>(true) : null;
             if (pausedPlayerInput != null)
             {
                 previousPlayerInputEnabled = pausedPlayerInput.enabled;
                 pausedPlayerInput.enabled = false;
             }
 
-            GameObject player = ResolvePlayerObject();
             if (player == null)
             {
                 return;
