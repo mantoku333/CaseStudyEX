@@ -219,12 +219,13 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         currentRoom = null;
         hasRooms = false;
 
-        IReadOnlyList<RoomCameraTrigger> allRooms = RoomCameraTrigger.RegisteredTriggers;
+        RoomCameraTrigger[] allRooms =
+            FindObjectsByType<RoomCameraTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
         bool hasBounds = false;
         worldBounds = default;
 
-        for (int i = 0; i < allRooms.Count; i++)
+        for (int i = 0; i < allRooms.Length; i++)
         {
             RoomCameraTrigger room = allRooms[i];
             if (room == null ||
@@ -1184,8 +1185,9 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void ConfigureRoomCameraPortals()
     {
-        IReadOnlyList<RoomCameraPortal> portals = RoomCameraPortal.RegisteredPortals;
-        for (int i = 0; i < portals.Count; i++)
+        RoomCameraPortal[] portals =
+            FindObjectsByType<RoomCameraPortal>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < portals.Length; i++)
         {
             RoomCameraPortal portal = portals[i];
             if (portal == null || portal.gameObject.scene != managedScene)
@@ -1199,8 +1201,9 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void ConfigureVerticalRoomCameraPortals()
     {
-        IReadOnlyList<VerticalRoomCameraPortal> portals = VerticalRoomCameraPortal.RegisteredPortals;
-        for (int i = 0; i < portals.Count; i++)
+        VerticalRoomCameraPortal[] portals =
+            FindObjectsByType<VerticalRoomCameraPortal>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < portals.Length; i++)
         {
             VerticalRoomCameraPortal portal = portals[i];
             if (portal == null || portal.gameObject.scene != managedScene)
@@ -1214,8 +1217,9 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void ConfigureFallRoomCameraPortals()
     {
-        IReadOnlyList<FallRoomCameraPortal> portals = FallRoomCameraPortal.RegisteredPortals;
-        for (int i = 0; i < portals.Count; i++)
+        FallRoomCameraPortal[] portals =
+            FindObjectsByType<FallRoomCameraPortal>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < portals.Length; i++)
         {
             FallRoomCameraPortal portal = portals[i];
             if (portal == null || portal.gameObject.scene != managedScene)
@@ -1229,8 +1233,9 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void ConfigureSwitchPortals()
     {
-        IReadOnlyList<RoomCameraSwitchPortal> portals = RoomCameraSwitchPortal.RegisteredPortals;
-        for (int i = 0; i < portals.Count; i++)
+        RoomCameraSwitchPortal[] portals =
+            FindObjectsByType<RoomCameraSwitchPortal>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < portals.Length; i++)
         {
             RoomCameraSwitchPortal portal = portals[i];
             if (portal == null || portal.gameObject.scene != managedScene)

@@ -9,10 +9,6 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class VerticalRoomCameraPortal : MonoBehaviour
 {
-    private static readonly List<VerticalRoomCameraPortal> RegisteredPortalsInternal =
-        new List<VerticalRoomCameraPortal>();
-    public static IReadOnlyList<VerticalRoomCameraPortal> RegisteredPortals => RegisteredPortalsInternal;
-
     private enum PortalDirection
     {
         Bidirectional,
@@ -65,30 +61,6 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
     private float nextMainCameraRefreshTime;
     private bool transitionActive;
     private bool transitionCommitted;
-
-    private void Awake()
-    {
-        RegisterPortal(this);
-    }
-
-    private void OnDestroy()
-    {
-        RegisteredPortalsInternal.Remove(this);
-    }
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetRegisteredPortals()
-    {
-        RegisteredPortalsInternal.Clear();
-    }
-
-    private static void RegisterPortal(VerticalRoomCameraPortal portal)
-    {
-        if (portal != null && !RegisteredPortalsInternal.Contains(portal))
-        {
-            RegisteredPortalsInternal.Add(portal);
-        }
-    }
 
     private void OnDisable()
     {

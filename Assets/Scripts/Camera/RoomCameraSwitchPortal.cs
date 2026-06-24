@@ -12,10 +12,6 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
     [SerializeField] private RoomCameraTrigger targetRoom;
     [SerializeField] private string playerTag = "Player";
 
-    private static readonly List<RoomCameraSwitchPortal> RegisteredPortalsInternal =
-        new List<RoomCameraSwitchPortal>();
-    public static IReadOnlyList<RoomCameraSwitchPortal> RegisteredPortals => RegisteredPortalsInternal;
-
     private static readonly List<RoomCameraSwitchPortal> activePortals = new();
     private readonly HashSet<Collider2D> overlappingPlayerColliders2D = new();
     private readonly HashSet<Collider> overlappingPlayerColliders = new();
@@ -27,7 +23,6 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private void Awake()
     {
-        RegisterPortal(this);
         overlapFilter2D = new ContactFilter2D
         {
             useTriggers = true
@@ -53,24 +48,10 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
         activatedDuringCurrentOverlap = false;
     }
 
-    private void OnDestroy()
-    {
-        RegisteredPortalsInternal.Remove(this);
-    }
-
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetRegisteredPortals()
+    private static void ResetActivePortals()
     {
-        RegisteredPortalsInternal.Clear();
         activePortals.Clear();
-    }
-
-    private static void RegisterPortal(RoomCameraSwitchPortal portal)
-    {
-        if (portal != null && !RegisteredPortalsInternal.Contains(portal))
-        {
-            RegisteredPortalsInternal.Add(portal);
-        }
     }
 
     private void FixedUpdate()
