@@ -19,6 +19,7 @@ public class ItemEffectController : MonoBehaviour
     private Vector3[] pickupFrameOffsets;
     private Vector3 pickupStartPosition;
     private readonly List<Sprite> generatedSprites = new();
+    private readonly List<Collider2D> colliderBuffer = new();
 
     private void Awake()
     {
@@ -378,11 +379,15 @@ public class ItemEffectController : MonoBehaviour
     }
     private void DisablePickupColliders()
     {
-        Collider2D[] colliders = GetComponents<Collider2D>();
+        colliderBuffer.Clear();
+        GetComponents(colliderBuffer);
 
-        for (int i = 0; i < colliders.Length; i++)
+        for (int i = 0; i < colliderBuffer.Count; i++)
         {
-            colliders[i].enabled = false;
+            if (colliderBuffer[i] != null)
+            {
+                colliderBuffer[i].enabled = false;
+            }
         }
     }
 

@@ -21,7 +21,7 @@ public class AttackHitbox : MonoBehaviour
     private Collider2D hitboxCollider;
     private Rigidbody2D ownerRigidbody;
     private Collider2D ownerBodyCollider;
-    private Collider2D[] ownerColliders = Array.Empty<Collider2D>();
+    private readonly List<Collider2D> ownerColliders = new List<Collider2D>();
     private ContactFilter2D overlapFilter;
     private ContactFilter2D wallProbeFilter;
     private int cachedWallMaskValue = int.MinValue;
@@ -236,8 +236,9 @@ public class AttackHitbox : MonoBehaviour
             return;
         }
 
-        ownerColliders = ownerRigidbody.GetComponentsInChildren<Collider2D>(true);
-        for (int i = 0; i < ownerColliders.Length; i++)
+        ownerColliders.Clear();
+        ownerRigidbody.GetComponentsInChildren(true, ownerColliders);
+        for (int i = 0; i < ownerColliders.Count; i++)
         {
             Collider2D candidate = ownerColliders[i];
             if (candidate != null && candidate.enabled && !candidate.isTrigger && candidate.attachedRigidbody == ownerRigidbody)
@@ -260,7 +261,7 @@ public class AttackHitbox : MonoBehaviour
             return true;
         }
 
-        for (int i = 0; i < ownerColliders.Length; i++)
+        for (int i = 0; i < ownerColliders.Count; i++)
         {
             if (ownerColliders[i] == candidate)
             {
