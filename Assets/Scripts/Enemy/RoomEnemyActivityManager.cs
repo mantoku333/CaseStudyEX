@@ -22,7 +22,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
     private bool gatingActive;
     private Transform playerTransform;
     private Transform cachedPlayerColliderRoot;
-    private Collider2D[] cachedPlayerColliders = new Collider2D[0];
+    private readonly List<Collider2D> cachedPlayerColliders = new List<Collider2D>();
     private RoomCameraTrigger inferredActiveRoom;
     private RoomCameraTrigger lastResolvedActiveRoom;
     private float nextPlayerRoomRefreshTime;
@@ -136,7 +136,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         roomTriggers = FindRoomTriggers(managedScene);
         playerTransform = null;
         cachedPlayerColliderRoot = null;
-        cachedPlayerColliders = new Collider2D[0];
+        cachedPlayerColliders.Clear();
         inferredActiveRoom = ResolveActiveRoomFromPlayer();
         lastResolvedActiveRoom = inferredActiveRoom;
         nextPlayerRoomRefreshTime = Time.unscaledTime + PlayerRoomRefreshInterval;
@@ -423,7 +423,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
         playerTransform = null;
         cachedPlayerColliderRoot = null;
-        cachedPlayerColliders = new Collider2D[0];
+        cachedPlayerColliders.Clear();
 
         GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
         if (taggedPlayer != null && taggedPlayer.scene == managedScene)
@@ -461,7 +461,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         if (cachedPlayerColliderRoot != player)
         {
             cachedPlayerColliderRoot = player;
-            cachedPlayerColliders = player.GetComponentsInChildren<Collider2D>();
+            cachedPlayerColliders.Clear();
+            player.GetComponentsInChildren(false, cachedPlayerColliders);
         }
 
         if (TryResolveBoundsCenter(cachedPlayerColliders, false, out Vector3 center) ||
@@ -474,7 +475,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
     }
 
     private static bool TryResolveBoundsCenter(
-        Collider2D[] colliders,
+        List<Collider2D> colliders,
         bool includeTriggers,
         out Vector3 center)
     {
@@ -483,7 +484,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
         if (colliders != null)
         {
-            for (int i = 0; i < colliders.Length; i++)
+            for (int i = 0; i < colliders.Count; i++)
             {
                 Collider2D collider = colliders[i];
                 if (collider == null ||
