@@ -42,6 +42,7 @@ public sealed class OptionsMenu : MonoBehaviour
     };
 
     private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
+    private readonly List<MonoBehaviour> playerBehaviourBuffer = new List<MonoBehaviour>();
     private readonly Dictionary<int, float> capturedAudioBaseVolumes = new Dictionary<int, float>();
     private readonly Dictionary<int, float> lastAppliedAudioVolumes = new Dictionary<int, float>();
     private GameObject menuRoot;
@@ -1038,10 +1039,11 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
-        MonoBehaviour[] behaviours = playerObject.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
-        for (int i = 0; i < behaviours.Length; i++)
+        playerBehaviourBuffer.Clear();
+        playerObject.GetComponentsInChildren(true, playerBehaviourBuffer);
+        for (int i = 0; i < playerBehaviourBuffer.Count; i++)
         {
-            MonoBehaviour behaviour = behaviours[i];
+            MonoBehaviour behaviour = playerBehaviourBuffer[i];
             if (behaviour == null || !behaviour.enabled)
             {
                 continue;

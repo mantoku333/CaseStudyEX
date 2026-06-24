@@ -26,6 +26,7 @@ namespace Metroidvania.Managers
         };
 
         private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
+        private readonly List<MonoBehaviour> playerBehaviourBuffer = new List<MonoBehaviour>();
         private PlayerInput pausedPlayerInput;
         private global::PlayerController pausedPlayerController;
         private bool previousPlayerInputEnabled;
@@ -136,10 +137,11 @@ namespace Metroidvania.Managers
                 pausedPlayerController.SetExternalControlLocked(true);
             }
 
-            MonoBehaviour[] behaviours = player.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
-            for (int i = 0; i < behaviours.Length; i++)
+            playerBehaviourBuffer.Clear();
+            player.GetComponentsInChildren(true, playerBehaviourBuffer);
+            for (int i = 0; i < playerBehaviourBuffer.Count; i++)
             {
-                MonoBehaviour behaviour = behaviours[i];
+                MonoBehaviour behaviour = playerBehaviourBuffer[i];
                 if (behaviour == null || !behaviour.enabled)
                 {
                     continue;

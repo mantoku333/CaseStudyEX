@@ -61,6 +61,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
     };
 
     private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
+    private readonly List<MonoBehaviour> playerBehaviourBuffer = new List<MonoBehaviour>();
     private PlayerInput pausedPlayerInput;
     private bool previousPlayerInputEnabled;
     private float previousTimeScale = 1f;
@@ -511,10 +512,11 @@ public sealed class TutorialOverlayController : MonoBehaviour
             return;
         }
 
-        MonoBehaviour[] behaviours = player.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
-        for (int i = 0; i < behaviours.Length; i++)
+        playerBehaviourBuffer.Clear();
+        player.GetComponentsInChildren(true, playerBehaviourBuffer);
+        for (int i = 0; i < playerBehaviourBuffer.Count; i++)
         {
-            MonoBehaviour behaviour = behaviours[i];
+            MonoBehaviour behaviour = playerBehaviourBuffer[i];
             if (behaviour == null || !behaviour.enabled)
             {
                 continue;
