@@ -39,6 +39,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     [Header("物理設定")]
     [SerializeField] private bool applyNoFrictionMaterial = true;
 
+    [Header("接地安定化")]
+    [SerializeField, Min(0f)] private float groundedLossGraceSeconds = 0.08f;
+
     [Header("プレイヤーステータス")]
     [SerializeField, Required, Expandable] private PlayerStatsData playerStatsData;
 
@@ -46,6 +49,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private float moveInput;
     private bool jumpInput;
     private bool isGround;
+    private float groundedLossGraceRemaining;
     private bool hasPreviousGroundState;
     private bool previousGroundState;
     private bool isFacingRight = true;
@@ -138,6 +142,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     {
         BindInputActions();
         hasPreviousGroundState = false;
+        groundedLossGraceRemaining = 0f;
     }
 
     private void OnDisable()
@@ -242,14 +247,33 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
     private void RefreshGroundState()
     {
-        if (groundCheck != null)
+        bool detectedGround = groundCheck != null && groundCheck.IsGround();
+        ApplyGroundSample(detectedGround, Time.fixedDeltaTime);
+    }
+
+    private void ApplyGroundSample(bool detectedGround, float fixedDeltaTime)
+    {
+        if (detectedGround)
         {
-            isGround = groundCheck.IsGround();
+            isGround = true;
+            groundedLossGraceRemaining = Mathf.Max(0f, groundedLossGraceSeconds);
+            return;
         }
-        else
+
+        // Upward motion is an intentional departure (jump/recoil), so it must not
+        // inherit landing grace. The grace only filters brief downward/idle misses
+        // from the very thin GroundCheck while the physics solver settles.
+        if (rigidBody2d != null && rigidBody2d.linearVelocity.y > 0.01f)
         {
             isGround = false;
+            groundedLossGraceRemaining = 0f;
+            return;
         }
+
+        groundedLossGraceRemaining = Mathf.Max(
+            0f,
+            groundedLossGraceRemaining - Mathf.Max(0f, fixedDeltaTime));
+        isGround = isGround && groundedLossGraceRemaining > 0f;
     }
 
     public void SetPlayerStatsData(PlayerStatsData playerData)

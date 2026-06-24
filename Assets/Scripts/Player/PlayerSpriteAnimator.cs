@@ -39,6 +39,9 @@ namespace Player
         [SerializeField] private string attackStateName = "attack";
         [SerializeField] private string recoilBoostSkyStateName = "recoilboost_sky";
 
+        [Header("Landing Stability")]
+        [SerializeField, Min(1)] private int landingGroundLossGraceFrames = 3;
+
         [Header("Cutscene Movement")]
         [SerializeField] private bool useTransformDeltaAsMovement = true;
         [SerializeField, Min(0f)] private float transformMovementThreshold = 0.001f;
@@ -75,6 +78,8 @@ namespace Player
         private string _currentAnimatorStateName;
         private bool _hasPreviousWorldPosition;
         private Vector3 _previousWorldPosition;
+        private Rigidbody2D _playerRigidbody;
+        private int _landingGroundLossFrames;
 
         private void Awake()
         {
@@ -92,6 +97,7 @@ namespace Player
             _currentAnimatorStateName = null;
             _hasPreviousWorldPosition = false;
             _previousWorldPosition = transform.position;
+            _landingGroundLossFrames = 0;
         }
 
         private void Update()
@@ -179,6 +185,8 @@ namespace Player
                     animator = GetComponentInParent<Animator>();
                 }
             }
+
+            _playerRigidbody = GetComponentInParent<Rigidbody2D>();
 
             if (flipRenderers != null && flipRenderers.Length > 0)
             {
@@ -292,10 +300,31 @@ namespace Player
             if (!_previousGrounded && isGrounded)
             {
                 _landingLocked = true;
+                _landingGroundLossFrames = 0;
             }
             else if (!isGrounded)
             {
-                _landingLocked = false;
+                bool isSettlingDownward =
+                    _landingLocked &&
+                    (_playerRigidbody == null || _playerRigidbody.linearVelocity.y <= 0.01f);
+
+                if (isSettlingDownward)
+                {
+                    _landingGroundLossFrames++;
+                    if (_landingGroundLossFrames > landingGroundLossGraceFrames)
+                    {
+                        _landingLocked = false;
+                    }
+                }
+                else
+                {
+                    _landingLocked = false;
+                    _landingGroundLossFrames = 0;
+                }
+            }
+            else
+            {
+                _landingGroundLossFrames = 0;
             }
 
             _previousGrounded = isGrounded;
