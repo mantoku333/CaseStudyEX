@@ -131,7 +131,7 @@ namespace GameName.UI
 
             if (targetHealth == null && autoFindPlayerHealth)
             {
-                GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
+                GameObject playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
                 if (playerObject != null)
                 {
                     targetHealth = playerObject.GetComponent<PlayerHealth>();

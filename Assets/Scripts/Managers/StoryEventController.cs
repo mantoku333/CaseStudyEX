@@ -1875,7 +1875,7 @@ public sealed class StoryEventController : MonoBehaviour
         CinemachineCamera currentCamera = FindHighestPriorityCameraExcept(targetCamera);
         if (currentCamera == null)
         {
-            Camera mainCamera = Camera.main;
+            Camera mainCamera = MainCameraCache.Get();
             if (mainCamera == null)
             {
                 return;

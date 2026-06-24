@@ -1398,7 +1398,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         }
 
         // タグ検索は必要時のみ実行してキャッシュする。
-        GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
+        GameObject playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
         if (playerObject == null)
         {
             return;

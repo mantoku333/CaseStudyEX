@@ -540,7 +540,7 @@ public sealed class LockedUpAreaController : MonoBehaviour
             return;
         }
 
-        GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
+        GameObject playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
         if (playerObject == null)
         {
             return;

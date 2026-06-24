@@ -375,7 +375,7 @@ namespace GameName.Enemy
             GameObject playerObject = null;
             if (!string.IsNullOrEmpty(playerTag))
             {
-                playerObject = GameObject.FindGameObjectWithTag(playerTag);
+                playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
             }
 
             if (playerObject != null)

@@ -433,7 +433,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
     {
         if (!string.IsNullOrWhiteSpace(playerTag))
         {
-            GameObject taggedPlayer = GameObject.FindGameObjectWithTag(playerTag);
+            GameObject taggedPlayer = global::PlayerReferenceCache.GetGameObject(playerTag);
             if (taggedPlayer != null)
             {
                 return taggedPlayer;

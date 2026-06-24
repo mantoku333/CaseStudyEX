@@ -431,7 +431,7 @@ public sealed class GameCursorController : MonoBehaviour
         }
 
         nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
-        cachedMainCamera = Camera.main;
+        cachedMainCamera = MainCameraCache.Get();
         mainCamera = cachedMainCamera;
         return mainCamera != null;
     }

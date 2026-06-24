@@ -944,7 +944,7 @@ namespace GameName.Ending
 
         private Vector3 ResolveCurrentCameraPosition()
         {
-            Camera mainCamera = Camera.main;
+            Camera mainCamera = global::MainCameraCache.Get();
             if (mainCamera != null)
             {
                 return mainCamera.transform.position;
@@ -980,7 +980,7 @@ namespace GameName.Ending
 
         private float ResolveCurrentOrthographicSize()
         {
-            Camera mainCamera = Camera.main;
+            Camera mainCamera = global::MainCameraCache.Get();
             if (mainCamera != null && mainCamera.orthographic)
             {
                 return mainCamera.orthographicSize;

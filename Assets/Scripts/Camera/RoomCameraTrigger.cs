@@ -694,7 +694,7 @@ public class RoomCameraTrigger : MonoBehaviour
             return true;
         }
 
-        _cachedMainCamera = Camera.main;
+        _cachedMainCamera = MainCameraCache.Get();
         _nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
         mainCamera = _cachedMainCamera;
         return mainCamera != null;

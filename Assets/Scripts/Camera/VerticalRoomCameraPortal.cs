@@ -896,7 +896,7 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
             return true;
         }
 
-        cachedMainCamera = Camera.main;
+        cachedMainCamera = MainCameraCache.Get();
         nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
         mainCamera = cachedMainCamera;
         return mainCamera != null;

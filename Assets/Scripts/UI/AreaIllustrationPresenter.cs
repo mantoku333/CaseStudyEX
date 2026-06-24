@@ -177,7 +177,7 @@ public sealed class AreaIllustrationPresenter : MonoBehaviour
         }
 
         cachedPlayerObject = !string.IsNullOrWhiteSpace(playerTag)
-            ? GameObject.FindGameObjectWithTag(playerTag)
+            ? global::PlayerReferenceCache.GetGameObject(playerTag)
             : null;
         return cachedPlayerObject;
     }

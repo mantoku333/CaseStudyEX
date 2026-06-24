@@ -275,7 +275,7 @@ public sealed class MinimapRoom : MonoBehaviour
 
     private void EnterIfPlayerAlreadyInside()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
+        GameObject playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
         if (playerObject == null)
         {
             return;

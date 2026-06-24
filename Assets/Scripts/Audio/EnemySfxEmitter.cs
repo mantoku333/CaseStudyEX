@@ -64,7 +64,7 @@ namespace GameName.Audio
 
         public bool IsVisibleToMainCamera()
         {
-            Camera mainCamera = Camera.main;
+            Camera mainCamera = MainCameraCache.Get();
             if (mainCamera == null)
             {
                 return false;

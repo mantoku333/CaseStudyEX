@@ -371,7 +371,7 @@ public class CameraManager : MonoBehaviour
             return activeCamera.transform.position;
         }
 
-        Camera mainCamera = Camera.main;
+        Camera mainCamera = MainCameraCache.Get();
         return mainCamera != null ? mainCamera.transform.position : Vector3.zero;
     }
 
@@ -413,5 +413,61 @@ public class CameraManager : MonoBehaviour
         }
 
         listener.UseCameraSpace = true;
+    }
+}
+
+public static class MainCameraCache
+{
+    private const float RefreshInterval = 0.5f;
+
+    private static Camera cachedCamera;
+    private static float nextRefreshTime;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void Reset()
+    {
+        cachedCamera = null;
+        nextRefreshTime = 0f;
+        UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= HandleActiveSceneChanged;
+        UnityEngine.SceneManagement.SceneManager.activeSceneChanged += HandleActiveSceneChanged;
+    }
+
+    public static Camera Get(bool forceRefresh = false)
+    {
+        if (!forceRefresh &&
+            cachedCamera != null &&
+            cachedCamera.isActiveAndEnabled &&
+            Time.unscaledTime < nextRefreshTime)
+        {
+            return cachedCamera;
+        }
+
+        nextRefreshTime = Time.unscaledTime + RefreshInterval;
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            cachedCamera = mainCamera;
+        }
+
+        return cachedCamera;
+    }
+
+    public static Transform GetTransform(bool forceRefresh = false)
+    {
+        Camera mainCamera = Get(forceRefresh);
+        return mainCamera != null ? mainCamera.transform : null;
+    }
+
+    public static void Invalidate()
+    {
+        cachedCamera = null;
+        nextRefreshTime = 0f;
+    }
+
+    private static void HandleActiveSceneChanged(
+        UnityEngine.SceneManagement.Scene previous,
+        UnityEngine.SceneManagement.Scene current)
+    {
+        Invalidate();
     }
 }

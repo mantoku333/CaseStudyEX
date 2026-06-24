@@ -95,7 +95,7 @@ namespace Metroidvania.UI
         {
             EnsureAutoSizeDefaultsIfMissing();
 
-            _mainCamera = Camera.main;
+            _mainCamera = MainCameraCache.Get(forceRefresh: true);
             RefreshUiReferenceCache();
             ResolveBubbleLayoutElements();
             ResolveSpeakerImages();
@@ -225,7 +225,7 @@ namespace Metroidvania.UI
             }
 
             _nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
-            Camera currentMainCamera = Camera.main;
+            Camera currentMainCamera = MainCameraCache.Get();
             if (currentMainCamera != null)
             {
                 _mainCamera = currentMainCamera;

@@ -1103,7 +1103,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return true;
         }
 
-        cachedMainCamera = Camera.main;
+        cachedMainCamera = MainCameraCache.Get();
         nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
         mainCamera = cachedMainCamera;
         return mainCamera != null;
@@ -1154,5 +1154,81 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             bounciness = 0f
         };
         playerCollider.sharedMaterial = runtimeNoFrictionMaterial;
+    }
+}
+
+public static class PlayerReferenceCache
+{
+    private const string DefaultPlayerTag = "Player";
+    private const float RefreshInterval = 0.5f;
+
+    private static GameObject cachedPlayerObject;
+    private static global::PlayerController cachedPlayerController;
+    private static float nextRefreshTime;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void Reset()
+    {
+        cachedPlayerObject = null;
+        cachedPlayerController = null;
+        nextRefreshTime = 0f;
+        UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= HandleActiveSceneChanged;
+        UnityEngine.SceneManagement.SceneManager.activeSceneChanged += HandleActiveSceneChanged;
+    }
+
+    public static GameObject GetGameObject(string playerTag = DefaultPlayerTag, bool forceRefresh = false)
+    {
+        playerTag = string.IsNullOrWhiteSpace(playerTag) ? DefaultPlayerTag : playerTag;
+        if (!forceRefresh &&
+            IsUsable(cachedPlayerObject, playerTag) &&
+            Time.unscaledTime < nextRefreshTime)
+        {
+            return cachedPlayerObject;
+        }
+
+        nextRefreshTime = Time.unscaledTime + RefreshInterval;
+        if (!IsUsable(cachedPlayerController != null ? cachedPlayerController.gameObject : null, playerTag))
+        {
+            cachedPlayerController = Object.FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Exclude);
+        }
+
+        if (cachedPlayerController != null && IsUsable(cachedPlayerController.gameObject, playerTag))
+        {
+            cachedPlayerObject = cachedPlayerController.gameObject;
+            return cachedPlayerObject;
+        }
+
+        cachedPlayerObject = GameObject.FindGameObjectWithTag(playerTag);
+        cachedPlayerController = cachedPlayerObject != null
+            ? cachedPlayerObject.GetComponent<global::PlayerController>()
+            : null;
+        return cachedPlayerObject;
+    }
+
+    public static Transform GetTransform(string playerTag = DefaultPlayerTag, bool forceRefresh = false)
+    {
+        GameObject playerObject = GetGameObject(playerTag, forceRefresh);
+        return playerObject != null ? playerObject.transform : null;
+    }
+
+    public static void Invalidate()
+    {
+        cachedPlayerObject = null;
+        cachedPlayerController = null;
+        nextRefreshTime = 0f;
+    }
+
+    private static bool IsUsable(GameObject playerObject, string playerTag)
+    {
+        return playerObject != null &&
+               playerObject.activeInHierarchy &&
+               playerObject.CompareTag(playerTag);
+    }
+
+    private static void HandleActiveSceneChanged(
+        UnityEngine.SceneManagement.Scene previous,
+        UnityEngine.SceneManagement.Scene current)
+    {
+        Invalidate();
     }
 }

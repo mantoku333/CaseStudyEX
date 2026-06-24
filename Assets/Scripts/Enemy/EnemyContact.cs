@@ -150,7 +150,7 @@ namespace Metroidvania.Enemy
 
         private void CachePlayerReferences()
         {
-            GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+            GameObject player = global::PlayerReferenceCache.GetGameObject(playerTag);
             if (player == null)
             {
                 return;
