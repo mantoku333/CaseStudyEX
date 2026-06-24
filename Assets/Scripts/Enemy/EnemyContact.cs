@@ -224,7 +224,9 @@ namespace Metroidvania.Enemy
 
             if (enemyController != null && enemyController.IsContactDamageIgnored())
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log($"[EnemyContact] パリィ後なので接触ダメージ無効 frame={Time.frameCount}");
+#endif
                 return;
             }
 

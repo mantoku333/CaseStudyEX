@@ -328,13 +328,17 @@ namespace Metroidvania.Enemy
         {
             if (other.GetComponent<AttackHitbox>() != null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("AttackHitboxに触れたので弾は消しません");
+#endif
                 return;
             }
 
             if (other.GetComponent<ParryHitbox>() != null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("ParryHitboxに触れたので弾は消しません");
+#endif
                 return;
             }
 
@@ -352,7 +356,9 @@ namespace Metroidvania.Enemy
 
                 if (IsPlayerCollider(other))
                 {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                     Debug.Log("反射弾なのでPlayerにはダメージを入れません");
+#endif
                     return;
                 }
             }
@@ -375,13 +381,17 @@ namespace Metroidvania.Enemy
         {
             if (collision.gameObject.GetComponent<AttackHitbox>() != null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("AttackHitboxに衝突したので弾は消しません");
+#endif
                 return;
             }
 
             if (collision.gameObject.GetComponent<ParryHitbox>() != null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("ParryHitboxに衝突したので弾は消しません");
+#endif
                 return;
             }
 
@@ -399,7 +409,9 @@ namespace Metroidvania.Enemy
 
                 if (IsPlayerCollider(collision.collider) || IsPlayerCollider(collision.otherCollider))
                 {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                     Debug.Log("反射弾なのでPlayerにはダメージを入れません");
+#endif
                     return;
                 }
             }
@@ -1135,7 +1147,9 @@ namespace Metroidvania.Enemy
 
             SetVelocity(reflectDirection);
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log($"ジャストパリィ成功。反射ダメージ:{reflectedDamage}");
+#endif
         }
 
         private Vector2 ResolveIncomingDirection(Vector2 parryPosition)
@@ -1222,7 +1236,9 @@ namespace Metroidvania.Enemy
                 return false;
             }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log($"反射弾が敵に命中。ダメージ:{reflectedDamage}");
+#endif
 
             enemyController.TakeDamage(reflectedDamage);
 

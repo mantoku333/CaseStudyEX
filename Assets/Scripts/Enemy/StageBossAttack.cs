@@ -592,7 +592,9 @@ namespace GameName.Enemy
                 return;
             }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("StageBossの突進をパリィしました");
+#endif
 
             if (enemyController != null)
             {
