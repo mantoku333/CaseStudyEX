@@ -530,6 +530,7 @@ GameObject:
   - component: {fileID: 3375801726536475401}
   - component: {fileID: 3047304842873908124}
   - component: {fileID: 4202108349721021491}
+  - component: {fileID: 3141592653589793238}
   - component: {fileID: 2152828851043830257}
   - component: {fileID: 9016234512487790021}
   - component: {fileID: 7711066996538408739}
@@ -726,6 +727,21 @@ MonoBehaviour:
   damageKnockbackSpeed: 6
   damageKnockbackDuration: 0.18
   damageKnockbackUpwardSpeed: 3.5
+--- !u!114 &3141592653589793238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e6a6df4482e43f6af2714b2a1b59bea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerAttackPower
+  statsData: {fileID: 11400000, guid: 828b8bd6e59a0de45ac0b6f81b0916f1, type: 2}
+  attackDamageBonus: 0
+  logAttackPowerDebug: 0
 --- !u!114 &6872356164271042961
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -35,6 +35,8 @@ namespace Metroidvania.Data
         public int staminaAmount;
         [Tooltip("増加量（HP増加アイテムの場合）")]
         public int maxHealthBonus;
+        [Tooltip("増加量（攻撃力増加アイテムの場合）")]
+        public int attackDamageBonus;
 
         [Tooltip("解放する能力")]
         public PlayerAbilityType abilityType = PlayerAbilityType.None;
