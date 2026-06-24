@@ -105,7 +105,7 @@ public class DodgeController : MonoBehaviour
 
     public bool CanDodge()
     {
-        return !isDodging && Time.time >= nextDodgeTime;
+        return !isDodging && Time.unscaledTime >= nextDodgeTime;
     }
 
     /// <summary>
@@ -181,7 +181,7 @@ public class DodgeController : MonoBehaviour
         if (rigidBody2d == null) { return; }
 
         isDodging = true;
-        nextDodgeTime = Time.time + dodgeCooldown;
+        nextDodgeTime = Time.unscaledTime + dodgeCooldown;
         dodgeMovementCancelled = false;
         PlayDodgeSe();
 
