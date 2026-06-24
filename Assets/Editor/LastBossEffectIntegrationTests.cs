@@ -9,6 +9,8 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
+[Category("Boss")]
+[Category("VFX")]
 public sealed class LastBossEffectIntegrationTests
 {
     private const BindingFlags InstancePrivate = BindingFlags.Instance | BindingFlags.NonPublic;

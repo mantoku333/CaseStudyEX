@@ -5,6 +5,7 @@ using Player;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+[Category("Gameplay")]
 public sealed class RainDamageAreaTests
 {
     private readonly List<GameObject> objectsToDestroy = new List<GameObject>();

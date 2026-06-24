@@ -5,6 +5,8 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[Category("Boss")]
+[Category("SceneValidation")]
 public sealed class BossAreaControllerSceneValidationTests
 {
     private const string ScenePath = "Assets/Scenes/Fix_Alpha4_Fuyuno.unity";

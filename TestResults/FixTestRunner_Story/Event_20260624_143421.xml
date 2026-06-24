@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="18" result="Failed(Child)" total="18" passed="11" failed="7" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.1002817">
+  <test-suite type="TestSuite" id="1194" name="CaseStudy" fullname="CaseStudy" runstate="Runnable" testcasecount="159" result="Failed" site="Child" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.100282" total="18" passed="11" failed="7" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1183" name="Assembly-CSharp-Editor.dll" fullname="C:/case/Case/CaseStudy/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="159" result="Failed" site="Child" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.095038" total="18" passed="11" failed="7" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="37012" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestFixture" id="1037" name="LastBossArcancielRewardTests" fullname="LastBossArcancielRewardTests" classname="LastBossArcancielRewardTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.008774" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties>
+          <property name="Category" value="Boss" />
+          <property name="Category" value="Story/Event" />
+        </properties>
+        <test-case id="1040" name="EnemyUniqueDropTable_DoesNotContainArcanciel" fullname="LastBossArcancielRewardTests.EnemyUniqueDropTable_DoesNotContainArcanciel" methodname="EnemyUniqueDropTable_DoesNotContainArcanciel" classname="LastBossArcancielRewardTests" runstate="Runnable" seed="83542995" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.004557" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1039" name="TryGrantArcancielReward_AlreadyAcquired_SkipsDuplicateGrant" fullname="LastBossArcancielRewardTests.TryGrantArcancielReward_AlreadyAcquired_SkipsDuplicateGrant" methodname="TryGrantArcancielReward_AlreadyAcquired_SkipsDuplicateGrant" classname="LastBossArcancielRewardTests" runstate="Runnable" seed="701443190" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.002227" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1038" name="TryGrantArcancielReward_MarksProgressFlagAndInventory" fullname="LastBossArcancielRewardTests.TryGrantArcancielReward_MarksProgressFlagAndInventory" methodname="TryGrantArcancielReward_MarksProgressFlagAndInventory" classname="LastBossArcancielRewardTests" runstate="Runnable" seed="1931355151" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.000285" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1167" name="StageBossIntroTests" fullname="StageBossIntroTests" classname="StageBossIntroTests" runstate="Runnable" testcasecount="15" result="Failed" site="Child" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.081875" total="15" passed="8" failed="7" inconclusive="0" skipped="0" asserts="0">
+        <properties>
+          <property name="Category" value="Story/Event" />
+          <property name="Category" value="Boss" />
+        </properties>
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-case id="1182" name="Awake_WhenStageBossAlreadyDefeated_HidesBossAndSkipsIntroVisibility" fullname="StageBossIntroTests.Awake_WhenStageBossAlreadyDefeated_HidesBossAndSkipsIntroVisibility" methodname="Awake_WhenStageBossAlreadyDefeated_HidesBossAndSkipsIntroVisibility" classname="StageBossIntroTests" runstate="Runnable" seed="1524755719" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.018334" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="3000" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1168" name="Awake_WhenStageBossIntroEnabled_HidesStageBossUntilIntro" fullname="StageBossIntroTests.Awake_WhenStageBossIntroEnabled_HidesStageBossUntilIntro" methodname="Awake_WhenStageBossIntroEnabled_HidesStageBossUntilIntro" classname="StageBossIntroTests" runstate="Runnable" seed="2021896322" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.015219" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="3000" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1175" name="OnTriggerEnter2D_WhenPlayerOnlyPartiallyInside_DoesNotStartOrMovePlayer" fullname="StageBossIntroTests.OnTriggerEnter2D_WhenPlayerOnlyPartiallyInside_DoesNotStartOrMovePlayer" methodname="OnTriggerEnter2D_WhenPlayerOnlyPartiallyInside_DoesNotStartOrMovePlayer" classname="StageBossIntroTests" runstate="Runnable" seed="123948986" result="Failed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.009246" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+            <stack-trace><![CDATA[at StageBossIntroTests.OnTriggerEnter2D_WhenPlayerOnlyPartiallyInside_DoesNotStartOrMovePlayer () [0x0008e] in C:\case\Case\CaseStudy\Assets\Editor\StageBossIntroTests.cs:327
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1176" name="OnTriggerStay2D_WhenPlayerLeavesThenFullyEnters_StartsWithoutMovingPlayer" fullname="StageBossIntroTests.OnTriggerStay2D_WhenPlayerLeavesThenFullyEnters_StartsWithoutMovingPlayer" methodname="OnTriggerStay2D_WhenPlayerLeavesThenFullyEnters_StartsWithoutMovingPlayer" classname="StageBossIntroTests" runstate="Runnable" seed="770655018" result="Failed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.001264" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+            <stack-trace><![CDATA[at StageBossIntroTests.OnTriggerStay2D_WhenPlayerLeavesThenFullyEnters_StartsWithoutMovingPlayer () [0x00085] in C:\case\Case\CaseStudy\Assets\Editor\StageBossIntroTests.cs:352
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1172" name="RestoreStageBossForCombat_ReappliesPassThroughCollisionAfterColliderRestore" fullname="StageBossIntroTests.RestoreStageBossForCombat_ReappliesPassThroughCollisionAfterColliderRestore" methodname="RestoreStageBossForCombat_ReappliesPassThroughCollisionAfterColliderRestore" classname="StageBossIntroTests" runstate="Runnable" seed="2125203283" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.002201" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1173" name="StageBossIntroWindSuppression_BlocksOnlyWindRiseInsideBossAreaUntilIntroEnds" fullname="StageBossIntroTests.StageBossIntroWindSuppression_BlocksOnlyWindRiseInsideBossAreaUntilIntroEnds" methodname="StageBossIntroWindSuppression_BlocksOnlyWindRiseInsideBossAreaUntilIntroEnds" classname="StageBossIntroTests" runstate="Runnable" seed="245891098" result="Failed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.001485" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+            <stack-trace><![CDATA[at StageBossIntroTests.StageBossIntroWindSuppression_BlocksOnlyWindRiseInsideBossAreaUntilIntroEnds () [0x000fd] in C:\case\Case\CaseStudy\Assets\Editor\StageBossIntroTests.cs:270
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1181" name="StartEncounterAfterStoryRoutine_ForLastBoss_StartsAfterObservedExternalEventBecomesIdle" fullname="StageBossIntroTests.StartEncounterAfterStoryRoutine_ForLastBoss_StartsAfterObservedExternalEventBecomesIdle" methodname="StartEncounterAfterStoryRoutine_ForLastBoss_StartsAfterObservedExternalEventBecomesIdle" classname="StageBossIntroTests" runstate="Runnable" seed="2143142434" result="Failed" label="Error" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.003707" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[System.InvalidOperationException : The following game object is invoking the DontDestroyOnLoad method: [StoryEventRuntimeService]. Notice that DontDestroyOnLoad can only be used in play mode and, as such, cannot be part of an editor script.]]></message>
+            <stack-trace><![CDATA[  at (wrapper managed-to-native) UnityEngine.Object.DontDestroyOnLoad_Injected(intptr)
+  at UnityEngine.Object.DontDestroyOnLoad (UnityEngine.Object target) [0x00023] in <6a469c5cf96a43eab23a293167261e20>:0 
+  at StoryEventRuntimeService.EnsureInstance () [0x0001d] in C:\case\Case\CaseStudy\Assets\Scripts\Managers\StoryEventRuntimeService.cs:119 
+  at StoryEventRuntimeService.get_HasPendingEvents () [0x00000] in C:\case\Case\CaseStudy\Assets\Scripts\Managers\StoryEventRuntimeService.cs:31 
+  at BossAreaController+<WaitForConfiguredStoryEventTriggerAndCompletion>d__112.MoveNext () [0x00082] in C:\case\Case\CaseStudy\Assets\Scripts\Environment\BossAreaController.cs:678 
+  at StageBossIntroTests.StartEncounterAfterStoryRoutine_ForLastBoss_StartsAfterObservedExternalEventBecomesIdle () [0x000e7] in C:\case\Case\CaseStudy\Assets\Editor\StageBossIntroTests.cs:546 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <1eb9db207454431c84a47bcd81e79c37>:0 ]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1179" name="StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForActiveDialogueAfterStory" fullname="StageBossIntroTests.StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForActiveDialogueAfterStory" methodname="StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForActiveDialogueAfterStory" classname="StageBossIntroTests" runstate="Runnable" seed="368481066" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.002311" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1180" name="StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForExternalStoryEventTrigger" fullname="StageBossIntroTests.StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForExternalStoryEventTrigger" methodname="StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForExternalStoryEventTrigger" classname="StageBossIntroTests" runstate="Runnable" seed="1042705582" result="Failed" label="Error" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.000800" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[System.InvalidOperationException : The following game object is invoking the DontDestroyOnLoad method: [StoryEventRuntimeService]. Notice that DontDestroyOnLoad can only be used in play mode and, as such, cannot be part of an editor script.]]></message>
+            <stack-trace><![CDATA[  at (wrapper managed-to-native) UnityEngine.Object.DontDestroyOnLoad_Injected(intptr)
+  at UnityEngine.Object.DontDestroyOnLoad (UnityEngine.Object target) [0x00023] in <6a469c5cf96a43eab23a293167261e20>:0 
+  at StoryEventRuntimeService.EnsureInstance () [0x0001d] in C:\case\Case\CaseStudy\Assets\Scripts\Managers\StoryEventRuntimeService.cs:119 
+  at StoryEventRuntimeService.get_HasPendingEvents () [0x00000] in C:\case\Case\CaseStudy\Assets\Scripts\Managers\StoryEventRuntimeService.cs:31 
+  at BossAreaController+<WaitForConfiguredStoryEventTriggerAndCompletion>d__112.MoveNext () [0x00082] in C:\case\Case\CaseStudy\Assets\Scripts\Environment\BossAreaController.cs:678 
+  at StageBossIntroTests.StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForExternalStoryEventTrigger () [0x000cc] in C:\case\Case\CaseStudy\Assets\Editor\StageBossIntroTests.cs:498 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <1eb9db207454431c84a47bcd81e79c37>:0 ]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1178" name="StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForStoryBeforeStarting" fullname="StageBossIntroTests.StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForStoryBeforeStarting" methodname="StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForStoryBeforeStarting" classname="StageBossIntroTests" runstate="Runnable" seed="797879224" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.000697" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1177" name="TryStartEncounter_ForLastBoss_StartsImmediately" fullname="StageBossIntroTests.TryStartEncounter_ForLastBoss_StartsImmediately" methodname="TryStartEncounter_ForLastBoss_StartsImmediately" classname="StageBossIntroTests" runstate="Runnable" seed="507076868" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.000549" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1169" name="TryStartEncounter_ForStageBoss_DelaysHpEventAndActivationUntilIntroCompletes" fullname="StageBossIntroTests.TryStartEncounter_ForStageBoss_DelaysHpEventAndActivationUntilIntroCompletes" methodname="TryStartEncounter_ForStageBoss_DelaysHpEventAndActivationUntilIntroCompletes" classname="StageBossIntroTests" runstate="Runnable" seed="457660547" result="Failed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.005148" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: FreezeAll
+  But was:  None
+]]></message>
+            <stack-trace><![CDATA[at StageBossIntroTests.TryStartEncounter_ForStageBoss_DelaysHpEventAndActivationUntilIntroCompletes () [0x0017e] in C:\case\Case\CaseStudy\Assets\Editor\StageBossIntroTests.cs:107
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1170" name="TryStartEncounter_ForStageBoss_FreezesPlayerDuringIntro" fullname="StageBossIntroTests.TryStartEncounter_ForStageBoss_FreezesPlayerDuringIntro" methodname="TryStartEncounter_ForStageBoss_FreezesPlayerDuringIntro" classname="StageBossIntroTests" runstate="Runnable" seed="1283961217" result="Failed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.001147" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: FreezeAll
+  But was:  None
+]]></message>
+            <stack-trace><![CDATA[at StageBossIntroTests.TryStartEncounter_ForStageBoss_FreezesPlayerDuringIntro () [0x000e8] in C:\case\Case\CaseStudy\Assets\Editor\StageBossIntroTests.cs:164
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1174" name="TryStartEncounter_ForStageBoss_StartsRoomStateButDelaysPlayerLockAndHpEvent" fullname="StageBossIntroTests.TryStartEncounter_ForStageBoss_StartsRoomStateButDelaysPlayerLockAndHpEvent" methodname="TryStartEncounter_ForStageBoss_StartsRoomStateButDelaysPlayerLockAndHpEvent" classname="StageBossIntroTests" runstate="Runnable" seed="1802454999" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.000904" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1171" name="TryStartEncounter_ForStageBoss_WaitsForGroundBeforeFreezingPlayer" fullname="StageBossIntroTests.TryStartEncounter_ForStageBoss_WaitsForGroundBeforeFreezingPlayer" methodname="TryStartEncounter_ForStageBoss_WaitsForGroundBeforeFreezingPlayer" classname="StageBossIntroTests" runstate="Runnable" seed="1901307704" result="Passed" start-time="2026-06-24 05:34:20Z" end-time="2026-06-24 05:34:20Z" duration="0.011980" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[Saving results to: C:/Users/manto/AppData/LocalLow/DefaultCompany/CaseStudy\TestResults.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
