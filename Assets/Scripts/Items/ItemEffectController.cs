@@ -18,6 +18,7 @@ public class ItemEffectController : MonoBehaviour
     private Sprite[] pickupFrames;
     private Vector3[] pickupFrameOffsets;
     private Vector3 pickupStartPosition;
+    private bool isPickupEffectDetached;
     private readonly List<Sprite> generatedSprites = new();
 
     private void Awake()
@@ -52,7 +53,7 @@ public class ItemEffectController : MonoBehaviour
     }
 #endif
 
-    public bool PlayPickupEffectAndDestroy()
+    public bool PlayPickupEffectAndDestroy(Transform pickupTarget = null)
     {
         CacheReferences();
 
@@ -70,13 +71,14 @@ public class ItemEffectController : MonoBehaviour
 
         DisablePickupColliders();
         isPickupPlaying = true;
-        pickupStartPosition = effectTransform != null
-            ? effectTransform.localPosition
-            : (settings != null ? settings.visualOffset : Vector3.zero);
 
-        if (settings != null)
+        if (settings != null && settings.playPickupEffectAtPlayer && pickupTarget != null)
         {
-            pickupStartPosition += settings.pickupVisualOffset;
+            PreparePickupEffectAtPlayer(pickupTarget);
+        }
+        else
+        {
+            PreparePickupEffectAtItem();
         }
 
         if (playbackRoutine != null)
@@ -123,7 +125,65 @@ public class ItemEffectController : MonoBehaviour
             null,
             settings.pickupFrameSeconds,
             pickupStartPosition);
+
+        if (isPickupEffectDetached && effectTransform != null)
+        {
+            Destroy(effectTransform.gameObject);
+        }
+
         Destroy(gameObject);
+    }
+
+    private void PreparePickupEffectAtItem()
+    {
+        isPickupEffectDetached = false;
+        ApplyPickupVisualScale(compensateRootScale: true);
+        pickupStartPosition = effectTransform != null
+            ? effectTransform.localPosition
+            : (settings != null ? settings.visualOffset : Vector3.zero);
+
+        if (settings != null)
+        {
+            pickupStartPosition += settings.pickupVisualOffset;
+        }
+    }
+
+    private void PreparePickupEffectAtPlayer(Transform pickupTarget)
+    {
+        isPickupEffectDetached = false;
+        if (effectTransform == null || settings == null || pickupTarget == null)
+        {
+            PreparePickupEffectAtItem();
+            return;
+        }
+
+        effectTransform.SetParent(pickupTarget, false);
+        effectTransform.localRotation = Quaternion.identity;
+        ApplyPickupVisualScale(compensateRootScale: false);
+        pickupStartPosition = settings.playerPickupVisualOffset + settings.pickupVisualOffset;
+        effectTransform.localPosition = pickupStartPosition;
+        isPickupEffectDetached = true;
+    }
+
+    private void ApplyPickupVisualScale(bool compensateRootScale)
+    {
+        if (effectTransform == null)
+        {
+            return;
+        }
+
+        Vector3 targetScale = settings != null ? settings.pickupVisualScale : Vector3.one;
+        if (!compensateRootScale)
+        {
+            effectTransform.localScale = targetScale;
+            return;
+        }
+
+        Vector3 rootScale = transform.localScale;
+        effectTransform.localScale = new Vector3(
+            SafeDivide(targetScale.x, rootScale.x),
+            SafeDivide(targetScale.y, rootScale.y),
+            SafeDivide(targetScale.z, rootScale.z));
     }
 
     private IEnumerator PlayFrames(

@@ -27,6 +27,8 @@
     public const string AbilityGunRecoilUnlocked = "ability_gun_recoil_unlocked";
     public const string AbilityParryUnlocked = "ability_parry_unlocked";
 
+    public const string AttackPowerUp001Collected = "attack_power_up_001";
+
     //--------------デコレーション関連------------
     public const string EquipmentBlueAuraUnlocked = "Equipment_BlueAura_Unlock";
     public const string EquipmentRedAuraUnlocked = "Equipment_RedAura_Unlock";

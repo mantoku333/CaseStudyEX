@@ -30,6 +30,9 @@ public class ItemEffectSettings : ScriptableObject
     public Vector3 visualScale = new Vector3(1.5f, 1.5f, 1f);
     public Vector3 visualOffset = new Vector3(0f, 0.2f, 0f);
     public Vector3 pickupVisualOffset = new Vector3(0f, 0.08f, 0f);
+    public Vector3 pickupVisualScale = new Vector3(1.5f, 1.5f, 1f);
+    public bool playPickupEffectAtPlayer;
+    public Vector3 playerPickupVisualOffset = new Vector3(1f, 1.2f, 0f);
     public int sortingOrder = 0;
 
     [Header("Heal Pickup")]
