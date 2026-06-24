@@ -77,6 +77,93 @@ public sealed class PlayerControllerMovementTests
         Assert.That(attackDirection, Is.EqualTo(new Vector2(expectedDirectionX, 0f)));
     }
 
+    [Test]
+    public void GroundState_WhenDescendingSampleBrieflyMissesGround_RemainsGrounded()
+    {
+        PlayerController controller = CreatePlayer(out Rigidbody2D rigidbody2D);
+        rigidbody2D.linearVelocity = Vector2.down;
+        SetPrivateField(controller, "groundedLossGraceSeconds", 0.08f);
+
+        InvokePrivate(controller, "ApplyGroundSample", true, 0.02f);
+        InvokePrivate(controller, "ApplyGroundSample", false, 0.02f);
+        InvokePrivate(controller, "ApplyGroundSample", false, 0.02f);
+
+        Assert.That(controller.IsGrounded, Is.True);
+    }
+
+    [Test]
+    public void GroundState_WhenMovingUpward_DoesNotRetainLandingGrace()
+    {
+        PlayerController controller = CreatePlayer(out Rigidbody2D rigidbody2D);
+        SetPrivateField(controller, "groundedLossGraceSeconds", 0.08f);
+
+        InvokePrivate(controller, "ApplyGroundSample", true, 0.02f);
+        rigidbody2D.linearVelocity = Vector2.up;
+        InvokePrivate(controller, "ApplyGroundSample", false, 0.02f);
+
+        Assert.That(controller.IsGrounded, Is.False);
+    }
+
+    [Test]
+    public void UmbrellaGlide_WhenGrounded_DoesNotReapplyDownwardVelocity()
+    {
+        PlayerController controller = CreatePlayer(out Rigidbody2D rigidbody2D);
+        UmbrellaController umbrellaController =
+            controller.GetComponentInChildren<UmbrellaController>();
+        PlayerAbilityController abilityController =
+            controller.gameObject.AddComponent<PlayerAbilityController>();
+        GroundedStateProvider stateProvider = new GroundedStateProvider
+        {
+            IsGrounded = true
+        };
+
+        SetPrivateField(abilityController, "canGlide", true);
+        SetPrivateField(umbrellaController, "playerAbilityController", abilityController);
+        SetPrivateField(umbrellaController, "playerStateProvider", stateProvider);
+        SetPrivateField(umbrellaController, "rigidBody2D", rigidbody2D);
+        umbrellaController.SetFallSpeed(3f);
+        umbrellaController.SetUmbrellaState(UmbrellaController.UmbrellaState.Open, false);
+        rigidbody2D.linearVelocity = new Vector2(0f, -10f);
+
+        InvokePrivate(umbrellaController, "Glide");
+
+        Assert.That(rigidbody2D.linearVelocity.y, Is.EqualTo(-10f).Within(0.001f));
+    }
+
+    [Test]
+    public void LandingAnimation_WhenDescendingGroundSampleBrieflyDrops_RemainsLocked()
+    {
+        PlayerController controller = CreatePlayer(out Rigidbody2D rigidbody2D);
+        PlayerSpriteAnimator spriteAnimator =
+            controller.gameObject.AddComponent<PlayerSpriteAnimator>();
+        SetPrivateField(spriteAnimator, "_playerRigidbody", rigidbody2D);
+        SetPrivateField(spriteAnimator, "_hasPreviousGrounded", true);
+        SetPrivateField(spriteAnimator, "_previousGrounded", false);
+
+        InvokePrivate(spriteAnimator, "UpdateLandingLock", true);
+        rigidbody2D.linearVelocity = Vector2.down;
+        InvokePrivate(spriteAnimator, "UpdateLandingLock", false);
+
+        Assert.That(GetPrivateField<bool>(spriteAnimator, "_landingLocked"), Is.True);
+    }
+
+    [Test]
+    public void LandingAnimation_WhenMovingUpward_ReleasesLockImmediately()
+    {
+        PlayerController controller = CreatePlayer(out Rigidbody2D rigidbody2D);
+        PlayerSpriteAnimator spriteAnimator =
+            controller.gameObject.AddComponent<PlayerSpriteAnimator>();
+        SetPrivateField(spriteAnimator, "_playerRigidbody", rigidbody2D);
+        SetPrivateField(spriteAnimator, "_hasPreviousGrounded", true);
+        SetPrivateField(spriteAnimator, "_previousGrounded", true);
+        SetPrivateField(spriteAnimator, "_landingLocked", true);
+        rigidbody2D.linearVelocity = Vector2.up;
+
+        InvokePrivate(spriteAnimator, "UpdateLandingLock", false);
+
+        Assert.That(GetPrivateField<bool>(spriteAnimator, "_landingLocked"), Is.False);
+    }
+
     private PlayerController CreatePlayer(out Rigidbody2D rigidbody2D)
     {
         GameObject playerObject = new GameObject("Player");
@@ -115,11 +202,18 @@ public sealed class PlayerControllerMovementTests
         field.SetValue(target, value);
     }
 
-    private static object InvokePrivate(object target, string methodName)
+    private static T GetPrivateField<T>(object target, string fieldName)
+    {
+        FieldInfo field = target.GetType().GetField(fieldName, InstancePrivate);
+        Assert.That(field, Is.Not.Null, fieldName);
+        return (T)field.GetValue(target);
+    }
+
+    private static object InvokePrivate(object target, string methodName, params object[] arguments)
     {
         MethodInfo method = target.GetType().GetMethod(methodName, InstancePrivate);
         Assert.That(method, Is.Not.Null, methodName);
-        return method.Invoke(target, null);
+        return method.Invoke(target, arguments);
     }
 
     private static bool InvokeTryResolveAttackDirection(
@@ -135,5 +229,19 @@ public sealed class PlayerControllerMovementTests
         bool resolved = (bool)method.Invoke(controller, arguments);
         attackDirection = (Vector2)arguments[0];
         return resolved;
+    }
+
+    private sealed class GroundedStateProvider : IPlayerViewStateProvider
+    {
+        public bool IsGrounded { get; set; }
+        public bool IsMoving => false;
+        public bool IsGliding => !IsGrounded;
+        public bool IsUmbrellaOpen => true;
+        public bool IsFacingRight => true;
+        public bool IsDodging => false;
+        public bool IsParrying => false;
+        public bool IsUmbrellaChanging => false;
+        public bool IsAttacking => false;
+        public bool IsRecoilBoosting => false;
     }
 }

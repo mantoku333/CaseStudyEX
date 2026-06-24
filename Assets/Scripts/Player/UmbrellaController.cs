@@ -10,6 +10,7 @@ public class UmbrellaController : MonoBehaviour
     //--------------能力関連------------------
     private Player.PlayerAbilityController playerAbilityController;
     private PlayerDiveAttackController diveAttackController;
+    private Player.IPlayerViewStateProvider playerStateProvider;
 
     /// <summary>
     /// 傘状態関連
@@ -48,6 +49,7 @@ public class UmbrellaController : MonoBehaviour
         audioSource = GetComponentInParent<AudioSource>();
         playerAbilityController = GetComponentInParent<Player.PlayerAbilityController>();
         diveAttackController = GetComponentInParent<PlayerDiveAttackController>();
+        playerStateProvider = GetComponentInParent<Player.IPlayerViewStateProvider>();
 
         if (openDebugSprite == null && spriteRenderer != null)
         {
@@ -176,6 +178,13 @@ public class UmbrellaController : MonoBehaviour
     /// </summary>
     private void Glide()
     {
+        if (rigidBody2D == null) { return; }
+
+        // Do not keep applying glide fall velocity while the landing contact is
+        // settling. Reapplying it here can make the GroundCheck alternate between
+        // grounded and airborne across Update/FixedUpdate in standalone builds.
+        if (playerStateProvider != null && playerStateProvider.IsGrounded) { return; }
+
         if (playerAbilityController == null) { return; }
 
         if (!playerAbilityController.GetCanGlide()) { return; }
@@ -187,8 +196,6 @@ public class UmbrellaController : MonoBehaviour
         if (diveAttackController != null && diveAttackController.IsDiveAttacking) { return; }
 
         if (rigidBody2D.linearVelocity.y >= 0) { return; }
-
-        if (rigidBody2D == null) { return; }
 
         float maxFallVelocity = -Mathf.Abs(glideFallSpeed);
 
