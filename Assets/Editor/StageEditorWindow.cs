@@ -40,12 +40,6 @@ namespace EditorTools
             ManualFace
         }
 
-        private enum StageTilePaintKind
-        {
-            StageBlock,
-            WaterFloor
-        }
-
         private enum StagePaintScope
         {
             PlaceAndReplace,
@@ -53,7 +47,6 @@ namespace EditorTools
         }
 
         [SerializeField] private TileEditMode tileEditMode = TileEditMode.Brush;
-        [SerializeField] private StageTilePaintKind stageTilePaintKind = StageTilePaintKind.StageBlock;
         [SerializeField] private StageBlockPaintMode stageBlockPaintMode = StageBlockPaintMode.AutoBlock;
         [SerializeField] private StagePaintScope stagePaintScope = StagePaintScope.PlaceAndReplace;
         [SerializeField] private int selectedStageBlockSetIndex = 1;
@@ -261,33 +254,25 @@ namespace EditorTools
             if (currentPlacementType == PlacementType.Stage)
             {
                 EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Stage Tile Type", EditorStyles.boldLabel);
-                stageTilePaintKind = (StageTilePaintKind)GUILayout.Toolbar(
-                    (int)stageTilePaintKind,
-                    new[] { "Stage Block", "Water Floor" });
+                EditorGUILayout.LabelField("Stage Block Set", EditorStyles.boldLabel);
+                selectedStageBlockSetIndex = EditorGUILayout.Popup(
+                    Mathf.Clamp(selectedStageBlockSetIndex, 0, 2),
+                    GetStageBlockSetLabels());
 
-                if (stageTilePaintKind == StageTilePaintKind.StageBlock)
+                EditorGUILayout.LabelField("Paint Mode", EditorStyles.boldLabel);
+                stageBlockPaintMode = (StageBlockPaintMode)GUILayout.Toolbar(
+                    (int)stageBlockPaintMode,
+                    new[] { "置き換え自動計算", "手動修正" });
+
+                EditorGUILayout.LabelField("Paint Scope", EditorStyles.boldLabel);
+                stagePaintScope = (StagePaintScope)GUILayout.Toolbar(
+                    (int)stagePaintScope,
+                    new[] { "配置+置き換え", "置き換えのみ" });
+
+                if (stageBlockPaintMode == StageBlockPaintMode.ManualFace)
                 {
-                    EditorGUILayout.LabelField("Stage Block Set", EditorStyles.boldLabel);
-                    selectedStageBlockSetIndex = EditorGUILayout.Popup(
-                        Mathf.Clamp(selectedStageBlockSetIndex, 0, 2),
-                        GetStageBlockSetLabels());
-
-                    EditorGUILayout.LabelField("Paint Mode", EditorStyles.boldLabel);
-                    stageBlockPaintMode = (StageBlockPaintMode)GUILayout.Toolbar(
-                        (int)stageBlockPaintMode,
-                        new[] { "置き換え自動計算", "手動修正" });
-
-                    EditorGUILayout.LabelField("Paint Scope", EditorStyles.boldLabel);
-                    stagePaintScope = (StagePaintScope)GUILayout.Toolbar(
-                        (int)stagePaintScope,
-                        new[] { "配置+置き換え", "置き換えのみ" });
-
-                    if (stageBlockPaintMode == StageBlockPaintMode.ManualFace)
-                    {
-                        EditorGUILayout.LabelField("Manual Face", EditorStyles.boldLabel);
-                        manualBlockFace = DrawManualBlockFaceGrid(manualBlockFace);
-                    }
+                    EditorGUILayout.LabelField("Manual Face", EditorStyles.boldLabel);
+                    manualBlockFace = DrawManualBlockFaceGrid(manualBlockFace);
                 }
 
                 EditorGUILayout.Space();
@@ -326,7 +311,10 @@ namespace EditorTools
             if (currentPlacementType == PlacementType.Stage &&
                 !HasValidStagePaintTile())
             {
-                EditorGUILayout.HelpBox($"Stage mode needs {GetRequiredStagePaintTileName()} in the Palette.", MessageType.Warning);
+                string requiredTileName = stageBlockPaintMode == StageBlockPaintMode.AutoBlock
+                    ? "selected Stage Block Set A-I"
+                    : $"selected Stage Block Face {manualBlockFace}";
+                EditorGUILayout.HelpBox($"Stage mode needs {requiredTileName} in the Palette.", MessageType.Warning);
             }
 
             if (cachedStatsEditor == null)
@@ -724,7 +712,6 @@ namespace EditorTools
             CancelTileDrag();
             ClearTileSelection();
             currentPlacementType = PlacementType.None;
-            stageTilePaintKind = StageTilePaintKind.StageBlock;
             stageBlockPaintMode = StageBlockPaintMode.AutoBlock;
             stagePaintScope = StagePaintScope.PlaceAndReplace;
             selectedStageBlockSetIndex = 1;
@@ -907,12 +894,6 @@ namespace EditorTools
 
         private bool HasValidStagePaintTile()
         {
-            if (stageTilePaintKind == StageTilePaintKind.WaterFloor)
-            {
-                WaterFloorTileSet waterTiles = GetWaterFloorTileSet();
-                return waterTiles != null && waterTiles.HasAllTiles();
-            }
-
             StageBlockTileSet tileSet = GetSelectedStageBlockTileSet();
             if (tileSet == null)
             {
@@ -922,18 +903,6 @@ namespace EditorTools
             return stageBlockPaintMode == StageBlockPaintMode.AutoBlock
                 ? tileSet.HasAllTiles()
                 : tileSet.HasTile(manualBlockFace);
-        }
-
-        private string GetRequiredStagePaintTileName()
-        {
-            if (stageTilePaintKind == StageTilePaintKind.WaterFloor)
-            {
-                return "Water Floor A-E";
-            }
-
-            return stageBlockPaintMode == StageBlockPaintMode.AutoBlock
-                ? "selected Stage Block Set A-I"
-                : $"selected Stage Block Face {manualBlockFace}";
         }
 
         private string[] GetStageBlockSetLabels()
@@ -991,38 +960,6 @@ namespace EditorTools
             return palette.GetBlockTileSet(selectedStageBlockSetIndex);
         }
 
-        private WaterFloorTileSet GetWaterFloorTileSet()
-        {
-            return palette != null ? palette.WaterFloorTiles : null;
-        }
-
-        private void EnsureWaterFloorTilemapDamage()
-        {
-            if (targetStageTilemap == null)
-            {
-                return;
-            }
-
-            WaterFloorTileSet waterTiles = GetWaterFloorTileSet();
-            if (waterTiles == null)
-            {
-                return;
-            }
-
-            global::WaterFloorTilemapDamage damage = targetStageTilemap.GetComponent<global::WaterFloorTilemapDamage>();
-            if (damage == null)
-            {
-                damage = Undo.AddComponent<global::WaterFloorTilemapDamage>(targetStageTilemap.gameObject);
-            }
-            else
-            {
-                Undo.RecordObject(damage, "Update Water Floor Damage");
-            }
-
-            damage.SetWaterTiles(waterTiles);
-            EditorUtility.SetDirty(damage);
-        }
-
         private void SetTileWithTransform(Vector3Int cell, TileBase tile, Matrix4x4 transform)
         {
             if (targetStageTilemap == null)
@@ -1057,24 +994,8 @@ namespace EditorTools
                    (palette.Stage3Blocks != null && palette.Stage3Blocks.Contains(tile));
         }
 
-        private bool IsWaterFloorTile(TileBase tile)
-        {
-            WaterFloorTileSet waterTiles = GetWaterFloorTileSet();
-            return waterTiles != null && waterTiles.Contains(tile);
-        }
-
-        private bool IsStageBlockSolidNeighborTile(TileBase tile)
-        {
-            return IsSolidBlockTile(tile) || IsWaterFloorTile(tile);
-        }
-
         private bool ShouldPaintStageCell(Vector3Int cell)
         {
-            if (stageTilePaintKind == StageTilePaintKind.WaterFloor)
-            {
-                return true;
-            }
-
             bool hasExistingBlock = IsSolidBlockTile(targetStageTilemap.GetTile(cell));
             bool replaceExistingOnly = stagePaintScope == StagePaintScope.ReplaceExistingOnly;
             return StageBlockAutoTileResolver.ShouldPaintCell(replaceExistingOnly, hasExistingBlock);
@@ -1159,7 +1080,10 @@ namespace EditorTools
             if (currentPlacementType == PlacementType.Stage &&
                 !HasValidStagePaintTile())
             {
-                Debug.LogWarning($"Palette に {GetRequiredStagePaintTileName()} が設定されていません");
+                string requiredTileName = stageBlockPaintMode == StageBlockPaintMode.AutoBlock
+                    ? "selected Stage Block Set A-I"
+                    : $"selected Stage Block Face {manualBlockFace}";
+                Debug.LogWarning($"Palette に {requiredTileName} が設定されていません");
                 return;
             }
 
@@ -1200,24 +1124,13 @@ namespace EditorTools
             }
 
             if (currentPlacementType == PlacementType.Stage &&
-                stageTilePaintKind == StageTilePaintKind.WaterFloor)
-            {
-                RecalculateWaterFloorTilesAroundBounds(editedBounds);
-            }
-            else if (currentPlacementType == PlacementType.Stage &&
                 stageBlockPaintMode == StageBlockPaintMode.AutoBlock)
             {
                 RecalculateAutoBlockTiles(StageBlockAutoTileResolver.ExpandByOneCell(editedBounds));
-                RecalculateWaterFloorTilesAroundBounds(editedBounds);
-            }
-            else if (currentPlacementType == PlacementType.Stage)
-            {
-                RecalculateWaterFloorTilesAroundBounds(editedBounds);
             }
             else if (currentPlacementType == PlacementType.Erase)
             {
                 RecalculateAutoBlockTiles(StageBlockAutoTileResolver.ExpandByOneCell(editedBounds));
-                RecalculateWaterFloorTilesAroundBounds(editedBounds);
             }
         }
 
@@ -1234,7 +1147,10 @@ namespace EditorTools
 
             if (!HasValidStagePaintTile())
             {
-                Debug.LogWarning($"Palette に {GetRequiredStagePaintTileName()} が設定されていません");
+                string requiredTileName = stageBlockPaintMode == StageBlockPaintMode.AutoBlock
+                    ? "selected Stage Block Set A-I"
+                    : $"selected Stage Block Face {manualBlockFace}";
+                Debug.LogWarning($"Palette に {requiredTileName} が設定されていません");
                 return;
             }
 
@@ -1245,38 +1161,15 @@ namespace EditorTools
 
             PaintTileWithoutUndo(cell);
 
-            BoundsInt editedBounds = StageBlockAutoTileResolver.CreateInclusiveBounds(cell, cell);
-
-            if (stageTilePaintKind == StageTilePaintKind.WaterFloor)
+            if (stageBlockPaintMode == StageBlockPaintMode.AutoBlock)
             {
-                RecalculateWaterFloorTilesAroundBounds(editedBounds);
-            }
-            else if (stageBlockPaintMode == StageBlockPaintMode.AutoBlock)
-            {
+                BoundsInt editedBounds = StageBlockAutoTileResolver.CreateInclusiveBounds(cell, cell);
                 RecalculateAutoBlockTiles(StageBlockAutoTileResolver.ExpandByOneCell(editedBounds));
-                RecalculateWaterFloorTilesAroundBounds(editedBounds);
-            }
-            else
-            {
-                RecalculateWaterFloorTilesAroundBounds(editedBounds);
             }
         }
 
         private void PaintTileWithoutUndo(Vector3Int cell)
         {
-            if (stageTilePaintKind == StageTilePaintKind.WaterFloor)
-            {
-                WaterFloorTileSet waterTiles = GetWaterFloorTileSet();
-                if (waterTiles == null)
-                {
-                    return;
-                }
-
-                EnsureWaterFloorTilemapDamage();
-                SetTileWithTransform(cell, waterTiles.GetTile(WaterFloorFace.B), Matrix4x4.identity);
-                return;
-            }
-
             StageBlockTileSet tileSet = GetSelectedStageBlockTileSet();
             if (tileSet == null)
             {
@@ -1319,90 +1212,6 @@ namespace EditorTools
             }
         }
 
-        private void RecalculateWaterFloorTilesAroundBounds(BoundsInt editedBounds)
-        {
-            if (targetStageTilemap == null)
-            {
-                return;
-            }
-
-            WaterFloorTileSet waterTiles = GetWaterFloorTileSet();
-            if (waterTiles == null || !waterTiles.HasAllTiles())
-            {
-                return;
-            }
-
-            BoundsInt seedBounds = ExpandBoundsHorizontally(editedBounds);
-            HashSet<Vector3Int> recalculatedRunStarts = new HashSet<Vector3Int>();
-
-            for (int y = seedBounds.yMin; y < seedBounds.yMax; y++)
-            {
-                for (int x = seedBounds.xMin; x < seedBounds.xMax; x++)
-                {
-                    Vector3Int cell = new Vector3Int(x, y, 0);
-                    if (!IsWaterFloorTile(targetStageTilemap.GetTile(cell)))
-                    {
-                        continue;
-                    }
-
-                    Vector3Int runStart = FindWaterFloorRunStart(cell);
-                    if (!recalculatedRunStarts.Add(runStart))
-                    {
-                        continue;
-                    }
-
-                    RecalculateWaterFloorRun(runStart, waterTiles);
-                }
-            }
-        }
-
-        private BoundsInt ExpandBoundsHorizontally(BoundsInt bounds)
-        {
-            return new BoundsInt(
-                bounds.xMin - 1,
-                bounds.yMin,
-                0,
-                bounds.size.x + 2,
-                bounds.size.y,
-                1);
-        }
-
-        private Vector3Int FindWaterFloorRunStart(Vector3Int cell)
-        {
-            Vector3Int current = cell;
-            while (IsWaterFloorTile(targetStageTilemap.GetTile(new Vector3Int(current.x - 1, current.y, current.z))))
-            {
-                current.x--;
-            }
-
-            return current;
-        }
-
-        private void RecalculateWaterFloorRun(Vector3Int runStart, WaterFloorTileSet waterTiles)
-        {
-            Vector3Int cell = runStart;
-            while (IsWaterFloorTile(targetStageTilemap.GetTile(cell)))
-            {
-                WaterFloorFace face = WaterFloorAutoTileResolver.Resolve(GetWaterFloorNeighborState(cell));
-                SetTileWithTransform(cell, waterTiles.GetTile(face), Matrix4x4.identity);
-                cell.x++;
-            }
-        }
-
-        private WaterFloorNeighborState GetWaterFloorNeighborState(Vector3Int cell)
-        {
-            Vector3Int leftCell = new Vector3Int(cell.x - 1, cell.y, cell.z);
-            Vector3Int rightCell = new Vector3Int(cell.x + 1, cell.y, cell.z);
-
-            return new WaterFloorNeighborState
-            {
-                waterLeft = IsWaterFloorTile(targetStageTilemap.GetTile(leftCell)),
-                waterRight = IsWaterFloorTile(targetStageTilemap.GetTile(rightCell)),
-                solidLeft = IsSolidBlockTile(targetStageTilemap.GetTile(leftCell)),
-                solidRight = IsSolidBlockTile(targetStageTilemap.GetTile(rightCell))
-            };
-        }
-
         private StageBlockNeighborState GetNeighborState(Vector3Int cell)
         {
             return new StageBlockNeighborState
@@ -1421,7 +1230,7 @@ namespace EditorTools
         private bool HasSolidBlockNeighbor(Vector3Int cell, int offsetX, int offsetY)
         {
             Vector3Int neighborCell = new Vector3Int(cell.x + offsetX, cell.y + offsetY, cell.z);
-            return IsStageBlockSolidNeighborTile(targetStageTilemap.GetTile(neighborCell));
+            return IsSolidBlockTile(targetStageTilemap.GetTile(neighborCell));
         }
 
         /// <summary>
@@ -1439,7 +1248,6 @@ namespace EditorTools
 
             BoundsInt editedBounds = StageBlockAutoTileResolver.CreateInclusiveBounds(cell, cell);
             RecalculateAutoBlockTiles(StageBlockAutoTileResolver.ExpandByOneCell(editedBounds));
-            RecalculateWaterFloorTilesAroundBounds(editedBounds);
         }
 
         /// <summary>
@@ -2038,11 +1846,9 @@ namespace EditorTools
 
             // クリップボード内の各タイルを、
             // 基準セルからの相対位置に応じて1枚ずつ貼り付ける
-            bool pastedWaterFloor = false;
             foreach (ClipboardTile data in clipboardTiles)
             {
                 Vector3Int targetCell = anchorCell + data.offset;
-                pastedWaterFloor |= IsWaterFloorTile(data.tile);
                 SetTileWithTransform(targetCell, data.tile, data.transform);
             }
 
@@ -2057,13 +1863,6 @@ namespace EditorTools
 
             // 選択範囲が存在する状態にする
             hasTileSelection = true;
-
-            if (pastedWaterFloor)
-            {
-                EnsureWaterFloorTilemapDamage();
-            }
-
-            RecalculateWaterFloorTilesAroundBounds(selectedBounds);
 
             // SceneView を再描画して貼り付け結果を反映する
             SceneView.RepaintAll();
@@ -2096,7 +1895,6 @@ namespace EditorTools
             }
 
             List<MovedTileData> movedTiles = new List<MovedTileData>();
-            bool movedWaterFloor = false;
 
             // 選択範囲内の「実際に存在しているタイルだけ」を集める
             for (int y = moveSourceBounds.yMin; y < moveSourceBounds.yMax; y++)
@@ -2110,8 +1908,6 @@ namespace EditorTools
                     {
                         continue;
                     }
-
-                    movedWaterFloor |= IsWaterFloorTile(tile);
 
                     movedTiles.Add(new MovedTileData
                     {
@@ -2146,14 +1942,6 @@ namespace EditorTools
 
             selectedBounds = OffsetBounds(moveSourceBounds, currentMoveOffset);
             hasTileSelection = true;
-
-            if (movedWaterFloor)
-            {
-                EnsureWaterFloorTilemapDamage();
-            }
-
-            RecalculateWaterFloorTilesAroundBounds(moveSourceBounds);
-            RecalculateWaterFloorTilesAroundBounds(selectedBounds);
 
             isMovingSelection = false;
             currentMoveOffset = Vector3Int.zero;
