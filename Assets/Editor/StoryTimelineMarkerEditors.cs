@@ -40,7 +40,7 @@ public sealed class StoryAudioMarkerEditor : MarkerEditor
         string clipName = audioMarker.AudioClip != null ? audioMarker.AudioClip.name : "None";
         return new MarkerDrawOptions
         {
-            tooltip = $"{audioMarker.AudioKind} {audioMarker.Action}: {clipName}",
+            tooltip = $"Audio Point - {audioMarker.AudioKind} {audioMarker.Action}: {clipName}",
             errorText = audioMarker.Action == StoryTimelineAudioAction.Play && audioMarker.AudioClip == null
                 ? "Audio clip is not assigned."
                 : string.Empty,
