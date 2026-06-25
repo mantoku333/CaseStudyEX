@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Version: 3
   m_AnimClip: {fileID: 0}
   m_Locked: 0
-  m_Muted: 0
+  m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
@@ -370,27 +370,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
   m_Name: Event/Panel Point
   m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
-  m_Time: 7.25
+  m_Time: 0.1
   markerId: fd40845972ef46b19fe643c3bb200821
-  markerMode: 0
+  markerMode: 1
   panelObject:
     exposedName: 75b8291ec6091904284b4ee4445c391d
     defaultValue: {fileID: 0}
   panelPresenter:
     exposedName: 9aadde69bc70a5e469624782ff1bdf36
     defaultValue: {fileID: 0}
-  panelPresenterName: 
-  panelKind: 0
+  panelPresenterName: Event02FloatingMessageView
+  panelKind: 2
   diaryEntryData: {fileID: 0}
   title: 
-  body: 
+  body: WASD\u3067\u79FB\u52D5 / \u53F3\u30AF\u30EA\u30C3\u30AF\u3067\u5098\u3092\u958B\u9589
   closeLabel: 
   illustration: {fileID: 0}
   animationFrames: []
   animationFramesPerSecond: 12
   animationLoopIntervalSeconds: 0.5
-  pauseTimelineUntilClosed: 1
-  autoCloseSecondsWhenNoButton: 3
+  pauseTimelineUntilClosed: 0
+  autoCloseSecondsWhenNoButton: 5.5
 --- !u!114 &9018057022353266388
 MonoBehaviour:
   m_ObjectHideFlags: 1
