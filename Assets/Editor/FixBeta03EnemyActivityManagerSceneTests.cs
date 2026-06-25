@@ -10,6 +10,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
+[Category("SceneValidation")]
+[Category("Gameplay")]
 public sealed class FixBeta03EnemyActivityManagerSceneTests
 {
     private const BindingFlags InstancePrivate = BindingFlags.Instance | BindingFlags.NonPublic;

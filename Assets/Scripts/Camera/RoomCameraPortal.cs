@@ -17,6 +17,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
     }
 
     private static CinemachineCamera runtimeTransitionCamera;
+    private const float MainCameraRefreshInterval = 0.5f;
 
     [Header("Rooms")]
     [SerializeField] private RoomCameraTrigger roomA;
@@ -44,6 +45,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
     [SerializeField] private string playerTag = "Player";
 
     private readonly HashSet<Collider2D> overlappingPlayerColliders = new();
+    private readonly List<Collider2D> playerColliderBuffer = new();
     private Transform playerTransform;
     private RoomCameraTrigger pendingFromRoom;
     private RoomCameraTrigger pendingToRoom;
@@ -52,6 +54,8 @@ public sealed class RoomCameraPortal : MonoBehaviour
     private Vector3 followOffsetAtEntry;
     private Vector3 transitionVelocity;
     private float transitionZoomVelocity;
+    private Camera cachedMainCamera;
+    private float nextMainCameraRefreshTime;
     private bool transitionActive;
     private bool transitionCommitted;
 
@@ -359,7 +363,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
             return;
         }
 
-        float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+        float aspect = ResolveAspect();
         float halfHeight = pose.OrthographicSize;
         float halfWidth = pose.OrthographicSize * aspect;
 
@@ -404,10 +408,10 @@ public sealed class RoomCameraPortal : MonoBehaviour
             return pose;
         }
 
-        if (Camera.main != null)
+        if (TryGetMainCamera(out Camera mainCamera))
         {
-            pose.Position = Camera.main.transform.position;
-            pose.OrthographicSize = Camera.main.orthographic ? Camera.main.orthographicSize : 10f;
+            pose.Position = mainCamera.transform.position;
+            pose.OrthographicSize = mainCamera.orthographic ? mainCamera.orthographicSize : 10f;
             return pose;
         }
 
@@ -426,9 +430,9 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
         if (room != null && room.TryGetAreaBounds(out Bounds bounds))
         {
-            float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+            float aspect = ResolveAspect();
             pose.Position = bounds.center;
-            pose.Position.z = Camera.main != null ? Camera.main.transform.position.z : transform.position.z;
+            pose.Position.z = TryGetMainCamera(out Camera mainCamera) ? mainCamera.transform.position.z : transform.position.z;
             pose.OrthographicSize = Mathf.Max(bounds.extents.y, bounds.extents.x / aspect);
             return pose;
         }
@@ -453,8 +457,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
     private bool TryGetCurrentCameraPose(out CameraPose pose)
     {
-        Camera mainCamera = Camera.main;
-        if (mainCamera != null)
+        if (TryGetMainCamera(out Camera mainCamera))
         {
             pose.Position = mainCamera.transform.position;
             pose.OrthographicSize = mainCamera.orthographic
@@ -517,7 +520,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
         previewCenter.z = poseAtEntry.Position.z;
         poseAtEntry.Position = previewCenter;
 
-        float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+        float aspect = ResolveAspect();
         float boundsSize = Mathf.Max(bounds.extents.y, bounds.extents.x / aspect);
         float previewSize = Mathf.Lerp(
             poseAtEntry.OrthographicSize,
@@ -617,7 +620,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
         bool constrainX,
         bool constrainY)
     {
-        float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+        float aspect = ResolveAspect();
         float halfHeight = Mathf.Max(0.1f, pose.OrthographicSize - playerPadding);
         float halfWidth = Mathf.Max(0.1f, pose.OrthographicSize * aspect - playerPadding);
 
@@ -698,12 +701,12 @@ public sealed class RoomCameraPortal : MonoBehaviour
             return false;
         }
 
-        Collider2D[] colliders = playerTransform.GetComponentsInChildren<Collider2D>();
+        FillPlayerColliderBuffer(playerTransform);
         bool checkedCollider = false;
 
-        for (int i = 0; i < colliders.Length; i++)
+        for (int i = 0; i < playerColliderBuffer.Count; i++)
         {
-            Collider2D collider = colliders[i];
+            Collider2D collider = playerColliderBuffer[i];
             if (collider == null || !collider.enabled || collider.isTrigger)
             {
                 continue;
@@ -721,9 +724,9 @@ public sealed class RoomCameraPortal : MonoBehaviour
             return true;
         }
 
-        for (int i = 0; i < colliders.Length; i++)
+        for (int i = 0; i < playerColliderBuffer.Count; i++)
         {
-            Collider2D collider = colliders[i];
+            Collider2D collider = playerColliderBuffer[i];
             if (collider == null || !collider.enabled)
             {
                 continue;
@@ -865,16 +868,16 @@ public sealed class RoomCameraPortal : MonoBehaviour
         return Vector3.Dot(portalToPlayer, aToB) >= 0f ? roomB : roomA;
     }
 
-    private static Vector3 ResolvePlayerCommitPoint(Transform player, Vector3 fallbackPosition)
+    private Vector3 ResolvePlayerCommitPoint(Transform player, Vector3 fallbackPosition)
     {
         if (player == null)
         {
             return fallbackPosition;
         }
 
-        Collider2D[] colliders = player.GetComponentsInChildren<Collider2D>();
-        if (TryResolveBoundsCenter(colliders, false, out Vector3 center) ||
-            TryResolveBoundsCenter(colliders, true, out center))
+        FillPlayerColliderBuffer(player);
+        if (TryResolveBoundsCenter(false, out Vector3 center) ||
+            TryResolveBoundsCenter(true, out center))
         {
             return center;
         }
@@ -882,40 +885,67 @@ public sealed class RoomCameraPortal : MonoBehaviour
         return fallbackPosition;
     }
 
-    private static bool TryResolveBoundsCenter(
-        Collider2D[] colliders,
-        bool includeTriggers,
-        out Vector3 center)
+    private bool TryResolveBoundsCenter(bool includeTriggers, out Vector3 center)
     {
         bool hasBounds = false;
         Bounds bounds = default;
 
-        if (colliders != null)
+        for (int i = 0; i < playerColliderBuffer.Count; i++)
         {
-            for (int i = 0; i < colliders.Length; i++)
+            Collider2D collider = playerColliderBuffer[i];
+            if (collider == null ||
+                !collider.enabled ||
+                !includeTriggers && collider.isTrigger)
             {
-                Collider2D collider = colliders[i];
-                if (collider == null ||
-                    !collider.enabled ||
-                    !includeTriggers && collider.isTrigger)
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                if (!hasBounds)
-                {
-                    bounds = collider.bounds;
-                    hasBounds = true;
-                }
-                else
-                {
-                    bounds.Encapsulate(collider.bounds);
-                }
+            if (!hasBounds)
+            {
+                bounds = collider.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(collider.bounds);
             }
         }
 
         center = hasBounds ? bounds.center : Vector3.zero;
         return hasBounds;
+    }
+
+    private void FillPlayerColliderBuffer(Transform player)
+    {
+        playerColliderBuffer.Clear();
+        if (player != null)
+        {
+            player.GetComponentsInChildren(false, playerColliderBuffer);
+        }
+    }
+
+    private float ResolveAspect()
+    {
+        if (TryGetMainCamera(out Camera mainCamera))
+        {
+            return mainCamera.aspect;
+        }
+
+        return Screen.height > 0 ? (float)Screen.width / Screen.height : 16f / 9f;
+    }
+
+    private bool TryGetMainCamera(out Camera mainCamera)
+    {
+        if (cachedMainCamera != null && Time.unscaledTime < nextMainCameraRefreshTime)
+        {
+            mainCamera = cachedMainCamera;
+            return true;
+        }
+
+        cachedMainCamera = MainCameraCache.Get();
+        nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
+        mainCamera = cachedMainCamera;
+        return mainCamera != null;
     }
 
     private static Vector3 ResolveRoomCenter(RoomCameraTrigger room, Vector3 fallback)

@@ -41,7 +41,10 @@ public sealed class OptionsMenu : MonoBehaviour
         "UmbrellaParryController"
     };
 
+    private static readonly List<Graphic> GraphicSearchBuffer = new List<Graphic>(16);
+
     private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
+    private readonly List<MonoBehaviour> playerBehaviourBuffer = new List<MonoBehaviour>();
     private readonly Dictionary<int, float> capturedAudioBaseVolumes = new Dictionary<int, float>();
     private readonly Dictionary<int, float> lastAppliedAudioVolumes = new Dictionary<int, float>();
     private readonly HashSet<int> audioSourcesMutedByOptions = new HashSet<int>();
@@ -1046,7 +1049,8 @@ public sealed class OptionsMenu : MonoBehaviour
             cachedMinimapManager.enabled = false;
         }
 
-        pausedPlayerInput = FindFirstObjectByType<PlayerInput>();
+        GameObject playerObject = ResolvePlayerObject();
+        pausedPlayerInput = playerObject != null ? playerObject.GetComponentInChildren<PlayerInput>(true) : null;
         if (pausedPlayerInput != null)
         {
             previousPlayerInputEnabled = pausedPlayerInput.enabled;
@@ -1054,16 +1058,16 @@ public sealed class OptionsMenu : MonoBehaviour
         }
 
         pausedBehaviours.Clear();
-        GameObject playerObject = ResolvePlayerObject();
         if (playerObject == null)
         {
             return;
         }
 
-        MonoBehaviour[] behaviours = playerObject.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
-        for (int i = 0; i < behaviours.Length; i++)
+        playerBehaviourBuffer.Clear();
+        playerObject.GetComponentsInChildren(true, playerBehaviourBuffer);
+        for (int i = 0; i < playerBehaviourBuffer.Count; i++)
         {
-            MonoBehaviour behaviour = behaviours[i];
+            MonoBehaviour behaviour = playerBehaviourBuffer[i];
             if (behaviour == null || !behaviour.enabled)
             {
                 continue;
@@ -1857,7 +1861,8 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private InputActionAsset ResolvePlayerActions()
     {
-        PlayerInput playerInput = FindFirstObjectByType<PlayerInput>();
+        GameObject playerObject = ResolvePlayerObject();
+        PlayerInput playerInput = playerObject != null ? playerObject.GetComponentInChildren<PlayerInput>(true) : null;
         if (playerInput == null)
         {
             return null;
@@ -2265,17 +2270,18 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private static Graphic FindLargestGraphic(Transform root)
     {
-        Graphic[] graphics = root.GetComponentsInChildren<Graphic>(true);
-        if (graphics.Length == 0)
+        GraphicSearchBuffer.Clear();
+        root.GetComponentsInChildren(true, GraphicSearchBuffer);
+        if (GraphicSearchBuffer.Count == 0)
         {
             return null;
         }
 
         Graphic bestGraphic = null;
         float bestArea = float.MinValue;
-        for (int i = 0; i < graphics.Length; i++)
+        for (int i = 0; i < GraphicSearchBuffer.Count; i++)
         {
-            Graphic graphic = graphics[i];
+            Graphic graphic = GraphicSearchBuffer[i];
             if (graphic == null)
             {
                 continue;
@@ -2291,6 +2297,7 @@ public sealed class OptionsMenu : MonoBehaviour
             }
         }
 
+        GraphicSearchBuffer.Clear();
         return bestGraphic;
     }
 
@@ -2309,13 +2316,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private GameObject ResolvePlayerObject()
     {
-        GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
-        if (taggedPlayer != null)
-        {
-            return taggedPlayer;
-        }
-
-        global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
+        global::PlayerController playerController = global::PlayerReferenceCache.GetController();
         if (playerController != null)
         {
             return playerController.gameObject;

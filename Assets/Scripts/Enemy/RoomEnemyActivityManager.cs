@@ -16,11 +16,13 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
     [SerializeField] private bool debugLogging;
 
     private readonly List<ManagedEnemy> managedEnemies = new List<ManagedEnemy>();
-    private RoomCameraTrigger[] roomTriggers = new RoomCameraTrigger[0];
+    private readonly List<RoomCameraTrigger> roomTriggers = new List<RoomCameraTrigger>();
     private Scene managedScene;
     private bool sceneHasPrologueSource;
     private bool gatingActive;
     private Transform playerTransform;
+    private Transform cachedPlayerColliderRoot;
+    private readonly List<Collider2D> cachedPlayerColliders = new List<Collider2D>();
     private RoomCameraTrigger inferredActiveRoom;
     private RoomCameraTrigger lastResolvedActiveRoom;
     private float nextPlayerRoomRefreshTime;
@@ -38,13 +40,11 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         public bool DesiredGameplayActive;
         public bool AppliedGameplayActive;
         // 帰還開始時にタックル状態を止めるため、事前に参照を保持しておく。
-        public EnemyTackleAttack[] TackleAttacks;
-        public MonoBehaviour[] GameplayBehaviours;
-        public bool[] InitialBehaviourEnabled;
-        public Rigidbody2D[] Rigidbodies;
-        public bool[] InitialRigidbodySimulated;
-        public Renderer[] VisibilityRenderers;
-        public Collider2D[] VisibilityColliders;
+        public readonly List<EnemyTackleAttack> TackleAttacks = new List<EnemyTackleAttack>();
+        public readonly List<MonoBehaviour> GameplayBehaviours = new List<MonoBehaviour>();
+        public readonly List<bool> InitialBehaviourEnabled = new List<bool>();
+        public readonly List<Rigidbody2D> Rigidbodies = new List<Rigidbody2D>();
+        public readonly List<bool> InitialRigidbodySimulated = new List<bool>();
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -131,8 +131,10 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
     {
         managedScene = SceneManager.GetActiveScene();
         sceneHasPrologueSource = HasScenePrologueSource(managedScene);
-        roomTriggers = FindRoomTriggers(managedScene);
+        FindRoomTriggers(managedScene, roomTriggers);
         playerTransform = null;
+        cachedPlayerColliderRoot = null;
+        cachedPlayerColliders.Clear();
         inferredActiveRoom = ResolveActiveRoomFromPlayer();
         lastResolvedActiveRoom = inferredActiveRoom;
         nextPlayerRoomRefreshTime = Time.unscaledTime + PlayerRoomRefreshInterval;
@@ -164,16 +166,14 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                 InitialActiveSelf = enemy.gameObject.activeSelf,
                 DesiredGameplayActive = enemy.gameObject.activeSelf,
                 AppliedGameplayActive = enemy.gameObject.activeSelf,
-                TackleAttacks = enemy.GetComponentsInChildren<EnemyTackleAttack>(true),
-                GameplayBehaviours = CollectGameplayBehaviours(enemy.gameObject),
-                Rigidbodies = enemy.GetComponentsInChildren<Rigidbody2D>(true),
-                VisibilityRenderers = enemy.GetComponentsInChildren<Renderer>(true),
-                VisibilityColliders = enemy.GetComponentsInChildren<Collider2D>(true)
             });
 
             ManagedEnemy managedEnemy = managedEnemies[managedEnemies.Count - 1];
-            managedEnemy.InitialBehaviourEnabled = CaptureBehaviourEnabledStates(managedEnemy.GameplayBehaviours);
-            managedEnemy.InitialRigidbodySimulated = CaptureRigidbodySimulatedStates(managedEnemy.Rigidbodies);
+            enemy.GetComponentsInChildren(true, managedEnemy.TackleAttacks);
+            CollectGameplayBehaviours(enemy.gameObject, managedEnemy.GameplayBehaviours);
+            enemy.GetComponentsInChildren(true, managedEnemy.Rigidbodies);
+            CaptureBehaviourEnabledStates(managedEnemy.GameplayBehaviours, managedEnemy.InitialBehaviourEnabled);
+            CaptureRigidbodySimulatedStates(managedEnemy.Rigidbodies, managedEnemy.InitialRigidbodySimulated);
         }
 
         gatingActive = ShouldGateCurrentScene();
@@ -366,13 +366,13 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
     private static void CancelTackleAttacks(ManagedEnemy managedEnemy)
     {
-        EnemyTackleAttack[] tackleAttacks = managedEnemy.TackleAttacks;
+        List<EnemyTackleAttack> tackleAttacks = managedEnemy.TackleAttacks;
         if (tackleAttacks == null)
         {
             return;
         }
 
-        for (int i = 0; i < tackleAttacks.Length; i++)
+        for (int i = 0; i < tackleAttacks.Count; i++)
         {
             if (tackleAttacks[i] != null)
             {
@@ -418,8 +418,10 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         }
 
         playerTransform = null;
+        cachedPlayerColliderRoot = null;
+        cachedPlayerColliders.Clear();
 
-        GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
+        GameObject taggedPlayer = global::PlayerReferenceCache.GetGameObject();
         if (taggedPlayer != null && taggedPlayer.scene == managedScene)
         {
             playerTransform = taggedPlayer.transform;
@@ -427,16 +429,11 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             return true;
         }
 
-        PlayerHealth[] players = FindObjectsByType<PlayerHealth>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < players.Length; i++)
+        GameObject playerObject = global::PlayerReferenceCache.GetGameObject(forceRefresh: true);
+        PlayerHealth playerHealth = playerObject != null ? playerObject.GetComponentInChildren<PlayerHealth>(true) : null;
+        if (playerHealth != null && playerHealth.gameObject.scene == managedScene)
         {
-            PlayerHealth player = players[i];
-            if (player == null || player.gameObject.scene != managedScene)
-            {
-                continue;
-            }
-
-            playerTransform = player.transform;
+            playerTransform = playerHealth.transform;
             playerPosition = ResolvePlayerReferencePoint(playerTransform, playerTransform.position);
             return true;
         }
@@ -445,16 +442,22 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         return false;
     }
 
-    private static Vector3 ResolvePlayerReferencePoint(Transform player, Vector3 fallbackPosition)
+    private Vector3 ResolvePlayerReferencePoint(Transform player, Vector3 fallbackPosition)
     {
         if (player == null)
         {
             return fallbackPosition;
         }
 
-        Collider2D[] colliders = player.GetComponentsInChildren<Collider2D>();
-        if (TryResolveBoundsCenter(colliders, false, out Vector3 center) ||
-            TryResolveBoundsCenter(colliders, true, out center))
+        if (cachedPlayerColliderRoot != player)
+        {
+            cachedPlayerColliderRoot = player;
+            cachedPlayerColliders.Clear();
+            player.GetComponentsInChildren(false, cachedPlayerColliders);
+        }
+
+        if (TryResolveBoundsCenter(cachedPlayerColliders, false, out Vector3 center) ||
+            TryResolveBoundsCenter(cachedPlayerColliders, true, out center))
         {
             return center;
         }
@@ -463,7 +466,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
     }
 
     private static bool TryResolveBoundsCenter(
-        Collider2D[] colliders,
+        List<Collider2D> colliders,
         bool includeTriggers,
         out Vector3 center)
     {
@@ -472,7 +475,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
         if (colliders != null)
         {
-            for (int i = 0; i < colliders.Length; i++)
+            for (int i = 0; i < colliders.Count; i++)
             {
                 Collider2D collider = colliders[i];
                 if (collider == null ||
@@ -628,8 +631,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
     private static void SetBehavioursActive(ManagedEnemy managedEnemy, bool active)
     {
-        MonoBehaviour[] behaviours = managedEnemy.GameplayBehaviours;
-        bool[] initialEnabled = managedEnemy.InitialBehaviourEnabled;
+        List<MonoBehaviour> behaviours = managedEnemy.GameplayBehaviours;
+        List<bool> initialEnabled = managedEnemy.InitialBehaviourEnabled;
         if (behaviours == null || initialEnabled == null)
         {
             return;
@@ -637,7 +640,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
         if (active)
         {
-            for (int i = 0; i < behaviours.Length && i < initialEnabled.Length; i++)
+            for (int i = 0; i < behaviours.Count && i < initialEnabled.Count; i++)
             {
                 if (behaviours[i] != null)
                 {
@@ -648,7 +651,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
             return;
         }
 
-        for (int i = behaviours.Length - 1; i >= 0; i--)
+        for (int i = behaviours.Count - 1; i >= 0; i--)
         {
             if (behaviours[i] != null)
             {
@@ -659,14 +662,14 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
     private static void SetRigidbodiesActive(ManagedEnemy managedEnemy, bool active)
     {
-        Rigidbody2D[] rigidbodies = managedEnemy.Rigidbodies;
-        bool[] initialSimulated = managedEnemy.InitialRigidbodySimulated;
+        List<Rigidbody2D> rigidbodies = managedEnemy.Rigidbodies;
+        List<bool> initialSimulated = managedEnemy.InitialRigidbodySimulated;
         if (rigidbodies == null || initialSimulated == null)
         {
             return;
         }
 
-        for (int i = 0; i < rigidbodies.Length && i < initialSimulated.Length; i++)
+        for (int i = 0; i < rigidbodies.Count && i < initialSimulated.Count; i++)
         {
             if (rigidbodies[i] != null)
             {
@@ -680,7 +683,7 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         RoomCameraTrigger bestRoom = null;
         float bestArea = float.PositiveInfinity;
 
-        for (int i = 0; i < roomTriggers.Length; i++)
+        for (int i = 0; i < roomTriggers.Count; i++)
         {
             RoomCameraTrigger roomTrigger = roomTriggers[i];
             if (roomTrigger == null || !roomTrigger.ContainsPoint(position))
@@ -711,8 +714,8 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
     private static bool HasScenePrologueSource(Scene scene)
     {
-        SceneStartStoryEventSource[] sources = FindObjectsByType<SceneStartStoryEventSource>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        for (int i = 0; i < sources.Length; i++)
+        IReadOnlyList<SceneStartStoryEventSource> sources = SceneStartStoryEventSource.RegisteredSources;
+        for (int i = 0; i < sources.Count; i++)
         {
             SceneStartStoryEventSource source = sources[i];
             if (source != null && source.gameObject.scene == scene)
@@ -724,11 +727,11 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
         return false;
     }
 
-    private static RoomCameraTrigger[] FindRoomTriggers(Scene scene)
+    private static void FindRoomTriggers(Scene scene, List<RoomCameraTrigger> validTriggers)
     {
-        RoomCameraTrigger[] allTriggers = FindObjectsByType<RoomCameraTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        List<RoomCameraTrigger> validTriggers = new List<RoomCameraTrigger>(allTriggers.Length);
-        for (int i = 0; i < allTriggers.Length; i++)
+        validTriggers.Clear();
+        IReadOnlyList<RoomCameraTrigger> allTriggers = RoomCameraTrigger.RegisteredTriggers;
+        for (int i = 0; i < allTriggers.Count; i++)
         {
             RoomCameraTrigger trigger = allTriggers[i];
             if (trigger == null ||
@@ -740,8 +743,6 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
 
             validTriggers.Add(trigger);
         }
-
-        return validTriggers.ToArray();
     }
 
     private static bool CanManageEnemy(EnemyController enemy, Scene scene)
@@ -759,68 +760,61 @@ public sealed class RoomEnemyActivityManager : MonoBehaviour
                managedEnemy.Root != null;
     }
 
-    private static MonoBehaviour[] CollectGameplayBehaviours(GameObject root)
+    private static void CollectGameplayBehaviours(GameObject root, List<MonoBehaviour> behaviours)
     {
-        List<MonoBehaviour> behaviours = new List<MonoBehaviour>();
-        AddUniqueBehaviours(root.GetComponentsInChildren<EnemyController>(true), behaviours);
-        AddUniqueBehaviours(root.GetComponentsInChildren<EnemyTackleAttack>(true), behaviours);
-        AddUniqueBehaviours(root.GetComponentsInChildren<EnemyRangedAttack>(true), behaviours);
-        AddUniqueBehaviours(root.GetComponentsInChildren<EnemyShooter>(true), behaviours);
-        AddUniqueBehaviours(root.GetComponentsInChildren<EnemyContact>(true), behaviours);
-        AddUniqueBehaviours(root.GetComponentsInChildren<EnemySpriteAnimator>(true), behaviours);
-        return behaviours.ToArray();
-    }
-
-    private static void AddUniqueBehaviours<T>(T[] components, List<MonoBehaviour> behaviours)
-        where T : MonoBehaviour
-    {
-        if (components == null)
+        behaviours.Clear();
+        if (root == null)
         {
             return;
         }
 
-        for (int i = 0; i < components.Length; i++)
+        root.GetComponentsInChildren(true, behaviours);
+        for (int i = behaviours.Count - 1; i >= 0; i--)
         {
-            MonoBehaviour behaviour = components[i];
-            if (behaviour == null || behaviours.Contains(behaviour))
+            MonoBehaviour behaviour = behaviours[i];
+            if (!IsGameplayBehaviour(behaviour))
             {
-                continue;
+                behaviours.RemoveAt(i);
             }
-
-            behaviours.Add(behaviour);
         }
     }
 
-    private static bool[] CaptureBehaviourEnabledStates(MonoBehaviour[] behaviours)
+    private static bool IsGameplayBehaviour(MonoBehaviour behaviour)
     {
+        return behaviour is EnemyController ||
+               behaviour is EnemyTackleAttack ||
+               behaviour is EnemyRangedAttack ||
+               behaviour is EnemyShooter ||
+               behaviour is EnemyContact ||
+               behaviour is EnemySpriteAnimator;
+    }
+
+    private static void CaptureBehaviourEnabledStates(List<MonoBehaviour> behaviours, List<bool> states)
+    {
+        states.Clear();
         if (behaviours == null)
         {
-            return new bool[0];
+            return;
         }
 
-        bool[] states = new bool[behaviours.Length];
-        for (int i = 0; i < behaviours.Length; i++)
+        for (int i = 0; i < behaviours.Count; i++)
         {
-            states[i] = behaviours[i] != null && behaviours[i].enabled;
+            states.Add(behaviours[i] != null && behaviours[i].enabled);
         }
-
-        return states;
     }
 
-    private static bool[] CaptureRigidbodySimulatedStates(Rigidbody2D[] rigidbodies)
+    private static void CaptureRigidbodySimulatedStates(List<Rigidbody2D> rigidbodies, List<bool> states)
     {
+        states.Clear();
         if (rigidbodies == null)
         {
-            return new bool[0];
+            return;
         }
 
-        bool[] states = new bool[rigidbodies.Length];
-        for (int i = 0; i < rigidbodies.Length; i++)
+        for (int i = 0; i < rigidbodies.Count; i++)
         {
-            states[i] = rigidbodies[i] != null && rigidbodies[i].simulated;
+            states.Add(rigidbodies[i] != null && rigidbodies[i].simulated);
         }
-
-        return states;
     }
 
     private void LogDebug(string message)

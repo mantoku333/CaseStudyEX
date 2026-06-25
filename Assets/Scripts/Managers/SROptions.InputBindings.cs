@@ -204,7 +204,7 @@ public partial class SROptions
 
     private static InputActionAsset GetCurrentPlayerActions()
     {
-        var player = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
+        var player = global::PlayerReferenceCache.GetController();
         if (player == null)
         {
             return null;

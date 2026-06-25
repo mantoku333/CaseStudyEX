@@ -1,6 +1,7 @@
 ﻿using Metroidvania.Player;
 using Player;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Metroidvania.Enemy
@@ -20,8 +21,8 @@ namespace Metroidvania.Enemy
         [SerializeField] private bool applyDamageInPassThrough = true;
         [SerializeField, Min(1)] private int contactDamage = 1;
 
-        private Collider2D[] enemyColliders;
-        private Collider2D[] playerColliders;
+        private readonly List<Collider2D> enemyColliders = new List<Collider2D>();
+        private readonly List<Collider2D> playerColliders = new List<Collider2D>();
         private Collider2D playerBodyCollider;
         private PlayerDamageFlash cachedPlayerFlash;
         private PlayerHealth cachedPlayerHealth;
@@ -92,6 +93,11 @@ namespace Metroidvania.Enemy
                 return;
             }
 
+            if (Time.time < nextHitTime)
+            {
+                return;
+            }
+
             if (!IsOverlappingPlayer())
             {
                 return;
@@ -122,7 +128,7 @@ namespace Metroidvania.Enemy
 
         private bool EnsurePlayerReferences()
         {
-            if (playerColliders != null && playerColliders.Length > 0 && playerBodyCollider != null &&
+            if (playerColliders.Count > 0 && playerBodyCollider != null &&
                 (cachedPlayerFlash != null || cachedPlayerHealth != null))
             {
                 return true;
@@ -131,25 +137,27 @@ namespace Metroidvania.Enemy
             CachePlayerReferences();
             IgnorePhysicalCollisionWithPlayer();
 
-            return playerColliders != null && playerColliders.Length > 0 &&
+            return playerColliders.Count > 0 &&
                    playerBodyCollider != null &&
                    (cachedPlayerFlash != null || cachedPlayerHealth != null);
         }
 
         private void RefreshEnemyColliders()
         {
-            enemyColliders = GetComponents<Collider2D>();
+            enemyColliders.Clear();
+            GetComponents(enemyColliders);
         }
 
         private void CachePlayerReferences()
         {
-            GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+            GameObject player = global::PlayerReferenceCache.GetGameObject(playerTag);
             if (player == null)
             {
                 return;
             }
 
-            playerColliders = player.GetComponentsInChildren<Collider2D>(true);
+            playerColliders.Clear();
+            player.GetComponentsInChildren(true, playerColliders);
             cachedPlayerHealth = player.GetComponent<PlayerHealth>();
             if (cachedPlayerHealth == null)
             {
@@ -163,12 +171,12 @@ namespace Metroidvania.Enemy
 
         private void IgnorePhysicalCollisionWithPlayer()
         {
-            if (enemyColliders == null || playerColliders == null)
+            if (enemyColliders.Count == 0 || playerColliders.Count == 0)
             {
                 return;
             }
 
-            for (int i = 0; i < enemyColliders.Length; i++)
+            for (int i = 0; i < enemyColliders.Count; i++)
             {
                 Collider2D enemyCollider = enemyColliders[i];
                 if (enemyCollider == null || !enemyCollider.enabled || enemyCollider.isTrigger)
@@ -176,7 +184,7 @@ namespace Metroidvania.Enemy
                     continue;
                 }
 
-                for (int j = 0; j < playerColliders.Length; j++)
+                for (int j = 0; j < playerColliders.Count; j++)
                 {
                     Collider2D playerCollider = playerColliders[j];
                     if (playerCollider == null || !playerCollider.enabled || playerCollider.isTrigger)
@@ -191,14 +199,14 @@ namespace Metroidvania.Enemy
 
         private bool IsOverlappingPlayer()
         {
-            if (enemyColliders == null || playerBodyCollider == null ||
+            if (enemyColliders.Count == 0 || playerBodyCollider == null ||
                 !playerBodyCollider.enabled || playerBodyCollider.isTrigger)
             {
                 return false;
             }
 
             // passThroughPlayer 中も、ダメージ判定は本体コライダーとの重なりだけに限定する。
-            for (int i = 0; i < enemyColliders.Length; i++)
+            for (int i = 0; i < enemyColliders.Count; i++)
             {
                 Collider2D enemyCollider = enemyColliders[i];
                 if (enemyCollider == null || !enemyCollider.enabled || enemyCollider.isTrigger)
@@ -224,17 +232,9 @@ namespace Metroidvania.Enemy
 
             if (enemyController != null && enemyController.IsContactDamageIgnored())
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log($"[EnemyContact] パリィ後なので接触ダメージ無効 frame={Time.frameCount}");
-                return;
-            }
-
-            if (Time.time < nextHitTime)
-            {
-                return;
-            }
-
-            if (Time.time < nextHitTime)
-            {
+#endif
                 return;
             }
 

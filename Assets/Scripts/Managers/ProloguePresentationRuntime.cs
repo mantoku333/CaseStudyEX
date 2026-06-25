@@ -327,7 +327,7 @@ public sealed class ProloguePresentationRuntime : MonoBehaviour
         if (string.Equals(trimmedActorId, IrisActorId, StringComparison.OrdinalIgnoreCase))
         {
             global::PlayerController player =
-                UnityEngine.Object.FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
+                global::PlayerReferenceCache.GetController();
 
             if (player != null)
             {

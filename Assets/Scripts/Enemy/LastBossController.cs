@@ -1736,7 +1736,7 @@ namespace GameName.Enemy
         {
             if (playerTransform == null && !string.IsNullOrWhiteSpace(playerTag))
             {
-                GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
+                GameObject playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
                 if (playerObject != null)
                 {
                     playerTransform = playerObject.transform;

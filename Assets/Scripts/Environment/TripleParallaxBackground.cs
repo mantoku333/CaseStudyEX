@@ -158,10 +158,7 @@ namespace Metroidvania.Environment
 
         private void Awake()
         {
-            if (cameraTarget == null && Camera.main != null)
-            {
-                cameraTarget = Camera.main.transform;
-            }
+            cameraTarget ??= MainCameraCache.GetTransform(forceRefresh: true);
 
             for (var i = 0; i < layers.Length; i++)
             {

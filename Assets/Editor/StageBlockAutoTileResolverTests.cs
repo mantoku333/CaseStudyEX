@@ -3,6 +3,7 @@ using EditorTools;
 using NUnit.Framework;
 using UnityEngine;
 
+[Category("Gameplay")]
 public sealed class StageBlockAutoTileResolverTests
 {
     [Test]

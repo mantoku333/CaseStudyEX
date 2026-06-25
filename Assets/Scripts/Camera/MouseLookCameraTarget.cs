@@ -26,7 +26,7 @@ public class MouseLookCameraTarget : MonoBehaviour
 
     private void Start()
     {
-        _mainCamera = Camera.main;
+        _mainCamera = MainCameraCache.Get(forceRefresh: true);
         
         // 親子関係を切っておく（カメラ独自の遅延をプレイヤーの動きと切り離して綺麗に出すため）
         if (transform.parent != null)
@@ -40,7 +40,7 @@ public class MouseLookCameraTarget : MonoBehaviour
         if (_playerTransform == null) return;
         if (_mainCamera == null)
         {
-            _mainCamera = Camera.main;
+            _mainCamera = MainCameraCache.Get();
             if (_mainCamera == null) return;
         }
 

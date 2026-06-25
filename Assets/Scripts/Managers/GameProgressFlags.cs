@@ -56,12 +56,26 @@ public static class GameProgressFlags
             return;
         }
 
-        flags.Remove(flagKey);
+        if (flags.Remove(flagKey))
+        {
+            FlagChanged?.Invoke(flagKey, false);
+        }
     }
 
     public static void ClearAll()
     {
+        if (flags.Count == 0)
+        {
+            return;
+        }
+
+        List<string> removedKeys = new List<string>(flags.Keys);
         flags.Clear();
+
+        for (int i = 0; i < removedKeys.Count; i++)
+        {
+            FlagChanged?.Invoke(removedKeys[i], false);
+        }
     }
 
     public static List<GameProgressFlagSnapshot> GetSnapshot()
@@ -105,22 +119,42 @@ public static class GameProgressFlags
 
     private static void ApplyPayload(GameProgressFlagsPayload payload)
     {
+        Dictionary<string, bool> previousFlags = new Dictionary<string, bool>(flags, StringComparer.Ordinal);
         flags.Clear();
 
-        if (payload == null || payload.entries == null)
+        if (payload != null && payload.entries != null)
         {
-            return;
+            for (int i = 0; i < payload.entries.Count; i++)
+            {
+                GameProgressFlagEntry entry = payload.entries[i];
+                if (string.IsNullOrWhiteSpace(entry.key))
+                {
+                    continue;
+                }
+
+                flags[entry.key] = entry.value;
+            }
         }
 
-        for (int i = 0; i < payload.entries.Count; i++)
-        {
-            GameProgressFlagEntry entry = payload.entries[i];
-            if (string.IsNullOrWhiteSpace(entry.key))
-            {
-                continue;
-            }
+        NotifyChangedFlags(previousFlags);
+    }
 
-            flags[entry.key] = entry.value;
+    private static void NotifyChangedFlags(Dictionary<string, bool> previousFlags)
+    {
+        foreach (var pair in flags)
+        {
+            if (!previousFlags.TryGetValue(pair.Key, out bool previousValue) || previousValue != pair.Value)
+            {
+                FlagChanged?.Invoke(pair.Key, pair.Value);
+            }
+        }
+
+        foreach (var pair in previousFlags)
+        {
+            if (!flags.ContainsKey(pair.Key))
+            {
+                FlagChanged?.Invoke(pair.Key, false);
+            }
         }
     }
 

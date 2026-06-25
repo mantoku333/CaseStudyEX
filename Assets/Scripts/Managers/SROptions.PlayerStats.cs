@@ -9,7 +9,7 @@ public partial class SROptions
     {
         get
         {
-            var player = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
+            var player = global::PlayerReferenceCache.GetController();
             if (player == null)
             {
                 return null;
@@ -198,7 +198,7 @@ public partial class SROptions
             return;
         }
 
-        var player = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
+        var player = global::PlayerReferenceCache.GetController();
         if (player == null)
         {
             return;

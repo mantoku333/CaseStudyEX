@@ -12,12 +12,13 @@ namespace GameName.UI
         [SerializeField] private RectTransform barTransform;
         [SerializeField] private string playerTag = "Player";
         [SerializeField] private bool autoFindPlayerHealth = true;
-        [SerializeField] private bool syncEveryFrame = true;
+        [SerializeField] private bool syncEveryFrame;
 
         private Vector3 initialScale = Vector3.one;
         private bool hasCachedInitialScale;
         private int lastCurrentHealth = int.MinValue;
         private int lastMaxHealth = int.MinValue;
+        private bool hasSubscribedToHealth;
 
         private void Awake()
         {
@@ -58,7 +59,7 @@ namespace GameName.UI
                 return;
             }
 
-            if (syncEveryFrame)
+            if (syncEveryFrame || !hasSubscribedToHealth)
             {
                 RefreshIfChanged(targetHealth.CurrentHealth, targetHealth.MaxHealth);
             }
@@ -105,7 +106,7 @@ namespace GameName.UI
                 return;
             }
 
-            GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
+            GameObject playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
 
             if (playerObject != null)
             {
@@ -132,16 +133,19 @@ namespace GameName.UI
 
             targetHealth.HealthChanged -= OnHealthChanged;
             targetHealth.HealthChanged += OnHealthChanged;
+            hasSubscribedToHealth = true;
         }
 
         private void UnsubscribeFromHealth()
         {
             if (targetHealth == null)
             {
+                hasSubscribedToHealth = false;
                 return;
             }
 
             targetHealth.HealthChanged -= OnHealthChanged;
+            hasSubscribedToHealth = false;
         }
 
         private void OnHealthChanged(int currentHealth, int maxHealth)

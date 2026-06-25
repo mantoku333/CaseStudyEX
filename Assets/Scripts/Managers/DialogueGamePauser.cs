@@ -26,6 +26,7 @@ namespace Metroidvania.Managers
         };
 
         private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
+        private readonly List<MonoBehaviour> playerBehaviourBuffer = new List<MonoBehaviour>();
         private PlayerInput pausedPlayerInput;
         private global::PlayerController pausedPlayerController;
         private bool previousPlayerInputEnabled;
@@ -111,14 +112,14 @@ namespace Metroidvania.Managers
             gameplayPaused = true;
             pausedBehaviours.Clear();
 
-            pausedPlayerInput = FindFirstObjectByType<PlayerInput>();
+            GameObject player = ResolvePlayerObject();
+            pausedPlayerInput = player != null ? player.GetComponentInChildren<PlayerInput>(true) : null;
             if (pausedPlayerInput != null)
             {
                 previousPlayerInputEnabled = pausedPlayerInput.enabled;
                 pausedPlayerInput.enabled = false;
             }
 
-            GameObject player = ResolvePlayerObject();
             if (player == null)
             {
                 return;
@@ -136,10 +137,11 @@ namespace Metroidvania.Managers
                 pausedPlayerController.SetExternalControlLocked(true);
             }
 
-            MonoBehaviour[] behaviours = player.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
-            for (int i = 0; i < behaviours.Length; i++)
+            playerBehaviourBuffer.Clear();
+            player.GetComponentsInChildren(true, playerBehaviourBuffer);
+            for (int i = 0; i < playerBehaviourBuffer.Count; i++)
             {
-                MonoBehaviour behaviour = behaviours[i];
+                MonoBehaviour behaviour = playerBehaviourBuffer[i];
                 if (behaviour == null || !behaviour.enabled)
                 {
                     continue;
@@ -213,13 +215,7 @@ namespace Metroidvania.Managers
 
         private GameObject ResolvePlayerObject()
         {
-            GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
-            if (taggedPlayer != null)
-            {
-                return taggedPlayer;
-            }
-
-            global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
+            global::PlayerController playerController = global::PlayerReferenceCache.GetController();
             return playerController != null ? playerController.gameObject : null;
         }
 
