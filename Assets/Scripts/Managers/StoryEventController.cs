@@ -348,22 +348,13 @@ public sealed class StoryEventController : MonoBehaviour
             return;
         }
 
-        if (marker.AudioKind == StoryTimelineAudioKind.Bgm)
-        {
-            if (marker.Action == StoryTimelineAudioAction.Stop)
-            {
-                StoryTimelineRuntime.Instance.StopBgm(marker.FadeSeconds);
-                return;
-            }
-
-            StoryTimelineRuntime.Instance.PlayBgm(marker.AudioClip, marker.Volume, marker.Loop, marker.FadeSeconds);
-            return;
-        }
-
-        if (marker.Action == StoryTimelineAudioAction.Play)
-        {
-            StoryTimelineRuntime.Instance.PlaySe(marker.AudioClip, marker.Volume);
-        }
+        StoryTimelineRuntime.Instance.PlayTimelineAudio(
+            marker.AudioKind,
+            marker.Action,
+            marker.AudioClip,
+            marker.Volume,
+            marker.Loop,
+            marker.FadeSeconds);
     }
 
     private static void PlayCameraShakeMarker(StoryCameraShakeMarker marker)
@@ -698,7 +689,7 @@ public sealed class StoryEventController : MonoBehaviour
 
         if (marker is StoryAudioMarker audioMarker)
         {
-            if (!(track is StoryAudioTrack))
+            if (!(track is StoryAudioTrack) && !(track is AudioTrack))
             {
                 return;
             }

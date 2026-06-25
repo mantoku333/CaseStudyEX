@@ -21,22 +21,13 @@ public sealed class StoryAudioPlayable : PlayableBehaviour
 
         fired = true;
 
-        if (audioKind == StoryTimelineAudioKind.Bgm)
-        {
-            if (action == StoryTimelineAudioAction.Stop)
-            {
-                StoryTimelineRuntime.Instance.StopBgm(fadeSeconds);
-                return;
-            }
-
-            StoryTimelineRuntime.Instance.PlayBgm(audioClip, volume, loop, fadeSeconds);
-            return;
-        }
-
-        if (action == StoryTimelineAudioAction.Play)
-        {
-            StoryTimelineRuntime.Instance.PlaySe(audioClip, volume);
-        }
+        StoryTimelineRuntime.Instance.PlayTimelineAudio(
+            audioKind,
+            action,
+            audioClip,
+            volume,
+            loop,
+            fadeSeconds);
     }
 
     public override void OnGraphStop(Playable playable)
