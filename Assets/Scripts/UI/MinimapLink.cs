@@ -5,12 +5,15 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class MinimapLink : MonoBehaviour
 {
+    private static readonly List<MinimapLink> ActiveLinks = new List<MinimapLink>();
+
     [SerializeField] private string linkId;
     [SerializeField] private MinimapRoom fromRoom;
     [SerializeField] private MinimapRoom toRoom;
     [SerializeField] private List<Vector2> pathPoints = new List<Vector2>();
 
     public string LinkId => string.IsNullOrWhiteSpace(linkId) ? gameObject.name : linkId;
+    public static IReadOnlyList<MinimapLink> RegisteredLinks => ActiveLinks;
     public MinimapRoom FromRoom => fromRoom;
     public MinimapRoom ToRoom => toRoom;
     public IReadOnlyList<Vector2> PathPoints => pathPoints;
@@ -61,6 +64,11 @@ public sealed class MinimapLink : MonoBehaviour
 
     private void OnEnable()
     {
+        if (!ActiveLinks.Contains(this))
+        {
+            ActiveLinks.Add(this);
+        }
+
         if (MinimapManager.Instance != null)
         {
             MinimapManager.Instance.RegisterLink(this);
@@ -69,6 +77,8 @@ public sealed class MinimapLink : MonoBehaviour
 
     private void OnDisable()
     {
+        ActiveLinks.Remove(this);
+
         if (MinimapManager.Instance != null)
         {
             MinimapManager.Instance.UnregisterLink(this);

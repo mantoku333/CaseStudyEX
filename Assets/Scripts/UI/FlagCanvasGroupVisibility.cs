@@ -27,8 +27,24 @@ public sealed class FlagCanvasGroupVisibility : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void OnEnable()
     {
+        GameProgressFlags.FlagChanged += OnProgressFlagChanged;
+        EvaluateAndApply();
+    }
+
+    private void OnDisable()
+    {
+        GameProgressFlags.FlagChanged -= OnProgressFlagChanged;
+    }
+
+    private void OnProgressFlagChanged(string flagKey, bool value)
+    {
+        if (!string.Equals(flagKey, triggerFlagKey, System.StringComparison.Ordinal))
+        {
+            return;
+        }
+
         EvaluateAndApply();
     }
 

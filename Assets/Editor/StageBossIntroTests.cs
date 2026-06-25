@@ -11,6 +11,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
+[Category("Story/Event")]
+[Category("Boss")]
 public sealed class StageBossIntroTests
 {
     private const BindingFlags PrivateInstance =

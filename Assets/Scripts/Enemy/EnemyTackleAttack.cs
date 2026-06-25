@@ -594,14 +594,18 @@ namespace GameName.Enemy
         public void StopByParry()
         {
             //バグ確認ログ
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log($"[Tackle StopByParry] frame={Time.frameCount}, time={Time.time}");
+#endif
 
             if (attackState != AttackState.Charging)
             {
                 return;
             }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("突進敵を通常パリィしました");
+#endif
 
             if (enemyController != null)
             {

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -7,6 +8,7 @@ public sealed class OptionsFinishPromptSkin : MonoBehaviour
 {
     private const string BackgroundNodeName = "Background";
     private const string DimBackgroundName = "背景の暗さ";
+    private static readonly List<Graphic> GraphicSearchBuffer = new List<Graphic>(16);
 
     private OptionsMenu backend;
     private Button yesButton;
@@ -162,17 +164,23 @@ public sealed class OptionsFinishPromptSkin : MonoBehaviour
             return null;
         }
 
-        Graphic[] graphics = stateRoot.GetComponentsInChildren<Graphic>(true);
-        if (graphics.Length == 0)
+        GraphicSearchBuffer.Clear();
+        stateRoot.GetComponentsInChildren(true, GraphicSearchBuffer);
+        if (GraphicSearchBuffer.Count == 0)
         {
             return null;
         }
 
         Graphic bestGraphic = null;
         float bestArea = float.MinValue;
-        for (int i = 0; i < graphics.Length; i++)
+        for (int i = 0; i < GraphicSearchBuffer.Count; i++)
         {
-            Graphic graphic = graphics[i];
+            Graphic graphic = GraphicSearchBuffer[i];
+            if (graphic == null)
+            {
+                continue;
+            }
+
             graphic.raycastTarget = false;
 
             RectTransform rectTransform = graphic.rectTransform;
@@ -193,6 +201,7 @@ public sealed class OptionsFinishPromptSkin : MonoBehaviour
             }
         }
 
+        GraphicSearchBuffer.Clear();
         return bestGraphic;
     }
 

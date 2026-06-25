@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -9,7 +10,8 @@ using UnityEngine;
 public sealed class DroppedItemHopMotion : MonoBehaviour
 {
     private Coroutine hopRoutine;
-    private ColliderState[] triggerColliderStates;
+    private readonly List<Collider2D> colliderBuffer = new List<Collider2D>();
+    private readonly List<ColliderState> triggerColliderStates = new List<ColliderState>();
 
     /// <summary>
     /// その場で上下に跳ねる互換用メソッド。
@@ -87,43 +89,33 @@ public sealed class DroppedItemHopMotion : MonoBehaviour
 
     private void DisableTriggerColliders()
     {
-        Collider2D[] colliders = GetComponentsInChildren<Collider2D>(true);
-        int triggerCount = 0;
+        colliderBuffer.Clear();
+        triggerColliderStates.Clear();
+        GetComponentsInChildren(true, colliderBuffer);
 
         // 元の有効状態を正しく戻すため、Trigger Colliderだけを記録する。
-        for (int i = 0; i < colliders.Length; i++)
+        for (int i = 0; i < colliderBuffer.Count; i++)
         {
-            if (colliders[i] != null && colliders[i].isTrigger)
-            {
-                triggerCount++;
-            }
-        }
-
-        triggerColliderStates = new ColliderState[triggerCount];
-        int stateIndex = 0;
-
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            Collider2D collider2D = colliders[i];
+            Collider2D collider2D = colliderBuffer[i];
             if (collider2D == null || !collider2D.isTrigger)
             {
                 continue;
             }
 
-            triggerColliderStates[stateIndex++] = new ColliderState(collider2D, collider2D.enabled);
+            triggerColliderStates.Add(new ColliderState(collider2D, collider2D.enabled));
             collider2D.enabled = false;
         }
     }
 
     private void RestoreTriggerColliders()
     {
-        if (triggerColliderStates == null)
+        if (triggerColliderStates.Count == 0)
         {
             return;
         }
 
         // ホップ前に有効だったColliderだけを元の状態へ戻す。
-        for (int i = 0; i < triggerColliderStates.Length; i++)
+        for (int i = 0; i < triggerColliderStates.Count; i++)
         {
             ColliderState state = triggerColliderStates[i];
             if (state.Collider != null)
@@ -132,7 +124,7 @@ public sealed class DroppedItemHopMotion : MonoBehaviour
             }
         }
 
-        triggerColliderStates = null;
+        triggerColliderStates.Clear();
     }
 
     private void OnDisable()

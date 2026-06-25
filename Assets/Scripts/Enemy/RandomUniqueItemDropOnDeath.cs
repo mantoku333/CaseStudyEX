@@ -24,6 +24,7 @@ namespace GameName.Enemy
         private IBossHealthSource healthSource;
         private IBossHealthSource subscribedHealthSource;
         private Collider2D bodyCollider;
+        private readonly List<MonoBehaviour> behaviourBuffer = new List<MonoBehaviour>();
         private bool hasRolled;
 
         private void Awake()
@@ -136,10 +137,11 @@ namespace GameName.Enemy
 
         private IBossHealthSource FindHealthSourceOnThisObject()
         {
-            MonoBehaviour[] behaviours = GetComponents<MonoBehaviour>();
-            for (int i = 0; i < behaviours.Length; i++)
+            behaviourBuffer.Clear();
+            GetComponents(behaviourBuffer);
+            for (int i = 0; i < behaviourBuffer.Count; i++)
             {
-                if (behaviours[i] is IBossHealthSource source)
+                if (behaviourBuffer[i] is IBossHealthSource source)
                 {
                     return source;
                 }

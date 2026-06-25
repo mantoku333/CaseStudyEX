@@ -1,0 +1,18 @@
+{
+    "label": "FixPerformance",
+    "sceneName": "Fix_Master",
+    "scenePath": "Assets/Scenes/FixScenes/Fix_Master.unity",
+    "timestamp": "2026-06-24 14:11:48",
+    "warmupSeconds": 2.0,
+    "captureSeconds": 15.0,
+    "frameCount": 3033,
+    "activeGameObjectCount": 2104,
+    "averageFps": 56.39140170276309,
+    "minFrameMs": 7.40090012550354,
+    "averageFrameMs": 17.733199917089516,
+    "p95FrameMs": 22.985197603702546,
+    "maxFrameMs": 2403.5329818725586,
+    "memoryStartMb": 931.53515625,
+    "memoryEndMb": 947.02734375,
+    "memoryDeltaMb": 15.4921875
+}

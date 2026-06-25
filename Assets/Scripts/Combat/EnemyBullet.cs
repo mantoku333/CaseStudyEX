@@ -76,7 +76,15 @@ namespace Metroidvania.Enemy
             new Vector2Int(-1, -1)
         };
 
+        private static readonly List<Collider2D> TargetColliderLookupBuffer = new List<Collider2D>();
+
         private readonly List<Vector2> currentPath = new List<Vector2>();
+        private readonly List<PathNode> pathOpenNodes = new List<PathNode>();
+        private readonly Dictionary<Vector2Int, PathNode> pathNodes = new Dictionary<Vector2Int, PathNode>();
+        private readonly HashSet<Vector2Int> pathClosedNodes = new HashSet<Vector2Int>();
+        private readonly List<Vector2> reversedPathBuffer = new List<Vector2>();
+        private readonly List<PathNode> pathNodePool = new List<PathNode>();
+        private int pathNodePoolIndex;
 
         private Rigidbody2D rb2D;
         // 弾自身の大きさを見て、壁からどれくらい離れて経路探索するかを決める。
@@ -108,6 +116,15 @@ namespace Metroidvania.Enemy
             public float G;
             public float H;
             public float F => G + H;
+
+            public void Reset(Vector2Int grid, float h)
+            {
+                Grid = grid;
+                Parent = default;
+                HasParent = false;
+                G = 0f;
+                H = h;
+            }
         }
 
         private void Awake()
@@ -328,13 +345,17 @@ namespace Metroidvania.Enemy
         {
             if (other.GetComponent<AttackHitbox>() != null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("AttackHitboxに触れたので弾は消しません");
+#endif
                 return;
             }
 
             if (other.GetComponent<ParryHitbox>() != null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("ParryHitboxに触れたので弾は消しません");
+#endif
                 return;
             }
 
@@ -352,7 +373,9 @@ namespace Metroidvania.Enemy
 
                 if (IsPlayerCollider(other))
                 {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                     Debug.Log("反射弾なのでPlayerにはダメージを入れません");
+#endif
                     return;
                 }
             }
@@ -375,13 +398,17 @@ namespace Metroidvania.Enemy
         {
             if (collision.gameObject.GetComponent<AttackHitbox>() != null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("AttackHitboxに衝突したので弾は消しません");
+#endif
                 return;
             }
 
             if (collision.gameObject.GetComponent<ParryHitbox>() != null)
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("ParryHitboxに衝突したので弾は消しません");
+#endif
                 return;
             }
 
@@ -399,7 +426,9 @@ namespace Metroidvania.Enemy
 
                 if (IsPlayerCollider(collision.collider) || IsPlayerCollider(collision.otherCollider))
                 {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                     Debug.Log("反射弾なのでPlayerにはダメージを入れません");
+#endif
                     return;
                 }
             }
@@ -673,37 +702,33 @@ namespace Metroidvania.Enemy
             int extent = Mathf.CeilToInt(radius / spacing);
             int maxIterations = Mathf.Min(5000, (extent * 2 + 1) * (extent * 2 + 1));
 
-            List<PathNode> open = new List<PathNode>();
-            Dictionary<Vector2Int, PathNode> nodes = new Dictionary<Vector2Int, PathNode>();
-            HashSet<Vector2Int> closed = new HashSet<Vector2Int>();
+            pathOpenNodes.Clear();
+            pathNodes.Clear();
+            pathClosedNodes.Clear();
+            pathNodePoolIndex = 0;
 
-            PathNode startNode = new PathNode
-            {
-                Grid = startCell,
-                G = 0f,
-                H = Vector2Int.Distance(startCell, goalCell)
-            };
-            open.Add(startNode);
-            nodes[startCell] = startNode;
+            PathNode startNode = RentPathNode(startCell, Vector2Int.Distance(startCell, goalCell));
+            pathOpenNodes.Add(startNode);
+            pathNodes[startCell] = startNode;
 
             int iterations = 0;
-            while (open.Count > 0 && iterations < maxIterations)
+            while (pathOpenNodes.Count > 0 && iterations < maxIterations)
             {
                 iterations++;
-                PathNode current = PopBestNode(open);
+                PathNode current = PopBestNode(pathOpenNodes);
 
                 if (current.Grid == goalCell)
                 {
-                    ReconstructPath(current, nodes, center, spacing, goal, path);
+                    ReconstructPath(current, pathNodes, center, spacing, goal, path);
                     return path.Count > 0;
                 }
 
-                closed.Add(current.Grid);
+                pathClosedNodes.Add(current.Grid);
 
                 for (int i = 0; i < NeighborOffsets.Length; i++)
                 {
                     Vector2Int nextCell = current.Grid + NeighborOffsets[i];
-                    if (closed.Contains(nextCell) ||
+                    if (pathClosedNodes.Contains(nextCell) ||
                         Mathf.Abs(nextCell.x) > extent ||
                         Mathf.Abs(nextCell.y) > extent)
                     {
@@ -730,19 +755,15 @@ namespace Metroidvania.Enemy
 
                     float nextCost = current.G + Vector2.Distance(currentWorld, nextWorld);
 
-                    if (!nodes.TryGetValue(nextCell, out PathNode nextNode))
+                    if (!pathNodes.TryGetValue(nextCell, out PathNode nextNode))
                     {
-                        nextNode = new PathNode
-                        {
-                            Grid = nextCell,
-                            H = Vector2Int.Distance(nextCell, goalCell)
-                        };
-                        nodes[nextCell] = nextNode;
-                        open.Add(nextNode);
+                        nextNode = RentPathNode(nextCell, Vector2Int.Distance(nextCell, goalCell));
+                        pathNodes[nextCell] = nextNode;
+                        pathOpenNodes.Add(nextNode);
                     }
-                    else if (open.IndexOf(nextNode) < 0)
+                    else if (pathOpenNodes.IndexOf(nextNode) < 0)
                     {
-                        open.Add(nextNode);
+                        pathOpenNodes.Add(nextNode);
                     }
 
                     if (nextNode.HasParent && nextCost >= nextNode.G)
@@ -758,6 +779,19 @@ namespace Metroidvania.Enemy
 
             path.Clear();
             return false;
+        }
+
+        private PathNode RentPathNode(Vector2Int grid, float h)
+        {
+            if (pathNodePoolIndex >= pathNodePool.Count)
+            {
+                pathNodePool.Add(new PathNode());
+            }
+
+            PathNode node = pathNodePool[pathNodePoolIndex];
+            pathNodePoolIndex++;
+            node.Reset(grid, h);
+            return node;
         }
 
         private PathNode PopBestNode(List<PathNode> open)
@@ -785,12 +819,12 @@ namespace Metroidvania.Enemy
             Vector2 goal,
             List<Vector2> path)
         {
-            List<Vector2> reversed = new List<Vector2>();
+            reversedPathBuffer.Clear();
             PathNode current = endNode;
 
             while (current != null)
             {
-                reversed.Add(PathCellToWorld(current.Grid, center, spacing));
+                reversedPathBuffer.Add(PathCellToWorld(current.Grid, center, spacing));
 
                 if (!current.HasParent || !nodes.TryGetValue(current.Parent, out current))
                 {
@@ -798,10 +832,12 @@ namespace Metroidvania.Enemy
                 }
             }
 
-            for (int i = reversed.Count - 2; i >= 0; i--)
+            for (int i = reversedPathBuffer.Count - 2; i >= 0; i--)
             {
-                path.Add(reversed[i]);
+                path.Add(reversedPathBuffer[i]);
             }
+
+            reversedPathBuffer.Clear();
 
             if (path.Count == 0 || Vector2.Distance(path[path.Count - 1], goal) > waypointReachDistance)
             {
@@ -1010,13 +1046,14 @@ namespace Metroidvania.Enemy
                 return playerBodyCollider;
             }
 
-            Collider2D[] colliders = targetRoot.GetComponentsInChildren<Collider2D>();
+            TargetColliderLookupBuffer.Clear();
+            targetRoot.GetComponentsInChildren(false, TargetColliderLookupBuffer);
             Collider2D bestCollider = null;
             float bestArea = -1f;
 
-            for (int i = 0; i < colliders.Length; i++)
+            for (int i = 0; i < TargetColliderLookupBuffer.Count; i++)
             {
-                Collider2D candidate = colliders[i];
+                Collider2D candidate = TargetColliderLookupBuffer[i];
                 if (candidate == null || !candidate.enabled || candidate.isTrigger)
                 {
                     continue;
@@ -1031,6 +1068,8 @@ namespace Metroidvania.Enemy
                 bestArea = area;
                 bestCollider = candidate;
             }
+
+            TargetColliderLookupBuffer.Clear();
 
             if (bestCollider != null)
             {
@@ -1136,7 +1175,9 @@ namespace Metroidvania.Enemy
 
             SetVelocity(reflectDirection);
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log($"ジャストパリィ成功。反射ダメージ:{reflectedDamage}");
+#endif
         }
 
         private Vector2 ResolveIncomingDirection(Vector2 parryPosition)
@@ -1223,7 +1264,9 @@ namespace Metroidvania.Enemy
                 return false;
             }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log($"反射弾が敵に命中。ダメージ:{reflectedDamage}");
+#endif
 
             enemyController.TakeDamage(reflectedDamage);
 

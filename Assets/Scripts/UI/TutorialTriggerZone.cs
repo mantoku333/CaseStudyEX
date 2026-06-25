@@ -110,6 +110,7 @@ public sealed class TutorialTriggerZone : MonoBehaviour
     };
 
     private readonly List<Behaviour> cutscenePausedBehaviours = new List<Behaviour>();
+    private readonly List<MonoBehaviour> cutscenePlayerBehaviourBuffer = new List<MonoBehaviour>();
     private bool triggered;
     private DialogueRunner activeDialogueRunner;
     private bool waitingDialogueCompletion;
@@ -374,10 +375,11 @@ public sealed class TutorialTriggerZone : MonoBehaviour
             cutscenePausedPlayerInput.enabled = false;
         }
 
-        MonoBehaviour[] behaviours = player.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
-        for (int i = 0; i < behaviours.Length; i++)
+        cutscenePlayerBehaviourBuffer.Clear();
+        player.GetComponentsInChildren(true, cutscenePlayerBehaviourBuffer);
+        for (int i = 0; i < cutscenePlayerBehaviourBuffer.Count; i++)
         {
-            MonoBehaviour behaviour = behaviours[i];
+            MonoBehaviour behaviour = cutscenePlayerBehaviourBuffer[i];
             if (behaviour == null || !behaviour.enabled)
             {
                 continue;
@@ -431,14 +433,14 @@ public sealed class TutorialTriggerZone : MonoBehaviour
     {
         if (!string.IsNullOrWhiteSpace(playerTag))
         {
-            GameObject taggedPlayer = GameObject.FindGameObjectWithTag(playerTag);
+            GameObject taggedPlayer = global::PlayerReferenceCache.GetGameObject(playerTag);
             if (taggedPlayer != null)
             {
                 return taggedPlayer;
             }
         }
 
-        global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
+        global::PlayerController playerController = global::PlayerReferenceCache.GetController();
         return playerController != null ? playerController.gameObject : null;
     }
 

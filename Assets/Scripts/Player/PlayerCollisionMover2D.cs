@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -26,6 +27,7 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
     private readonly RaycastHit2D[] castHits = new RaycastHit2D[8];
     private readonly Collider2D[] overlapHits = new Collider2D[8];
     private readonly ContactPoint2D[] contactHits = new ContactPoint2D[8];
+    private readonly List<Collider2D> colliderBuffer = new List<Collider2D>();
 
     private Rigidbody2D rigidBody2d;
     private Collider2D bodyCollider;
@@ -398,12 +400,13 @@ public sealed class PlayerCollisionMover2D : MonoBehaviour
 
         if (bodyCollider == null)
         {
-            Collider2D[] colliders = GetComponents<Collider2D>();
-            for (int i = 0; i < colliders.Length; i++)
+            colliderBuffer.Clear();
+            GetComponents(colliderBuffer);
+            for (int i = 0; i < colliderBuffer.Count; i++)
             {
-                if (colliders[i] != null && colliders[i].enabled && !colliders[i].isTrigger)
+                if (colliderBuffer[i] != null && colliderBuffer[i].enabled && !colliderBuffer[i].isTrigger)
                 {
-                    bodyCollider = colliders[i];
+                    bodyCollider = colliderBuffer[i];
                     break;
                 }
             }

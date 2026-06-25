@@ -101,7 +101,7 @@ public partial class SROptions
 
     private static PlayerAbilityController ResolvePlayerAbilityController()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        GameObject playerObject = global::PlayerReferenceCache.GetGameObject();
         if (playerObject != null)
         {
             PlayerAbilityController abilityController = playerObject.GetComponent<PlayerAbilityController>();

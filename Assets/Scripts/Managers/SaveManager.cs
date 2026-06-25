@@ -64,19 +64,12 @@ public sealed class SaveManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        TraceLoadedPlayerPosition("Update");
-    }
-
-    private void FixedUpdate()
-    {
-        TraceLoadedPlayerPosition("FixedUpdate");
-    }
-
     private void LateUpdate()
     {
-        TraceLoadedPlayerPosition("LateUpdate");
+        if (EnableLoadTrace)
+        {
+            TraceLoadedPlayerPosition("LateUpdate");
+        }
 
         if (pendingLoadData != null)
         {
@@ -305,7 +298,7 @@ public sealed class SaveManager : MonoBehaviour
 
         EnsureInstance();
 
-        var playerController = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
+        var playerController = global::PlayerReferenceCache.GetController();
         if (playerController == null)
         {
             Debug.LogWarning("[SaveManager] PlayerController not found. Save skipped.");
@@ -452,7 +445,7 @@ public sealed class SaveManager : MonoBehaviour
 
         SaveGameData loadedData = pendingLoadData;
 
-        var playerController = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
+        var playerController = global::PlayerReferenceCache.GetController();
         if (playerController == null)
         {
             if (EnableLoadTrace)
