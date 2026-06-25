@@ -43,30 +43,8 @@ public sealed class PlayerHudPrologueVisibilityGate : MonoBehaviour
         EvaluateAndApply();
     }
 
-    private void OnEnable()
+    private void Update()
     {
-        GameProgressFlags.FlagChanged += OnProgressFlagChanged;
-        EvaluateAndApply();
-    }
-
-    private void OnDisable()
-    {
-        GameProgressFlags.FlagChanged -= OnProgressFlagChanged;
-    }
-
-    private void OnTransformChildrenChanged()
-    {
-        targetObject = null;
-        EvaluateAndApply();
-    }
-
-    private void OnProgressFlagChanged(string flagKey, bool value)
-    {
-        if (!string.Equals(flagKey, triggerFlagKey, System.StringComparison.Ordinal))
-        {
-            return;
-        }
-
         EvaluateAndApply();
     }
 

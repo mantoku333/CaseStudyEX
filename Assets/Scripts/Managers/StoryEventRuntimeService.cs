@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Metroidvania.Managers;
 using UnityEngine;
@@ -293,14 +292,14 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
 
     private bool EnqueueSceneComponentEvents(string sceneName)
     {
-        IReadOnlyList<SceneStartStoryEventSource> sources = SceneStartStoryEventSource.RegisteredSources;
-        if (sources.Count == 0)
+        SceneStartStoryEventSource[] sources = FindObjectsByType<SceneStartStoryEventSource>(FindObjectsSortMode.None);
+        if (sources == null || sources.Length == 0)
         {
             return false;
         }
 
         bool enqueued = false;
-        for (int i = 0; i < sources.Count; i++)
+        for (int i = 0; i < sources.Length; i++)
         {
             SceneStartStoryEventSource source = sources[i];
             if (source == null || !source.isActiveAndEnabled)
@@ -429,8 +428,9 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
         string activeSceneName = SceneManager.GetActiveScene().name;
         StoryEventController fallbackController = null;
 
-        IReadOnlyList<StoryEventController> controllers = StoryEventController.RegisteredControllers;
-        for (int i = 0; i < controllers.Count; i++)
+        StoryEventController[] controllers =
+            FindObjectsByType<StoryEventController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < controllers.Length; i++)
         {
             StoryEventController controller = controllers[i];
             if (controller == null)
@@ -511,8 +511,9 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
         string activeSceneName = SceneManager.GetActiveScene().name;
         StoryEventController fallbackController = null;
 
-        IReadOnlyList<StoryEventController> controllers = StoryEventController.RegisteredControllers;
-        for (int i = 0; i < controllers.Count; i++)
+        StoryEventController[] controllers =
+            FindObjectsByType<StoryEventController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < controllers.Length; i++)
         {
             StoryEventController controller = controllers[i];
             if (controller == null || !controller.IsPlaying)

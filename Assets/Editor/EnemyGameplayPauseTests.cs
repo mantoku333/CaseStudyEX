@@ -7,7 +7,6 @@ using Player;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-[Category("Gameplay")]
 public sealed class EnemyGameplayPauseTests
 {
     private const BindingFlags InstancePrivate = BindingFlags.Instance | BindingFlags.NonPublic;

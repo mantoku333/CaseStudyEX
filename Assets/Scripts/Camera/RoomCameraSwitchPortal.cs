@@ -17,7 +17,6 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
     private readonly HashSet<Collider> overlappingPlayerColliders = new();
     private readonly Collider2D[] polledColliderBuffer2D = new Collider2D[32];
     private readonly List<Collider2D> portalColliders2D = new();
-    private readonly List<Collider2D> playerColliderBuffer2D = new();
     private ContactFilter2D overlapFilter2D;
     private bool activatedDuringCurrentOverlap;
 
@@ -46,12 +45,6 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
         overlappingPlayerColliders2D.Clear();
         overlappingPlayerColliders.Clear();
         activatedDuringCurrentOverlap = false;
-    }
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetActivePortals()
-    {
-        activePortals.Clear();
     }
 
     private void FixedUpdate()
@@ -278,8 +271,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
         RefreshPortalColliders2D();
 
-        playerColliderBuffer2D.Clear();
-        player.GetComponentsInChildren(false, playerColliderBuffer2D);
+        Collider2D[] playerColliders = player.GetComponentsInChildren<Collider2D>();
         for (int i = 0; i < portalColliders2D.Count; i++)
         {
             Collider2D portalCollider = portalColliders2D[i];
@@ -288,9 +280,9 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
                 continue;
             }
 
-            for (int j = 0; j < playerColliderBuffer2D.Count; j++)
+            for (int j = 0; j < playerColliders.Length; j++)
             {
-                Collider2D playerCollider = playerColliderBuffer2D[j];
+                Collider2D playerCollider = playerColliders[j];
                 if (playerCollider == null ||
                     !playerCollider.enabled ||
                     !portalCollider.bounds.Intersects(playerCollider.bounds))
@@ -299,12 +291,10 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
                 }
 
                 ActivateTargetRoomFromTeleport();
-                playerColliderBuffer2D.Clear();
                 return true;
             }
         }
 
-        playerColliderBuffer2D.Clear();
         return false;
     }
 

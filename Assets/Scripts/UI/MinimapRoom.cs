@@ -7,7 +7,6 @@ public sealed class MinimapRoom : MonoBehaviour
 {
     private static readonly Vector2 DefaultFreeformRoomSize = new Vector2(1.5f, 1f);
     private static readonly List<MinimapRoom> OccupiedRooms = new List<MinimapRoom>();
-    private static readonly List<MinimapRoom> ActiveRooms = new List<MinimapRoom>();
 
     [Header("Room Identity")]
     [SerializeField, Tooltip("Unique room id for the minimap. Uses the GameObject name when empty.")]
@@ -44,8 +43,6 @@ public sealed class MinimapRoom : MonoBehaviour
     [Header("Detection")]
     [SerializeField] private string playerTag = "Player";
 
-    private readonly List<Collider2D> roomCollider2DBuffer = new List<Collider2D>();
-    private readonly List<Collider> roomColliderBuffer = new List<Collider>();
     private int overlapCount;
 
     public string RoomId => roomId;
@@ -53,7 +50,6 @@ public sealed class MinimapRoom : MonoBehaviour
     public Vector2Int MapPosition => mapPosition;
     public Vector2Int MapSize => new Vector2Int(Mathf.Max(1, mapSize.x), Mathf.Max(1, mapSize.y));
     public MinimapConnection Connections => connections;
-    public static IReadOnlyList<MinimapRoom> RegisteredRooms => ActiveRooms;
     public bool UsesFreeformLayout => usesFreeformLayout;
     public Vector2 AreaPosition => usesFreeformLayout ? areaPosition : LegacyGridToBoardPosition(mapPosition, MapSize);
     public Vector2 AreaSize => usesFreeformLayout
@@ -76,11 +72,6 @@ public sealed class MinimapRoom : MonoBehaviour
 
     private void OnEnable()
     {
-        if (!ActiveRooms.Contains(this))
-        {
-            ActiveRooms.Add(this);
-        }
-
         if (MinimapManager.Instance != null)
         {
             MinimapManager.Instance.RegisterRoom(this);
@@ -89,8 +80,6 @@ public sealed class MinimapRoom : MonoBehaviour
 
     private void OnDisable()
     {
-        ActiveRooms.Remove(this);
-
         if (MinimapManager.Instance != null)
         {
             MinimapManager.Instance.UnregisterRoom(this);
@@ -298,7 +287,7 @@ public sealed class MinimapRoom : MonoBehaviour
 
     private void EnterIfPlayerAlreadyInside()
     {
-        GameObject playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
+        GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
         if (playerObject == null)
         {
             return;
@@ -306,11 +295,10 @@ public sealed class MinimapRoom : MonoBehaviour
 
         Vector3 playerPosition = playerObject.transform.position;
         Vector2 playerPosition2D = new Vector2(playerPosition.x, playerPosition.y);
-        roomCollider2DBuffer.Clear();
-        GetComponents(roomCollider2DBuffer);
-        for (int i = 0; i < roomCollider2DBuffer.Count; i++)
+        Collider2D[] colliders2D = GetComponents<Collider2D>();
+        for (int i = 0; i < colliders2D.Length; i++)
         {
-            Collider2D roomCollider = roomCollider2DBuffer[i];
+            Collider2D roomCollider = colliders2D[i];
             if (roomCollider != null && roomCollider.enabled && roomCollider.OverlapPoint(playerPosition2D))
             {
                 HandlePlayerEntered();
@@ -318,11 +306,10 @@ public sealed class MinimapRoom : MonoBehaviour
             }
         }
 
-        roomColliderBuffer.Clear();
-        GetComponents(roomColliderBuffer);
-        for (int i = 0; i < roomColliderBuffer.Count; i++)
+        Collider[] colliders = GetComponents<Collider>();
+        for (int i = 0; i < colliders.Length; i++)
         {
-            Collider roomCollider = roomColliderBuffer[i];
+            Collider roomCollider = colliders[i];
             if (roomCollider != null && roomCollider.enabled && roomCollider.bounds.Contains(playerPosition))
             {
                 HandlePlayerEntered();

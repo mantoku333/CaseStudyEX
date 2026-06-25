@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,8 +13,8 @@ namespace Metroidvania.Player
 
         private Rigidbody2D _rb2d;
         private RigidbodyType2D _originalBodyType;
-        private readonly List<Collider2D> _colliders = new List<Collider2D>();
-        private readonly List<bool> _originalColliderStates = new List<bool>();
+        private Collider2D[] _colliders;
+        private bool[] _originalColliderStates;
 
         private void OnEnable()
         {
@@ -29,17 +28,12 @@ namespace Metroidvania.Player
             }
 
             // 当たり判定の無効化（壁抜けするため）
-            _colliders.Clear();
-            _originalColliderStates.Clear();
-            GetComponentsInChildren(false, _colliders);
-            for (int i = 0; i < _colliders.Count; i++)
+            _colliders = GetComponentsInChildren<Collider2D>();
+            _originalColliderStates = new bool[_colliders.Length];
+            for (int i = 0; i < _colliders.Length; i++)
             {
-                Collider2D collider2D = _colliders[i];
-                _originalColliderStates.Add(collider2D != null && collider2D.enabled);
-                if (collider2D != null)
-                {
-                    collider2D.enabled = false;
-                }
+                _originalColliderStates[i] = _colliders[i].enabled;
+                _colliders[i].enabled = false;
             }
             
             Debug.Log("[CheatMode] Cheat Mode ON");
@@ -90,18 +84,15 @@ namespace Metroidvania.Player
             }
 
             // 当たり判定を元に戻す
-            if (_colliders.Count > 0)
+            if (_colliders != null)
             {
-                for (int i = 0; i < _colliders.Count && i < _originalColliderStates.Count; i++)
+                for (int i = 0; i < _colliders.Length; i++)
                 {
                     if (_colliders[i] != null)
                     {
                         _colliders[i].enabled = _originalColliderStates[i];
                     }
                 }
-
-                _colliders.Clear();
-                _originalColliderStates.Clear();
             }
             
             Debug.Log("[CheatMode] Cheat Mode OFF");

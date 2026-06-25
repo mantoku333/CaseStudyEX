@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,8 +6,6 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class OptionsMainMenuSkin : MonoBehaviour
 {
-    private static readonly List<Graphic> GraphicSearchBuffer = new List<Graphic>(16);
-
     private OptionsMenu backend;
     private Button continueButton;
     private Button saveButton;
@@ -151,23 +148,17 @@ public sealed class OptionsMainMenuSkin : MonoBehaviour
             return null;
         }
 
-        GraphicSearchBuffer.Clear();
-        stateRoot.GetComponentsInChildren(true, GraphicSearchBuffer);
-        if (GraphicSearchBuffer.Count == 0)
+        Graphic[] graphics = stateRoot.GetComponentsInChildren<Graphic>(true);
+        if (graphics.Length == 0)
         {
             return null;
         }
 
         Graphic bestGraphic = null;
         float bestArea = float.MinValue;
-        for (int i = 0; i < GraphicSearchBuffer.Count; i++)
+        for (int i = 0; i < graphics.Length; i++)
         {
-            Graphic graphic = GraphicSearchBuffer[i];
-            if (graphic == null)
-            {
-                continue;
-            }
-
+            Graphic graphic = graphics[i];
             graphic.raycastTarget = false;
 
             RectTransform rectTransform = graphic.rectTransform;
@@ -188,7 +179,6 @@ public sealed class OptionsMainMenuSkin : MonoBehaviour
             }
         }
 
-        GraphicSearchBuffer.Clear();
         return bestGraphic;
     }
 

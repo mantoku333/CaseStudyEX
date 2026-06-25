@@ -25,10 +25,6 @@ namespace Metroidvania.UI
     /// </summary>
     public class BubbleDialogueView : DialoguePresenterBase
     {
-        private const float MainCameraRefreshInterval = 0.5f;
-        private static readonly List<RectTransform> RectTransformSearchBuffer = new List<RectTransform>(16);
-        private static readonly List<Transform> TransformSearchBuffer = new List<Transform>(32);
-
         public delegate bool SpeakerTargetResolver(string characterName, out Transform? target, out Vector3 offset);
 
         [Header("UI Elements")]
@@ -91,13 +87,12 @@ namespace Metroidvania.UI
         private bool _hasLoggedAutoSizeSkipReason;
         private bool _lineIsVisible;
         private bool _presentationEnabled = true;
-        private float _nextMainCameraRefreshTime;
 
         private void Awake()
         {
             EnsureAutoSizeDefaultsIfMissing();
 
-            _mainCamera = MainCameraCache.Get(forceRefresh: true);
+            _mainCamera = Camera.main;
             RefreshUiReferenceCache();
             ResolveBubbleLayoutElements();
             ResolveSpeakerImages();
@@ -180,7 +175,16 @@ namespace Metroidvania.UI
                 return;
             }
 
-            RefreshMainCameraIfNeeded();
+            Camera currentMainCamera = Camera.main;
+            if (currentMainCamera != null && currentMainCamera != _mainCamera)
+            {
+                _mainCamera = currentMainCamera;
+            }
+
+            if (_mainCamera == null)
+            {
+                _mainCamera = currentMainCamera;
+            }
 
             if (_currentTarget == null || _mainCamera == null)
             {
@@ -217,21 +221,6 @@ namespace Metroidvania.UI
             }
 
             bubblePanel.transform.position = screenPos;
-        }
-
-        private void RefreshMainCameraIfNeeded()
-        {
-            if (_mainCamera != null && _mainCamera.isActiveAndEnabled && Time.unscaledTime < _nextMainCameraRefreshTime)
-            {
-                return;
-            }
-
-            _nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
-            Camera currentMainCamera = MainCameraCache.Get();
-            if (currentMainCamera != null)
-            {
-                _mainCamera = currentMainCamera;
-            }
         }
 
         private Vector3 ClampToScreen(Vector3 screenPos)
@@ -287,7 +276,6 @@ namespace Metroidvania.UI
             if (dialogueText != null)
             {
                 dialogueText.text = string.Empty;
-                dialogueText.maxVisibleCharacters = int.MaxValue;
             }
 
             if (_currentTarget == null)
@@ -355,6 +343,12 @@ namespace Metroidvania.UI
             ApplySpeakerNameImage(line.CharacterName);
             _lineIsVisible = true;
 
+            if (dialogueText != null)
+            {
+                ApplyTextLayoutDefaults();
+                dialogueText.text = string.Empty;
+            }
+
             if (bubblePanel != null)
             {
                 bubblePanel.SetActive(true);
@@ -362,13 +356,6 @@ namespace Metroidvania.UI
 
             string text = line.TextWithoutCharacterName.Text;
             UpdateBubbleSizeForText(text);
-
-            if (dialogueText != null)
-            {
-                ApplyTextLayoutDefaults();
-                dialogueText.text = text;
-                dialogueText.maxVisibleCharacters = 0;
-            }
 
             try
             {
@@ -379,14 +366,14 @@ namespace Metroidvania.UI
                 {
                     if (dialogueText != null)
                     {
-                        dialogueText.maxVisibleCharacters = i + 1;
+                        dialogueText.text = text.Substring(0, i + 1);
                     }
 
                     if (token.HurryUpToken.IsCancellationRequested)
                     {
                         if (dialogueText != null)
                         {
-                            dialogueText.maxVisibleCharacters = textLength;
+                            dialogueText.text = text;
                         }
                         break;
                     }
@@ -403,7 +390,7 @@ namespace Metroidvania.UI
             {
                 if (dialogueText != null)
                 {
-                    dialogueText.maxVisibleCharacters = text.Length;
+                    dialogueText.text = text;
                 }
             }
 
@@ -446,7 +433,6 @@ namespace Metroidvania.UI
             if (dialogueText != null)
             {
                 dialogueText.text = string.Empty;
-                dialogueText.maxVisibleCharacters = int.MaxValue;
             }
 
             _currentTarget = null;
@@ -740,7 +726,7 @@ namespace Metroidvania.UI
         private static Transform? FindPlayerTransform()
         {
             global::PlayerController player =
-                global::PlayerReferenceCache.GetController();
+                UnityEngine.Object.FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
             return player != null ? player.transform : null;
         }
 
@@ -784,7 +770,6 @@ namespace Metroidvania.UI
             // 1) Measure text at max width.
             _textRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, clampedMaxTextWidthText);
             dialogueText.text = measureText;
-            dialogueText.maxVisibleCharacters = int.MaxValue;
             dialogueText.ForceMeshUpdate();
 
             float measuredTextWidthText = Mathf.Clamp(dialogueText.preferredWidth, 8f, clampedMaxTextWidthText);
@@ -832,7 +817,6 @@ namespace Metroidvania.UI
 
             // Keep typewriter behavior intact.
             dialogueText.text = string.Empty;
-            dialogueText.maxVisibleCharacters = int.MaxValue;
 
             if (logAutoSizeResult)
             {
@@ -965,19 +949,16 @@ namespace Metroidvania.UI
                 return null;
             }
 
-            RectTransformSearchBuffer.Clear();
-            root.GetComponentsInChildren(true, RectTransformSearchBuffer);
-            for (int i = 0; i < RectTransformSearchBuffer.Count; i++)
+            RectTransform[] rects = root.GetComponentsInChildren<RectTransform>(true);
+            for (int i = 0; i < rects.Length; i++)
             {
-                RectTransform rect = RectTransformSearchBuffer[i];
+                RectTransform rect = rects[i];
                 if (rect != null && string.Equals(rect.name, objectName, StringComparison.OrdinalIgnoreCase))
                 {
-                    RectTransformSearchBuffer.Clear();
                     return rect;
                 }
             }
 
-            RectTransformSearchBuffer.Clear();
             return null;
         }
 
@@ -988,19 +969,16 @@ namespace Metroidvania.UI
                 return null;
             }
 
-            TransformSearchBuffer.Clear();
-            root.GetComponentsInChildren(true, TransformSearchBuffer);
-            for (int i = 0; i < TransformSearchBuffer.Count; i++)
+            Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < transforms.Length; i++)
             {
-                Transform tf = TransformSearchBuffer[i];
+                Transform tf = transforms[i];
                 if (tf != null && string.Equals(tf.name, objectName, StringComparison.OrdinalIgnoreCase))
                 {
-                    TransformSearchBuffer.Clear();
                     return tf.gameObject;
                 }
             }
 
-            TransformSearchBuffer.Clear();
             return null;
         }
 

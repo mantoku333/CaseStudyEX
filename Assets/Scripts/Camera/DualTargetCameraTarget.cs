@@ -43,10 +43,6 @@ public sealed class DualTargetCameraTarget : MonoBehaviour
     private Vector3 positionVelocity;
     private float zoomVelocity;
     private float runtimeMinOrthographicSize;
-    private Camera cachedMainCamera;
-    private float nextMainCameraRefreshTime;
-
-    private const float MainCameraRefreshInterval = 0.5f;
 
     public void Configure(
         Transform primary,
@@ -163,7 +159,8 @@ public sealed class DualTargetCameraTarget : MonoBehaviour
             return;
         }
 
-        if (!TryGetMainCamera(out Camera mainCamera))
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null)
         {
             return;
         }
@@ -384,27 +381,14 @@ public sealed class DualTargetCameraTarget : MonoBehaviour
             : ResolveMinOrthographicSize();
     }
 
-    private float ResolveAspect()
+    private static float ResolveAspect()
     {
-        if (TryGetMainCamera(out Camera mainCamera))
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null)
         {
             return mainCamera.aspect;
         }
 
         return Screen.height > 0 ? (float)Screen.width / Screen.height : 16f / 9f;
-    }
-
-    private bool TryGetMainCamera(out Camera mainCamera)
-    {
-        if (cachedMainCamera != null && Time.unscaledTime < nextMainCameraRefreshTime)
-        {
-            mainCamera = cachedMainCamera;
-            return true;
-        }
-
-        cachedMainCamera = MainCameraCache.Get();
-        nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
-        mainCamera = cachedMainCamera;
-        return mainCamera != null;
     }
 }

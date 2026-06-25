@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
-[Category("Gameplay")]
 public sealed class DodgeControllerTests
 {
     private readonly List<GameObject> objectsToDestroy = new List<GameObject>();

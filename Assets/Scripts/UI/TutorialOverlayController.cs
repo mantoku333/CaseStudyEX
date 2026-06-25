@@ -61,7 +61,6 @@ public sealed class TutorialOverlayController : MonoBehaviour
     };
 
     private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
-    private readonly List<MonoBehaviour> playerBehaviourBuffer = new List<MonoBehaviour>();
     private PlayerInput pausedPlayerInput;
     private bool previousPlayerInputEnabled;
     private float previousTimeScale = 1f;
@@ -519,11 +518,10 @@ public sealed class TutorialOverlayController : MonoBehaviour
             return;
         }
 
-        playerBehaviourBuffer.Clear();
-        player.GetComponentsInChildren(true, playerBehaviourBuffer);
-        for (int i = 0; i < playerBehaviourBuffer.Count; i++)
+        MonoBehaviour[] behaviours = player.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
+        for (int i = 0; i < behaviours.Length; i++)
         {
-            MonoBehaviour behaviour = playerBehaviourBuffer[i];
+            MonoBehaviour behaviour = behaviours[i];
             if (behaviour == null || !behaviour.enabled)
             {
                 continue;
@@ -596,6 +594,12 @@ public sealed class TutorialOverlayController : MonoBehaviour
             }
         }
 
+        PlayerInput playerInput = FindFirstObjectByType<PlayerInput>();
+        if (playerInput != null)
+        {
+            return playerInput;
+        }
+
         return null;
     }
 
@@ -603,14 +607,14 @@ public sealed class TutorialOverlayController : MonoBehaviour
     {
         if (!string.IsNullOrWhiteSpace(playerTag))
         {
-            GameObject taggedPlayer = global::PlayerReferenceCache.GetGameObject(playerTag);
+            GameObject taggedPlayer = GameObject.FindGameObjectWithTag(playerTag);
             if (taggedPlayer != null)
             {
                 return taggedPlayer;
             }
         }
 
-        global::PlayerController playerController = global::PlayerReferenceCache.GetController();
+        global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>();
         if (playerController != null)
         {
             return playerController.gameObject;

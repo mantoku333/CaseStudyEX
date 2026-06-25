@@ -34,8 +34,8 @@ public static class MinimapMantokuStoryBootstrap
             return;
         }
 
-        IReadOnlyList<RoomCameraTrigger> triggers = RoomCameraTrigger.RegisteredTriggers;
-        if (triggers.Count == 0)
+        RoomCameraTrigger[] triggers = Object.FindObjectsByType<RoomCameraTrigger>(FindObjectsSortMode.None);
+        if (triggers == null || triggers.Length == 0)
         {
             return;
         }
@@ -52,11 +52,11 @@ public static class MinimapMantokuStoryBootstrap
         BindExistingRoomTriggers(triggers, definitions);
     }
 
-    private static Dictionary<string, MinimapRoomDefinition> CreateDefinitions(IReadOnlyList<RoomCameraTrigger> triggers)
+    private static Dictionary<string, MinimapRoomDefinition> CreateDefinitions(RoomCameraTrigger[] triggers)
     {
         var definitions = new Dictionary<string, MinimapRoomDefinition>();
 
-        for (int i = 0; i < triggers.Count; i++)
+        for (int i = 0; i < triggers.Length; i++)
         {
             RoomCameraTrigger trigger = triggers[i];
             if (trigger == null)
@@ -82,10 +82,10 @@ public static class MinimapMantokuStoryBootstrap
     }
 
     private static void BindExistingRoomTriggers(
-        IReadOnlyList<RoomCameraTrigger> triggers,
+        RoomCameraTrigger[] triggers,
         IReadOnlyDictionary<string, MinimapRoomDefinition> definitions)
     {
-        for (int i = 0; i < triggers.Count; i++)
+        for (int i = 0; i < triggers.Length; i++)
         {
             RoomCameraTrigger trigger = triggers[i];
             if (trigger == null)

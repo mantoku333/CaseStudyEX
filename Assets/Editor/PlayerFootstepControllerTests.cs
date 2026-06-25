@@ -6,7 +6,6 @@ using Player;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-[Category("Gameplay")]
 public sealed class PlayerFootstepControllerTests
 {
     private const BindingFlags InstancePrivate = BindingFlags.Instance | BindingFlags.NonPublic;

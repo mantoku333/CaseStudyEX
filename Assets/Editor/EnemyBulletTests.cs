@@ -6,7 +6,6 @@ using NUnit.Framework;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-[Category("Gameplay")]
 public sealed class EnemyBulletTests
 {
     private const BindingFlags InstancePrivate = BindingFlags.Instance | BindingFlags.NonPublic;

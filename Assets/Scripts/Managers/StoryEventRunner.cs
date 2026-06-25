@@ -19,7 +19,6 @@ public sealed class StoryEventRunner : MonoBehaviour
     [SerializeField] private float letterBoxSlidePixels = 120f;
 
     private readonly Queue<StoryEventDefinition> queuedEvents = new Queue<StoryEventDefinition>();
-    private readonly List<RectTransform> letterBoxRectTransformBuffer = new List<RectTransform>(8);
     private StoryEventDefinition activeEvent;
     private DialogueRunner activeDialogueRunner;
     private Coroutine activeRoutine;
@@ -343,8 +342,8 @@ public sealed class StoryEventRunner : MonoBehaviour
             return;
         }
 
-        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get();
-        for (int i = 0; i < cameras.Count; i++)
+        CinemachineCamera[] cameras = Object.FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+        for (int i = 0; i < cameras.Length; i++)
         {
             if (cameras[i] == null)
             {
@@ -441,8 +440,9 @@ public sealed class StoryEventRunner : MonoBehaviour
         }
 
         string trimmedName = eventNameOrId.Trim();
-        IReadOnlyList<StoryEventController> controllers = StoryEventController.RegisteredControllers;
-        for (int i = 0; i < controllers.Count; i++)
+        StoryEventController[] controllers =
+            Object.FindObjectsByType<StoryEventController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < controllers.Length; i++)
         {
             StoryEventController controller = controllers[i];
             if (controller == null)
@@ -563,10 +563,10 @@ public sealed class StoryEventRunner : MonoBehaviour
         }
 
         string targetName = eventCameraName.Trim();
-        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get(forceRefresh: true);
+        CinemachineCamera[] cameras = Object.FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
         int maxPriority = int.MinValue;
 
-        for (int i = 0; i < cameras.Count; i++)
+        for (int i = 0; i < cameras.Length; i++)
         {
             if (cameras[i] == null)
             {
@@ -738,19 +738,16 @@ public sealed class StoryEventRunner : MonoBehaviour
             return child as RectTransform;
         }
 
-        letterBoxRectTransformBuffer.Clear();
-        root.GetComponentsInChildren(true, letterBoxRectTransformBuffer);
-        for (int i = 0; i < letterBoxRectTransformBuffer.Count; i++)
+        RectTransform[] rectTransforms = root.GetComponentsInChildren<RectTransform>(true);
+        for (int i = 0; i < rectTransforms.Length; i++)
         {
-            RectTransform candidate = letterBoxRectTransformBuffer[i];
+            RectTransform candidate = rectTransforms[i];
             if (candidate != null && candidate.name == barName)
             {
-                letterBoxRectTransformBuffer.Clear();
                 return candidate;
             }
         }
 
-        letterBoxRectTransformBuffer.Clear();
         return null;
     }
 

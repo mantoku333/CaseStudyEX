@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using GameName.Enemy;
 using TMPro;
 using UnityEngine;
@@ -19,7 +18,6 @@ namespace GameName.UI
         private const string HpFullObjectName = "Boss_HPFull";
         private const string HpReducedObjectName = "Boss_HPReduced";
         private const string HpDamagedObjectName = "Boss_Damaged";
-        private readonly List<Transform> childTransformBuffer = new List<Transform>(32);
 
         [Header("References")]
         [SerializeField] private Canvas rootCanvas;
@@ -453,19 +451,16 @@ namespace GameName.UI
 
         private GameObject FindNamedGameObject(string childName)
         {
-            childTransformBuffer.Clear();
-            GetComponentsInChildren(true, childTransformBuffer);
-            for (int i = 0; i < childTransformBuffer.Count; i++)
+            Transform[] children = GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < children.Length; i++)
             {
-                Transform child = childTransformBuffer[i];
+                Transform child = children[i];
                 if (child != null && child.name == childName)
                 {
-                    childTransformBuffer.Clear();
                     return child.gameObject;
                 }
             }
 
-            childTransformBuffer.Clear();
             return null;
         }
 

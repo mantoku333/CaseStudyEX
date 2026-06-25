@@ -461,7 +461,7 @@ namespace GameName.Ending
         {
             disabledGameplayBehaviours.Clear();
 
-            global::PlayerController playerController = global::PlayerReferenceCache.GetController();
+            global::PlayerController playerController = FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Exclude);
             if (playerController == null)
             {
                 return;
@@ -590,7 +590,7 @@ namespace GameName.Ending
 
             global::PlayerController playerController = endingPlayerController != null
                 ? endingPlayerController
-                : global::PlayerReferenceCache.GetController();
+                : FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
 
             if (playerController == null)
             {
@@ -944,7 +944,7 @@ namespace GameName.Ending
 
         private Vector3 ResolveCurrentCameraPosition()
         {
-            Camera mainCamera = global::MainCameraCache.Get();
+            Camera mainCamera = Camera.main;
             if (mainCamera != null)
             {
                 return mainCamera.transform.position;
@@ -980,7 +980,7 @@ namespace GameName.Ending
 
         private float ResolveCurrentOrthographicSize()
         {
-            Camera mainCamera = global::MainCameraCache.Get();
+            Camera mainCamera = Camera.main;
             if (mainCamera != null && mainCamera.orthographic)
             {
                 return mainCamera.orthographicSize;

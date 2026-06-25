@@ -531,7 +531,7 @@ namespace GameName.Enemy
                 return false;
             }
 
-            GameObject playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
+            GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
             if (playerObject == null)
             {
                 return false;
@@ -592,9 +592,7 @@ namespace GameName.Enemy
                 return;
             }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("StageBossの突進をパリィしました");
-#endif
 
             if (enemyController != null)
             {

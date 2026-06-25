@@ -18,17 +18,6 @@ using Yarn.Unity;
 [AddComponentMenu("CaseStudy/Story/Story Event Controller")]
 public sealed class StoryEventController : MonoBehaviour
 {
-    private static readonly List<StoryEventController> RegisteredControllersInternal = new List<StoryEventController>();
-
-    public static IReadOnlyList<StoryEventController> RegisteredControllers
-    {
-        get
-        {
-            PruneRegisteredControllers();
-            return RegisteredControllersInternal;
-        }
-    }
-
     private static readonly string[] PlayerControlBehaviourNames =
     {
         "PlayerController",
@@ -41,8 +30,6 @@ public sealed class StoryEventController : MonoBehaviour
         "UmbrellaAttackController",
         "UmbrellaParryController"
     };
-
-    private static readonly List<RectTransform> LetterBoxRectTransformBuffer = new List<RectTransform>(8);
 
     [Serializable]
     private sealed class ActorBinding
@@ -216,7 +203,6 @@ public sealed class StoryEventController : MonoBehaviour
 
     private void Awake()
     {
-        RegisterController(this);
         ResolveDirector();
         DisableDirectorPlayOnAwakeIfNeeded();
         RebuildLookupCache();
@@ -233,36 +219,6 @@ public sealed class StoryEventController : MonoBehaviour
     private void OnDisable()
     {
         StopEvent();
-    }
-
-    private void OnDestroy()
-    {
-        RegisteredControllersInternal.Remove(this);
-    }
-
-    private static void RegisterController(StoryEventController controller)
-    {
-        if (controller != null && !RegisteredControllersInternal.Contains(controller))
-        {
-            RegisteredControllersInternal.Add(controller);
-        }
-    }
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetRegisteredControllers()
-    {
-        RegisteredControllersInternal.Clear();
-    }
-
-    private static void PruneRegisteredControllers()
-    {
-        for (int i = RegisteredControllersInternal.Count - 1; i >= 0; i--)
-        {
-            if (RegisteredControllersInternal[i] == null)
-            {
-                RegisteredControllersInternal.RemoveAt(i);
-            }
-        }
     }
 
     public bool PlayEvent()
@@ -1399,7 +1355,8 @@ public sealed class StoryEventController : MonoBehaviour
 
     private static Transform ResolvePlayerTransform()
     {
-        global::PlayerController player = global::PlayerReferenceCache.GetController();
+        global::PlayerController player =
+            FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
         return player != null ? player.transform : null;
     }
 
@@ -1741,19 +1698,16 @@ public sealed class StoryEventController : MonoBehaviour
             return child as RectTransform;
         }
 
-        LetterBoxRectTransformBuffer.Clear();
-        root.GetComponentsInChildren(true, LetterBoxRectTransformBuffer);
-        for (int i = 0; i < LetterBoxRectTransformBuffer.Count; i++)
+        RectTransform[] rectTransforms = root.GetComponentsInChildren<RectTransform>(includeInactive: true);
+        for (int i = 0; i < rectTransforms.Length; i++)
         {
-            RectTransform candidate = LetterBoxRectTransformBuffer[i];
+            RectTransform candidate = rectTransforms[i];
             if (candidate != null && candidate.name == barName)
             {
-                LetterBoxRectTransformBuffer.Clear();
                 return candidate;
             }
         }
 
-        LetterBoxRectTransformBuffer.Clear();
         return null;
     }
 
@@ -1923,8 +1877,8 @@ public sealed class StoryEventController : MonoBehaviour
         hasCachedEventCameraPriority = true;
 
         int maxPriority = int.MinValue;
-        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get(forceRefresh: true);
-        for (int i = 0; i < cameras.Count; i++)
+        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None);
+        for (int i = 0; i < cameras.Length; i++)
         {
             if (cameras[i] != null)
             {
@@ -1948,7 +1902,7 @@ public sealed class StoryEventController : MonoBehaviour
         CinemachineCamera currentCamera = FindHighestPriorityCameraExcept(targetCamera);
         if (currentCamera == null)
         {
-            Camera mainCamera = MainCameraCache.Get();
+            Camera mainCamera = Camera.main;
             if (mainCamera == null)
             {
                 return;
@@ -1989,9 +1943,11 @@ public sealed class StoryEventController : MonoBehaviour
     {
         CinemachineCamera bestCamera = null;
         int bestPriority = int.MinValue;
-        IReadOnlyList<CinemachineCamera> cameras = CinemachineCameraCache.Get();
+        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
+            FindObjectsInactive.Exclude,
+            FindObjectsSortMode.None);
 
-        for (int i = 0; i < cameras.Count; i++)
+        for (int i = 0; i < cameras.Length; i++)
         {
             CinemachineCamera camera = cameras[i];
             if (camera == null || camera == excludedCamera || IsRuntimeEventCamera(camera))
@@ -2250,14 +2206,14 @@ public sealed class StoryEventController : MonoBehaviour
 
     private static GameObject ResolvePlayerObjectForCameraRestore()
     {
-        GameObject taggedPlayer = global::PlayerReferenceCache.GetGameObject();
+        GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
         if (taggedPlayer != null)
         {
             return taggedPlayer;
         }
 
         global::PlayerController playerController =
-            global::PlayerReferenceCache.GetController();
+            FindFirstObjectByType<global::PlayerController>(FindObjectsInactive.Include);
         return playerController != null ? playerController.gameObject : null;
     }
 
@@ -2331,10 +2287,10 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         string targetName = eventCameraName.Trim();
-        IReadOnlyList<CinemachineCamera> cameras =
-            CinemachineCameraCache.Get(includeInactive: true, forceRefresh: true);
+        CinemachineCamera[] cameras =
+            FindObjectsByType<CinemachineCamera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         CinemachineCamera fallbackCamera = null;
-        for (int i = 0; i < cameras.Count; i++)
+        for (int i = 0; i < cameras.Length; i++)
         {
             CinemachineCamera camera = cameras[i];
             if (camera == null || IsRuntimeEventCamera(camera))
@@ -2699,10 +2655,10 @@ public sealed class StoryEventController : MonoBehaviour
             Transform playerTransform = playerObject != null ? playerObject.transform : null;
             PlayerController playerController = playerObject != null
                 ? playerObject.GetComponent<PlayerController>()
-                : global::PlayerReferenceCache.GetController();
+                : FindFirstObjectByType<PlayerController>(FindObjectsInactive.Include);
             PlayerInput playerInput = playerObject != null
                 ? playerObject.GetComponent<PlayerInput>()
-                : null;
+                : FindFirstObjectByType<PlayerInput>(FindObjectsInactive.Include);
 
             var snapshot = new CinematicStateSnapshot(
                 PlayerControllerState.Capture(playerController),
@@ -2789,14 +2745,14 @@ public sealed class StoryEventController : MonoBehaviour
 
         private static GameObject ResolvePlayerObject()
         {
-            GameObject cachedPlayer = global::PlayerReferenceCache.GetGameObject();
-            if (cachedPlayer != null)
+            GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
+            if (taggedPlayer != null)
             {
-                return cachedPlayer;
+                return taggedPlayer;
             }
 
             PlayerController playerController =
-                global::PlayerReferenceCache.GetController();
+                FindFirstObjectByType<PlayerController>(FindObjectsInactive.Include);
             if (playerController != null)
             {
                 return playerController.gameObject;
@@ -3088,7 +3044,6 @@ public sealed class StoryEventController : MonoBehaviour
 
         private readonly Rigidbody2D target;
         private readonly RaycastHit2D[] castHits = new RaycastHit2D[8];
-        private readonly List<Collider2D> colliderBuffer = new List<Collider2D>();
         private readonly Vector2 linearVelocity;
         private readonly float angularVelocity;
         private readonly bool preserveVelocityOnRestore;
@@ -3203,11 +3158,10 @@ public sealed class StoryEventController : MonoBehaviour
 
         private Collider2D ResolveBodyCollider()
         {
-            colliderBuffer.Clear();
-            target.GetComponents(colliderBuffer);
-            for (int i = 0; i < colliderBuffer.Count; i++)
+            Collider2D[] colliders = target.GetComponents<Collider2D>();
+            for (int i = 0; i < colliders.Length; i++)
             {
-                Collider2D collider = colliderBuffer[i];
+                Collider2D collider = colliders[i];
                 if (collider != null && collider.enabled && !collider.isTrigger)
                 {
                     return collider;
