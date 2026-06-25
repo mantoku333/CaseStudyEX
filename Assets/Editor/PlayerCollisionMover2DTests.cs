@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using Object = UnityEngine.Object;
 
 public sealed class PlayerCollisionMover2DTests
@@ -199,6 +202,109 @@ public sealed class PlayerCollisionMover2DTests
         Assert.That(Mathf.Abs(projectedVelocity), Is.LessThan(0.01f));
         Assert.That(rigidbody2D.position.x, Is.EqualTo(startPosition.x).Within(0.0001f));
         Assert.That(rigidbody2D.position.y, Is.EqualTo(startPosition.y).Within(0.0001f));
+    }
+
+    [Test]
+    public void ProjectHorizontalVelocityForNextFixedStep_WhenTallCapsuleApproachesNarrowSteppedOpening_Blocks()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(
+            new Vector2(3f, 0f),
+            out Rigidbody2D rigidbody2D,
+            out _,
+            new Vector2(1.35f, 2.94f));
+        CreateGroundBox("TopStep", new Vector2(1f, 1.1f), new Vector2(2.2f, 0.2f));
+        CreateGroundBox("BottomStep", new Vector2(1f, -1.1f), new Vector2(2.2f, 0.2f));
+        Physics2D.SyncTransforms();
+
+        Vector2 startPosition = rigidbody2D.position;
+        float projectedVelocity = mover.ProjectHorizontalVelocityForNextFixedStep(-100f);
+
+        Assert.That(Mathf.Abs(projectedVelocity), Is.LessThan(0.01f));
+        Assert.That(rigidbody2D.position.x, Is.EqualTo(startPosition.x).Within(0.0001f));
+        Assert.That(rigidbody2D.position.y, Is.EqualTo(startPosition.y).Within(0.0001f));
+    }
+
+    [Test]
+    public void ProjectHorizontalVelocityForNextFixedStep_WhenRepeatedAtNarrowOpening_RemainsStableAndAllowsRetreat()
+    {
+        PlayerCollisionMover2D mover = CreatePlayer(
+            new Vector2(3f, 0f),
+            out Rigidbody2D rigidbody2D,
+            out _,
+            new Vector2(1.35f, 2.94f));
+        CreateGroundBox("TopStep", new Vector2(1f, 1.1f), new Vector2(2.2f, 0.2f));
+        CreateGroundBox("BottomStep", new Vector2(1f, -1.1f), new Vector2(2.2f, 0.2f));
+        Physics2D.SyncTransforms();
+
+        Vector2 startPosition = rigidbody2D.position;
+        for (int i = 0; i < 256; i++)
+        {
+            float blockedVelocity = mover.ProjectHorizontalVelocityForNextFixedStep(-100f);
+            float retreatVelocity = mover.ProjectHorizontalVelocityForNextFixedStep(5f);
+
+            Assert.That(Mathf.Abs(blockedVelocity), Is.LessThan(0.01f));
+            Assert.That(retreatVelocity, Is.EqualTo(5f).Within(0.001f));
+            Assert.That(rigidbody2D.position.x, Is.EqualTo(startPosition.x).Within(0.0001f));
+            Assert.That(rigidbody2D.position.y, Is.EqualTo(startPosition.y).Within(0.0001f));
+        }
+    }
+
+    [Test]
+    public void SolidTerrainTileAssets_UseGridCollision()
+    {
+        string[] tileGuids = AssetDatabase.FindAssets("t:Tile", new[] { "Assets/Art/Tilemaps" });
+        int solidTileCount = 0;
+
+        Assert.That(tileGuids, Is.Not.Empty);
+        for (int i = 0; i < tileGuids.Length; i++)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(tileGuids[i]);
+            if (!path.EndsWith(".asset"))
+            {
+                continue;
+            }
+
+            Tile tile = AssetDatabase.LoadAssetAtPath<Tile>(path);
+
+            Assert.That(tile, Is.Not.Null, path);
+            Assert.That(tile.colliderType, Is.EqualTo(Tile.ColliderType.Grid), path);
+            solidTileCount++;
+        }
+
+        Assert.That(solidTileCount, Is.EqualTo(15));
+    }
+
+    [TestCase("Assets/Scenes/Test_OzonoFix.unity")]
+    [TestCase("Assets/Scenes/FixScenes/future_fuyuno_master.unity")]
+    public void CompositeTerrainScene_LoadsWithCompactGridGeometry(string scenePath)
+    {
+        SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+
+        try
+        {
+            EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            TilemapCollider2D[] tilemapColliders =
+                Object.FindObjectsByType<TilemapCollider2D>(FindObjectsSortMode.None);
+
+            Assert.That(tilemapColliders.Length, Is.EqualTo(1), scenePath);
+            CompositeCollider2D composite = tilemapColliders[0].GetComponent<CompositeCollider2D>();
+            Assert.That(composite, Is.Not.Null, scenePath);
+            Assert.That(
+                composite.pointCount,
+                Is.LessThan(10000),
+                $"{scenePath} still contains detailed sprite-outline collision geometry.");
+        }
+        finally
+        {
+            if (previousSetup.Length > 0)
+            {
+                EditorSceneManager.RestoreSceneManagerSetup(previousSetup);
+            }
+            else
+            {
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            }
+        }
     }
 
     [Test]
