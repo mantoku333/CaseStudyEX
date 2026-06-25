@@ -8,15 +8,13 @@ public class ParryHitbox : MonoBehaviour
 {
     // パリィ判定に接触している敵攻撃を保持する。
     // 通常弾はEnemyBullet、LastBossの範囲攻撃はLastBossAttackParryTargetで判別する。
-    private readonly List<GameObject> enemyAttacks = new List<GameObject>();     //接触管理
-    private readonly List<GameObject> parriedAttacks = new List<GameObject>();
+    private List<GameObject> enemyAttacks = new List<GameObject>();     //接触管理
     private readonly Collider2D[] overlapResults = new Collider2D[16];
     private Collider2D hitboxCollider;
     private ContactFilter2D overlapFilter;
     private Vector2 lastParryHitPosition;
     private bool hasLastParryHitPosition;
     private bool lastParryWasJust;
-    private static readonly List<MonoBehaviour> ParryableLookupBuffer = new List<MonoBehaviour>();
 
     //--------------パリィ関連------------------
     private UmbrellaParryController umbrellaParryController;
@@ -60,9 +58,7 @@ public class ParryHitbox : MonoBehaviour
         {
             if (enemyBullet.IsReflectedByPlayer)
             {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("反射弾なのでパリィ対象外です");
-#endif
                 return;
             }
 
@@ -70,9 +66,7 @@ public class ParryHitbox : MonoBehaviour
 
             if (!umbrellaParryController.IsParrying()) { return; }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("弾を通常パリィしました");
-#endif
 
             RecordParryHit(collision);
             lastParryWasJust = false;
@@ -90,15 +84,11 @@ public class ParryHitbox : MonoBehaviour
 
             if (!parryableAttack.IsParryable)
             {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("敵攻撃はパリィ可能状態ではありません");
-#endif
                 return;
             }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("突進攻撃をパリィしました");
-#endif
 
             RecordParryHit(collision);
             lastParryWasJust = false;
@@ -257,7 +247,7 @@ public class ParryHitbox : MonoBehaviour
         bool parried = false;
         bool justParried = false;
         lastParryWasJust = false;
-        parriedAttacks.Clear();
+        List<GameObject> parriedAttacks = new List<GameObject>();
 
         for (int i = enemyAttacks.Count - 1; i >= 0; i--)
         {
@@ -282,9 +272,7 @@ public class ParryHitbox : MonoBehaviour
 
             if (enemyBullet.CanJustParry())
             {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("ジャストパリィです");
-#endif
                 RecordParryHit(attackObject);
                 enemyBullet.ReflectByJustParry(transform.position);
                 parriedAttacks.Add(attackObject);
@@ -293,9 +281,7 @@ public class ParryHitbox : MonoBehaviour
                 continue;
             }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log("通常パリィです");
-#endif
             RecordParryHit(attackObject);
             enemyBullet.DestroyByParry();
             parriedAttacks.Add(attackObject);
@@ -358,9 +344,7 @@ public class ParryHitbox : MonoBehaviour
 
             if (!parryableAttack.IsParryable)
             {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("パリィ可能状態ではない攻撃なのでパリィしません");
-#endif
                 continue;
             }
 
@@ -414,20 +398,18 @@ public class ParryHitbox : MonoBehaviour
             return false;
         }
 
-        ParryableLookupBuffer.Clear();
-        collision.GetComponentsInParent(false, ParryableLookupBuffer);
+        MonoBehaviour[] behaviours =
+            collision.GetComponentsInParent<MonoBehaviour>();
 
-        for (int i = 0; i < ParryableLookupBuffer.Count; i++)
+        for (int i = 0; i < behaviours.Length; i++)
         {
-            if (ParryableLookupBuffer[i] is IParryableAttack attack)
+            if (behaviours[i] is IParryableAttack attack)
             {
                 parryableAttack = attack;
-                ParryableLookupBuffer.Clear();
                 return true;
             }
         }
 
-        ParryableLookupBuffer.Clear();
         return false;
     }
 

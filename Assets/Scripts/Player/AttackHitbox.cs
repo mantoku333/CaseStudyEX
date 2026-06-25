@@ -7,8 +7,8 @@ public class AttackHitbox : MonoBehaviour
 {
     private const string GroundLayerName = "Ground";
     private const string FallThroughFloorLayerName = "FallThroughFloor";
+
     private readonly HashSet<MonoBehaviour> hitReceivers = new HashSet<MonoBehaviour>();
-    private readonly List<MonoBehaviour> receiverLookupBuffer = new List<MonoBehaviour>();
     private readonly Collider2D[] overlapResults = new Collider2D[16];
     private readonly RaycastHit2D[] wallProbeResults = new RaycastHit2D[16];
 
@@ -21,7 +21,7 @@ public class AttackHitbox : MonoBehaviour
     private Collider2D hitboxCollider;
     private Rigidbody2D ownerRigidbody;
     private Collider2D ownerBodyCollider;
-    private readonly List<Collider2D> ownerColliders = new List<Collider2D>();
+    private Collider2D[] ownerColliders = Array.Empty<Collider2D>();
     private ContactFilter2D overlapFilter;
     private ContactFilter2D wallProbeFilter;
     private int cachedWallMaskValue = int.MinValue;
@@ -152,20 +152,16 @@ public class AttackHitbox : MonoBehaviour
             return;
         }
 
-        receiverLookupBuffer.Clear();
-        collision.GetComponentsInParent(false, receiverLookupBuffer);
+        MonoBehaviour[] behaviours = collision.GetComponentsInParent<MonoBehaviour>();
 
-        for (int i = 0; i < receiverLookupBuffer.Count; i++)
+        for (int i = 0; i < behaviours.Length; i++)
         {
-            MonoBehaviour behaviour = receiverLookupBuffer[i];
-            if (behaviour is IAttackReceiver receiver && hitReceivers.Add(behaviour))
+            if (behaviours[i] is IAttackReceiver receiver && hitReceivers.Add(behaviours[i]))
             {
                 receiver.OnAttacked(this, collision);
                 OnHit?.Invoke(collision);
             }
         }
-
-        receiverLookupBuffer.Clear();
     }
 
     private bool IsHitBlockedByVerticalWall(Collider2D targetCollider)
@@ -252,9 +248,8 @@ public class AttackHitbox : MonoBehaviour
             return;
         }
 
-        ownerColliders.Clear();
-        ownerRigidbody.GetComponentsInChildren(true, ownerColliders);
-        for (int i = 0; i < ownerColliders.Count; i++)
+        ownerColliders = ownerRigidbody.GetComponentsInChildren<Collider2D>(true);
+        for (int i = 0; i < ownerColliders.Length; i++)
         {
             Collider2D candidate = ownerColliders[i];
             if (candidate != null && candidate.enabled && !candidate.isTrigger && candidate.attachedRigidbody == ownerRigidbody)
@@ -277,7 +272,7 @@ public class AttackHitbox : MonoBehaviour
             return true;
         }
 
-        for (int i = 0; i < ownerColliders.Count; i++)
+        for (int i = 0; i < ownerColliders.Length; i++)
         {
             if (ownerColliders[i] == candidate)
             {

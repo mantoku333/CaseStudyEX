@@ -1,13 +1,10 @@
 using UnityEngine;
 using UnityEngine.Events;
-using System.Collections.Generic;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public sealed class TitleMenuSkin : MonoBehaviour
 {
-    private static readonly List<Graphic> GraphicSearchBuffer = new List<Graphic>(16);
-
     private TitleSceneController controller;
     private bool listenersRegistered;
 
@@ -151,18 +148,11 @@ public sealed class TitleMenuSkin : MonoBehaviour
             return;
         }
 
-        GraphicSearchBuffer.Clear();
-        stateRoot.GetComponentsInChildren(true, GraphicSearchBuffer);
-        for (int i = 0; i < GraphicSearchBuffer.Count; i++)
+        Graphic[] graphics = stateRoot.GetComponentsInChildren<Graphic>(true);
+        for (int i = 0; i < graphics.Length; i++)
         {
-            Graphic graphic = GraphicSearchBuffer[i];
-            if (graphic != null)
-            {
-                graphic.raycastTarget = false;
-            }
+            graphics[i].raycastTarget = false;
         }
-
-        GraphicSearchBuffer.Clear();
     }
 
     private static Transform FindInChildren(Transform root, string name)

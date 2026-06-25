@@ -375,7 +375,7 @@ namespace GameName.Enemy
             GameObject playerObject = null;
             if (!string.IsNullOrEmpty(playerTag))
             {
-                playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
+                playerObject = GameObject.FindGameObjectWithTag(playerTag);
             }
 
             if (playerObject != null)
@@ -384,7 +384,8 @@ namespace GameName.Enemy
                 return;
             }
 
-            playerTransform = null;
+            PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
+            playerTransform = playerHealth != null ? playerHealth.transform : null;
         }
 
         private static LayerMask BuildDefaultObstacleMask()

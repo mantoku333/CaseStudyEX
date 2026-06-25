@@ -7,9 +7,6 @@ using UnityEngine.UI;
 public sealed class MinimapView : MonoBehaviour
 {
     private const string MiniMapBackgroundName = "MiniMapBackGround";
-    private const float MainCameraRefreshInterval = 0.5f;
-    private const float PlayerReferenceSearchInterval = 0.25f;
-    private static readonly List<RectTransform> RectTransformSearchBuffer = new List<RectTransform>(32);
 
     [Header("Minimap Panel")]
     [SerializeField] private Vector2 miniMapSize = new Vector2(290f, 170f);
@@ -70,9 +67,6 @@ public sealed class MinimapView : MonoBehaviour
     private CanvasGroup miniMapBackgroundCanvasGroup;
     private PlayerController cachedPlayer;
     private Collider2D cachedPlayerCollider;
-    private Camera cachedMainCamera;
-    private float nextMainCameraRefreshTime;
-    private float nextPlayerReferenceSearchTime;
     private Sprite whiteSprite;
     private Sprite circleSprite;
     private Vector2 miniMapOrigin;
@@ -1119,8 +1113,8 @@ public sealed class MinimapView : MonoBehaviour
 
     private bool IsPlayerTouchingMiniMap()
     {
-        if (!TryGetMainCamera(out Camera mainCamera) ||
-            !TryResolvePlayerCollider(out Collider2D playerCollider))
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null || !TryResolvePlayerCollider(out Collider2D playerCollider))
         {
             return false;
         }
@@ -1165,19 +1159,10 @@ public sealed class MinimapView : MonoBehaviour
 
     private bool TryResolvePlayerCollider(out Collider2D playerCollider)
     {
-        if (cachedPlayer == null || !cachedPlayer.isActiveAndEnabled)
+        if (cachedPlayer == null)
         {
-            cachedPlayer = null;
+            cachedPlayer = FindFirstObjectByType<PlayerController>();
             cachedPlayerCollider = null;
-
-            if (Time.unscaledTime < nextPlayerReferenceSearchTime)
-            {
-                playerCollider = null;
-                return false;
-            }
-
-            nextPlayerReferenceSearchTime = Time.unscaledTime + PlayerReferenceSearchInterval;
-            cachedPlayer = global::PlayerReferenceCache.GetController();
         }
 
         if (cachedPlayer == null)
@@ -1193,22 +1178,6 @@ public sealed class MinimapView : MonoBehaviour
 
         playerCollider = cachedPlayerCollider;
         return playerCollider != null && playerCollider.enabled;
-    }
-
-    private bool TryGetMainCamera(out Camera mainCamera)
-    {
-        if (cachedMainCamera != null &&
-            cachedMainCamera.isActiveAndEnabled &&
-            Time.unscaledTime < nextMainCameraRefreshTime)
-        {
-            mainCamera = cachedMainCamera;
-            return true;
-        }
-
-        nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
-        cachedMainCamera = MainCameraCache.Get();
-        mainCamera = cachedMainCamera;
-        return mainCamera != null;
     }
 
     private Rect CalculatePlayerScreenRect(Bounds bounds, Camera mainCamera)
@@ -1269,14 +1238,7 @@ public sealed class MinimapView : MonoBehaviour
         Camera uiCamera = null;
         if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
         {
-            if (canvas.worldCamera != null)
-            {
-                uiCamera = canvas.worldCamera;
-            }
-            else if (TryGetMainCamera(out Camera mainCamera))
-            {
-                uiCamera = mainCamera;
-            }
+            uiCamera = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
         }
 
         float minX = float.PositiveInfinity;
@@ -1367,19 +1329,15 @@ public sealed class MinimapView : MonoBehaviour
             return null;
         }
 
-        RectTransformSearchBuffer.Clear();
-        root.GetComponentsInChildren(true, RectTransformSearchBuffer);
-        for (int i = 0; i < RectTransformSearchBuffer.Count; i++)
+        RectTransform[] children = root.GetComponentsInChildren<RectTransform>(true);
+        for (int i = 0; i < children.Length; i++)
         {
-            RectTransform child = RectTransformSearchBuffer[i];
-            if (child != null && child.gameObject.name == objectName)
+            if (children[i] != null && children[i].gameObject.name == objectName)
             {
-                RectTransformSearchBuffer.Clear();
-                return child;
+                return children[i];
             }
         }
 
-        RectTransformSearchBuffer.Clear();
         return null;
     }
 

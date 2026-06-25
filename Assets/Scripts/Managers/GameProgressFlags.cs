@@ -56,26 +56,12 @@ public static class GameProgressFlags
             return;
         }
 
-        if (flags.Remove(flagKey))
-        {
-            FlagChanged?.Invoke(flagKey, false);
-        }
+        flags.Remove(flagKey);
     }
 
     public static void ClearAll()
     {
-        if (flags.Count == 0)
-        {
-            return;
-        }
-
-        List<string> removedKeys = new List<string>(flags.Keys);
         flags.Clear();
-
-        for (int i = 0; i < removedKeys.Count; i++)
-        {
-            FlagChanged?.Invoke(removedKeys[i], false);
-        }
     }
 
     public static List<GameProgressFlagSnapshot> GetSnapshot()
@@ -119,42 +105,22 @@ public static class GameProgressFlags
 
     private static void ApplyPayload(GameProgressFlagsPayload payload)
     {
-        Dictionary<string, bool> previousFlags = new Dictionary<string, bool>(flags, StringComparer.Ordinal);
         flags.Clear();
 
-        if (payload != null && payload.entries != null)
+        if (payload == null || payload.entries == null)
         {
-            for (int i = 0; i < payload.entries.Count; i++)
-            {
-                GameProgressFlagEntry entry = payload.entries[i];
-                if (string.IsNullOrWhiteSpace(entry.key))
-                {
-                    continue;
-                }
-
-                flags[entry.key] = entry.value;
-            }
+            return;
         }
 
-        NotifyChangedFlags(previousFlags);
-    }
-
-    private static void NotifyChangedFlags(Dictionary<string, bool> previousFlags)
-    {
-        foreach (var pair in flags)
+        for (int i = 0; i < payload.entries.Count; i++)
         {
-            if (!previousFlags.TryGetValue(pair.Key, out bool previousValue) || previousValue != pair.Value)
+            GameProgressFlagEntry entry = payload.entries[i];
+            if (string.IsNullOrWhiteSpace(entry.key))
             {
-                FlagChanged?.Invoke(pair.Key, pair.Value);
+                continue;
             }
-        }
 
-        foreach (var pair in previousFlags)
-        {
-            if (!flags.ContainsKey(pair.Key))
-            {
-                FlagChanged?.Invoke(pair.Key, false);
-            }
+            flags[entry.key] = entry.value;
         }
     }
 

@@ -16,8 +16,6 @@ public sealed class GameCursorController : MonoBehaviour
     private const string ReticleImageName = "ReticleImage";
     private const string ReloadImageName = "ReloadImage";
     private const int ReloadCircleTextureSize = 128;
-    private const float MainCameraRefreshInterval = 0.5f;
-    private const float PlayerReferenceSearchInterval = 0.25f;
 
     private static GameCursorController instance;
     private static readonly HashSet<object> menuCursorModeOwners = new HashSet<object>();
@@ -57,11 +55,8 @@ public sealed class GameCursorController : MonoBehaviour
     private Texture2D reloadCircleTexture;
     private float cursorBlinkTimer;
     private float cursorBlinkDelaySeconds;
-    private float nextMainCameraRefreshTime;
-    private float nextPlayerReferenceSearchTime;
     private int cursorBlinkPatternIndex;
     private bool cursorBlinkPlaying;
-    private Camera cachedMainCamera;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
@@ -222,15 +217,14 @@ public sealed class GameCursorController : MonoBehaviour
             umbrellaOpen &&
             clampReticleToPlayerRadius &&
             activePlayer != null &&
-            TryGetMainCamera(out Camera mainCamera) &&
+            Camera.main != null &&
             TryGetClampedAimWorldPosition(
                 activePlayer.transform,
-                mainCamera,
+                Camera.main,
                 rawScreenPosition,
-                out Vector3 clampedWorldPosition,
-                false))
+                out Vector3 clampedWorldPosition))
         {
-            displayPosition = mainCamera.WorldToScreenPoint(clampedWorldPosition);
+            displayPosition = Camera.main.WorldToScreenPoint(clampedWorldPosition);
         }
 
         // Reload 中は Reticle を隠し、同じ制限済み位置に Reload 円を出す。
@@ -382,18 +376,10 @@ public sealed class GameCursorController : MonoBehaviour
     {
         if (activePlayer == null || !activePlayer.isActiveAndEnabled)
         {
-            activePlayer = null;
+            activePlayer = FindFirstObjectByType<PlayerController>(FindObjectsInactive.Exclude);
             activeGun = null;
             activeUmbrella = null;
             activeAbility = null;
-
-            if (Time.unscaledTime < nextPlayerReferenceSearchTime)
-            {
-                return;
-            }
-
-            nextPlayerReferenceSearchTime = Time.unscaledTime + PlayerReferenceSearchInterval;
-            activePlayer = global::PlayerReferenceCache.GetController();
         }
 
         if (activePlayer == null)
@@ -420,22 +406,6 @@ public sealed class GameCursorController : MonoBehaviour
         }
     }
 
-    private bool TryGetMainCamera(out Camera mainCamera)
-    {
-        if (cachedMainCamera != null &&
-            cachedMainCamera.isActiveAndEnabled &&
-            Time.unscaledTime < nextMainCameraRefreshTime)
-        {
-            mainCamera = cachedMainCamera;
-            return true;
-        }
-
-        nextMainCameraRefreshTime = Time.unscaledTime + MainCameraRefreshInterval;
-        cachedMainCamera = MainCameraCache.Get();
-        mainCamera = cachedMainCamera;
-        return mainCamera != null;
-    }
-
     private bool TryGetPointerScreenPosition(out Vector2 screenPosition)
     {
         if (Pointer.current != null)
@@ -458,8 +428,7 @@ public sealed class GameCursorController : MonoBehaviour
         Transform player,
         Camera camera,
         Vector2 screenPosition,
-        out Vector3 worldPosition,
-        bool requireGunAbilityCheck = true)
+        out Vector3 worldPosition)
     {
         if (player == null || camera == null)
         {
@@ -473,7 +442,7 @@ public sealed class GameCursorController : MonoBehaviour
             return false;
         }
 
-        if (requireGunAbilityCheck && !PlayerHasGunAbility(player))
+        if (!PlayerHasGunAbility(player))
         {
             worldPosition = Vector3.zero;
             return false;

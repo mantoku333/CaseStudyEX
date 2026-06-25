@@ -4,7 +4,6 @@ using NUnit.Framework;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-[Category("Gameplay")]
 public sealed class AttackHitboxOcclusionTests
 {
     private readonly List<GameObject> objectsToDestroy = new List<GameObject>();

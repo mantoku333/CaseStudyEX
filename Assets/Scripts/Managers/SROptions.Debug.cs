@@ -21,7 +21,7 @@ public partial class SROptions
     [Sort(-101)]
     public void ResetPlayerPositionToOrigin()
     {
-        var player = global::PlayerReferenceCache.GetController();
+        var player = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
         if (player == null)
         {
             Debug.LogWarning("[SROptions] PlayerController not found.");
@@ -75,7 +75,7 @@ public partial class SROptions
     {
         get
         {
-            var player = global::PlayerReferenceCache.GetController();
+            var player = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
             if (player != null)
             {
                 return player.GetComponent<DebugCheatModeController>() != null;
@@ -84,7 +84,7 @@ public partial class SROptions
         }
         set
         {
-            var player = global::PlayerReferenceCache.GetController();
+            var player = UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
             if (player != null)
             {
                 var cheatController = player.GetComponent<DebugCheatModeController>();
@@ -363,7 +363,7 @@ public partial class SROptions
 
     private static PlayerHealth ResolvePlayerHealth()
     {
-        GameObject playerObject = global::PlayerReferenceCache.GetGameObject();
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject != null)
         {
             PlayerHealth playerHealth = playerObject.GetComponent<PlayerHealth>();
@@ -379,7 +379,7 @@ public partial class SROptions
             }
         }
 
-        return null;
+        return UnityEngine.Object.FindFirstObjectByType<PlayerHealth>();
     }
 
     private DebugTeleportPoint2D[] CollectDebugTeleportPoints()
@@ -472,7 +472,7 @@ public partial class SROptions
 
     private static global::PlayerController ResolvePlayerController()
     {
-        GameObject playerObject = global::PlayerReferenceCache.GetGameObject();
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject != null)
         {
             global::PlayerController player = playerObject.GetComponent<global::PlayerController>();
@@ -488,7 +488,7 @@ public partial class SROptions
             }
         }
 
-        return global::PlayerReferenceCache.GetController();
+        return UnityEngine.Object.FindFirstObjectByType<global::PlayerController>();
     }
 
     private static string GetSavedAtTextForSlot(int slotIndex)

@@ -131,7 +131,7 @@ namespace GameName.UI
 
             if (targetHealth == null && autoFindPlayerHealth)
             {
-                GameObject playerObject = global::PlayerReferenceCache.GetGameObject(playerTag);
+                GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
                 if (playerObject != null)
                 {
                     targetHealth = playerObject.GetComponent<PlayerHealth>();
@@ -141,9 +141,13 @@ namespace GameName.UI
                     }
                 }
 
+                if (targetHealth == null)
+                {
+                    targetHealth = FindFirstObjectByType<PlayerHealth>();
+                }
             }
 
-            var playerController = global::PlayerReferenceCache.GetController();
+            var playerController = FindFirstObjectByType<global::PlayerController>();
             playerInput = playerController != null ? playerController.GetComponent<PlayerInput>() : null;
             playerRigidbody = playerController != null ? playerController.GetComponent<Rigidbody2D>() : null;
 

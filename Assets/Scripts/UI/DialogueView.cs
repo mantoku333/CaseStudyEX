@@ -80,11 +80,7 @@ namespace Metroidvania.UI
             if (dialoguePanel != null) dialoguePanel.SetActive(true);
             if (optionsPanel != null) optionsPanel.SetActive(false);
             if (speakerNameText != null) speakerNameText.text = "";
-            if (dialogueText != null)
-            {
-                dialogueText.text = "";
-                dialogueText.maxVisibleCharacters = int.MaxValue;
-            }
+            if (dialogueText != null) dialogueText.text = "";
             if (nextIndicator != null) nextIndicator.SetActive(false);
             return YarnTask.CompletedTask;
         }
@@ -122,12 +118,7 @@ namespace Metroidvania.UI
             var mergedToken = linkedTokenSource.Token;
 
             if (speakerNameText != null) speakerNameText.text = line.CharacterName ?? "";
-            var text = line.TextWithoutCharacterName.Text;
-            if (dialogueText != null)
-            {
-                dialogueText.text = text;
-                dialogueText.maxVisibleCharacters = 0;
-            }
+            if (dialogueText != null) dialogueText.text = "";
             if (nextIndicator != null) nextIndicator.SetActive(false);
 
             // 立ち絵の切り替え
@@ -146,6 +137,8 @@ namespace Metroidvania.UI
                 }
             }
 
+            var text = line.TextWithoutCharacterName.Text;
+
             try
             {
                 // タイプライター演出
@@ -156,13 +149,13 @@ namespace Metroidvania.UI
                 {
                     if (dialogueText != null)
                     {
-                        dialogueText.maxVisibleCharacters = i + 1;
+                        dialogueText.text = text.Substring(0, i + 1);
                     }
 
                     // HurryUp（スキップ指示）が来たら即全文表示
                     if (token.HurryUpToken.IsCancellationRequested)
                     {
-                        if (dialogueText != null) dialogueText.maxVisibleCharacters = textLength;
+                        if (dialogueText != null) dialogueText.text = text;
                         break;
                     }
 
@@ -179,7 +172,7 @@ namespace Metroidvania.UI
             catch (OperationCanceledException)
             {
                 // キャンセル時は全文表示
-                if (dialogueText != null) dialogueText.maxVisibleCharacters = text.Length;
+                if (dialogueText != null) dialogueText.text = text;
             }
 
             // 全文表示後、次へマーカー点滅
@@ -307,11 +300,7 @@ namespace Metroidvania.UI
             if (dialoguePanel != null) dialoguePanel.SetActive(false);
             if (optionsPanel != null) optionsPanel.SetActive(false);
             if (speakerNameText != null) speakerNameText.text = "";
-            if (dialogueText != null)
-            {
-                dialogueText.text = "";
-                dialogueText.maxVisibleCharacters = int.MaxValue;
-            }
+            if (dialogueText != null) dialogueText.text = "";
             if (nextIndicator != null) nextIndicator.SetActive(false);
             if (portraitImage != null) portraitImage.gameObject.SetActive(false);
         }

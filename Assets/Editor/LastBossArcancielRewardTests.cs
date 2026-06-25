@@ -6,8 +6,6 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-[Category("Boss")]
-[Category("Story/Event")]
 public sealed class LastBossArcancielRewardTests
 {
     private ItemData rewardItemData;

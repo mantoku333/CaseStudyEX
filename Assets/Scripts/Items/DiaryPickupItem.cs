@@ -392,7 +392,13 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
 
         private static GameObject ResolvePlayerObject()
         {
-            PlayerController playerController = global::PlayerReferenceCache.GetController();
+            GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
+            if (taggedPlayer != null)
+            {
+                return taggedPlayer;
+            }
+
+            PlayerController playerController = FindFirstObjectByType<PlayerController>();
             return playerController != null ? playerController.gameObject : null;
         }
 

@@ -56,7 +56,6 @@ namespace GameName.Enemy
         private bool turnCheckScheduled;
 
         private static readonly System.Collections.Generic.List<Collider2D> ShutterWallColliders = new System.Collections.Generic.List<Collider2D>();
-        private static readonly System.Collections.Generic.List<Collider2D> ShutterWallColliderBuffer = new System.Collections.Generic.List<Collider2D>();
         private static Scene cachedShutterWallScene;
         private static bool shutterWallCacheValid;
 
@@ -584,11 +583,10 @@ namespace GameName.Enemy
                     continue;
                 }
 
-                ShutterWallColliderBuffer.Clear();
-                shutterWall.GetComponentsInChildren(true, ShutterWallColliderBuffer);
-                for (int j = 0; j < ShutterWallColliderBuffer.Count; j++)
+                Collider2D[] colliders = shutterWall.GetComponentsInChildren<Collider2D>(true);
+                for (int j = 0; j < colliders.Length; j++)
                 {
-                    Collider2D collider = ShutterWallColliderBuffer[j];
+                    Collider2D collider = colliders[j];
                     if (collider != null && !collider.isTrigger)
                     {
                         ShutterWallColliders.Add(collider);
@@ -728,9 +726,7 @@ namespace GameName.Enemy
 
             if (shouldIgnoreContactDamage)
             {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                 Debug.Log("パリィ後なので接触ダメージ無効");
-#endif
             }
             else
             {
@@ -739,16 +735,12 @@ namespace GameName.Enemy
 
                 if (umbrellaParryController != null && umbrellaParryController.IsParrying())
                 {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                     Debug.Log("パリィ中なので敵ダメージ無効");
-#endif
                 }
                 else if (TryGetPlayerBodyCollision(collision, out PlayerHealth playerHealth) &&
                         playerHealth.TryTakeDamage(DamageToPlayer))
                 {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                     Debug.Log("敵接触ダメージ");
-#endif
                     HitStopController.RequestEnemyToPlayer();
                     playerHealth.ApplyDamageKnockbackFrom(transform.position);
 
@@ -800,9 +792,7 @@ namespace GameName.Enemy
             currentHealth = Mathf.Max(0, currentHealth - damage);
             NotifyHealthChanged();
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log($"敵にダメージ: {damage} / 残りHP: {currentHealth}");
-#endif
 
             if (currentHealth > 0)
             {
@@ -870,9 +860,7 @@ namespace GameName.Enemy
         /// </summary>
         public void IgnoreContactDamage(float duration)
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Debug.Log($"[IgnoreContactDamage] frame={Time.frameCount}, until={ignoreContactDamageUntilTime}");
-#endif
             ignoreContactDamageUntilTime = Time.time + duration;
         }
 

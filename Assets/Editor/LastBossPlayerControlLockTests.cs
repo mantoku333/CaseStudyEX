@@ -7,8 +7,6 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-[Category("Boss")]
-[Category("Gameplay")]
 public sealed class LastBossPlayerControlLockTests
 {
     private const BindingFlags InstancePrivate = BindingFlags.Instance | BindingFlags.NonPublic;

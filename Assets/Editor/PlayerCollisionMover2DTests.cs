@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Object = UnityEngine.Object;
 
-[Category("Gameplay")]
 public sealed class PlayerCollisionMover2DTests
 {
     private readonly List<GameObject> objectsToDestroy = new List<GameObject>();
