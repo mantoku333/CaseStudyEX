@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
+using GameName.Enemy;
+using Metroidvania.Player;
 using NUnit.Framework;
 using Player;
 using UnityEngine;
@@ -9,9 +11,19 @@ public sealed class RainDamageAreaTests
 {
     private readonly List<GameObject> objectsToDestroy = new List<GameObject>();
 
+    [SetUp]
+    public void SetUp()
+    {
+        EnemyGameplayPause.ResetCache();
+        Time.timeScale = 1f;
+    }
+
     [TearDown]
     public void TearDown()
     {
+        Time.timeScale = 1f;
+        EnemyGameplayPause.ResetCache();
+
         for (int i = objectsToDestroy.Count - 1; i >= 0; i--)
         {
             if (objectsToDestroy[i] != null)
@@ -87,6 +99,58 @@ public sealed class RainDamageAreaTests
         Assert.That(playerHealth.CurrentHealth, Is.EqualTo(1));
     }
 
+    [Test]
+    public void EventControlLock_BlocksDamageAndFlashUntilGracePeriodExpires()
+    {
+        RainDamageArea rainArea = CreateRainDamageArea(true);
+        PlayerHealth playerHealth = CreatePlayer(Vector2.zero);
+        SpriteRenderer playerRenderer = playerHealth.gameObject.AddComponent<SpriteRenderer>();
+        playerRenderer.color = Color.white;
+        PlayerDamageFlash damageFlash = playerHealth.gameObject.AddComponent<PlayerDamageFlash>();
+        InvokeLifecycleMethod(damageFlash, "Awake");
+        PlayerController playerController = playerHealth.gameObject.AddComponent<PlayerController>();
+        Physics2D.SyncTransforms();
+
+        playerController.SetExternalControlLocked(true);
+        InvokeLifecycleMethod(rainArea, "Update");
+        float graceDeadline = GetPrivateField<float>(rainArea, "rainDamageBlockedUntilTime");
+        InvokeFixedUpdate(rainArea);
+
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(1));
+        Assert.That(playerRenderer.color, Is.EqualTo(Color.white));
+        Assert.That(GetPrivateField<float>(damageFlash, "nextFlashTime"), Is.EqualTo(0f));
+        Assert.That(graceDeadline - Time.time, Is.EqualTo(3f).Within(0.001f));
+
+        playerController.SetExternalControlLocked(false);
+        InvokeFixedUpdate(rainArea);
+
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(1));
+        Assert.That(playerRenderer.color, Is.EqualTo(Color.white));
+        Assert.That(GetPrivateField<float>(damageFlash, "nextFlashTime"), Is.EqualTo(0f));
+
+        SetPrivateField(rainArea, "rainDamageBlockedUntilTime", Time.time - 0.01f);
+        InvokeFixedUpdate(rainArea);
+
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(0));
+        Assert.That(GetPrivateField<float>(damageFlash, "nextFlashTime"), Is.GreaterThan(Time.time));
+    }
+
+    [Test]
+    public void OptionsMenuTimeScalePause_DoesNotStartPostEventGracePeriod()
+    {
+        RainDamageArea rainArea = CreateRainDamageArea(true);
+        PlayerHealth playerHealth = CreatePlayer(Vector2.zero);
+        Physics2D.SyncTransforms();
+
+        Time.timeScale = 0f;
+        InvokeLifecycleMethod(rainArea, "Update");
+        Time.timeScale = 1f;
+        InvokeFixedUpdate(rainArea);
+
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(0));
+        Assert.That(GetPrivateField<float>(rainArea, "rainDamageBlockedUntilTime"), Is.EqualTo(0f));
+    }
+
     private RainDamageArea CreateRainDamageArea(bool active)
     {
         // 実シーンを開かず、雨エリア・プレイヤー・屋根だけを作って到達判定を検証する。
@@ -142,11 +206,25 @@ public sealed class RainDamageAreaTests
         InvokeLifecycleMethod(rainArea, "FixedUpdate");
     }
 
-    private static void InvokeLifecycleMethod(RainDamageArea rainArea, string methodName)
+    private static void InvokeLifecycleMethod(object target, string methodName)
     {
-        MethodInfo method = typeof(RainDamageArea).GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+        MethodInfo method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.That(method, Is.Not.Null);
-        method.Invoke(rainArea, null);
+        method.Invoke(target, null);
+    }
+
+    private static T GetPrivateField<T>(object target, string fieldName)
+    {
+        FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(field, Is.Not.Null, fieldName);
+        return (T)field.GetValue(target);
+    }
+
+    private static void SetPrivateField(object target, string fieldName, object value)
+    {
+        FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(field, Is.Not.Null, fieldName);
+        field.SetValue(target, value);
     }
 
     private static int PlayerLayer()
