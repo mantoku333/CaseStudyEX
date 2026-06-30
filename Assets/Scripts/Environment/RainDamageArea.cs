@@ -1,3 +1,4 @@
+using GameName.Enemy;
 using Metroidvania.Player;
 using Player;
 using UnityEngine;
@@ -13,6 +14,7 @@ public sealed class RainDamageArea : MonoBehaviour
 
     [SerializeField, Min(1)] private int damage = 1;
     [SerializeField, Min(0f)] private float damageIntervalSeconds = 1f;
+    [SerializeField, Min(0f)] private float postEventDamageGraceSeconds = 3f;
     [SerializeField] private string playerTag = "Player";
     // 雨エリア内でも、頭上まで雨が届かない場所ではダメージを受けないようにする。
     [SerializeField] private bool requireClearRainPath = true;
@@ -33,6 +35,7 @@ public sealed class RainDamageArea : MonoBehaviour
     private PlayerDamageFlash cachedPlayerDamageFlash;
     private UmbrellaController cachedUmbrellaController;
     private Collider2D cachedPlayerBodyCollider;
+    private float rainDamageBlockedUntilTime;
 
     public bool IsRainActive => isRainActive;
 
@@ -55,14 +58,40 @@ public sealed class RainDamageArea : MonoBehaviour
         RebuildRainPathFilterIfNeeded();
     }
 
+    private void Update()
+    {
+        if (EnemyGameplayPause.IsPaused())
+        {
+            ExtendPostEventDamageGrace();
+        }
+    }
+
     private void FixedUpdate()
     {
-        if (!isRainActive)
+        if (!isRainActive || IsRainDamageSuppressedByEvent())
         {
             return;
         }
 
         DamagePlayersInArea();
+    }
+
+    private bool IsRainDamageSuppressedByEvent()
+    {
+        if (EnemyGameplayPause.IsPaused())
+        {
+            ExtendPostEventDamageGrace();
+            return true;
+        }
+
+        return Time.time < rainDamageBlockedUntilTime;
+    }
+
+    private void ExtendPostEventDamageGrace()
+    {
+        rainDamageBlockedUntilTime = Mathf.Max(
+            rainDamageBlockedUntilTime,
+            Time.time + Mathf.Max(0f, postEventDamageGraceSeconds));
     }
 
     private void DamagePlayersInArea()
@@ -444,6 +473,7 @@ public sealed class RainDamageArea : MonoBehaviour
     {
         damage = Mathf.Max(1, damage);
         damageIntervalSeconds = Mathf.Max(0f, damageIntervalSeconds);
+        postEventDamageGraceSeconds = Mathf.Max(0f, postEventDamageGraceSeconds);
         rainPathProbeInset = Mathf.Max(0f, rainPathProbeInset);
         EnsureTriggerCollider();
         EnsureRainBlockLayerMask();
