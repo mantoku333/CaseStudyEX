@@ -186,11 +186,8 @@ public static class RoomCameraHierarchyTools
         SetObject(serializedPortal, "lowerRoom", lowerRoom != null ? ResolveRoomTrigger(lowerRoom.gameObject) : null);
         SetInt(serializedPortal, "transitionPriority", 30);
         SetEnum(serializedPortal, "direction", 0);
-        SetFloat(serializedPortal, "startTargetRoomWeight", 0.35f);
-        SetFloat(serializedPortal, "targetTargetRoomWeight", 1f);
-        SetFloat(serializedPortal, "previewDuration", 0.75f);
+        SetFloat(serializedPortal, "portalRoomWeight", 0.35f);
         SetFloat(serializedPortal, "smoothTime", 0.12f);
-        SetFloat(serializedPortal, "playerPadding", 2.5f);
         SetBool(serializedPortal, "commitWhenPlayerFullyInsideTargetRoom", false);
         SetBool(serializedPortal, "commitByPortalExitSide", true);
         SetString(serializedPortal, "playerTag", "Player");
@@ -242,14 +239,6 @@ public static class RoomCameraHierarchyTools
         SerializedObject serializedPortal = new SerializedObject(portal);
         SetObject(serializedPortal, "upperRoom", upperRoom != null ? ResolveRoomTrigger(upperRoom.gameObject) : null);
         SetObject(serializedPortal, "lowerRoom", lowerRoom != null ? ResolveRoomTrigger(lowerRoom.gameObject) : null);
-        SetInt(serializedPortal, "transitionPriority", 30);
-        SetFloat(serializedPortal, "startLowerRoomWeight", 0.35f);
-        SetFloat(serializedPortal, "targetLowerRoomWeight", 1f);
-        SetFloat(serializedPortal, "fallPreviewDuration", 0.75f);
-        SetFloat(serializedPortal, "smoothTime", 0.12f);
-        SetFloat(serializedPortal, "playerPadding", 2.5f);
-        SetBool(serializedPortal, "commitWhenPlayerFullyInsideLowerRoom", false);
-        SetBool(serializedPortal, "commitToLowerWhenExitingBelowPortal", true);
         SetString(serializedPortal, "playerTag", "Player");
         serializedPortal.ApplyModifiedPropertiesWithoutUndo();
 

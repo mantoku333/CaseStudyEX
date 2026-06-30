@@ -12,11 +12,27 @@ public class DodgeController : MonoBehaviour
     [Header("回避クールタイム")]
     [SerializeField, Min(0f)] private float dodgeCooldown = 0.5f;
 
+    [Header("空中回避軌道")]
+    [SerializeField, Tooltip("有効にすると、空中回避だけ真横ではなく少し落下する軌道にします。")]
+    private bool enableAirDodgeTrajectoryAdjustment = true;
+
+    [SerializeField, Range(0f, 1.5f), Tooltip("空中回避時の横移動量倍率です。1で地上と同じ横距離、0.8なら少し短くなります。")]
+    private float airDodgeHorizontalDistanceMultiplier = 0.9f;
+
+    [SerializeField, Min(0f), Tooltip("空中回避の終点をどれだけ下げるかです。0で真横、値を大きくすると落下感が強くなります。")]
+    private float airDodgeDownwardOffset = 0.55f;
+
+    [Header("SE")]
+    [SerializeField] private AudioClip dodgeClip;
+    [SerializeField, Range(0f, 1f)] private float dodgeVolume = 1f;
+
     private bool isDodging = false;   //回避中かどうかのフラグ
     private float nextDodgeTime;
     private bool dodgeMovementCancelled;
     private Rigidbody2D rigidBody2d;  //Rigidbody2Dコンポーネント
     private PlayerCollisionMover2D collisionMover;
+    private GroundCheck groundCheck;
+    private AudioSource audioSource;
 
     // ロック中のエリアから渡される、回避移動専用の境界情報。
     // 回避の目標地点を先に切り詰めることで、エリア拘束との押し戻し競合を防ぐ。
@@ -38,12 +54,23 @@ public class DodgeController : MonoBehaviour
     {
         rigidBody2d = GetComponent<Rigidbody2D>();
         collisionMover = GetComponent<PlayerCollisionMover2D>();
+        groundCheck = GetComponentInChildren<GroundCheck>();
+        audioSource = GetComponent<AudioSource>();
 
         if (collisionMover == null)
         {
             // プレハブに付け忘れても、回避移動だけは必ず物理Sweep経由にする。
             collisionMover = gameObject.AddComponent<PlayerCollisionMover2D>();
         }
+    }
+
+    private void OnValidate()
+    {
+        dodgeDistance = Mathf.Max(0f, dodgeDistance);
+        dodgeDuration = Mathf.Max(0.01f, dodgeDuration);
+        dodgeCooldown = Mathf.Max(0f, dodgeCooldown);
+        airDodgeHorizontalDistanceMultiplier = Mathf.Clamp(airDodgeHorizontalDistanceMultiplier, 0f, 1.5f);
+        airDodgeDownwardOffset = Mathf.Max(0f, airDodgeDownwardOffset);
     }
 
     public void SetDodgeDistance(float distance)
@@ -78,7 +105,7 @@ public class DodgeController : MonoBehaviour
 
     public bool CanDodge()
     {
-        return !isDodging && Time.time >= nextDodgeTime;
+        return !isDodging && Time.unscaledTime >= nextDodgeTime;
     }
 
     /// <summary>
@@ -154,8 +181,9 @@ public class DodgeController : MonoBehaviour
         if (rigidBody2d == null) { return; }
 
         isDodging = true;
-        nextDodgeTime = Time.time + dodgeCooldown;
+        nextDodgeTime = Time.unscaledTime + dodgeCooldown;
         dodgeMovementCancelled = false;
+        PlayDodgeSe();
 
         Vector2 velocity = rigidBody2d.linearVelocity;
         velocity.x = 0.0f;
@@ -166,7 +194,8 @@ public class DodgeController : MonoBehaviour
 
         if (direction != Vector2.zero)
         {
-            targetPos = ResolveReachableDodgeTarget(startPos, direction.normalized * dodgeDistance);
+            Vector2 desiredDelta = CreateDodgeDelta(direction.normalized);
+            targetPos = ResolveReachableDodgeTarget(startPos, desiredDelta);
         }
 
         // 回避アニメーションは通常通り再生しつつ、移動先だけをロック範囲内に収める。
@@ -188,6 +217,24 @@ public class DodgeController : MonoBehaviour
 
         dodgeMovementCancelled = false;
         isDodging = false;
+    }
+
+    private void PlayDodgeSe()
+    {
+        if (dodgeClip == null)
+        {
+            return;
+        }
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+
+        if (audioSource != null)
+        {
+            audioSource.PlayOneShot(dodgeClip, Mathf.Clamp01(dodgeVolume));
+        }
     }
 
     /// <summary>
@@ -216,6 +263,34 @@ public class DodgeController : MonoBehaviour
         }
 
         return startPosition + collisionMover.CalculateSlideDelta(clampedDesiredDelta);
+    }
+
+    private Vector2 CreateDodgeDelta(Vector2 normalizedDirection)
+    {
+        Vector2 dodgeDelta = normalizedDirection * dodgeDistance;
+        if (!ShouldAdjustAirDodgeTrajectory())
+        {
+            return dodgeDelta;
+        }
+
+        dodgeDelta.x *= airDodgeHorizontalDistanceMultiplier;
+        dodgeDelta.y -= airDodgeDownwardOffset;
+        return dodgeDelta;
+    }
+
+    private bool ShouldAdjustAirDodgeTrajectory()
+    {
+        if (!enableAirDodgeTrajectoryAdjustment)
+        {
+            return false;
+        }
+
+        if (groundCheck == null)
+        {
+            groundCheck = GetComponentInChildren<GroundCheck>();
+        }
+
+        return groundCheck != null && !groundCheck.IsGround();
     }
 
     private void MoveToDodgePosition(Vector2 targetPosition)

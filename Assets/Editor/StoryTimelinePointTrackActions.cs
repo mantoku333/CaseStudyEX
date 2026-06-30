@@ -51,7 +51,7 @@ internal abstract class StoryTimelinePointTrackAction<TTrack, TMarker> : TrackAc
         return true;
     }
 
-    private static TrackAsset[] GetValidTargets(IEnumerable<TrackAsset> tracks)
+    private TrackAsset[] GetValidTargets(IEnumerable<TrackAsset> tracks)
     {
         if (tracks == null)
         {
@@ -60,12 +60,17 @@ internal abstract class StoryTimelinePointTrackAction<TTrack, TMarker> : TrackAc
 
         TrackAsset[] targets = tracks.Where(track => track != null).ToArray();
         if (targets.Length == 0 ||
-            targets.Any(track => !typeof(TTrack).IsInstanceOfType(track)))
+            targets.Any(track => !IsValidTrack(track)))
         {
             return System.Array.Empty<TrackAsset>();
         }
 
         return targets;
+    }
+
+    protected virtual bool IsValidTrack(TrackAsset track)
+    {
+        return typeof(TTrack).IsInstanceOfType(track);
     }
 
     private static double ResolveTimelineTime()
@@ -92,9 +97,28 @@ internal sealed class AddEventPanelPointAction
 {
 }
 
-[MenuEntry("Add Point/Audio Point", 3312)]
-internal sealed class AddStoryAudioPointAction
+internal abstract class AddStoryAudioPointActionBase
     : StoryTimelinePointTrackAction<StoryAudioTrack, StoryAudioMarker>
+{
+    protected override bool IsValidTrack(TrackAsset track)
+    {
+        return track is StoryAudioTrack || track is AudioTrack;
+    }
+}
+
+[MenuEntry("Add Audio Point", 3312)]
+internal sealed class AddStoryAudioPointAction : AddStoryAudioPointActionBase
+{
+}
+
+[MenuEntry("Audio/Add Audio Point", 3312)]
+internal sealed class AddStoryAudioPointAudioMenuAction : AddStoryAudioPointActionBase
+{
+}
+
+[MenuEntry("Add Point/Audio Point", 3312)]
+internal sealed class AddStoryAudioPointLegacyAction
+    : AddStoryAudioPointActionBase
 {
 }
 

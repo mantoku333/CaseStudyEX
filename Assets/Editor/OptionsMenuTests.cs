@@ -50,6 +50,45 @@ public sealed class OptionsMenuTests
         Assert.That(playerRigidbody.angularVelocity, Is.EqualTo(angularVelocity).Within(0.001f));
     }
 
+    [Test]
+    public void ApplyAudioSettings_SeVolumeZeroMutesSeAndRaisingVolumeUnmutesIt()
+    {
+        const string seVolumeKey = "Options.SeVolume";
+        bool hadSavedValue = PlayerPrefs.HasKey(seVolumeKey);
+        float savedValue = PlayerPrefs.GetFloat(seVolumeKey, 1f);
+
+        try
+        {
+            OptionsMenu menu = CreateMenu();
+            GameObject sourceObject = new GameObject("TestSeSource");
+            objectsToDestroy.Add(sourceObject);
+            AudioSource source = sourceObject.AddComponent<AudioSource>();
+            source.loop = false;
+            source.volume = 0.75f;
+
+            PlayerPrefs.SetFloat(seVolumeKey, 0f);
+            InvokePrivate(menu, "ApplyAudioSettingsToScene", true);
+
+            Assert.That(source.mute, Is.True);
+
+            PlayerPrefs.SetFloat(seVolumeKey, 0.5f);
+            InvokePrivate(menu, "ApplyAudioSettingsToScene", true);
+
+            Assert.That(source.mute, Is.False);
+        }
+        finally
+        {
+            if (hadSavedValue)
+            {
+                PlayerPrefs.SetFloat(seVolumeKey, savedValue);
+            }
+            else
+            {
+                PlayerPrefs.DeleteKey(seVolumeKey);
+            }
+        }
+    }
+
     private OptionsMenu CreateMenu()
     {
         GameObject menuObject = new GameObject("OptionsMenu");

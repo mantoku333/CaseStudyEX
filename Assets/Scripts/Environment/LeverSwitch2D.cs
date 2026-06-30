@@ -15,6 +15,11 @@ public class LeverSwitch2D : MonoBehaviour, IAttackReceiver
     // true の場合、最初の成功操作後に再操作不可
     [SerializeField] private bool oneShot = true;
 
+    [Header("SE")]
+    [SerializeField] private AudioSource leverAudioSource;
+    [SerializeField] private AudioClip activationClip;
+    [SerializeField, Range(0f, 1f)] private float activationVolume = 1f;
+
     // 初期化の多重実行を防ぐフラグ
     private bool initialized;
     // レバーの論理状態（ON=開く側）
@@ -77,6 +82,7 @@ public class LeverSwitch2D : MonoBehaviour, IAttackReceiver
 
         // 見た目を論理状態に同期
         SyncVisualState();
+        PlayActivationSound();
     }
 
     public void OnAttacked(AttackHitbox attacker, Collider2D hitCollider)
@@ -96,6 +102,11 @@ public class LeverSwitch2D : MonoBehaviour, IAttackReceiver
         if (leverRenderer == null)
         {
             leverRenderer = GetComponent<SpriteRenderer>();
+        }
+
+        if (leverAudioSource == null)
+        {
+            leverAudioSource = GetComponent<AudioSource>();
         }
 
         if (closedSprite == null && leverRenderer != null)
@@ -125,6 +136,18 @@ public class LeverSwitch2D : MonoBehaviour, IAttackReceiver
 
         // 初期見た目も同期
         SyncVisualState();
+    }
+
+    private void PlayActivationSound()
+    {
+        if (activationClip == null || leverAudioSource == null)
+        {
+            return;
+        }
+
+        // 専用音源の前回再生を止め、連続操作でも音を重ねない。
+        leverAudioSource.Stop();
+        leverAudioSource.PlayOneShot(activationClip, activationVolume);
     }
 
     private void SyncVisualState()

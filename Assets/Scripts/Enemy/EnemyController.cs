@@ -13,6 +13,8 @@ namespace GameName.Enemy
     {
         [SerializeField] private float moveSpeed = 2f;
         [SerializeField] private float patrolDistance = 2f;
+        [SerializeField, Tooltip("有効時、生成時の巡回方向を左右からランダムに選びます。")]
+        private bool randomizeInitialDirection;
         [SerializeField, Min(0)] private int damageToPlayer = 1;
         [SerializeField, Min(1)] private int maxHealth = 1;
         [SerializeField, Min(1f)] private float backAttackDamageMultiplier = 2f;
@@ -112,6 +114,11 @@ namespace GameName.Enemy
             currentHealth = MaxHealth;
             CaptureOriginalStartPositionIfNeeded();
             startPosition = originalStartPosition;
+
+            if (randomizeInitialDirection)
+            {
+                moveDirection = UnityEngine.Random.value < 0.5f ? -1 : 1;
+            }
 
             if (stageLayerMask.value == 0)
             {
@@ -364,6 +371,21 @@ namespace GameName.Enemy
         }
 
         /// <summary>
+        /// 向きの状態に依存せず、ワールド座標基準の横速度を設定する。
+        /// </summary>
+        public void SetWorldHorizontalVelocity(float velocityX)
+        {
+            if (rigidbody2D == null)
+            {
+                return;
+            }
+
+            Vector2 velocity = rigidbody2D.linearVelocity;
+            velocity.x = velocityX;
+            rigidbody2D.linearVelocity = velocity;
+        }
+
+        /// <summary>
         /// 水平方向の移動を即座に停止する。
         /// </summary>
         public void StopHorizontalMotion()
@@ -375,6 +397,21 @@ namespace GameName.Enemy
 
             Vector2 velocity = rigidbody2D.linearVelocity;
             velocity.x = 0f;
+            rigidbody2D.linearVelocity = velocity;
+        }
+
+        /// <summary>
+        /// 現在の横速度を保ったまま、上方向の速度を与える。
+        /// </summary>
+        public void SetVerticalVelocity(float speed)
+        {
+            if (rigidbody2D == null)
+            {
+                return;
+            }
+
+            Vector2 velocity = rigidbody2D.linearVelocity;
+            velocity.y = Mathf.Max(velocity.y, Mathf.Max(0f, speed));
             rigidbody2D.linearVelocity = velocity;
         }
 
@@ -685,7 +722,7 @@ namespace GameName.Enemy
                 return;
             }
 
-           bool shouldIgnoreContactDamage = Time.time < ignoreContactDamageUntilTime;
+            bool shouldIgnoreContactDamage = Time.time < ignoreContactDamageUntilTime;
 
             if (shouldIgnoreContactDamage)
             {
@@ -705,6 +742,7 @@ namespace GameName.Enemy
                 {
                     Debug.Log("敵接触ダメージ");
                     HitStopController.RequestEnemyToPlayer();
+                    playerHealth.ApplyDamageKnockbackFrom(transform.position);
 
                     PlayerDamageFlash damageFlash = playerHealth.GetComponent<PlayerDamageFlash>();
                     if (damageFlash == null)

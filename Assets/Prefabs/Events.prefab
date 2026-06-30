@@ -3627,21 +3627,21 @@ MonoBehaviour:
     setTrueFlags: []
     setFalseFlags: []
     clearFlags: []
-  pausePolicy: 2
+  pausePolicy: 1
   autoSaveOnComplete: 1
   markRunOnceFlagOnComplete: 1
   deactivateObjectsOnComplete: []
-  lockPlayerControlDuringEvent: 1
-  lockPlayerFacingDuringEvent: 1
+  lockPlayerControlDuringEvent: 0
+  lockPlayerFacingDuringEvent: 0
   restoreActorTransformsOnExit: 1
   restoreSpriteFacingOnExit: 1
   restoreRigidbodyVelocityOnExit: 0
-  showLetterBoxDuringEvent: 1
+  showLetterBoxDuringEvent: 0
   letterBoxView: {fileID: 0}
   letterBoxViewName: LetterBoxView
   letterBoxFadeSeconds: 0.6
   letterBoxSlidePixels: 120
-  useEventCameraDuringEvent: 1
+  useEventCameraDuringEvent: 0
   eventCamera: {fileID: 0}
   eventCameraName: EventCam
   eventCameraPriorityFloor: 100

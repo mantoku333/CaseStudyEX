@@ -156,6 +156,7 @@ MonoBehaviour:
   breakEffectPrefab: {fileID: 100000, guid: a0a9b50285f341f5bf0ab48e6a8b1c91, type: 3}
   destroyOnBreak: 1
   breakSe: {fileID: 8300000, guid: cf924152618b8ca48a37f4551a24379b, type: 3}
+  breakSeVolume: 1.5
   forceColliderAsSolid: 1
   forceStaticBody: 1
   useGravity: 0

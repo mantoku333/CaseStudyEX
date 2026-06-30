@@ -141,10 +141,10 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 0.11666666666666667
-    m_ClipIn: 0
+    m_Start: 0.26666666666666666
+    m_ClipIn: 0.15
     m_Asset: {fileID: 2869561812980922962}
-    m_Duration: 2.466666666666667
+    m_Duration: 2.1333333333333333
     m_TimeScale: 1
     m_ParentTrack: {fileID: -5675552448397036753}
     m_EaseInDuration: 0
@@ -514,7 +514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
   m_Name: Story/Yarn Dialogue Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 2.5833333333333335
+  m_Time: 0.26666666666666666
   markerId: af28a1b8189b45c9acbfdb853ab727e8
   nodeName: test_01
   useControllerDefaultStyle: 1
@@ -636,22 +636,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
   m_Name: Event/Panel Point
   m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
-  m_Time: 7.25
+  m_Time: 0.11666666666666667
   markerId: fd40845972ef46b19fe643c3bb200821
-  markerMode: 0
+  markerMode: 1
   panelObject:
     exposedName: 75b8291ec6091904284b4ee4445c391d
     defaultValue: {fileID: 0}
   panelPresenter:
     exposedName: 9aadde69bc70a5e469624782ff1bdf36
     defaultValue: {fileID: 0}
-  panelPresenterName: 
+  panelPresenterName: TutorialView
   panelKind: 0
   diaryEntryData: {fileID: 0}
+  collectDiaryOnClose: 0
   title: 
   body: 
   closeLabel: 
-  illustration: {fileID: 0}
+  illustration: {fileID: -8081079051363985716, guid: 97d4f1526fe52c24dabfa80cd121c990, type: 3}
   animationFrames: []
   animationFramesPerSecond: 12
   animationLoopIntervalSeconds: 0.5

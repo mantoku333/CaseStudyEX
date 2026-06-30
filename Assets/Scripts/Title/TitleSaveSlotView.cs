@@ -131,6 +131,8 @@ public sealed class TitleSaveSlotView : MonoBehaviour
 
         button.onClick.RemoveListener(OnClick);
         button.onClick.AddListener(OnClick);
+        UIButtonSfxPlayer.Register(button);
+        UIButtonSfxPlayer.RegisterHover(button);
     }
 
     private void OnClick()

@@ -11,6 +11,7 @@ public class AttackDestructible : MonoBehaviour, IAttackReceiver
 
     [Header("SE")]
     [SerializeField] private AudioClip breakSe;
+    [SerializeField, Range(0f, 3f)] private float breakSeVolume = 1f;
 
     private bool isBroken;
 
@@ -21,6 +22,7 @@ public class AttackDestructible : MonoBehaviour, IAttackReceiver
     protected virtual void OnValidate()
     {
         hitPoints = Mathf.Max(1, hitPoints);
+        breakSeVolume = Mathf.Clamp(breakSeVolume, 0f, 3f);
     }
 #endif
 
@@ -62,7 +64,7 @@ public class AttackDestructible : MonoBehaviour, IAttackReceiver
 
         if (breakSe != null)
         {
-            AudioSource.PlayClipAtPoint(breakSe, transform.position);
+            PlayBreakSound();
         }
 
         OnBreakEffectSpawned(breakEffectInstance, attacker, hitCollider);
@@ -72,6 +74,22 @@ public class AttackDestructible : MonoBehaviour, IAttackReceiver
         {
             Destroy(gameObject);
         }
+    }
+
+    private void PlayBreakSound()
+    {
+        // PlayClipAtPoint の AudioSource.volume は 1 で頭打ちになるため、
+        // 1 を超える音量倍率を扱える PlayOneShot を一時音源から再生する。
+        GameObject audioObject = new GameObject("Break SE");
+        audioObject.transform.position = transform.position;
+
+        AudioSource audioSource = audioObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        // 2DゲームではカメラとオブジェクトのZ距離で減衰させない。
+        audioSource.spatialBlend = 0f;
+        audioSource.PlayOneShot(breakSe, breakSeVolume);
+
+        Destroy(audioObject, breakSe.length + 0.1f);
     }
 
     // Override if a concrete object needs custom behavior before destroy.

@@ -132,6 +132,32 @@ public sealed class StoryTimelineRuntime : MonoBehaviour
         bgmFadeRoutine = StartCoroutine(FadeBgmOut(fadeSeconds));
     }
 
+    public void PlayTimelineAudio(
+        StoryTimelineAudioKind audioKind,
+        StoryTimelineAudioAction action,
+        AudioClip clip,
+        float volume,
+        bool loop,
+        float fadeSeconds)
+    {
+        if (audioKind == StoryTimelineAudioKind.Bgm)
+        {
+            if (action == StoryTimelineAudioAction.Stop)
+            {
+                StopBgm(fadeSeconds);
+                return;
+            }
+
+            PlayBgm(clip, volume, loop, fadeSeconds);
+            return;
+        }
+
+        if (action == StoryTimelineAudioAction.Play)
+        {
+            PlaySe(clip, volume);
+        }
+    }
+
     public void PlaySe(AudioClip clip, float volume)
     {
         if (clip == null)

@@ -49,3 +49,10 @@ MonoBehaviour:
     g: {fileID: 0}
     h: {fileID: 0}
     i: {fileID: 0}
+  waterFloorTiles:
+    displayName: Water Floor
+    a: {fileID: 11400000, guid: f6236f995556456b86586b585ae7aa29, type: 2}
+    b: {fileID: 11400000, guid: c2740a79348c4c518504202ef5bb4122, type: 2}
+    c: {fileID: 11400000, guid: 75768cc0ef5e4e4f93f84aacd339d509, type: 2}
+    d: {fileID: 11400000, guid: e0e88510542c4120822c3b45ccc6dcf0, type: 2}
+    e: {fileID: 11400000, guid: 94d8c612952f49e0999dcc3b6e96770f, type: 2}

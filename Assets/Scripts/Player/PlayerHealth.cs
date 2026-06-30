@@ -18,11 +18,17 @@ namespace Player
         [Header("SE")]
         [SerializeField] private AudioClip playerDamageClip;
 
+        [Header("Damage Knockback")]
+        [SerializeField, Min(0f)] private float damageKnockbackSpeed = 6f;
+        [SerializeField, Min(0f)] private float damageKnockbackDuration = 0.18f;
+        [SerializeField, Min(0f)] private float damageKnockbackUpwardSpeed = 3.5f;
+
         [Header("Debug")]
         [SerializeField] private bool logHealthDebug;
 
         private int currentHealth;
         private float nextDamageTime;
+        private float attackPriorityInvulnerableUntilTime;
         private bool deathNotified;
         private bool restoredFromSave;
         private AudioSource audioSource;
@@ -131,6 +137,11 @@ namespace Player
                 return false;
             }
 
+            if (Time.time < attackPriorityInvulnerableUntilTime)
+            {
+                return false;
+            }
+
             if (Time.time < nextDamageTime)
             {
                 return false;
@@ -148,6 +159,55 @@ namespace Player
             PlaySE(playerDamageClip);
             NotifyHealthChanged();
             return true;
+        }
+
+        /// <summary>
+        /// プレイヤー側の攻撃成立を優先したい短い瞬間だけ、敵からの被弾を無効化する。
+        /// 落下攻撃の着地判定など、「相打ちで気持ちよさが消える」箇所向け。
+        /// </summary>
+        public void RequestAttackPriorityInvulnerability(float duration)
+        {
+            if (duration <= 0f)
+            {
+                return;
+            }
+
+            attackPriorityInvulnerableUntilTime = Mathf.Max(
+                attackPriorityInvulnerableUntilTime,
+                Time.time + duration);
+        }
+
+        public void ClearAttackPriorityInvulnerability()
+        {
+            attackPriorityInvulnerableUntilTime = 0f;
+        }
+
+        /// <summary>
+        /// 実ダメージ成立後、攻撃元から離れる方向へ小さく跳ねるノックバックを与える。
+        /// </summary>
+        public void ApplyDamageKnockbackFrom(Vector2 sourcePosition)
+        {
+            PlayerController playerController = GetComponent<PlayerController>();
+            if (playerController == null)
+            {
+                playerController = GetComponentInParent<PlayerController>();
+            }
+
+            if (playerController == null)
+            {
+                return;
+            }
+
+            float horizontalDelta = transform.position.x - sourcePosition.x;
+            float direction = Mathf.Abs(horizontalDelta) > 0.01f
+                ? Mathf.Sign(horizontalDelta)
+                : (playerController.IsFacingRight ? -1f : 1f);
+
+            playerController.ApplyDamageKnockback(
+                direction,
+                damageKnockbackSpeed,
+                damageKnockbackDuration,
+                damageKnockbackUpwardSpeed);
         }
 
 

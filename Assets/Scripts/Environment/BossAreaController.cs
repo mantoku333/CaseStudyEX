@@ -69,6 +69,9 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     [Header("Story Events")]
     [SerializeField] private string preEncounterStoryEventId = string.Empty;
     [SerializeField] private bool waitForPreEncounterStoryEvent = true;
+    [SerializeField] private string lastBossHealthThresholdStoryEventId = string.Empty;
+    [SerializeField, Range(0.01f, 1f)] private float lastBossHealthThresholdRate = 0.4f;
+    [SerializeField] private bool waitForLastBossHealthThresholdStoryEvent = true;
     [SerializeField] private string postDefeatStoryEventId = string.Empty;
     [SerializeField] private bool waitForPostDefeatStoryEvent = true;
     [SerializeField] private bool logMissingStoryEvents = true;
@@ -114,6 +117,9 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private bool suppressWindRiseDuringStageBossIntro;
     private Coroutine encounterStartRoutine;
     private Coroutine encounterCompleteRoutine;
+    private Coroutine lastBossHealthThresholdStoryRoutine;
+    private LastBossController subscribedLastBossController;
+    private bool lastBossHealthThresholdStoryEventPlayed;
 
     public int Priority => 240;
     public string BossDisplayName => ResolveBossDisplayName();
@@ -121,6 +127,8 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     public StageBossAttack StageBossAttack => stageBossAttack;
     public LastBossController LastBossController => lastBossController;
     public IBossHealthSource BossHealthSource => ResolveBossHealthSource();
+    public bool IsEncounterCompleted =>
+        encounterCompleted || IsBossDefeatedInSavedProgress();
 
     public bool TryGetActiveBossHorizontalConfinementBounds(out Bounds bounds)
     {
@@ -204,6 +212,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private void OnDisable()
     {
         StopEncounterStoryRoutines();
+        UnsubscribeLastBossHealthChanged();
         StopStageBossIntroRoutine();
         RestoreStageBossIntroPlayerLock();
         ClearActiveDodgeBounds();
@@ -294,6 +303,8 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
         // 戦闘開始直前にプレイヤー参照を再取得しておく。
         CachePlayerReferences();
+        lastBossHealthThresholdStoryEventPlayed = false;
+        SubscribeLastBossHealthChanged();
 
         encounterStarted = true;
         RegisterActiveDodgeBounds();
@@ -605,6 +616,88 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             StopCoroutine(encounterCompleteRoutine);
             encounterCompleteRoutine = null;
         }
+
+        if (lastBossHealthThresholdStoryRoutine != null)
+        {
+            StopCoroutine(lastBossHealthThresholdStoryRoutine);
+            lastBossHealthThresholdStoryRoutine = null;
+        }
+    }
+
+    private void SubscribeLastBossHealthChanged()
+    {
+        if (ReferenceEquals(subscribedLastBossController, lastBossController))
+        {
+            return;
+        }
+
+        UnsubscribeLastBossHealthChanged();
+
+        if (ReferenceEquals(lastBossController, null))
+        {
+            return;
+        }
+
+        subscribedLastBossController = lastBossController;
+        subscribedLastBossController.HealthChanged += HandleLastBossHealthChanged;
+    }
+
+    private void UnsubscribeLastBossHealthChanged()
+    {
+        if (ReferenceEquals(subscribedLastBossController, null))
+        {
+            return;
+        }
+
+        subscribedLastBossController.HealthChanged -= HandleLastBossHealthChanged;
+        subscribedLastBossController = null;
+    }
+
+    private void HandleLastBossHealthChanged(int currentHealth, int maxHealth)
+    {
+        if (!encounterStarted ||
+            encounterCompleted ||
+            lastBossHealthThresholdStoryEventPlayed ||
+            string.IsNullOrWhiteSpace(lastBossHealthThresholdStoryEventId) ||
+            currentHealth <= 0 ||
+            maxHealth <= 0)
+        {
+            return;
+        }
+
+        float healthRate = (float)currentHealth / maxHealth;
+        float thresholdRate = Mathf.Clamp(lastBossHealthThresholdRate, 0.01f, 1f);
+        if (healthRate > thresholdRate)
+        {
+            return;
+        }
+
+        lastBossHealthThresholdStoryEventPlayed = true;
+        if (!TryPlayConfiguredStoryEvent(
+                lastBossHealthThresholdStoryEventId,
+                waitForLastBossHealthThresholdStoryEvent,
+                waitForExternalTrigger: false,
+                out IEnumerator storyRoutine))
+        {
+            return;
+        }
+
+        if (waitForLastBossHealthThresholdStoryEvent && storyRoutine != null)
+        {
+            if (lastBossHealthThresholdStoryRoutine != null)
+            {
+                StopCoroutine(lastBossHealthThresholdStoryRoutine);
+            }
+
+            lastBossHealthThresholdStoryRoutine =
+                StartCoroutine(WaitForLastBossHealthThresholdStoryRoutine(storyRoutine));
+        }
+    }
+
+    private IEnumerator WaitForLastBossHealthThresholdStoryRoutine(IEnumerator storyRoutine)
+    {
+        yield return storyRoutine;
+        lastBossHealthThresholdStoryRoutine = null;
     }
 
     private bool TryPlayConfiguredStoryEvent(
@@ -816,6 +909,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             return;
         }
 
+        UnsubscribeLastBossHealthChanged();
         StopStageBossIntroRoutine();
         RestoreStageBossIntroPlayerLock();
 
@@ -921,6 +1015,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             return;
         }
 
+        UnsubscribeLastBossHealthChanged();
         StopStageBossIntroRoutine();
         RestoreStageBossIntroPlayerLock();
 
@@ -958,6 +1053,8 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void ResetUnfinishedEncounterAfterLoad()
     {
+        UnsubscribeLastBossHealthChanged();
+        lastBossHealthThresholdStoryEventPlayed = false;
         StopStageBossIntroRoutine();
         RestoreStageBossIntroPlayerLock();
 

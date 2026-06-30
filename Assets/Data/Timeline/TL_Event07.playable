@@ -161,7 +161,7 @@ MonoBehaviour:
     m_Start: 0.11666666666666667
     m_ClipIn: 0
     m_Asset: {fileID: 8586769028533396923}
-    m_Duration: 2.466666666666667
+    m_Duration: 0.033333333333333326
     m_TimeScale: 1
     m_ParentTrack: {fileID: -5675552448397036753}
     m_EaseInDuration: 0
@@ -410,6 +410,61 @@ MonoBehaviour:
     m_ScenePreview: 1
   m_DurationMode: 0
   m_MarkerTrack: {fileID: 0}
+--- !u!114 &707070707070701
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
+  m_Name: Event/Panel Point
+  m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
+  m_Time: 42.91666666666669
+  markerId: codex_event07_tutorial_parry
+  markerMode: 1
+  panelObject:
+    exposedName: 
+    defaultValue: {fileID: 0}
+  panelPresenter:
+    exposedName: 
+    defaultValue: {fileID: 0}
+  panelPresenterName: TutorialView
+  panelKind: 0
+  diaryEntryData: {fileID: 0}
+  collectDiaryOnClose: 0
+  title: 
+  body: 
+  closeLabel: 
+  illustration: {fileID: 5684639667912481340, guid: 51e44b2fa068dbe48ab8ae556dd6a983, type: 3}
+  animationFrames:
+  - {fileID: 8152383114581043371, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: -6368145617101811964, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: -5095350033197084485, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 4343311520036043448, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 1182320541147543958, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 9009447597312504714, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 8949978873818198345, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 6866249974247278883, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 4106281639395321768, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: -5020279325869342020, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 15774093725256625, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 9211784454458576796, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 5642148721936390687, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: -1651792978619646636, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 1055045310221324785, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 175670492865351536, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: -6195149558338675425, guid: 4e6224c562f4fd4408244491f8b82a2e, type: 3}
+  - {fileID: 696442681471543072, guid: 4e6224c562f4fd4408244491f8b82a2e, type: 3}
+  - {fileID: -2314259120897181164, guid: 4e6224c562f4fd4408244491f8b82a2e, type: 3}
+  - {fileID: 4549201057751625474, guid: 4e6224c562f4fd4408244491f8b82a2e, type: 3}
+  - {fileID: 4549201057751625474, guid: 4e6224c562f4fd4408244491f8b82a2e, type: 3}
+  animationFramesPerSecond: 30
+  animationLoopIntervalSeconds: 0.5
+  pauseTimelineUntilClosed: 1
+  autoCloseSecondsWhenNoButton: 3
 --- !u!114 &1112982847894433
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -432,7 +487,9 @@ MonoBehaviour:
   m_Children: []
   m_Clips: []
   m_Markers:
-    m_Objects: []
+    m_Objects:
+    - {fileID: 707070707070701}
+    - {fileID: 8810208586813070218}
 --- !u!114 &149827093544674222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -537,7 +594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
   m_Name: Story/Yarn Dialogue Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 2.5833333333333335
+  m_Time: 0.15
   markerId: af28a1b8189b45c9acbfdb853ab727e8
   nodeName: test_01
   useControllerDefaultStyle: 1
@@ -623,6 +680,61 @@ MonoBehaviour:
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
   bubbleActorKey: 
+--- !u!114 &8810208586813070218
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
+  m_Time: 0.13333333333333333
+  markerId: b54ce1cc452640199bb972d5f3803eb5
+  markerMode: 1
+  panelObject:
+    exposedName: 
+    defaultValue: {fileID: 0}
+  panelPresenter:
+    exposedName: 
+    defaultValue: {fileID: 0}
+  panelPresenterName: TutorialView
+  panelKind: 0
+  diaryEntryData: {fileID: 0}
+  collectDiaryOnClose: 0
+  title: 
+  body: 
+  closeLabel: 
+  illustration: {fileID: 5684639667912481340, guid: 51e44b2fa068dbe48ab8ae556dd6a983, type: 3}
+  animationFrames:
+  - {fileID: 8152383114581043371, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: -6368145617101811964, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: -5095350033197084485, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 4343311520036043448, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 1182320541147543958, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 9009447597312504714, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 8949978873818198345, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 6866249974247278883, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 4106281639395321768, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: -5020279325869342020, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 15774093725256625, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 9211784454458576796, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 5642148721936390687, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: -1651792978619646636, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 1055045310221324785, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: 175670492865351536, guid: 53f3cba1f2569ce40ae4f64a4abf8bef, type: 3}
+  - {fileID: -6195149558338675425, guid: 4e6224c562f4fd4408244491f8b82a2e, type: 3}
+  - {fileID: 696442681471543072, guid: 4e6224c562f4fd4408244491f8b82a2e, type: 3}
+  - {fileID: -2314259120897181164, guid: 4e6224c562f4fd4408244491f8b82a2e, type: 3}
+  - {fileID: 4549201057751625474, guid: 4e6224c562f4fd4408244491f8b82a2e, type: 3}
+  - {fileID: 4549201057751625474, guid: 4e6224c562f4fd4408244491f8b82a2e, type: 3}
+  animationFramesPerSecond: 30
+  animationLoopIntervalSeconds: 0.5
+  pauseTimelineUntilClosed: 1
+  autoCloseSecondsWhenNoButton: 3
 --- !u!114 &9018057022353266388
 MonoBehaviour:
   m_ObjectHideFlags: 1

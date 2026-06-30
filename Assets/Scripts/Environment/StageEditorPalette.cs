@@ -17,6 +17,15 @@ namespace EditorTools
         I
     }
 
+    public enum WaterFloorFace
+    {
+        A,
+        B,
+        C,
+        D,
+        E
+    }
+
     [Serializable]
     public class StageBlockTileSet
     {
@@ -111,6 +120,106 @@ namespace EditorTools
         }
     }
 
+    [Serializable]
+    public class WaterFloorTileSet
+    {
+        [SerializeField] private string displayName = "Water Floor";
+        [SerializeField] private TileBase a;
+        [SerializeField] private TileBase b;
+        [SerializeField] private TileBase c;
+        [SerializeField] private TileBase d;
+        [SerializeField] private TileBase e;
+
+        public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? "Water Floor" : displayName;
+
+        public TileBase GetTile(WaterFloorFace face)
+        {
+            switch (face)
+            {
+                case WaterFloorFace.A:
+                    return a;
+                case WaterFloorFace.B:
+                    return b;
+                case WaterFloorFace.C:
+                    return c;
+                case WaterFloorFace.D:
+                    return d;
+                case WaterFloorFace.E:
+                    return e;
+                default:
+                    return null;
+            }
+        }
+
+        public bool Contains(TileBase tile)
+        {
+            if (tile == null)
+            {
+                return false;
+            }
+
+            return tile == a ||
+                   tile == b ||
+                   tile == c ||
+                   tile == d ||
+                   tile == e;
+        }
+
+        public bool HasTile(WaterFloorFace face)
+        {
+            return GetTile(face) != null;
+        }
+
+        public bool HasAllTiles()
+        {
+            return a != null &&
+                   b != null &&
+                   c != null &&
+                   d != null &&
+                   e != null;
+        }
+
+        public TileBase FirstAvailableTile()
+        {
+            for (int index = 0; index < 5; index++)
+            {
+                TileBase tile = GetTile((WaterFloorFace)index);
+                if (tile != null)
+                {
+                    return tile;
+                }
+            }
+
+            return null;
+        }
+
+        public void SetTiles(TileBase aTile, TileBase bTile, TileBase cTile, TileBase dTile, TileBase eTile)
+        {
+            a = aTile;
+            b = bTile;
+            c = cTile;
+            d = dTile;
+            e = eTile;
+        }
+
+        public void CopyFrom(WaterFloorTileSet source)
+        {
+            if (source == null)
+            {
+                SetTiles(null, null, null, null, null);
+                return;
+            }
+
+            displayName = source.DisplayName;
+            SetTiles(
+                source.GetTile(WaterFloorFace.A),
+                source.GetTile(WaterFloorFace.B),
+                source.GetTile(WaterFloorFace.C),
+                source.GetTile(WaterFloorFace.D),
+                source.GetTile(WaterFloorFace.E));
+        }
+    }
+
     /// <summary>
     /// Data used by the Stage Editor for prefabs and block tiles.
     /// </summary>
@@ -124,6 +233,7 @@ namespace EditorTools
         [SerializeField] private StageBlockTileSet stage1Blocks;
         [SerializeField] private StageBlockTileSet stage2Blocks;
         [SerializeField] private StageBlockTileSet stage3Blocks;
+        [SerializeField] private WaterFloorTileSet waterFloorTiles;
 
         /// <summary>Prefab used for player placement.</summary>
         public GameObject PlayerPrefab => playerPrefab;
@@ -145,6 +255,8 @@ namespace EditorTools
         public StageBlockTileSet Stage2Blocks => stage2Blocks;
 
         public StageBlockTileSet Stage3Blocks => stage3Blocks;
+
+        public WaterFloorTileSet WaterFloorTiles => waterFloorTiles;
 
         public StageBlockTileSet GetBlockTileSet(int index)
         {

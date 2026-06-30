@@ -155,6 +155,7 @@ MonoBehaviour:
   hitPoints: 1
   breakEffectPrefab: {fileID: 0}
   breakSe: {fileID: 0}
+  breakSeVolume: 1
   destroyOnBreak: 1
   forceColliderAsSolid: 1
   forceStaticBody: 1

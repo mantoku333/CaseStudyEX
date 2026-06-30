@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Camera transition volume for vertical movement between two stacked room areas.
@@ -32,11 +33,11 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
     [SerializeField] private CinemachineCamera transitionCamera;
     [SerializeField] private int transitionPriority = 30;
     [SerializeField] private PortalDirection direction = PortalDirection.Bidirectional;
-    [SerializeField, Range(0f, 1f)] private float startTargetRoomWeight = 0.35f;
-    [SerializeField, Range(0f, 1f)] private float targetTargetRoomWeight = 1f;
-    [SerializeField, Min(0f)] private float previewDuration = 0.75f;
+
+    [FormerlySerializedAs("startTargetRoomWeight")]
+    [SerializeField, Range(0f, 1f)] private float portalRoomWeight = 0.35f;
+
     [SerializeField, Min(0f)] private float smoothTime = 0.12f;
-    [SerializeField, Min(0f)] private float playerPadding = 2.5f;
     [SerializeField, Min(0f)] private float minimumOrthographicSize;
     [SerializeField] private bool commitWhenPlayerFullyInsideTargetRoom;
     [SerializeField] private bool commitByPortalExitSide = true;
@@ -53,7 +54,6 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
     private Vector3 followOffsetAtEntry;
     private Vector3 transitionVelocity;
     private float transitionZoomVelocity;
-    private float transitionElapsed;
     private bool transitionActive;
     private bool transitionCommitted;
 
@@ -66,7 +66,6 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         followOffsetAtEntry = Vector3.zero;
         transitionVelocity = Vector3.zero;
         transitionZoomVelocity = 0f;
-        transitionElapsed = 0f;
         transitionCommitted = false;
         StopTransitionCamera();
     }
@@ -115,7 +114,10 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
         Vector3 playerCommitPoint = ResolvePlayerCommitPoint(player, player.position);
         BeginTransition(playerCommitPoint);
-        StartTransitionCamera(playerCommitPoint);
+        if (CanPreviewPendingRoom())
+        {
+            StartTransitionCamera(playerCommitPoint);
+        }
     }
 
     private void BeginTransition(Vector3 playerPosition)
@@ -130,6 +132,11 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
     private void CommitExit(Vector3 playerPosition)
     {
         RoomCameraTrigger finalRoom = ResolveExitRoom(playerPosition);
+        if (finalRoom == pendingToRoom && !CanPreviewPendingRoom())
+        {
+            finalRoom = pendingFromRoom;
+        }
+
         CommitToRoom(finalRoom);
     }
 
@@ -189,15 +196,36 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         camera.Priority.Value = transitionPriority;
         transitionVelocity = Vector3.zero;
         transitionZoomVelocity = 0f;
-        transitionElapsed = 0f;
         transitionActive = true;
     }
 
     private void UpdateTransitionCamera()
     {
-        if (transitionCommitted || !transitionActive || playerTransform == null)
+        if (transitionCommitted || playerTransform == null)
         {
             return;
+        }
+
+        if (!CanPreviewPendingRoom())
+        {
+            if (transitionActive)
+            {
+                StopTransitionCamera();
+            }
+
+            return;
+        }
+
+        if (!transitionActive)
+        {
+            Vector3 startPosition = ResolvePlayerCommitPoint(
+                playerTransform,
+                playerTransform.position);
+            StartTransitionCamera(startPosition);
+            if (!transitionActive)
+            {
+                return;
+            }
         }
 
         if (TryCommitFullyEnteredTargetRoom())
@@ -211,7 +239,6 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
             return;
         }
 
-        transitionElapsed += Time.deltaTime;
         Vector3 playerPosition = ResolvePlayerCommitPoint(playerTransform, playerTransform.position);
         CameraPose targetPose = BuildTransitionPose(playerPosition);
         if (smoothTime <= 0f)
@@ -247,29 +274,17 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
             pendingToRoom,
             toPoseAtEntry,
             playerPosition,
-            false,
+            true,
             false);
 
         CameraPose pose;
-        float targetWeight = ResolveTargetRoomWeight();
-        pose.Position = Vector3.Lerp(fromPose.Position, toPose.Position, targetWeight);
+        pose.Position = Vector3.Lerp(fromPose.Position, toPose.Position, portalRoomWeight);
         pose.OrthographicSize = Mathf.Max(
             minimumOrthographicSize,
-            Mathf.Lerp(fromPose.OrthographicSize, toPose.OrthographicSize, targetWeight));
+            Mathf.Lerp(fromPose.OrthographicSize, toPose.OrthographicSize, portalRoomWeight));
 
-        KeepPlayerInsideView(ref pose, playerPosition);
+        pose.Position.x = fromPoseAtEntry.Position.x;
         return pose;
-    }
-
-    private float ResolveTargetRoomWeight()
-    {
-        if (previewDuration <= 0f)
-        {
-            return targetTargetRoomWeight;
-        }
-
-        float t = Mathf.Clamp01(transitionElapsed / previewDuration);
-        return Mathf.SmoothStep(startTargetRoomWeight, targetTargetRoomWeight, t);
     }
 
     private CameraPose ResolveRoomPose(
@@ -558,36 +573,12 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
             camera.Lens.OrthographicSize);
     }
 
-    private void KeepPlayerInsideView(ref CameraPose pose, Vector3 playerPosition)
-    {
-        float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
-        float halfHeight = Mathf.Max(0.1f, pose.OrthographicSize - playerPadding);
-        float halfWidth = Mathf.Max(0.1f, pose.OrthographicSize * aspect - playerPadding);
-
-        if (playerPosition.x < pose.Position.x - halfWidth)
-        {
-            pose.Position.x = playerPosition.x + halfWidth;
-        }
-        else if (playerPosition.x > pose.Position.x + halfWidth)
-        {
-            pose.Position.x = playerPosition.x - halfWidth;
-        }
-
-        if (playerPosition.y < pose.Position.y - halfHeight)
-        {
-            pose.Position.y = playerPosition.y + halfHeight;
-        }
-        else if (playerPosition.y > pose.Position.y + halfHeight)
-        {
-            pose.Position.y = playerPosition.y - halfHeight;
-        }
-    }
-
     private bool TryCommitFullyEnteredTargetRoom()
     {
         if (!commitWhenPlayerFullyInsideTargetRoom ||
             playerTransform == null ||
             pendingToRoom == null ||
+            !CanPreviewPendingRoom() ||
             !IsPlayerFullyInsideRoom(pendingToRoom))
         {
             return false;
@@ -608,6 +599,14 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         room.ActivateCamera();
         StopTransitionCamera();
         transitionCommitted = true;
+    }
+
+    private bool CanPreviewPendingRoom()
+    {
+        return RoomPortalAccessCondition.AllowsPreview(
+            this,
+            pendingFromRoom,
+            pendingToRoom);
     }
 
     private bool IsPlayerFullyInsideRoom(RoomCameraTrigger room)

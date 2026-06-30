@@ -4,9 +4,10 @@ using UnityEngine.Timeline;
 
 [System.Serializable]
 [HideInMenu]
-[DisplayName("Story/Audio Point")]
+[DisplayName("Audio/Point")]
 public sealed class StoryAudioMarker : Marker
 {
+    [Tooltip("Audio Point plays through StoryTimelineRuntime, so playback is not bound to Timeline pause or resume.")]
     [SerializeField] private StoryTimelineAudioKind audioKind = StoryTimelineAudioKind.Se;
     [SerializeField] private StoryTimelineAudioAction action = StoryTimelineAudioAction.Play;
     [SerializeField] private AudioClip audioClip;

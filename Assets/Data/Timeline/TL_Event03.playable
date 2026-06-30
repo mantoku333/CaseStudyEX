@@ -92,33 +92,6 @@ MonoBehaviour:
     m_DisplayName: StoryObjectMoveClip
   m_Markers:
     m_Objects: []
---- !u!114 &-8455305301741701886
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b22792c3b570444eb18cb78c2af3a74, type: 3}
-  m_Name: Audio Track
-  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.AudioTrack
-  m_Version: 3
-  m_AnimClip: {fileID: 0}
-  m_Locked: 0
-  m_Muted: 0
-  m_CustomPlayableFullTypename: 
-  m_Curves: {fileID: 0}
-  m_Parent: {fileID: 11400000}
-  m_Children: []
-  m_Clips: []
-  m_Markers:
-    m_Objects: []
-  m_TrackProperties:
-    volume: 1
-    stereoPan: 0
-    spatialBlend: 0
 --- !u!114 &-6122209638621462820
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -160,12 +133,6 @@ MonoBehaviour:
   m_Markers:
     m_Objects:
     - {fileID: -3543721811740217886}
-    - {fileID: -4403982217242846192}
-    - {fileID: -2073824339582600517}
-    - {fileID: 8340132531640153485}
-    - {fileID: -1850197409799598628}
-    - {fileID: -1907171916938764281}
-    - {fileID: 4347346118750407989}
 --- !u!114 &-4819130723759348321
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -248,7 +215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
   m_Name: Story/Yarn Dialogue Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 0.1
+  m_Time: 0.11666666666666667
   markerId: 4307f155624846d39a59504c037c4c94
   nodeName: TutorialStory_Attack1
   useControllerDefaultStyle: 1
@@ -277,8 +244,7 @@ MonoBehaviour:
   - {fileID: -8539405550118696819}
   - {fileID: 9018057022353266388}
   - {fileID: 1112982847894433}
-  - {fileID: -8455305301741701886}
-  m_FixedDuration: 0.85
+  m_FixedDuration: 0.21666666666666667
   m_EditorSettings:
     m_Framerate: 60
     m_ScenePreview: 1
@@ -299,7 +265,7 @@ MonoBehaviour:
   m_Version: 3
   m_AnimClip: {fileID: 0}
   m_Locked: 0
-  m_Muted: 1
+  m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
@@ -333,7 +299,7 @@ MonoBehaviour:
     m_Start: 0
     m_ClipIn: 0
     m_Asset: {fileID: -6122209638621462820}
-    m_Duration: 0.5666666666666667
+    m_Duration: 0.21666666666666667
     m_TimeScale: 1
     m_ParentTrack: {fileID: 149827093544674222}
     m_EaseInDuration: 0
@@ -423,6 +389,25 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
+--- !u!114 &1514726616637349562
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 662be744134a56144b84df107eb21272, type: 3}
+  m_Name: Story/Audio Point
+  m_EditorClassIdentifier: Assembly-CSharp::StoryAudioMarker
+  m_Time: 0.21666666666666667
+  audioKind: 1
+  action: 0
+  audioClip: {fileID: 8300000, guid: f1febc82980c844ac845d5d74d1e08e2, type: 3}
+  volume: 1
+  loop: 0
+  fadeSeconds: 0
 --- !u!114 &8561065495896680998
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -435,9 +420,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
   m_Name: Event/Panel Point
   m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
-  m_Time: 0.5666666666666667
+  m_Time: 0.15
   markerId: fd40845972ef46b19fe643c3bb200821
-  markerMode: 0
+  markerMode: 1
   panelObject:
     exposedName: 75b8291ec6091904284b4ee4445c391d
     defaultValue: {fileID: 0}
@@ -447,12 +432,27 @@ MonoBehaviour:
   panelPresenterName: TutorialView
   panelKind: 0
   diaryEntryData: {fileID: 0}
+  collectDiaryOnClose: 0
   title: 
   body: 
   closeLabel: 
-  illustration: {fileID: 0}
-  animationFrames: []
-  animationFramesPerSecond: 12
+  illustration: {fileID: 968655641620669233, guid: 1cccab5fccac7ae40bbc6d253a2798bd, type: 3}
+  animationFrames:
+  - {fileID: -8011036441523943339, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: -773474076320456115, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: -655322560539089551, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: -2424350563587162302, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: 7594240634221896692, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: 5173630548638396427, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: -1644127670990559900, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: -4407601060775894336, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: 4138615175428421088, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: -5425894282643783593, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: 8301243705581677691, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: 4062011983671510715, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: 1883398019648039864, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  - {fileID: 1594199424148718425, guid: a4d24218aca8fd748bd3970fc661efaa, type: 3}
+  animationFramesPerSecond: 30
   animationLoopIntervalSeconds: 0.5
   pauseTimelineUntilClosed: 1
   autoCloseSecondsWhenNoButton: 3

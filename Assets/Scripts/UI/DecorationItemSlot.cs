@@ -56,6 +56,7 @@ public sealed class DecorationItemSlot : MonoBehaviour
         {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(OnClick);
+            UIButtonSfxPlayer.Register(button);
         }
     }
 

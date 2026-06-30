@@ -125,7 +125,8 @@ public static class MinimapFuyuno3Bootstrap
                     "Boss Room",
                     new Vector2Int(5, 0),
                     new Vector2Int(3, 1),
-                    MinimapConnection.Left)
+                    MinimapConnection.Left,
+                    true)
             }
         };
 
