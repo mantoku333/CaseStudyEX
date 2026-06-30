@@ -272,6 +272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameName.Enemy.EnemyController2D
   moveSpeed: 0
   patrolDistance: 0
+  randomizeInitialDirection: 0
   damageToPlayer: 5
   maxHealth: 40
   backAttackDamageMultiplier: 2
@@ -331,8 +332,8 @@ MonoBehaviour:
   frameCount: 60
   pixelsPerUnit: 100
   localOffset: {x: 0, y: 0, z: 0}
-  forwardOffset: 1
-  effectScale: {x: 2, y: 2, z: 1}
+  forwardOffset: 1.8
+  effectScale: {x: 3.6, y: 3.6, z: 1}
   parentToFirePoint: 1
   sortingOrderOffset: 3
   copyEnemyMaterial: 1
