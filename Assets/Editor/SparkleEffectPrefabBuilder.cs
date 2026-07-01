@@ -74,9 +74,7 @@ public static class SparkleEffectPrefabBuilder
         main.startSpeed = new ParticleSystem.MinMaxCurve(1.2f, 2.6f);
         main.startSize = new ParticleSystem.MinMaxCurve(0.06f, 0.16f);
         main.startRotation = new ParticleSystem.MinMaxCurve(-Mathf.PI, Mathf.PI);
-        main.startColor = new ParticleSystem.MinMaxGradient(
-            new Color(1f, 0.94f, 0.55f, 1f),
-            new Color(0.75f, 0.95f, 1f, 1f));
+        main.startColor = Color.white;
         main.gravityModifier = -0.12f;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
         main.playOnAwake = true;
@@ -97,9 +95,9 @@ public static class SparkleEffectPrefabBuilder
         ParticleSystem.ColorOverLifetimeModule colorOverLifetime = particleSystem.colorOverLifetime;
         colorOverLifetime.enabled = true;
         colorOverLifetime.color = BuildFadeGradient(
-            new Color(1f, 0.98f, 0.78f, 0f),
-            new Color(1f, 0.96f, 0.62f, 1f),
-            new Color(0.7f, 0.95f, 1f, 0f));
+            new Color(1f, 1f, 1f, 0f),
+            new Color(1f, 1f, 1f, 1f),
+            new Color(1f, 1f, 1f, 0f));
 
         ParticleSystem.SizeOverLifetimeModule sizeOverLifetime = particleSystem.sizeOverLifetime;
         sizeOverLifetime.enabled = true;
@@ -115,7 +113,7 @@ public static class SparkleEffectPrefabBuilder
 
         ParticleSystemRenderer renderer = particleSystem.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
-        renderer.sortingOrder = 25;
+        renderer.sortingOrder = 0;
         renderer.sharedMaterial = material;
     }
 
@@ -128,9 +126,7 @@ public static class SparkleEffectPrefabBuilder
         main.startLifetime = new ParticleSystem.MinMaxCurve(0.45f, 0.9f);
         main.startSpeed = new ParticleSystem.MinMaxCurve(0.15f, 0.75f);
         main.startSize = new ParticleSystem.MinMaxCurve(0.025f, 0.07f);
-        main.startColor = new ParticleSystem.MinMaxGradient(
-            new Color(1f, 1f, 1f, 0.8f),
-            new Color(0.9f, 0.92f, 1f, 0.65f));
+        main.startColor = new Color(1f, 1f, 1f, 0.75f);
         main.gravityModifier = -0.05f;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
         main.playOnAwake = true;
@@ -162,8 +158,8 @@ public static class SparkleEffectPrefabBuilder
         colorOverLifetime.enabled = true;
         colorOverLifetime.color = BuildFadeGradient(
             new Color(1f, 1f, 1f, 0f),
-            new Color(0.92f, 0.96f, 1f, 0.7f),
-            new Color(0.85f, 0.92f, 1f, 0f));
+            new Color(1f, 1f, 1f, 0.7f),
+            new Color(1f, 1f, 1f, 0f));
 
         ParticleSystem.SizeOverLifetimeModule sizeOverLifetime = particleSystem.sizeOverLifetime;
         sizeOverLifetime.enabled = true;
@@ -174,7 +170,7 @@ public static class SparkleEffectPrefabBuilder
 
         ParticleSystemRenderer renderer = particleSystem.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Billboard;
-        renderer.sortingOrder = 24;
+        renderer.sortingOrder = 0;
         renderer.sharedMaterial = material;
     }
 
