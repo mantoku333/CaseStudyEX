@@ -72,13 +72,7 @@ MonoBehaviour:
   m_Children: []
   m_Clips: []
   m_Markers:
-    m_Objects:
-    - {fileID: -4403982217242846192}
-    - {fileID: -2073824339582600517}
-    - {fileID: 8340132531640153485}
-    - {fileID: 3026920669365046440}
-    - {fileID: -1907171916938764281}
-    - {fileID: -1850197409799598628}
+    m_Objects: []
 --- !u!114 &-4819130723759348321
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -102,25 +96,6 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
---- !u!114 &-4403982217242846192
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 17.866666666666667
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_02
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
 --- !u!114 &-3805806930034002821
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -213,63 +188,6 @@ MonoBehaviour:
     m_DisplayName: StoryCameraShakeClip
   m_Markers:
     m_Objects: []
---- !u!114 &-2073824339582600517
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 22.866666666666674
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_03
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
---- !u!114 &-1907171916938764281
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 37.86666666666669
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_06
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
---- !u!114 &-1850197409799598628
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 32.86666666666669
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_05
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
 --- !u!114 &-823749366753058545
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -356,7 +274,6 @@ MonoBehaviour:
   m_Markers:
     m_Objects:
     - {fileID: -823749366753058545}
-    - {fileID: 9142402660110848016}
 --- !u!114 &149827093544674222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -403,25 +320,6 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
---- !u!114 &3026920669365046440
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 42.86666666666669
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_07
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
 --- !u!114 &5742001379958914921
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -437,25 +335,6 @@ MonoBehaviour:
   force: 1
   direction: 0
   customDirection: {x: 1, y: 0}
---- !u!114 &8340132531640153485
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 27.866666666666674
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_04
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
 --- !u!114 &9018057022353266388
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -479,36 +358,3 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
---- !u!114 &9142402660110848016
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
-  m_Time: 0
-  markerId: 6b89f3fc7d37438e99de087a2e71d9cb
-  markerMode: 0
-  panelObject:
-    exposedName: 5573831cd44733442baf7ddabd72aa58
-    defaultValue: {fileID: 0}
-  panelPresenter:
-    exposedName: 847b532a08f4fe049bfd403b4ac2d3b2
-    defaultValue: {fileID: 0}
-  panelPresenterName: 
-  panelKind: 0
-  diaryEntryData: {fileID: 0}
-  title: 
-  body: 
-  closeLabel: 
-  illustration: {fileID: 0}
-  animationFrames: []
-  animationFramesPerSecond: 12
-  animationLoopIntervalSeconds: 0.5
-  pauseTimelineUntilClosed: 1
-  autoCloseSecondsWhenNoButton: 3
