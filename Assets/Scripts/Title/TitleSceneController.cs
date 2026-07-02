@@ -82,6 +82,7 @@ public class TitleSceneController : MonoBehaviour
         }
 
         quitConfirmPanel.SetActive(true);
+        TitleButtonState.ResetPointerVisualMode();
 
         if (EventSystem.current != null && noButton != null)
         {
