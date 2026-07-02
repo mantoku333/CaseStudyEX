@@ -12,6 +12,9 @@ public class DodgeController : MonoBehaviour
     [Header("回避クールタイム")]
     [SerializeField, Min(0f)] private float dodgeCooldown = 0.5f;
 
+    [Header("回避後無敵")]
+    [SerializeField, Min(0f)] private float postDodgeInvincibleSeconds = 0.25f;
+
     [Header("空中回避軌道")]
     [SerializeField, Tooltip("有効にすると、空中回避だけ真横ではなく少し落下する軌道にします。")]
     private bool enableAirDodgeTrajectoryAdjustment = true;
@@ -28,6 +31,8 @@ public class DodgeController : MonoBehaviour
 
     private bool isDodging = false;   //回避中かどうかのフラグ
     private float nextDodgeTime;
+    private float dodgeInvincibleUntilTime;
+    private int dodgeInvincibleSequence;
     private bool dodgeMovementCancelled;
     private Rigidbody2D rigidBody2d;  //Rigidbody2Dコンポーネント
     private PlayerCollisionMover2D collisionMover;
@@ -44,6 +49,7 @@ public class DodgeController : MonoBehaviour
     private bool areaDodgeConfineY;
     private bool areaDodgeConfineYForDynamicBodies;
     private Collider2D areaDodgeBodyCollider;
+
 
     private void Awake()
     {
@@ -69,6 +75,7 @@ public class DodgeController : MonoBehaviour
         dodgeDistance = Mathf.Max(0f, dodgeDistance);
         dodgeDuration = Mathf.Max(0.01f, dodgeDuration);
         dodgeCooldown = Mathf.Max(0f, dodgeCooldown);
+        postDodgeInvincibleSeconds = Mathf.Max(0f, postDodgeInvincibleSeconds);
         airDodgeHorizontalDistanceMultiplier = Mathf.Clamp(airDodgeHorizontalDistanceMultiplier, 0f, 1.5f);
         airDodgeDownwardOffset = Mathf.Max(0f, airDodgeDownwardOffset);
     }
@@ -181,8 +188,12 @@ public class DodgeController : MonoBehaviour
         if (rigidBody2d == null) { return; }
 
         isDodging = true;
+        dodgeInvincibleUntilTime
+            = Time.time + dodgeDuration + postDodgeInvincibleSeconds; //回避開始時に無敵の終了時間を計算し設定
+        int currentDodgeInvincibleSequence = ++dodgeInvincibleSequence;
         nextDodgeTime = Time.unscaledTime + dodgeCooldown;
         dodgeMovementCancelled = false;
+        Debug.Log("回避を開始しました");
         PlayDodgeSe();
 
         Vector2 velocity = rigidBody2d.linearVelocity;
@@ -216,7 +227,10 @@ public class DodgeController : MonoBehaviour
         MoveToDodgePosition(targetPos);
 
         dodgeMovementCancelled = false;
+        Debug.Log("回避を終了しました");
         isDodging = false;
+
+        await LogDodgeInvincibleEndAsync(currentDodgeInvincibleSequence);
     }
 
     private void PlayDodgeSe()
@@ -244,6 +258,24 @@ public class DodgeController : MonoBehaviour
     public bool IsDodging()
     {
         return isDodging;
+    }
+
+    public bool IsDodgeInvincible()
+    {
+        return isDodging || Time.time < dodgeInvincibleUntilTime;
+    }
+
+    private async UniTask LogDodgeInvincibleEndAsync(int sequence)
+    {
+        while (Time.time < dodgeInvincibleUntilTime)
+        {
+            await UniTask.Yield();
+        }
+
+        if (sequence == dodgeInvincibleSequence && !isDodging)
+        {
+            Debug.Log("回避の無敵時間が終了しました");
+        }
     }
 
     private Vector2 ResolveReachableDodgeTarget(Vector2 startPosition, Vector2 desiredDelta)
