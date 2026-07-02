@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5677133075464715223}
   - component: {fileID: 4800481580561749407}
   - component: {fileID: 5128999057470847238}
-  - component: {fileID: 6043493292014972630}
   m_Layer: 0
   m_Name: FX_Action
   m_TagString: Untagged
@@ -53,7 +52,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -4806,7 +4805,7 @@ ParticleSystemRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 50
   m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -4839,412 +4838,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &6043493292014972630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4914264783026443649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89528d36304a434d8f58e017da0b0a58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetPlayer: {fileID: 0}
-  autoFindPlayerOnStart: 1
-  followPlayer: 1
-  mirrorOffsetByFacing: 1
-  comboGraceSeconds: 1.2
-  includeRootParticleSystem: 0
-  stopIgnoredRootParticleSystem: 1
-  actionParticleSystems:
-  - {fileID: 2160200920483181721}
-  - {fileID: 3653460312585159099}
-  comboTrailParticleSystems: []
-  preservePrefabParticleSettings: 1
-  eleganceLevel: 0
-  levelSettings:
-  - label: Lv0 Off
-    emissionEnabled: 0
-    rateOverTime: 0
-    startSize: 0
-    startLifetime: 0
-    startSpeed: 0
-    overrideStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 0}
-    gravityModifier: 0
-    simulationSpeed: 1
-    maxParticles: 200
-    overrideShape: 0
-    shapeEnabled: 1
-    shapeType: 4
-    shapeRadius: 0.15
-    shapeAngle: 25
-    shapeScale: {x: 1, y: 1, z: 1}
-    overrideNoise: 0
-    noiseEnabled: 0
-    noiseStrength: 0.15
-    noiseFrequency: 0.6
-    noiseScrollSpeed: 0.25
-    overrideColorOverLifetime: 0
-    colorOverLifetimeEnabled: 1
-    colorOverLifetime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 45875
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: -1
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    particleLayers:
-    - label: Layer 0
-      enabled: 1
-      rateMultiplier: 1
-      sizeMultiplier: 1
-      lifetimeMultiplier: 1
-      speedMultiplier: 1
-      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
-    - label: Layer 1
-      enabled: 1
-      rateMultiplier: 1
-      sizeMultiplier: 1
-      lifetimeMultiplier: 1
-      speedMultiplier: 1
-      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
-  - label: Lv1 Weak
-    emissionEnabled: 1
-    rateOverTime: 0.45
-    startSize: 0.85
-    startLifetime: 0.9
-    startSpeed: 0.85
-    overrideStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    gravityModifier: 0
-    simulationSpeed: 1
-    maxParticles: 200
-    overrideShape: 0
-    shapeEnabled: 1
-    shapeType: 4
-    shapeRadius: 0.15
-    shapeAngle: 25
-    shapeScale: {x: 1, y: 1, z: 1}
-    overrideNoise: 0
-    noiseEnabled: 0
-    noiseStrength: 0.15
-    noiseFrequency: 0.6
-    noiseScrollSpeed: 0.25
-    overrideColorOverLifetime: 0
-    colorOverLifetimeEnabled: 1
-    colorOverLifetime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 45875
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: -1
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    particleLayers:
-    - label: Layer 0
-      enabled: 1
-      rateMultiplier: 1
-      sizeMultiplier: 1
-      lifetimeMultiplier: 1
-      speedMultiplier: 1
-      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
-    - label: Layer 1
-      enabled: 1
-      rateMultiplier: 1
-      sizeMultiplier: 1
-      lifetimeMultiplier: 1
-      speedMultiplier: 1
-      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
-  - label: Lv2 Flow
-    emissionEnabled: 1
-    rateOverTime: 0.75
-    startSize: 1
-    startLifetime: 1
-    startSpeed: 1
-    overrideStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    gravityModifier: 0
-    simulationSpeed: 1
-    maxParticles: 200
-    overrideShape: 0
-    shapeEnabled: 1
-    shapeType: 4
-    shapeRadius: 0.15
-    shapeAngle: 25
-    shapeScale: {x: 1, y: 1, z: 1}
-    overrideNoise: 0
-    noiseEnabled: 0
-    noiseStrength: 0.15
-    noiseFrequency: 0.6
-    noiseScrollSpeed: 0.25
-    overrideColorOverLifetime: 0
-    colorOverLifetimeEnabled: 1
-    colorOverLifetime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 45875
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: -1
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    particleLayers:
-    - label: Layer 0
-      enabled: 1
-      rateMultiplier: 1
-      sizeMultiplier: 1
-      lifetimeMultiplier: 1
-      speedMultiplier: 1
-      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
-    - label: Layer 1
-      enabled: 1
-      rateMultiplier: 1
-      sizeMultiplier: 1
-      lifetimeMultiplier: 1
-      speedMultiplier: 1
-      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
-  - label: Lv3 Show
-    emissionEnabled: 1
-    rateOverTime: 1.15
-    startSize: 1.12
-    startLifetime: 1.05
-    startSpeed: 1.1
-    overrideStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    gravityModifier: 0
-    simulationSpeed: 1
-    maxParticles: 200
-    overrideShape: 0
-    shapeEnabled: 1
-    shapeType: 4
-    shapeRadius: 0.15
-    shapeAngle: 25
-    shapeScale: {x: 1, y: 1, z: 1}
-    overrideNoise: 0
-    noiseEnabled: 0
-    noiseStrength: 0.15
-    noiseFrequency: 0.6
-    noiseScrollSpeed: 0.25
-    overrideColorOverLifetime: 0
-    colorOverLifetimeEnabled: 1
-    colorOverLifetime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 45875
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: -1
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    particleLayers:
-    - label: Layer 0
-      enabled: 1
-      rateMultiplier: 1
-      sizeMultiplier: 1
-      lifetimeMultiplier: 1
-      speedMultiplier: 1
-      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
-    - label: Layer 1
-      enabled: 1
-      rateMultiplier: 1
-      sizeMultiplier: 1
-      lifetimeMultiplier: 1
-      speedMultiplier: 1
-      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
-  - label: Lv4 Bloom
-    emissionEnabled: 1
-    rateOverTime: 1.6
-    startSize: 1.28
-    startLifetime: 1.1
-    startSpeed: 1.25
-    overrideStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    gravityModifier: 0
-    simulationSpeed: 1
-    maxParticles: 200
-    overrideShape: 0
-    shapeEnabled: 1
-    shapeType: 4
-    shapeRadius: 0.15
-    shapeAngle: 25
-    shapeScale: {x: 1, y: 1, z: 1}
-    overrideNoise: 0
-    noiseEnabled: 0
-    noiseStrength: 0.15
-    noiseFrequency: 0.6
-    noiseScrollSpeed: 0.25
-    overrideColorOverLifetime: 0
-    colorOverLifetimeEnabled: 1
-    colorOverLifetime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 45875
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_ColorSpace: -1
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    particleLayers:
-    - label: Layer 0
-      enabled: 1
-      rateMultiplier: 1
-      sizeMultiplier: 1
-      lifetimeMultiplier: 1
-      speedMultiplier: 1
-      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
-    - label: Layer 1
-      enabled: 1
-      rateMultiplier: 1
-      sizeMultiplier: 1
-      lifetimeMultiplier: 1
-      speedMultiplier: 1
-      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
-  glidePreset:
-    label: Glide
-    localOffset: {x: -0.35, y: 0.55, z: 0}
-    localRotationEuler: {x: 0, y: 0, z: 180}
-    speedMultiplier: 0.9
-    overrideShape: 0
-    shapeType: 4
-    shapeRadius: 0.18
-  recoilJumpPreset:
-    label: Recoil Jump
-    localOffset: {x: 0, y: -0.35, z: 0}
-    localRotationEuler: {x: 0, y: 0, z: 0}
-    speedMultiplier: 1.25
-    overrideShape: 0
-    shapeType: 4
-    shapeRadius: 0.2
-  dodgePreset:
-    label: Dodge
-    localOffset: {x: -0.45, y: 0.15, z: 0}
-    localRotationEuler: {x: 0, y: 0, z: 90}
-    speedMultiplier: 1.35
-    overrideShape: 0
-    shapeType: 4
-    shapeRadius: 0.16
-  diveAttackPreset:
-    label: Dive Attack
-    localOffset: {x: 0, y: 0.55, z: 0}
-    localRotationEuler: {x: 0, y: 0, z: 180}
-    speedMultiplier: 1.5
-    overrideShape: 0
-    shapeType: 4
-    shapeRadius: 0.22
-  forcePreview: 0
-  previewEleganceLevel: 1
-  previewAction: 1
 --- !u!1001 &5197677806278417261
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5338,8 +4931,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: ShapeModule.type
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: ShapeModule.radius.value
@@ -5347,7 +4948,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: EmissionModule.m_BurstCount
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: ShapeModule.radiusThickness
@@ -5355,19 +4956,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 0.6
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 2.6
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: InitialModule.startSize.minScalar
-      value: 0.3
+      value: 0.06
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
-      value: 30
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: InitialModule.startColor.maxColor.a
@@ -5573,8 +5182,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: ShapeModule.type
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: ShapeModule.radius.value
@@ -5582,7 +5199,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: EmissionModule.m_BurstCount
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: ShapeModule.radiusThickness
@@ -5590,19 +5207,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 0.2
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 2.6
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: InitialModule.startSize.minScalar
-      value: 0.1
+      value: 0.06
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
-      value: 30
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 8832243457004690134, guid: 9c0b5c755ddb74c82bb9e998de4506f0, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
