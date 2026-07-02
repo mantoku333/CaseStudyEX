@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 8.3667, y: 0.1333, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -185,6 +185,7 @@ MonoBehaviour:
   justParryWindow: 1
   maxReflectDistance: 15
   reflectedDamageMultiplier: 4
+  reflectedHitGraceDistance: 2
 --- !u!114 &650300000000000001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,7 +196,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab7c9e44e7b8424c86a78d5f302e6579, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Enemy.EnemyBulletEffectPlayer
   loopSpriteSheet: {fileID: 2800000, guid: 1d6acb5c3d3bc92498c8f39c1117adce, type: 3}
   loopColumns: 5
@@ -213,9 +214,9 @@ MonoBehaviour:
   impactFrameCount: 15
   impactFrameSeconds: 0.033
   pixelsPerUnit: 100
-  loopScale: {x: 0.9, y: 0.9, z: 1}
-  outScale: {x: 0.75, y: 0.75, z: 1}
-  impactScale: {x: 1, y: 1, z: 1}
+  loopScale: {x: 1.62, y: 1.62, z: 1}
+  outScale: {x: 1.35, y: 1.35, z: 1}
+  impactScale: {x: 1.8, y: 1.8, z: 1}
   oneShotOffset: {x: 0, y: 0, z: 0}
   sortingOrder: 10
   forceWhiteColor: 1
