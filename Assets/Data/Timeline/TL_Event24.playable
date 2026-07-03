@@ -119,6 +119,25 @@ MonoBehaviour:
     volume: 1
     stereoPan: 0
     spatialBlend: 0
+--- !u!114 &-8227983408848640711
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
+  m_Time: 0.11666666666666667
+  markerId: c345359214d44956a7c9da7505d08244
+  nodeName: EeventStory03
+  useControllerDefaultStyle: 1
+  dialogueStyle: 1
+  pauseTimelineUntilComplete: 1
+  bubbleActorKey: 
 --- !u!114 &-5675552448397036753
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -139,78 +158,10 @@ MonoBehaviour:
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
   m_Children: []
-  m_Clips:
-  - m_Version: 1
-    m_Start: 0.11666666666666667
-    m_ClipIn: 0
-    m_Asset: {fileID: 2869561812980922962}
-    m_Duration: 2.466666666666667
-    m_TimeScale: 1
-    m_ParentTrack: {fileID: -5675552448397036753}
-    m_EaseInDuration: 0
-    m_EaseOutDuration: 0
-    m_BlendInDuration: 0
-    m_BlendOutDuration: 0
-    m_MixInCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_MixOutCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_BlendInCurveMode: 0
-    m_BlendOutCurveMode: 0
-    m_ExposedParameterNames: []
-    m_AnimationCurves: {fileID: 0}
-    m_Recordable: 0
-    m_PostExtrapolationMode: 0
-    m_PreExtrapolationMode: 0
-    m_PostExtrapolationTime: 0
-    m_PreExtrapolationTime: 0
-    m_DisplayName: StoryYarnDialogueClip
+  m_Clips: []
   m_Markers:
-    m_Objects: []
+    m_Objects:
+    - {fileID: -8227983408848640711}
 --- !u!114 &-4819130723759348321
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -441,24 +392,6 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
---- !u!114 &2869561812980922962
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a4da3f2323046fdbb3dc0f7ca40a6b8, type: 3}
-  m_Name: StoryYarnDialogueClip
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueClip
-  clipId: 11ba336f7a10453d92984f9a08b8cb35
-  nodeName: EeventStory03
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
 --- !u!114 &7398791834983163447
 MonoBehaviour:
   m_ObjectHideFlags: 1
