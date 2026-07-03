@@ -2769,3 +2769,11 @@ MonoBehaviour:
   logAutoSizeResult: 0
   normalizeTextMargin: 1
   normalizedTextMargin: {x: 0, y: 0, z: 12, w: 6}
+  autoLayoutBubbleElements: 1
+  speakerNamePlate: {fileID: 0}
+  nextMarker: {fileID: 0}
+  speakerNameOffset: {x: 0, y: 8}
+  nextMarkerBottomOffset: 22
+  irisSpeakerImage: {fileID: 0}
+  noxSpeakerImage: {fileID: 0}
+  autoResolveSpeakerImages: 1

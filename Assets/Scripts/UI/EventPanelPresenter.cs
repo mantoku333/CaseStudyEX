@@ -52,8 +52,14 @@ public sealed class EventPanelPresenter : MonoBehaviour
     [Header("Input")]
     [SerializeField] private bool closeOnSpace = true;
 
+    [Header("Fade")]
+    [SerializeField] private CanvasGroup panelCanvasGroup;
+    [SerializeField, Min(0f)] private float fadeInSeconds;
+    [SerializeField, Min(0f)] private float fadeOutSeconds;
+
     private Action onClosed;
     private Coroutine autoCloseRoutine;
+    private Coroutine fadeRoutine;
     private bool isVisible;
     private bool hidingInternal;
     private Sprite[] currentAnimationFrames = Array.Empty<Sprite>();
@@ -143,11 +149,13 @@ public sealed class EventPanelPresenter : MonoBehaviour
         }
 
         StopAutoCloseRoutine();
+        StopFadeRoutine();
         bool wasVisible = isVisible;
         bool isDiaryContent = content != null && content.kind == EventPanelKind.Diary;
         onClosed = closeCallback;
         ApplyContent(content);
         SetVisible(true);
+        PlayFadeInIfNeeded();
         RefreshDiaryBackdropImage();
         RefreshBodyScrollLayout();
 
@@ -172,8 +180,10 @@ public sealed class EventPanelPresenter : MonoBehaviour
         }
 
         StopAutoCloseRoutine();
+        StopFadeRoutine();
         onClosed = closeCallback;
         SetVisible(true);
+        PlayFadeInIfNeeded();
         RefreshDiaryBackdropImage();
         pendingBodyScrollRefresh = bodyScrollRect != null && bodyScrollContent != null;
         RefreshBodyScrollLayout();
@@ -203,8 +213,22 @@ public sealed class EventPanelPresenter : MonoBehaviour
             return;
         }
 
+        if (ShouldFadeOut())
+        {
+            StopAutoCloseRoutine();
+            StopFadeRoutine();
+            fadeRoutine = StartCoroutine(FadeOutThenHide(invokeCallback));
+            return;
+        }
+
+        HideImmediate(invokeCallback);
+    }
+
+    private void HideImmediate(bool invokeCallback)
+    {
         hidingInternal = true;
         StopAutoCloseRoutine();
+        StopFadeRoutine();
         SetVisible(false);
         currentAnimationFrames = Array.Empty<Sprite>();
         pendingBodyScrollRefresh = false;
@@ -218,6 +242,23 @@ public sealed class EventPanelPresenter : MonoBehaviour
         }
 
         hidingInternal = false;
+    }
+
+    private bool ShouldFadeOut()
+    {
+        return isVisible &&
+               fadeOutSeconds > 0f &&
+               isActiveAndEnabled &&
+               ResolvePanelCanvasGroup() != null;
+    }
+
+    private IEnumerator FadeOutThenHide(bool invokeCallback)
+    {
+        hidingInternal = true;
+        yield return FadeCanvasGroup(0f, fadeOutSeconds);
+        hidingInternal = false;
+        fadeRoutine = null;
+        HideImmediate(invokeCallback);
     }
 
     private IEnumerator AutoClose(float seconds)
@@ -246,6 +287,17 @@ public sealed class EventPanelPresenter : MonoBehaviour
 
         StopCoroutine(autoCloseRoutine);
         autoCloseRoutine = null;
+    }
+
+    private void StopFadeRoutine()
+    {
+        if (fadeRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(fadeRoutine);
+        fadeRoutine = null;
     }
 
     private void ApplyContent(EventPanelContent content)
@@ -616,6 +668,66 @@ public sealed class EventPanelPresenter : MonoBehaviour
         }
 
         RefreshDiaryBackdropImage();
+    }
+
+    private void PlayFadeInIfNeeded()
+    {
+        CanvasGroup canvasGroup = ResolvePanelCanvasGroup();
+        if (canvasGroup == null)
+        {
+            return;
+        }
+
+        StopFadeRoutine();
+        if (fadeInSeconds <= 0f)
+        {
+            canvasGroup.alpha = 1f;
+            return;
+        }
+
+        canvasGroup.alpha = 0f;
+        fadeRoutine = StartCoroutine(FadeCanvasGroup(1f, fadeInSeconds));
+    }
+
+    private IEnumerator FadeCanvasGroup(float targetAlpha, float seconds)
+    {
+        CanvasGroup canvasGroup = ResolvePanelCanvasGroup();
+        if (canvasGroup == null)
+        {
+            yield break;
+        }
+
+        float startAlpha = canvasGroup.alpha;
+        float duration = Mathf.Max(0.01f, seconds);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
+            yield return null;
+        }
+
+        canvasGroup.alpha = targetAlpha;
+        fadeRoutine = null;
+    }
+
+    private CanvasGroup ResolvePanelCanvasGroup()
+    {
+        if (panelCanvasGroup != null)
+        {
+            return panelCanvasGroup;
+        }
+
+        GameObject target = panelRoot != null ? panelRoot : gameObject;
+        if (target == null)
+        {
+            return null;
+        }
+
+        panelCanvasGroup = target.GetComponent<CanvasGroup>();
+        return panelCanvasGroup;
     }
 
     private bool ValidateRequiredReferences(float autoCloseSecondsWhenNoButton)

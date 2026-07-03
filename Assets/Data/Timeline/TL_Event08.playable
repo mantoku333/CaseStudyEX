@@ -106,7 +106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.AudioTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
-  m_Locked: 0
+  m_Locked: 1
   m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
@@ -139,10 +139,85 @@ MonoBehaviour:
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
   m_Children: []
-  m_Clips: []
+  m_Clips:
+  - m_Version: 1
+    m_Start: 0.06666666666666667
+    m_ClipIn: 0
+    m_Asset: {fileID: 4465498491066181583}
+    m_Duration: 0.7666666666666667
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: -5675552448397036753}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: 0
+    m_BlendOutDuration: 0
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: StoryYarnDialogueClip
   m_Markers:
     m_Objects:
-    - {fileID: -2743067259125845206}
+    - {fileID: 327608698108943624}
+    - {fileID: -4403982217242846192}
+    - {fileID: -2073824339582600517}
+    - {fileID: 8340132531640153485}
+    - {fileID: 3026920669365046440}
+    - {fileID: -1907171916938764281}
+    - {fileID: -1850197409799598628}
 --- !u!114 &-4819130723759348321
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -166,6 +241,25 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
+--- !u!114 &-4403982217242846192
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
+  m_Name: Story/Yarn Dialogue Point
+  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
+  m_Time: 17.866666666666667
+  markerId: e084d23cce954d0dac3494c348322d77
+  nodeName: test_02
+  useControllerDefaultStyle: 1
+  dialogueStyle: 1
+  pauseTimelineUntilComplete: 1
+  bubbleActorKey: 
 --- !u!114 &-3805806930034002821
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -189,7 +283,7 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
---- !u!114 &-2743067259125845206
+--- !u!114 &-2073824339582600517
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -199,15 +293,124 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: 
+  m_Name: Story/Yarn Dialogue Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 0.11666666666666667
-  markerId: 7ead00883dde40b4b864e716c3b72de7
-  nodeName: TutorialStory_Glide
+  m_Time: 22.866666666666674
+  markerId: e084d23cce954d0dac3494c348322d77
+  nodeName: test_03
   useControllerDefaultStyle: 1
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
   bubbleActorKey: 
+--- !u!114 &-1907171916938764281
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
+  m_Name: Story/Yarn Dialogue Point
+  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
+  m_Time: 37.86666666666669
+  markerId: e084d23cce954d0dac3494c348322d77
+  nodeName: test_06
+  useControllerDefaultStyle: 1
+  dialogueStyle: 1
+  pauseTimelineUntilComplete: 1
+  bubbleActorKey: 
+--- !u!114 &-1850197409799598628
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
+  m_Name: Story/Yarn Dialogue Point
+  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
+  m_Time: 32.86666666666669
+  markerId: e084d23cce954d0dac3494c348322d77
+  nodeName: test_05
+  useControllerDefaultStyle: 1
+  dialogueStyle: 1
+  pauseTimelineUntilComplete: 1
+  bubbleActorKey: 
+--- !u!114 &-559403127261465519
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
+  m_Time: 0.11666666666666667
+  markerId: acfc07fb78a0498caf478d037f70e3e0
+  markerMode: 1
+  panelObject:
+    exposedName: 
+    defaultValue: {fileID: 0}
+  panelPresenter:
+    exposedName: 
+    defaultValue: {fileID: 0}
+  panelPresenterName: TutorialView
+  panelKind: 0
+  diaryEntryData: {fileID: 0}
+  collectDiaryOnClose: 0
+  title: 
+  body: 
+  closeLabel: 
+  illustration: {fileID: 1134774262983277418, guid: acce28c141d14464aadff3a2c1920e30, type: 3}
+  animationFrames:
+  - {fileID: 547272735996893312, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 4260182939320931829, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: -2647089753416783099, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 1274406469212515908, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 671756515232349730, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: -5795948040014163936, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 6000053423925193067, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 6992524536920468423, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: -3272252235915841903, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: -8679326958289103421, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: -8201520937797541419, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 5086148858703205689, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 259730831694742680, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 1349477142905205166, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 928318841413939274, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 2462690090166872651, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 6289986078090414645, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -9143897472662961744, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 8273556124235115238, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 8966201429016027812, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -173647719396677390, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 6822019606185636804, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -5330029134186021869, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 7137705611000711182, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -6266289474916058231, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -5669853069227175865, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -4692921963961639819, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 3117164115997238619, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -9023211208836314688, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 8098241281340042003, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 6127790041191001571, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 8055967947268323736, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 6010659998615427241, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
+  - {fileID: -4704171619322872294, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
+  - {fileID: 4445258897571193940, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
+  - {fileID: 1228929565730294400, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
+  - {fileID: -2130727791062742564, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
+  animationFramesPerSecond: 30
+  animationLoopIntervalSeconds: 0.5
+  pauseTimelineUntilClosed: 1
+  autoCloseSecondsWhenNoButton: 3
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,7 +462,9 @@ MonoBehaviour:
   m_Children: []
   m_Clips: []
   m_Markers:
-    m_Objects: []
+    m_Objects:
+    - {fileID: 8561065495896680998}
+    - {fileID: -559403127261465519}
 --- !u!114 &149827093544674222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -352,6 +557,25 @@ MonoBehaviour:
     m_DisplayName: StoryCameraMoveClip
   m_Markers:
     m_Objects: []
+--- !u!114 &327608698108943624
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
+  m_Name: Story/Yarn Dialogue Point
+  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
+  m_Time: 0.8333333333333334
+  markerId: af28a1b8189b45c9acbfdb853ab727e8
+  nodeName: test_01
+  useControllerDefaultStyle: 1
+  dialogueStyle: 1
+  pauseTimelineUntilComplete: 1
+  bubbleActorKey: 
 --- !u!114 &1274885233549238161
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -375,6 +599,43 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
+--- !u!114 &3026920669365046440
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
+  m_Name: Story/Yarn Dialogue Point
+  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
+  m_Time: 42.86666666666669
+  markerId: e084d23cce954d0dac3494c348322d77
+  nodeName: test_07
+  useControllerDefaultStyle: 1
+  dialogueStyle: 1
+  pauseTimelineUntilComplete: 1
+  bubbleActorKey: 
+--- !u!114 &4465498491066181583
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a4da3f2323046fdbb3dc0f7ca40a6b8, type: 3}
+  m_Name: StoryYarnDialogueClip
+  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueClip
+  clipId: 1c439ee6848245a3b6b3b11b28155e28
+  nodeName: TutorialStory_Glide
+  useControllerDefaultStyle: 1
+  dialogueStyle: 1
+  pauseTimelineUntilComplete: 1
+  bubbleActorKey: 
 --- !u!114 &6687967747389635710
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -416,6 +677,114 @@ MonoBehaviour:
   worldPosition: {x: 0, y: 0, z: 0}
   keepCurrentZ: 1
   smoothStep: 1
+--- !u!114 &8340132531640153485
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
+  m_Name: Story/Yarn Dialogue Point
+  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
+  m_Time: 27.866666666666674
+  markerId: e084d23cce954d0dac3494c348322d77
+  nodeName: test_04
+  useControllerDefaultStyle: 1
+  dialogueStyle: 1
+  pauseTimelineUntilComplete: 1
+  bubbleActorKey: 
+--- !u!114 &8561065495896680998
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
+  m_Name: Event/Panel Point
+  m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
+  m_Time: 42.91666666666669
+  markerId: fd40845972ef46b19fe643c3bb200821
+  markerMode: 1
+  panelObject:
+    exposedName: 75b8291ec6091904284b4ee4445c391d
+    defaultValue: {fileID: 0}
+  panelPresenter:
+    exposedName: 9aadde69bc70a5e469624782ff1bdf36
+    defaultValue: {fileID: 0}
+  panelPresenterName: TutorialView
+  panelKind: 0
+  diaryEntryData: {fileID: 0}
+  collectDiaryOnClose: 0
+  title: 
+  body: 
+  closeLabel: 
+  illustration: {fileID: 1134774262983277418, guid: acce28c141d14464aadff3a2c1920e30, type: 3}
+  animationFrames:
+  - {fileID: 6398532992895567966, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 6334465542202308526, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -2266074707541393775, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 3827516983886061118, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 2329513681120006970, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -52607348152783240, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 103483345428722616, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -7309113378000962415, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -4508778449494888351, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -5909514550856225943, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -5954482351469753530, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 7997216393085619715, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 818632823107179384, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -6332303881136346038, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 5304488594039264005, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 1637929785684243139, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -5635232448908060653, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -5884408679422929518, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -134699393584573939, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -7536675235685669391, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 4439837765060010334, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -3469791911110914337, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -8490906779681320752, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -1151234397049541306, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -5143704232378994820, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 6363674799261513952, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -2698617553878928064, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 577413833630587268, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 6850484769221473023, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -7822216666339518476, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 815145540269974940, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 8350938588523390638, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 7894454620552223258, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 5323833392295460100, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 5148417435806478051, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 6693989842763716180, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -6306691456295968611, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -3958627141243884234, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 8847856569323612431, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 3184290157097297575, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -305247628470718941, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 2451094180295711908, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 2351476171385751068, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -1583483190715659625, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -1780407204451238841, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 8148390420589862103, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -8024314025245052846, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 7949949299919672130, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -7796493081902539791, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -7449337615109923576, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -2795239809450924303, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 2396597026298706903, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: 7968431701421264261, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -1000652574737754439, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  - {fileID: -700540763201263217, guid: 0c94cc9aba2426f4a9b748aa4ed3559f, type: 3}
+  animationFramesPerSecond: 30
+  animationLoopIntervalSeconds: 0.5
+  pauseTimelineUntilClosed: 1
+  autoCloseSecondsWhenNoButton: 3
 --- !u!114 &9018057022353266388
 MonoBehaviour:
   m_ObjectHideFlags: 1
