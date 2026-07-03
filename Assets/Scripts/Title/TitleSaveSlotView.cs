@@ -19,6 +19,19 @@ public sealed class TitleSaveSlotView : MonoBehaviour
 
     private TitleSceneController titleController;
 
+    public int SlotIndex => slotIndex;
+    public Button Button => button;
+    public Image StageThumbnailImage => stageThumbnailImage;
+    public TMP_Text SavedAtLabel => savedAtText;
+    public TMP_Text StageNameLabel => stageNameText;
+
+    public void ApplyDesign2Layout(Vector2 thumbnailSize)
+    {
+        stageThumbnailSize = thumbnailSize;
+        ResolveReferences();
+        ApplyThumbnailSize();
+    }
+
     private void Awake()
     {
         ResolveReferences();
