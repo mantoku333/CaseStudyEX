@@ -395,7 +395,7 @@ public sealed class TitleSaveListPanelDesign2Skin : MonoBehaviour
             return;
         }
 
-        SetRect(back, 1785f, 30f, 106f, 82f, new Vector2(0f, 1f));
+        SetRect(back, 1785f, 5f, 113f, 113f, new Vector2(0f, 1f));
         back.localScale = Vector3.one;
         Image image = back.GetComponent<Image>();
         if (image != null)
