@@ -336,6 +336,41 @@ public sealed class StoryEventController : MonoBehaviour
         return null;
     }
 
+    public bool TryGetAuthoredActorTransform(string actorKey, out Transform actorTransform)
+    {
+        actorTransform = null;
+        if (string.IsNullOrWhiteSpace(actorKey))
+        {
+            return false;
+        }
+
+        RebuildLookupCache();
+        string key = actorKey.Trim();
+
+        for (int i = 0; i < actorBindings.Count; i++)
+        {
+            ActorBinding binding = actorBindings[i];
+            if (binding == null || string.IsNullOrWhiteSpace(binding.actorKey))
+            {
+                continue;
+            }
+
+            if (binding.MatchesActorKey(key) && binding.actorRoot != null)
+            {
+                actorTransform = binding.actorRoot;
+                return true;
+            }
+        }
+
+        if (actorByKey.TryGetValue(key, out StoryEventActor actor) && actor != null)
+        {
+            actorTransform = actor.Root;
+            return actorTransform != null;
+        }
+
+        return false;
+    }
+
     public CinemachineCamera GetEventCameraForTimeline()
     {
         return activeEventCamera != null ? activeEventCamera : ResolveEventCamera();
@@ -565,7 +600,14 @@ public sealed class StoryEventController : MonoBehaviour
             yield return null;
         }
 
-        ProcessTimelinePoints(resolvedDirector, lastPointProcessTime, resolvedDirector.time);
+        ProcessTimelinePoints(
+            resolvedDirector,
+            lastPointProcessTime,
+            ResolveFinalTimelinePointProcessTime(resolvedDirector, lastPointProcessTime));
+        while (waitingDialogueCompletion)
+        {
+            yield return null;
+        }
 
         resolvedDirector.stopped -= OnDirectorStopped;
         ApplyCompletionState();
@@ -618,6 +660,23 @@ public sealed class StoryEventController : MonoBehaviour
                 PlayTimelinePoint(resolvedDirector, track, marker);
             }
         }
+    }
+
+    private static double ResolveFinalTimelinePointProcessTime(PlayableDirector resolvedDirector, double previousTime)
+    {
+        if (resolvedDirector == null)
+        {
+            return previousTime;
+        }
+
+        double currentTime = resolvedDirector.time;
+        double duration = resolvedDirector.duration;
+        if (double.IsInfinity(duration) || double.IsNaN(duration) || duration <= 0.000001d)
+        {
+            return currentTime;
+        }
+
+        return Math.Max(currentTime, Math.Max(previousTime, duration));
     }
 
     private static IEnumerable<TrackAsset> EnumerateTracks(TimelineAsset timelineAsset)
@@ -2059,8 +2118,20 @@ public sealed class StoryEventController : MonoBehaviour
             cameraStartOrthographicSize,
             cameraTargetOrthographicSize);
 
-        RestoreEventCameraPriority();
+        if (hasCameraTarget && targetUsesDefaultCamera)
+        {
+            CameraManager.Instance?.SuppressFollowCameraCenterOnActivateForFrames(6);
+            CameraManager.Instance?.TrySetFollowCameraPose(cameraTargetPosition, cameraTargetOrthographicSize);
+        }
+
         RestoreRoomCameraOnEventExit();
+
+        if (hasHandoffCamera)
+        {
+            yield return null;
+        }
+
+        RestoreEventCameraPriority();
     }
 
     private IEnumerator AnimatePresentationExit(

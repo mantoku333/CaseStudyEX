@@ -13,6 +13,7 @@ public partial class SROptions
     private static readonly bool EnableSaveLoadTrace = false;
     private int selectedSaveSlot = SaveManager.DefaultSlotIndex;
     private int selectedDebugTeleportPointIndex;
+    private int selectedDebugEventAreaIndex;
     private string debugTeleportStageId = string.Empty;
     private SaveSlotMeta SelectedSlotMeta => SaveManager.GetSlotMeta(selectedSaveSlot);
 
@@ -175,6 +176,76 @@ public partial class SROptions
 
         selectedDebugTeleportPointIndex = Mathf.Clamp(selectedDebugTeleportPointIndex, 0, points.Length - 1);
         TeleportPlayer(points[selectedDebugTeleportPointIndex]);
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("イベントエリア番号")]
+    [Sort(-89)]
+    [Increment(1)]
+    public int DebugEventAreaIndex
+    {
+        get => selectedDebugEventAreaIndex;
+        set => selectedDebugEventAreaIndex = Mathf.Max(0, value);
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("イベントエリア一覧")]
+    [Sort(-88)]
+    public string DebugEventAreaList
+    {
+        get
+        {
+            StoryEventTrigger2D[] triggers = CollectStoryEventTriggers();
+            if (triggers.Length == 0)
+            {
+                return "(none)";
+            }
+
+            string result = string.Empty;
+            for (int i = 0; i < triggers.Length; i++)
+            {
+                StoryEventTrigger2D trigger = triggers[i];
+                Vector3 position = ResolveEventAreaTeleportPosition(trigger);
+                string label = BuildEventAreaLabel(trigger);
+                string line = $"{i}: {label} ({position.x:0.##}, {position.y:0.##})";
+                result = string.IsNullOrEmpty(result) ? line : $"{result}\n{line}";
+            }
+
+            return result;
+        }
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("次のイベントエリア")]
+    [Sort(-87)]
+    public void SelectNextDebugEventArea()
+    {
+        StoryEventTrigger2D[] triggers = CollectStoryEventTriggers();
+        if (triggers.Length == 0)
+        {
+            selectedDebugEventAreaIndex = 0;
+            Debug.LogWarning("[SROptions] StoryEventTrigger2D not found in the active scene.");
+            return;
+        }
+
+        selectedDebugEventAreaIndex = (selectedDebugEventAreaIndex + 1) % triggers.Length;
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("選択イベントエリアへテレポート")]
+    [Sort(-86)]
+    public void TeleportPlayerToSelectedDebugEventArea()
+    {
+        StoryEventTrigger2D[] triggers = CollectStoryEventTriggers();
+        if (triggers.Length == 0)
+        {
+            Debug.LogWarning("[SROptions] StoryEventTrigger2D not found in the active scene.");
+            return;
+        }
+
+        selectedDebugEventAreaIndex = Mathf.Clamp(selectedDebugEventAreaIndex, 0, triggers.Length - 1);
+        StoryEventTrigger2D trigger = triggers[selectedDebugEventAreaIndex];
+        TeleportPlayer(ResolveEventAreaTeleportPosition(trigger), BuildEventAreaLabel(trigger));
     }
 
     [Category(SaveCategory)]
@@ -440,6 +511,81 @@ public partial class SROptions
         return filteredPoints;
     }
 
+    private static StoryEventTrigger2D[] CollectStoryEventTriggers()
+    {
+        StoryEventTrigger2D[] allTriggers = UnityEngine.Object.FindObjectsByType<StoryEventTrigger2D>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+        Scene activeScene = SceneManager.GetActiveScene();
+
+        int count = 0;
+        for (int i = 0; i < allTriggers.Length; i++)
+        {
+            StoryEventTrigger2D trigger = allTriggers[i];
+            if (trigger != null && trigger.gameObject.scene == activeScene)
+            {
+                count++;
+            }
+        }
+
+        if (count == 0)
+        {
+            return Array.Empty<StoryEventTrigger2D>();
+        }
+
+        StoryEventTrigger2D[] filteredTriggers = new StoryEventTrigger2D[count];
+        int writeIndex = 0;
+        for (int i = 0; i < allTriggers.Length; i++)
+        {
+            StoryEventTrigger2D trigger = allTriggers[i];
+            if (trigger == null || trigger.gameObject.scene != activeScene)
+            {
+                continue;
+            }
+
+            filteredTriggers[writeIndex] = trigger;
+            writeIndex++;
+        }
+
+        Array.Sort(
+            filteredTriggers,
+            (left, right) => string.Compare(BuildEventAreaLabel(left), BuildEventAreaLabel(right), StringComparison.OrdinalIgnoreCase));
+
+        return filteredTriggers;
+    }
+
+    private static string BuildEventAreaLabel(StoryEventTrigger2D trigger)
+    {
+        if (trigger == null)
+        {
+            return "(null)";
+        }
+
+        string eventId = string.IsNullOrWhiteSpace(trigger.EventId) ? "(no event)" : trigger.EventId;
+        return $"{eventId}/{trigger.name}";
+    }
+
+    private static Vector3 ResolveEventAreaTeleportPosition(StoryEventTrigger2D trigger)
+    {
+        if (trigger == null)
+        {
+            return Vector3.zero;
+        }
+
+        Collider2D triggerCollider = trigger.GetComponent<Collider2D>();
+        if (triggerCollider == null)
+        {
+            return trigger.transform.position;
+        }
+
+        if (triggerCollider.enabled && trigger.gameObject.activeInHierarchy)
+        {
+            return triggerCollider.bounds.center;
+        }
+
+        return trigger.transform.TransformPoint(triggerCollider.offset);
+    }
+
     private static void TeleportPlayer(DebugTeleportPoint2D point)
     {
         if (point == null)
@@ -447,6 +593,11 @@ public partial class SROptions
             return;
         }
 
+        TeleportPlayer(point.TeleportPosition, point.Label);
+    }
+
+    private static void TeleportPlayer(Vector3 destination, string label)
+    {
         global::PlayerController player = ResolvePlayerController();
         if (player == null)
         {
@@ -454,7 +605,8 @@ public partial class SROptions
             return;
         }
 
-        Vector3 destination = point.TeleportPosition;
+        player.ClearExternalMovementDirection();
+
         Rigidbody2D rigidbody2D = player.GetComponent<Rigidbody2D>();
         if (rigidbody2D != null)
         {
@@ -467,7 +619,7 @@ public partial class SROptions
         player.transform.position = destination;
         Physics2D.SyncTransforms();
 
-        Debug.Log($"[SROptions] Teleported player to '{point.Label}' at {destination}.");
+        Debug.Log($"[SROptions] Teleported player to '{label}' at {destination}.");
     }
 
     private static global::PlayerController ResolvePlayerController()

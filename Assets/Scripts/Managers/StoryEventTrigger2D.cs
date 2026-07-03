@@ -24,6 +24,8 @@ public sealed class StoryEventTrigger2D : MonoBehaviour
     private Collider2D triggerCollider;
     private bool triggered;
 
+    public string EventId => string.IsNullOrWhiteSpace(eventId) ? string.Empty : eventId.Trim();
+
     private void Reset()
     {
         triggerCollider = GetComponent<Collider2D>();
