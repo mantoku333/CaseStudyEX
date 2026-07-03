@@ -77,6 +77,7 @@ namespace Metroidvania.Enemy
         };
 
         private readonly List<Vector2> currentPath = new List<Vector2>();
+        private readonly List<Collider2D> ownerColliders = new List<Collider2D>();
 
         private Rigidbody2D rb2D;
         // 弾自身の大きさを見て、壁からどれくらい離れて経路探索するかを決める。
@@ -90,6 +91,11 @@ namespace Metroidvania.Enemy
         private Transform owner;
         private float ownerDetectionRadius;
         private bool useTerrainAvoidance;
+        private bool isGuidanceActive;
+        private float guidanceDuration;
+        private float guidanceElapsed;
+        private bool isEscapingOwner;
+        private Vector2 ownerEscapeDirection;
         private LayerMask obstacleMask;
         private float nextPathRefreshTime;
         private int currentPathIndex;
@@ -188,6 +194,17 @@ namespace Metroidvania.Enemy
                 return;
             }
 
+            AdvanceGuidance(Time.fixedDeltaTime);
+            if (UpdateOwnerEscape())
+            {
+                return;
+            }
+
+            if (!isGuidanceActive)
+            {
+                return;
+            }
+
             if (useTerrainAvoidance && Time.time >= nextPathRefreshTime)
             {
                 if (!RefreshTerrainPath())
@@ -217,6 +234,12 @@ namespace Metroidvania.Enemy
             owner = null;
             ownerDetectionRadius = 0f;
             useTerrainAvoidance = false;
+            isGuidanceActive = false;
+            guidanceDuration = 0f;
+            guidanceElapsed = 0f;
+            isEscapingOwner = false;
+            ownerEscapeDirection = Vector2.zero;
+            ownerColliders.Clear();
             isTerminalImpacting = false;
             terminalImpactTravelDistance = 0f;
             terminalImpactMaxDistance = 0f;
@@ -239,7 +262,9 @@ namespace Metroidvania.Enemy
             int damage,
             float lifetime,
             LayerMask obstacleMask,
-            bool useTerrainAvoidance)
+            bool useTerrainAvoidance,
+            float guidanceDuration,
+            Vector2 launchFacingDirection)
         {
             this.target = target;
             // 追尾先をプレイヤー本体の当たり判定中心にして、弾が足元へ吸われるのを防ぐ。
@@ -250,12 +275,26 @@ namespace Metroidvania.Enemy
             this.damage = Mathf.Max(1, damage);
             this.lifeTime = Mathf.Max(0.1f, lifetime);
             this.useTerrainAvoidance = useTerrainAvoidance;
+            this.guidanceDuration = Mathf.Max(0f, guidanceDuration);
+            guidanceElapsed = 0f;
+            isGuidanceActive = this.guidanceDuration > 0f;
+            ownerEscapeDirection = launchFacingDirection.sqrMagnitude > 0.0001f
+                ? launchFacingDirection.normalized
+                : Vector2.right;
+            CacheOwnerColliders();
+            isEscapingOwner = HasOwnerObstacle() && IsWithinOwnerClearance(transform.position);
             this.obstacleMask = obstacleMask.value != 0 ? obstacleMask : BuildDefaultObstacleMask();
             destroyOnHitLayers = this.obstacleMask;
             isTerminalImpacting = false;
             terminalImpactTravelDistance = 0f;
             terminalImpactMaxDistance = 0f;
             initialized = true;
+
+            if (isEscapingOwner)
+            {
+                SetVelocity(ownerEscapeDirection);
+                return;
+            }
 
             if (this.useTerrainAvoidance && !RefreshTerrainPath())
             {
@@ -265,6 +304,57 @@ namespace Metroidvania.Enemy
             }
 
             SetVelocity(ResolveHomingDirection());
+        }
+
+        private void AdvanceGuidance(float deltaTime)
+        {
+            if (!isGuidanceActive)
+            {
+                return;
+            }
+
+            guidanceElapsed += Mathf.Max(0f, deltaTime);
+            if (guidanceElapsed < guidanceDuration)
+            {
+                return;
+            }
+
+            guidanceElapsed = guidanceDuration;
+            isGuidanceActive = false;
+            useTerrainAvoidance = false;
+            currentPath.Clear();
+            currentPathIndex = 0;
+            nextPathRefreshTime = float.PositiveInfinity;
+        }
+
+        private bool UpdateOwnerEscape()
+        {
+            if (!isEscapingOwner)
+            {
+                return false;
+            }
+
+            RemoveInvalidOwnerColliders();
+            if (HasOwnerObstacle() && IsWithinOwnerClearance(transform.position))
+            {
+                SetVelocity(ownerEscapeDirection);
+                return true;
+            }
+
+            isEscapingOwner = false;
+            if (!isGuidanceActive || !useTerrainAvoidance)
+            {
+                return false;
+            }
+
+            if (!RefreshTerrainPath())
+            {
+                TryEnterTerminalImpact(transform.position, out Vector2 terminalDirection);
+                SetVelocity(terminalDirection);
+                return true;
+            }
+
+            return false;
         }
 
         public void DestroyByParry()
@@ -823,13 +913,18 @@ namespace Metroidvania.Enemy
         private bool IsObstacleAt(Vector2 point)
         {
             // 弾の実サイズぶんの余白を含めて、壁に近すぎる経路ノードを除外する。
-            return obstacleMask.value != 0 &&
-                   Physics2D.OverlapCircle(point, GetEffectiveObstacleClearanceRadius(), obstacleMask) != null;
+            bool terrainBlocked = obstacleMask.value != 0 &&
+                                  Physics2D.OverlapCircle(
+                                      point,
+                                      GetEffectiveObstacleClearanceRadius(),
+                                      obstacleMask) != null;
+            return terrainBlocked ||
+                   (isGuidanceActive && IsWithinOwnerClearance(point));
         }
 
         private bool IsMovementSegmentBlocked(Vector2 from, Vector2 to)
         {
-            if (obstacleMask.value == 0)
+            if (obstacleMask.value == 0 && !HasOwnerObstacle())
             {
                 return false;
             }
@@ -842,14 +937,127 @@ namespace Metroidvania.Enemy
             }
 
             // 線ではなく弾の太さを持った CircleCast で、角をかすめる経路を弾く。
-            RaycastHit2D hit = Physics2D.CircleCast(
+            return TryGetRelevantObstacleHit(from, delta, distance, out _);
+        }
+
+        private void CacheOwnerColliders()
+        {
+            ownerColliders.Clear();
+            if (owner == null)
+            {
+                return;
+            }
+
+            Collider2D[] colliders = owner.GetComponentsInChildren<Collider2D>(true);
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Collider2D candidate = colliders[i];
+                if (candidate == null || !candidate.enabled || candidate.isTrigger || candidate == bulletCollider)
+                {
+                    continue;
+                }
+
+                ownerColliders.Add(candidate);
+            }
+        }
+
+        private void RemoveInvalidOwnerColliders()
+        {
+            for (int i = ownerColliders.Count - 1; i >= 0; i--)
+            {
+                Collider2D candidate = ownerColliders[i];
+                if (candidate == null || !candidate.enabled || candidate.isTrigger)
+                {
+                    ownerColliders.RemoveAt(i);
+                }
+            }
+        }
+
+        private bool HasOwnerObstacle()
+        {
+            RemoveInvalidOwnerColliders();
+            return !isReflectedByPlayer && ownerColliders.Count > 0;
+        }
+
+        private bool IsOwnerCollider(Collider2D candidate)
+        {
+            if (candidate == null || !HasOwnerObstacle())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < ownerColliders.Count; i++)
+            {
+                if (ownerColliders[i] == candidate)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsWithinOwnerClearance(Vector2 point)
+        {
+            if (!HasOwnerObstacle())
+            {
+                return false;
+            }
+
+            float clearance = GetEffectiveObstacleClearanceRadius();
+            for (int i = 0; i < ownerColliders.Count; i++)
+            {
+                Collider2D candidate = ownerColliders[i];
+                Vector2 closestPoint = candidate.ClosestPoint(point);
+                if ((closestPoint - point).sqrMagnitude <= clearance * clearance)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool TryGetRelevantObstacleHit(
+            Vector2 from,
+            Vector2 direction,
+            float maxDistance,
+            out RaycastHit2D closestHit)
+        {
+            closestHit = default(RaycastHit2D);
+            if (direction.sqrMagnitude <= 0.0001f)
+            {
+                return false;
+            }
+
+            RaycastHit2D[] hits = Physics2D.CircleCastAll(
                 from,
                 GetEffectiveObstacleClearanceRadius(),
-                delta / distance,
-                distance,
-                obstacleMask);
+                direction.normalized,
+                Mathf.Max(0.05f, maxDistance));
 
-            return hit.collider != null;
+            float closestDistance = float.PositiveInfinity;
+            for (int i = 0; i < hits.Length; i++)
+            {
+                RaycastHit2D hit = hits[i];
+                Collider2D candidate = hit.collider;
+                if (candidate == null || candidate == bulletCollider)
+                {
+                    continue;
+                }
+
+                bool isTerrain = IsInLayerMask(candidate.gameObject.layer, obstacleMask);
+                bool isOwner = isGuidanceActive && IsOwnerCollider(candidate);
+                if ((!isTerrain && !isOwner) || hit.distance >= closestDistance)
+                {
+                    continue;
+                }
+
+                closestDistance = hit.distance;
+                closestHit = hit;
+            }
+
+            return closestHit.collider != null;
         }
 
         // 指定方向の少し先を CircleCast で確認し、今進むとぶつかるか判定する。
@@ -883,6 +1091,7 @@ namespace Metroidvania.Enemy
             currentPath.Clear();
             currentPathIndex = 0;
             useTerrainAvoidance = false;
+            isGuidanceActive = false;
             isTerminalImpacting = true;
             terminalImpactTravelDistance = 0f;
             terminalImpactMaxDistance = 0f;
@@ -943,20 +1152,7 @@ namespace Metroidvania.Enemy
             float maxDistance,
             out RaycastHit2D hit)
         {
-            hit = default(RaycastHit2D);
-            if (obstacleMask.value == 0 || direction.sqrMagnitude <= 0.0001f)
-            {
-                return false;
-            }
-
-            hit = Physics2D.CircleCast(
-                from,
-                GetEffectiveObstacleClearanceRadius(),
-                direction.normalized,
-                Mathf.Max(0.05f, maxDistance),
-                obstacleMask);
-
-            return hit.collider != null;
+            return TryGetRelevantObstacleHit(from, direction, maxDistance, out hit);
         }
 
         /// <summary>
@@ -1129,10 +1325,13 @@ namespace Metroidvania.Enemy
             target = null;
             owner = null;
             useTerrainAvoidance = false;
+            isGuidanceActive = false;
             isTerminalImpacting = false;
             terminalImpactTravelDistance = 0f;
             terminalImpactMaxDistance = 0f;
             currentPath.Clear();
+            ownerColliders.Clear();
+            isEscapingOwner = false;
 
             SetVelocity(reflectDirection);
 
