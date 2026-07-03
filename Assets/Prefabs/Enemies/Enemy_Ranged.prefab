@@ -309,6 +309,7 @@ MonoBehaviour:
   bulletSpeed: 10
   projectileDamage: 10
   projectileLifetime: 10
+  projectileGuidanceDuration: 0.5
   projectileObstacleMask:
     serializedVersion: 2
     m_Bits: 192
