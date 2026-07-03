@@ -29,6 +29,7 @@ namespace GameName.Enemy
         [SerializeField, Min(0.1f)] private float bulletSpeed = 3f;
         [SerializeField, Min(1)] private int projectileDamage = 10;
         [SerializeField, Min(0.1f)] private float projectileLifetime = 10f;
+        [SerializeField, Min(0f)] private float projectileGuidanceDuration = 1f;
         [SerializeField] private LayerMask projectileObstacleMask;
         [SerializeField, Min(0.01f)] private float fireVisualDuration = 0.15f;
 
@@ -88,6 +89,7 @@ namespace GameName.Enemy
             bulletSpeed = Mathf.Max(0.1f, bulletSpeed);
             projectileDamage = Mathf.Max(1, projectileDamage);
             projectileLifetime = Mathf.Max(0.1f, projectileLifetime);
+            projectileGuidanceDuration = Mathf.Max(0f, projectileGuidanceDuration);
             fireVisualDuration = Mathf.Max(0.01f, fireVisualDuration);
 
             if (projectileObstacleMask.value == 0)
@@ -279,7 +281,9 @@ namespace GameName.Enemy
                 projectileDamage,
                 projectileLifetime,
                 projectileObstacleMask,
-                true);
+                true,
+                projectileGuidanceDuration,
+                Vector2.right * enemyController.FacingDirection);
 
             // 弾の初期化完了後に通知し、実際に発射できた攻撃だけSE対象にする。
             ProjectileFired?.Invoke();
