@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 094ba68d3690b9c4c988a67c7022515a
+guid: af7077f13870332428c9aea2e9c6b584
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -77,9 +77,6 @@ TextureImporter:
   - first:
       213: 5203618770780202634
     second: AM_boss_sword_Attack_sky_End_1_24
-  - first:
-      213: -5422065333439781826
-    second: AM_boss_sword_Attack_sky_End_1_25
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -179,9 +176,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 2948
-        width: 820
-        height: 982
+        y: 2940
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,10 +197,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_1
       rect:
         serializedVersion: 2
-        x: 820
-        y: 2948
-        width: 820
-        height: 982
+        x: 818
+        y: 2940
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -222,10 +219,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_2
       rect:
         serializedVersion: 2
-        x: 1640
-        y: 2948
-        width: 820
-        height: 982
+        x: 1636
+        y: 2940
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -244,10 +241,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_3
       rect:
         serializedVersion: 2
-        x: 2460
-        y: 2948
-        width: 820
-        height: 982
+        x: 2454
+        y: 2940
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -267,9 +264,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1966
-        width: 820
-        height: 982
+        y: 1960
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -288,10 +285,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_5
       rect:
         serializedVersion: 2
-        x: 820
-        y: 1966
-        width: 820
-        height: 982
+        x: 818
+        y: 1960
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -310,10 +307,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_6
       rect:
         serializedVersion: 2
-        x: 1640
-        y: 1966
-        width: 820
-        height: 982
+        x: 1636
+        y: 1960
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -332,10 +329,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_7
       rect:
         serializedVersion: 2
-        x: 2460
-        y: 1966
-        width: 820
-        height: 982
+        x: 2454
+        y: 1960
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -355,9 +352,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 984
-        width: 820
-        height: 982
+        y: 980
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -376,10 +373,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_9
       rect:
         serializedVersion: 2
-        x: 820
-        y: 984
-        width: 820
-        height: 982
+        x: 818
+        y: 980
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -398,10 +395,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_10
       rect:
         serializedVersion: 2
-        x: 1640
-        y: 984
-        width: 820
-        height: 982
+        x: 1636
+        y: 980
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -420,10 +417,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_11
       rect:
         serializedVersion: 2
-        x: 2460
-        y: 984
-        width: 820
-        height: 982
+        x: 2454
+        y: 980
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -443,9 +440,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 2
-        width: 820
-        height: 982
+        y: 0
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -464,10 +461,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_13
       rect:
         serializedVersion: 2
-        x: 820
-        y: 2
-        width: 820
-        height: 982
+        x: 818
+        y: 0
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -486,10 +483,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_14
       rect:
         serializedVersion: 2
-        x: 1640
-        y: 2
-        width: 820
-        height: 982
+        x: 1636
+        y: 0
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -508,10 +505,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_End_1_15
       rect:
         serializedVersion: 2
-        x: 2460
-        y: 2
-        width: 820
-        height: 982
+        x: 2454
+        y: 0
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -530,7 +527,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: c551e97b6ddad604fb28a7d785d8028e
+    spriteID: 188c2057e97b3234792f3d9735395164
     internalID: 0
     vertices: []
     indices: 
@@ -540,7 +537,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":820.0,"y":982.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":818.0,"y":980.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       AM_boss_sword_Attack_sky_End_1_0: -6506424668848699643
       AM_boss_sword_Attack_sky_End_1_1: -1355410438821082266
