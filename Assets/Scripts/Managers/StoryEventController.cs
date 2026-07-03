@@ -2059,8 +2059,20 @@ public sealed class StoryEventController : MonoBehaviour
             cameraStartOrthographicSize,
             cameraTargetOrthographicSize);
 
-        RestoreEventCameraPriority();
+        if (hasCameraTarget && targetUsesDefaultCamera)
+        {
+            CameraManager.Instance?.SuppressFollowCameraCenterOnActivateForFrames(6);
+            CameraManager.Instance?.TrySetFollowCameraPose(cameraTargetPosition, cameraTargetOrthographicSize);
+        }
+
         RestoreRoomCameraOnEventExit();
+
+        if (hasHandoffCamera)
+        {
+            yield return null;
+        }
+
+        RestoreEventCameraPriority();
     }
 
     private IEnumerator AnimatePresentationExit(
