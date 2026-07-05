@@ -132,7 +132,7 @@ namespace Player
             }
 
             TryResolveDodgeController();
-            if (dodgeController != null && dodgeController.IsDodging())
+            if (dodgeController != null && dodgeController.IsDodgeInvincible())
             {
                 return false;
             }
