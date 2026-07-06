@@ -45,11 +45,13 @@ public sealed class DecorationPage : MonoBehaviour
 
         if (confirmButton != null)
         {
+            OptionsCanvasButtonUtility.ConfigureSingleIllustrationButton(confirmButton);
             confirmButton.onClick.AddListener(OnConfirmClicked);
             UIButtonSfxPlayer.Register(confirmButton);
         }
         if (removeButton != null)
         {
+            OptionsCanvasButtonUtility.ConfigureSingleIllustrationButton(removeButton);
             removeButton.onClick.AddListener(OnRemoveClicked);
             UIButtonSfxPlayer.Register(removeButton);
         }

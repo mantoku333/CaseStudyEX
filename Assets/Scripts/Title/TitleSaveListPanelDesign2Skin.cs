@@ -321,6 +321,7 @@ public sealed class TitleSaveListPanelDesign2Skin : MonoBehaviour
             spriteState.selectedSprite = slotSelectedSprite;
             spriteState.pressedSprite = slotSelectedSprite;
             button.spriteState = spriteState;
+            OptionsCanvasButtonUtility.ConfigurePressOnlyFeedback(button);
 
             if (Application.isPlaying)
             {
@@ -411,6 +412,12 @@ public sealed class TitleSaveListPanelDesign2Skin : MonoBehaviour
         if (outline != null)
         {
             outline.enabled = false;
+        }
+
+        Button button = back.GetComponent<Button>();
+        if (button != null)
+        {
+            OptionsCanvasButtonUtility.ConfigureSingleIllustrationButton(button);
         }
 
         TMP_Text label = back.GetComponentInChildren<TMP_Text>(true);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -30,6 +31,7 @@ public sealed class OptionsMenu : MonoBehaviour
     private const float HandlePadding = 10f;
     private const float KeyboardScrollPixelsPerWheelTick = 56f;
     private const float KeyboardScrollbarMinHandleHeight = 44f;
+    private const float ButtonActionDelay = 0.32f;
 
     private static readonly string[] PlayerControlBehaviourNames =
     {
@@ -152,6 +154,7 @@ public sealed class OptionsMenu : MonoBehaviour
     private bool activeRebindAllowsMouse;
     private bool openFullMapAfterClose;
     private bool optionPageHeaderAvailable;
+    private Coroutine delayedButtonActionRoutine;
     private float previousTimeScale = 1f;
     private Rigidbody2D pausedPlayerRigidbody;
     private Vector2 pausedPlayerLinearVelocity;
@@ -209,6 +212,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private void OnDisable()
     {
+        StopDelayedButtonAction();
         SetCursorMenuModeActive(false);
         DisposeActiveRebindOperation();
         activeVolumeBar = ActiveVolumeBar.None;
@@ -218,6 +222,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private void OnDestroy()
     {
+        StopDelayedButtonAction();
         SetCursorMenuModeActive(false);
         DisposeActiveRebindOperation();
         UnregisterListeners();
@@ -336,16 +341,18 @@ public sealed class OptionsMenu : MonoBehaviour
         keyboardTabButtonBase = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/KeyboardTabButton (1)");
         backButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/BackButton");
         optionHeaderCloseButton = EnsureRuntimeButton(optionHeaderCloseButtonObject, "Back Button");
-        optionHeaderPreviousButton = EnsureRuntimeButton(optionHeaderPreviousButtonObject, "Q");
-        optionHeaderNextButton = EnsureRuntimeButton(optionHeaderNextButtonObject, "E");
-        mapTabNormalButton = EnsureRuntimeButton(mapTabNormal, "Map");
-        mapTabSelectedButton = EnsureRuntimeButton(mapTabSelected, "Map");
-        decorationTabNormalButton = EnsureRuntimeButton(decorationTabNormal, "Decoration");
-        decorationTabSelectedButton = EnsureRuntimeButton(decorationTabSelected, "Decoration");
-        noteTabNormalButton = EnsureRuntimeButton(noteTabNormal, "Note");
-        noteTabSelectedButton = EnsureRuntimeButton(noteTabSelected, "Note");
-        settingsTabNormalButton = EnsureRuntimeButton(settingsTabNormal, "Option text");
-        settingsTabSelectedButton = EnsureRuntimeButton(settingsTabSelected, "Option text");
+        OptionsCanvasButtonUtility.ConfigureIllustrationOnly(optionHeaderPreviousButtonObject);
+        OptionsCanvasButtonUtility.ConfigureIllustrationOnly(optionHeaderNextButtonObject);
+        optionHeaderPreviousButton = null;
+        optionHeaderNextButton = null;
+        mapTabNormalButton = EnsureRuntimeButton(mapTabNormal, "Map", useDimHover: false);
+        mapTabSelectedButton = EnsureRuntimeButton(mapTabSelected, "Map", useDimHover: false);
+        decorationTabNormalButton = EnsureRuntimeButton(decorationTabNormal, "Decoration", useDimHover: false);
+        decorationTabSelectedButton = EnsureRuntimeButton(decorationTabSelected, "Decoration", useDimHover: false);
+        noteTabNormalButton = EnsureRuntimeButton(noteTabNormal, "Note", useDimHover: false);
+        noteTabSelectedButton = EnsureRuntimeButton(noteTabSelected, "Note", useDimHover: false);
+        settingsTabNormalButton = EnsureRuntimeButton(settingsTabNormal, "Option text", useDimHover: false);
+        settingsTabSelectedButton = EnsureRuntimeButton(settingsTabSelected, "Option text", useDimHover: false);
         rightMoveButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/RightMoveRow/ValueButton");
         leftMoveButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/LeftMoveRow/ValueButton");
         jumpButton = FindChildComponent<Button>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/JumpRow/ValueButton");
@@ -453,27 +460,25 @@ public sealed class OptionsMenu : MonoBehaviour
         }
 
         MinimapManager.MapKeyRequested += OpenMapFromKeyboard;
-        BindButton(resumeButton, CloseMenu);
+        BindButton(resumeButton, RequestCloseMenu);
         BindButton(saveButton, SaveCurrentGame);
-        BindButton(mapButton, OpenMap);
-        BindButton(optionButton, ShowOptionDetail);
-        BindButton(titleButton, ShowFinishPrompt);
-        BindButton(soundTabButton, ShowSoundTab);
-        BindButton(keyboardTabButton, ShowKeyboardTab);
-        BindButton(soundTabButtonBase, ShowSoundTab);
-        BindButton(keyboardTabButtonBase, ShowKeyboardTab);
-        BindButton(backButton, ShowMainMenu);
-        BindButton(optionHeaderCloseButton, CloseMenu);
-        BindButton(optionHeaderPreviousButton, ShowPreviousOptionPage);
-        BindButton(optionHeaderNextButton, ShowNextOptionPage);
-        BindButton(mapTabNormalButton, ShowMapOptionPage);
-        BindButton(mapTabSelectedButton, ShowMapOptionPage);
-        BindButton(decorationTabNormalButton, ShowDecorationOptionPage);
-        BindButton(decorationTabSelectedButton, ShowDecorationOptionPage);
-        BindButton(noteTabNormalButton, ShowNoteOptionPage);
-        BindButton(noteTabSelectedButton, ShowNoteOptionPage);
-        BindButton(settingsTabNormalButton, ShowSettingsOptionPage);
-        BindButton(settingsTabSelectedButton, ShowSettingsOptionPage);
+        BindButton(mapButton, RequestOpenMap);
+        BindButton(optionButton, RequestShowOptionDetail);
+        BindButton(titleButton, RequestShowFinishPrompt);
+        BindButton(soundTabButton, ShowSoundTab, useDimHover: false);
+        BindButton(keyboardTabButton, ShowKeyboardTab, useDimHover: false);
+        BindButton(soundTabButtonBase, ShowSoundTab, useDimHover: false);
+        BindButton(keyboardTabButtonBase, ShowKeyboardTab, useDimHover: false);
+        BindButton(backButton, DoNothing);
+        BindButton(optionHeaderCloseButton, RequestShowMainMenu);
+        BindButton(mapTabNormalButton, ShowMapOptionPage, useDimHover: false);
+        BindButton(mapTabSelectedButton, ShowMapOptionPage, useDimHover: false);
+        BindButton(decorationTabNormalButton, ShowDecorationOptionPage, useDimHover: false);
+        BindButton(decorationTabSelectedButton, ShowDecorationOptionPage, useDimHover: false);
+        BindButton(noteTabNormalButton, ShowNoteOptionPage, useDimHover: false);
+        BindButton(noteTabSelectedButton, ShowNoteOptionPage, useDimHover: false);
+        BindButton(settingsTabNormalButton, ShowSettingsOptionPage, useDimHover: false);
+        BindButton(settingsTabSelectedButton, ShowSettingsOptionPage, useDimHover: false);
         BindButton(rightMoveButton, StartRebindRightMove);
         BindButton(leftMoveButton, StartRebindLeftMove);
         BindButton(jumpButton, StartRebindJump);
@@ -493,17 +498,17 @@ public sealed class OptionsMenu : MonoBehaviour
         }
 
         MinimapManager.MapKeyRequested -= OpenMapFromKeyboard;
-        UnbindButton(resumeButton, CloseMenu);
+        UnbindButton(resumeButton, RequestCloseMenu);
         UnbindButton(saveButton, SaveCurrentGame);
-        UnbindButton(mapButton, OpenMap);
-        UnbindButton(optionButton, ShowOptionDetail);
-        UnbindButton(titleButton, ShowFinishPrompt);
+        UnbindButton(mapButton, RequestOpenMap);
+        UnbindButton(optionButton, RequestShowOptionDetail);
+        UnbindButton(titleButton, RequestShowFinishPrompt);
         UnbindButton(soundTabButton, ShowSoundTab);
         UnbindButton(keyboardTabButton, ShowKeyboardTab);
         UnbindButton(soundTabButtonBase, ShowSoundTab);
         UnbindButton(keyboardTabButtonBase, ShowKeyboardTab);
-        UnbindButton(backButton, ShowMainMenu);
-        UnbindButton(optionHeaderCloseButton, CloseMenu);
+        UnbindButton(backButton, DoNothing);
+        UnbindButton(optionHeaderCloseButton, RequestShowMainMenu);
         UnbindButton(optionHeaderPreviousButton, ShowPreviousOptionPage);
         UnbindButton(optionHeaderNextButton, ShowNextOptionPage);
         UnbindButton(mapTabNormalButton, ShowMapOptionPage);
@@ -573,6 +578,16 @@ public sealed class OptionsMenu : MonoBehaviour
         ShowOptionPage(OptionPage.Settings);
     }
 
+    public void RequestShowOptionDetail()
+    {
+        if (!referencesResolved || isRebinding)
+        {
+            return;
+        }
+
+        RunAfterButtonFeedback(ShowOptionDetail);
+    }
+
     public void ShowMainMenu()
     {
         if (isRebinding)
@@ -611,6 +626,16 @@ public sealed class OptionsMenu : MonoBehaviour
         }
 
         SelectButton(isOpen ? resumeButton : optionButton);
+    }
+
+    public void RequestShowMainMenu()
+    {
+        if (!referencesResolved || isRebinding)
+        {
+            return;
+        }
+
+        RunAfterButtonFeedback(ShowMainMenu);
     }
 
     private void ShowMapOptionPage()
@@ -1019,6 +1044,16 @@ public sealed class OptionsMenu : MonoBehaviour
         RestoreGameplayState();
     }
 
+    public void RequestCloseMenu()
+    {
+        if (!isOpen || !referencesResolved || isRebinding)
+        {
+            return;
+        }
+
+        RunAfterButtonFeedback(CloseMenu);
+    }
+
     private void HandleToggleRequest()
     {
         if (!isOpen)
@@ -1208,6 +1243,16 @@ public sealed class OptionsMenu : MonoBehaviour
         ShowMapOptionPage();
     }
 
+    public void RequestOpenMap()
+    {
+        if (!referencesResolved || isRebinding)
+        {
+            return;
+        }
+
+        RunAfterButtonFeedback(OpenMap);
+    }
+
     private bool HandleMapKeyboardRequest()
     {
         if (isRebinding || lastMapKeyboardRequestFrame == Time.frameCount)
@@ -1262,6 +1307,16 @@ public sealed class OptionsMenu : MonoBehaviour
         }
     }
 
+    public void RequestShowFinishPrompt()
+    {
+        if (!referencesResolved || isRebinding)
+        {
+            return;
+        }
+
+        RunAfterButtonFeedback(ShowFinishPrompt);
+    }
+
     public void HideFinishPrompt()
     {
         if (!referencesResolved)
@@ -1273,6 +1328,16 @@ public sealed class OptionsMenu : MonoBehaviour
         ShowMainMenu();
     }
 
+    public void RequestHideFinishPrompt()
+    {
+        if (!referencesResolved)
+        {
+            return;
+        }
+
+        RunAfterButtonFeedback(HideFinishPrompt);
+    }
+
     public void ReturnToTitle()
     {
         if (isRebinding)
@@ -1282,6 +1347,20 @@ public sealed class OptionsMenu : MonoBehaviour
 
         CloseMenu();
         SceneManager.LoadScene(TitleSceneName);
+    }
+
+    public void RequestReturnToTitle()
+    {
+        if (isRebinding)
+        {
+            return;
+        }
+
+        RunAfterButtonFeedback(ReturnToTitle);
+    }
+
+    public void DoNothing()
+    {
     }
 
     public void OpenSkillList()
@@ -2179,6 +2258,35 @@ public sealed class OptionsMenu : MonoBehaviour
         }
     }
 
+    private void RunAfterButtonFeedback(Action action)
+    {
+        if (delayedButtonActionRoutine != null)
+        {
+            return;
+        }
+
+        StopDelayedButtonAction();
+        delayedButtonActionRoutine = StartCoroutine(RunAfterButtonFeedbackRoutine(action));
+    }
+
+    private IEnumerator RunAfterButtonFeedbackRoutine(Action action)
+    {
+        yield return new WaitForSecondsRealtime(ButtonActionDelay);
+        delayedButtonActionRoutine = null;
+        action?.Invoke();
+    }
+
+    private void StopDelayedButtonAction()
+    {
+        if (delayedButtonActionRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(delayedButtonActionRoutine);
+        delayedButtonActionRoutine = null;
+    }
+
     private void SetCursorMenuModeActive(bool active)
     {
         if (cursorMenuModeActive == active)
@@ -2265,57 +2373,12 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private Button EnsureRuntimeButton(GameObject target, string hitKey)
     {
-        if (target == null)
-        {
-            return null;
-        }
-
-        Button button = target.GetComponent<Button>();
-        if (button == null)
-        {
-            return null;
-        }
-
-        button.transition = Selectable.Transition.None;
-        Graphic targetGraphic = FindLargestGraphic(target.transform);
-        if (targetGraphic != null)
-        {
-            button.targetGraphic = targetGraphic;
-            targetGraphic.raycastTarget = true;
-        }
-
-        return button;
+        return EnsureRuntimeButton(target, hitKey, useDimHover: true);
     }
 
-    private static Graphic FindLargestGraphic(Transform root)
+    private Button EnsureRuntimeButton(GameObject target, string hitKey, bool useDimHover)
     {
-        Graphic[] graphics = root.GetComponentsInChildren<Graphic>(true);
-        if (graphics.Length == 0)
-        {
-            return null;
-        }
-
-        Graphic bestGraphic = null;
-        float bestArea = float.MinValue;
-        for (int i = 0; i < graphics.Length; i++)
-        {
-            Graphic graphic = graphics[i];
-            if (graphic == null)
-            {
-                continue;
-            }
-
-            graphic.raycastTarget = false;
-            RectTransform rectTransform = graphic.rectTransform;
-            float area = Mathf.Abs(rectTransform.rect.width * rectTransform.rect.height);
-            if (area > bestArea)
-            {
-                bestArea = area;
-                bestGraphic = graphic;
-            }
-        }
-
-        return bestGraphic;
+        return OptionsCanvasButtonUtility.ConfigureExistingGraphicButton(target, useDimHover);
     }
 
     private static bool ShouldPauseBehaviour(string typeName)
@@ -2400,11 +2463,17 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private void BindButton(Button button, UnityEngine.Events.UnityAction action)
     {
+        BindButton(button, action, useDimHover: true);
+    }
+
+    private void BindButton(Button button, UnityEngine.Events.UnityAction action, bool useDimHover)
+    {
         if (button == null)
         {
             return;
         }
 
+        OptionsCanvasButtonUtility.ConfigureSingleIllustrationButton(button, useDimHover);
         button.onClick.RemoveListener(action);
         button.onClick.AddListener(action);
         UIButtonSfxPlayer.Register(button);

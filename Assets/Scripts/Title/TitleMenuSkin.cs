@@ -138,6 +138,7 @@ public sealed class TitleMenuSkin : MonoBehaviour
         }
 
         state.Configure(selectRoot, notSelectRoot);
+        OptionsCanvasButtonUtility.ConfigureFigmaButton(button);
         return button;
     }
 
@@ -188,6 +189,7 @@ public sealed class TitleMenuSkin : MonoBehaviour
 
         button.onClick.RemoveListener(action);
         button.onClick.AddListener(action);
+        OptionsCanvasButtonUtility.ConfigureFigmaButton(button);
         UIButtonSfxPlayer.Register(button);
         UIButtonSfxPlayer.RegisterHover(button);
     }
