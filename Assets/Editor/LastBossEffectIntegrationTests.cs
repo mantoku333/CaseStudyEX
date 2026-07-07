@@ -868,39 +868,55 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [Test]
-    public void EffectController_BladeClipsUseStableGroundGridAndImportedRainSlices()
+    public void EffectController_BladeClipsUseStableGridSlicesIndependentOfImportedArtBounds()
     {
         const string underAttackPath = "Assets/Art/Sprites/Effects/eff_under_attack.png";
         const string topAttackInPath = "Assets/Art/Sprites/Effects/eff_top_attack_in.png";
+        const string topAttackOutPath = "Assets/Art/Sprites/Effects/eff_top_attack_out.png";
         Texture2D underAttack = AssetDatabase.LoadAssetAtPath<Texture2D>(underAttackPath);
         Texture2D topAttackIn = AssetDatabase.LoadAssetAtPath<Texture2D>(topAttackInPath);
+        Texture2D topAttackOut = AssetDatabase.LoadAssetAtPath<Texture2D>(topAttackOutPath);
         Assert.That(underAttack, Is.Not.Null);
         Assert.That(underAttack.width, Is.EqualTo(5120));
         Assert.That(underAttack.height, Is.EqualTo(4096));
         Assert.That(topAttackIn, Is.Not.Null);
+        Assert.That(topAttackIn.width, Is.EqualTo(5120));
+        Assert.That(topAttackIn.height, Is.EqualTo(5120));
+        Assert.That(topAttackOut, Is.Not.Null);
+        Assert.That(topAttackOut.width, Is.EqualTo(5120));
+        Assert.That(topAttackOut.height, Is.EqualTo(4096));
         LastBossEffectController effects = CreateEffectController();
         SetPrivateField(effects, "underAttackSpriteSheet", underAttack);
         SetPrivateField(effects, "topAttackInSpriteSheet", topAttackIn);
+        SetPrivateField(effects, "topAttackOutSpriteSheet", topAttackOut);
         InvokePrivate(effects, "OnValidate");
 
         var generatedSprites = new List<Sprite>();
         Sprite[] groundFrames = GridSpriteSheetUtility.BuildFrames(effects.GroundBladeClip, generatedSprites);
         Sprite[] rainFrames = GridSpriteSheetUtility.BuildFrames(effects.RainBladeInClip, generatedSprites);
-        Sprite[] importedRainFrames = LoadPrimarySpriteFramesByGrid(topAttackInPath, 5, 5, 23);
+        Sprite[] rainOutFrames = GridSpriteSheetUtility.BuildFrames(effects.RainBladeOutClip, generatedSprites);
         Vector2 groundVisibleSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(effects.GroundBladeClip);
+        Vector2 rainVisibleSize = GridSpriteSheetUtility.ResolveVisibleFrameSize(effects.RainBladeInClip);
 
-        Assert.That(generatedSprites, Has.Count.EqualTo(20));
+        Assert.That(generatedSprites, Has.Count.EqualTo(63));
         Assert.That(groundFrames, Has.Length.EqualTo(20));
         Assert.That(rainFrames, Has.Length.EqualTo(23));
+        Assert.That(rainOutFrames, Has.Length.EqualTo(20));
         Assert.That(groundFrames[0].texture, Is.SameAs(underAttack));
         Assert.That(groundFrames[0].textureRect, Is.EqualTo(new Rect(0f, 3072f, 1024f, 1024f)));
         Assert.That(groundFrames[19].textureRect, Is.EqualTo(new Rect(4096f, 0f, 1024f, 1024f)));
         Assert.That(groundFrames[0].pivot.x / 1024f, Is.EqualTo(0.5f).Within(0.001f));
         Assert.That(groundFrames[0].pivot.y / 1024f, Is.EqualTo(0.5f).Within(0.001f));
-        Assert.That(rainFrames[0], Is.SameAs(importedRainFrames[0]));
-        Assert.That(rainFrames[22], Is.SameAs(importedRainFrames[22]));
+        Assert.That(rainFrames[0].texture, Is.SameAs(topAttackIn));
+        Assert.That(rainFrames[0].textureRect, Is.EqualTo(new Rect(405f, 4116f, 217f, 995f)));
+        Assert.That(rainFrames[22].textureRect, Is.EqualTo(new Rect(2453f, 20f, 217f, 995f)));
+        Assert.That(rainOutFrames[0].texture, Is.SameAs(topAttackOut));
+        Assert.That(rainOutFrames[0].textureRect, Is.EqualTo(new Rect(405f, 3092f, 217f, 995f)));
+        Assert.That(rainOutFrames[19].textureRect, Is.EqualTo(new Rect(4501f, 20f, 217f, 995f)));
         Assert.That(groundVisibleSize.x, Is.EqualTo(1.87f).Within(0.001f));
         Assert.That(groundVisibleSize.y, Is.EqualTo(10.09f).Within(0.001f));
+        Assert.That(rainVisibleSize.x, Is.EqualTo(2.17f).Within(0.001f));
+        Assert.That(rainVisibleSize.y, Is.EqualTo(9.95f).Within(0.001f));
 
         GridSpriteSheetUtility.DestroyGeneratedSprites(generatedSprites);
     }
@@ -1157,7 +1173,70 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [UnityTest]
-    public IEnumerator RainBladeVisual_HoldsInFrameThenPlaysOutAndDestroysOnLand()
+    public IEnumerator RainBlade_HighSpeedFallStopsAtGroundAndFallThroughFloorSurfaces()
+    {
+        int groundLayer = LayerMask.NameToLayer("Ground");
+        int fallThroughFloorLayer = LayerMask.NameToLayer("FallThroughFloor");
+        Assert.That(groundLayer, Is.GreaterThanOrEqualTo(0));
+        Assert.That(fallThroughFloorLayer, Is.GreaterThanOrEqualTo(0));
+
+        GameObject groundObject = CreateObject("RainBladeGround", new Vector2(-2f, -0.5f));
+        groundObject.layer = groundLayer;
+        BoxCollider2D groundCollider = groundObject.AddComponent<BoxCollider2D>();
+        groundCollider.size = new Vector2(3f, 1f);
+
+        GameObject fallThroughObject = CreateObject("RainBladeFallThroughFloor", new Vector2(2f, -0.5f));
+        fallThroughObject.layer = fallThroughFloorLayer;
+        BoxCollider2D fallThroughCollider = fallThroughObject.AddComponent<BoxCollider2D>();
+        fallThroughCollider.size = new Vector2(3f, 1f);
+
+        GameObject groundBladeObject = CreateObject("GroundLayerRainBlade", new Vector2(-2f, 4f));
+        BoxCollider2D groundBladeCollider = groundBladeObject.AddComponent<BoxCollider2D>();
+        groundBladeCollider.size = new Vector2(1f, 2f);
+        LastBossBladeAttack groundBlade = groundBladeObject.AddComponent<LastBossBladeAttack>();
+        InvokePrivate(groundBlade, "Awake");
+        SetPrivateField(groundBlade, "rainGroundVisualInset", 0.15f);
+        groundBlade.InitializeRainPreview(
+            null,
+            1,
+            targetPoint: new Vector2(-2f, -5f),
+            previewAimPoint: new Vector2(-2f, -5f),
+            fallSpeed: 1000f,
+            groundDestroyDelay: 10f);
+
+        GameObject fallThroughBladeObject = CreateObject("FallThroughLayerRainBlade", new Vector2(2f, 4f));
+        BoxCollider2D fallThroughBladeCollider = fallThroughBladeObject.AddComponent<BoxCollider2D>();
+        fallThroughBladeCollider.size = new Vector2(1f, 2f);
+        LastBossBladeAttack fallThroughBlade = fallThroughBladeObject.AddComponent<LastBossBladeAttack>();
+        InvokePrivate(fallThroughBlade, "Awake");
+        SetPrivateField(fallThroughBlade, "rainGroundVisualInset", 3f);
+        fallThroughBlade.InitializeRainPreview(
+            null,
+            1,
+            targetPoint: new Vector2(2f, -5f),
+            previewAimPoint: new Vector2(2f, -5f),
+            fallSpeed: 1000f,
+            groundDestroyDelay: 10f);
+
+        groundBlade.ReleaseRainBlade();
+        fallThroughBlade.ReleaseRainBlade();
+        Physics2D.SyncTransforms();
+        InvokePrivate(groundBlade, "MoveRainBlade", 1f);
+        InvokePrivate(fallThroughBlade, "MoveRainBlade", 1f);
+        yield return null;
+
+        Assert.That(groundBladeObject.transform.position.y, Is.EqualTo(0.85f).Within(0.02f));
+        Assert.That(fallThroughBladeObject.transform.position.y, Is.EqualTo(-2f).Within(0.02f));
+        Assert.That(GetPrivateField<bool>(groundBlade, "rainLanded"), Is.True);
+        Assert.That(GetPrivateField<bool>(fallThroughBlade, "rainLanded"), Is.True);
+        Assert.That(GetPrivateField<bool>(groundBlade, "canDamage"), Is.False);
+        Assert.That(GetPrivateField<bool>(fallThroughBlade, "canDamage"), Is.False);
+        Assert.That(groundBladeCollider.enabled, Is.False);
+        Assert.That(fallThroughBladeCollider.enabled, Is.False);
+    }
+
+    [UnityTest]
+    public IEnumerator RainBladeVisual_KeepsFixedGridScaleThroughOutAnimationAndDestroysOnLand()
     {
         GameObject bladeObject = CreateObject("RainBlade", Vector2.zero);
         BoxCollider2D collider = bladeObject.AddComponent<BoxCollider2D>();
@@ -1182,13 +1261,22 @@ public sealed class LastBossEffectIntegrationTests
         SpriteRenderer visualRenderer = FindChildRenderer(bladeObject, "BladeEffectVisual");
         Assert.That(visualRenderer, Is.Not.Null);
         Assert.That(visualRenderer.sprite, Is.Not.Null);
+        Vector3 heldVisualScale = visualRenderer.transform.localScale;
 
         blade.ReleaseRainBlade();
-        InvokePrivate(blade, "MoveRainBlade");
+        InvokePrivate(blade, "MoveRainBlade", 0f);
 
+        Assert.That(GetPrivateField<bool>(blade, "rainLanded"), Is.True);
+        Assert.That(bladeObject.transform.position, Is.EqualTo(Vector3.zero));
         Assert.That(collider.enabled, Is.False);
         Assert.That(bladeObject.transform.localScale, Is.EqualTo(startScale));
         Assert.That(collider.size, Is.EqualTo(colliderSize));
+        Assert.That(visualRenderer.transform.localScale, Is.EqualTo(heldVisualScale));
+
+        yield return null;
+
+        Assert.That(bladeObject == null, Is.False);
+        Assert.That(visualRenderer.transform.localScale, Is.EqualTo(heldVisualScale));
         yield return new WaitForSecondsRealtime(outClip.DurationSeconds + 0.1f);
         yield return null;
 
