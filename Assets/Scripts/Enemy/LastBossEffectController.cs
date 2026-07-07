@@ -104,6 +104,7 @@ namespace GameName.Enemy
 
         private SpriteRenderer bossRenderer;
         private Collider2D bodyCollider;
+        private LastBossSpriteAnimator spriteAnimator;
         private GameObject auraObject;
         private GameObject shieldObject;
         private GameObject shieldBreakObject;
@@ -1260,8 +1261,27 @@ namespace GameName.Enemy
 
         private Vector3 ResolveBossCenter()
         {
-            Bounds bounds = ResolveBossBounds();
-            return new Vector3(bounds.center.x, bounds.center.y, transform.position.z);
+            CacheComponents();
+            Vector3 animationOffset = ResolveSpriteAnimationWorldOffset();
+            if (TryGetUsableBounds(bodyCollider, out Bounds colliderBounds))
+            {
+                return new Vector3(colliderBounds.center.x, colliderBounds.center.y, transform.position.z) + animationOffset;
+            }
+
+            if (TryGetUsableBounds(bossRenderer, out Bounds rendererBounds))
+            {
+                return new Vector3(rendererBounds.center.x, rendererBounds.center.y, transform.position.z);
+            }
+
+            return transform.position + animationOffset;
+        }
+
+        private Vector3 ResolveSpriteAnimationWorldOffset()
+        {
+            CacheComponents();
+            return spriteAnimator != null
+                ? transform.TransformVector(spriteAnimator.GetCurrentAnimationOffset())
+                : Vector3.zero;
         }
 
         private Vector2 ResolveBossSquareSize(float multiplier)
@@ -1326,7 +1346,11 @@ namespace GameName.Enemy
 
             if (bossRenderer == null)
             {
-                LastBossSpriteAnimator spriteAnimator = GetComponentInChildren<LastBossSpriteAnimator>(true);
+                if (spriteAnimator == null)
+                {
+                    spriteAnimator = GetComponentInChildren<LastBossSpriteAnimator>(true);
+                }
+
                 bossRenderer = spriteAnimator != null ? spriteAnimator.MainRenderer : null;
             }
 

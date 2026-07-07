@@ -196,6 +196,11 @@ namespace GameName.Enemy
             return GetOffsetValue(state);
         }
 
+        public Vector3 GetCurrentAnimationOffset()
+        {
+            return currentState.HasValue ? GetCurrentOffset() : Vector3.zero;
+        }
+
         public void ResetAnimationOffsets()
         {
             idleOffset = Vector3.zero;

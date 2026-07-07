@@ -154,6 +154,21 @@ MonoBehaviour:
   downHoldOffset: {x: 0, y: 0, z: 0}
   downEndOffset: {x: 0, y: 0, z: 0}
   deadOffset: {x: 0, y: 0, z: 0}
+  motionOffsetSets:
+  - state: 1
+    stateName: move
+    clipLength: 0.45000002
+    loop: 1
+    keys:
+    - time: 0
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 3
+    - time: 0.18333334
+      offset: {x: 0, y: 0.1, z: 0}
+      easeToNext: 1
+    - time: 0.31666666
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 3
   frameOffsetSets:
   - state: 1
     stateName: move
