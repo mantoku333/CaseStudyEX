@@ -75,7 +75,7 @@ public sealed class BackAttackDamageMultiplierTests
     }
 
     [Test]
-    public void LastBoss_BackAttack_ScalesDamageAndKeepsDownCountBonus()
+    public void LastBoss_BackAttack_ScalesDamageAndAddsOneDownCount()
     {
         LastBossController boss = CreateLastBossController(10, 2f);
         AttackHitbox attacker = CreateAttackHitbox(new Vector2(-1f, 0f), 1);
@@ -83,7 +83,7 @@ public sealed class BackAttackDamageMultiplierTests
         boss.OnAttacked(attacker, null);
 
         Assert.That(boss.CurrentHealth, Is.EqualTo(8));
-        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.EqualTo(2));
+        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.EqualTo(1));
     }
 
     [TestCase(10, 0.5f, 5)]
@@ -102,7 +102,7 @@ public sealed class BackAttackDamageMultiplierTests
         boss.OnAttacked(attacker, null);
 
         Assert.That(boss.CurrentHealth, Is.EqualTo(20 - expectedDamage));
-        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.EqualTo(1));
+        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.Zero);
     }
 
     [Test]
@@ -129,11 +129,25 @@ public sealed class BackAttackDamageMultiplierTests
         boss.OnAttacked(attacker, null);
 
         Assert.That(boss.CurrentHealth, Is.EqualTo(15));
-        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.EqualTo(2));
+        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.EqualTo(1));
     }
 
     [Test]
     public void LastBoss_HitThatTriggersDown_IsStillShieldReduced()
+    {
+        LastBossController boss = CreateLastBossController(20, 2f);
+        AttackHitbox attacker = CreateAttackHitbox(new Vector2(-1f, 0f), 5);
+        SetPrivateField(boss, "downCountThreshold", 1);
+        boss.ActivateEncounter();
+
+        boss.OnAttacked(attacker, null);
+
+        Assert.That(boss.CurrentHealth, Is.EqualTo(15));
+        Assert.That(GetPrivateField<object>(boss, "state").ToString(), Is.EqualTo("Downed"));
+    }
+
+    [Test]
+    public void LastBoss_FrontHitDoesNotTriggerDownCounter()
     {
         LastBossController boss = CreateLastBossController(20, 2f);
         AttackHitbox attacker = CreateAttackHitbox(new Vector2(1f, 0f), 10);
@@ -143,6 +157,26 @@ public sealed class BackAttackDamageMultiplierTests
         boss.OnAttacked(attacker, null);
 
         Assert.That(boss.CurrentHealth, Is.EqualTo(15));
+        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.Zero);
+        Assert.That(GetPrivateField<object>(boss, "state").ToString(), Is.Not.EqualTo("Downed"));
+    }
+
+    [Test]
+    public void LastBoss_TenthBackAttackTriggersDown()
+    {
+        LastBossController boss = CreateLastBossController(100, 2f);
+        AttackHitbox attacker = CreateAttackHitbox(new Vector2(-1f, 0f), 1);
+
+        for (int i = 0; i < 9; i++)
+        {
+            boss.OnAttacked(attacker, null);
+        }
+
+        Assert.That(GetPrivateField<int>(boss, "downCount"), Is.EqualTo(9));
+        Assert.That(GetPrivateField<object>(boss, "state").ToString(), Is.Not.EqualTo("Downed"));
+
+        boss.OnAttacked(attacker, null);
+
         Assert.That(GetPrivateField<object>(boss, "state").ToString(), Is.EqualTo("Downed"));
     }
 
@@ -209,7 +243,7 @@ public sealed class BackAttackDamageMultiplierTests
         SetPrivateField(boss, "maxHealth", maxHealth);
         SetPrivateField(boss, "backAttackDamageMultiplier", backAttackMultiplier);
         SetPrivateField(boss, "shieldDamageMultiplier", shieldMultiplier);
-        SetPrivateField(boss, "downCountThreshold", 20);
+        SetPrivateField(boss, "downCountThreshold", 10);
         SetPrivateField(boss, "facingDirection", 1);
         InvokePrivate(boss, "Awake");
         return boss;
