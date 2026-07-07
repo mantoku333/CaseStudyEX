@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Reflection;
 using GameName.Enemy;
+using Metroidvania.Enemy;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -622,6 +623,40 @@ public sealed class LastBossEffectIntegrationTests
         AssertSpriteFrameCount(effects, "magicCircleOutSpriteFrames", 9);
         AssertSpriteFrameCount(effects, "topAttackInSpriteFrames", 23);
         AssertSpriteFrameCount(effects, "topAttackOutSpriteFrames", 20);
+    }
+
+    [Test]
+    public void LastBossPrefab_HasSpriteSizedContactDamageCollider()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemies/LastBoss.prefab");
+        Assert.That(prefab, Is.Not.Null);
+
+        EnemyContact contact = prefab.GetComponent<EnemyContact>();
+        SpriteRenderer spriteRenderer = prefab.GetComponentInChildren<SpriteRenderer>(true);
+        ContactDamageOnlyCollider damageOnlyMarker = prefab.GetComponentInChildren<ContactDamageOnlyCollider>(true);
+
+        Assert.That(contact, Is.Not.Null);
+        Assert.That(spriteRenderer, Is.Not.Null);
+        Assert.That(damageOnlyMarker, Is.Not.Null);
+        Assert.That(GetPrivateField<int>(contact, "contactDamage"), Is.EqualTo(10));
+
+        BoxCollider2D contactCollider = damageOnlyMarker.GetComponent<BoxCollider2D>();
+        Assert.That(contactCollider, Is.Not.Null);
+        Assert.That(contactCollider.isTrigger, Is.True);
+
+        Bounds spriteLocalBounds = spriteRenderer.sprite.bounds;
+        Transform spriteTransform = spriteRenderer.transform;
+        Transform contactTransform = contactCollider.transform;
+        Vector2 expectedOffset = contactTransform.InverseTransformPoint(
+            spriteTransform.TransformPoint(spriteLocalBounds.center));
+        Vector2 expectedSize = new Vector2(
+            Mathf.Abs(spriteLocalBounds.size.x * spriteTransform.localScale.x / contactTransform.localScale.x),
+            Mathf.Abs(spriteLocalBounds.size.y * spriteTransform.localScale.y / contactTransform.localScale.y));
+
+        Assert.That(contactCollider.offset.x, Is.EqualTo(expectedOffset.x).Within(0.001f));
+        Assert.That(contactCollider.offset.y, Is.EqualTo(expectedOffset.y).Within(0.001f));
+        Assert.That(contactCollider.size.x, Is.EqualTo(expectedSize.x).Within(0.001f));
+        Assert.That(contactCollider.size.y, Is.EqualTo(expectedSize.y).Within(0.001f));
     }
 
     [UnityTest]
