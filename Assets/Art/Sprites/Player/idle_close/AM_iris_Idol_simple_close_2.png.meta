@@ -1,0 +1,535 @@
+fileFormatVersion: 2
+guid: b3a5a5723a68b464496969a15f7d90b2
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2956515324271204405
+    second: AM_iris_Idol_simple_close_2 (1)_0
+  - first:
+      213: 44577008597187154
+    second: AM_iris_Idol_simple_close_2 (1)_1
+  - first:
+      213: 1909354957783235684
+    second: AM_iris_Idol_simple_close_2 (1)_2
+  - first:
+      213: 161295104572611498
+    second: AM_iris_Idol_simple_close_2 (1)_3
+  - first:
+      213: -4195402231493914260
+    second: AM_iris_Idol_simple_close_2 (1)_4
+  - first:
+      213: -4301971342609899158
+    second: AM_iris_Idol_simple_close_2 (1)_5
+  - first:
+      213: -5084339803740989958
+    second: AM_iris_Idol_simple_close_2 (1)_6
+  - first:
+      213: -5244278071449337699
+    second: AM_iris_Idol_simple_close_2 (1)_7
+  - first:
+      213: -5424866849606491814
+    second: AM_iris_Idol_simple_close_2 (1)_8
+  - first:
+      213: 7226981153108837052
+    second: AM_iris_Idol_simple_close_2 (1)_9
+  - first:
+      213: 2114852756654015944
+    second: AM_iris_Idol_simple_close_2 (1)_10
+  - first:
+      213: 3008655725019918919
+    second: AM_iris_Idol_simple_close_2 (1)_11
+  - first:
+      213: 4721368904396422722
+    second: AM_iris_Idol_simple_close_2 (1)_12
+  - first:
+      213: 5189612912756133053
+    second: AM_iris_Idol_simple_close_2 (1)_13
+  - first:
+      213: -6919199206098531034
+    second: AM_iris_Idol_simple_close_2 (1)_14
+  - first:
+      213: -1165590243058678103
+    second: AM_iris_Idol_simple_close_2 (1)_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab01920eb8eac844b8fae5f6e72c2fe3
+      internalID: 590121640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_1
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db0ceec0a48a19f49a20eeb786e500da
+      internalID: -1918974994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_2
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 754fb5a4a88072e4cae1a25c71fe9631
+      internalID: 613420634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_3
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 2948
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee51dadd10af6884495dfcf2124a75a9
+      internalID: -17869934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cda44e5200289e74a84229013326c1e0
+      internalID: -199084787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_5
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4251ca42bacf2b448b7554f16bac4060
+      internalID: -2070352391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_6
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f1d3d42b7a1723544adbb1736bd2a943
+      internalID: -1697620682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_7
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 1966
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c5cb28295750d64080693a809328a53
+      internalID: 1630002824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f6424637eb55f84eb45d43030471ba7
+      internalID: -568632513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_9
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a6d62bf03b2acb4d8c8f206444629f7
+      internalID: 1802230666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_10
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 874b730aecfca174d86e05856d40b4d3
+      internalID: 4944481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_11
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 984
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6a2fdc78625f544a9c73b34f55f1620
+      internalID: -1733914796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a83b78c60200da42963703b5519d16c
+      internalID: -952243814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_13
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f69529c5d65df964581980d0f723f8c5
+      internalID: 1816697128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_14
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3cb9a730bebb8f245bc34b45438adbcf
+      internalID: -1114071775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AM_iris_Idol_simple_close_2_15
+      rect:
+        serializedVersion: 2
+        x: 2460
+        y: 2
+        width: 820
+        height: 982
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed7f1cea58ba99f4f91cd553d2019080
+      internalID: -925844555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: fcdf6bf386307794aac17a5a189524cc
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":820.0,"y":982.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      AM_iris_Idol_simple_close_2_0: 590121640
+      AM_iris_Idol_simple_close_2_1: -1918974994
+      AM_iris_Idol_simple_close_2_10: 4944481
+      AM_iris_Idol_simple_close_2_11: -1733914796
+      AM_iris_Idol_simple_close_2_12: -952243814
+      AM_iris_Idol_simple_close_2_13: 1816697128
+      AM_iris_Idol_simple_close_2_14: -1114071775
+      AM_iris_Idol_simple_close_2_15: -925844555
+      AM_iris_Idol_simple_close_2_2: 613420634
+      AM_iris_Idol_simple_close_2_3: -17869934
+      AM_iris_Idol_simple_close_2_4: -199084787
+      AM_iris_Idol_simple_close_2_5: -2070352391
+      AM_iris_Idol_simple_close_2_6: -1697620682
+      AM_iris_Idol_simple_close_2_7: 1630002824
+      AM_iris_Idol_simple_close_2_8: -568632513
+      AM_iris_Idol_simple_close_2_9: 1802230666
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
