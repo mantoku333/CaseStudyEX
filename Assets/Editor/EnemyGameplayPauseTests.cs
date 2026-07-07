@@ -157,6 +157,47 @@ public sealed class EnemyGameplayPauseTests
         Assert.That(bulletRigidbody.linearVelocity.x, Is.GreaterThan(0.0001f));
     }
 
+    [Test]
+    public void GuidedEnemyBullet_PauseDoesNotConsumeGuidance_AndResumesCleanly()
+    {
+        PlayerController player = CreatePlayer(Vector2.right * 3f);
+        GameObject owner = CreateObject("EnemyOwner", Vector2.zero);
+        owner.AddComponent<BoxCollider2D>();
+        EnemyBullet bullet = CreateBullet(Vector2.zero, out Rigidbody2D bulletRigidbody);
+        bullet.Initialize(
+            player.transform,
+            owner.transform,
+            5f,
+            4f,
+            10,
+            10f,
+            0,
+            true,
+            1f,
+            Vector2.right);
+
+        float elapsedBeforePause = 1f - Time.fixedDeltaTime * 0.5f;
+        SetPrivateField(bullet, "guidanceElapsed", elapsedBeforePause);
+        Vector2 velocityBeforePause = bulletRigidbody.linearVelocity;
+
+        player.SetExternalControlLocked(true);
+        InvokePrivate(bullet, "FixedUpdate");
+        InvokePrivate(bullet, "FixedUpdate");
+
+        Assert.That(bulletRigidbody.linearVelocity, Is.EqualTo(Vector2.zero));
+        Assert.That(GetPrivateField<float>(bullet, "guidanceElapsed"), Is.EqualTo(elapsedBeforePause));
+        Assert.That(GetPrivateField<Vector2>(bullet, "velocityBeforeEnemyPause"), Is.EqualTo(velocityBeforePause));
+        Assert.That(GetPrivateField<bool>(bullet, "isGuidanceActive"), Is.True);
+
+        player.SetExternalControlLocked(false);
+        InvokePrivate(bullet, "FixedUpdate");
+
+        Assert.That(GetPrivateField<bool>(bullet, "isGuidanceActive"), Is.False);
+        Assert.That(GetPrivateField<bool>(bullet, "useTerrainAvoidance"), Is.False);
+        Assert.That(GetPrivateField<bool>(bullet, "isEscapingOwner"), Is.True);
+        Assert.That(bulletRigidbody.linearVelocity, Is.EqualTo(velocityBeforePause));
+    }
+
     private PlayerController CreatePlayer(Vector2 position)
     {
         GameObject playerObject = CreateObject("Player", position);
@@ -221,6 +262,13 @@ public sealed class EnemyGameplayPauseTests
         FieldInfo field = target.GetType().GetField(fieldName, InstancePrivate);
         Assert.That(field, Is.Not.Null, fieldName);
         field.SetValue(target, value);
+    }
+
+    private static T GetPrivateField<T>(object target, string fieldName)
+    {
+        FieldInfo field = target.GetType().GetField(fieldName, InstancePrivate);
+        Assert.That(field, Is.Not.Null, fieldName);
+        return (T)field.GetValue(target);
     }
 
     private static object InvokePrivate(object target, string methodName, params object[] parameters)

@@ -10,6 +10,7 @@ public class ItemEffectController : MonoBehaviour
     [SerializeField] private Transform effectTransform;
     [SerializeField] private SpriteRenderer effectRenderer;
     [SerializeField] private AudioClip pickupSound;
+    [SerializeField, Min(0f)] private float pickupVisualScaleMultiplier = 1f;
 
     private Coroutine playbackRoutine;
     private bool isPickupPlaying;
@@ -173,6 +174,7 @@ public class ItemEffectController : MonoBehaviour
         }
 
         Vector3 targetScale = settings != null ? settings.pickupVisualScale : Vector3.one;
+        targetScale *= pickupVisualScaleMultiplier;
         if (!compensateRootScale)
         {
             effectTransform.localScale = targetScale;

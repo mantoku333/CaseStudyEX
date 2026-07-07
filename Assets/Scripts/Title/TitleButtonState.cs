@@ -72,6 +72,13 @@ public sealed class TitleButtonState :
         RefreshAll();
     }
 
+    public static void ResetPointerVisualMode()
+    {
+        pointerVisualMode = false;
+        hoveredInstance = null;
+        RefreshAll();
+    }
+
     private void Refresh()
     {
         bool showSelected = pointerVisualMode

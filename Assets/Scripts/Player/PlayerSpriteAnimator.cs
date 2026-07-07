@@ -39,6 +39,11 @@ namespace Player
         [SerializeField] private string attackStateName = "attack";
         [SerializeField] private string recoilBoostSkyStateName = "recoilboost_sky";
 
+        [Header("Idle Size Override")]
+        [SerializeField] private Transform viewScaleTarget;
+        [SerializeField] private bool applyIdleScaleOverride = true;
+        [SerializeField, Min(0f)] private float idleViewScale = 0.6f;
+
         [Header("Landing Stability")]
         [SerializeField, Min(1)] private int landingGroundLossGraceFrames = 3;
 
@@ -80,14 +85,19 @@ namespace Player
         private Vector3 _previousWorldPosition;
         private Rigidbody2D _playerRigidbody;
         private int _landingGroundLossFrames;
+        private Transform _resolvedViewScaleTarget;
+        private Vector3 _defaultViewLocalScale;
+        private bool _hasDefaultViewLocalScale;
 
         private void Awake()
         {
             ResolveReferences();
+            CacheDefaultViewScale();
         }
 
         private void OnEnable()
         {
+            CacheDefaultViewScale();
             _currentState = (VisualState)(-1);
             _landingLocked = false;
             _hasPreviousGrounded = false;
@@ -98,6 +108,16 @@ namespace Player
             _hasPreviousWorldPosition = false;
             _previousWorldPosition = transform.position;
             _landingGroundLossFrames = 0;
+        }
+
+        private void OnDisable()
+        {
+            RestoreViewScale();
+        }
+
+        private void OnValidate()
+        {
+            _resolvedViewScaleTarget = null;
         }
 
         private void Update()
@@ -148,6 +168,8 @@ namespace Player
             {
                 SwitchState(nextState, isUmbrellaOpen);
             }
+
+            ApplyViewScaleForState(_currentState);
         }
 
         private void LateUpdate()
@@ -187,6 +209,7 @@ namespace Player
             }
 
             _playerRigidbody = GetComponentInParent<Rigidbody2D>();
+            _resolvedViewScaleTarget = viewScaleTarget != null ? viewScaleTarget : transform;
 
             if (flipRenderers != null && flipRenderers.Length > 0)
             {
@@ -376,6 +399,64 @@ namespace Player
             {
                 animator.Play(stateName, animatorLayer, 0f);
             }
+        }
+
+        private void CacheDefaultViewScale()
+        {
+            var target = ResolveViewScaleTarget();
+            if (target == null)
+            {
+                _hasDefaultViewLocalScale = false;
+                return;
+            }
+
+            _defaultViewLocalScale = target.localScale;
+            _hasDefaultViewLocalScale = true;
+        }
+
+        private void ApplyViewScaleForState(VisualState state)
+        {
+            if (!applyIdleScaleOverride)
+            {
+                RestoreViewScale();
+                return;
+            }
+
+            var target = ResolveViewScaleTarget();
+            if (target == null)
+            {
+                return;
+            }
+
+            target.localScale = state == VisualState.Idle
+                ? Vector3.one * idleViewScale
+                : ResolveDefaultViewScale();
+        }
+
+        private void RestoreViewScale()
+        {
+            var target = ResolveViewScaleTarget();
+            if (target != null && _hasDefaultViewLocalScale)
+            {
+                target.localScale = _defaultViewLocalScale;
+            }
+        }
+
+        private Vector3 ResolveDefaultViewScale()
+        {
+            return _hasDefaultViewLocalScale
+                ? _defaultViewLocalScale
+                : Vector3.one;
+        }
+
+        private Transform ResolveViewScaleTarget()
+        {
+            if (_resolvedViewScaleTarget == null)
+            {
+                _resolvedViewScaleTarget = viewScaleTarget != null ? viewScaleTarget : transform;
+            }
+
+            return _resolvedViewScaleTarget;
         }
 
         private bool IsLandAnimationFinished()
