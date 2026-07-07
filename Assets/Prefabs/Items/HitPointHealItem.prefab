@@ -177,6 +177,7 @@ MonoBehaviour:
   effectTransform: {fileID: 9100000000000000043}
   effectRenderer: {fileID: 9100000000000000044}
   pickupSound: {fileID: 8300000, guid: dcb371cd1970cf545b33c60fcfe1a463, type: 3}
+  pickupVisualScaleMultiplier: 1.3
 --- !u!1 &9100000000000000042
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,6 +10,9 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class OptionsMenu : MonoBehaviour
 {
+    [Header("Option Header")]
+    [SerializeField] private Vector2 optionHeaderSelectionMarkerOffset = new Vector2(0f, -23f);
+
     private const string PlayerActionMapName = "Player";
     private const string KeyboardMouseGroup = "Keyboard&Mouse";
     private const string TitleSceneName = "Title";
@@ -221,6 +224,14 @@ public sealed class OptionsMenu : MonoBehaviour
         RestoreGameplayState();
     }
 
+    private void OnValidate()
+    {
+        if (optionHeaderSelectionMarker != null && optionHeaderSelectionMarker.activeSelf)
+        {
+            UpdateOptionHeaderSelectionMarker(true);
+        }
+    }
+
     private void Update()
     {
         if (!referencesResolved)
@@ -261,6 +272,8 @@ public sealed class OptionsMenu : MonoBehaviour
         {
             return;
         }
+
+        RefreshOptionHeaderSelectionMarkerPosition();
 
         // 0設定中は、そのフレームに新規生成・再設定されたAudioSourceも音声出力前にmuteする。
         if (ReadVolume(SeVolumeKey, 1f) <= 0.0001f ||
@@ -768,6 +781,14 @@ public sealed class OptionsMenu : MonoBehaviour
         }
     }
 
+    private void RefreshOptionHeaderSelectionMarkerPosition()
+    {
+        if (isOpen && IsOptionDetailVisible() && optionHeaderSelectionMarker != null && optionHeaderSelectionMarker.activeSelf)
+        {
+            UpdateOptionHeaderSelectionMarker(true);
+        }
+    }
+
     private void SetOptionTabPair(GameObject normalState, GameObject selectedState, bool selected)
     {
         SetActiveIfChanged(normalState, !selected);
@@ -798,12 +819,15 @@ public sealed class OptionsMenu : MonoBehaviour
         RectTransform targetRectTransform = targetTransform as RectTransform;
         if (markerRectTransform != null && targetRectTransform != null)
         {
-            markerRectTransform.anchoredPosition = targetRectTransform.anchoredPosition + new Vector2(0f, -23f);
+            markerRectTransform.anchoredPosition = targetRectTransform.anchoredPosition + optionHeaderSelectionMarkerOffset;
             return;
         }
 
         Vector3 targetPosition = targetTransform.localPosition;
-        markerTransform.localPosition = new Vector3(targetPosition.x, targetPosition.y - 23f, markerTransform.localPosition.z);
+        markerTransform.localPosition = new Vector3(
+            targetPosition.x + optionHeaderSelectionMarkerOffset.x,
+            targetPosition.y + optionHeaderSelectionMarkerOffset.y,
+            markerTransform.localPosition.z);
     }
 
     private Transform GetSelectedOptionHeaderTarget()

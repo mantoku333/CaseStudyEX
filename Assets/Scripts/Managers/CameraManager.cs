@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -10,6 +11,10 @@ public class CameraManager : MonoBehaviour
     private bool isFollowCamActive = true;
     private CinemachineCamera followCam;
     private CinemachineCamera directFollowCam;
+    private Coroutine restoreFollowCenterOnActivateRoutine;
+    private CinemachinePositionComposer cachedFollowPositionComposer;
+    private bool cachedFollowCenterOnActivate;
+    private bool hasCachedFollowCenterOnActivate;
 
     private void Awake()
     {
@@ -170,6 +175,60 @@ public class CameraManager : MonoBehaviour
         lens.OrthographicSize = orthographicSize;
         followCam.Lens = lens;
         return true;
+    }
+
+    public void SuppressFollowCameraCenterOnActivateForFrames(int frameCount = 3)
+    {
+        if (followCam == null)
+        {
+            FindCameras();
+        }
+
+        if (followCam == null)
+        {
+            return;
+        }
+
+        CinemachinePositionComposer positionComposer = followCam.GetComponent<CinemachinePositionComposer>();
+        if (positionComposer == null)
+        {
+            return;
+        }
+
+        if (restoreFollowCenterOnActivateRoutine != null)
+        {
+            StopCoroutine(restoreFollowCenterOnActivateRoutine);
+            restoreFollowCenterOnActivateRoutine = null;
+        }
+
+        if (!hasCachedFollowCenterOnActivate || cachedFollowPositionComposer != positionComposer)
+        {
+            cachedFollowPositionComposer = positionComposer;
+            cachedFollowCenterOnActivate = positionComposer.CenterOnActivate;
+            hasCachedFollowCenterOnActivate = true;
+        }
+
+        positionComposer.CenterOnActivate = false;
+        restoreFollowCenterOnActivateRoutine =
+            StartCoroutine(RestoreFollowCenterOnActivateAfterFrames(Mathf.Max(1, frameCount)));
+    }
+
+    private IEnumerator RestoreFollowCenterOnActivateAfterFrames(int frameCount)
+    {
+        for (int i = 0; i < frameCount; i++)
+        {
+            yield return null;
+        }
+
+        if (cachedFollowPositionComposer != null && hasCachedFollowCenterOnActivate)
+        {
+            cachedFollowPositionComposer.CenterOnActivate = cachedFollowCenterOnActivate;
+        }
+
+        cachedFollowPositionComposer = null;
+        cachedFollowCenterOnActivate = false;
+        hasCachedFollowCenterOnActivate = false;
+        restoreFollowCenterOnActivateRoutine = null;
     }
 
     private bool EnsureCameraTargets()

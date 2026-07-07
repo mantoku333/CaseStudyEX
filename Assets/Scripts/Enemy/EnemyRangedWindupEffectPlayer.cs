@@ -8,18 +8,30 @@ namespace GameName.Enemy
     [RequireComponent(typeof(EnemyRangedAttack))]
     public sealed class EnemyRangedWindupEffectPlayer : MonoBehaviour
     {
-        [Header("Sprite Sheet")]
+        [Header("Charging Sprite Sheet")]
         [SerializeField] private Texture2D inSpriteSheet;
         [SerializeField, Min(1)] private int frameColumns = 5;
         [SerializeField, Min(1)] private int frameRows = 12;
         [SerializeField, Min(1)] private int frameCount = 60;
         [SerializeField, Min(1f)] private float pixelsPerUnit = 100f;
 
-        [Header("Placement")]
+        [Header("Attack Timing Sprite Sheet")]
+        [SerializeField] private Texture2D attackTimingSpriteSheet;
+        [SerializeField, Min(1)] private int timingFrameColumns = 5;
+        [SerializeField, Min(1)] private int timingFrameRows = 6;
+        [SerializeField, Min(1)] private int timingFrameCount = 28;
+        [SerializeField, Min(1f)] private float timingPixelsPerUnit = 100f;
+
+        [Header("Charging Placement")]
         [SerializeField] private Vector3 localOffset = Vector3.zero;
         [SerializeField, Min(0f)] private float forwardOffset = 0.5f;
         [SerializeField] private Vector3 effectScale = Vector3.one;
         [SerializeField] private bool parentToFirePoint = true;
+
+        [Header("Attack Timing Placement")]
+        [SerializeField] private Vector3 timingLocalOffset = Vector3.zero;
+        [SerializeField] private float timingForwardOffset;
+        [SerializeField, Min(0.01f)] private float timingFitScaleMultiplier = 1f;
 
         [Header("Renderer")]
         [SerializeField] private int sortingOrderOffset = 3;
@@ -29,9 +41,14 @@ namespace GameName.Enemy
         private EnemyRangedAttack rangedAttack;
         private EnemyController enemyController;
         private Sprite[] frames;
+        private Sprite[] timingFrames;
         private GameObject effectObject;
         private SpriteRenderer effectRenderer;
+        private GameObject timingEffectObject;
+        private SpriteRenderer timingEffectRenderer;
         private Coroutine playRoutine;
+        private float playbackElapsed;
+        private float playbackDuration;
 
         private void Awake()
         {
@@ -59,7 +76,7 @@ namespace GameName.Enemy
                 rangedAttack.WindupEnded -= HandleWindupEnded;
             }
 
-            StopAndDestroyEffect();
+            StopAndDestroyEffects();
         }
 
 #if UNITY_EDITOR
@@ -69,6 +86,11 @@ namespace GameName.Enemy
             frameRows = Mathf.Max(1, frameRows);
             frameCount = Mathf.Max(1, frameCount);
             pixelsPerUnit = Mathf.Max(1f, pixelsPerUnit);
+            timingFrameColumns = Mathf.Max(1, timingFrameColumns);
+            timingFrameRows = Mathf.Max(1, timingFrameRows);
+            timingFrameCount = Mathf.Max(1, timingFrameCount);
+            timingPixelsPerUnit = Mathf.Max(1f, timingPixelsPerUnit);
+            timingFitScaleMultiplier = Mathf.Max(0.01f, timingFitScaleMultiplier);
         }
 #endif
 
@@ -93,8 +115,20 @@ namespace GameName.Enemy
                 return;
             }
 
-            StopAndDestroyEffect();
+            StopAndDestroyEffects();
 
+            SpriteRenderer sourceRenderer = ResolveFrontmostEnemyRenderer();
+            CreateChargingEffect(firePoint, sourceRenderer);
+            CreateTimingEffect(sourceRenderer);
+
+            playbackElapsed = 0f;
+            playbackDuration = Mathf.Max(0.01f, duration);
+            ApplyVisualFrames();
+            playRoutine = StartCoroutine(PlayRoutine());
+        }
+
+        private void CreateChargingEffect(Transform firePoint, SpriteRenderer sourceRenderer)
+        {
             Transform anchor = firePoint != null ? firePoint : transform;
             effectObject = new GameObject("LongRangeAttackInEffect");
             effectObject.transform.position = ResolveEffectWorldPosition(anchor);
@@ -107,8 +141,30 @@ namespace GameName.Enemy
             }
 
             effectRenderer = effectObject.AddComponent<SpriteRenderer>();
-            ApplyRendererSettings(effectRenderer);
-            playRoutine = StartCoroutine(PlayRoutine(Mathf.Max(0.01f, duration)));
+            ApplyRendererSettings(effectRenderer, sourceRenderer, sortingOrderOffset);
+        }
+
+        private void CreateTimingEffect(SpriteRenderer sourceRenderer)
+        {
+            if (timingFrames == null || timingFrames.Length == 0 || sourceRenderer == null)
+            {
+                return;
+            }
+
+            timingEffectObject = new GameObject("RangedAttackTimingEffect");
+            timingEffectObject.transform.position = ResolveTimingWorldPosition(sourceRenderer);
+            timingEffectObject.transform.rotation = transform.rotation;
+
+            float spriteWidth = Mathf.Max(0.0001f, timingFrames[0].bounds.size.x);
+            float targetWidth = Mathf.Max(0.0001f, sourceRenderer.bounds.size.x) * timingFitScaleMultiplier;
+            float fittedScale = targetWidth / spriteWidth;
+            timingEffectObject.transform.localScale = Vector3.one * fittedScale;
+            timingEffectObject.transform.SetParent(transform, true);
+
+            timingEffectRenderer = timingEffectObject.AddComponent<SpriteRenderer>();
+            timingEffectRenderer.sprite = timingFrames[0];
+            timingEffectRenderer.enabled = false;
+            ApplyRendererSettings(timingEffectRenderer, sourceRenderer, sortingOrderOffset + 1);
         }
 
         public Vector3 ResolveEffectWorldPosition(Transform firePoint)
@@ -124,29 +180,72 @@ namespace GameName.Enemy
             return localOffset + (Vector3.right * Mathf.Sign(facingDirection) * forwardOffset);
         }
 
+        private Vector3 ResolveTimingWorldPosition(SpriteRenderer sourceRenderer)
+        {
+            Vector3 center = sourceRenderer != null ? sourceRenderer.bounds.center : transform.position;
+            int facingDirection = enemyController != null ? enemyController.FacingDirection : 1;
+            Vector3 facingOffset = Vector3.right * Mathf.Sign(facingDirection) * timingForwardOffset;
+            return center + transform.TransformVector(timingLocalOffset + facingOffset);
+        }
+
         private void HandleWindupEnded()
         {
-            StopAndDestroyEffect();
+            StopAndDestroyEffects();
         }
 
-        private IEnumerator PlayRoutine(float duration)
+        private IEnumerator PlayRoutine()
         {
-            float frameSeconds = Mathf.Max(0.01f, duration / frames.Length);
-            for (int i = 0; i < frames.Length; i++)
+            while (effectRenderer != null)
             {
-                if (effectRenderer == null)
-                {
-                    yield break;
-                }
+                yield return null;
+                AdvancePlayback(Time.deltaTime, EnemyGameplayPause.IsPaused());
+            }
+        }
 
-                effectRenderer.sprite = frames[i];
-                yield return new WaitForSeconds(frameSeconds);
+        private void AdvancePlayback(float deltaTime, bool isPaused)
+        {
+            if (isPaused || effectRenderer == null)
+            {
+                return;
             }
 
-            StopAndDestroyEffect();
+            playbackElapsed = Mathf.Min(playbackDuration, playbackElapsed + Mathf.Max(0f, deltaTime));
+            ApplyVisualFrames();
         }
 
-        private void StopAndDestroyEffect()
+        private void ApplyVisualFrames()
+        {
+            if (effectRenderer == null || frames == null || frames.Length == 0)
+            {
+                return;
+            }
+
+            float frameSeconds = playbackDuration / frames.Length;
+            int chargeFrameIndex = Mathf.Min(
+                frames.Length - 1,
+                Mathf.FloorToInt(playbackElapsed / Mathf.Max(0.0001f, frameSeconds)));
+            effectRenderer.sprite = frames[chargeFrameIndex];
+
+            if (timingEffectRenderer == null || timingFrames == null || timingFrames.Length == 0)
+            {
+                return;
+            }
+
+            int timingStartChargeFrame = Mathf.Max(0, frames.Length - timingFrames.Length);
+            if (chargeFrameIndex < timingStartChargeFrame)
+            {
+                timingEffectRenderer.enabled = false;
+                return;
+            }
+
+            int timingFrameIndex = Mathf.Min(
+                timingFrames.Length - 1,
+                chargeFrameIndex - timingStartChargeFrame);
+            timingEffectRenderer.sprite = timingFrames[timingFrameIndex];
+            timingEffectRenderer.enabled = true;
+        }
+
+        private void StopAndDestroyEffects()
         {
             if (playRoutine != null)
             {
@@ -154,25 +253,40 @@ namespace GameName.Enemy
                 playRoutine = null;
             }
 
-            if (effectObject != null)
-            {
-                Destroy(effectObject);
-                effectObject = null;
-                effectRenderer = null;
-            }
+            DestroyEffectObject(ref effectObject, ref effectRenderer);
+            DestroyEffectObject(ref timingEffectObject, ref timingEffectRenderer);
+            playbackElapsed = 0f;
+            playbackDuration = 0f;
         }
 
-        private void ApplyRendererSettings(SpriteRenderer renderer)
+        private static void DestroyEffectObject(ref GameObject target, ref SpriteRenderer renderer)
         {
-            SpriteRenderer sourceRenderer = ResolveFrontmostEnemyRenderer();
+            if (target != null)
+            {
+                if (Application.isPlaying)
+                {
+                    Destroy(target);
+                }
+                else
+                {
+                    DestroyImmediate(target);
+                }
+            }
+
+            target = null;
+            renderer = null;
+        }
+
+        private void ApplyRendererSettings(SpriteRenderer renderer, SpriteRenderer sourceRenderer, int orderOffset)
+        {
             if (sourceRenderer == null)
             {
-                renderer.sortingOrder = sortingOrderOffset;
+                renderer.sortingOrder = orderOffset;
                 return;
             }
 
             renderer.sortingLayerID = sourceRenderer.sortingLayerID;
-            renderer.sortingOrder = sourceRenderer.sortingOrder + sortingOrderOffset;
+            renderer.sortingOrder = sourceRenderer.sortingOrder + orderOffset;
 
             if (copyEnemyMaterial && sourceRenderer.sharedMaterial != null)
             {
@@ -188,7 +302,7 @@ namespace GameName.Enemy
             for (int i = 0; i < renderers.Length; i++)
             {
                 SpriteRenderer renderer = renderers[i];
-                if (renderer == null || renderer == effectRenderer)
+                if (renderer == null || renderer == effectRenderer || renderer == timingEffectRenderer)
                 {
                     continue;
                 }
@@ -218,41 +332,56 @@ namespace GameName.Enemy
         {
             if (frames == null || frames.Length == 0)
             {
-                frames = BuildFrames(inSpriteSheet);
+                frames = BuildFrames(inSpriteSheet, frameColumns, frameRows, frameCount, pixelsPerUnit);
+            }
+
+            if (timingFrames == null || timingFrames.Length == 0)
+            {
+                timingFrames = BuildFrames(
+                    attackTimingSpriteSheet,
+                    timingFrameColumns,
+                    timingFrameRows,
+                    timingFrameCount,
+                    timingPixelsPerUnit);
             }
         }
 
-        private Sprite[] BuildFrames(Texture2D spriteSheet)
+        private Sprite[] BuildFrames(
+            Texture2D spriteSheet,
+            int columns,
+            int rows,
+            int requestedFrameCount,
+            float spritePixelsPerUnit)
         {
             if (spriteSheet == null)
             {
                 return System.Array.Empty<Sprite>();
             }
 
-            int frameWidth = spriteSheet.width / frameColumns;
-            int frameHeight = spriteSheet.height / frameRows;
+            int frameWidth = spriteSheet.width / columns;
+            int frameHeight = spriteSheet.height / rows;
             if (frameWidth <= 0 || frameHeight <= 0)
             {
                 return System.Array.Empty<Sprite>();
             }
 
-            int maxFrameCount = Mathf.Min(frameCount, frameColumns * frameRows);
+            int maxFrameCount = Mathf.Min(requestedFrameCount, columns * rows);
             Sprite[] builtFrames = new Sprite[maxFrameCount];
             Vector2 pivot = new Vector2(0.5f, 0.5f);
             int index = 0;
 
-            for (int row = 0; row < frameRows && index < maxFrameCount; row++)
+            for (int row = 0; row < rows && index < maxFrameCount; row++)
             {
                 int y = spriteSheet.height - ((row + 1) * frameHeight);
 
-                for (int column = 0; column < frameColumns && index < maxFrameCount; column++)
+                for (int column = 0; column < columns && index < maxFrameCount; column++)
                 {
                     Rect rect = new Rect(column * frameWidth, y, frameWidth, frameHeight);
                     Sprite sprite = Sprite.Create(
                         spriteSheet,
                         rect,
                         pivot,
-                        pixelsPerUnit,
+                        spritePixelsPerUnit,
                         0,
                         SpriteMeshType.FullRect);
 
@@ -270,7 +399,14 @@ namespace GameName.Enemy
             {
                 if (generatedSprites[i] != null)
                 {
-                    Destroy(generatedSprites[i]);
+                    if (Application.isPlaying)
+                    {
+                        Destroy(generatedSprites[i]);
+                    }
+                    else
+                    {
+                        DestroyImmediate(generatedSprites[i]);
+                    }
                 }
             }
         }

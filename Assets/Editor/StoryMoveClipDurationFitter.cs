@@ -96,7 +96,11 @@ public static class StoryMoveClipDurationFitter
 
                 scannedClips++;
 
-                Transform moveTarget = ResolveMoveTarget(controller, director, moveClip);
+                Transform moveTarget = ResolveMoveTarget(
+                    controller,
+                    director,
+                    moveClip,
+                    out bool usesImplicitPlayerFallback);
                 if (moveTarget == null)
                 {
                     skippedClips++;
@@ -130,7 +134,25 @@ public static class StoryMoveClipDurationFitter
                     continue;
                 }
 
-                if (!virtualPositions.TryGetValue(moveTarget, out Vector3 virtualPosition))
+                bool hasVirtualPosition = virtualPositions.TryGetValue(moveTarget, out Vector3 virtualPosition);
+                if (!hasVirtualPosition && usesImplicitPlayerFallback)
+                {
+                    if (!TryResolveEventAreaStartPosition(controller, out virtualPosition))
+                    {
+                        skippedClips++;
+                        if (logDetails)
+                        {
+                            Debug.LogWarning(
+                                $"[StoryMoveClipDurationFitter] Move target for actorKey='{moveClip.actorKey}' falls back to Player, " +
+                                $"but no EventArea trigger was found for eventId='{controller.EventId}'. " +
+                                $"Track='{track.name}', clip='{clip.displayName}'",
+                                timeline);
+                        }
+
+                        continue;
+                    }
+                }
+                else if (!hasVirtualPosition)
                 {
                     virtualPosition = moveTarget.position;
                 }
@@ -140,6 +162,18 @@ public static class StoryMoveClipDurationFitter
                 {
                     targetPosition.y = virtualPosition.y;
                     targetPosition.z = virtualPosition.z;
+                }
+
+                if (!hasVirtualPosition && usesImplicitPlayerFallback &&
+                    TryResolveEventAreaStartPosition(controller, targetPosition, out Vector3 eventAreaEdgePosition))
+                {
+                    virtualPosition = eventAreaEdgePosition;
+                    targetPosition = ResolveTargetPosition(controller, moveClip, virtualPosition);
+                    if (playerController != null)
+                    {
+                        targetPosition.y = virtualPosition.y;
+                        targetPosition.z = virtualPosition.z;
+                    }
                 }
 
                 float distance = playerController != null
@@ -198,11 +232,89 @@ public static class StoryMoveClipDurationFitter
         return Selection.activeGameObject.GetComponentInParent<StoryEventController>();
     }
 
+    private static bool TryResolveEventAreaStartPosition(
+        StoryEventController controller,
+        out Vector3 startPosition)
+    {
+        startPosition = Vector3.zero;
+        StoryEventTrigger2D trigger = FindEventTrigger(controller);
+        if (trigger == null)
+        {
+            return false;
+        }
+
+        startPosition = trigger.transform.position;
+        return true;
+    }
+
+    private static bool TryResolveEventAreaStartPosition(
+        StoryEventController controller,
+        Vector3 targetPosition,
+        out Vector3 startPosition)
+    {
+        startPosition = Vector3.zero;
+        StoryEventTrigger2D trigger = FindEventTrigger(controller);
+        if (trigger == null)
+        {
+            return false;
+        }
+
+        Collider2D triggerCollider = trigger.GetComponent<Collider2D>();
+        if (triggerCollider == null)
+        {
+            startPosition = trigger.transform.position;
+            return true;
+        }
+
+        Bounds bounds = triggerCollider.bounds;
+        Vector3 closest = bounds.ClosestPoint(targetPosition);
+        closest.z = trigger.transform.position.z;
+        startPosition = closest;
+        return true;
+    }
+
+    private static StoryEventTrigger2D FindEventTrigger(StoryEventController controller)
+    {
+        if (controller == null || string.IsNullOrWhiteSpace(controller.EventId))
+        {
+            return null;
+        }
+
+        string eventId = controller.EventId.Trim();
+        StoryEventTrigger2D[] triggers = Object.FindObjectsByType<StoryEventTrigger2D>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        StoryEventTrigger2D fallback = null;
+        for (int i = 0; i < triggers.Length; i++)
+        {
+            StoryEventTrigger2D trigger = triggers[i];
+            if (trigger == null ||
+                !string.Equals(trigger.EventId, eventId, System.StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (trigger.gameObject.scene.IsValid() &&
+                controller.gameObject.scene.IsValid() &&
+                trigger.gameObject.scene == controller.gameObject.scene)
+            {
+                return trigger;
+            }
+
+            fallback ??= trigger;
+        }
+
+        return fallback;
+    }
+
     private static Transform ResolveMoveTarget(
         StoryEventController controller,
         IExposedPropertyTable resolver,
-        StoryObjectMoveClip moveClip)
+        StoryObjectMoveClip moveClip,
+        out bool usesImplicitPlayerFallback)
     {
+        usesImplicitPlayerFallback = false;
         if (moveClip == null)
         {
             return null;
@@ -220,6 +332,12 @@ public static class StoryMoveClipDurationFitter
         }
 
         string key = string.IsNullOrWhiteSpace(moveClip.actorKey) ? "iris" : moveClip.actorKey.Trim();
+        if (controller.TryGetAuthoredActorTransform(key, out Transform authoredTarget) && authoredTarget != null)
+        {
+            return authoredTarget;
+        }
+
+        usesImplicitPlayerFallback = true;
         return controller.GetActorTransform(key);
     }
 

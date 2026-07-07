@@ -179,13 +179,6 @@ public sealed class GameCursorController : MonoBehaviour
 
     private void Update()
     {
-        if (ShouldUseSystemCursor())
-        {
-            SetSystemCursorVisible(true);
-            HideAllImages();
-            return;
-        }
-
         SetSystemCursorVisible(false);
         ResolvePlayerReferences();
 
@@ -763,12 +756,6 @@ public sealed class GameCursorController : MonoBehaviour
 
     private static void ApplySystemCursorVisibility()
     {
-        SetSystemCursorVisible(ShouldUseSystemCursor());
-    }
-
-    private static bool ShouldUseSystemCursor()
-    {
-        return StoryPauseRuntime.HasOverride &&
-               StoryPauseRuntime.EffectivePolicy != StoryPausePolicy.None;
+        SetSystemCursorVisible(false);
     }
 }
