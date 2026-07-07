@@ -270,6 +270,7 @@ MonoBehaviour:
   startActiveOnPlay: 0
   maxHealth: 350
   backAttackDamageMultiplier: 2
+  shieldDamageMultiplier: 0.5
   moveSpeed: 8
   enrageHealthRate: 0.4
   enragedAttackMultiplier: 1.1
@@ -453,7 +454,8 @@ MonoBehaviour:
   - {fileID: 6998906520638918403, guid: 17682aae2164dfb4bba5a9721c3b0e91, type: 3}
   - {fileID: 25231560044382443, guid: 17682aae2164dfb4bba5a9721c3b0e91, type: 3}
   - {fileID: -1951799286732692100, guid: 17682aae2164dfb4bba5a9721c3b0e91, type: 3}
-  shieldBreakSpriteFrames: []
+  shieldBreakSpriteFrames:
+  - {fileID: 21300000, guid: 20cfe696025c4336b2f5a95c321417d6, type: 3}
   auraSpriteFrames:
   - {fileID: -4601674874447721213, guid: 2c093d300f00e3f49ad0827a11f0ead3, type: 3}
   - {fileID: -5502542794857560747, guid: 2c093d300f00e3f49ad0827a11f0ead3, type: 3}
@@ -1307,8 +1309,8 @@ MonoBehaviour:
   rangeEffectSizeMultiplier: 1
   rangeEffectFrameSizeMultiplier: {x: 1.2, y: 1}
   rangeOffset: {x: 0, y: 0.3, z: 0}
-  magicCircleBeyondSpawnDistance: 2
-  magicCircleWorldSize: {x: 10, y: 10}
+  magicCircleBeyondSpawnDistance: 0.5
+  magicCircleWorldSize: {x: 5, y: 5}
   groundBladeVisualFrameSizeMultiplier: {x: 1.2, y: 1}
   rainBladeVisualFrameSizeMultiplier: {x: 1, y: 1}
   auraSortingOrderOffset: 0
