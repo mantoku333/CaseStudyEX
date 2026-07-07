@@ -21,6 +21,7 @@ namespace Metroidvania.Enemy
         [SerializeField, Min(1)] private int contactDamage = 1;
 
         private Collider2D[] enemyColliders;
+        private Collider2D[] damageOnlyColliders;
         private Collider2D[] playerColliders;
         private Collider2D playerBodyCollider;
         private PlayerDamageFlash cachedPlayerFlash;
@@ -139,6 +140,12 @@ namespace Metroidvania.Enemy
         private void RefreshEnemyColliders()
         {
             enemyColliders = GetComponents<Collider2D>();
+            ContactDamageOnlyCollider[] markers = GetComponentsInChildren<ContactDamageOnlyCollider>(true);
+            damageOnlyColliders = new Collider2D[markers.Length];
+            for (int i = 0; i < markers.Length; i++)
+            {
+                damageOnlyColliders[i] = markers[i] != null ? markers[i].GetComponent<Collider2D>() : null;
+            }
         }
 
         private void CachePlayerReferences()
@@ -207,6 +214,25 @@ namespace Metroidvania.Enemy
                 }
 
                 if (enemyCollider.Distance(playerBodyCollider).isOverlapped)
+                {
+                    return true;
+                }
+            }
+
+            if (damageOnlyColliders == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < damageOnlyColliders.Length; i++)
+            {
+                Collider2D damageCollider = damageOnlyColliders[i];
+                if (damageCollider == null || !damageCollider.enabled)
+                {
+                    continue;
+                }
+
+                if (damageCollider.Distance(playerBodyCollider).isOverlapped)
                 {
                     return true;
                 }

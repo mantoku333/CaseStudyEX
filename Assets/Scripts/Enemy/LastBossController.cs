@@ -78,7 +78,7 @@ namespace GameName.Enemy
         [SerializeField, Min(0f)] private float bladeParryFadeDuration = 0.2f;
 
         [Header("Down")]
-        [SerializeField, Min(1)] private int downCountThreshold = 20;
+        [SerializeField, Min(1)] private int downCountThreshold = 10;
         [SerializeField, Min(0f)] private float downDuration = 10f;
         [SerializeField, Min(0f)] private float hitStopDuration = 0.08f;
         [SerializeField] private bool useGlobalHitStop = true;
@@ -438,7 +438,10 @@ namespace GameName.Enemy
                 return;
             }
 
-            AddDownCount(isBackAttack ? 2 : 1);
+            if (isBackAttack)
+            {
+                AddDownCount(1);
+            }
         }
 
         private void UpdateInitialDelay()
@@ -512,12 +515,7 @@ namespace GameName.Enemy
                 return;
             }
 
-            bool downStarted = ResolveAttack(pendingAction, activeAttackBox);
-            if (downStarted)
-            {
-                HideAttackVisual();
-                return;
-            }
+            ResolveAttack(pendingAction, activeAttackBox);
 
             visibleAction = pendingAction;
             stateTimer = GetAttackVisibleTime(pendingAction);
@@ -660,12 +658,7 @@ namespace GameName.Enemy
 
             spriteView?.PlayNormalAttack();
 
-            bool downStarted = ResolveAttack(action, activeAttackBox);
-            if (downStarted)
-            {
-                HideAttackVisual();
-                return;
-            }
+            ResolveAttack(action, activeAttackBox);
 
             visibleAction = action;
             stateTimer = GetAttackVisibleTime(action);
@@ -679,8 +672,8 @@ namespace GameName.Enemy
                 facingDirection);
         }
 
-        // 戻り値は「この攻撃解決でダウンが開始したか」。trueなら攻撃表示へ進めない。
-        private bool ResolveAttack(BossAction action, AttackBox attackBox)
+        // Resolves cooldown, parry, damage, and action bookkeeping.
+        private void ResolveAttack(BossAction action, AttackBox attackBox)
         {
             if (action == BossAction.Horizontal)
             {
@@ -691,18 +684,7 @@ namespace GameName.Enemy
                 verticalReadyTime = Time.time + verticalAttackCooldown;
             }
 
-            bool parried = IsRangeAttackParried(action, attackBox);
-            if (parried)
-            {
-                if (AddDownCount(action == BossAction.Horizontal ? 7 : 15))
-                {
-                    normalChainCount = 0;
-                    previousAction = action;
-                    ClearJustParryBuffer();
-                    return true;
-                }
-            }
-            else
+            if (!IsRangeAttackParried(action, attackBox))
             {
                 ApplyDamageToPlayersInBox(action, attackBox);
             }
@@ -718,7 +700,6 @@ namespace GameName.Enemy
 
             previousAction = action;
             ClearJustParryBuffer();
-            return false;
         }
 
         private void BeginPrefabRangeAttack(BossAction action, AttackBox attackBox)
@@ -1410,13 +1391,6 @@ namespace GameName.Enemy
                 effectController?.EndVerticalRangeCharge();
             }
 
-            bool downStarted = AddDownCount(action == BossAction.Horizontal ? 7 : 15);
-            if (downStarted)
-            {
-                HideAttackVisual();
-                return;
-            }
-
             if (state != BossState.Dead && state != BossState.Downed)
             {
                 visibleAction = action;
@@ -1468,13 +1442,6 @@ namespace GameName.Enemy
             if (action == BossAction.Vertical)
             {
                 effectController?.EndVerticalRangeCharge();
-            }
-
-            bool downStarted = AddDownCount(action == BossAction.Horizontal ? 7 : 15);
-            if (downStarted)
-            {
-                HideAttackVisual();
-                return;
             }
 
             if (state != BossState.Dead && state != BossState.Downed)
