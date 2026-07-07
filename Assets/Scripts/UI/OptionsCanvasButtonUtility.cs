@@ -118,12 +118,29 @@ public static class OptionsCanvasButtonUtility
         }
 
         button.transition = Selectable.Transition.None;
-        Graphic targetGraphic = FindLargestVisibleGraphic(button.transform);
+        Graphic targetGraphic = FindHitAreaGraphic(button.transform);
+        Graphic feedbackGraphic = null;
+        if (targetGraphic == null)
+        {
+            targetGraphic = FindLargestVisibleGraphic(button.transform);
+            feedbackGraphic = targetGraphic;
+        }
+        else
+        {
+            DisableOtherRaycastGraphics(button.transform, targetGraphic);
+            feedbackGraphic = FindLargestVisibleGraphic(button.transform);
+        }
         if (targetGraphic == null)
         {
             targetGraphic = button.targetGraphic != null
                 ? button.targetGraphic
                 : FindLargestGraphic(button.transform);
+            feedbackGraphic = targetGraphic;
+        }
+
+        if (feedbackGraphic == null || feedbackGraphic == targetGraphic)
+        {
+            feedbackGraphic = FindLargestVisibleGraphic(button.transform);
         }
 
         if (targetGraphic != null)
@@ -132,8 +149,39 @@ public static class OptionsCanvasButtonUtility
             targetGraphic.raycastTarget = true;
         }
 
-        ConfigureFeedback(button, targetGraphic, useDimHover, button.transform);
+        ConfigureFeedback(button, feedbackGraphic, useDimHover, button.transform);
         return button;
+    }
+
+    private static Graphic FindHitAreaGraphic(Transform root)
+    {
+        Transform hitArea = root != null ? root.Find("HitArea") : null;
+        if (hitArea == null)
+        {
+            return null;
+        }
+
+        Graphic graphic = hitArea.GetComponent<Graphic>();
+        if (graphic != null)
+        {
+            graphic.raycastTarget = true;
+        }
+
+        return graphic;
+    }
+
+    private static void DisableOtherRaycastGraphics(Transform root, Graphic allowedGraphic)
+    {
+        Graphic[] graphics = root.GetComponentsInChildren<Graphic>(true);
+        for (int i = 0; i < graphics.Length; i++)
+        {
+            if (graphics[i] == null)
+            {
+                continue;
+            }
+
+            graphics[i].raycastTarget = graphics[i] == allowedGraphic;
+        }
     }
 
     public static void ConfigurePressOnlyFeedback(Button button)

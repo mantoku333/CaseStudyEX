@@ -13,6 +13,7 @@ public sealed class OptionsMenu : MonoBehaviour
 {
     [Header("Option Header")]
     [SerializeField] private Vector2 optionHeaderSelectionMarkerOffset = new Vector2(0f, -23f);
+    [SerializeField, Min(0f)] private float optionHeaderSelectionMarkerSlideDuration = 0.12f;
 
     private const string PlayerActionMapName = "Player";
     private const string KeyboardMouseGroup = "Keyboard&Mouse";
@@ -110,6 +111,9 @@ public sealed class OptionsMenu : MonoBehaviour
     private RectTransform bgmBar;
     private RectTransform seBar;
     private RectTransform systemBar;
+    private RectTransform bgmFill;
+    private RectTransform seFill;
+    private RectTransform systemFill;
     private RectTransform bgmHandle;
     private RectTransform seHandle;
     private RectTransform systemHandle;
@@ -120,6 +124,9 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private TextMeshProUGUI statusText;
     private TextMeshProUGUI keyboardStatusText;
+    private TextMeshProUGUI bgmVolumeText;
+    private TextMeshProUGUI seVolumeText;
+    private TextMeshProUGUI systemVolumeText;
     private TextMeshProUGUI rightMoveValueText;
     private TextMeshProUGUI leftMoveValueText;
     private TextMeshProUGUI jumpValueText;
@@ -194,6 +201,10 @@ public sealed class OptionsMenu : MonoBehaviour
     }
 
     private OptionPage currentOptionPage = OptionPage.Settings;
+    private bool optionHeaderSelectionMarkerAnimating;
+    private Vector2 optionHeaderSelectionMarkerAnimationStart;
+    private Vector2 optionHeaderSelectionMarkerAnimationTarget;
+    private float optionHeaderSelectionMarkerAnimationElapsed;
 
     private void Awake()
     {
@@ -365,6 +376,9 @@ public sealed class OptionsMenu : MonoBehaviour
         bgmBar = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/BgmBar");
         seBar = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/SeBar");
         systemBar = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/SystemBar");
+        bgmFill = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/BgmBar/Fill");
+        seFill = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/SeBar/Fill");
+        systemFill = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/SystemBar/Fill");
         bgmHandle = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/BgmBar/Handle");
         seHandle = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/SeBar/Handle");
         systemHandle = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/SystemBar/Handle");
@@ -372,8 +386,12 @@ public sealed class OptionsMenu : MonoBehaviour
         keyboardScrollContent = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content");
         keyboardScrollbarTrack = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollbarTrack");
         keyboardScrollbarHandle = FindChildComponent<RectTransform>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollbarTrack/Handle");
+        HideKeyboardScrollbarGraphics();
 
         statusText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/MainMenuPanel/StatusText");
+        bgmVolumeText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/BgmVolumeText");
+        seVolumeText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/SeVolumeText");
+        systemVolumeText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/SoundContentPanel/SystemVolumeText");
         keyboardStatusText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/KeyboardStatusText");
         rightMoveValueText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/RightMoveRow/ValueButton/Label");
         leftMoveValueText = FindChildComponent<TextMeshProUGUI>("MenuRoot/OptionPanel/OptionDetailPanel/ContentFrame/KeyboardContentPanel/ScrollViewport/Content/LeftMoveRow/ValueButton/Label");
@@ -566,6 +584,11 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
+        if (!gameplayPaused)
+        {
+            PauseGameplay();
+        }
+
         SetMenuVisible(true);
         SetCursorMenuModeActive(true);
         isOpen = true;
@@ -610,6 +633,7 @@ public sealed class OptionsMenu : MonoBehaviour
         SetOptionPageHeaderVisible(false);
         SetActiveIfChanged(optionDetailPanel, false);
         SetActiveIfChanged(decorationContentPanel, false);
+        HideMapPanelsWhileMenuIsOpen();
 
         if (alternateMainMenuSkin != null)
         {
@@ -688,23 +712,33 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
+        bool animateSelectionMarker =
+            optionPageHeaderAvailable &&
+            isOpen &&
+            IsOptionDetailVisible() &&
+            optionHeaderSelectionMarker != null &&
+            optionHeaderSelectionMarker.activeSelf &&
+            currentOptionPage != page;
+
         currentOptionPage = page;
         SetOptionPanelVisible(true);
         optionPanel.transform.SetAsLastSibling();
         SetMainMenuPanelVisible(false);
         SetAlternateMainMenuVisible(false);
-        SetOptionPageHeaderVisible(true);
+        SetOptionPageHeaderVisible(true, updateMarker: !animateSelectionMarker);
         SetOptionTabPair(mapTabNormal, mapTabSelected, page == OptionPage.Map);
         SetOptionTabPair(decorationTabNormal, decorationTabSelected, page == OptionPage.Decoration);
         SetOptionTabPair(noteTabNormal, noteTabSelected, page == OptionPage.Note);
         SetOptionTabPair(settingsTabNormal, settingsTabSelected, page == OptionPage.Settings);
-        UpdateOptionHeaderSelectionMarker(true);
+        UpdateOptionHeaderSelectionMarker(true, animateSelectionMarker);
 
         bool showMapPage = page == OptionPage.Map;
         bool showSettingsPage = page == OptionPage.Settings;
         bool showDecorationPage = page == OptionPage.Decoration;
         if (cachedMinimapView != null)
+        {
             cachedMinimapView.SetFullMapVisible(showMapPage);
+        }
         SetActiveIfChanged(optionDetailPanel, showSettingsPage);
         SetActiveIfChanged(decorationContentPanel, showDecorationPage);
         if (showSettingsPage)
@@ -776,7 +810,7 @@ public sealed class OptionsMenu : MonoBehaviour
         return mainMenuPanel != null && mainMenuPanel.activeSelf;
     }
 
-    private void SetOptionPageHeaderVisible(bool visible)
+    private void SetOptionPageHeaderVisible(bool visible, bool updateMarker = true)
     {
         if (!optionPageHeaderAvailable)
         {
@@ -797,7 +831,10 @@ public sealed class OptionsMenu : MonoBehaviour
         SetActiveIfChanged(optionHeaderNextButtonObject, visible);
         SetActiveIfChanged(optionHeaderBack, visible);
         SetActiveIfChanged(optionHeaderBackground, visible);
-        UpdateOptionHeaderSelectionMarker(visible);
+        if (updateMarker)
+        {
+            UpdateOptionHeaderSelectionMarker(visible);
+        }
 
         if (visible)
         {
@@ -806,11 +843,26 @@ public sealed class OptionsMenu : MonoBehaviour
         }
     }
 
+    private void HideMapPanelsWhileMenuIsOpen()
+    {
+        if (cachedMinimapView != null)
+        {
+            cachedMinimapView.SetPanelVisibility(false, false);
+        }
+    }
+
     private void RefreshOptionHeaderSelectionMarkerPosition()
     {
         if (isOpen && IsOptionDetailVisible() && optionHeaderSelectionMarker != null && optionHeaderSelectionMarker.activeSelf)
         {
-            UpdateOptionHeaderSelectionMarker(true);
+            if (optionHeaderSelectionMarkerAnimating)
+            {
+                AdvanceOptionHeaderSelectionMarkerAnimation();
+            }
+            else
+            {
+                UpdateOptionHeaderSelectionMarker(true);
+            }
         }
     }
 
@@ -820,7 +872,7 @@ public sealed class OptionsMenu : MonoBehaviour
         SetActiveIfChanged(selectedState, selected);
     }
 
-    private void UpdateOptionHeaderSelectionMarker(bool visible)
+    private void UpdateOptionHeaderSelectionMarker(bool visible, bool animate = false)
     {
         if (optionHeaderSelectionMarker == null)
         {
@@ -830,6 +882,7 @@ public sealed class OptionsMenu : MonoBehaviour
         SetActiveIfChanged(optionHeaderSelectionMarker, visible);
         if (!visible)
         {
+            optionHeaderSelectionMarkerAnimating = false;
             return;
         }
 
@@ -844,15 +897,71 @@ public sealed class OptionsMenu : MonoBehaviour
         RectTransform targetRectTransform = targetTransform as RectTransform;
         if (markerRectTransform != null && targetRectTransform != null)
         {
-            markerRectTransform.anchoredPosition = targetRectTransform.anchoredPosition + optionHeaderSelectionMarkerOffset;
+            Vector2 markerTargetPosition = targetRectTransform.anchoredPosition + optionHeaderSelectionMarkerOffset;
+            if (animate && optionHeaderSelectionMarkerSlideDuration > 0f)
+            {
+                StartOptionHeaderSelectionMarkerAnimation(markerRectTransform, markerTargetPosition);
+            }
+            else
+            {
+                optionHeaderSelectionMarkerAnimating = false;
+                markerRectTransform.anchoredPosition = markerTargetPosition;
+            }
             return;
         }
 
-        Vector3 targetPosition = targetTransform.localPosition;
+        Vector3 fallbackTargetPosition = targetTransform.localPosition;
+        optionHeaderSelectionMarkerAnimating = false;
         markerTransform.localPosition = new Vector3(
-            targetPosition.x + optionHeaderSelectionMarkerOffset.x,
-            targetPosition.y + optionHeaderSelectionMarkerOffset.y,
+            fallbackTargetPosition.x + optionHeaderSelectionMarkerOffset.x,
+            fallbackTargetPosition.y + optionHeaderSelectionMarkerOffset.y,
             markerTransform.localPosition.z);
+    }
+
+    private void StartOptionHeaderSelectionMarkerAnimation(RectTransform marker, Vector2 targetPosition)
+    {
+        if ((marker.anchoredPosition - targetPosition).sqrMagnitude <= 0.01f)
+        {
+            optionHeaderSelectionMarkerAnimating = false;
+            marker.anchoredPosition = targetPosition;
+            return;
+        }
+
+        optionHeaderSelectionMarkerAnimationStart = marker.anchoredPosition;
+        optionHeaderSelectionMarkerAnimationTarget = targetPosition;
+        optionHeaderSelectionMarkerAnimationElapsed = 0f;
+        optionHeaderSelectionMarkerAnimating = true;
+    }
+
+    private void AdvanceOptionHeaderSelectionMarkerAnimation()
+    {
+        if (optionHeaderSelectionMarker == null)
+        {
+            optionHeaderSelectionMarkerAnimating = false;
+            return;
+        }
+
+        RectTransform marker = optionHeaderSelectionMarker.transform as RectTransform;
+        if (marker == null)
+        {
+            optionHeaderSelectionMarkerAnimating = false;
+            return;
+        }
+
+        optionHeaderSelectionMarkerAnimationElapsed += Time.unscaledDeltaTime;
+        float duration = Mathf.Max(0.0001f, optionHeaderSelectionMarkerSlideDuration);
+        float t = Mathf.Clamp01(optionHeaderSelectionMarkerAnimationElapsed / duration);
+        float eased = t * t * (3f - (2f * t));
+        marker.anchoredPosition = Vector2.LerpUnclamped(
+            optionHeaderSelectionMarkerAnimationStart,
+            optionHeaderSelectionMarkerAnimationTarget,
+            eased);
+
+        if (t >= 1f)
+        {
+            marker.anchoredPosition = optionHeaderSelectionMarkerAnimationTarget;
+            optionHeaderSelectionMarkerAnimating = false;
+        }
     }
 
     private Transform GetSelectedOptionHeaderTarget()
@@ -958,6 +1067,7 @@ public sealed class OptionsMenu : MonoBehaviour
         }
 
         soundContentPanel.SetActive(true);
+        soundContentPanel.transform.SetAsLastSibling();
         keyboardContentPanel.SetActive(false);
         isDraggingKeyboardScrollbar = false;
         ClearKeyboardStatus();
@@ -976,6 +1086,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
         soundContentPanel.SetActive(false);
         keyboardContentPanel.SetActive(true);
+        keyboardContentPanel.transform.SetAsLastSibling();
         SetTabVisualState(soundTabButton, false);
         SetTabVisualState(keyboardTabButton, true);
         RefreshKeyboardBindings();
@@ -1159,7 +1270,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
         if (cachedMinimapView != null)
         {
-            cachedMinimapView.SetPanelVisibility(previousMinimapVisible, false);
+            cachedMinimapView.SetPanelVisibility(previousMinimapVisible, previousFullMapVisible);
             cachedMinimapView = null;
         }
 
@@ -1376,6 +1487,11 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
+        if (!gameplayPaused)
+        {
+            PauseGameplay();
+        }
+
         SetMenuVisible(true);
         SetCursorMenuModeActive(true);
         isOpen = true;
@@ -1493,9 +1609,57 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private void RefreshVolumeVisuals()
     {
-        UpdateHandlePosition(bgmBar, bgmHandle, ReadVolume(BgmVolumeKey, 1f));
-        UpdateHandlePosition(seBar, seHandle, ReadVolume(SeVolumeKey, 1f));
-        UpdateHandlePosition(systemBar, systemHandle, ReadVolume(SystemVolumeKey, 1f));
+        float bgmVolume = ReadVolume(BgmVolumeKey, 1f);
+        float seVolume = ReadVolume(SeVolumeKey, 1f);
+        float systemVolume = ReadVolume(SystemVolumeKey, 1f);
+
+        UpdateBarFill(bgmBar, bgmFill, bgmVolume);
+        UpdateBarFill(seBar, seFill, seVolume);
+        UpdateBarFill(systemBar, systemFill, systemVolume);
+        UpdateHandlePosition(bgmBar, bgmHandle, bgmVolume);
+        UpdateHandlePosition(seBar, seHandle, seVolume);
+        UpdateHandlePosition(systemBar, systemHandle, systemVolume);
+        UpdateVolumeText(bgmVolumeText, bgmVolume);
+        UpdateVolumeText(seVolumeText, seVolume);
+        UpdateVolumeText(systemVolumeText, systemVolume);
+    }
+
+    private static void UpdateBarFill(RectTransform track, RectTransform fill, float value)
+    {
+        if (track == null || fill == null)
+        {
+            return;
+        }
+
+        float normalized = Mathf.Clamp01(value);
+        fill.gameObject.SetActive(normalized > 0.0001f);
+
+        float trackWidth = Mathf.Max(1f, track.rect.width);
+        fill.anchorMin = new Vector2(0.5f, 0.5f);
+        fill.anchorMax = new Vector2(0.5f, 0.5f);
+        fill.pivot = new Vector2(0f, 0.5f);
+        fill.anchoredPosition = new Vector2(-trackWidth * 0.5f, 0f);
+        fill.sizeDelta = new Vector2(trackWidth * normalized, track.rect.height);
+        fill.localScale = Vector3.one;
+
+        Image fillImage = fill.GetComponent<Image>();
+        if (fillImage != null)
+        {
+            fillImage.type = Image.Type.Simple;
+            fillImage.fillAmount = 1f;
+        }
+
+        fill.SetSiblingIndex(Mathf.Min(1, fill.parent.childCount - 1));
+    }
+
+    private static void UpdateVolumeText(TextMeshProUGUI text, float value)
+    {
+        if (text == null)
+        {
+            return;
+        }
+
+        text.text = Mathf.RoundToInt(Mathf.Clamp01(value) * 100f).ToString();
     }
 
     private void UpdateHandlePosition(RectTransform track, RectTransform handle, float value)
@@ -1510,6 +1674,7 @@ public sealed class OptionsMenu : MonoBehaviour
         Vector2 anchored = handle.anchoredPosition;
         anchored.x = x;
         handle.anchoredPosition = anchored;
+        handle.SetAsLastSibling();
     }
 
     private void ApplyAudioSettingsToScene(bool forceRefreshAll)
@@ -1607,14 +1772,31 @@ public sealed class OptionsMenu : MonoBehaviour
         string recoil,
         string dodge)
     {
-        rightMoveValueText.text = rightMove;
-        leftMoveValueText.text = leftMove;
-        jumpValueText.text = jump;
-        attackValueText.text = attack;
-        glideValueText.text = glide;
-        if (recoilValueText != null) recoilValueText.text = recoil;
-        if (parryValueText != null) parryValueText.text = "-";
-        dodgeValueText.text = dodge;
+        SetKeyboardValueText(rightMoveValueText, rightMove);
+        SetKeyboardValueText(leftMoveValueText, leftMove);
+        SetKeyboardValueText(jumpValueText, jump);
+        SetKeyboardValueText(attackValueText, attack);
+        SetKeyboardValueText(glideValueText, glide);
+        SetKeyboardValueText(recoilValueText, recoil);
+        SetKeyboardValueText(parryValueText, "-");
+        SetKeyboardValueText(dodgeValueText, dodge);
+    }
+
+    private static void SetKeyboardValueText(TextMeshProUGUI text, string value)
+    {
+        if (text == null)
+        {
+            return;
+        }
+
+        text.text = IsMouseButtonLabel(value) ? string.Empty : value;
+    }
+
+    private static bool IsMouseButtonLabel(string value)
+    {
+        return value == "\u5DE6\u30AF\u30EA\u30C3\u30AF" ||
+               value == "\u53F3\u30AF\u30EA\u30C3\u30AF" ||
+               value == "\u30DB\u30A4\u30FC\u30EB\u30AF\u30EA\u30C3\u30AF";
     }
 
     private void StartRebindRightMove()
@@ -2047,6 +2229,27 @@ public sealed class OptionsMenu : MonoBehaviour
         Vector2 handlePosition = keyboardScrollbarHandle.anchoredPosition;
         handlePosition.y = -(trackHeight - handleHeight) * keyboardScrollNormalized;
         keyboardScrollbarHandle.anchoredPosition = handlePosition;
+        HideKeyboardScrollbarGraphics();
+    }
+
+    private void HideKeyboardScrollbarGraphics()
+    {
+        SetGraphicTransparent(keyboardScrollbarTrack);
+        SetGraphicTransparent(keyboardScrollbarHandle);
+    }
+
+    private static void SetGraphicTransparent(RectTransform target)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        Graphic graphic = target.GetComponent<Graphic>();
+        if (graphic != null)
+        {
+            graphic.color = new Color(1f, 1f, 1f, 0.001f);
+        }
     }
 
     private void UpdateKeyboardScrollFromPointer(Vector2 screenPoint)
@@ -2433,7 +2636,6 @@ public sealed class OptionsMenu : MonoBehaviour
         if (jumpButton == null) missing.Append("JumpButton ");
         if (attackButton == null) missing.Append("AttackButton ");
         if (glideButton == null) missing.Append("GlideButton ");
-        if (recoilButton == null) missing.Append("RecoilButton ");
         if (dodgeButton == null) missing.Append("DodgeButton ");
         if (bgmBar == null) missing.Append("BgmBar ");
         if (seBar == null) missing.Append("SeBar ");
