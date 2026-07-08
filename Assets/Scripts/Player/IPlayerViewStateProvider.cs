@@ -14,6 +14,7 @@ namespace Player
         bool IsParrying { get; }
         bool IsUmbrellaChanging { get; }
         bool IsAttacking { get; }
+        bool IsDiveAttacking { get; }
         bool IsRecoilBoosting { get; }
     }
 }

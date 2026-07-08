@@ -37,6 +37,7 @@ namespace Player
         [SerializeField] private string parryStateName = "parry";
         [SerializeField] private string changeStateName = "change";
         [SerializeField] private string attackStateName = "attack";
+        [SerializeField] private string diveAttackStateName = "dive_attack";
         [SerializeField] private string recoilBoostSkyStateName = "recoilboost_sky";
 
         [Header("Landing Stability")]
@@ -60,6 +61,7 @@ namespace Player
             Parry,
             Change,
             Attack,
+            DiveAttack,
             RecoilBoostSky
         }
 
@@ -102,7 +104,7 @@ namespace Player
 
         private void Update()
         {
-            if (!TryReadProviderState(out var isGrounded, out var isMoving, out var isGliding, out var isUmbrellaOpen, out var isDodging, out var isFacingRight, out var isParrying, out var isChanging, out var isAttacking, out var isRecoilBoosting))
+            if (!TryReadProviderState(out var isGrounded, out var isMoving, out var isGliding, out var isUmbrellaOpen, out var isDodging, out var isFacingRight, out var isParrying, out var isChanging, out var isAttacking, out var isDiveAttacking, out var isRecoilBoosting))
             {
                 if (!_warnedNoStateProvider)
                 {
@@ -143,7 +145,7 @@ namespace Player
                 _landingLocked = false;
             }
 
-            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, isParrying, isChanging, isAttacking, isRecoilBoosting, _landingLocked);
+            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, isParrying, isChanging, isAttacking, isDiveAttacking, isRecoilBoosting, _landingLocked);
             if (_currentState != nextState || _currentUmbrellaOpen != isUmbrellaOpen)
             {
                 SwitchState(nextState, isUmbrellaOpen);
@@ -212,7 +214,7 @@ namespace Player
                 : EmptyRenderers;
         }
 
-        private bool TryReadProviderState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isUmbrellaOpen, out bool isDodging, out bool isFacingRight, out bool isParrying, out bool isChanging, out bool isAttacking, out bool isRecoilBoosting)
+        private bool TryReadProviderState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isUmbrellaOpen, out bool isDodging, out bool isFacingRight, out bool isParrying, out bool isChanging, out bool isAttacking, out bool isDiveAttacking, out bool isRecoilBoosting)
         {
             if (_stateProvider != null)
             {
@@ -225,6 +227,7 @@ namespace Player
                 isParrying = _stateProvider.IsParrying;
                 isChanging = _stateProvider.IsUmbrellaChanging;
                 isAttacking = _stateProvider.IsAttacking;
+                isDiveAttacking = _stateProvider.IsDiveAttacking;
                 isRecoilBoosting = _stateProvider.IsRecoilBoosting;
                 return true;
             }
@@ -238,11 +241,12 @@ namespace Player
             isParrying = false;
             isChanging = false;
             isAttacking = false;
+            isDiveAttacking = false;
             isRecoilBoosting = false;
             return false;
         }
 
-        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool isParrying, bool isChanging, bool isAttacking, bool isRecoilBoosting, bool hasLandingLock)
+        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool isParrying, bool isChanging, bool isAttacking, bool isDiveAttacking, bool isRecoilBoosting, bool hasLandingLock)
         {
             if (isParrying)
             {
@@ -257,6 +261,11 @@ namespace Player
             if (isAttacking)
             {
                 return VisualState.Attack;
+            }
+
+            if (isDiveAttacking)
+            {
+                return VisualState.DiveAttack;
             }
 
             if (isDodging)
@@ -440,6 +449,8 @@ namespace Player
                     return changeStateName;
                 case VisualState.Attack:
                     return attackStateName;
+                case VisualState.DiveAttack:
+                    return diveAttackStateName;
                 case VisualState.RecoilBoostSky:
                     return recoilBoostSkyStateName;
                 default:
@@ -524,6 +535,15 @@ namespace Player
                     if (AnimatorHasState(primary)) return primary;
                     if (AnimatorHasState("Attack")) return "Attack";
                     if (AnimatorHasState("attack")) return "attack";
+                    break;
+                case VisualState.DiveAttack:
+                    if (AnimatorHasState(primary)) return primary;
+                    if (AnimatorHasState("DiveAttack")) return "DiveAttack";
+                    if (AnimatorHasState("Dive_Attack")) return "Dive_Attack";
+                    if (AnimatorHasState("diveAttack")) return "diveAttack";
+                    if (AnimatorHasState("dive_attack")) return "dive_attack";
+                    if (AnimatorHasState(jumpStateName)) return jumpStateName;
+                    if (AnimatorHasState("jump")) return "jump";
                     break;
                 case VisualState.RecoilBoostSky:
                     if (AnimatorHasState(primary)) return primary;

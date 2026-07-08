@@ -75,21 +75,6 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     [SerializeField, Min(0f), Tooltip("落下攻撃の着地判定中だけ、敵からの被弾よりプレイヤー攻撃を優先する時間です。空振り時は即解除します。")]
     private float 攻撃成立時の被弾無効時間 = 0.16f;
 
-    [Header("見た目")]
-    [SerializeField, Tooltip("落下攻撃中に表示する1枚絵です。")]
-    private Sprite 落下攻撃スプライト;
-
-    [SerializeField, Tooltip("差し替え対象の SpriteRenderer です。未設定なら子から自動取得します。")]
-    private SpriteRenderer 対象スプライトレンダラー;
-
-    [SerializeField, Tooltip("落下攻撃中だけ Animator を止め、1枚絵を維持します。")]
-    private bool 落下中はAnimatorを停止する = true;
-
-    [SerializeField, Tooltip("落下攻撃スプライト表示中の位置補正です。画像の中心ズレをここで吸収します。")]
-    private Vector3 スプライト位置補正 = new Vector3(0f, 0f, 0f);
-
-    [SerializeField, Tooltip("落下攻撃スプライト表示中のスケール倍率です。画像サイズ差をここで吸収します。")]
-    private Vector3 スプライトスケール倍率 = Vector3.one;
 
     [Header("敵ヒットエフェクト")]
     [SerializeField, Tooltip("敵に当たった時だけ再生するエフェクトのスプライトシートです。パリィ成功エフェクトの青い方を指定してください。")]
@@ -162,13 +147,6 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     private GroundCheck groundCheck;
     private PlayerEquipmentController equipmentController;
     private PlayerHealth playerHealth;
-    private Animator targetAnimator;
-    private Transform spriteTransform;
-    private Sprite previousSprite;
-    private Vector3 previousLocalPosition;
-    private Vector3 previousLocalScale;
-    private bool previousAnimatorEnabled;
-    private bool hasVisualOverride;
     private bool isDiveAttacking;
     private float diveStartedTime;
     private float bounceControlEndTime;
@@ -188,20 +166,6 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         ResolveGridIfNeeded();
         ResolveGroundLayerMaskIfNeeded();
 
-        if (対象スプライトレンダラー == null)
-        {
-            対象スプライトレンダラー = GetComponentInChildren<SpriteRenderer>(true);
-        }
-
-        if (対象スプライトレンダラー != null)
-        {
-            spriteTransform = 対象スプライトレンダラー.transform;
-            targetAnimator = 対象スプライトレンダラー.GetComponent<Animator>();
-            if (targetAnimator == null)
-            {
-                targetAnimator = 対象スプライトレンダラー.GetComponentInParent<Animator>();
-            }
-        }
 
         if (SE再生AudioSource == null)
         {
@@ -242,7 +206,6 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
             EndDiveAttack(false);
         }
 
-        RestoreVisual();
         bounceControlEndTime = 0f;
     }
 
@@ -283,7 +246,6 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         hitEnemies.Clear();
         hitDestructibles.Clear();
 
-        ApplyVisualOverride();
         PlaySE(落下開始SE, 落下開始SE音量);
 
         Vector2 velocity = rigidBody2d.linearVelocity;
@@ -368,7 +330,6 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         }
 
         isDiveAttacking = false;
-        RestoreVisual();
 
         if (!applyLanding)
         {
@@ -714,69 +675,6 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         velocity.y = Mathf.Max(velocity.y, 跳ね上がり速度);
         rigidBody2d.linearVelocity = velocity;
         bounceControlEndTime = Time.time + 跳ね上がり操作時間;
-    }
-
-    private void ApplyVisualOverride()
-    {
-        if (落下攻撃スプライト == null || 対象スプライトレンダラー == null)
-        {
-            return;
-        }
-
-        previousSprite = 対象スプライトレンダラー.sprite;
-        if (spriteTransform != null)
-        {
-            previousLocalPosition = spriteTransform.localPosition;
-            previousLocalScale = spriteTransform.localScale;
-        }
-
-        if (targetAnimator != null)
-        {
-            previousAnimatorEnabled = targetAnimator.enabled;
-            if (落下中はAnimatorを停止する)
-            {
-                targetAnimator.enabled = false;
-            }
-        }
-
-        対象スプライトレンダラー.sprite = 落下攻撃スプライト;
-
-        if (spriteTransform != null)
-        {
-            spriteTransform.localPosition = previousLocalPosition + スプライト位置補正;
-            spriteTransform.localScale = new Vector3(
-                previousLocalScale.x * スプライトスケール倍率.x,
-                previousLocalScale.y * スプライトスケール倍率.y,
-                previousLocalScale.z * スプライトスケール倍率.z);
-        }
-
-        hasVisualOverride = true;
-    }
-
-    private void RestoreVisual()
-    {
-        if (!hasVisualOverride)
-        {
-            return;
-        }
-
-        if (対象スプライトレンダラー != null)
-        {
-            対象スプライトレンダラー.sprite = previousSprite;
-        }
-
-        if (spriteTransform != null)
-        {
-            spriteTransform.localPosition = previousLocalPosition;
-            spriteTransform.localScale = previousLocalScale;
-        }
-
-        if (targetAnimator != null)
-        {
-            targetAnimator.enabled = previousAnimatorEnabled;
-        }
-
-        hasVisualOverride = false;
     }
 
     private void PlaySE(AudioClip clip, float volume)
