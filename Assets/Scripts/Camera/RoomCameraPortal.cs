@@ -130,16 +130,18 @@ public sealed class RoomCameraPortal : MonoBehaviour
     private void CommitPendingTransition(Vector3 playerPosition)
     {
         RoomCameraTrigger finalRoom = ResolveRoomContaining(playerPosition);
+        if (finalRoom == null &&
+            RoomCameraTrigger.TryGetRoomAtPosition(playerPosition, out RoomCameraTrigger containingRegisteredRoom))
+        {
+            finalRoom = containingRegisteredRoom;
+        }
+
         if (finalRoom == null)
         {
             finalRoom = ResolveRoomOnPortalSide(playerPosition);
         }
 
-        if (finalRoom == null ||
-            pendingFromRoom != null &&
-            pendingToRoom != null &&
-            finalRoom != pendingFromRoom &&
-            finalRoom != pendingToRoom)
+        if (finalRoom == null)
         {
             finalRoom = pendingFromRoom;
         }
