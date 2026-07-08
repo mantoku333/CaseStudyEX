@@ -17,6 +17,7 @@ namespace Player
 
         [Header("SE")]
         [SerializeField] private AudioClip playerDamageClip;
+        [SerializeField, Range(0f, 1f)] private float playerDamageVolume = 0.25f;
 
         [Header("Damage Knockback")]
         [SerializeField, Min(0f)] private float damageKnockbackSpeed = 6f;
@@ -156,7 +157,7 @@ namespace Player
 
             nextDamageTime = Time.time + Mathf.Max(0f, cooldownSeconds);
 
-            PlaySE(playerDamageClip);
+            PlaySE(playerDamageClip, playerDamageVolume);
             NotifyHealthChanged();
             return true;
         }
@@ -401,7 +402,7 @@ namespace Player
             }
         }
 
-        private void PlaySE(AudioClip clip)
+        private void PlaySE(AudioClip clip, float volumeScale)
         {
             if (clip == null)
             {
@@ -411,7 +412,7 @@ namespace Player
             TryResolveAudioSource();
             if (audioSource != null)
             {
-                audioSource.PlayOneShot(clip);
+                audioSource.PlayOneShot(clip, Mathf.Clamp01(volumeScale));
             }
         }
 
