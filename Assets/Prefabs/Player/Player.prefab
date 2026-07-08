@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1199861529177928970
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5340152419630611810}
+  m_Layer: 0
+  m_Name: StoryTextPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5340152419630611810
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1199861529177928970}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.61, y: 1.65, z: 0}
+  m_LocalScale: {x: 0.6273526, y: 0.6273526, z: 0.6273526}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1297286252844393473}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1455145078984213775
 GameObject:
   m_ObjectHideFlags: 0
@@ -43,7 +74,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: adab7e5b3d4b0c04c9078e8e8d2a1b60, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ParryHitbox
 --- !u!58 &5261322581532133394
 CircleCollider2D:
@@ -568,6 +599,7 @@ Transform:
   - {fileID: 3878988826709100726}
   - {fileID: 1844776828312348601}
   - {fileID: 6043330165385624681}
+  - {fileID: 5340152419630611810}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5431561428665394503
@@ -706,6 +738,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   applyNoFrictionMaterial: 1
+  groundedLossGraceSeconds: 0.08
   playerStatsData: {fileID: 11400000, guid: 828b8bd6e59a0de45ac0b6f81b0916f1, type: 2}
 --- !u!114 &4202108349721021491
 MonoBehaviour:
@@ -727,6 +760,7 @@ MonoBehaviour:
   damageKnockbackSpeed: 6
   damageKnockbackDuration: 0.18
   damageKnockbackUpwardSpeed: 3.5
+  logHealthDebug: 0
 --- !u!114 &3141592653589793238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -742,22 +776,6 @@ MonoBehaviour:
   statsData: {fileID: 11400000, guid: 828b8bd6e59a0de45ac0b6f81b0916f1, type: 2}
   attackDamageBonus: 0
   logAttackPowerDebug: 0
---- !u!114 &6872356164271042961
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4600020788520051928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e264f05f19c542a2996e357d267bd47f, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerGlideAudioController
-  glideLoopClip: {fileID: 8300000, guid: 6777b9b5926c4432f99243f72c150e47, type: 3}
-  playDelay: 0.2
-  fadeOutDuration: 0.35
-  volume: 1
 --- !u!114 &2152828851043830257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -773,6 +791,7 @@ MonoBehaviour:
   dodgeDistance: 5
   dodgeDuration: 0.3
   dodgeCooldown: 0.5
+  postDodgeInvincibleSeconds: 0.25
   enableAirDodgeTrajectoryAdjustment: 1
   airDodgeHorizontalDistanceMultiplier: 0.9
   airDodgeDownwardOffset: 0.55
@@ -788,7 +807,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3bb7d3a9ef364d9ab0319b31a4b0b9e2, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDiveAttackController
   "\u843D\u4E0B\u653B\u6483\u3092\u4F7F\u7528\u3059\u308B": 1
   "\u767A\u52D5\u306B\u5FC5\u8981\u306A\u5730\u9762\u304B\u3089\u306E\u9AD8\u3055\u30B0\u30EA\u30C3\u30C9\u6570": 2
@@ -1038,6 +1057,9 @@ MonoBehaviour:
   surfaceLayerMask:
     serializedVersion: 2
     m_Bits: 192
+  surfaceZoneLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
   surfaceProbeDistance: 1.2
   fallbackSurfaceProfile: {fileID: 0}
   stepInterval: 0.35
@@ -1085,6 +1107,22 @@ MonoBehaviour:
   visualAnchor: {fileID: 0}
   backVisualRoot: {fileID: 0}
   frontVisualRoot: {fileID: 0}
+--- !u!114 &6872356164271042961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e264f05f19c542a2996e357d267bd47f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGlideAudioController
+  glideLoopClip: {fileID: 8300000, guid: 6777b9b5926c4432f99243f72c150e47, type: 3}
+  playDelay: 0.2
+  fadeOutDuration: 0.35
+  volume: 1
 --- !u!1 &5437759847484700699
 GameObject:
   m_ObjectHideFlags: 0
@@ -1211,7 +1249,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8bb4d642cfe14c34809000abed88a48f, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RecoilTrajectoryPreview
   predictionSeconds: 1.25
   maxPointCount: 64
@@ -1369,6 +1407,12 @@ MonoBehaviour:
   changeStateName: change
   attackStateName: attack
   recoilBoostSkyStateName: recoilboost_sky
+  viewScaleTarget: {fileID: 0}
+  applyIdleScaleOverride: 1
+  idleViewScale: 0.6
+  landingGroundLossGraceFrames: 3
+  useTransformDeltaAsMovement: 1
+  transformMovementThreshold: 0.001
   logCurrentSpriteEveryFrame: 0
 --- !u!114 &5649830263680809920
 MonoBehaviour:
