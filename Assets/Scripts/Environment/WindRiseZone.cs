@@ -130,7 +130,7 @@ public class WindRiseZone : MonoBehaviour
 
     private void AddTarget(Collider2D other)
     {
-        // プレイヤー以外のコライダーや Rigidbody を持たないものは対象外。
+        // プレイヤー本体の CapsuleCollider2D 以外（攻撃・パリィ判定など）は対象外。
         if (!TryBuildTarget(other, out PlayerWindTarget target))
         {
             return;
@@ -172,7 +172,7 @@ public class WindRiseZone : MonoBehaviour
     {
         target = null;
 
-        // 子オブジェクトのコライダーに触れた場合でも、親の Rigidbody2D を風の対象にする。
+        // 攻撃・パリィ・GroundCheck などの子コライダーでは WindRise を反応させない。
         Rigidbody2D body = ResolveRigidbody(other);
         if (body == null)
         {
@@ -185,11 +185,10 @@ public class WindRiseZone : MonoBehaviour
             return false;
         }
 
-        // 風の判定にはプレイヤー本体の Collider bounds を使う。
-        Collider2D bodyCollider = body.GetComponent<Collider2D>();
-        if (bodyCollider == null)
+        CapsuleCollider2D bodyCollider = body.GetComponent<CapsuleCollider2D>();
+        if (bodyCollider == null || other != bodyCollider)
         {
-            bodyCollider = other;
+            return false;
         }
 
         target = new PlayerWindTarget

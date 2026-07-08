@@ -17,6 +17,7 @@ namespace GameName.Enemy
         }
 
         private readonly Collider2D[] overlapResults = new Collider2D[8];
+        private readonly RaycastHit2D[] groundCastResults = new RaycastHit2D[8];
 
         private LastBossController owner;
         private Collider2D bladeCollider;
@@ -24,6 +25,7 @@ namespace GameName.Enemy
         private SpriteRenderer[] spriteRenderers = System.Array.Empty<SpriteRenderer>();
         private Color[] spriteRendererStartColors = System.Array.Empty<Color>();
         private ContactFilter2D playerOverlapFilter;
+        private ContactFilter2D groundCastFilter;
         private BladeKind kind;
         private Vector2 rainTargetPoint;
         private Vector3 originalScale;
@@ -40,6 +42,7 @@ namespace GameName.Enemy
         private Vector2 groundVisualFrameSizeMultiplier = Vector2.one;
         private Vector2 rainVisualFrameSizeMultiplier = Vector2.one;
         [SerializeField] private float rainAimRotationOffsetDegrees = 180f;
+        [SerializeField, Min(0f)] private float rainGroundVisualInset = 0.15f;
         private bool initialized;
         private bool canDamage;
         private bool rainReleased;
@@ -64,6 +67,14 @@ namespace GameName.Enemy
                 useTriggers = false
             };
 
+            int groundMask = BuildGroundMask();
+            groundCastFilter = new ContactFilter2D
+            {
+                useLayerMask = groundMask != 0,
+                layerMask = groundMask,
+                useTriggers = false
+            };
+
             if (bladeCollider != null)
             {
                 bladeCollider.isTrigger = true;
@@ -72,6 +83,8 @@ namespace GameName.Enemy
 
         private void OnValidate()
         {
+            rainGroundVisualInset = Mathf.Max(0f, rainGroundVisualInset);
+
             Collider2D validatedCollider = GetComponent<Collider2D>();
             if (validatedCollider != null)
             {
@@ -88,7 +101,7 @@ namespace GameName.Enemy
 
             if (kind == BladeKind.Rain && rainReleased && !rainLanded)
             {
-                MoveRainBlade();
+                MoveRainBlade(Time.deltaTime);
             }
 
             if (canDamage)
@@ -305,13 +318,27 @@ namespace GameName.Enemy
             transform.position = finalPosition;
         }
 
-        private void MoveRainBlade()
+        private void MoveRainBlade(float deltaTime)
         {
             Vector2 currentPosition = transform.position;
             Vector2 nextPosition = Vector2.MoveTowards(
                 currentPosition,
                 rainTargetPoint,
-                rainFallSpeed * Time.deltaTime);
+                rainFallSpeed * Mathf.Max(0f, deltaTime));
+
+            Vector2 movement = nextPosition - currentPosition;
+            if (TryFindGroundHit(movement, out float groundDistance))
+            {
+                Vector2 direction = movement.normalized;
+                float remainingTargetDistance = Vector2.Distance(currentPosition, rainTargetPoint);
+                float visualLandingDistance = Mathf.Min(
+                    remainingTargetDistance,
+                    groundDistance + Mathf.Max(0f, rainGroundVisualInset));
+                Vector2 landingPosition = currentPosition + direction * visualLandingDistance;
+                transform.position = new Vector3(landingPosition.x, landingPosition.y, transform.position.z);
+                LandRainBlade();
+                return;
+            }
 
             // RainBladeはControllerが決めたスロット下端へ落ちる。着地後の消滅時間はInspectorで調整する。
             transform.position = new Vector3(nextPosition.x, nextPosition.y, transform.position.z);
@@ -319,26 +346,95 @@ namespace GameName.Enemy
 
             if (Vector2.Distance(nextPosition, rainTargetPoint) <= 0.01f)
             {
-                rainLanded = true;
-                owner?.NotifyBladeLanded(this);
-                canDamage = false;
-
-                if (bladeCollider != null)
-                {
-                    bladeCollider.enabled = false;
-                }
-
-                if (useRainVisual && bladeVisual != null)
-                {
-                    bladeVisual.PlayRainOut(
-                        rainOutVisualClip,
-                        ResolveCachedVisualWorldSize(rainVisualWorldSize),
-                        DestroySelf);
-                    return;
-                }
-
-                StartCoroutine(DestroyAfterGroundDelayRoutine());
+                LandRainBlade();
             }
+        }
+
+        private bool TryFindGroundHit(Vector2 movement, out float groundDistance)
+        {
+            groundDistance = 0f;
+            float movementDistance = movement.magnitude;
+            if (bladeCollider == null ||
+                !bladeCollider.enabled ||
+                !groundCastFilter.useLayerMask ||
+                movementDistance <= 0.0001f)
+            {
+                return false;
+            }
+
+            Vector2 direction = movement / movementDistance;
+            int hitCount = CastBladeCollider(direction, movementDistance);
+            float nearestDistance = float.PositiveInfinity;
+
+            for (int i = 0; i < hitCount; i++)
+            {
+                RaycastHit2D hit = groundCastResults[i];
+                groundCastResults[i] = default;
+                if (hit.collider == null || hit.collider.isTrigger)
+                {
+                    continue;
+                }
+
+                nearestDistance = Mathf.Min(nearestDistance, Mathf.Max(0f, hit.distance));
+            }
+
+            if (float.IsPositiveInfinity(nearestDistance))
+            {
+                return false;
+            }
+
+            groundDistance = Mathf.Min(nearestDistance, movementDistance);
+            return true;
+        }
+
+        private int CastBladeCollider(Vector2 direction, float distance)
+        {
+            if (bladeCollider is BoxCollider2D boxCollider)
+            {
+                Vector3 lossyScale = boxCollider.transform.lossyScale;
+                Vector2 castSize = new Vector2(
+                    Mathf.Abs(boxCollider.size.x * lossyScale.x),
+                    Mathf.Abs(boxCollider.size.y * lossyScale.y));
+                Vector2 castOrigin = boxCollider.transform.TransformPoint(boxCollider.offset);
+                float castAngle = boxCollider.transform.eulerAngles.z;
+                return Physics2D.BoxCast(
+                    castOrigin,
+                    castSize,
+                    castAngle,
+                    direction,
+                    groundCastFilter,
+                    groundCastResults,
+                    distance);
+            }
+
+            return bladeCollider.Cast(
+                direction,
+                groundCastFilter,
+                groundCastResults,
+                distance);
+        }
+
+        private void LandRainBlade()
+        {
+            rainLanded = true;
+            owner?.NotifyBladeLanded(this);
+            canDamage = false;
+
+            if (bladeCollider != null)
+            {
+                bladeCollider.enabled = false;
+            }
+
+            if (useRainVisual && bladeVisual != null)
+            {
+                bladeVisual.PlayRainOut(
+                    rainOutVisualClip,
+                    ResolveCachedVisualWorldSize(rainVisualWorldSize),
+                    DestroySelf);
+                return;
+            }
+
+            StartCoroutine(DestroyAfterGroundDelayRoutine());
         }
 
         private IEnumerator DestroyAfterGroundDelayRoutine()
@@ -514,6 +610,25 @@ namespace GameName.Enemy
             return new Vector2(
                 Mathf.Max(0.01f, multiplier.x),
                 Mathf.Max(0.01f, multiplier.y));
+        }
+
+        private static int BuildGroundMask()
+        {
+            int mask = 0;
+            int groundLayer = LayerMask.NameToLayer("Ground");
+            int fallThroughFloorLayer = LayerMask.NameToLayer("FallThroughFloor");
+
+            if (groundLayer >= 0)
+            {
+                mask |= 1 << groundLayer;
+            }
+
+            if (fallThroughFloorLayer >= 0)
+            {
+                mask |= 1 << fallThroughFloorLayer;
+            }
+
+            return mask;
         }
 
         private void EnsureBladeVisual()

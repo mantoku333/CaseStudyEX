@@ -48,6 +48,32 @@ public sealed class EnemyContactTests
         Assert.That(damage, Is.EqualTo(15));
     }
 
+    [Test]
+    public void IsOverlappingPlayer_UsesContactDamageOnlyTriggerColliders()
+    {
+        GameObject enemyObject = CreateObject("Enemy", Vector2.zero);
+        EnemyContact enemyContact = enemyObject.AddComponent<EnemyContact>();
+        GameObject damageOnlyObject = CreateObject("ContactDamageOnly", Vector2.zero);
+        damageOnlyObject.transform.SetParent(enemyObject.transform, false);
+        BoxCollider2D damageOnlyCollider = damageOnlyObject.AddComponent<BoxCollider2D>();
+        damageOnlyCollider.isTrigger = true;
+        damageOnlyCollider.size = Vector2.one;
+        damageOnlyObject.AddComponent<ContactDamageOnlyCollider>();
+
+        GameObject playerObject = CreateObject("Player", Vector2.zero);
+        BoxCollider2D playerCollider = playerObject.AddComponent<BoxCollider2D>();
+        playerCollider.size = Vector2.one;
+
+        SetPrivateField(enemyContact, "enemyColliders", new Collider2D[0]);
+        SetPrivateField(enemyContact, "damageOnlyColliders", new Collider2D[] { damageOnlyCollider });
+        SetPrivateField(enemyContact, "playerBodyCollider", playerCollider);
+        Physics2D.SyncTransforms();
+
+        bool overlaps = InvokePrivate<bool>(enemyContact, "IsOverlappingPlayer");
+
+        Assert.That(overlaps, Is.True);
+    }
+
     private EnemyContact CreateEnemyContact(int controllerDamage, int fallbackContactDamage)
     {
         GameObject enemyObject = CreateObject("Enemy", Vector2.zero);

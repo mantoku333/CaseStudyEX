@@ -29,6 +29,7 @@ namespace GameName.Enemy
         [SerializeField, Min(0.1f)] private float bulletSpeed = 3f;
         [SerializeField, Min(1)] private int projectileDamage = 10;
         [SerializeField, Min(0.1f)] private float projectileLifetime = 10f;
+        [SerializeField, Min(0f)] private float projectileGuidanceDuration = 1f;
         [SerializeField] private LayerMask projectileObstacleMask;
         [SerializeField, Min(0.01f)] private float fireVisualDuration = 0.15f;
 
@@ -88,6 +89,7 @@ namespace GameName.Enemy
             bulletSpeed = Mathf.Max(0.1f, bulletSpeed);
             projectileDamage = Mathf.Max(1, projectileDamage);
             projectileLifetime = Mathf.Max(0.1f, projectileLifetime);
+            projectileGuidanceDuration = Mathf.Max(0f, projectileGuidanceDuration);
             fireVisualDuration = Mathf.Max(0.01f, fireVisualDuration);
 
             if (projectileObstacleMask.value == 0)
@@ -156,7 +158,7 @@ namespace GameName.Enemy
             enemyController.StopHorizontalMotion();
 
             // プレイヤーが検知範囲に入ったら、攻撃準備前にプレイヤーの方向へ向きを合わせる。
-            if (!TryFacePlayerInDetectionRadius())
+            if (!IsPlayerInDetectionRadius())
             {
                 return;
             }
@@ -168,6 +170,7 @@ namespace GameName.Enemy
         {
             PauseEnemyMovement();
             enemyController.StopHorizontalMotion();
+            FacePlayer();
 
             attackState = AttackState.Windup;
             stateTimer = windupDuration;
@@ -178,8 +181,8 @@ namespace GameName.Enemy
 
         private void UpdateWindupState()
         {
-            // 予備動作中もプレイヤーを見失っていない限り、左右の向きを追従させる。
-            if (!TryFacePlayerInDetectionRadius())
+            // 予備動作を開始した向きを保ったまま、プレイヤーが検知範囲内にいるかだけ確認する。
+            if (!IsPlayerInDetectionRadius())
             {
                 EnterIdleState();
                 return;
@@ -200,8 +203,7 @@ namespace GameName.Enemy
 
         private void EnterFireState()
         {
-            // 発射直前にもう一度向きを補正し、弾を撃つ見た目と方向感を揃える。
-            FacePlayer();
+            // 予備動作を開始した向きを保ったまま発射する。
             enemyController.SetHorizontalPosition(vibrationBaseX);
             enemyController.StopHorizontalMotion();
             WindupEnded?.Invoke();
@@ -216,8 +218,8 @@ namespace GameName.Enemy
         {
             stateTimer -= Time.fixedDeltaTime;
             enemyController.StopHorizontalMotion();
-            // 発射演出中にプレイヤーが反対側へ回り込んだ場合も向きを更新する。
-            bool playerInRange = TryFacePlayerInDetectionRadius();
+            // 発射演出中も向きを保ち、次の予備動作を開始するときだけ向きを更新する。
+            bool playerInRange = IsPlayerInDetectionRadius();
 
             if (stateTimer > 0f)
             {
@@ -279,7 +281,9 @@ namespace GameName.Enemy
                 projectileDamage,
                 projectileLifetime,
                 projectileObstacleMask,
-                true);
+                true,
+                projectileGuidanceDuration,
+                Vector2.right * enemyController.FacingDirection);
 
             // 弾の初期化完了後に通知し、実際に発射できた攻撃だけSE対象にする。
             ProjectileFired?.Invoke();
@@ -312,21 +316,6 @@ namespace GameName.Enemy
             Vector2 playerPosition = playerTransform.position;
             float radius = Mathf.Max(0.1f, detectionRadius);
             return (playerPosition - enemyPosition).sqrMagnitude <= radius * radius;
-        }
-
-        /// <summary>
-        /// プレイヤーが検知範囲内にいるか確認し、範囲内ならその方向へ向きを合わせる。
-        /// </summary>
-        /// <returns>プレイヤーが検知範囲内にいれば true。</returns>
-        private bool TryFacePlayerInDetectionRadius()
-        {
-            if (!IsPlayerInDetectionRadius())
-            {
-                return false;
-            }
-
-            FacePlayer();
-            return true;
         }
 
         /// <summary>

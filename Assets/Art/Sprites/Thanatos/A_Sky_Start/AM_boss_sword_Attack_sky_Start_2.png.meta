@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6a693914b9b3c80408fcadf8eb1bb0f9
+guid: 1ff19528c9b33e5459e2acdd7478a1a1
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -114,8 +114,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 820
-        height: 984
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,10 +134,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_Start_2_1
       rect:
         serializedVersion: 2
-        x: 820
+        x: 818
         y: 0
-        width: 820
-        height: 984
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,10 +156,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_Start_2_2
       rect:
         serializedVersion: 2
-        x: 1640
+        x: 1636
         y: 0
-        width: 820
-        height: 984
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,10 +178,10 @@ TextureImporter:
       name: AM_boss_sword_Attack_sky_Start_2_3
       rect:
         serializedVersion: 2
-        x: 2460
+        x: 2454
         y: 0
-        width: 820
-        height: 984
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,7 +200,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 6b7cb2a91836dcc43bc7a79057a6e541
+    spriteID: 72f357721654c634f882a02ac4528968
     internalID: 0
     vertices: []
     indices: 
@@ -210,7 +210,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":1.0},"gridSpriteSize":{"x":820.0,"y":984.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":1.0},"gridSpriteSize":{"x":818.0,"y":980.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       AM_boss_sword_Attack_sky_Start_2_0: 5936687435497916400
       AM_boss_sword_Attack_sky_Start_2_1: 2839695128941313149

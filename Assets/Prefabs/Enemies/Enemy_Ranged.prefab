@@ -309,6 +309,7 @@ MonoBehaviour:
   bulletSpeed: 10
   projectileDamage: 10
   projectileLifetime: 10
+  projectileGuidanceDuration: 0.5
   projectileObstacleMask:
     serializedVersion: 2
     m_Bits: 192
@@ -331,10 +332,18 @@ MonoBehaviour:
   frameRows: 12
   frameCount: 60
   pixelsPerUnit: 100
+  attackTimingSpriteSheet: {fileID: 2800000, guid: 428ebdea01bca6349adf96a647cb8f12, type: 3}
+  timingFrameColumns: 5
+  timingFrameRows: 6
+  timingFrameCount: 28
+  timingPixelsPerUnit: 100
   localOffset: {x: 0, y: 0, z: 0}
   forwardOffset: 1.8
   effectScale: {x: 3.6, y: 3.6, z: 1}
   parentToFirePoint: 1
+  timingLocalOffset: {x: 0, y: 0.12, z: 0}
+  timingForwardOffset: 0.09
+  timingFitScaleMultiplier: 3
   sortingOrderOffset: 3
   copyEnemyMaterial: 1
 --- !u!114 &1141293357520890712

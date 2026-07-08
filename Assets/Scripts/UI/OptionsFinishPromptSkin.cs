@@ -87,8 +87,8 @@ public sealed class OptionsFinishPromptSkin : MonoBehaviour
             return;
         }
 
-        Bind(yesButton, backend.ReturnToTitle);
-        Bind(noButton, backend.HideFinishPrompt);
+        Bind(yesButton, backend.RequestReturnToTitle);
+        Bind(noButton, backend.RequestHideFinishPrompt);
         listenersRegistered = true;
     }
 
@@ -99,151 +99,14 @@ public sealed class OptionsFinishPromptSkin : MonoBehaviour
             return;
         }
 
-        Unbind(yesButton, backend.ReturnToTitle);
-        Unbind(noButton, backend.HideFinishPrompt);
+        Unbind(yesButton, backend.RequestReturnToTitle);
+        Unbind(noButton, backend.RequestHideFinishPrompt);
         listenersRegistered = false;
     }
 
     private Button EnsureButton(string normalizedName)
     {
-        Transform target = FindByNormalizedName(normalizedName);
-        if (target == null)
-        {
-            return null;
-        }
-
-        Transform selectRoot = target.Find("Select");
-        Transform notSelectRoot = target.Find("Not Select");
-        Graphic raycastGraphic = ConfigureRaycastGraphics(selectRoot, notSelectRoot);
-
-        Image image = target.GetComponent<Image>();
-        if (image != null)
-        {
-            image.raycastTarget = false;
-        }
-        else if (raycastGraphic == null)
-        {
-            image = target.gameObject.AddComponent<Image>();
-            image.color = new Color(1f, 1f, 1f, 0f);
-            image.raycastTarget = true;
-            raycastGraphic = image;
-        }
-
-        Button button = target.GetComponent<Button>();
-        if (button == null)
-        {
-            button = target.gameObject.AddComponent<Button>();
-        }
-
-        button.transition = Selectable.Transition.None;
-        button.targetGraphic = raycastGraphic;
-
-        OptionsMenuButtonState state = target.GetComponent<OptionsMenuButtonState>();
-        if (state == null)
-        {
-            state = target.gameObject.AddComponent<OptionsMenuButtonState>();
-        }
-
-        state.Configure(selectRoot, notSelectRoot);
-        return button;
-    }
-
-    private static Graphic ConfigureRaycastGraphics(Transform selectRoot, Transform notSelectRoot)
-    {
-        Graphic selectGraphic = ConfigureStateRaycastGraphic(selectRoot);
-        Graphic notSelectGraphic = ConfigureStateRaycastGraphic(notSelectRoot);
-        return notSelectGraphic != null ? notSelectGraphic : selectGraphic;
-    }
-
-    private static Graphic ConfigureStateRaycastGraphic(Transform stateRoot)
-    {
-        if (stateRoot == null)
-        {
-            return null;
-        }
-
-        Graphic[] graphics = stateRoot.GetComponentsInChildren<Graphic>(true);
-        if (graphics.Length == 0)
-        {
-            return null;
-        }
-
-        Graphic bestGraphic = null;
-        float bestArea = float.MinValue;
-        for (int i = 0; i < graphics.Length; i++)
-        {
-            Graphic graphic = graphics[i];
-            graphic.raycastTarget = false;
-
-            RectTransform rectTransform = graphic.rectTransform;
-            float area = Mathf.Abs(rectTransform.rect.width * rectTransform.rect.height);
-            if (area > bestArea)
-            {
-                bestArea = area;
-                bestGraphic = graphic;
-            }
-        }
-
-        if (bestGraphic != null)
-        {
-            bestGraphic.raycastTarget = true;
-            if (bestGraphic is Image image)
-            {
-                image.alphaHitTestMinimumThreshold = 0.1f;
-            }
-        }
-
-        return bestGraphic;
-    }
-
-    private Transform FindByNormalizedName(string normalizedName)
-    {
-        return FindInChildren(transform, normalizedName);
-    }
-
-    private static Transform FindInChildren(Transform root, string normalizedName)
-    {
-        if (root == null)
-        {
-            return null;
-        }
-
-        if (Normalize(root.name) == normalizedName)
-        {
-            return root;
-        }
-
-        for (int i = 0; i < root.childCount; i++)
-        {
-            Transform match = FindInChildren(root.GetChild(i), normalizedName);
-            if (match != null)
-            {
-                return match;
-            }
-        }
-
-        return null;
-    }
-
-    private static string Normalize(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return string.Empty;
-        }
-
-        char[] buffer = new char[value.Length];
-        int count = 0;
-        for (int i = 0; i < value.Length; i++)
-        {
-            char character = value[i];
-            if (!char.IsWhiteSpace(character) && character != '\u3000')
-            {
-                buffer[count++] = character;
-            }
-        }
-
-        return new string(buffer, 0, count);
+        return OptionsCanvasButtonUtility.EnsureStateButton(transform, normalizedName);
     }
 
     private static void Bind(Button button, UnityEngine.Events.UnityAction action)

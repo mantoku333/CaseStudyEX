@@ -187,7 +187,6 @@ namespace Player
             }
 
             _playerRigidbody = GetComponentInParent<Rigidbody2D>();
-
             if (flipRenderers != null && flipRenderers.Length > 0)
             {
                 _resolvedFlipRenderers = flipRenderers;

@@ -417,7 +417,7 @@ MonoBehaviour:
   justParryEffectFrameSeconds: 0.033
   justParryEffectSpritePivot: {x: 0.67, y: 0.5}
   justParryEffectScale: {x: 3, y: 3, z: 1}
-  enableJustParryEffectDebugKey: 1
+  enableJustParryEffectDebugKey: 0
   justParryEffectDebugKey: 25
   umbrella_open: {fileID: 8300000, guid: b23093459fc678f498899d1ceed37ba0, type: 3}
   parrySuccessClip: {fileID: 8300000, guid: 8f6922e4da234c34c942ae55fa1e8462, type: 3}

@@ -139,8 +139,9 @@ namespace GameName.Enemy
             new Vector2(0.5f, 0.5f),
             GroundBladeFrameCropPixels,
             LargeFrameReferencePixels);
-        public GridSpriteSheetClip RainBladeInClip => CreateClip(topAttackInSpriteSheet, topAttackInSpriteFrames, 5, 5, 23, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
-        public GridSpriteSheetClip RainBladeOutClip => CreateClip(topAttackOutSpriteSheet, topAttackOutSpriteFrames, 5, 4, 20, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
+        // RainBlade must use exact grid cells instead of tightly trimmed imported sprite bounds.
+        public GridSpriteSheetClip RainBladeInClip => CreateClip(topAttackInSpriteSheet, null, 5, 5, 23, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
+        public GridSpriteSheetClip RainBladeOutClip => CreateClip(topAttackOutSpriteSheet, null, 5, 4, 20, new Vector2(0.5f, 0.5f), RainBladeFrameCropPixels, LargeFrameReferencePixels);
 
         private void Awake()
         {

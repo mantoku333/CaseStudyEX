@@ -25,7 +25,7 @@ MonoBehaviour:
     m_Start: 0
     m_ClipIn: 0
     m_Asset: {fileID: 7398791834983163447}
-    m_Duration: 0.11666666666666667
+    m_Duration: 0.8199942708015442
     m_TimeScale: 1
     m_ParentTrack: {fileID: -8539405550118696819}
     m_EaseInDuration: 0
@@ -139,85 +139,10 @@ MonoBehaviour:
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
   m_Children: []
-  m_Clips:
-  - m_Version: 1
-    m_Start: 0.11666666666666667
-    m_ClipIn: 0
-    m_Asset: {fileID: 2869561812980922962}
-    m_Duration: 2.466666666666667
-    m_TimeScale: 1
-    m_ParentTrack: {fileID: -5675552448397036753}
-    m_EaseInDuration: 0
-    m_EaseOutDuration: 0
-    m_BlendInDuration: 0
-    m_BlendOutDuration: 0
-    m_MixInCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_MixOutCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_BlendInCurveMode: 0
-    m_BlendOutCurveMode: 0
-    m_ExposedParameterNames: []
-    m_AnimationCurves: {fileID: 0}
-    m_Recordable: 0
-    m_PostExtrapolationMode: 0
-    m_PreExtrapolationMode: 0
-    m_PostExtrapolationTime: 0
-    m_PreExtrapolationTime: 0
-    m_DisplayName: StoryYarnDialogueClip
+  m_Clips: []
   m_Markers:
     m_Objects:
-    - {fileID: 327608698108943624}
-    - {fileID: -4403982217242846192}
-    - {fileID: -2073824339582600517}
-    - {fileID: 8340132531640153485}
-    - {fileID: 3026920669365046440}
-    - {fileID: -1907171916938764281}
-    - {fileID: -1850197409799598628}
+    - {fileID: 2369484416288696948}
 --- !u!114 &-4819130723759348321
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -241,25 +166,6 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
---- !u!114 &-4403982217242846192
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 17.866666666666667
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_02
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
 --- !u!114 &-3805806930034002821
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -300,63 +206,6 @@ MonoBehaviour:
   worldPosition: {x: 0, y: 0, z: 0}
   keepCurrentZ: 1
   smoothStep: 1
---- !u!114 &-2073824339582600517
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 22.866666666666674
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_03
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
---- !u!114 &-1907171916938764281
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 37.86666666666669
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_06
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
---- !u!114 &-1850197409799598628
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 32.86666666666669
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_05
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -501,25 +350,6 @@ MonoBehaviour:
     m_DisplayName: StoryCameraMoveClip
   m_Markers:
     m_Objects: []
---- !u!114 &327608698108943624
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 2.5833333333333335
-  markerId: af28a1b8189b45c9acbfdb853ab727e8
-  nodeName: test_01
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
 --- !u!114 &1274885233549238161
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -543,25 +373,7 @@ MonoBehaviour:
   m_Clips: []
   m_Markers:
     m_Objects: []
---- !u!114 &2869561812980922962
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a4da3f2323046fdbb3dc0f7ca40a6b8, type: 3}
-  m_Name: StoryYarnDialogueClip
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueClip
-  clipId: 11ba336f7a10453d92984f9a08b8cb35
-  nodeName: TutorialStory_Rain
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
---- !u!114 &3026920669365046440
+--- !u!114 &2369484416288696948
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -573,9 +385,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
   m_Name: Story/Yarn Dialogue Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 42.86666666666669
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_07
+  m_Time: 0.8199942708015442
+  markerId: 49d803aabbbf487ebf97b958e861e54c
+  nodeName: TutorialStory_Rain
   useControllerDefaultStyle: 1
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
@@ -594,7 +406,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StoryObjectMoveClip
   actorKey: iris
   target:
-    exposedName: 
+    exposedName: f50622f5d1b715f43ae92c02370e1211
     defaultValue: {fileID: 0}
   targetMode: 0
   markerNo: 2
@@ -604,25 +416,6 @@ MonoBehaviour:
   moveY: 1
   smoothStep: 1
   useUmbrellaWalk: 0
---- !u!114 &8340132531640153485
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84d9b244a4c0afb4c850f3a81a1c8e9c, type: 3}
-  m_Name: Story/Yarn Dialogue Point
-  m_EditorClassIdentifier: Assembly-CSharp::StoryYarnDialogueMarker
-  m_Time: 27.866666666666674
-  markerId: e084d23cce954d0dac3494c348322d77
-  nodeName: test_04
-  useControllerDefaultStyle: 1
-  dialogueStyle: 1
-  pauseTimelineUntilComplete: 1
-  bubbleActorKey: 
 --- !u!114 &9018057022353266388
 MonoBehaviour:
   m_ObjectHideFlags: 1

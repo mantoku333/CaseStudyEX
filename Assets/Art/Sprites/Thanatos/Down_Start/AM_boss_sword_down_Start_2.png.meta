@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f3c4b9b8cafaa9e4aa1705d83f80e2c6
+guid: 12303a45b1bb12e43b2c8302870e1d83
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -119,9 +119,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 983
-        width: 820
-        height: 983
+        y: 980
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -140,10 +140,10 @@ TextureImporter:
       name: AM_boss_sword_down_Start_2_1
       rect:
         serializedVersion: 2
-        x: 820
-        y: 983
-        width: 820
-        height: 983
+        x: 818
+        y: 980
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -162,10 +162,10 @@ TextureImporter:
       name: AM_boss_sword_down_Start_2_2
       rect:
         serializedVersion: 2
-        x: 1640
-        y: 983
-        width: 820
-        height: 983
+        x: 1636
+        y: 980
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,10 +184,10 @@ TextureImporter:
       name: AM_boss_sword_down_Start_2_3
       rect:
         serializedVersion: 2
-        x: 2460
-        y: 983
-        width: 820
-        height: 983
+        x: 2454
+        y: 980
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -208,8 +208,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 820
-        height: 983
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -228,10 +228,10 @@ TextureImporter:
       name: AM_boss_sword_down_Start_2_5
       rect:
         serializedVersion: 2
-        x: 820
+        x: 818
         y: 0
-        width: 820
-        height: 983
+        width: 818
+        height: 980
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -250,7 +250,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: d425f56faf9844444bc1ce0c74140aa5
+    spriteID: f804e41e2f1081846bdafb9cd2dab51b
     internalID: 0
     vertices: []
     indices: 
@@ -260,7 +260,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":2.0},"gridSpriteSize":{"x":820.0,"y":983.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":2.0},"gridSpriteSize":{"x":818.0,"y":980.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       AM_boss_sword_down_Start_2_0: -8037991577874693948
       AM_boss_sword_down_Start_2_1: -3272755029244936928

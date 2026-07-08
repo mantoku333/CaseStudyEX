@@ -41,7 +41,7 @@ public class UmbrellaParryController : MonoBehaviour
     [SerializeField] private Vector3 justParryEffectScale = new Vector3(1.5f, 1.5f, 1f);
 
     [Header("Debug")]
-    [SerializeField] private bool enableJustParryEffectDebugKey = true;
+    [SerializeField] private bool enableJustParryEffectDebugKey = false;
     [SerializeField] private Key justParryEffectDebugKey = Key.K;
 
     [Header("SE")]
@@ -52,6 +52,7 @@ public class UmbrellaParryController : MonoBehaviour
     private bool isParrying = false;  //現在パリィ状態かどうかのフラグ
 
     private AudioSource audioSource;      //AudioSource
+    private PlayerAbilityController playerAbilityController;
     private IPlayerViewStateProvider facingStateProvider;
     private Vector3 parryColliderDefaultLocalPosition;
     private bool hasParryColliderDefaultLocalPosition;
@@ -76,6 +77,7 @@ public class UmbrellaParryController : MonoBehaviour
         }
         //AudioSourceの取得
         audioSource = GetComponentInParent<AudioSource>();
+        playerAbilityController = GetComponentInParent<PlayerAbilityController>();
         facingStateProvider = GetComponentInParent<IPlayerViewStateProvider>();
         BuildParryEffectFramesIfNeeded();
     }
@@ -124,6 +126,7 @@ public class UmbrellaParryController : MonoBehaviour
     private void Update()
     {
         if (!enableJustParryEffectDebugKey ||
+            !CanUseParryAbility() ||
             Keyboard.current == null ||
             !Keyboard.current[justParryEffectDebugKey].wasPressedThisFrame)
         {
@@ -153,6 +156,11 @@ public class UmbrellaParryController : MonoBehaviour
 
     public async UniTaskVoid Parry(Vector2 hitWorldPosition, bool playJustParryEffect)
     {
+        if (!CanUseParryAbility())
+        {
+            return;
+        }
+
         RefreshParryColliderFacing();
 
         if (isParrying){ return; }
@@ -207,6 +215,11 @@ public class UmbrellaParryController : MonoBehaviour
 
     public void PlayParrySuccessEffect(Vector2 hitWorldPosition)
     {
+        if (!CanUseParryAbility())
+        {
+            return;
+        }
+
         BuildParryEffectFramesIfNeeded();
         PlayParrySuccessEffect(
             hitWorldPosition,
@@ -218,6 +231,11 @@ public class UmbrellaParryController : MonoBehaviour
 
     public void PlayJustParrySuccessEffect(Vector2 hitWorldPosition)
     {
+        if (!CanUseParryAbility())
+        {
+            return;
+        }
+
         BuildParryEffectFramesIfNeeded();
         Sprite[] frames = justParryEffectFrames != null && justParryEffectFrames.Length > 0
             ? justParryEffectFrames
@@ -404,7 +422,15 @@ public class UmbrellaParryController : MonoBehaviour
 
         if (parryEffectObject != null)
         {
-            Destroy(parryEffectObject);
+            if (Application.isPlaying)
+            {
+                Destroy(parryEffectObject);
+            }
+            else
+            {
+                DestroyImmediate(parryEffectObject);
+            }
+
             parryEffectObject = null;
             parryEffectRenderer = null;
         }
@@ -425,6 +451,16 @@ public class UmbrellaParryController : MonoBehaviour
         {
             renderer.sharedMaterial = playerSprite.sharedMaterial;
         }
+    }
+
+    private bool CanUseParryAbility()
+    {
+        if (playerAbilityController == null)
+        {
+            playerAbilityController = GetComponentInParent<PlayerAbilityController>();
+        }
+
+        return playerAbilityController == null || playerAbilityController.GetCanParry();
     }
 
     /// <summary>
@@ -486,7 +522,14 @@ public class UmbrellaParryController : MonoBehaviour
         {
             if (generatedParryEffectSprites[i] != null)
             {
-                Destroy(generatedParryEffectSprites[i]);
+                if (Application.isPlaying)
+                {
+                    Destroy(generatedParryEffectSprites[i]);
+                }
+                else
+                {
+                    DestroyImmediate(generatedParryEffectSprites[i]);
+                }
             }
         }
     }

@@ -4,13 +4,16 @@ using UnityEngine;
 using Unity.Cinemachine;
 
 /// <summary>
-/// Room camera endpoint. This component does not switch cameras by itself;
-/// portals and gates call ActivateCamera when the player reaches a real transition.
+/// Room camera endpoint. Portals and gates call ActivateCamera at transitions;
+/// this component also validates the active room against the player's position.
 /// </summary>
 public class RoomCameraTrigger : MonoBehaviour
 {
+    private const string DefaultPlayerTag = "Player";
+
     private static RoomCameraTrigger _activeTrigger;
     private static readonly List<RoomCameraTrigger> _registeredTriggers = new();
+    private static int lastActiveRoomValidationFrame = -1;
 
     public static event Action<RoomCameraTrigger> ActiveRoomChanged;
 
@@ -20,6 +23,28 @@ public class RoomCameraTrigger : MonoBehaviour
 
     [SerializeField]
     private bool _useDefaultCameraWhenEntered;
+
+    [Header("Horizontal Follow Camera")]
+    [SerializeField]
+    private bool _useHorizontalFollowCameraWhenEntered;
+
+    [SerializeField]
+    private CinemachineCamera _horizontalFollowCamera;
+
+    [SerializeField]
+    private bool _useManualYForHorizontalFollow;
+
+    [SerializeField]
+    private float _horizontalFollowFixedY;
+
+    [SerializeField]
+    private bool _clampHorizontalFollowXToArea = true;
+
+    [SerializeField, Min(0f)]
+    private float _horizontalFollowSmoothTime = 0.15f;
+
+    [SerializeField]
+    private string _playerTag = "Player";
 
     [SerializeField]
     private int _activePriority = 20;
@@ -49,10 +74,15 @@ public class RoomCameraTrigger : MonoBehaviour
 
     private bool IsDefaultTrigger => _useDefaultCameraWhenEntered;
     private bool HasRoomCamera => _roomCamera != null;
+    private bool IsHorizontalFollowTrigger => _useHorizontalFollowCameraWhenEntered;
+    private bool HasHorizontalFollowCamera => _horizontalFollowCamera != null;
+    private Transform horizontalFollowPlayer;
+    private float horizontalFollowVelocityX;
 
     public static RoomCameraTrigger ActiveRoom => _activeTrigger;
     public bool UsesDefaultCameraWhenEntered => IsDefaultTrigger;
     public bool HasAssignedRoomCamera => HasRoomCamera;
+    public bool UsesHorizontalFollowCameraWhenEntered => IsHorizontalFollowTrigger;
     public bool IsBossRoom => HasBossAreaController();
     public bool PreviewDefaultCameraByAreaBounds => _previewDefaultCameraByAreaBounds;
     public float DefaultCameraPreviewWeight => _defaultCameraPreviewWeight;
@@ -61,6 +91,13 @@ public class RoomCameraTrigger : MonoBehaviour
 
     public bool TryGetCameraPose(out Vector3 position, out float orthographicSize)
     {
+        if (IsHorizontalFollowTrigger && _horizontalFollowCamera != null)
+        {
+            position = _horizontalFollowCamera.transform.position;
+            orthographicSize = _horizontalFollowCamera.Lens.OrthographicSize;
+            return true;
+        }
+
         if (_roomCamera != null)
         {
             position = _roomCamera.transform.position;
@@ -139,13 +176,25 @@ public class RoomCameraTrigger : MonoBehaviour
             _registeredTriggers.Add(this);
         }
 
-        if (!IsDefaultTrigger && !HasRoomCamera)
+        if (!IsDefaultTrigger && !IsHorizontalFollowTrigger && !HasRoomCamera)
         {
             Debug.LogWarning($"[{gameObject.name}] RoomCameraTrigger has no CinemachineCamera assigned.", this);
             return;
         }
 
         DeactivateOwnCamera();
+    }
+
+    private void LateUpdate()
+    {
+        ValidateActiveRoomAgainstPlayer();
+
+        if (_activeTrigger != this || !IsHorizontalFollowTrigger)
+        {
+            return;
+        }
+
+        UpdateHorizontalFollowTarget();
     }
 
     private void OnDisable()
@@ -161,8 +210,53 @@ public class RoomCameraTrigger : MonoBehaviour
         DeactivateOwnCamera();
     }
 
+    private void OnDestroy()
+    {
+        horizontalFollowPlayer = null;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        TryActivateHorizontalFollowFromPlayer(collision.transform);
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        TryActivateHorizontalFollowFromPlayer(collision.transform);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        TryActivateHorizontalFollowFromPlayer(other.transform);
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        TryActivateHorizontalFollowFromPlayer(other.transform);
+    }
+
+    private void TryActivateHorizontalFollowFromPlayer(Transform source)
+    {
+        if (!IsHorizontalFollowTrigger || !TryResolvePlayerTransform(source, out Transform player))
+        {
+            return;
+        }
+
+        horizontalFollowPlayer = player;
+        if (_activeTrigger != this)
+        {
+            ActivateCamera();
+        }
+    }
+
     public void ActivateCamera()
     {
+        if (IsHorizontalFollowTrigger)
+        {
+            ActivateHorizontalFollowCamera();
+            return;
+        }
+
         if (IsDefaultTrigger)
         {
             ReleaseToDefaultCamera(this);
@@ -243,6 +337,12 @@ public class RoomCameraTrigger : MonoBehaviour
 
     private void DeactivateOwnCamera()
     {
+        if (HasHorizontalFollowCamera)
+        {
+            _horizontalFollowCamera.Priority.Value = _inactivePriority;
+            _horizontalFollowCamera.Priority.Enabled = true;
+        }
+
         if (!HasRoomCamera)
         {
             return;
@@ -250,6 +350,152 @@ public class RoomCameraTrigger : MonoBehaviour
 
         _roomCamera.Priority.Value = _inactivePriority;
         _roomCamera.Priority.Enabled = true;
+    }
+
+    private void ActivateHorizontalFollowCamera()
+    {
+        if (!HasHorizontalFollowCamera)
+        {
+            Debug.LogWarning(
+                $"[{gameObject.name}] Use Horizontal Follow Camera is enabled, but no camera is assigned.",
+                this);
+            return;
+        }
+
+        DeactivateAllRoomCamerasExcept(this);
+
+        if (_activeTrigger != this)
+        {
+            _activeTrigger = this;
+            NotifyActiveRoomChanged();
+        }
+
+        horizontalFollowVelocityX = 0f;
+        _horizontalFollowCamera.Follow = null;
+        _horizontalFollowCamera.Target.TrackingTarget = null;
+        UpdateHorizontalFollowCamera();
+        _horizontalFollowCamera.Priority.Value = _activePriority;
+        _horizontalFollowCamera.Priority.Enabled = true;
+    }
+
+    private void UpdateHorizontalFollowTarget()
+    {
+        UpdateHorizontalFollowCamera();
+    }
+
+    private void UpdateHorizontalFollowCamera()
+    {
+        if (_horizontalFollowCamera == null)
+        {
+            return;
+        }
+
+        if (horizontalFollowPlayer == null)
+        {
+            horizontalFollowPlayer = ResolvePlayerTransform();
+        }
+
+        Vector3 targetPosition = _horizontalFollowCamera.transform.position;
+        if (horizontalFollowPlayer != null)
+        {
+            targetPosition.x = horizontalFollowPlayer.position.x;
+        }
+
+        targetPosition.y = ResolveHorizontalFollowY();
+
+        if (_clampHorizontalFollowXToArea && TryGetAreaBounds(out Bounds bounds))
+        {
+            float halfWidth = ResolveCameraHalfWidth(_horizontalFollowCamera);
+            float minX = bounds.min.x + halfWidth;
+            float maxX = bounds.max.x - halfWidth;
+            targetPosition.x = minX <= maxX
+                ? Mathf.Clamp(targetPosition.x, minX, maxX)
+                : bounds.center.x;
+        }
+
+        if (_horizontalFollowSmoothTime <= 0f)
+        {
+            _horizontalFollowCamera.transform.position = targetPosition;
+            return;
+        }
+
+        Vector3 currentPosition = _horizontalFollowCamera.transform.position;
+        currentPosition.x = Mathf.SmoothDamp(
+            currentPosition.x,
+            targetPosition.x,
+            ref horizontalFollowVelocityX,
+            _horizontalFollowSmoothTime);
+        currentPosition.y = targetPosition.y;
+        _horizontalFollowCamera.transform.position = currentPosition;
+    }
+
+    private float ResolveHorizontalFollowY()
+    {
+        if (_useManualYForHorizontalFollow)
+        {
+            return _horizontalFollowFixedY;
+        }
+
+        if (TryGetAreaBounds(out Bounds bounds))
+        {
+            return bounds.center.y;
+        }
+
+        return _horizontalFollowCamera != null
+            ? _horizontalFollowCamera.transform.position.y
+            : transform.position.y;
+    }
+
+    private static float ResolveCameraHalfWidth(CinemachineCamera camera)
+    {
+        if (camera == null)
+        {
+            return 0f;
+        }
+
+        float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
+        return camera.Lens.OrthographicSize * aspect;
+    }
+
+    private Transform ResolvePlayerTransform()
+    {
+        if (string.IsNullOrWhiteSpace(_playerTag))
+        {
+            return null;
+        }
+
+        try
+        {
+            GameObject playerObject = GameObject.FindGameObjectWithTag(_playerTag);
+            return playerObject != null ? playerObject.transform : null;
+        }
+        catch (UnityException)
+        {
+            return null;
+        }
+    }
+
+    private bool TryResolvePlayerTransform(Transform source, out Transform resolvedPlayer)
+    {
+        resolvedPlayer = null;
+        if (source == null || string.IsNullOrWhiteSpace(_playerTag))
+        {
+            return false;
+        }
+
+        Transform current = source;
+        while (current != null)
+        {
+            if (current.CompareTag(_playerTag))
+            {
+                resolvedPlayer = current;
+                return true;
+            }
+
+            current = current.parent;
+        }
+
+        return false;
     }
 
     private static void ReleaseToDefaultCamera(RoomCameraTrigger defaultTrigger)
@@ -271,9 +517,23 @@ public class RoomCameraTrigger : MonoBehaviour
         NotifyActiveRoomChanged();
     }
 
+    private static void ReleaseToGlobalDefaultFollowCamera()
+    {
+        DeactivateAllRoomCamerasExcept(null);
+        ActivateDefaultFollowCamera(null);
+
+        if (_activeTrigger == null)
+        {
+            return;
+        }
+
+        _activeTrigger = null;
+        NotifyActiveRoomChanged();
+    }
+
     private static void ActivateDefaultFollowCamera(RoomCameraTrigger defaultTrigger)
     {
-        if (defaultTrigger._roomCamera != null)
+        if (defaultTrigger != null && defaultTrigger._roomCamera != null)
         {
             defaultTrigger._roomCamera.Priority.Value = defaultTrigger._activePriority;
             defaultTrigger._roomCamera.Priority.Enabled = true;
@@ -312,8 +572,9 @@ public class RoomCameraTrigger : MonoBehaviour
 
         if (followCamera == null)
         {
+            string contextName = defaultTrigger != null ? defaultTrigger.name : nameof(RoomCameraTrigger);
             Debug.LogWarning(
-                $"[{defaultTrigger.name}] Use Default Camera is enabled, but CN_FollowCam was not found.",
+                $"[{contextName}] Default follow camera was requested, but CN_FollowCam was not found.",
                 defaultTrigger);
             return;
         }
@@ -325,6 +586,60 @@ public class RoomCameraTrigger : MonoBehaviour
         {
             directFollowCamera.Priority.Value = 0;
             directFollowCamera.Priority.Enabled = true;
+        }
+    }
+
+    private static void ValidateActiveRoomAgainstPlayer()
+    {
+        if (lastActiveRoomValidationFrame == Time.frameCount)
+        {
+            return;
+        }
+
+        lastActiveRoomValidationFrame = Time.frameCount;
+
+        Transform player = ResolvePlayerTransformForValidation();
+        if (player == null)
+        {
+            return;
+        }
+
+        Vector3 playerPosition = player.position;
+        RoomCameraTrigger activeTrigger = _activeTrigger;
+        if (activeTrigger != null &&
+            activeTrigger.isActiveAndEnabled &&
+            activeTrigger.ContainsPoint(playerPosition))
+        {
+            return;
+        }
+
+        if (TryGetRoomAtPosition(playerPosition, out RoomCameraTrigger containingRoom))
+        {
+            if (containingRoom != activeTrigger)
+            {
+                containingRoom.ActivateCamera();
+            }
+
+            return;
+        }
+
+        ReleaseToGlobalDefaultFollowCamera();
+    }
+
+    private static Transform ResolvePlayerTransformForValidation()
+    {
+        string playerTag = _activeTrigger != null && !string.IsNullOrWhiteSpace(_activeTrigger._playerTag)
+            ? _activeTrigger._playerTag
+            : DefaultPlayerTag;
+
+        try
+        {
+            GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
+            return playerObject != null ? playerObject.transform : null;
+        }
+        catch (UnityException)
+        {
+            return null;
         }
     }
 

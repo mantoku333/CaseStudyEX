@@ -101,6 +101,26 @@ public sealed class AttackHitboxOcclusionTests
         Assert.That(receiver.AttackCount, Is.EqualTo(1));
     }
 
+    [Test]
+    public void ScanCurrentOverlaps_WhenColliderIsContactDamageOnly_DoesNotAttack()
+    {
+        AttackHitbox hitbox = CreateAttackHitbox(Vector2.zero, new Vector2(1f, 0f), new Vector2(3f, 2f));
+        CountingAttackReceiver receiver = CreateReceiver(
+            "Target",
+            new Vector2(6f, 0f),
+            Vector2.one,
+            out _);
+        GameObject damageOnly = CreateBox("ContactDamageOnly", new Vector2(1f, 0f), Vector2.one);
+        damageOnly.transform.SetParent(receiver.transform, true);
+        damageOnly.GetComponent<BoxCollider2D>().isTrigger = true;
+        damageOnly.AddComponent<Metroidvania.Enemy.ContactDamageOnlyCollider>();
+        Physics2D.SyncTransforms();
+
+        hitbox.ScanCurrentOverlaps();
+
+        Assert.That(receiver.AttackCount, Is.EqualTo(0));
+    }
+
     private AttackHitbox CreateAttackHitbox(Vector2 playerPosition, Vector2 attackPosition, Vector2 attackSize)
     {
         GameObject player = CreateObject("Player", playerPosition);
