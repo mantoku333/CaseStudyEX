@@ -665,7 +665,12 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             // 傘の開閉状態ではなく、地面からグリッド2ブロック以上離れているかで発動可否を決める。
             if (!isGround && isDownHeld)
             {
-                if (diveAttackController != null &&
+                bool canUseDiveAttack =
+                    playerAbilityController != null &&
+                    playerAbilityController.GetCanDiveAttack();
+
+                if (canUseDiveAttack &&
+                    diveAttackController != null &&
                     diveAttackController.CanStartDiveAttackFromAir() &&
                     diveAttackController.TryStartDiveAttack())
                 {

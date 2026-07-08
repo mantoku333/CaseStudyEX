@@ -4,5 +4,6 @@
     Dodge,
     Glide,
     GunRecoil,
-    Parry
+    Parry,
+    DiveAttack
 }

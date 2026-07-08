@@ -52,14 +52,26 @@ public partial class SROptions
     }
 
     [Category(AbilitiesCategory)]
-    [DisplayName("全アビリティ取得")]
+    [DisplayName("落下攻撃取得")]
     [Sort(-36)]
+    public void UnlockDiveAttackAbility()
+    {
+        UnlockAbility(
+            PlayerAbilityType.DiveAttack,
+            GameProgressKeys.AbilityDiveAttackUnlocked,
+            controller => controller.UnlockDiveAttack());
+    }
+
+    [Category(AbilitiesCategory)]
+    [DisplayName("全アビリティ取得")]
+    [Sort(-35)]
     public void UnlockAllAbilities()
     {
         UnlockDodgeAbility();
         UnlockGlideAbility();
         UnlockGunRecoilAbility();
         UnlockParryAbility();
+        UnlockDiveAttackAbility();
     }
 
     [Category(AbilitiesCategory)]
@@ -81,6 +93,11 @@ public partial class SROptions
     [DisplayName("パリィ取得済み")]
     [Sort(-27)]
     public bool IsParryAbilityUnlocked => GameProgressFlags.Get(GameProgressKeys.AbilityParryUnlocked);
+
+    [Category(AbilitiesCategory)]
+    [DisplayName("落下攻撃取得済み")]
+    [Sort(-26)]
+    public bool IsDiveAttackAbilityUnlocked => GameProgressFlags.Get(GameProgressKeys.AbilityDiveAttackUnlocked);
 
     private static void UnlockAbility(
         PlayerAbilityType abilityType,

@@ -23,6 +23,7 @@ namespace Player
         [SerializeField] private bool canGlide = false;
         [SerializeField] private bool canGunRecoil = false;
         [SerializeField] private bool canParry = false;
+        [SerializeField] private bool canDiveAttack = false;
 
         public int Priority => 220;
 
@@ -76,6 +77,13 @@ namespace Player
             GameProgressFlags.Set(GameProgressKeys.AbilityParryUnlocked, isEnabled);
         }
 
+        //落下攻撃
+        public void SetCanDiveAttack(bool isEnabled)
+        {
+            canDiveAttack = isEnabled;
+            GameProgressFlags.Set(GameProgressKeys.AbilityDiveAttackUnlocked, isEnabled);
+        }
+
         //--------Get関数-------
         //回避
         public bool GetCanDodge()
@@ -99,6 +107,12 @@ namespace Player
         public bool GetCanParry()
         {
             return canParry;
+        }
+
+        //落下攻撃
+        public bool GetCanDiveAttack()
+        {
+            return canDiveAttack;
         }
 
         /// <summary>
@@ -144,6 +158,17 @@ namespace Player
             Debug.Log("パリィ能力を解放しました。");
         }
 
+        /// <summary>
+        /// 落下攻撃能力を解放する関数。解放フラグを立て、
+        /// セーブデータに保存する
+        /// </summary>
+        public void UnlockDiveAttack()
+        {
+            SetCanDiveAttack(true);
+            GameProgressFlags.Set(GameProgressKeys.AbilityDiveAttackUnlocked, true);
+            Debug.Log("落下攻撃能力を解放しました。");
+        }
+
         public void UnlockAbility(PlayerAbilityType abilityType)
         {
             if (abilityType == PlayerAbilityType.Dodge)
@@ -169,6 +194,12 @@ namespace Player
                 UnlockParry();
                 return;
             }
+
+            if (abilityType == PlayerAbilityType.DiveAttack)
+            {
+                UnlockDiveAttack();
+                return;
+            }
         }
 
         //セーブデータからアイテム取得状況を復元するための関数
@@ -178,6 +209,7 @@ namespace Player
             canGlide = GameProgressFlags.Get(GameProgressKeys.AbilityGlideUnlocked);
             canGunRecoil = GameProgressFlags.Get(GameProgressKeys.AbilityGunRecoilUnlocked);
             canParry = GameProgressFlags.Get(GameProgressKeys.AbilityParryUnlocked);
+            canDiveAttack = GameProgressFlags.Get(GameProgressKeys.AbilityDiveAttackUnlocked);
         }
         public void Capture(SaveGameData saveData)
         {
@@ -185,6 +217,7 @@ namespace Player
             GameProgressFlags.Set(GameProgressKeys.AbilityGlideUnlocked, canGlide);
             GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, canGunRecoil);
             GameProgressFlags.Set(GameProgressKeys.AbilityParryUnlocked, canParry);
+            GameProgressFlags.Set(GameProgressKeys.AbilityDiveAttackUnlocked, canDiveAttack);
 
             if (saveData == null)
             {
@@ -196,7 +229,8 @@ namespace Player
                 canDodge = canDodge,
                 canGlide = canGlide,
                 canGunRecoil = canGunRecoil,
-                canParry = canParry
+                canParry = canParry,
+                canDiveAttack = canDiveAttack
             };
 
             saveData.SetCustomSectionJson(SectionKey, JsonUtility.ToJson(payload));
@@ -216,10 +250,12 @@ namespace Player
                         canGlide = payload.canGlide;
                         canGunRecoil = payload.canGunRecoil;
                         canParry = payload.canParry;
+                        canDiveAttack = payload.canDiveAttack;
                         GameProgressFlags.Set(GameProgressKeys.AbilityDodgeUnlocked, canDodge);
                         GameProgressFlags.Set(GameProgressKeys.AbilityGlideUnlocked, canGlide);
                         GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, canGunRecoil);
                         GameProgressFlags.Set(GameProgressKeys.AbilityParryUnlocked, canParry);
+                        GameProgressFlags.Set(GameProgressKeys.AbilityDiveAttackUnlocked, canDiveAttack);
                         return;
                     }
                     catch (Exception exception)
@@ -239,6 +275,7 @@ namespace Player
             public bool canGlide;
             public bool canGunRecoil;
             public bool canParry;
+            public bool canDiveAttack;
         }
     }
 }

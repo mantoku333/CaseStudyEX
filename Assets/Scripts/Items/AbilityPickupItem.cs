@@ -93,6 +93,11 @@ public class AbilityPickupItem : MonoBehaviour, ISaveDataModule
             return GameProgressFlags.Get(GameProgressKeys.AbilityGunRecoilUnlocked);
         }
 
+        if (abilityType == PlayerAbilityType.DiveAttack)
+        {
+            return GameProgressFlags.Get(GameProgressKeys.AbilityDiveAttackUnlocked);
+        }
+
         return false;
     }
 
@@ -119,6 +124,14 @@ public class AbilityPickupItem : MonoBehaviour, ISaveDataModule
             abilityController.SetCanGunRecoil(true);
             GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, true);
             Debug.Log("銃反動能力を取得しました！");
+            return;
+        }
+
+        if (abilityType == PlayerAbilityType.DiveAttack)
+        {
+            abilityController.SetCanDiveAttack(true);
+            GameProgressFlags.Set(GameProgressKeys.AbilityDiveAttackUnlocked, true);
+            Debug.Log("落下攻撃能力を取得しました！");
             return;
         }
     }
