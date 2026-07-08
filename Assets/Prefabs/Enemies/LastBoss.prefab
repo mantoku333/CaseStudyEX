@@ -169,6 +169,76 @@ MonoBehaviour:
     - time: 0.31666666
       offset: {x: 0, y: 0, z: 0}
       easeToNext: 3
+  - state: 2
+    stateName: attack_normal
+    clipLength: 0.33333334
+    loop: 0
+    keys:
+    - time: 0
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 3
+    - time: 0.15
+      offset: {x: 0.5, y: 0, z: 0}
+      easeToNext: 3
+    - time: 0.31666666
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 0
+  - state: 3
+    stateName: attack_horizontal_start
+    clipLength: 0.26666668
+    loop: 0
+    keys:
+    - time: 0
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 3
+    - time: 0.11666667
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 3
+    - time: 0.25
+      offset: {x: 0.5, y: 0, z: 0}
+      easeToNext: 0
+  - state: 4
+    stateName: attack_horizontal_end
+    clipLength: 0.16666667
+    loop: 0
+    keys:
+    - time: 0
+      offset: {x: 0.5, y: 0, z: 0}
+      easeToNext: 3
+    - time: 0.083333336
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 3
+    - time: 0.15
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 0
+  - state: 5
+    stateName: attack_vertical_start
+    clipLength: 0.33333334
+    loop: 0
+    keys:
+    - time: 0
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 3
+    - time: 0
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 3
+    - time: 0.31666666
+      offset: {x: -0.5, y: 0.5, z: 0}
+      easeToNext: 0
+  - state: 6
+    stateName: attack_vertical_end
+    clipLength: 0.33333334
+    loop: 0
+    keys:
+    - time: 0
+      offset: {x: -0.5, y: 0.5, z: 0}
+      easeToNext: 3
+    - time: 0.15
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 3
+    - time: 0.31666666
+      offset: {x: 0, y: 0, z: 0}
+      easeToNext: 0
   frameOffsetSets:
   - state: 1
     stateName: move
