@@ -24,6 +24,7 @@ public sealed class ActionSparkleEffectManagerEditor : Editor
     private SerializedProperty fallbackStartSpeed;
     private SerializedProperty eleganceLevel;
     private SerializedProperty currentAction;
+    private SerializedProperty logLevelChanges;
     private SerializedProperty levelSettings;
     private SerializedProperty glideSettings;
     private SerializedProperty recoilJumpSettings;
@@ -48,6 +49,7 @@ public sealed class ActionSparkleEffectManagerEditor : Editor
         fallbackStartSpeed = serializedObject.FindProperty("fallbackStartSpeed");
         eleganceLevel = serializedObject.FindProperty("eleganceLevel");
         currentAction = serializedObject.FindProperty("currentAction");
+        logLevelChanges = serializedObject.FindProperty("logLevelChanges");
         levelSettings = serializedObject.FindProperty("levelSettings");
         glideSettings = serializedObject.FindProperty("glideSettings");
         recoilJumpSettings = serializedObject.FindProperty("recoilJumpSettings");
@@ -262,6 +264,7 @@ public sealed class ActionSparkleEffectManagerEditor : Editor
         using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
         {
             EditorGUILayout.PropertyField(comboGraceSeconds, new GUIContent("Combo Grace Seconds"));
+            EditorGUILayout.PropertyField(logLevelChanges, new GUIContent("Log Level Changes"));
             EditorGUILayout.PropertyField(overrideParticleSorting, new GUIContent("Override Sorting"));
             if (overrideParticleSorting.boolValue)
             {

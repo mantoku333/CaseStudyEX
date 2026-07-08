@@ -53,6 +53,7 @@ public sealed class ActionSparkleEffectManager : MonoBehaviour
     [Header("Runtime State")]
     [SerializeField, Range(MinLevel, MaxLevel)] private int eleganceLevel;
     [SerializeField] private SparkleAction currentAction = SparkleAction.None;
+    [SerializeField] private bool logLevelChanges = true;
 
     [Header("Level Settings")]
     [SerializeField] private LevelSettings[] levelSettings = CreateDefaultLevelSettings();
@@ -74,6 +75,7 @@ public sealed class ActionSparkleEffectManager : MonoBehaviour
     private bool previousDodging;
     private bool previousDiveAttacking;
     private float lastElegantActionTime = float.NegativeInfinity;
+    private SparkleAction lastVisibleAction = SparkleAction.None;
 
     public int EleganceLevel => eleganceLevel;
     public SparkleAction CurrentAction => currentAction;
@@ -203,6 +205,7 @@ public sealed class ActionSparkleEffectManager : MonoBehaviour
 
     public void ResetSparkle()
     {
+        lastVisibleAction = SparkleAction.None;
         SetLevelAndAction(MinLevel, SparkleAction.None);
     }
 
@@ -452,11 +455,14 @@ public sealed class ActionSparkleEffectManager : MonoBehaviour
     private void AdvanceEleganceForAction(SparkleAction action)
     {
         bool insideComboWindow = Time.time <= lastElegantActionTime + comboGraceSeconds;
+        int previousLevel = eleganceLevel;
         lastElegantActionTime = Time.time;
+        lastVisibleAction = action;
 
         if (action == SparkleAction.Glide)
         {
             eleganceLevel = Mathf.Max(eleganceLevel, 1);
+            LogEleganceLevelChange(previousLevel, eleganceLevel, action, "Action");
             return;
         }
 
@@ -464,6 +470,7 @@ public sealed class ActionSparkleEffectManager : MonoBehaviour
         eleganceLevel = eleganceLevel > 0 && (insideComboWindow || chainedFromGlide)
             ? Mathf.Clamp(eleganceLevel + 1, MinLevel, MaxLevel)
             : 1;
+        LogEleganceLevelChange(previousLevel, eleganceLevel, action, "Action");
     }
 
     private void UpdateComboTimeout()
@@ -475,24 +482,51 @@ public sealed class ActionSparkleEffectManager : MonoBehaviour
 
         if (Time.time > lastElegantActionTime + comboGraceSeconds)
         {
+            lastVisibleAction = SparkleAction.None;
             SetLevelAndAction(MinLevel, SparkleAction.None);
         }
     }
 
     private void SetLevelAndAction(int level, SparkleAction action)
     {
+        int previousLevel = eleganceLevel;
         eleganceLevel = Mathf.Clamp(level, MinLevel, MaxLevel);
         currentAction = action;
+        if (eleganceLevel == MinLevel)
+        {
+            lastVisibleAction = SparkleAction.None;
+        }
+        else if (action != SparkleAction.None)
+        {
+            lastVisibleAction = action;
+        }
+
+        LogEleganceLevelChange(previousLevel, eleganceLevel, action, "SetLevel");
         ApplyState();
+    }
+
+    private void LogEleganceLevelChange(int previousLevel, int nextLevel, SparkleAction action, string reason)
+    {
+        if (!logLevelChanges || previousLevel == nextLevel)
+        {
+            return;
+        }
+
+        Debug.Log(
+            $"[ActionSparkleEffectManager] Elegance Level {previousLevel} -> {nextLevel} / Action: {action} / Reason: {reason}",
+            this);
     }
 
     private void ApplyState()
     {
         ResolveParticles(false);
 
-        bool shouldPlay = eleganceLevel > MinLevel && currentAction != SparkleAction.None;
+        bool insideComboWindow = Time.time <= lastElegantActionTime + comboGraceSeconds;
+        bool hasRecentAction = currentAction != SparkleAction.None || insideComboWindow;
+        SparkleAction effectiveAction = currentAction != SparkleAction.None ? currentAction : lastVisibleAction;
+        bool shouldPlay = eleganceLevel > MinLevel && hasRecentAction && effectiveAction != SparkleAction.None;
         LevelSettings level = GetLevelSettings(eleganceLevel);
-        ActionSettings action = GetActionSettings(currentAction);
+        ActionSettings action = GetActionSettings(effectiveAction);
 
         for (int i = 0; i < sparkleParticles.Length; i++)
         {
