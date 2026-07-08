@@ -81,6 +81,11 @@ MonoBehaviour:
   nextMarker: {fileID: 0}
   speakerNameOffset: {x: 0, y: 8}
   nextMarkerBottomOffset: 22
+  bubbleTail: {fileID: 0}
+  bubbleTailBottomOffset: -25
+  bubbleTailEdgePadding: 16
+  bubbleTailLogic: {fileID: 0}
+  bubbleTailLogicBasePosition: {x: 5, y: 0}
   irisSpeakerImage: {fileID: 5375859862439295052}
   noxSpeakerImage: {fileID: 6393333120498479039}
   autoResolveSpeakerImages: 1
@@ -1195,15 +1200,15 @@ RectTransform:
   m_GameObject: {fileID: 2172898611964584840}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.782355, y: 5.782355, z: 5.782355}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 3.8000002, y: 3.8000002, z: 3.8000002}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1927717399385301111}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -475, y: -66}
-  m_SizeDelta: {x: 65, y: 65}
+  m_AnchoredPosition: {x: -367, y: -70}
+  m_SizeDelta: {x: 130, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1264441482829941134
 CanvasRenderer:
@@ -1554,7 +1559,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -10}
+  m_AnchoredPosition: {x: 0, y: -19}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4888790937441551297
