@@ -138,6 +138,13 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     [SerializeField, Range(0f, 2f), Tooltip("敵ヒットSEの音量です。")]
     private float 敵ヒットSE音量 = 1f;
 
+    [Header("Animation")]
+    [SerializeField, Min(0.05f), Tooltip("落下攻撃が地面で終わった後、専用着地アニメーションを要求し続ける時間です。")]
+    private float diveAttackLandingVisualSeconds = 0.25f;
+
+    [SerializeField, Min(0.05f), Tooltip("落下攻撃で敵を倒して跳ねた後、専用バウンドアニメーションを要求し続ける時間です。")]
+    private float diveAttackBounceVisualSeconds = 0.25f;
+
     private readonly Collider2D[] overlapResults = new Collider2D[32];
     private readonly HashSet<EnemyController> hitEnemies = new HashSet<EnemyController>();
     private readonly HashSet<AttackDestructible> hitDestructibles = new HashSet<AttackDestructible>();
@@ -150,10 +157,14 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     private bool isDiveAttacking;
     private float diveStartedTime;
     private float bounceControlEndTime;
+    private float diveAttackLandingVisualEndTime;
+    private float diveAttackBounceVisualEndTime;
     private bool warnedMissingGrid;
     private Sprite[] hitEffectFrames;
 
     public bool IsDiveAttacking => isDiveAttacking;
+    public bool IsDiveAttackLanding => !isDiveAttacking && Time.time < diveAttackLandingVisualEndTime;
+    public bool IsDiveAttackBouncing => !isDiveAttacking && Time.time < diveAttackBounceVisualEndTime;
     public bool IsBounceControlActive => Time.time < bounceControlEndTime;
     public float BounceControlSpeed => 跳ね上がり左右調整速度;
 
@@ -197,6 +208,8 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         落下開始SE音量 = Mathf.Clamp(落下開始SE音量, 0f, 2f);
         着地SE音量 = Mathf.Clamp(着地SE音量, 0f, 2f);
         敵ヒットSE音量 = Mathf.Clamp(敵ヒットSE音量, 0f, 2f);
+        diveAttackLandingVisualSeconds = Mathf.Max(0.05f, diveAttackLandingVisualSeconds);
+        diveAttackBounceVisualSeconds = Mathf.Max(0.05f, diveAttackBounceVisualSeconds);
     }
 
     private void OnDisable()
@@ -207,6 +220,8 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         }
 
         bounceControlEndTime = 0f;
+        diveAttackLandingVisualEndTime = 0f;
+        diveAttackBounceVisualEndTime = 0f;
     }
 
     private void FixedUpdate()
@@ -243,6 +258,8 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         isDiveAttacking = true;
         diveStartedTime = Time.time;
         bounceControlEndTime = 0f;
+        diveAttackLandingVisualEndTime = 0f;
+        diveAttackBounceVisualEndTime = 0f;
         hitEnemies.Clear();
         hitDestructibles.Clear();
 
@@ -364,7 +381,10 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         if (killedAnyEnemy && 敵撃破時に跳ねる)
         {
             BounceUp();
+            return;
         }
+
+        RequestDiveAttackLandingVisual();
     }
 
     private void UpdateDiveAttackHit()
@@ -671,10 +691,19 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
             return;
         }
 
+        diveAttackLandingVisualEndTime = 0f;
+        diveAttackBounceVisualEndTime = Time.time + diveAttackBounceVisualSeconds;
+
         Vector2 velocity = rigidBody2d.linearVelocity;
         velocity.y = Mathf.Max(velocity.y, 跳ね上がり速度);
         rigidBody2d.linearVelocity = velocity;
         bounceControlEndTime = Time.time + 跳ね上がり操作時間;
+    }
+
+    private void RequestDiveAttackLandingVisual()
+    {
+        diveAttackBounceVisualEndTime = 0f;
+        diveAttackLandingVisualEndTime = Time.time + diveAttackLandingVisualSeconds;
     }
 
     private void PlaySE(AudioClip clip, float volume)

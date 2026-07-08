@@ -243,6 +243,8 @@ public sealed class PlayerControllerMovementTests
         public bool IsUmbrellaChanging => false;
         public bool IsAttacking => false;
         public bool IsDiveAttacking => false;
+        public bool IsDiveAttackLanding => false;
+        public bool IsDiveAttackBouncing => false;
         public bool IsRecoilBoosting => false;
     }
 }

@@ -38,6 +38,8 @@ namespace Player
         [SerializeField] private string changeStateName = "change";
         [SerializeField] private string attackStateName = "attack";
         [SerializeField] private string diveAttackStateName = "dive_attack";
+        [SerializeField] private string diveAttackLandStateName = "dive_attack_land";
+        [SerializeField] private string diveAttackBounceStateName = "dive_attack_bounce";
         [SerializeField] private string recoilBoostSkyStateName = "recoilboost_sky";
 
         [Header("Landing Stability")]
@@ -62,6 +64,8 @@ namespace Player
             Change,
             Attack,
             DiveAttack,
+            DiveAttackLand,
+            DiveAttackBounce,
             RecoilBoostSky
         }
 
@@ -77,11 +81,16 @@ namespace Player
         private bool _previousGrounded;
         private bool _currentUmbrellaOpen;
         private string _activeLandStateName;
+        private string _activeDiveAttackFollowThroughStateName;
         private string _currentAnimatorStateName;
         private bool _hasPreviousWorldPosition;
         private Vector3 _previousWorldPosition;
         private Rigidbody2D _playerRigidbody;
         private int _landingGroundLossFrames;
+        private bool _diveAttackLandingLocked;
+        private bool _diveAttackBouncingLocked;
+        private bool _previousDiveAttackLandingRequest;
+        private bool _previousDiveAttackBouncingRequest;
 
         private void Awake()
         {
@@ -96,15 +105,20 @@ namespace Player
             _previousGrounded = false;
             _currentUmbrellaOpen = false;
             _activeLandStateName = null;
+            _activeDiveAttackFollowThroughStateName = null;
             _currentAnimatorStateName = null;
             _hasPreviousWorldPosition = false;
             _previousWorldPosition = transform.position;
             _landingGroundLossFrames = 0;
+            _diveAttackLandingLocked = false;
+            _diveAttackBouncingLocked = false;
+            _previousDiveAttackLandingRequest = false;
+            _previousDiveAttackBouncingRequest = false;
         }
 
         private void Update()
         {
-            if (!TryReadProviderState(out var isGrounded, out var isMoving, out var isGliding, out var isUmbrellaOpen, out var isDodging, out var isFacingRight, out var isParrying, out var isChanging, out var isAttacking, out var isDiveAttacking, out var isRecoilBoosting))
+            if (!TryReadProviderState(out var isGrounded, out var isMoving, out var isGliding, out var isUmbrellaOpen, out var isDodging, out var isFacingRight, out var isParrying, out var isChanging, out var isAttacking, out var isDiveAttacking, out var isDiveAttackLanding, out var isDiveAttackBouncing, out var isRecoilBoosting))
             {
                 if (!_warnedNoStateProvider)
                 {
@@ -140,12 +154,18 @@ namespace Player
             }
 
             UpdateLandingLock(isGrounded);
+            UpdateDiveAttackFollowThroughLocks(isDiveAttackLanding, isDiveAttackBouncing);
             if (_landingLocked && _currentState == VisualState.Land && IsLandAnimationFinished())
             {
                 _landingLocked = false;
             }
 
-            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, isParrying, isChanging, isAttacking, isDiveAttacking, isRecoilBoosting, _landingLocked);
+            if ((_diveAttackLandingLocked || _diveAttackBouncingLocked) && IsDiveAttackFollowThroughAnimationFinished())
+            {
+                ClearDiveAttackFollowThroughLocks();
+            }
+
+            var nextState = ResolveState(isGrounded, isMoving, isGliding, isDodging, isParrying, isChanging, isAttacking, isDiveAttacking, _diveAttackLandingLocked, _diveAttackBouncingLocked, isRecoilBoosting, _landingLocked);
             if (_currentState != nextState || _currentUmbrellaOpen != isUmbrellaOpen)
             {
                 SwitchState(nextState, isUmbrellaOpen);
@@ -214,7 +234,7 @@ namespace Player
                 : EmptyRenderers;
         }
 
-        private bool TryReadProviderState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isUmbrellaOpen, out bool isDodging, out bool isFacingRight, out bool isParrying, out bool isChanging, out bool isAttacking, out bool isDiveAttacking, out bool isRecoilBoosting)
+        private bool TryReadProviderState(out bool isGrounded, out bool isMoving, out bool isGliding, out bool isUmbrellaOpen, out bool isDodging, out bool isFacingRight, out bool isParrying, out bool isChanging, out bool isAttacking, out bool isDiveAttacking, out bool isDiveAttackLanding, out bool isDiveAttackBouncing, out bool isRecoilBoosting)
         {
             if (_stateProvider != null)
             {
@@ -228,6 +248,8 @@ namespace Player
                 isChanging = _stateProvider.IsUmbrellaChanging;
                 isAttacking = _stateProvider.IsAttacking;
                 isDiveAttacking = _stateProvider.IsDiveAttacking;
+                isDiveAttackLanding = _stateProvider.IsDiveAttackLanding;
+                isDiveAttackBouncing = _stateProvider.IsDiveAttackBouncing;
                 isRecoilBoosting = _stateProvider.IsRecoilBoosting;
                 return true;
             }
@@ -242,11 +264,13 @@ namespace Player
             isChanging = false;
             isAttacking = false;
             isDiveAttacking = false;
+            isDiveAttackLanding = false;
+            isDiveAttackBouncing = false;
             isRecoilBoosting = false;
             return false;
         }
 
-        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool isParrying, bool isChanging, bool isAttacking, bool isDiveAttacking, bool isRecoilBoosting, bool hasLandingLock)
+        private static VisualState ResolveState(bool isGrounded, bool isMoving, bool isGliding, bool isDodging, bool isParrying, bool isChanging, bool isAttacking, bool isDiveAttacking, bool isDiveAttackLanding, bool isDiveAttackBouncing, bool isRecoilBoosting, bool hasLandingLock)
         {
             if (isParrying)
             {
@@ -266,6 +290,16 @@ namespace Player
             if (isDiveAttacking)
             {
                 return VisualState.DiveAttack;
+            }
+
+            if (isDiveAttackBouncing)
+            {
+                return VisualState.DiveAttackBounce;
+            }
+
+            if (isDiveAttackLanding)
+            {
+                return VisualState.DiveAttackLand;
             }
 
             if (isDodging)
@@ -380,6 +414,15 @@ namespace Player
                 _activeLandStateName = null;
             }
 
+            if (nextState == VisualState.DiveAttackLand || nextState == VisualState.DiveAttackBounce)
+            {
+                _activeDiveAttackFollowThroughStateName = stateName;
+            }
+            else
+            {
+                _activeDiveAttackFollowThroughStateName = null;
+            }
+
             if (!string.IsNullOrEmpty(stateName))
             {
                 animator.Play(stateName, animatorLayer, 0f);
@@ -407,6 +450,58 @@ namespace Player
             return stateInfo.normalizedTime >= 1f && !animator.IsInTransition(animatorLayer);
         }
 
+        private void UpdateDiveAttackFollowThroughLocks(bool isDiveAttackLanding, bool isDiveAttackBouncing)
+        {
+            bool startedBouncing = isDiveAttackBouncing && !_previousDiveAttackBouncingRequest;
+            bool startedLanding = isDiveAttackLanding && !_previousDiveAttackLandingRequest;
+            _previousDiveAttackBouncingRequest = isDiveAttackBouncing;
+            _previousDiveAttackLandingRequest = isDiveAttackLanding;
+
+            if (startedBouncing)
+            {
+                _diveAttackBouncingLocked = true;
+                _diveAttackLandingLocked = false;
+                _landingLocked = false;
+                return;
+            }
+
+            if (startedLanding)
+            {
+                _diveAttackLandingLocked = true;
+                _diveAttackBouncingLocked = false;
+                _landingLocked = false;
+            }
+        }
+
+        private bool IsDiveAttackFollowThroughAnimationFinished()
+        {
+            if (animator == null)
+            {
+                return true;
+            }
+
+            if (string.IsNullOrEmpty(_activeDiveAttackFollowThroughStateName))
+            {
+                return false;
+            }
+
+            var stateInfo = animator.GetCurrentAnimatorStateInfo(animatorLayer);
+            if (!stateInfo.IsName(_activeDiveAttackFollowThroughStateName))
+            {
+                return true;
+            }
+
+            return stateInfo.normalizedTime >= 1f && !animator.IsInTransition(animatorLayer);
+        }
+
+        private void ClearDiveAttackFollowThroughLocks()
+        {
+            _diveAttackLandingLocked = false;
+            _diveAttackBouncingLocked = false;
+            _activeDiveAttackFollowThroughStateName = null;
+            _landingLocked = false;
+        }
+
         /// <summary>
         /// Receives AnimationEvent from land.anim.
         /// Kept for compatibility with clip event wiring.
@@ -415,6 +510,16 @@ namespace Player
         {
             _landingLocked = false;
             _activeLandStateName = null;
+        }
+
+        public void OnDiveAttackLandAnimationEnd()
+        {
+            ClearDiveAttackFollowThroughLocks();
+        }
+
+        public void OnDiveAttackBounceAnimationEnd()
+        {
+            ClearDiveAttackFollowThroughLocks();
         }
 
         private string GetAnimatorStateName(VisualState state, bool isUmbrellaOpen)
@@ -451,6 +556,10 @@ namespace Player
                     return attackStateName;
                 case VisualState.DiveAttack:
                     return diveAttackStateName;
+                case VisualState.DiveAttackLand:
+                    return diveAttackLandStateName;
+                case VisualState.DiveAttackBounce:
+                    return diveAttackBounceStateName;
                 case VisualState.RecoilBoostSky:
                     return recoilBoostSkyStateName;
                 default:
@@ -542,6 +651,24 @@ namespace Player
                     if (AnimatorHasState("Dive_Attack")) return "Dive_Attack";
                     if (AnimatorHasState("diveAttack")) return "diveAttack";
                     if (AnimatorHasState("dive_attack")) return "dive_attack";
+                    if (AnimatorHasState(jumpStateName)) return jumpStateName;
+                    if (AnimatorHasState("jump")) return "jump";
+                    break;
+                case VisualState.DiveAttackLand:
+                    if (AnimatorHasState(primary)) return primary;
+                    if (AnimatorHasState("DiveAttackLand")) return "DiveAttackLand";
+                    if (AnimatorHasState("Dive_Attack_Land")) return "Dive_Attack_Land";
+                    if (AnimatorHasState("diveAttackLand")) return "diveAttackLand";
+                    if (AnimatorHasState("dive_attack_land")) return "dive_attack_land";
+                    if (AnimatorHasState(landStateName)) return landStateName;
+                    if (AnimatorHasState("land")) return "land";
+                    break;
+                case VisualState.DiveAttackBounce:
+                    if (AnimatorHasState(primary)) return primary;
+                    if (AnimatorHasState("DiveAttackBounce")) return "DiveAttackBounce";
+                    if (AnimatorHasState("Dive_Attack_Bounce")) return "Dive_Attack_Bounce";
+                    if (AnimatorHasState("diveAttackBounce")) return "diveAttackBounce";
+                    if (AnimatorHasState("dive_attack_bounce")) return "dive_attack_bounce";
                     if (AnimatorHasState(jumpStateName)) return jumpStateName;
                     if (AnimatorHasState("jump")) return "jump";
                     break;

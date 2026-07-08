@@ -114,6 +114,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsExternalMovementActive => externalMovementActive;
     public bool IsDamageKnockbackActive => Time.time < damageKnockbackEndTime;
     public bool IsDiveAttacking => diveAttackController != null && diveAttackController.IsDiveAttacking;
+    public bool IsDiveAttackLanding => diveAttackController != null && diveAttackController.IsDiveAttackLanding;
+    public bool IsDiveAttackBouncing => diveAttackController != null && diveAttackController.IsDiveAttackBouncing;
 
     private void Awake()
     {
