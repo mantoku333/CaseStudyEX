@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using GameName.Enemy;
 using Player;
@@ -90,6 +91,46 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     [SerializeField, Tooltip("落下攻撃スプライト表示中のスケール倍率です。画像サイズ差をここで吸収します。")]
     private Vector3 スプライトスケール倍率 = Vector3.one;
 
+    [Header("敵ヒットエフェクト")]
+    [SerializeField, Tooltip("敵に当たった時だけ再生するエフェクトのスプライトシートです。パリィ成功エフェクトの青い方を指定してください。")]
+    private Texture2D 敵ヒットエフェクトスプライトシート;
+
+    [SerializeField, Min(1), Tooltip("敵ヒットエフェクトの横方向フレーム数です。")]
+    private int 敵ヒットエフェクト横フレーム数 = 5;
+
+    [SerializeField, Min(1), Tooltip("敵ヒットエフェクトの縦方向フレーム数です。")]
+    private int 敵ヒットエフェクト縦フレーム数 = 4;
+
+    [SerializeField, Min(1), Tooltip("敵ヒットエフェクトで再生する総フレーム数です。")]
+    private int 敵ヒットエフェクト再生フレーム数 = 20;
+
+    [SerializeField, Min(0.01f), Tooltip("敵ヒットエフェクト1フレームあたりの秒数です。")]
+    private float 敵ヒットエフェクトフレーム秒数 = 0.033f;
+
+    [SerializeField, Min(1f), Tooltip("敵ヒットエフェクトのPixels Per Unitです。")]
+    private float 敵ヒットエフェクトPixelsPerUnit = 100f;
+
+    [SerializeField, Tooltip("敵ヒットエフェクトのスプライトピボットです。")]
+    private Vector2 敵ヒットエフェクトピボット = new Vector2(0.67f, 0.5f);
+
+    [SerializeField, Tooltip("敵ヒットエフェクトの位置補正です。敵の中心からのワールド座標オフセットです。")]
+    private Vector3 敵ヒットエフェクト位置補正 = Vector3.zero;
+
+    [SerializeField, Tooltip("敵ヒットエフェクトの回転です。初期値は下向きです。")]
+    private Vector3 敵ヒットエフェクト回転 = new Vector3(0f, 0f, 90f);
+
+    [SerializeField, Tooltip("敵ヒットエフェクトのスケールです。")]
+    private Vector3 敵ヒットエフェクトスケール = Vector3.one;
+
+    [SerializeField, Tooltip("敵ヒットエフェクトの描画順を、ヒット対象の最前面SpriteRendererからどれだけ前に出すかです。")]
+    private int 敵ヒットエフェクト描画順オフセット = 4;
+
+    [SerializeField, Tooltip("敵ヒットエフェクトの最低Sorting Orderです。")]
+    private int 敵ヒットエフェクト最低描画順 = 20;
+
+    [SerializeField, Tooltip("有効にすると、ヒット対象のマテリアルを敵ヒットエフェクトにも使います。")]
+    private bool 敵ヒットエフェクト対象マテリアルをコピー = true;
+
     [Header("SE")]
     [SerializeField, Tooltip("未設定ならプレイヤーの AudioSource を使います。")]
     private AudioSource SE再生AudioSource;
@@ -115,6 +156,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     private readonly Collider2D[] overlapResults = new Collider2D[32];
     private readonly HashSet<EnemyController> hitEnemies = new HashSet<EnemyController>();
     private readonly HashSet<AttackDestructible> hitDestructibles = new HashSet<AttackDestructible>();
+    private readonly List<Sprite> generatedHitEffectSprites = new List<Sprite>();
 
     private Rigidbody2D rigidBody2d;
     private GroundCheck groundCheck;
@@ -131,6 +173,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     private float diveStartedTime;
     private float bounceControlEndTime;
     private bool warnedMissingGrid;
+    private Sprite[] hitEffectFrames;
 
     public bool IsDiveAttacking => isDiveAttacking;
     public bool IsBounceControlActive => Time.time < bounceControlEndTime;
@@ -179,6 +222,14 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         跳ね上がり操作時間 = Mathf.Max(0f, 跳ね上がり操作時間);
         跳ね上がり左右調整速度 = Mathf.Max(0f, 跳ね上がり左右調整速度);
         攻撃成立時の被弾無効時間 = Mathf.Max(0f, 攻撃成立時の被弾無効時間);
+        敵ヒットエフェクト横フレーム数 = Mathf.Max(1, 敵ヒットエフェクト横フレーム数);
+        敵ヒットエフェクト縦フレーム数 = Mathf.Max(1, 敵ヒットエフェクト縦フレーム数);
+        敵ヒットエフェクト再生フレーム数 = Mathf.Max(1, 敵ヒットエフェクト再生フレーム数);
+        敵ヒットエフェクトフレーム秒数 = Mathf.Max(0.01f, 敵ヒットエフェクトフレーム秒数);
+        敵ヒットエフェクトPixelsPerUnit = Mathf.Max(1f, 敵ヒットエフェクトPixelsPerUnit);
+        敵ヒットエフェクトピボット = new Vector2(
+            Mathf.Clamp01(敵ヒットエフェクトピボット.x),
+            Mathf.Clamp01(敵ヒットエフェクトピボット.y));
         落下開始SE音量 = Mathf.Clamp(落下開始SE音量, 0f, 2f);
         着地SE音量 = Mathf.Clamp(着地SE音量, 0f, 2f);
         敵ヒットSE音量 = Mathf.Clamp(敵ヒットSE音量, 0f, 2f);
@@ -330,12 +381,21 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
             transform.position,
             攻撃半径,
             out bool killedAnyEnemy,
-            out bool appliedNewHit);
+            out bool appliedNewHit,
+            out bool appliedNewEnemyHit,
+            out Vector3 enemyHitEffectPosition,
+            out Collider2D enemyHitCollider);
         if (appliedNewHit)
         {
             PlaySE(敵ヒットSE, 敵ヒットSE音量);
         }
-        else if (!foundAnyTarget)
+
+        if (appliedNewEnemyHit)
+        {
+            PlayEnemyHitEffect(enemyHitEffectPosition, enemyHitCollider);
+        }
+
+        if (!foundAnyTarget)
         {
             playerHealth?.ClearAttackPriorityInvulnerability();
         }
@@ -359,7 +419,10 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
             attackCenter,
             落下中攻撃半径,
             out bool killedAnyEnemy,
-            out bool appliedNewHit);
+            out bool appliedNewHit,
+            out bool appliedNewEnemyHit,
+            out Vector3 enemyHitEffectPosition,
+            out Collider2D enemyHitCollider);
         if (!foundAnyTarget)
         {
             playerHealth?.ClearAttackPriorityInvulnerability();
@@ -369,6 +432,11 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         if (appliedNewHit)
         {
             PlaySE(敵ヒットSE, 敵ヒットSE音量);
+        }
+
+        if (appliedNewEnemyHit)
+        {
+            PlayEnemyHitEffect(enemyHitEffectPosition, enemyHitCollider);
         }
 
         if (killedAnyEnemy && 敵撃破時に跳ねる)
@@ -382,10 +450,16 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         Vector2 center,
         float radius,
         out bool killedAnyEnemy,
-        out bool appliedNewHit)
+        out bool appliedNewHit,
+        out bool appliedNewEnemyHit,
+        out Vector3 enemyHitEffectPosition,
+        out Collider2D enemyHitCollider)
     {
         killedAnyEnemy = false;
         appliedNewHit = false;
+        appliedNewEnemyHit = false;
+        enemyHitEffectPosition = center;
+        enemyHitCollider = null;
         bool foundAnyTarget = false;
 
         ContactFilter2D filter = new ContactFilter2D
@@ -415,6 +489,13 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
                 }
 
                 appliedNewHit = true;
+                if (!appliedNewEnemyHit)
+                {
+                    appliedNewEnemyHit = true;
+                    enemyHitEffectPosition = ResolveEnemyHitEffectPosition(center, hitCollider);
+                    enemyHitCollider = hitCollider;
+                }
+
                 int healthBefore = enemy.CurrentHealth;
                 enemy.TakeDamage(ダメージ量);
                 if (healthBefore > 0 && enemy.CurrentHealth <= 0)
@@ -442,6 +523,184 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         }
 
         return foundAnyTarget;
+    }
+
+    private Vector3 ResolveEnemyHitEffectPosition(Vector2 attackCenter, Collider2D hitCollider)
+    {
+        if (hitCollider == null)
+        {
+            return (Vector3)attackCenter + 敵ヒットエフェクト位置補正;
+        }
+
+        Vector2 hitPoint = hitCollider.ClosestPoint(attackCenter);
+        if (!hitCollider.OverlapPoint(attackCenter))
+        {
+            return (Vector3)hitPoint + 敵ヒットエフェクト位置補正;
+        }
+
+        Vector2 pointFromEnemyCenter = hitCollider.ClosestPoint(transform.position);
+        if ((pointFromEnemyCenter - (Vector2)hitCollider.bounds.center).sqrMagnitude > 0.0001f)
+        {
+            return (Vector3)pointFromEnemyCenter + 敵ヒットエフェクト位置補正;
+        }
+
+        return (Vector3)attackCenter + 敵ヒットエフェクト位置補正;
+    }
+
+    private void PlayEnemyHitEffect(Vector3 effectPosition, Collider2D hitCollider)
+    {
+        BuildHitEffectFramesIfNeeded();
+        if (hitEffectFrames == null || hitEffectFrames.Length == 0)
+        {
+            return;
+        }
+
+        GameObject effectObject = new GameObject("DiveAttackEnemyHitEffect");
+        effectObject.transform.position = effectPosition;
+        effectObject.transform.rotation = Quaternion.Euler(敵ヒットエフェクト回転);
+        effectObject.transform.localScale = 敵ヒットエフェクトスケール;
+
+        SpriteRenderer renderer = effectObject.AddComponent<SpriteRenderer>();
+        ApplyHitEffectRendererSettings(renderer, hitCollider);
+        StartCoroutine(PlayHitEffectRoutine(effectObject, renderer));
+    }
+
+    private void ApplyHitEffectRendererSettings(SpriteRenderer renderer, Collider2D hitCollider)
+    {
+        SpriteRenderer sourceRenderer = ResolveFrontmostRenderer(hitCollider);
+        if (sourceRenderer == null)
+        {
+            renderer.sortingOrder = 敵ヒットエフェクト最低描画順;
+            return;
+        }
+
+        renderer.sortingLayerID = sourceRenderer.sortingLayerID;
+        renderer.sortingOrder = Mathf.Max(
+            sourceRenderer.sortingOrder + 敵ヒットエフェクト描画順オフセット,
+            敵ヒットエフェクト最低描画順);
+
+        if (敵ヒットエフェクト対象マテリアルをコピー && sourceRenderer.sharedMaterial != null)
+        {
+            renderer.sharedMaterial = sourceRenderer.sharedMaterial;
+        }
+    }
+
+    private static SpriteRenderer ResolveFrontmostRenderer(Collider2D hitCollider)
+    {
+        if (hitCollider == null)
+        {
+            return null;
+        }
+
+        Transform targetRoot = hitCollider.transform;
+        EnemyController enemy = hitCollider.GetComponentInParent<EnemyController>();
+        if (enemy != null)
+        {
+            targetRoot = enemy.transform;
+        }
+
+        SpriteRenderer[] renderers = targetRoot.GetComponentsInChildren<SpriteRenderer>(true);
+        SpriteRenderer frontmost = null;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            SpriteRenderer renderer = renderers[i];
+            if (renderer == null)
+            {
+                continue;
+            }
+
+            if (frontmost == null || CompareRendererSort(renderer, frontmost) > 0)
+            {
+                frontmost = renderer;
+            }
+        }
+
+        return frontmost;
+    }
+
+    private static int CompareRendererSort(SpriteRenderer left, SpriteRenderer right)
+    {
+        int leftLayerValue = SortingLayer.GetLayerValueFromID(left.sortingLayerID);
+        int rightLayerValue = SortingLayer.GetLayerValueFromID(right.sortingLayerID);
+        if (leftLayerValue != rightLayerValue)
+        {
+            return leftLayerValue.CompareTo(rightLayerValue);
+        }
+
+        return left.sortingOrder.CompareTo(right.sortingOrder);
+    }
+
+    private IEnumerator PlayHitEffectRoutine(GameObject effectObject, SpriteRenderer renderer)
+    {
+        for (int i = 0; i < hitEffectFrames.Length; i++)
+        {
+            if (renderer == null)
+            {
+                yield break;
+            }
+
+            Sprite frame = hitEffectFrames[i];
+            if (frame != null)
+            {
+                renderer.sprite = frame;
+            }
+
+            yield return new WaitForSeconds(敵ヒットエフェクトフレーム秒数);
+        }
+
+        Destroy(effectObject);
+    }
+
+    private void BuildHitEffectFramesIfNeeded()
+    {
+        if (hitEffectFrames == null || hitEffectFrames.Length == 0)
+        {
+            hitEffectFrames = BuildHitEffectFrames();
+        }
+    }
+
+    private Sprite[] BuildHitEffectFrames()
+    {
+        if (敵ヒットエフェクトスプライトシート == null)
+        {
+            return System.Array.Empty<Sprite>();
+        }
+
+        int frameWidth = 敵ヒットエフェクトスプライトシート.width / 敵ヒットエフェクト横フレーム数;
+        int frameHeight = 敵ヒットエフェクトスプライトシート.height / 敵ヒットエフェクト縦フレーム数;
+        if (frameWidth <= 0 || frameHeight <= 0)
+        {
+            return System.Array.Empty<Sprite>();
+        }
+
+        int maxFrameCount = Mathf.Min(
+            敵ヒットエフェクト再生フレーム数,
+            敵ヒットエフェクト横フレーム数 * 敵ヒットエフェクト縦フレーム数);
+        Sprite[] frames = new Sprite[maxFrameCount];
+        int index = 0;
+
+        for (int row = 0; row < 敵ヒットエフェクト縦フレーム数 && index < maxFrameCount; row++)
+        {
+            int y = 敵ヒットエフェクトスプライトシート.height - ((row + 1) * frameHeight);
+
+            for (int column = 0; column < 敵ヒットエフェクト横フレーム数 && index < maxFrameCount; column++)
+            {
+                Rect rect = new Rect(column * frameWidth, y, frameWidth, frameHeight);
+                Sprite sprite = Sprite.Create(
+                    敵ヒットエフェクトスプライトシート,
+                    rect,
+                    敵ヒットエフェクトピボット,
+                    敵ヒットエフェクトPixelsPerUnit,
+                    0,
+                    SpriteMeshType.FullRect);
+
+                frames[index++] = sprite;
+                generatedHitEffectSprites.Add(sprite);
+            }
+        }
+
+        return frames;
     }
 
     private void BounceUp()
@@ -528,6 +787,24 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         }
 
         SE再生AudioSource.PlayOneShot(clip, volume);
+    }
+
+    private void OnDestroy()
+    {
+        for (int i = 0; i < generatedHitEffectSprites.Count; i++)
+        {
+            if (generatedHitEffectSprites[i] != null)
+            {
+                if (Application.isPlaying)
+                {
+                    Destroy(generatedHitEffectSprites[i]);
+                }
+                else
+                {
+                    DestroyImmediate(generatedHitEffectSprites[i]);
+                }
+            }
+        }
     }
 
     private void OnDrawGizmosSelected()
