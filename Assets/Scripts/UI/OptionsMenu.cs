@@ -26,7 +26,7 @@ public sealed class OptionsMenu : MonoBehaviour
     private const string JumpDefaultPath = "<Keyboard>/space";
     private const string AttackDefaultPath = "<Mouse>/leftButton";
     private const string GlideDefaultPath = "<Mouse>/rightButton";
-    private const string RecoilDefaultPath = "<Keyboard>/e";
+    private const string RecoilDefaultPath = "";
     private const string DodgeDefaultPath = "<Keyboard>/leftShift";
     private const float AudioRefreshInterval = 0.35f;
     private const float HandlePadding = 10f;
@@ -502,7 +502,6 @@ public sealed class OptionsMenu : MonoBehaviour
         BindButton(jumpButton, StartRebindJump);
         BindButton(attackButton, StartRebindAttack);
         BindButton(glideButton, StartRebindGlide);
-        BindButton(recoilButton, StartRebindRecoil);
         BindButton(dodgeButton, StartRebindDodge);
 
         listenersRegistered = true;
@@ -542,7 +541,6 @@ public sealed class OptionsMenu : MonoBehaviour
         UnbindButton(jumpButton, StartRebindJump);
         UnbindButton(attackButton, StartRebindAttack);
         UnbindButton(glideButton, StartRebindGlide);
-        UnbindButton(recoilButton, StartRebindRecoil);
         UnbindButton(dodgeButton, StartRebindDodge);
 
         listenersRegistered = false;
@@ -1999,7 +1997,7 @@ public sealed class OptionsMenu : MonoBehaviour
         SetButtonInteractable(jumpButton, interactable);
         SetButtonInteractable(attackButton, interactable);
         SetButtonInteractable(glideButton, interactable);
-        SetButtonInteractable(recoilButton, interactable);
+        SetButtonInteractable(recoilButton, false);
         SetButtonInteractable(parryButton, interactable);
         SetButtonInteractable(dodgeButton, interactable);
     }

@@ -7,6 +7,8 @@ public static class PlayerInputBindingOverrides
 {
     private const string PlayerPrefsKey = "InputBindingOverrides_Player";
     private const string PlayerActionMapName = "Player";
+    private const string KeyboardMouseGroupName = "Keyboard&Mouse";
+    private const string RecoilJumpActionName = "RecoilJump";
 
     private static readonly HashSet<int> LoadedActionAssetIds = new HashSet<int>();
     private static bool _sceneHookRegistered;
@@ -60,6 +62,11 @@ public static class PlayerInputBindingOverrides
         if (!string.IsNullOrEmpty(json))
         {
             actions.LoadBindingOverridesFromJson(json);
+        }
+
+        if (DisableRecoilJumpKeyboardBindings(actions))
+        {
+            Save(actions);
         }
 
         LoadedActionAssetIds.Add(assetId);
@@ -215,6 +222,41 @@ public static class PlayerInputBindingOverrides
         }
 
         return false;
+    }
+
+    private static bool DisableRecoilJumpKeyboardBindings(InputActionAsset actions)
+    {
+        InputActionMap actionMap = actions.FindActionMap(PlayerActionMapName, false);
+        InputAction recoilJumpAction = actionMap != null ? actionMap.FindAction(RecoilJumpActionName, false) : null;
+        if (recoilJumpAction == null)
+        {
+            return false;
+        }
+
+        bool changed = false;
+        for (int i = 0; i < recoilJumpAction.bindings.Count; i++)
+        {
+            InputBinding binding = recoilJumpAction.bindings[i];
+            if (binding.isComposite || binding.isPartOfComposite)
+            {
+                continue;
+            }
+
+            if (!BindingContainsGroup(binding.groups, KeyboardMouseGroupName))
+            {
+                continue;
+            }
+
+            if (binding.overridePath == string.Empty)
+            {
+                continue;
+            }
+
+            recoilJumpAction.ApplyBindingOverride(i, new InputBinding { overridePath = string.Empty });
+            changed = true;
+        }
+
+        return changed;
     }
 
     private static bool BindingContainsGroup(string bindingGroups, string targetGroup)
