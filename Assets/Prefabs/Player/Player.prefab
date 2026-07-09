@@ -757,6 +757,7 @@ MonoBehaviour:
   damageCooldownSeconds: 3
   maxHealthBonus: 0
   playerDamageClip: {fileID: 8300000, guid: 5d07316111d5d54458cae5d7e4158754, type: 3}
+  playerDamageVolume: 0.25
   damageKnockbackSpeed: 6
   damageKnockbackDuration: 0.18
   damageKnockbackUpwardSpeed: 3.5

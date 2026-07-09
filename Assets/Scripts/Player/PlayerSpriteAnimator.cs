@@ -785,8 +785,7 @@ namespace Player
 
             if (_stateProvider is global::PlayerController playerController)
             {
-                return playerController.IsExternalControlLocked ||
-                       playerController.IsExternalMovementActive;
+                return playerController.IsExternalMovementActive;
             }
 
             return false;
