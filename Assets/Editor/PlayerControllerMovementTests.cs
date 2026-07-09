@@ -131,6 +131,60 @@ public sealed class PlayerControllerMovementTests
     }
 
     [Test]
+    public void IsMoving_WhenControlLocked_IgnoresStaleMoveInput()
+    {
+        PlayerController controller = CreatePlayer(out _);
+        SetPrivateField(controller, "moveInput", -1f);
+        SetPrivateField(controller, "externalControlLocked", true);
+
+        Assert.That(controller.IsMoving, Is.False);
+    }
+
+    [Test]
+    public void SetExternalControlLocked_WhenExternalMovementWasActive_PreservesScriptedMovement()
+    {
+        PlayerController controller = CreatePlayer(out _);
+        controller.StartExternalMoveToX(-5f);
+        Assert.That(controller.IsExternalMovementActive, Is.True);
+
+        controller.SetExternalControlLocked(true);
+
+        Assert.That(controller.IsExternalMovementActive, Is.True);
+        Assert.That(controller.IsMoving, Is.True);
+    }
+
+    [Test]
+    public void StartExternalMoveToX_WhenControlLocked_StillReportsScriptedMovement()
+    {
+        PlayerController controller = CreatePlayer(out _);
+        controller.SetExternalControlLocked(true);
+
+        controller.StartExternalMoveToX(5f);
+
+        Assert.That(controller.IsExternalMovementActive, Is.True);
+        Assert.That(controller.IsMoving, Is.True);
+    }
+
+    [Test]
+    public void StartExternalMoveToX_WhenExternalMovementSuppressed_DoesNotReportMovement()
+    {
+        PlayerController controller = CreatePlayer(out _);
+        controller.SetExternalControlLocked(true);
+        controller.SetExternalMovementSuppressed(true);
+
+        controller.StartExternalMoveToX(-5f);
+
+        Assert.That(controller.IsExternalMovementActive, Is.False);
+        Assert.That(controller.IsMoving, Is.False);
+
+        controller.SetExternalMovementSuppressed(false);
+        controller.StartExternalMoveToX(-5f);
+
+        Assert.That(controller.IsExternalMovementActive, Is.True);
+        Assert.That(controller.IsMoving, Is.True);
+    }
+
+    [Test]
     public void LandingAnimation_WhenDescendingGroundSampleBrieflyDrops_RemainsLocked()
     {
         PlayerController controller = CreatePlayer(out Rigidbody2D rigidbody2D);
@@ -162,6 +216,39 @@ public sealed class PlayerControllerMovementTests
         InvokePrivate(spriteAnimator, "UpdateLandingLock", false);
 
         Assert.That(GetPrivateField<bool>(spriteAnimator, "_landingLocked"), Is.False);
+    }
+
+    [Test]
+    public void CutsceneMovement_WhenControlLockedWithoutExternalMovement_IgnoresTransformDelta()
+    {
+        PlayerController controller = CreatePlayer(out _);
+        PlayerSpriteAnimator spriteAnimator =
+            controller.gameObject.AddComponent<PlayerSpriteAnimator>();
+        SetPrivateField(spriteAnimator, "_stateProvider", controller);
+        SetPrivateField(spriteAnimator, "_hasPreviousWorldPosition", true);
+        SetPrivateField(spriteAnimator, "_previousWorldPosition", Vector3.zero);
+        controller.SetExternalControlLocked(true);
+        controller.transform.position = Vector3.right;
+
+        bool isMoving = InvokeTryResolveCutsceneMovement(spriteAnimator, out _);
+
+        Assert.That(isMoving, Is.False);
+    }
+
+    [Test]
+    public void CutsceneMovement_WhenExternalMovementActive_ReportsMoving()
+    {
+        PlayerController controller = CreatePlayer(out _);
+        PlayerSpriteAnimator spriteAnimator =
+            controller.gameObject.AddComponent<PlayerSpriteAnimator>();
+        SetPrivateField(spriteAnimator, "_stateProvider", controller);
+        controller.SetExternalControlLocked(true);
+        controller.StartExternalMoveToX(5f);
+
+        bool isMoving = InvokeTryResolveCutsceneMovement(spriteAnimator, out bool isFacingRight);
+
+        Assert.That(isMoving, Is.True);
+        Assert.That(isFacingRight, Is.True);
     }
 
     private PlayerController CreatePlayer(out Rigidbody2D rigidbody2D)
@@ -231,6 +318,21 @@ public sealed class PlayerControllerMovementTests
         return resolved;
     }
 
+    private static bool InvokeTryResolveCutsceneMovement(
+        PlayerSpriteAnimator spriteAnimator,
+        out bool isFacingRight)
+    {
+        MethodInfo method = spriteAnimator.GetType().GetMethod(
+            "TryResolveCutsceneMovement",
+            InstancePrivate);
+        Assert.That(method, Is.Not.Null);
+
+        object[] arguments = { false };
+        bool resolved = (bool)method.Invoke(spriteAnimator, arguments);
+        isFacingRight = (bool)arguments[0];
+        return resolved;
+    }
+
     private sealed class GroundedStateProvider : IPlayerViewStateProvider
     {
         public bool IsGrounded { get; set; }
@@ -242,6 +344,9 @@ public sealed class PlayerControllerMovementTests
         public bool IsParrying => false;
         public bool IsUmbrellaChanging => false;
         public bool IsAttacking => false;
+        public bool IsDiveAttacking => false;
+        public bool IsDiveAttackLanding => false;
+        public bool IsDiveAttackBouncing => false;
         public bool IsRecoilBoosting => false;
     }
 }

@@ -75,21 +75,6 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     [SerializeField, Min(0f), Tooltip("落下攻撃の着地判定中だけ、敵からの被弾よりプレイヤー攻撃を優先する時間です。空振り時は即解除します。")]
     private float 攻撃成立時の被弾無効時間 = 0.16f;
 
-    [Header("見た目")]
-    [SerializeField, Tooltip("落下攻撃中に表示する1枚絵です。")]
-    private Sprite 落下攻撃スプライト;
-
-    [SerializeField, Tooltip("差し替え対象の SpriteRenderer です。未設定なら子から自動取得します。")]
-    private SpriteRenderer 対象スプライトレンダラー;
-
-    [SerializeField, Tooltip("落下攻撃中だけ Animator を止め、1枚絵を維持します。")]
-    private bool 落下中はAnimatorを停止する = true;
-
-    [SerializeField, Tooltip("落下攻撃スプライト表示中の位置補正です。画像の中心ズレをここで吸収します。")]
-    private Vector3 スプライト位置補正 = new Vector3(0f, 0f, 0f);
-
-    [SerializeField, Tooltip("落下攻撃スプライト表示中のスケール倍率です。画像サイズ差をここで吸収します。")]
-    private Vector3 スプライトスケール倍率 = Vector3.one;
 
     [Header("敵ヒットエフェクト")]
     [SerializeField, Tooltip("敵に当たった時だけ再生するエフェクトのスプライトシートです。パリィ成功エフェクトの青い方を指定してください。")]
@@ -153,6 +138,17 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     [SerializeField, Range(0f, 2f), Tooltip("敵ヒットSEの音量です。")]
     private float 敵ヒットSE音量 = 1f;
 
+    [Header("Animation")]
+    [SerializeField, Min(0.05f), Tooltip("落下攻撃が地面で終わった後、専用着地アニメーションを要求し続ける時間です。")]
+    private float diveAttackLandingVisualSeconds = 0.52f;
+
+    [SerializeField, Min(0.05f), Tooltip("落下攻撃で敵を倒して跳ねた後、専用バウンドアニメーションを要求し続ける時間です。")]
+    private float diveAttackBounceVisualSeconds = 0.25f;
+
+    [Header("Landing Control")]
+    [SerializeField, Range(0f, 1f)]
+    private float diveAttackLandingHorizontalSpeedMultiplier = 0.35f;
+
     private readonly Collider2D[] overlapResults = new Collider2D[32];
     private readonly HashSet<EnemyController> hitEnemies = new HashSet<EnemyController>();
     private readonly HashSet<AttackDestructible> hitDestructibles = new HashSet<AttackDestructible>();
@@ -162,20 +158,18 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     private GroundCheck groundCheck;
     private PlayerEquipmentController equipmentController;
     private PlayerHealth playerHealth;
-    private Animator targetAnimator;
-    private Transform spriteTransform;
-    private Sprite previousSprite;
-    private Vector3 previousLocalPosition;
-    private Vector3 previousLocalScale;
-    private bool previousAnimatorEnabled;
-    private bool hasVisualOverride;
     private bool isDiveAttacking;
     private float diveStartedTime;
     private float bounceControlEndTime;
+    private float diveAttackLandingVisualEndTime;
+    private float diveAttackBounceVisualEndTime;
     private bool warnedMissingGrid;
     private Sprite[] hitEffectFrames;
 
     public bool IsDiveAttacking => isDiveAttacking;
+    public bool IsDiveAttackLanding => !isDiveAttacking && Time.time < diveAttackLandingVisualEndTime;
+    public float DiveAttackLandingHorizontalSpeedMultiplier => diveAttackLandingHorizontalSpeedMultiplier;
+    public bool IsDiveAttackBouncing => !isDiveAttacking && Time.time < diveAttackBounceVisualEndTime;
     public bool IsBounceControlActive => Time.time < bounceControlEndTime;
     public float BounceControlSpeed => 跳ね上がり左右調整速度;
 
@@ -188,20 +182,6 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         ResolveGridIfNeeded();
         ResolveGroundLayerMaskIfNeeded();
 
-        if (対象スプライトレンダラー == null)
-        {
-            対象スプライトレンダラー = GetComponentInChildren<SpriteRenderer>(true);
-        }
-
-        if (対象スプライトレンダラー != null)
-        {
-            spriteTransform = 対象スプライトレンダラー.transform;
-            targetAnimator = 対象スプライトレンダラー.GetComponent<Animator>();
-            if (targetAnimator == null)
-            {
-                targetAnimator = 対象スプライトレンダラー.GetComponentInParent<Animator>();
-            }
-        }
 
         if (SE再生AudioSource == null)
         {
@@ -233,6 +213,9 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         落下開始SE音量 = Mathf.Clamp(落下開始SE音量, 0f, 2f);
         着地SE音量 = Mathf.Clamp(着地SE音量, 0f, 2f);
         敵ヒットSE音量 = Mathf.Clamp(敵ヒットSE音量, 0f, 2f);
+        diveAttackLandingVisualSeconds = Mathf.Max(0.05f, diveAttackLandingVisualSeconds);
+        diveAttackLandingHorizontalSpeedMultiplier = Mathf.Clamp01(diveAttackLandingHorizontalSpeedMultiplier);
+        diveAttackBounceVisualSeconds = Mathf.Max(0.05f, diveAttackBounceVisualSeconds);
     }
 
     private void OnDisable()
@@ -242,8 +225,9 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
             EndDiveAttack(false);
         }
 
-        RestoreVisual();
         bounceControlEndTime = 0f;
+        diveAttackLandingVisualEndTime = 0f;
+        diveAttackBounceVisualEndTime = 0f;
     }
 
     private void FixedUpdate()
@@ -280,10 +264,11 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         isDiveAttacking = true;
         diveStartedTime = Time.time;
         bounceControlEndTime = 0f;
+        diveAttackLandingVisualEndTime = 0f;
+        diveAttackBounceVisualEndTime = 0f;
         hitEnemies.Clear();
         hitDestructibles.Clear();
 
-        ApplyVisualOverride();
         PlaySE(落下開始SE, 落下開始SE音量);
 
         Vector2 velocity = rigidBody2d.linearVelocity;
@@ -304,6 +289,16 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         Vector2 velocity = rigidBody2d.linearVelocity;
         velocity.x = horizontalInput * 跳ね上がり左右調整速度;
         rigidBody2d.linearVelocity = velocity;
+    }
+
+    public void EndDiveAttackOnGrounded()
+    {
+        if (!isDiveAttacking)
+        {
+            return;
+        }
+
+        EndDiveAttack(true);
     }
 
     public bool CanStartDiveAttackFromAir()
@@ -368,7 +363,6 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         }
 
         isDiveAttacking = false;
-        RestoreVisual();
 
         if (!applyLanding)
         {
@@ -403,7 +397,10 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         if (killedAnyEnemy && 敵撃破時に跳ねる)
         {
             BounceUp();
+            return;
         }
+
+        RequestDiveAttackLandingFollowThrough();
     }
 
     private void UpdateDiveAttackHit()
@@ -710,73 +707,19 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
             return;
         }
 
+        diveAttackLandingVisualEndTime = 0f;
+        diveAttackBounceVisualEndTime = Time.time + diveAttackBounceVisualSeconds;
+
         Vector2 velocity = rigidBody2d.linearVelocity;
         velocity.y = Mathf.Max(velocity.y, 跳ね上がり速度);
         rigidBody2d.linearVelocity = velocity;
         bounceControlEndTime = Time.time + 跳ね上がり操作時間;
     }
 
-    private void ApplyVisualOverride()
+    private void RequestDiveAttackLandingFollowThrough()
     {
-        if (落下攻撃スプライト == null || 対象スプライトレンダラー == null)
-        {
-            return;
-        }
-
-        previousSprite = 対象スプライトレンダラー.sprite;
-        if (spriteTransform != null)
-        {
-            previousLocalPosition = spriteTransform.localPosition;
-            previousLocalScale = spriteTransform.localScale;
-        }
-
-        if (targetAnimator != null)
-        {
-            previousAnimatorEnabled = targetAnimator.enabled;
-            if (落下中はAnimatorを停止する)
-            {
-                targetAnimator.enabled = false;
-            }
-        }
-
-        対象スプライトレンダラー.sprite = 落下攻撃スプライト;
-
-        if (spriteTransform != null)
-        {
-            spriteTransform.localPosition = previousLocalPosition + スプライト位置補正;
-            spriteTransform.localScale = new Vector3(
-                previousLocalScale.x * スプライトスケール倍率.x,
-                previousLocalScale.y * スプライトスケール倍率.y,
-                previousLocalScale.z * スプライトスケール倍率.z);
-        }
-
-        hasVisualOverride = true;
-    }
-
-    private void RestoreVisual()
-    {
-        if (!hasVisualOverride)
-        {
-            return;
-        }
-
-        if (対象スプライトレンダラー != null)
-        {
-            対象スプライトレンダラー.sprite = previousSprite;
-        }
-
-        if (spriteTransform != null)
-        {
-            spriteTransform.localPosition = previousLocalPosition;
-            spriteTransform.localScale = previousLocalScale;
-        }
-
-        if (targetAnimator != null)
-        {
-            targetAnimator.enabled = previousAnimatorEnabled;
-        }
-
-        hasVisualOverride = false;
+        diveAttackBounceVisualEndTime = 0f;
+        diveAttackLandingVisualEndTime = Time.time + diveAttackLandingVisualSeconds;
     }
 
     private void PlaySE(AudioClip clip, float volume)

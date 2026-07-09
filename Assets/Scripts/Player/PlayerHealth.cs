@@ -17,6 +17,7 @@ namespace Player
 
         [Header("SE")]
         [SerializeField] private AudioClip playerDamageClip;
+        [SerializeField, Range(0f, 1f)] private float playerDamageVolume = 0.25f;
 
         [Header("Damage Knockback")]
         [SerializeField, Min(0f)] private float damageKnockbackSpeed = 6f;
@@ -25,6 +26,7 @@ namespace Player
 
         [Header("Debug")]
         [SerializeField] private bool logHealthDebug;
+        [SerializeField] private bool debugInvincible;
 
         private int currentHealth;
         private float nextDamageTime;
@@ -49,6 +51,12 @@ namespace Player
 
         /// <summary>現在HP</summary>
         public int CurrentHealth => currentHealth;
+
+        public bool DebugInvincible
+        {
+            get => debugInvincible;
+            set => debugInvincible = value;
+        }
 
         /// <summary>最大HP</summary>
         public int MaxHealth
@@ -131,6 +139,11 @@ namespace Player
                 return false;
             }
 
+            if (debugInvincible)
+            {
+                return false;
+            }
+
             TryResolveDodgeController();
             if (dodgeController != null && dodgeController.IsDodgeInvincible())
             {
@@ -156,7 +169,7 @@ namespace Player
 
             nextDamageTime = Time.time + Mathf.Max(0f, cooldownSeconds);
 
-            PlaySE(playerDamageClip);
+            PlaySE(playerDamageClip, playerDamageVolume);
             NotifyHealthChanged();
             return true;
         }
@@ -401,7 +414,7 @@ namespace Player
             }
         }
 
-        private void PlaySE(AudioClip clip)
+        private void PlaySE(AudioClip clip, float volumeScale)
         {
             if (clip == null)
             {
@@ -411,7 +424,7 @@ namespace Player
             TryResolveAudioSource();
             if (audioSource != null)
             {
-                audioSource.PlayOneShot(clip);
+                audioSource.PlayOneShot(clip, Mathf.Clamp01(volumeScale));
             }
         }
 

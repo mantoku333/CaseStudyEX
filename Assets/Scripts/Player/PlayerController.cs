@@ -57,6 +57,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private bool externalFacingLocked;
     private bool externalFacingRight = true;
     private bool externalMovementActive;
+    private bool externalMovementSuppressed;
     private float externalMoveInput;
     private bool externalMovementHasTarget;
     private float externalMovementTargetX;
@@ -91,7 +92,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     // Animator/View が参照する読み取り専用状態。
     // ロジック追加時は「計算済みの状態」をここに公開し、View側で判定させない方針。
     public bool IsGrounded => isGround;
-    public bool IsMoving => Mathf.Abs(moveInput) > 0.01f || externalMovementActive;
+    public bool IsMoving => externalMovementActive || (!externalControlLocked && Mathf.Abs(moveInput) > 0.01f);
     public bool IsGliding =>
         umbrellaController != null &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open &&
@@ -112,8 +113,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsExternalControlLocked => externalControlLocked;
     public bool IsExternalFacingLocked => externalFacingLocked;
     public bool IsExternalMovementActive => externalMovementActive;
+    public bool IsExternalMovementSuppressed => externalMovementSuppressed;
     public bool IsDamageKnockbackActive => Time.time < damageKnockbackEndTime;
     public bool IsDiveAttacking => diveAttackController != null && diveAttackController.IsDiveAttacking;
+    public bool IsDiveAttackLanding => diveAttackController != null && diveAttackController.IsDiveAttackLanding;
+    public bool IsDiveAttackBouncing => diveAttackController != null && diveAttackController.IsDiveAttackBouncing;
 
     private void Awake()
     {
@@ -180,6 +184,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private void FixedUpdate()
     {
         RefreshGroundState();
+        if (isGround && diveAttackController != null)
+        {
+            diveAttackController.EndDiveAttackOnGrounded();
+        }
+
         HandleGroundTransition();
 
         if (UpdateDamageKnockback())
@@ -310,8 +319,24 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
     }
 
+    public void SetExternalMovementSuppressed(bool suppressed)
+    {
+        externalMovementSuppressed = suppressed;
+
+        if (externalMovementSuppressed)
+        {
+            ClearExternalMovementDirection();
+        }
+    }
+
     public void SetExternalMovementDirection(float horizontalDirection)
     {
+        if (externalMovementSuppressed)
+        {
+            ClearExternalMovementDirection();
+            return;
+        }
+
         externalMoveInput = Mathf.Clamp(horizontalDirection, -1.0f, 1.0f);
         externalMovementActive = Mathf.Abs(externalMoveInput) > 0.01f;
 
@@ -328,6 +353,12 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
     public void StartExternalMoveToX(float targetX)
     {
+        if (externalMovementSuppressed)
+        {
+            ClearExternalMovementDirection();
+            return;
+        }
+
         externalMovementTargetX = targetX;
         externalMovementHasTarget = true;
         SetExternalMovementDirection(targetX - transform.position.x);
@@ -519,17 +550,18 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             moveInput = Mathf.Clamp(move.x, -1.0f, 1.0f);
         }
 
+        bool isDownHeld = move.y < -0.5f;
+
         if (diveAttackController != null && diveAttackController.IsDiveAttacking)
         {
             jumpInput = false;
-            wasDownHeld = false;
+            wasDownHeld = isDownHeld;
             return;
         }
 
         UpdateFacingDirection();
         RefreshParryColliderFacing();
 
-        bool isDownHeld = move.y < -0.5f;
         bool isDownPressedThisFrame = isDownHeld && !wasDownHeld;
         wasDownHeld = isDownHeld;
 
@@ -665,7 +697,12 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             // 傘の開閉状態ではなく、地面からグリッド2ブロック以上離れているかで発動可否を決める。
             if (!isGround && isDownHeld)
             {
-                if (diveAttackController != null &&
+                bool canUseDiveAttack =
+                    playerAbilityController != null &&
+                    playerAbilityController.GetCanDiveAttack();
+
+                if (canUseDiveAttack &&
+                    diveAttackController != null &&
                     diveAttackController.CanStartDiveAttackFromAir() &&
                     diveAttackController.TryStartDiveAttack())
                 {
@@ -776,6 +813,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         float moveSpeed = isGliding
             ? umbrellaController.GetGlideMoveSpeed()
             : playerStatsData.MoveSpeed;
+        moveSpeed *= ResolveDiveAttackLandingHorizontalSpeedMultiplier();
+
         bool preserveRecoilMomentum =
             !isGround &&
             gunController != null &&
@@ -820,6 +859,21 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private float ResolveHorizontalMoveInput()
     {
         return externalMovementActive ? externalMoveInput : moveInput;
+    }
+
+    private float ResolveDiveAttackLandingHorizontalSpeedMultiplier()
+    {
+        if (externalMovementActive)
+        {
+            return 1f;
+        }
+
+        if (diveAttackController == null || !diveAttackController.IsDiveAttackLanding)
+        {
+            return 1f;
+        }
+
+        return diveAttackController.DiveAttackLandingHorizontalSpeedMultiplier;
     }
 
     private void UpdateExternalTargetMovement()
