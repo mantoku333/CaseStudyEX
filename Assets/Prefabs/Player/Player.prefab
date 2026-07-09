@@ -560,6 +560,7 @@ GameObject:
   - component: {fileID: 7949513042368536473}
   - component: {fileID: 3375801726536475401}
   - component: {fileID: 3047304842873908124}
+  - component: {fileID: 860945867500482815}
   - component: {fileID: 4202108349721021491}
   - component: {fileID: 3141592653589793238}
   - component: {fileID: 2152828851043830257}
@@ -740,6 +741,28 @@ MonoBehaviour:
   applyNoFrictionMaterial: 1
   groundedLossGraceSeconds: 0.08
   playerStatsData: {fileID: 11400000, guid: 828b8bd6e59a0de45ac0b6f81b0916f1, type: 2}
+--- !u!114 &860945867500482815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41187da6b1904b528e5ae8623a8bf21f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ActionSparkleEffectManager
+  targetPlayer: {fileID: 3047304842873908124}
+  sparkleEffectRoot: {fileID: 0}
+  sparkleParticles: []
+  autoFindPlayerOnStart: 1
+  comboGraceSeconds: 1.2
+  eleganceLevel: 0
+  currentAction: 0
+  forcePreview: 0
+  previewLevel: 1
+  previewAction: 1
 --- !u!114 &4202108349721021491
 MonoBehaviour:
   m_ObjectHideFlags: 0
