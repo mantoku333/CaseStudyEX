@@ -16,19 +16,6 @@ public sealed class TitleButtonState :
     private static TitleButtonState hoveredInstance;
     private static bool pointerVisualMode;
 
-    private void Start()
-    {
-        Image hitImage = GetComponent<Image>();
-        if (hitImage != null)
-        {
-            Rect r      = GetComponent<RectTransform>().rect;
-            float padX  = r.width  * 0.15f;
-            float padY  = r.height * 0.15f;
-            // 負値で当たり判定を外側に拡張（見た目は変わらない）
-            hitImage.raycastPadding = new Vector4(-padX, -padY, -padX, -padY);
-        }
-    }
-
     private void Awake()
     {
         if (selectState == null)

@@ -121,6 +121,7 @@ public sealed class TitleMenuSkin : MonoBehaviour
             image.color = new Color(1f, 1f, 1f, 0f);
         }
         image.raycastTarget = true;
+        image.raycastPadding = Vector4.zero;
 
         Button button = target.GetComponent<Button>();
         if (button == null)
@@ -131,14 +132,6 @@ public sealed class TitleMenuSkin : MonoBehaviour
         button.transition    = Selectable.Transition.None;
         button.targetGraphic = image;
 
-        OptionsMenuButtonState state = target.GetComponent<OptionsMenuButtonState>();
-        if (state == null)
-        {
-            state = target.gameObject.AddComponent<OptionsMenuButtonState>();
-        }
-
-        state.Configure(selectRoot, notSelectRoot);
-        OptionsCanvasButtonUtility.ConfigureFigmaButton(button);
         return button;
     }
 
@@ -189,7 +182,6 @@ public sealed class TitleMenuSkin : MonoBehaviour
 
         button.onClick.RemoveListener(action);
         button.onClick.AddListener(action);
-        OptionsCanvasButtonUtility.ConfigureFigmaButton(button);
         UIButtonSfxPlayer.Register(button);
         UIButtonSfxPlayer.RegisterHover(button);
     }

@@ -29,8 +29,29 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] private LocationDatabase locationDatabase;
     [SerializeField] private StageDisplayInfo[] stageDisplayInfos;
 
+    [Header("Title Rain")]
+    [SerializeField] private GameObject titleRainRoot;
+    [SerializeField] private AudioSource titleRainAudioSource;
+    [SerializeField] private Image titleFadeImage;
+    [SerializeField, Min(0.1f), Tooltip("初めからボタンを押してから、雨で画面を埋めるまでの秒数。")]
+    private float startRainFillDuration = 3f;
+    [SerializeField, Min(0.1f), Tooltip("初めからボタンを押してから、シーンを切り替えるまでの秒数。この間は雨を流しっぱなしにする。")]
+    private float startSceneSwitchDelay = 6f;
+    [SerializeField, Min(1f), Tooltip("初めからボタン演出の最後に、雨パーティクルのRate over Timeを何倍にするか。")]
+    private float startRainRateMultiplier = 15f;
+    [SerializeField, Min(1f), Tooltip("初めからボタン演出中に雨粒のStart Lifetimeを何倍にするか。雨が早く消える場合は増やす。")]
+    private float startRainLifetimeMultiplier = 2f;
+    [SerializeField, Min(3000), Tooltip("初めからボタン演出中に各Rain Particleへ設定するMax Particles。雨が途中で止む場合は増やす。")]
+    private int startRainMaxParticles = 50000;
+    [SerializeField, Range(0f, 1f), Tooltip("初めからボタン演出の最後に到達する雨音BGMの音量。")]
+    private float startRainTargetVolume = 0.8f;
+    [SerializeField, Range(0f, 1f), Tooltip("初めからボタン演出の最後に到達する暗転の濃さ。")]
+    private float startFadeTargetAlpha = 1f;
+
     private int selectedSaveSlotIndex = SaveManager.DefaultSlotIndex;
     private Coroutine delayedButtonActionRoutine;
+    private bool titleRainAudioWasPlaying;
+    private bool startingNewGame;
 
     private void OnEnable()
     {
@@ -59,10 +80,13 @@ public class TitleSceneController : MonoBehaviour
             loadConfirmPanel.SetActive(false);
         }
 
+        SetTitleFadeAlpha(0f);
         ResolveButtonReferences();
+        ResolveRainReferences();
         BindContinueButton();
         ConfigureTitleButtonFeedback();
         RefreshContinueButtonState();
+        EnsureTitleRainActive();
     }
 
     private void RunAfterButtonFeedback(Action action)
@@ -96,7 +120,148 @@ public class TitleSceneController : MonoBehaviour
 
     public void OnClickStartButton()
     {
-        RunAfterButtonFeedback(StartNewGame);
+        if (startingNewGame)
+        {
+            return;
+        }
+
+        BeginStartNewGameRainTransition();
+    }
+
+    private void BeginStartNewGameRainTransition()
+    {
+        if (startingNewGame)
+        {
+            return;
+        }
+
+        startingNewGame = true;
+        SetMainTitleButtonsInteractable(false);
+        StartCoroutine(StartNewGameRainTransitionRoutine());
+    }
+
+    private IEnumerator StartNewGameRainTransitionRoutine()
+    {
+        EnsureTitleRainActive();
+        float initialRainVolume = titleRainAudioSource != null ? titleRainAudioSource.volume : 0f;
+        ParticleSystem[] rainParticles = titleRainRoot != null
+            ? titleRainRoot.GetComponentsInChildren<ParticleSystem>(true)
+            : Array.Empty<ParticleSystem>();
+
+        ParticleSystem.MinMaxCurve[] initialRates = new ParticleSystem.MinMaxCurve[rainParticles.Length];
+        ParticleSystem.MinMaxCurve[] initialLifetimes = new ParticleSystem.MinMaxCurve[rainParticles.Length];
+        for (int i = 0; i < rainParticles.Length; i++)
+        {
+            ParticleSystem.EmissionModule emission = rainParticles[i].emission;
+            emission.enabled = true;
+            ParticleSystem.MainModule main = rainParticles[i].main;
+            main.loop = true;
+            main.useUnscaledTime = true;
+            main.maxParticles = Mathf.Max(main.maxParticles, startRainMaxParticles);
+            initialLifetimes[i] = main.startLifetime;
+            main.startLifetime = MultiplyMinMaxCurve(initialLifetimes[i], startRainLifetimeMultiplier);
+            initialRates[i] = emission.rateOverTime;
+            rainParticles[i].Play(true);
+        }
+
+        float fillDuration = Mathf.Max(0.1f, startRainFillDuration);
+        float sceneSwitchDelay = Mathf.Max(fillDuration, startSceneSwitchDelay);
+        float elapsed = 0f;
+        while (elapsed < sceneSwitchDelay)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / fillDuration);
+            float eased = t * t * (3f - 2f * t);
+            float multiplier = Mathf.Lerp(1f, startRainRateMultiplier, eased);
+            ApplyRainRateMultiplier(rainParticles, initialRates, multiplier);
+            ApplyRainVolume(initialRainVolume, eased);
+            SetTitleFadeAlpha(CalculateFadeAlpha(elapsed, fillDuration));
+            SustainRainPlayback(rainParticles);
+            yield return null;
+        }
+
+        SetTitleFadeAlpha(startFadeTargetAlpha);
+        StartNewGame();
+    }
+
+    private void ApplyRainVolume(float initialVolume, float t)
+    {
+        if (titleRainAudioSource == null)
+        {
+            return;
+        }
+
+        titleRainAudioSource.volume = Mathf.Lerp(initialVolume, startRainTargetVolume, Mathf.Clamp01(t));
+    }
+
+    private void SetTitleFadeAlpha(float alpha)
+    {
+        if (titleFadeImage == null)
+        {
+            return;
+        }
+
+        Color color = titleFadeImage.color;
+        color.a = Mathf.Clamp01(alpha);
+        titleFadeImage.color = color;
+    }
+
+    private static void SustainRainPlayback(ParticleSystem[] rainParticles)
+    {
+        if (rainParticles == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < rainParticles.Length; i++)
+        {
+            if (rainParticles[i] != null && !rainParticles[i].isPlaying)
+            {
+                rainParticles[i].Play(true);
+            }
+        }
+    }
+
+    private float CalculateFadeAlpha(float elapsed, float totalDuration)
+    {
+        float t = Mathf.Clamp01(elapsed / Mathf.Max(0.1f, totalDuration));
+        float eased = t * t * (3f - 2f * t);
+        return Mathf.Lerp(0f, startFadeTargetAlpha, eased);
+    }
+
+    private static void ApplyRainRateMultiplier(
+        ParticleSystem[] rainParticles,
+        ParticleSystem.MinMaxCurve[] initialRates,
+        float multiplier)
+    {
+        if (rainParticles == null || initialRates == null)
+        {
+            return;
+        }
+
+        int count = Mathf.Min(rainParticles.Length, initialRates.Length);
+        for (int i = 0; i < count; i++)
+        {
+            if (rainParticles[i] == null)
+            {
+                continue;
+            }
+
+            ParticleSystem.EmissionModule emission = rainParticles[i].emission;
+            ParticleSystem.MinMaxCurve rate = initialRates[i];
+            rate.constant *= multiplier;
+            rate.constantMin *= multiplier;
+            rate.constantMax *= multiplier;
+            emission.rateOverTime = rate;
+        }
+    }
+
+    private static ParticleSystem.MinMaxCurve MultiplyMinMaxCurve(ParticleSystem.MinMaxCurve source, float multiplier)
+    {
+        source.constant *= multiplier;
+        source.constantMin *= multiplier;
+        source.constantMax *= multiplier;
+        return source;
     }
 
     private void StartNewGame()
@@ -199,7 +364,7 @@ public class TitleSceneController : MonoBehaviour
 
         continueButton.onClick.RemoveListener(OnClickContinueButton);
         continueButton.onClick.AddListener(OnClickContinueButton);
-        OptionsCanvasButtonUtility.ConfigureFigmaButton(continueButton);
+        ApplyMainButtonHitArea(continueButton);
     }
 
     private static void ConfigureTitleButtonFeedback()
@@ -207,7 +372,62 @@ public class TitleSceneController : MonoBehaviour
         Button[] buttons = FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         for (int i = 0; i < buttons.Length; i++)
         {
-            OptionsCanvasButtonUtility.ConfigureFigmaButton(buttons[i]);
+            if (IsMainTitleButton(buttons[i]))
+            {
+                ApplyMainButtonHitArea(buttons[i]);
+            }
+            else
+            {
+                OptionsCanvasButtonUtility.ConfigureFigmaButton(buttons[i]);
+            }
+        }
+    }
+
+    private static void ApplyMainButtonHitArea(Button button)
+    {
+        if (!IsMainTitleButton(button))
+        {
+            return;
+        }
+
+        Graphic[] graphics = button.GetComponentsInChildren<Graphic>(true);
+        for (int i = 0; i < graphics.Length; i++)
+        {
+            graphics[i].raycastTarget = false;
+        }
+
+        Image image = button.GetComponent<Image>();
+        if (image == null)
+        {
+            image = button.gameObject.AddComponent<Image>();
+            image.color = new Color(1f, 1f, 1f, 0f);
+        }
+
+        image.raycastTarget = true;
+        image.raycastPadding = Vector4.zero;
+        button.targetGraphic = image;
+    }
+
+    private static bool IsMainTitleButton(Button button)
+    {
+        if (button == null)
+        {
+            return false;
+        }
+
+        string buttonName = button.name;
+        return buttonName == "Btn_NewGame" || buttonName == "Btn_Countinue" || buttonName == "Btn_ExitGame";
+    }
+
+    private static void SetMainTitleButtonsInteractable(bool interactable)
+    {
+        Button[] buttons = FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            if (IsMainTitleButton(buttons[i]))
+            {
+                buttons[i].interactable = interactable;
+            }
         }
     }
 
@@ -258,6 +478,7 @@ public class TitleSceneController : MonoBehaviour
         saveListPanel.transform.SetAsLastSibling();
         RefreshSaveSlotViews();
         saveListPanel.SetActive(true);
+        SetTitleRainPausedForSaveList(true);
 
         TitleSaveListPanelDesign2Skin saveListSkin = saveListPanel.GetComponent<TitleSaveListPanelDesign2Skin>();
         if (saveListSkin != null)
@@ -283,9 +504,71 @@ public class TitleSceneController : MonoBehaviour
             saveListPanel.SetActive(false);
         }
 
+        SetTitleRainPausedForSaveList(false);
+
         if (EventSystem.current != null)
         {
             EventSystem.current.SetSelectedGameObject(null);
+        }
+    }
+
+    private void ResolveRainReferences()
+    {
+        if (titleRainRoot == null)
+        {
+            titleRainRoot = GameObject.Find("RainOverlayCanvas");
+        }
+
+        if (titleRainAudioSource == null)
+        {
+            GameObject rainAudioObject = GameObject.Find("TitleRainBGM");
+            if (rainAudioObject != null)
+            {
+                titleRainAudioSource = rainAudioObject.GetComponent<AudioSource>();
+            }
+        }
+    }
+
+    private void EnsureTitleRainActive()
+    {
+        ResolveRainReferences();
+
+        if (titleRainRoot != null)
+        {
+            titleRainRoot.SetActive(true);
+        }
+
+        if (titleRainAudioSource != null && !titleRainAudioSource.isPlaying)
+        {
+            titleRainAudioSource.Play();
+        }
+    }
+
+    private void SetTitleRainPausedForSaveList(bool paused)
+    {
+        ResolveRainReferences();
+
+        if (titleRainRoot != null)
+        {
+            titleRainRoot.SetActive(!paused);
+        }
+
+        if (titleRainAudioSource == null)
+        {
+            return;
+        }
+
+        if (paused)
+        {
+            titleRainAudioWasPlaying = titleRainAudioSource.isPlaying;
+            if (titleRainAudioWasPlaying)
+            {
+                titleRainAudioSource.Pause();
+            }
+        }
+        else if (titleRainAudioWasPlaying)
+        {
+            titleRainAudioSource.UnPause();
         }
     }
 
