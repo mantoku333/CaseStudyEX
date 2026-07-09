@@ -57,6 +57,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private bool externalFacingLocked;
     private bool externalFacingRight = true;
     private bool externalMovementActive;
+    private bool externalMovementSuppressed;
     private float externalMoveInput;
     private bool externalMovementHasTarget;
     private float externalMovementTargetX;
@@ -91,7 +92,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     // Animator/View が参照する読み取り専用状態。
     // ロジック追加時は「計算済みの状態」をここに公開し、View側で判定させない方針。
     public bool IsGrounded => isGround;
-    public bool IsMoving => Mathf.Abs(moveInput) > 0.01f || externalMovementActive;
+    public bool IsMoving => externalMovementActive || (!externalControlLocked && Mathf.Abs(moveInput) > 0.01f);
     public bool IsGliding =>
         umbrellaController != null &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open &&
@@ -112,6 +113,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsExternalControlLocked => externalControlLocked;
     public bool IsExternalFacingLocked => externalFacingLocked;
     public bool IsExternalMovementActive => externalMovementActive;
+    public bool IsExternalMovementSuppressed => externalMovementSuppressed;
     public bool IsDamageKnockbackActive => Time.time < damageKnockbackEndTime;
     public bool IsDiveAttacking => diveAttackController != null && diveAttackController.IsDiveAttacking;
 
@@ -310,8 +312,24 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
     }
 
+    public void SetExternalMovementSuppressed(bool suppressed)
+    {
+        externalMovementSuppressed = suppressed;
+
+        if (externalMovementSuppressed)
+        {
+            ClearExternalMovementDirection();
+        }
+    }
+
     public void SetExternalMovementDirection(float horizontalDirection)
     {
+        if (externalMovementSuppressed)
+        {
+            ClearExternalMovementDirection();
+            return;
+        }
+
         externalMoveInput = Mathf.Clamp(horizontalDirection, -1.0f, 1.0f);
         externalMovementActive = Mathf.Abs(externalMoveInput) > 0.01f;
 
@@ -328,6 +346,12 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
     public void StartExternalMoveToX(float targetX)
     {
+        if (externalMovementSuppressed)
+        {
+            ClearExternalMovementDirection();
+            return;
+        }
+
         externalMovementTargetX = targetX;
         externalMovementHasTarget = true;
         SetExternalMovementDirection(targetX - transform.position.x);
