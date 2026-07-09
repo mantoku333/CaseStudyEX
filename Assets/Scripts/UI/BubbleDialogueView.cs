@@ -4,6 +4,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Yarn.Unity;
 
 #nullable enable
@@ -73,6 +74,11 @@ namespace Metroidvania.UI
         [Header("Speaker Name Images")]
         [SerializeField] private GameObject? irisSpeakerImage;
         [SerializeField] private GameObject? noxSpeakerImage;
+        [SerializeField] private GameObject? irisUnknownSpeakerImage;
+        [SerializeField] private GameObject? noxUnknownSpeakerImage;
+        [SerializeField] private Sprite? irisUnknownSpeakerSprite;
+        [SerializeField] private Sprite? noxUnknownSpeakerSprite;
+        [SerializeField] private bool useEvent01UnknownSpeakerImages = true;
         [SerializeField] private bool autoResolveSpeakerImages = true;
 
         private readonly Dictionary<string, Transform?> _speakerTargetCache =
@@ -94,6 +100,11 @@ namespace Metroidvania.UI
         private bool _hasLoggedAutoSizeSkipReason;
         private bool _lineIsVisible;
         private bool _presentationEnabled = true;
+        private bool _event01UnknownSpeakerSequenceActive;
+        private bool _event01IrisNameRevealed;
+        private bool _event01NoxNameRevealed;
+        private Sprite? _irisDefaultSpeakerSprite;
+        private Sprite? _noxDefaultSpeakerSprite;
 
         private void Awake()
         {
@@ -378,6 +389,8 @@ namespace Metroidvania.UI
             );
             CancellationToken mergedToken = linkedTokenSource.Token;
 
+            string text = line.TextWithoutCharacterName.Text;
+            UpdateEvent01UnknownSpeakerState(line.CharacterName, text);
             ApplySpeakerTarget(line.CharacterName);
             ApplySpeakerNameImage(line.CharacterName);
             _lineIsVisible = true;
@@ -393,7 +406,6 @@ namespace Metroidvania.UI
                 bubblePanel.SetActive(true);
             }
 
-            string text = line.TextWithoutCharacterName.Text;
             UpdateBubbleSizeForText(text);
 
             try
@@ -733,19 +745,46 @@ namespace Metroidvania.UI
         private void ApplySpeakerNameImage(string? characterName)
         {
             ResolveSpeakerImages();
+            CacheDefaultSpeakerSprites();
 
             string? alias = ResolveSpeakerAlias(characterName);
             bool showIris = string.Equals(alias, "iris", StringComparison.OrdinalIgnoreCase);
             bool showNox = string.Equals(alias, "nox", StringComparison.OrdinalIgnoreCase);
+            bool showIrisUnknown =
+                showIris &&
+                useEvent01UnknownSpeakerImages &&
+                _event01UnknownSpeakerSequenceActive &&
+                !_event01IrisNameRevealed &&
+                (irisUnknownSpeakerImage != null || irisUnknownSpeakerSprite != null);
+            bool showNoxUnknown =
+                showNox &&
+                useEvent01UnknownSpeakerImages &&
+                _event01UnknownSpeakerSequenceActive &&
+                !_event01NoxNameRevealed &&
+                (noxUnknownSpeakerImage != null || noxUnknownSpeakerSprite != null);
+            bool useIrisUnknownSprite = showIrisUnknown && irisUnknownSpeakerSprite != null && irisSpeakerImage != null;
+            bool useNoxUnknownSprite = showNoxUnknown && noxUnknownSpeakerSprite != null && noxSpeakerImage != null;
 
             if (irisSpeakerImage != null)
             {
-                irisSpeakerImage.SetActive(showIris);
+                SetImageSprite(irisSpeakerImage, useIrisUnknownSprite ? irisUnknownSpeakerSprite : _irisDefaultSpeakerSprite);
+                irisSpeakerImage.SetActive(showIris && (!showIrisUnknown || useIrisUnknownSprite));
             }
 
             if (noxSpeakerImage != null)
             {
-                noxSpeakerImage.SetActive(showNox);
+                SetImageSprite(noxSpeakerImage, useNoxUnknownSprite ? noxUnknownSpeakerSprite : _noxDefaultSpeakerSprite);
+                noxSpeakerImage.SetActive(showNox && (!showNoxUnknown || useNoxUnknownSprite));
+            }
+
+            if (irisUnknownSpeakerImage != null)
+            {
+                irisUnknownSpeakerImage.SetActive(showIrisUnknown && !useIrisUnknownSprite);
+            }
+
+            if (noxUnknownSpeakerImage != null)
+            {
+                noxUnknownSpeakerImage.SetActive(showNoxUnknown && !useNoxUnknownSprite);
             }
         }
 
@@ -753,13 +792,106 @@ namespace Metroidvania.UI
         {
             if (irisSpeakerImage != null)
             {
+                SetImageSprite(irisSpeakerImage, _irisDefaultSpeakerSprite);
                 irisSpeakerImage.SetActive(false);
             }
 
             if (noxSpeakerImage != null)
             {
+                SetImageSprite(noxSpeakerImage, _noxDefaultSpeakerSprite);
                 noxSpeakerImage.SetActive(false);
             }
+
+            if (irisUnknownSpeakerImage != null)
+            {
+                irisUnknownSpeakerImage.SetActive(false);
+            }
+
+            if (noxUnknownSpeakerImage != null)
+            {
+                noxUnknownSpeakerImage.SetActive(false);
+            }
+        }
+
+        private void CacheDefaultSpeakerSprites()
+        {
+            if (_irisDefaultSpeakerSprite == null && irisSpeakerImage != null)
+            {
+                _irisDefaultSpeakerSprite = GetImageSprite(irisSpeakerImage);
+            }
+
+            if (_noxDefaultSpeakerSprite == null && noxSpeakerImage != null)
+            {
+                _noxDefaultSpeakerSprite = GetImageSprite(noxSpeakerImage);
+            }
+        }
+
+        private static Sprite? GetImageSprite(GameObject? imageObject)
+        {
+            return imageObject != null && imageObject.TryGetComponent(out Image image)
+                ? image.sprite
+                : null;
+        }
+
+        private static void SetImageSprite(GameObject imageObject, Sprite? sprite)
+        {
+            if (sprite == null || !imageObject.TryGetComponent(out Image image))
+            {
+                return;
+            }
+
+            image.sprite = sprite;
+        }
+
+        private void UpdateEvent01UnknownSpeakerState(string? characterName, string text)
+        {
+            if (!useEvent01UnknownSpeakerImages)
+            {
+                return;
+            }
+
+            string? alias = ResolveSpeakerAlias(characterName);
+            string normalizedText = NormalizeDialogueText(text);
+
+            if (GameProgressFlags.Get(GameProgressKeys.PrologueCompleted))
+            {
+                _event01IrisNameRevealed = true;
+                _event01NoxNameRevealed = true;
+                return;
+            }
+
+            if (!_event01UnknownSpeakerSequenceActive &&
+                string.Equals(alias, "iris", StringComparison.OrdinalIgnoreCase) &&
+                (normalizedText == "！！" || normalizedText == "かみなり……？"))
+            {
+                _event01UnknownSpeakerSequenceActive = true;
+                _event01IrisNameRevealed = false;
+                _event01NoxNameRevealed = false;
+            }
+
+            if (!_event01UnknownSpeakerSequenceActive)
+            {
+                return;
+            }
+
+            if (string.Equals(alias, "iris", StringComparison.OrdinalIgnoreCase) &&
+                normalizedText == "……イリス")
+            {
+                _event01IrisNameRevealed = true;
+            }
+
+            if (string.Equals(alias, "nox", StringComparison.OrdinalIgnoreCase) &&
+                normalizedText == "俺はノクスだ")
+            {
+                _event01NoxNameRevealed = true;
+            }
+        }
+
+        private static string NormalizeDialogueText(string? text)
+        {
+            return string.IsNullOrWhiteSpace(text)
+                ? string.Empty
+                : text.Trim().Replace(" ", string.Empty).Replace("\u3000", string.Empty);
         }
 
         private static Transform? FindPlayerTransform()
@@ -988,6 +1120,28 @@ namespace Metroidvania.UI
                     FindGameObjectByName(transform, "nox_speaker") ??
                     FindGameObjectByName(transform.parent, "nox_speaker") ??
                     FindGameObjectByName(transform.root, "nox_speaker");
+            }
+
+            if (irisUnknownSpeakerImage == null)
+            {
+                irisUnknownSpeakerImage =
+                    FindGameObjectByName(transform, "iris_speaker_unknown") ??
+                    FindGameObjectByName(transform.parent, "iris_speaker_unknown") ??
+                    FindGameObjectByName(transform.root, "iris_speaker_unknown") ??
+                    FindGameObjectByName(transform, "iris_unknown_speaker") ??
+                    FindGameObjectByName(transform.parent, "iris_unknown_speaker") ??
+                    FindGameObjectByName(transform.root, "iris_unknown_speaker");
+            }
+
+            if (noxUnknownSpeakerImage == null)
+            {
+                noxUnknownSpeakerImage =
+                    FindGameObjectByName(transform, "nox_speaker_unknown") ??
+                    FindGameObjectByName(transform.parent, "nox_speaker_unknown") ??
+                    FindGameObjectByName(transform.root, "nox_speaker_unknown") ??
+                    FindGameObjectByName(transform, "nox_unknown_speaker") ??
+                    FindGameObjectByName(transform.parent, "nox_unknown_speaker") ??
+                    FindGameObjectByName(transform.root, "nox_unknown_speaker");
             }
         }
 
