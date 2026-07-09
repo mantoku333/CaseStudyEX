@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -62,6 +62,13 @@ namespace Metroidvania.UI
         [SerializeField] private RectTransform? nextMarker;
         [SerializeField] private Vector2 speakerNameOffset = new Vector2(0f, 8f);
         [SerializeField] private float nextMarkerBottomOffset = 22f;
+        //20260708以下中江追加
+        [SerializeField] private RectTransform? bubbleTail;　　　　　　//
+        [SerializeField] private float bubbleTailBottomOffset = -25f;  //
+        [SerializeField] private float bubbleTailEdgePadding = 16f;    //
+        [SerializeField] private RectTransform? bubbleTailLogic;
+        [SerializeField] private Vector2 bubbleTailLogicBasePosition = new Vector2(5f, 0f);
+
 
         [Header("Speaker Name Images")]
         [SerializeField] private GameObject? irisSpeakerImage;
@@ -202,9 +209,9 @@ namespace Metroidvania.UI
             }
 
             Vector3 worldPos = _currentTarget.position + _currentOffset;
-            Vector3 screenPos = _mainCamera.WorldToScreenPoint(worldPos);
+            Vector3 targetScreenPos = _mainCamera.WorldToScreenPoint(worldPos);
 
-            if (screenPos.z < 0f)
+            if (targetScreenPos.z < 0f)
             {
                 bubblePanel.SetActive(false);
                 return;
@@ -215,12 +222,44 @@ namespace Metroidvania.UI
                 bubblePanel.SetActive(true);
             }
 
+            Vector3 bubbleScreenPos = targetScreenPos;
             if (clampBubbleToScreen)
             {
-                screenPos = ClampToScreen(screenPos);
+                bubbleScreenPos = ClampToScreen(bubbleScreenPos);
             }
 
-            bubblePanel.transform.position = screenPos;
+            bubblePanel.transform.position = bubbleScreenPos;
+            UpdateBubbleTailPosition(targetScreenPos, bubbleScreenPos);
+
+        }
+        private void UpdateBubbleTailPosition(Vector3 targetScreenPos, Vector3 bubbleScreenPos)
+        {
+            if (bubbleTail == null || _bubbleRectTransform == null)　{ return; }
+
+            bubbleTail.anchorMin = new Vector2(0.5f, 0f);
+            bubbleTail.anchorMax = new Vector2(0.5f, 0f);
+            bubbleTail.pivot = new Vector2(0.5f, 0.5f);
+
+            float bubbleScaleX = SafePositiveScale(_bubbleRectTransform.lossyScale.x);
+            float localX = (targetScreenPos.x - bubbleScreenPos.x) / bubbleScaleX;
+
+            float halfBubbleWidth = _bubbleRectTransform.rect.width * 0.5f;
+            float halfTailWidth = bubbleTail.rect.width * 0.5f;
+            float limitX = Mathf.Max(0f, halfBubbleWidth - halfTailWidth - bubbleTailEdgePadding);
+
+            localX = Mathf.Clamp(localX, -limitX, limitX);
+            bubbleTail.anchoredPosition = new Vector2( localX, bubbleTailBottomOffset);
+
+            if (bubbleTailLogic != null)
+            {
+                bubbleTailLogic.anchorMin = new Vector2(0.5f, 0f);
+                bubbleTailLogic.anchorMax = new Vector2(0.5f, 0f);
+                bubbleTailLogic.pivot = new Vector2(0.5f, 0.5f);
+
+                bubbleTailLogic.anchoredPosition = new Vector2(
+                    bubbleTailLogicBasePosition.x + localX,
+                    bubbleTailLogicBasePosition.y);
+            }
         }
 
         private Vector3 ClampToScreen(Vector3 screenPos)
@@ -904,9 +943,19 @@ namespace Metroidvania.UI
                 return;
             }
 
+            if (bubbleTailLogic == null)
+            {
+                bubbleTailLogic = FindRectTransformByName(_bubbleRectTransform, "logic");
+            }
+
             if (nextMarker == null)
             {
                 nextMarker = FindRectTransformByName(_bubbleRectTransform, "NextMarker_Text");
+            }
+
+            if (bubbleTail == null)
+            {
+                bubbleTail = FindRectTransformByName(_bubbleRectTransform, "triangle");
             }
 
             if (speakerNamePlate == null)

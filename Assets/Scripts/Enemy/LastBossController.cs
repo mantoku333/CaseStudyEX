@@ -184,6 +184,25 @@ namespace GameName.Enemy
         public int CurrentHealth => currentHealth;
         public int MaxHealth => Mathf.Max(1, maxHealth);
         private static bool UseLegacyBossHitStop => false;
+
+        public void SetAnimationOffset(LastBossSpriteAnimator.AnimationState state, Vector3 offset)
+        {
+            ResolveSpriteView();
+            spriteView?.SetAnimationOffset(state, offset);
+        }
+
+        public Vector3 GetAnimationOffset(LastBossSpriteAnimator.AnimationState state)
+        {
+            ResolveSpriteView();
+            return spriteView != null ? spriteView.GetAnimationOffset(state) : Vector3.zero;
+        }
+
+        public void ResetAnimationOffsets()
+        {
+            ResolveSpriteView();
+            spriteView?.ResetAnimationOffsets();
+        }
+
         /// <summary>
         /// LastBossがDestroyされる直前に通知する。専用死亡SEの再生に使う。
         /// System.Actionを直接書き、UnityEngine.Randomとの名前衝突を避ける。

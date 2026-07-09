@@ -55,8 +55,31 @@ public partial class SROptions
     }
 
     [Category(DebugCategory)]
-    [DisplayName("ガチ死亡")]
+    [DisplayName("主人公 無敵")]
     [Sort(-99)]
+    public bool IsPlayerDebugInvincible
+    {
+        get
+        {
+            PlayerHealth playerHealth = ResolvePlayerHealth();
+            return playerHealth != null && playerHealth.DebugInvincible;
+        }
+        set
+        {
+            PlayerHealth playerHealth = ResolvePlayerHealth();
+            if (playerHealth == null)
+            {
+                Debug.LogWarning("[SROptions] PlayerHealth not found.");
+                return;
+            }
+
+            playerHealth.DebugInvincible = value;
+        }
+    }
+
+    [Category(DebugCategory)]
+    [DisplayName("ガチ死亡")]
+    [Sort(-98)]
     public void ForcePlayerDeath()
     {
         PlayerHealth playerHealth = ResolvePlayerHealth();
@@ -71,7 +94,7 @@ public partial class SROptions
 
     [Category(DebugCategory)]
     [DisplayName("チートモード")]
-    [Sort(-98)]
+    [Sort(-97)]
     public bool IsCheatMode
     {
         get
