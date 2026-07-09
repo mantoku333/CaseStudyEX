@@ -75,6 +75,7 @@ namespace GameName.Enemy
         [SerializeField, Min(0.01f)] private float auraSizeMultiplier = 1.35f;
         [SerializeField, Min(0f)] private float auraFacingPush = 0.35f;
         [SerializeField, Min(0f)] private float auraLeftFacingExtraPush = 0f;
+        [SerializeField] private AuraAnchorOffsetSet[] auraAnchorOffsetSets = new AuraAnchorOffsetSet[0];
         [SerializeField, Min(0.01f)] private float shieldSizeMultiplier = 1.35f;
         [SerializeField, Min(0.01f)] private float shieldBreakSizeMultiplier = 1.45f;
         [SerializeField, Min(0.01f)] private float deathSizeMultiplier = 1.8f;
@@ -167,7 +168,7 @@ namespace GameName.Enemy
 
         private void LateUpdate()
         {
-            FollowBoss(auraObject, ResolveAuraOffset());
+            FollowBoss(auraObject, ResolveAuraFollowOffset());
             FollowBoss(shieldObject, shieldOffset);
             if (!shieldBreakPositionLocked)
             {
@@ -264,7 +265,7 @@ namespace GameName.Enemy
         public void SetFacingDirection(int direction)
         {
             facingDirection = direction < 0 ? -1 : 1;
-            FollowBoss(auraObject, ResolveAuraOffset());
+            FollowBoss(auraObject, ResolveAuraFollowOffset());
             FollowBoss(shieldObject, shieldOffset);
             if (!shieldBreakPositionLocked)
             {
@@ -669,7 +670,7 @@ namespace GameName.Enemy
 
             GridSpriteSheetPlayer player = CreateEffectPlayer(
                 "LastBossAuraEffect",
-                ResolveBossCenter() + ResolveFacingOffset(ResolveAuraOffset()),
+                ResolveBossCenter() + ResolveFacingOffset(ResolveAuraFollowOffset()),
                 ResolveBossSquareSize(auraSizeMultiplier),
                 auraSortingOrderOffset);
             if (player == null)
@@ -765,7 +766,7 @@ namespace GameName.Enemy
                 return;
             }
 
-            FollowBoss(auraObject, ResolveAuraOffset());
+            FollowBoss(auraObject, ResolveAuraFollowOffset());
             ApplyAuraFacing(auraObject);
             GridSpriteSheetPlayer player = auraObject.GetComponent<GridSpriteSheetPlayer>();
             if (player != null)
@@ -1225,6 +1226,139 @@ namespace GameName.Enemy
             return auraOffset - new Vector3(horizontalPush, 0f, 0f);
         }
 
+        private Vector3 ResolveAuraFollowOffset()
+        {
+            return ResolveAuraOffset() + ResolveAuraAnchorOffset();
+        }
+
+        private Vector3 ResolveAuraAnchorOffset()
+        {
+            CacheComponents();
+            if (spriteAnimator == null ||
+                !spriteAnimator.TryGetCurrentAnimationState(out LastBossSpriteAnimator.AnimationState state))
+            {
+                return Vector3.zero;
+            }
+
+            AuraAnchorOffsetSet offsetSet = FindAuraAnchorOffsetSet(state);
+            if (offsetSet == null || offsetSet.Keys == null || offsetSet.Keys.Length == 0)
+            {
+                return Vector3.zero;
+            }
+
+            float time = spriteAnimator.GetCurrentAnimationTime(offsetSet.ClipLength, offsetSet.Loop);
+            return EvaluateAuraAnchorOffset(offsetSet, time);
+        }
+
+        private AuraAnchorOffsetSet FindAuraAnchorOffsetSet(LastBossSpriteAnimator.AnimationState state)
+        {
+            if (auraAnchorOffsetSets == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < auraAnchorOffsetSets.Length; i++)
+            {
+                AuraAnchorOffsetSet offsetSet = auraAnchorOffsetSets[i];
+                if (offsetSet != null && offsetSet.State == state)
+                {
+                    return offsetSet;
+                }
+            }
+
+            return null;
+        }
+
+        private static Vector3 EvaluateAuraAnchorOffset(AuraAnchorOffsetSet offsetSet, float time)
+        {
+            AuraAnchorOffsetKey[] keys = offsetSet.Keys;
+            if (keys == null || keys.Length == 0)
+            {
+                return Vector3.zero;
+            }
+
+            if (keys.Length == 1)
+            {
+                return keys[0].Offset;
+            }
+
+            int firstIndex = 0;
+            int lastIndex = 0;
+            float firstTime = keys[0].Time;
+            float lastTime = keys[0].Time;
+            for (int i = 1; i < keys.Length; i++)
+            {
+                if (keys[i].Time < firstTime)
+                {
+                    firstTime = keys[i].Time;
+                    firstIndex = i;
+                }
+
+                if (keys[i].Time > lastTime)
+                {
+                    lastTime = keys[i].Time;
+                    lastIndex = i;
+                }
+            }
+
+            if (time <= firstTime)
+            {
+                return keys[firstIndex].Offset;
+            }
+
+            if (time >= lastTime)
+            {
+                return keys[lastIndex].Offset;
+            }
+
+            int previousIndex = firstIndex;
+            int nextIndex = lastIndex;
+            float previousTime = float.NegativeInfinity;
+            float nextTime = float.PositiveInfinity;
+            for (int i = 0; i < keys.Length; i++)
+            {
+                float keyTime = keys[i].Time;
+                if (keyTime <= time && keyTime >= previousTime)
+                {
+                    previousTime = keyTime;
+                    previousIndex = i;
+                }
+
+                if (keyTime >= time && keyTime <= nextTime)
+                {
+                    nextTime = keyTime;
+                    nextIndex = i;
+                }
+            }
+
+            if (previousIndex == nextIndex || Mathf.Approximately(previousTime, nextTime))
+            {
+                return keys[previousIndex].Offset;
+            }
+
+            AuraAnchorOffsetKey current = keys[previousIndex];
+            AuraAnchorOffsetKey next = keys[nextIndex];
+            float duration = Mathf.Max(0.0001f, nextTime - previousTime);
+            float t = Mathf.Clamp01((time - previousTime) / duration);
+            return Vector3.LerpUnclamped(current.Offset, next.Offset, ApplyEase(t, current.EaseToNext));
+        }
+
+        private static float ApplyEase(float t, LastBossSpriteAnimator.OffsetEase ease)
+        {
+            t = Mathf.Clamp01(t);
+            switch (ease)
+            {
+                case LastBossSpriteAnimator.OffsetEase.EaseIn:
+                    return t * t;
+                case LastBossSpriteAnimator.OffsetEase.EaseOut:
+                    return 1f - (1f - t) * (1f - t);
+                case LastBossSpriteAnimator.OffsetEase.EaseInOut:
+                    return t * t * (3f - 2f * t);
+                default:
+                    return t;
+            }
+        }
+
         private static Vector3 ResolveFacingOffset(Vector3 localOffset, int direction)
         {
             int normalizedDirection = direction < 0 ? -1 : 1;
@@ -1405,6 +1539,34 @@ namespace GameName.Enemy
             public GameObject EffectObject { get; }
             public GridSpriteSheetPlayer Player { get; }
             public bool FadingOut { get; set; }
+        }
+
+        [Serializable]
+        private sealed class AuraAnchorOffsetSet
+        {
+            [SerializeField] private LastBossSpriteAnimator.AnimationState state;
+            [SerializeField] private string stateName;
+            [SerializeField, Min(0f)] private float clipLength;
+            [SerializeField] private bool loop;
+            [SerializeField] private AuraAnchorOffsetKey[] keys = new AuraAnchorOffsetKey[0];
+
+            public LastBossSpriteAnimator.AnimationState State => state;
+            public string StateName => stateName;
+            public float ClipLength => clipLength;
+            public bool Loop => loop;
+            public AuraAnchorOffsetKey[] Keys => keys;
+        }
+
+        [Serializable]
+        private struct AuraAnchorOffsetKey
+        {
+            [SerializeField, Min(0f)] private float time;
+            [SerializeField] private Vector3 offset;
+            [SerializeField] private LastBossSpriteAnimator.OffsetEase easeToNext;
+
+            public float Time => time;
+            public Vector3 Offset => offset;
+            public LastBossSpriteAnimator.OffsetEase EaseToNext => easeToNext;
         }
     }
 }

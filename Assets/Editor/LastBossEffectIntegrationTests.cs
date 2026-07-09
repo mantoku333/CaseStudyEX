@@ -482,6 +482,64 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.55f).Within(0.001f));
     }
 
+    [Test]
+    public void EffectController_AuraAnchorOffsetInterpolatesBetweenKeys()
+    {
+        object offsetSet = CreateAuraAnchorOffsetSet(
+            LastBossSpriteAnimator.AnimationState.DownStart,
+            1f,
+            false,
+            CreateAuraAnchorOffsetKey(0f, Vector3.zero, LastBossSpriteAnimator.OffsetEase.Linear),
+            CreateAuraAnchorOffsetKey(1f, new Vector3(1f, -1f, 0f), LastBossSpriteAnimator.OffsetEase.Linear));
+
+        Vector3 offset = (Vector3)InvokePrivateStatic(
+            typeof(LastBossEffectController),
+            "EvaluateAuraAnchorOffset",
+            offsetSet,
+            0.5f);
+
+        Assert.That(offset.x, Is.EqualTo(0.5f).Within(0.001f));
+        Assert.That(offset.y, Is.EqualTo(-0.5f).Within(0.001f));
+    }
+
+    [UnityTest]
+    public IEnumerator EffectController_AuraAnchorOffsetFollowsSpriteAnimationState()
+    {
+        GameObject bossObject = CreateObject("LastBossAuraAnchor", Vector2.zero);
+        bossObject.AddComponent<BoxCollider2D>();
+
+        GameObject spriteViewObject = CreateObject("SpriteView", Vector2.zero);
+        spriteViewObject.transform.SetParent(bossObject.transform, false);
+        spriteViewObject.AddComponent<SpriteRenderer>();
+        LastBossSpriteAnimator spriteAnimator = spriteViewObject.AddComponent<LastBossSpriteAnimator>();
+
+        LastBossEffectController effects = bossObject.AddComponent<LastBossEffectController>();
+        SetPrivateField(effects, "auraSpriteSheet", CreateTexture("AuraAnchor", 10, 12));
+        SetPrivateField(effects, "auraOffset", Vector3.zero);
+        SetPrivateField(effects, "auraFacingPush", 0f);
+        SetPrivateField(effects, "auraAnchorOffsetSets", CreateAuraAnchorOffsetSets(
+            CreateAuraAnchorOffsetSet(
+                LastBossSpriteAnimator.AnimationState.DownHold,
+                0.016666668f,
+                true,
+                CreateAuraAnchorOffsetKey(0f, new Vector3(0.4f, -0.6f, 0f), LastBossSpriteAnimator.OffsetEase.Linear))));
+
+        spriteAnimator.PlayDownHold();
+        effects.HandleResetToFull();
+        yield return null;
+
+        SpriteRenderer auraRenderer = FindRendererNamed("LastBossAuraEffect");
+        Assert.That(auraRenderer, Is.Not.Null);
+        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.4f).Within(0.001f));
+        Assert.That(auraRenderer.transform.position.y, Is.EqualTo(-0.6f).Within(0.001f));
+
+        effects.SetFacingDirection(-1);
+        InvokePrivate(effects, "LateUpdate");
+
+        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(-0.4f).Within(0.001f));
+        Assert.That(auraRenderer.transform.position.y, Is.EqualTo(-0.6f).Within(0.001f));
+    }
+
     [UnityTest]
     public IEnumerator EffectController_MagicCircleFlipsRightAndDoesNotRotate()
     {
@@ -1747,5 +1805,65 @@ public sealed class LastBossEffectIntegrationTests
         MethodInfo method = target.GetType().GetMethod(methodName, InstancePrivate);
         Assert.That(method, Is.Not.Null, $"{methodName} must exist.");
         return method.Invoke(target, arguments);
+    }
+
+    private static object InvokePrivateStatic(Type targetType, string methodName, params object[] arguments)
+    {
+        MethodInfo method = targetType.GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.That(method, Is.Not.Null, $"{methodName} must exist.");
+        return method.Invoke(null, arguments);
+    }
+
+    private static Array CreateAuraAnchorOffsetSets(params object[] offsetSets)
+    {
+        Type setType = typeof(LastBossEffectController).GetNestedType("AuraAnchorOffsetSet", BindingFlags.NonPublic);
+        Assert.That(setType, Is.Not.Null, "AuraAnchorOffsetSet must exist.");
+        Array array = Array.CreateInstance(setType, offsetSets.Length);
+        for (int i = 0; i < offsetSets.Length; i++)
+        {
+            array.SetValue(offsetSets[i], i);
+        }
+
+        return array;
+    }
+
+    private static object CreateAuraAnchorOffsetSet(
+        LastBossSpriteAnimator.AnimationState state,
+        float clipLength,
+        bool loop,
+        params object[] keys)
+    {
+        Type setType = typeof(LastBossEffectController).GetNestedType("AuraAnchorOffsetSet", BindingFlags.NonPublic);
+        Type keyType = typeof(LastBossEffectController).GetNestedType("AuraAnchorOffsetKey", BindingFlags.NonPublic);
+        Assert.That(setType, Is.Not.Null, "AuraAnchorOffsetSet must exist.");
+        Assert.That(keyType, Is.Not.Null, "AuraAnchorOffsetKey must exist.");
+
+        object offsetSet = Activator.CreateInstance(setType, nonPublic: true);
+        Array keyArray = Array.CreateInstance(keyType, keys.Length);
+        for (int i = 0; i < keys.Length; i++)
+        {
+            keyArray.SetValue(keys[i], i);
+        }
+
+        SetPrivateField(offsetSet, "state", state);
+        SetPrivateField(offsetSet, "stateName", state.ToString());
+        SetPrivateField(offsetSet, "clipLength", clipLength);
+        SetPrivateField(offsetSet, "loop", loop);
+        SetPrivateField(offsetSet, "keys", keyArray);
+        return offsetSet;
+    }
+
+    private static object CreateAuraAnchorOffsetKey(
+        float time,
+        Vector3 offset,
+        LastBossSpriteAnimator.OffsetEase easeToNext)
+    {
+        Type keyType = typeof(LastBossEffectController).GetNestedType("AuraAnchorOffsetKey", BindingFlags.NonPublic);
+        Assert.That(keyType, Is.Not.Null, "AuraAnchorOffsetKey must exist.");
+        object key = Activator.CreateInstance(keyType, nonPublic: true);
+        SetPrivateField(key, "time", time);
+        SetPrivateField(key, "offset", offset);
+        SetPrivateField(key, "easeToNext", easeToNext);
+        return key;
     }
 }

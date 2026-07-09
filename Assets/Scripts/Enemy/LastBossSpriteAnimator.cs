@@ -201,6 +201,23 @@ namespace GameName.Enemy
             return currentState.HasValue ? GetCurrentOffset() : Vector3.zero;
         }
 
+        public bool TryGetCurrentAnimationState(out AnimationState state)
+        {
+            if (currentState.HasValue)
+            {
+                state = currentState.Value;
+                return true;
+            }
+
+            state = default;
+            return false;
+        }
+
+        public float GetCurrentAnimationTime(float clipLength, bool loop)
+        {
+            return ResolveCurrentAnimationTime(clipLength, loop);
+        }
+
         public void ResetAnimationOffsets()
         {
             idleOffset = Vector3.zero;
@@ -404,7 +421,7 @@ namespace GameName.Enemy
                 return Vector3.zero;
             }
 
-            return EvaluateMotionOffset(offsetSet, GetCurrentAnimationTime(offsetSet.ClipLength, offsetSet.Loop));
+            return EvaluateMotionOffset(offsetSet, ResolveCurrentAnimationTime(offsetSet.ClipLength, offsetSet.Loop));
         }
 
         private Vector3 GetFrameOffsetValue(AnimationState state)
@@ -415,10 +432,10 @@ namespace GameName.Enemy
                 return Vector3.zero;
             }
 
-            return EvaluateFrameOffset(offsetSet, GetCurrentAnimationTime(offsetSet.ClipLength, offsetSet.Loop));
+            return EvaluateFrameOffset(offsetSet, ResolveCurrentAnimationTime(offsetSet.ClipLength, offsetSet.Loop));
         }
 
-        private float GetCurrentAnimationTime(float clipLength, bool loop)
+        private float ResolveCurrentAnimationTime(float clipLength, bool loop)
         {
             clipLength = Mathf.Max(0f, clipLength);
             if (clipLength <= 0f || !IsAnimatorReady())
