@@ -601,6 +601,7 @@ Transform:
   - {fileID: 1844776828312348601}
   - {fileID: 6043330165385624681}
   - {fileID: 5340152419630611810}
+  - {fileID: 8390058568437089888}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5431561428665394503
@@ -758,8 +759,143 @@ MonoBehaviour:
   sparkleParticles: []
   autoFindPlayerOnStart: 1
   comboGraceSeconds: 1.2
+  overrideParticleSorting: 1
+  particleSortingOrder: 50
+  fallbackRateOverTime: 16
+  fallbackStartSize: 0.16
+  fallbackStartLifetime: 0.7
+  fallbackStartSpeed: 2.6
   eleganceLevel: 0
   currentAction: 0
+  logLevelChanges: 1
+  levelSettings:
+  - label: Lv0 Off
+    emissionEnabled: 0
+    rateOverTimeMultiplier: 0
+    startSizeMultiplier: 0
+    startLifetimeMultiplier: 0
+    startSpeedMultiplier: 0
+    overrideStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    particles:
+    - label: Particle 0
+      enabled: 1
+      rateMultiplier: 1
+      sizeMultiplier: 1
+      lifetimeMultiplier: 1
+      speedMultiplier: 1
+      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+    - label: Particle 1
+      enabled: 1
+      rateMultiplier: 1
+      sizeMultiplier: 1
+      lifetimeMultiplier: 1
+      speedMultiplier: 1
+      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+  - label: Lv1 Weak
+    emissionEnabled: 1
+    rateOverTimeMultiplier: 0.5
+    startSizeMultiplier: 0.85
+    startLifetimeMultiplier: 0.9
+    startSpeedMultiplier: 0.9
+    overrideStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    particles:
+    - label: Particle 0
+      enabled: 1
+      rateMultiplier: 1
+      sizeMultiplier: 1
+      lifetimeMultiplier: 1
+      speedMultiplier: 1
+      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+    - label: Particle 1
+      enabled: 1
+      rateMultiplier: 1
+      sizeMultiplier: 1
+      lifetimeMultiplier: 1
+      speedMultiplier: 1
+      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+  - label: Lv2 Flow
+    emissionEnabled: 1
+    rateOverTimeMultiplier: 0.8
+    startSizeMultiplier: 1
+    startLifetimeMultiplier: 1
+    startSpeedMultiplier: 1
+    overrideStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    particles:
+    - label: Particle 0
+      enabled: 1
+      rateMultiplier: 1
+      sizeMultiplier: 1
+      lifetimeMultiplier: 1
+      speedMultiplier: 1
+      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+    - label: Particle 1
+      enabled: 1
+      rateMultiplier: 1
+      sizeMultiplier: 1
+      lifetimeMultiplier: 1
+      speedMultiplier: 1
+      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+  - label: Lv3 Show
+    emissionEnabled: 1
+    rateOverTimeMultiplier: 1.2
+    startSizeMultiplier: 1.15
+    startLifetimeMultiplier: 1.05
+    startSpeedMultiplier: 1.1
+    overrideStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    particles:
+    - label: Particle 0
+      enabled: 1
+      rateMultiplier: 1
+      sizeMultiplier: 1
+      lifetimeMultiplier: 1
+      speedMultiplier: 1
+      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+    - label: Particle 1
+      enabled: 1
+      rateMultiplier: 1
+      sizeMultiplier: 1
+      lifetimeMultiplier: 1
+      speedMultiplier: 1
+      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+  - label: Lv4 Bloom
+    emissionEnabled: 1
+    rateOverTimeMultiplier: 1.6
+    startSizeMultiplier: 1.3
+    startLifetimeMultiplier: 1.1
+    startSpeedMultiplier: 1.25
+    overrideStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    particles:
+    - label: Particle 0
+      enabled: 1
+      rateMultiplier: 1
+      sizeMultiplier: 1
+      lifetimeMultiplier: 1
+      speedMultiplier: 1
+      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+    - label: Particle 1
+      enabled: 1
+      rateMultiplier: 1
+      sizeMultiplier: 1
+      lifetimeMultiplier: 1
+      speedMultiplier: 1
+      colorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+  glideSettings:
+    label: Glide
+    speedMultiplier: 1
+  recoilJumpSettings:
+    label: RecoilJump
+    speedMultiplier: 1.15
+  dodgeSettings:
+    label: Dodge
+    speedMultiplier: 1.25
+  diveAttackSettings:
+    label: DiveAttack
+    speedMultiplier: 1.35
   forcePreview: 0
   previewLevel: 1
   previewAction: 1
@@ -785,6 +921,7 @@ MonoBehaviour:
   damageKnockbackDuration: 0.18
   damageKnockbackUpwardSpeed: 3.5
   logHealthDebug: 0
+  debugInvincible: 0
 --- !u!114 &3141592653589793238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -876,6 +1013,9 @@ MonoBehaviour:
   "\u843D\u4E0B\u958B\u59CBSE\u97F3\u91CF": 1
   "\u7740\u5730SE\u97F3\u91CF": 1
   "\u6575\u30D2\u30C3\u30C8SE\u97F3\u91CF": 1
+  diveAttackLandingVisualSeconds: 0.52
+  diveAttackBounceVisualSeconds: 0.25
+  diveAttackLandingHorizontalSpeedMultiplier: 0.35
 --- !u!82 &7711066996538408739
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1020,6 +1160,7 @@ MonoBehaviour:
   canGlide: 0
   canGunRecoil: 0
   canParry: 0
+  canDiveAttack: 0
 --- !u!114 &8257722522928208615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1425,10 +1566,10 @@ MonoBehaviour:
   parryStateName: parry
   changeStateName: change
   attackStateName: attack
+  diveAttackStateName: dive_attack
+  diveAttackLandStateName: dive_attack_land
+  diveAttackBounceStateName: dive_attack_bounce
   recoilBoostSkyStateName: recoilboost_sky
-  viewScaleTarget: {fileID: 0}
-  applyIdleScaleOverride: 1
-  idleViewScale: 0.6
   landingGroundLossGraceFrames: 3
   useTransformDeltaAsMovement: 1
   transformMovementThreshold: 0.001
@@ -1456,6 +1597,84 @@ MonoBehaviour:
   - {fileID: -3976302733274222075, guid: d2b25dbd30751324fb76122eb047627d, type: 3}
   - {fileID: 7249213566131619120, guid: f7bad9c43e263334fa7f44ca4ca48ddd, type: 3}
   - {fileID: 980366382651412403, guid: f7bad9c43e263334fa7f44ca4ca48ddd, type: 3}
+--- !u!1 &7089431480396879179
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8390058568437089888}
+  - component: {fileID: 586350845202272482}
+  m_Layer: 0
+  m_Name: CameraCol
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8390058568437089888
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7089431480396879179}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.17, y: -0.04, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 1297286252844393473}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &586350845202272482
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7089431480396879179}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &7408946771973873088
 GameObject:
   m_ObjectHideFlags: 0

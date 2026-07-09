@@ -158,6 +158,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     private GroundCheck groundCheck;
     private PlayerEquipmentController equipmentController;
     private PlayerHealth playerHealth;
+    private GunController gunController;
     private bool isDiveAttacking;
     private float diveStartedTime;
     private float bounceControlEndTime;
@@ -179,6 +180,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         groundCheck = GetComponentInChildren<GroundCheck>();
         equipmentController = GetComponent<PlayerEquipmentController>();
         playerHealth = GetComponent<PlayerHealth>();
+        gunController = GetComponentInChildren<GunController>();
         ResolveGridIfNeeded();
         ResolveGroundLayerMaskIfNeeded();
 
@@ -386,6 +388,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
 
         if (appliedNewEnemyHit)
         {
+            gunController?.RestoreAllRecoilUses();
             PlayEnemyHitEffect(enemyHitEffectPosition, enemyHitCollider);
         }
 
@@ -433,6 +436,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
 
         if (appliedNewEnemyHit)
         {
+            gunController?.RestoreAllRecoilUses();
             PlayEnemyHitEffect(enemyHitEffectPosition, enemyHitCollider);
         }
 

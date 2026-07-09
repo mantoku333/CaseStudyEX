@@ -559,6 +559,13 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
+        if (IsDiveAttackLandingRecoveryActive())
+        {
+            jumpInput = false;
+            wasDownHeld = isDownHeld;
+            return;
+        }
+
         UpdateFacingDirection();
         RefreshParryColliderFacing();
 
@@ -1006,6 +1013,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
+        if (IsDiveAttackLandingRecoveryActive())
+        {
+            return;
+        }
+
         if (umbrellaController == null)
         {
             return;
@@ -1075,6 +1087,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             isFacingRight = false;
         }
+    }
+
+    private bool IsDiveAttackLandingRecoveryActive()
+    {
+        return diveAttackController != null && diveAttackController.IsDiveAttackLanding;
     }
 
     private void RefreshParryColliderFacing()

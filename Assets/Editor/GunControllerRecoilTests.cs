@@ -85,6 +85,26 @@ public sealed class GunControllerRecoilTests
         Assert.That(secondLaunchSpeed, Is.EqualTo(firstLaunchSpeed).Within(0.001f));
     }
 
+    [Test]
+    public void RestoreAllRecoilUses_ClearsCooldownAndRestartsFirstRecoil()
+    {
+        GunController gun = CreateGun(out _);
+        gun.SetRecoilCoolTimes(0.25f, 0.75f);
+
+        gun.Shoot(Vector2.right);
+
+        Assert.That(gun.CurrentCoolTime, Is.EqualTo(0.25f).Within(0.001f));
+
+        gun.RestoreAllRecoilUses();
+
+        Assert.That(gun.CurrentCoolTime, Is.EqualTo(0f).Within(0.001f));
+        Assert.That(gun.IsReloading, Is.False);
+
+        gun.Shoot(Vector2.right);
+
+        Assert.That(gun.CurrentCoolTime, Is.EqualTo(0.25f).Within(0.001f));
+    }
+
     private GunController CreateGun(out Rigidbody2D rigidbody2D)
     {
         GameObject player = new GameObject("Player");

@@ -217,31 +217,48 @@ public class RoomCameraTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        TryActivateHorizontalFollowFromPlayer(collision.transform);
+        TryActivateHorizontalFollowFromPlayer(collision);
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        TryActivateHorizontalFollowFromPlayer(collision.transform);
+        TryActivateHorizontalFollowFromPlayer(collision);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        TryActivateHorizontalFollowFromPlayer(other.transform);
+        TryActivateHorizontalFollowFromPlayer(other);
     }
 
     private void OnTriggerStay(Collider other)
     {
-        TryActivateHorizontalFollowFromPlayer(other.transform);
+        TryActivateHorizontalFollowFromPlayer(other);
     }
 
-    private void TryActivateHorizontalFollowFromPlayer(Transform source)
+    private void TryActivateHorizontalFollowFromPlayer(Collider2D source)
     {
-        if (!IsHorizontalFollowTrigger || !TryResolvePlayerTransform(source, out Transform player))
+        if (!IsHorizontalFollowTrigger ||
+            !PlayerCameraColliderUtility.TryResolvePlayerTransform(source, _playerTag, out Transform player))
         {
             return;
         }
 
+        ActivateHorizontalFollowFromPlayer(player);
+    }
+
+    private void TryActivateHorizontalFollowFromPlayer(Collider source)
+    {
+        if (!IsHorizontalFollowTrigger ||
+            !PlayerCameraColliderUtility.TryResolvePlayerTransform(source, _playerTag, out Transform player))
+        {
+            return;
+        }
+
+        ActivateHorizontalFollowFromPlayer(player);
+    }
+
+    private void ActivateHorizontalFollowFromPlayer(Transform player)
+    {
         horizontalFollowPlayer = player;
         if (_activeTrigger != this)
         {
@@ -398,7 +415,9 @@ public class RoomCameraTrigger : MonoBehaviour
         Vector3 targetPosition = _horizontalFollowCamera.transform.position;
         if (horizontalFollowPlayer != null)
         {
-            targetPosition.x = horizontalFollowPlayer.position.x;
+            targetPosition.x = PlayerCameraColliderUtility.TryGetCameraPoint(horizontalFollowPlayer, out Vector3 cameraPoint)
+                ? cameraPoint.x
+                : horizontalFollowPlayer.position.x;
         }
 
         targetPosition.y = ResolveHorizontalFollowY();
@@ -473,29 +492,6 @@ public class RoomCameraTrigger : MonoBehaviour
         {
             return null;
         }
-    }
-
-    private bool TryResolvePlayerTransform(Transform source, out Transform resolvedPlayer)
-    {
-        resolvedPlayer = null;
-        if (source == null || string.IsNullOrWhiteSpace(_playerTag))
-        {
-            return false;
-        }
-
-        Transform current = source;
-        while (current != null)
-        {
-            if (current.CompareTag(_playerTag))
-            {
-                resolvedPlayer = current;
-                return true;
-            }
-
-            current = current.parent;
-        }
-
-        return false;
     }
 
     private static void ReleaseToDefaultCamera(RoomCameraTrigger defaultTrigger)
@@ -598,13 +594,11 @@ public class RoomCameraTrigger : MonoBehaviour
 
         lastActiveRoomValidationFrame = Time.frameCount;
 
-        Transform player = ResolvePlayerTransformForValidation();
-        if (player == null)
+        if (!TryResolvePlayerCameraPointForValidation(out Vector3 playerPosition))
         {
             return;
         }
 
-        Vector3 playerPosition = player.position;
         RoomCameraTrigger activeTrigger = _activeTrigger;
         if (activeTrigger != null &&
             activeTrigger.isActiveAndEnabled &&
@@ -626,21 +620,13 @@ public class RoomCameraTrigger : MonoBehaviour
         ReleaseToGlobalDefaultFollowCamera();
     }
 
-    private static Transform ResolvePlayerTransformForValidation()
+    private static bool TryResolvePlayerCameraPointForValidation(out Vector3 playerPosition)
     {
         string playerTag = _activeTrigger != null && !string.IsNullOrWhiteSpace(_activeTrigger._playerTag)
             ? _activeTrigger._playerTag
             : DefaultPlayerTag;
 
-        try
-        {
-            GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag);
-            return playerObject != null ? playerObject.transform : null;
-        }
-        catch (UnityException)
-        {
-            return null;
-        }
+        return PlayerCameraColliderUtility.TryGetCameraPointFromPlayerTag(playerTag, out playerPosition);
     }
 
     private static void DeactivateAllRoomCamerasExcept(RoomCameraTrigger exception)

@@ -77,7 +77,7 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (TryResolvePlayerTransform(collision.transform, out Transform player))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out Transform player))
         {
             HandlePlayerEntered(collision, player);
         }
@@ -85,7 +85,7 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (TryResolvePlayerTransform(collision.transform, out Transform player))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out Transform player))
         {
             overlappingPlayerColliders.Remove(collision);
             if (overlappingPlayerColliders.Count == 0)
@@ -611,30 +611,9 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private bool IsPlayerFullyInsideRoom(RoomCameraTrigger room)
     {
-        Collider2D[] colliders = playerTransform.GetComponentsInChildren<Collider2D>();
-        bool checkedCollider = false;
-
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            Collider2D collider = colliders[i];
-            if (collider == null || !collider.enabled || collider.isTrigger)
-            {
-                continue;
-            }
-
-            checkedCollider = true;
-            if (!IsBoundsInsideRoom(room, collider.bounds))
-            {
-                return false;
-            }
-        }
-
-        if (checkedCollider)
-        {
-            return true;
-        }
-
-        return room.ContainsPoint(playerTransform.position);
+        return PlayerCameraColliderUtility.TryGetCameraBounds(playerTransform, out Bounds cameraBounds)
+            ? IsBoundsInsideRoom(room, cameraBounds)
+            : room.ContainsPoint(playerTransform.position);
     }
 
     private static bool IsBoundsInsideRoom(RoomCameraTrigger room, Bounds bounds)
@@ -819,50 +798,12 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
             return fallbackPosition;
         }
 
-        Collider2D[] colliders = player.GetComponentsInChildren<Collider2D>();
-        if (TryResolveBoundsCenter(colliders, false, out Vector3 center) ||
-            TryResolveBoundsCenter(colliders, true, out center))
+        if (PlayerCameraColliderUtility.TryGetCameraPoint(player, out Vector3 center))
         {
             return center;
         }
 
         return fallbackPosition;
-    }
-
-    private static bool TryResolveBoundsCenter(
-        Collider2D[] colliders,
-        bool includeTriggers,
-        out Vector3 center)
-    {
-        bool hasBounds = false;
-        Bounds bounds = default;
-
-        if (colliders != null)
-        {
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                Collider2D collider = colliders[i];
-                if (collider == null ||
-                    !collider.enabled ||
-                    !includeTriggers && collider.isTrigger)
-                {
-                    continue;
-                }
-
-                if (!hasBounds)
-                {
-                    bounds = collider.bounds;
-                    hasBounds = true;
-                }
-                else
-                {
-                    bounds.Encapsulate(collider.bounds);
-                }
-            }
-        }
-
-        center = hasBounds ? bounds.center : Vector3.zero;
-        return hasBounds;
     }
 
     private static Vector3 ResolveRoomCenter(RoomCameraTrigger room, Vector3 fallback)
@@ -880,26 +821,4 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         return fallback;
     }
 
-    private bool TryResolvePlayerTransform(Transform source, out Transform resolvedPlayer)
-    {
-        resolvedPlayer = null;
-        if (source == null || string.IsNullOrWhiteSpace(playerTag))
-        {
-            return false;
-        }
-
-        Transform current = source;
-        while (current != null)
-        {
-            if (current.CompareTag(playerTag))
-            {
-                resolvedPlayer = current;
-                return true;
-            }
-
-            current = current.parent;
-        }
-
-        return false;
-    }
 }
