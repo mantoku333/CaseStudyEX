@@ -31,6 +31,7 @@ public sealed class StageBossIntroTests
         }
 
         SetPrivateStaticField<BossAreaController>("activeDialogueRunningOverride", null);
+        ClearStageBossIntroWindSuppressors();
         GameProgressFlags.ClearAll();
 
         for (int i = objectsToDestroy.Count - 1; i >= 0; i--)
@@ -100,6 +101,14 @@ public sealed class StageBossIntroTests
         Assert.That(bgmSource.clip, Is.Not.EqualTo(bossBgm));
 
         Assert.That(routine.MoveNext(), Is.True);
+        RunNestedEnumerator(routine.Current);
+        Assert.That(encounterStartedCount, Is.EqualTo(0));
+        Assert.That(stageBoss.IsEncounterActive, Is.False);
+        Assert.That(playerRigidbody.constraints, Is.EqualTo(RigidbodyConstraints2D.None));
+        Assert.That(playerController.IsExternalControlLocked, Is.False);
+        Assert.That(bgmSource.clip, Is.Not.EqualTo(bossBgm));
+
+        Assert.That(routine.MoveNext(), Is.True);
         Assert.That(encounterStartedCount, Is.EqualTo(0));
         Assert.That(stageBoss.IsEncounterActive, Is.False);
         Assert.That(playerRigidbody.constraints, Is.EqualTo(RigidbodyConstraints2D.FreezeAll));
@@ -139,6 +148,119 @@ public sealed class StageBossIntroTests
     }
 
     [Test]
+    public void PlayStageBossIntroRoutine_WithConfiguredStoryEvent_WaitsForDialogueBeforeHpAndActivation()
+    {
+        bool dialogueRunning = true;
+        SetPrivateStaticField<BossAreaController>(
+            "activeDialogueRunningOverride",
+            new Func<bool>(() => dialogueRunning));
+
+        CreatePlayer(new Vector2(-2f, 0f), out _);
+        StageBossAttack stageBoss = CreateStageBoss(
+            new Vector2(2f, 0f),
+            out _,
+            out Collider2D bossCollider,
+            out Rigidbody2D bossRigidbody2D);
+
+        GameObject areaObject = CreateInactiveBossAreaObject();
+        BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
+        ConfigureStageBossArea(
+            bossArea,
+            stageBoss,
+            revealDuration: 0f,
+            hpLeadInSeconds: 0f,
+            preEncounterStoryEventId: "Event_StageBossIntro",
+            logMissingStoryEvents: false);
+        InvokePrivate(bossArea, "Awake");
+        SetPrivateField(bossArea, "encounterStarted", true);
+
+        int encounterStartedCount = 0;
+        encounterStartedHandler = _ => encounterStartedCount++;
+        BossAreaController.EncounterStarted += encounterStartedHandler;
+
+        IEnumerator routine = (IEnumerator)InvokePrivate(bossArea, "PlayStageBossIntroRoutine");
+
+        Assert.That(routine.MoveNext(), Is.True);
+        RunNestedEnumerator(routine.Current);
+        Assert.That(routine.MoveNext(), Is.True);
+        RunNestedEnumerator(routine.Current);
+
+        Assert.That(routine.MoveNext(), Is.True);
+        RunNestedEnumerator(routine.Current);
+
+        Assert.That(routine.MoveNext(), Is.True);
+        IEnumerator dialogueWait = routine.Current as IEnumerator;
+        Assert.That(dialogueWait, Is.Not.Null);
+        Assert.That(dialogueWait.MoveNext(), Is.True);
+        Assert.That(encounterStartedCount, Is.EqualTo(0));
+        Assert.That(stageBoss.IsEncounterActive, Is.False);
+        Assert.That(bossCollider.enabled, Is.False);
+        Assert.That(bossRigidbody2D.simulated, Is.False);
+
+        dialogueRunning = false;
+        Assert.That(dialogueWait.MoveNext(), Is.False);
+        Assert.That(routine.MoveNext(), Is.False);
+        Assert.That(encounterStartedCount, Is.EqualTo(1));
+        Assert.That(stageBoss.IsEncounterActive, Is.True);
+        Assert.That(bossCollider.enabled, Is.True);
+        Assert.That(bossRigidbody2D.simulated, Is.True);
+
+        BossAreaController.EncounterStarted -= encounterStartedHandler;
+        encounterStartedHandler = null;
+    }
+
+    [Test]
+    public void Awake_ForStageBossIntroEvent_DisablesMatchingStoryEventTrigger()
+    {
+        StageBossAttack stageBoss = CreateStageBoss(Vector2.zero, out _, out _, out _);
+        StoryEventTrigger2D matchingTrigger =
+            CreateStoryEventTrigger("Event_StageBossIntro", out Collider2D matchingCollider);
+        StoryEventTrigger2D outsideMatchingTrigger =
+            CreateStoryEventTrigger(
+                "Event_StageBossIntro",
+                out Collider2D outsideMatchingCollider,
+                new Vector2(30f, 0f));
+        StoryEventTrigger2D otherTrigger =
+            CreateStoryEventTrigger("Event_Other", out Collider2D otherCollider);
+
+        GameObject areaObject = CreateInactiveBossAreaObject();
+        BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
+        ConfigureStageBossArea(
+            bossArea,
+            stageBoss,
+            revealDuration: 0f,
+            hpLeadInSeconds: 0f,
+            preEncounterStoryEventId: "Event_StageBossIntro");
+
+        InvokePrivate(bossArea, "Awake");
+
+        Assert.That(matchingTrigger.enabled, Is.False);
+        Assert.That(matchingCollider.enabled, Is.False);
+        Assert.That(outsideMatchingTrigger.enabled, Is.True);
+        Assert.That(outsideMatchingCollider.enabled, Is.True);
+        Assert.That(otherTrigger.enabled, Is.True);
+        Assert.That(otherCollider.enabled, Is.True);
+    }
+
+    [Test]
+    public void Awake_ForLastBossPreEncounterEvent_LeavesMatchingStoryEventTriggerEnabled()
+    {
+        LastBossController lastBoss = CreateLastBoss(Vector2.zero);
+        StoryEventTrigger2D matchingTrigger =
+            CreateStoryEventTrigger("Event_LastBossIntro", out Collider2D matchingCollider);
+
+        GameObject areaObject = CreateInactiveBossAreaObject();
+        BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
+        ConfigureLastBossArea(bossArea, lastBoss);
+        SetPrivateField(bossArea, "preEncounterStoryEventId", "Event_LastBossIntro");
+
+        InvokePrivate(bossArea, "Awake");
+
+        Assert.That(matchingTrigger.enabled, Is.True);
+        Assert.That(matchingCollider.enabled, Is.True);
+    }
+
+    [Test]
     public void TryStartEncounter_ForStageBoss_FreezesPlayerDuringIntro()
     {
         // ロック開始後にプレイヤー入力・速度・向きが演出用に固定されることを確認する。
@@ -151,6 +273,8 @@ public sealed class StageBossIntroTests
         ConfigureStageBossArea(bossArea, stageBoss, revealDuration: 0f, hpLeadInSeconds: 0.05f, entryDelaySeconds: 0.05f);
         InvokePrivate(bossArea, "Awake");
         InvokePrivate(bossArea, "CachePlayerReferences");
+        playerController.StartExternalMoveToX(-5f);
+        Assert.That(playerController.IsExternalMovementActive, Is.True);
 
         IEnumerator routine = (IEnumerator)InvokePrivate(bossArea, "PlayStageBossIntroRoutine");
 
@@ -159,11 +283,21 @@ public sealed class StageBossIntroTests
         Assert.That(playerController.IsExternalControlLocked, Is.False);
 
         Assert.That(routine.MoveNext(), Is.True);
+        RunNestedEnumerator(routine.Current);
+        Assert.That(playerRigidbody.constraints, Is.EqualTo(RigidbodyConstraints2D.None));
+        Assert.That(playerController.IsExternalControlLocked, Is.False);
+
+        Assert.That(routine.MoveNext(), Is.True);
         Assert.That(playerRigidbody.constraints, Is.EqualTo(RigidbodyConstraints2D.FreezeAll));
         Assert.That(playerRigidbody.linearVelocity, Is.EqualTo(Vector2.zero));
+        Assert.That(playerController.IsExternalMovementActive, Is.False);
+        Assert.That(playerController.IsExternalMovementSuppressed, Is.True);
         Assert.That(playerController.IsExternalControlLocked, Is.True);
         Assert.That(playerController.IsExternalFacingLocked, Is.True);
         Assert.That(playerController.IsFacingRight, Is.True);
+        playerController.StartExternalMoveToX(-5f);
+        Assert.That(playerController.IsExternalMovementActive, Is.False);
+        Assert.That(playerController.IsMoving, Is.False);
 
         RunNestedEnumerator(routine.Current);
         Assert.That(routine.MoveNext(), Is.True);
@@ -173,6 +307,7 @@ public sealed class StageBossIntroTests
         Assert.That(playerRigidbody.linearVelocity, Is.EqualTo(Vector2.zero));
         Assert.That(playerController.IsExternalControlLocked, Is.False);
         Assert.That(playerController.IsExternalFacingLocked, Is.False);
+        Assert.That(playerController.IsExternalMovementSuppressed, Is.False);
     }
 
     [Test]
@@ -250,7 +385,8 @@ public sealed class StageBossIntroTests
         GameObject areaObject = CreateInactiveBossAreaObject();
         BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
         ConfigureStageBossArea(bossArea, stageBoss, revealDuration: 0f, hpLeadInSeconds: 0f);
-        InvokePrivate(bossArea, "Awake");
+        areaObject.SetActive(true);
+        InvokePrivate(bossArea, "CacheConfinementBounds");
         SetPrivateField(bossArea, "encounterStarted", true);
 
         InvokePrivate(bossArea, "BeginStageBossIntroWindSuppression");
@@ -271,6 +407,53 @@ public sealed class StageBossIntroTests
 
         Assert.That(BossAreaController.ShouldSuppressWindRiseAt(Vector3.zero), Is.False);
         Assert.That(BossAreaController.ShouldSuppressWindRise(overlappingWindCollider), Is.False);
+    }
+
+    [Test]
+    public void FinishEncounterAfterGroundedPostDefeatStoryRoutine_WaitsForGroundBeforeStoryAndSuppressesWind()
+    {
+        CreatePlayer(new Vector2(0f, 1f), out PlayerController playerController);
+        playerController.enabled = true;
+        SetPrivateField(playerController, "isGround", false);
+        StageBossAttack stageBoss = CreateStageBoss(Vector2.zero, out _, out _, out _);
+
+        GameObject areaObject = CreateInactiveBossAreaObject();
+        BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
+        ConfigureStageBossArea(bossArea, stageBoss, revealDuration: 0f, hpLeadInSeconds: 0f);
+        areaObject.SetActive(true);
+        InvokePrivate(bossArea, "CacheConfinementBounds");
+        InvokePrivate(bossArea, "CachePlayerReferences");
+        SetPrivateField(bossArea, "encounterCompleted", true);
+        InvokePrivate(bossArea, "BeginStageBossPostDefeatWindSuppression");
+
+        bool storyStarted = false;
+        IEnumerator routine = (IEnumerator)InvokePrivate(
+            bossArea,
+            "FinishEncounterAfterGroundedPostDefeatStoryRoutine",
+            StoryMarksStartedThenCompletes(() => storyStarted = true));
+
+        Assert.That(BossAreaController.ShouldSuppressWindRiseAt(Vector3.zero), Is.True);
+
+        Assert.That(routine.MoveNext(), Is.True);
+        IEnumerator groundedWait = routine.Current as IEnumerator;
+        Assert.That(groundedWait, Is.Not.Null);
+        Assert.That(groundedWait.MoveNext(), Is.True);
+        Assert.That(storyStarted, Is.False);
+        Assert.That(BossAreaController.ShouldSuppressWindRiseAt(Vector3.zero), Is.True);
+
+        SetPrivateField(playerController, "isGround", true);
+        Assert.That(groundedWait.MoveNext(), Is.False);
+        Assert.That(storyStarted, Is.False);
+
+        Assert.That(routine.MoveNext(), Is.True);
+        RunNestedEnumerator(routine.Current);
+        Assert.That(storyStarted, Is.True);
+        Assert.That(BossAreaController.ShouldSuppressWindRiseAt(Vector3.zero), Is.True);
+
+        Assert.That(routine.MoveNext(), Is.True);
+        RunNestedEnumerator(routine.Current);
+        Assert.That(routine.MoveNext(), Is.False);
+        Assert.That(BossAreaController.ShouldSuppressWindRiseAt(Vector3.zero), Is.False);
     }
 
     [Test]
@@ -318,6 +501,7 @@ public sealed class StageBossIntroTests
         BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
         ConfigureStageBossArea(bossArea, stageBoss, revealDuration: 0f, hpLeadInSeconds: 0f, entryDelaySeconds: 2f);
         areaObject.SetActive(true);
+        InvokePrivate(bossArea, "CacheConfinementBounds");
         Physics2D.SyncTransforms();
 
         InvokePrivate(bossArea, "OnTriggerEnter2D", playerCollider);
@@ -344,6 +528,7 @@ public sealed class StageBossIntroTests
         BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
         ConfigureStageBossArea(bossArea, stageBoss, revealDuration: 0f, hpLeadInSeconds: 0f, entryDelaySeconds: 2f);
         areaObject.SetActive(true);
+        InvokePrivate(bossArea, "CacheConfinementBounds");
         Physics2D.SyncTransforms();
 
         InvokePrivate(bossArea, "OnTriggerEnter2D", playerCollider);
@@ -634,6 +819,23 @@ public sealed class StageBossIntroTests
         return controller;
     }
 
+    private StoryEventTrigger2D CreateStoryEventTrigger(
+        string eventId,
+        out Collider2D triggerCollider,
+        Vector2? position = null)
+    {
+        GameObject triggerObject = new GameObject($"StoryEventTrigger_{eventId}");
+        objectsToDestroy.Add(triggerObject);
+        triggerObject.transform.position = position ?? Vector2.zero;
+
+        triggerCollider = triggerObject.AddComponent<BoxCollider2D>();
+        triggerCollider.isTrigger = true;
+        StoryEventTrigger2D trigger = triggerObject.AddComponent<StoryEventTrigger2D>();
+        SetPrivateField(trigger, "eventId", eventId);
+        InvokePrivate(trigger, "Awake");
+        return trigger;
+    }
+
     private StageBgmController CreateStageBgm(out AudioSource bgmSource, out AudioClip bossBgm)
     {
         // BGM開始タイミングだけを確認するための最小構成StageBgm。
@@ -763,7 +965,10 @@ public sealed class StageBossIntroTests
         float hpLeadInSeconds,
         float entryDelaySeconds = 0f,
         StageBgmController stageBgm = null,
-        AudioClip bossBgm = null)
+        AudioClip bossBgm = null,
+        string preEncounterStoryEventId = "",
+        bool waitForPreEncounterStoryEvent = true,
+        bool logMissingStoryEvents = true)
     {
         SetPrivateField(bossArea, "bossRoot", stageBoss.transform);
         SetPrivateField(bossArea, "stageBossAttack", stageBoss);
@@ -777,6 +982,9 @@ public sealed class StageBossIntroTests
         SetPrivateField(bossArea, "stageBossHpLeadInSeconds", hpLeadInSeconds);
         SetPrivateField(bossArea, "stageBgm", stageBgm);
         SetPrivateField(bossArea, "bossBgm", bossBgm);
+        SetPrivateField(bossArea, "preEncounterStoryEventId", preEncounterStoryEventId);
+        SetPrivateField(bossArea, "waitForPreEncounterStoryEvent", waitForPreEncounterStoryEvent);
+        SetPrivateField(bossArea, "logMissingStoryEvents", logMissingStoryEvents);
         SetPrivateField(bossArea, "disableTriggerAfterStart", false);
     }
 
@@ -810,6 +1018,17 @@ public sealed class StageBossIntroTests
         FieldInfo field = typeof(TTarget).GetField(fieldName, PrivateStatic);
         Assert.That(field, Is.Not.Null, $"{fieldName} must exist.");
         field.SetValue(null, value);
+    }
+
+    private static void ClearStageBossIntroWindSuppressors()
+    {
+        FieldInfo field = typeof(BossAreaController).GetField("StageBossIntroWindSuppressors", PrivateStatic);
+        Assert.That(field, Is.Not.Null, "StageBossIntroWindSuppressors must exist.");
+
+        if (field.GetValue(null) is IList suppressors)
+        {
+            suppressors.Clear();
+        }
     }
 
     private static object InvokePrivate(object target, string methodName, params object[] arguments)
@@ -849,6 +1068,12 @@ public sealed class StageBossIntroTests
 
     private static IEnumerator StoryCompletesAfterOneFrame()
     {
+        yield return null;
+    }
+
+    private static IEnumerator StoryMarksStartedThenCompletes(Action onStarted)
+    {
+        onStarted?.Invoke();
         yield return null;
     }
 
