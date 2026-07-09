@@ -25,6 +25,7 @@ namespace Player
 
         [Header("Debug")]
         [SerializeField] private bool logHealthDebug;
+        [SerializeField] private bool debugInvincible;
 
         private int currentHealth;
         private float nextDamageTime;
@@ -49,6 +50,12 @@ namespace Player
 
         /// <summary>現在HP</summary>
         public int CurrentHealth => currentHealth;
+
+        public bool DebugInvincible
+        {
+            get => debugInvincible;
+            set => debugInvincible = value;
+        }
 
         /// <summary>最大HP</summary>
         public int MaxHealth
@@ -127,6 +134,11 @@ namespace Player
         {
             // 無効なダメージ、またはすでに死亡しているなら何もしない
             if (damage <= 0 || currentHealth <= 0)
+            {
+                return false;
+            }
+
+            if (debugInvincible)
             {
                 return false;
             }
