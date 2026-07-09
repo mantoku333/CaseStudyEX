@@ -182,6 +182,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private void FixedUpdate()
     {
         RefreshGroundState();
+        if (isGround && diveAttackController != null)
+        {
+            diveAttackController.EndDiveAttackOnGrounded();
+        }
+
         HandleGroundTransition();
 
         if (UpdateDamageKnockback())
@@ -521,17 +526,18 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             moveInput = Mathf.Clamp(move.x, -1.0f, 1.0f);
         }
 
+        bool isDownHeld = move.y < -0.5f;
+
         if (diveAttackController != null && diveAttackController.IsDiveAttacking)
         {
             jumpInput = false;
-            wasDownHeld = false;
+            wasDownHeld = isDownHeld;
             return;
         }
 
         UpdateFacingDirection();
         RefreshParryColliderFacing();
 
-        bool isDownHeld = move.y < -0.5f;
         bool isDownPressedThisFrame = isDownHeld && !wasDownHeld;
         wasDownHeld = isDownHeld;
 
@@ -783,6 +789,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         float moveSpeed = isGliding
             ? umbrellaController.GetGlideMoveSpeed()
             : playerStatsData.MoveSpeed;
+        moveSpeed *= ResolveDiveAttackLandingHorizontalSpeedMultiplier();
+
         bool preserveRecoilMomentum =
             !isGround &&
             gunController != null &&
@@ -827,6 +835,21 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private float ResolveHorizontalMoveInput()
     {
         return externalMovementActive ? externalMoveInput : moveInput;
+    }
+
+    private float ResolveDiveAttackLandingHorizontalSpeedMultiplier()
+    {
+        if (externalMovementActive)
+        {
+            return 1f;
+        }
+
+        if (diveAttackController == null || !diveAttackController.IsDiveAttackLanding)
+        {
+            return 1f;
+        }
+
+        return diveAttackController.DiveAttackLandingHorizontalSpeedMultiplier;
     }
 
     private void UpdateExternalTargetMovement()

@@ -282,11 +282,6 @@ namespace Player
                 return VisualState.Change;
             }
 
-            if (isAttacking)
-            {
-                return VisualState.Attack;
-            }
-
             if (isDiveAttacking)
             {
                 return VisualState.DiveAttack;
@@ -300,6 +295,11 @@ namespace Player
             if (isDiveAttackLanding)
             {
                 return VisualState.DiveAttackLand;
+            }
+
+            if (isAttacking)
+            {
+                return VisualState.Attack;
             }
 
             if (isDodging)
@@ -514,11 +514,21 @@ namespace Player
 
         public void OnDiveAttackLandAnimationEnd()
         {
-            ClearDiveAttackFollowThroughLocks();
+            ClearDiveAttackFollowThroughLocksIfAnimationFinished();
         }
 
         public void OnDiveAttackBounceAnimationEnd()
         {
+            ClearDiveAttackFollowThroughLocksIfAnimationFinished();
+        }
+
+        private void ClearDiveAttackFollowThroughLocksIfAnimationFinished()
+        {
+            if (!IsDiveAttackFollowThroughAnimationFinished())
+            {
+                return;
+            }
+
             ClearDiveAttackFollowThroughLocks();
         }
 

@@ -140,10 +140,14 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField, Min(0.05f), Tooltip("落下攻撃が地面で終わった後、専用着地アニメーションを要求し続ける時間です。")]
-    private float diveAttackLandingVisualSeconds = 0.25f;
+    private float diveAttackLandingVisualSeconds = 0.52f;
 
     [SerializeField, Min(0.05f), Tooltip("落下攻撃で敵を倒して跳ねた後、専用バウンドアニメーションを要求し続ける時間です。")]
     private float diveAttackBounceVisualSeconds = 0.25f;
+
+    [Header("Landing Control")]
+    [SerializeField, Range(0f, 1f)]
+    private float diveAttackLandingHorizontalSpeedMultiplier = 0.35f;
 
     private readonly Collider2D[] overlapResults = new Collider2D[32];
     private readonly HashSet<EnemyController> hitEnemies = new HashSet<EnemyController>();
@@ -164,6 +168,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
 
     public bool IsDiveAttacking => isDiveAttacking;
     public bool IsDiveAttackLanding => !isDiveAttacking && Time.time < diveAttackLandingVisualEndTime;
+    public float DiveAttackLandingHorizontalSpeedMultiplier => diveAttackLandingHorizontalSpeedMultiplier;
     public bool IsDiveAttackBouncing => !isDiveAttacking && Time.time < diveAttackBounceVisualEndTime;
     public bool IsBounceControlActive => Time.time < bounceControlEndTime;
     public float BounceControlSpeed => 跳ね上がり左右調整速度;
@@ -209,6 +214,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         着地SE音量 = Mathf.Clamp(着地SE音量, 0f, 2f);
         敵ヒットSE音量 = Mathf.Clamp(敵ヒットSE音量, 0f, 2f);
         diveAttackLandingVisualSeconds = Mathf.Max(0.05f, diveAttackLandingVisualSeconds);
+        diveAttackLandingHorizontalSpeedMultiplier = Mathf.Clamp01(diveAttackLandingHorizontalSpeedMultiplier);
         diveAttackBounceVisualSeconds = Mathf.Max(0.05f, diveAttackBounceVisualSeconds);
     }
 
@@ -283,6 +289,16 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         Vector2 velocity = rigidBody2d.linearVelocity;
         velocity.x = horizontalInput * 跳ね上がり左右調整速度;
         rigidBody2d.linearVelocity = velocity;
+    }
+
+    public void EndDiveAttackOnGrounded()
+    {
+        if (!isDiveAttacking)
+        {
+            return;
+        }
+
+        EndDiveAttack(true);
     }
 
     public bool CanStartDiveAttackFromAir()
@@ -384,7 +400,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
             return;
         }
 
-        RequestDiveAttackLandingVisual();
+        RequestDiveAttackLandingFollowThrough();
     }
 
     private void UpdateDiveAttackHit()
@@ -700,7 +716,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         bounceControlEndTime = Time.time + 跳ね上がり操作時間;
     }
 
-    private void RequestDiveAttackLandingVisual()
+    private void RequestDiveAttackLandingFollowThrough()
     {
         diveAttackBounceVisualEndTime = 0f;
         diveAttackLandingVisualEndTime = Time.time + diveAttackLandingVisualSeconds;
