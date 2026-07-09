@@ -586,7 +586,7 @@ MonoBehaviour:
   rainBladeFallSpeed: 30
   rainBladeGroundDestroyDelay: 0.3
   bladeParryFadeDuration: 0.2
-  downCountThreshold: 20
+  downCountThreshold: 10
   downDuration: 10
   hitStopDuration: 0.08
   useGlobalHitStop: 1

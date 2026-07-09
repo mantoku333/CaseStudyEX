@@ -2103,11 +2103,8 @@ public sealed class StoryEventController : MonoBehaviour
             cameraStartOrthographicSize = handoffCamera.Lens.OrthographicSize;
         }
 
-        bool shouldEaseCamera = hasCameraTarget && !targetUsesDefaultCamera && hasHandoffCamera;
-        if (hasCameraTarget && targetUsesDefaultCamera)
-        {
-            CameraManager.Instance?.TrySetFollowCameraPose(cameraTargetPosition, cameraTargetOrthographicSize);
-        }
+        // レターボックスが引っ込む間に、通常追従カメラを含む復帰先へ補完する。
+        bool shouldEaseCamera = hasCameraTarget && hasHandoffCamera;
 
         yield return AnimatePresentationExit(
             letterBoxExit,
@@ -2120,8 +2117,9 @@ public sealed class StoryEventController : MonoBehaviour
 
         if (hasCameraTarget && targetUsesDefaultCamera)
         {
+            // 優先度を戻す前にCN_FollowCamを補完後の姿勢へ合わせ、見た目の飛びを防ぐ。
             CameraManager.Instance?.SuppressFollowCameraCenterOnActivateForFrames(6);
-            CameraManager.Instance?.TrySetFollowCameraPose(cameraTargetPosition, cameraTargetOrthographicSize);
+            TrySetDefaultFollowCameraPose(cameraTargetPosition, cameraTargetOrthographicSize);
         }
 
         RestoreRoomCameraOnEventExit();
@@ -2225,11 +2223,7 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         targetUsesDefaultCamera = targetRoom.UsesDefaultCameraWhenEntered;
-        if (targetUsesDefaultCamera)
-        {
-            return handoffCamera != null;
-        }
-
+        // 通常カメラの部屋でも追従カメラの姿勢を取得し、イベントカメラの復帰先にする。
         position = roomPosition;
         orthographicSize = roomOrthographicSize;
         return true;
@@ -2264,6 +2258,33 @@ public sealed class StoryEventController : MonoBehaviour
         LensSettings lens = camera.Lens;
         lens.OrthographicSize = Mathf.Max(0.01f, orthographicSize);
         camera.Lens = lens;
+    }
+
+    private static bool TrySetDefaultFollowCameraPose(Vector3 position, float orthographicSize)
+    {
+        // CameraManagerがないPrefab/テスト環境でも、シーン上のCN_FollowCamへ同じ受け渡しを行う。
+        if (CameraManager.Instance != null &&
+            CameraManager.Instance.TrySetFollowCameraPose(position, orthographicSize))
+        {
+            return true;
+        }
+
+        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            CinemachineCamera camera = cameras[i];
+            if (camera == null || camera.gameObject.name != "CN_FollowCam")
+            {
+                continue;
+            }
+
+            ApplyCameraPose(camera, position, orthographicSize);
+            return true;
+        }
+
+        return false;
     }
 
     private static GameObject ResolvePlayerObjectForCameraRestore()

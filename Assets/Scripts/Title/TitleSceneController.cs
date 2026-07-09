@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -5,6 +7,8 @@ using UnityEngine.UI;
 
 public class TitleSceneController : MonoBehaviour
 {
+    private const float ButtonActionDelay = 0.45f;
+
     [Header("シーン設定")]
     [SerializeField] private string gameSceneName = "Fix_Alpha2_Fuyuno";
 
@@ -26,10 +30,16 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] private StageDisplayInfo[] stageDisplayInfos;
 
     private int selectedSaveSlotIndex = SaveManager.DefaultSlotIndex;
+    private Coroutine delayedButtonActionRoutine;
 
     private void OnEnable()
     {
         RefreshContinueButtonState();
+    }
+
+    private void OnDisable()
+    {
+        StopDelayedButtonAction();
     }
 
     private void Start()
@@ -51,10 +61,45 @@ public class TitleSceneController : MonoBehaviour
 
         ResolveButtonReferences();
         BindContinueButton();
+        ConfigureTitleButtonFeedback();
         RefreshContinueButtonState();
     }
 
+    private void RunAfterButtonFeedback(Action action)
+    {
+        if (delayedButtonActionRoutine != null)
+        {
+            return;
+        }
+
+        StopDelayedButtonAction();
+        delayedButtonActionRoutine = StartCoroutine(RunAfterButtonFeedbackRoutine(action));
+    }
+
+    private IEnumerator RunAfterButtonFeedbackRoutine(Action action)
+    {
+        yield return new WaitForSecondsRealtime(ButtonActionDelay);
+        delayedButtonActionRoutine = null;
+        action?.Invoke();
+    }
+
+    private void StopDelayedButtonAction()
+    {
+        if (delayedButtonActionRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(delayedButtonActionRoutine);
+        delayedButtonActionRoutine = null;
+    }
+
     public void OnClickStartButton()
+    {
+        RunAfterButtonFeedback(StartNewGame);
+    }
+
+    private void StartNewGame()
     {
         SaveManager.DeleteSave();
         SaveManager.ClearAllFlags();
@@ -66,15 +111,15 @@ public class TitleSceneController : MonoBehaviour
 
     public void OnClickContinueButton()
     {
-        if (!SaveManager.HasAnySave())
-        {
-            return;
-        }
-
-        ShowSaveListPanel();
+        RunAfterButtonFeedback(ShowSaveListPanel);
     }
 
     public void OnClickQuitButton()
+    {
+        RunAfterButtonFeedback(ShowQuitConfirmPanel);
+    }
+
+    private void ShowQuitConfirmPanel()
     {
         if (quitConfirmPanel == null)
         {
@@ -93,6 +138,11 @@ public class TitleSceneController : MonoBehaviour
 
     public void OnClickNoButton()
     {
+        RunAfterButtonFeedback(HideQuitConfirmPanel);
+    }
+
+    private void HideQuitConfirmPanel()
+    {
         if (quitConfirmPanel != null)
         {
             quitConfirmPanel.SetActive(false);
@@ -105,6 +155,11 @@ public class TitleSceneController : MonoBehaviour
     }
 
     public void OnClickYesButton()
+    {
+        RunAfterButtonFeedback(QuitGame);
+    }
+
+    private void QuitGame()
     {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
@@ -144,6 +199,16 @@ public class TitleSceneController : MonoBehaviour
 
         continueButton.onClick.RemoveListener(OnClickContinueButton);
         continueButton.onClick.AddListener(OnClickContinueButton);
+        OptionsCanvasButtonUtility.ConfigureFigmaButton(continueButton);
+    }
+
+    private static void ConfigureTitleButtonFeedback()
+    {
+        Button[] buttons = FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            OptionsCanvasButtonUtility.ConfigureFigmaButton(buttons[i]);
+        }
     }
 
     private void RefreshContinueButtonState()
@@ -153,7 +218,7 @@ public class TitleSceneController : MonoBehaviour
 
         if (continueButton != null)
         {
-            continueButton.interactable = SaveManager.HasAnySave();
+            continueButton.interactable = true;
         }
     }
 
@@ -190,8 +255,16 @@ public class TitleSceneController : MonoBehaviour
             return;
         }
 
+        saveListPanel.transform.SetAsLastSibling();
         RefreshSaveSlotViews();
         saveListPanel.SetActive(true);
+
+        TitleSaveListPanelDesign2Skin saveListSkin = saveListPanel.GetComponent<TitleSaveListPanelDesign2Skin>();
+        if (saveListSkin != null)
+        {
+            saveListSkin.Initialize(this);
+        }
+
         if (loadConfirmPanel != null)
         {
             loadConfirmPanel.SetActive(false);
@@ -199,6 +272,11 @@ public class TitleSceneController : MonoBehaviour
     }
 
     public void OnClickSaveListBackButton()
+    {
+        RunAfterButtonFeedback(HideSaveListPanel);
+    }
+
+    private void HideSaveListPanel()
     {
         if (saveListPanel != null)
         {
@@ -213,7 +291,7 @@ public class TitleSceneController : MonoBehaviour
 
     public void OnClickSaveSlot(int slotIndex)
     {
-        SelectSaveSlot(slotIndex);
+        RunAfterButtonFeedback(() => SelectSaveSlot(slotIndex));
     }
 
     public string GetStageDisplayName(string sceneName)
@@ -269,6 +347,11 @@ public class TitleSceneController : MonoBehaviour
 
     public void OnClickLoadConfirmYesButton()
     {
+        RunAfterButtonFeedback(LoadSelectedSave);
+    }
+
+    private void LoadSelectedSave()
+    {
         if (!SaveManager.TryLoadGame(selectedSaveSlotIndex, gameSceneName))
         {
             SceneManager.LoadScene(gameSceneName);
@@ -276,6 +359,11 @@ public class TitleSceneController : MonoBehaviour
     }
 
     public void OnClickLoadConfirmNoButton()
+    {
+        RunAfterButtonFeedback(HideLoadConfirmPanel);
+    }
+
+    private void HideLoadConfirmPanel()
     {
         if (loadConfirmPanel != null)
         {

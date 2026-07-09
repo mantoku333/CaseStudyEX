@@ -158,6 +158,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
     {
         if (closeButton != null)
         {
+            OptionsCanvasButtonUtility.ConfigureSingleIllustrationButton(closeButton);
             closeButton.onClick.AddListener(HandleCloseButtonClicked);
             UIButtonSfxPlayer.Register(closeButton);
         }
@@ -231,6 +232,7 @@ public sealed class TutorialOverlayController : MonoBehaviour
         RefreshPromptText();
         RefreshBackgroundImage();
         RefreshTutorialLayout();
+        OptionsCanvasButtonUtility.ConfigureSingleIllustrationButton(closeButton);
         RestartGifAnimation();
         RestartLoopAnimation();
         PauseGame();

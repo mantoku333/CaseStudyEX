@@ -147,6 +147,11 @@ public class AttackHitbox : MonoBehaviour
             return;
         }
 
+        if (collision.GetComponent<Metroidvania.Enemy.ContactDamageOnlyCollider>() != null)
+        {
+            return;
+        }
+
         if (IsHitBlockedByVerticalWall(collision))
         {
             return;

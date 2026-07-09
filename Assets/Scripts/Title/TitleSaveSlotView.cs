@@ -144,6 +144,7 @@ public sealed class TitleSaveSlotView : MonoBehaviour
 
         button.onClick.RemoveListener(OnClick);
         button.onClick.AddListener(OnClick);
+        OptionsCanvasButtonUtility.ConfigurePressOnlyFeedback(button);
         UIButtonSfxPlayer.Register(button);
         UIButtonSfxPlayer.RegisterHover(button);
     }

@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 {
     private const string ShaderName = "CaseStudy/RoomFogOverlay";
+    private const string OverlayObjectName = "[RoomFogOverlay]";
     private const float PlayerRoomRefreshInterval = 0.2f;
     private const float PreviewRevealGraceDuration = 0.25f;
 
@@ -130,19 +131,29 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         }
 
         manager.fogEnabled = enabled;
-        manager.SetOverlayVisible(manager.hasRooms);
+        if (enabled)
+        {
+            manager.RefreshForCurrentScene(true);
+        }
+        else
+        {
+            manager.DestroyOverlayResources();
+            DestroyOrphanOverlayObjects();
+        }
     }
 
     private static bool TryGetInstance(out RoomFogRevealManager manager)
     {
-        if (instance != null)
+        if (instance != null && instance.isActiveAndEnabled)
         {
             manager = instance;
             return true;
         }
 
-        RoomFogRevealManager existing = FindFirstObjectByType<RoomFogRevealManager>(FindObjectsInactive.Include);
-        if (existing != null)
+        instance = null;
+
+        RoomFogRevealManager existing = FindFirstObjectByType<RoomFogRevealManager>(FindObjectsInactive.Exclude);
+        if (existing != null && existing.isActiveAndEnabled)
         {
             instance = existing;
             manager = instance;
@@ -158,7 +169,10 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         if (TryGetInstance(out RoomFogRevealManager manager))
         {
             manager.RefreshForCurrentScene(revealCurrentRoom);
+            return;
         }
+
+        DestroyOrphanOverlayObjects();
     }
 
     private static void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -188,18 +202,24 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     {
         SaveManager.UnregisterModule(this);
         RoomCameraTrigger.ActiveRoomChanged -= HandleActiveRoomChanged;
-        SetOverlayVisible(false);
+        if (instance == this)
+        {
+            instance = null;
+        }
+
+        DestroyOverlayResources();
+        DestroyOrphanOverlayObjects();
     }
 
     private void OnDestroy()
     {
-        if (instance != this)
+        if (instance == this)
         {
-            return;
+            instance = null;
         }
 
-        instance = null;
         DestroyOverlayResources();
+        DestroyOrphanOverlayObjects();
     }
 
     private void Update()
@@ -287,12 +307,19 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
         if (!hasBounds || rooms.Count == 0)
         {
-            SetOverlayVisible(false);
+            DestroyOverlayResources();
             return;
         }
 
         worldBounds.Expand(worldPadding * 2f);
         hasRooms = true;
+
+        if (!fogEnabled)
+        {
+            DestroyOverlayResources();
+            DestroyOrphanOverlayObjects();
+            return;
+        }
 
         EnsureMaskTexture();
         ClearMaskPixels();
@@ -1397,11 +1424,14 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
         if (overlayFilter == null || overlayRenderer == null)
         {
-            overlayObject = new GameObject("[RoomFogOverlay]");
+            overlayObject = new GameObject(OverlayObjectName);
             overlayObject.hideFlags = HideFlags.DontSave;
+            overlayObject.transform.SetParent(transform, false);
             overlayFilter = overlayObject.AddComponent<MeshFilter>();
             overlayRenderer = overlayObject.AddComponent<MeshRenderer>();
+            overlayRenderer.enabled = false;
             overlayRenderer.sharedMaterial = fogMaterial;
+            HideOverlayFromSceneView();
         }
 
         if (overlayMesh == null)
@@ -1469,6 +1499,22 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             overlayRenderer.enabled = fogEnabled && visible;
         }
     }
+
+#if UNITY_EDITOR
+    private void HideOverlayFromSceneView()
+    {
+        if (overlayObject == null)
+        {
+            return;
+        }
+
+        UnityEditor.SceneVisibilityManager.instance.Hide(overlayObject, true);
+    }
+#else
+    private void HideOverlayFromSceneView()
+    {
+    }
+#endif
 
     private void DestroyOverlayResources()
     {
@@ -1726,6 +1772,22 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     {
         string roomName = room != null ? room.gameObject.name : "UnknownRoom";
         return $"{managedScene.name}:{roomName}";
+    }
+
+    private static void DestroyOrphanOverlayObjects()
+    {
+        Transform[] transforms = FindObjectsByType<Transform>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            Transform candidate = transforms[i];
+            if (candidate != null && candidate.name.StartsWith(OverlayObjectName, StringComparison.Ordinal))
+            {
+                Destroy(candidate.gameObject);
+            }
+        }
     }
 
 }
