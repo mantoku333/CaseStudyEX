@@ -206,6 +206,12 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
             abilityController.SetCanParry(true);
             return;
         }
+
+        if (itemData.abilityType == PlayerAbilityType.DiveAttack)
+        {
+            abilityController.SetCanDiveAttack(true);
+            return;
+        }
     }
 
     private bool IsAlreadyPickedUp()
