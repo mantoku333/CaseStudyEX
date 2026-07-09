@@ -142,9 +142,9 @@ MonoBehaviour:
   m_Clips:
   - m_Version: 1
     m_Start: 0.26666666666666666
-    m_ClipIn: 0.15
+    m_ClipIn: 0.2666666666666667
     m_Asset: {fileID: 2869561812980922962}
-    m_Duration: 2.1333333333333333
+    m_Duration: 0.1833333333333333
     m_TimeScale: 1
     m_ParentTrack: {fileID: -5675552448397036753}
     m_EaseInDuration: 0
@@ -410,6 +410,7 @@ MonoBehaviour:
   m_Markers:
     m_Objects:
     - {fileID: 8561065495896680998}
+    - {fileID: 6883547947871992019}
 --- !u!114 &149827093544674222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -581,6 +582,40 @@ MonoBehaviour:
   dialogueStyle: 1
   pauseTimelineUntilComplete: 1
   bubbleActorKey: 
+--- !u!114 &6883547947871992019
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
+  m_Name: Event/Panel Point
+  m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
+  m_Time: 0.16666666666666666
+  markerId: fd40845972ef46b19fe643c3bb200821
+  markerMode: 1
+  panelObject:
+    exposedName: 75b8291ec6091904284b4ee4445c391d
+    defaultValue: {fileID: 0}
+  panelPresenter:
+    exposedName: 9aadde69bc70a5e469624782ff1bdf36
+    defaultValue: {fileID: 0}
+  panelPresenterName: TutorialView
+  panelKind: 0
+  diaryEntryData: {fileID: 0}
+  collectDiaryOnClose: 0
+  title: 
+  body: 
+  closeLabel: 
+  illustration: {fileID: -7675807604529421940, guid: e2e88f21513ca3848aca5e9341dec519, type: 3}
+  animationFrames: []
+  animationFramesPerSecond: 12
+  animationLoopIntervalSeconds: 0.5
+  pauseTimelineUntilClosed: 1
+  autoCloseSecondsWhenNoButton: 3
 --- !u!114 &7398791834983163447
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -652,8 +687,45 @@ MonoBehaviour:
   title: 
   body: 
   closeLabel: 
-  illustration: {fileID: -8081079051363985716, guid: 97d4f1526fe52c24dabfa80cd121c990, type: 3}
-  animationFrames: []
+  illustration: {fileID: -7675807604529421940, guid: e2e88f21513ca3848aca5e9341dec519, type: 3}
+  animationFrames:
+  - {fileID: 547272735996893312, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 4260182939320931829, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: -2647089753416783099, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 1274406469212515908, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 671756515232349730, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: -5795948040014163936, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 6000053423925193067, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 6992524536920468423, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: -3272252235915841903, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: -8679326958289103421, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: -8201520937797541419, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 5086148858703205689, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 259730831694742680, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 1349477142905205166, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 928318841413939274, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 2462690090166872651, guid: 61f3bed139896e94685cebf904193689, type: 3}
+  - {fileID: 6289986078090414645, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -9143897472662961744, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 8273556124235115238, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 8966201429016027812, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -173647719396677390, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 6822019606185636804, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -5330029134186021869, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 7137705611000711182, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -6266289474916058231, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -5669853069227175865, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -4692921963961639819, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 3117164115997238619, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: -9023211208836314688, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 8098241281340042003, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 6127790041191001571, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 8055967947268323736, guid: 7bb815230e32af74eabc1c90b9b9f73a, type: 3}
+  - {fileID: 6010659998615427241, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
+  - {fileID: -4704171619322872294, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
+  - {fileID: 4445258897571193940, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
+  - {fileID: 1228929565730294400, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
+  - {fileID: -2130727791062742564, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
   animationFramesPerSecond: 12
   animationLoopIntervalSeconds: 0.5
   pauseTimelineUntilClosed: 1
