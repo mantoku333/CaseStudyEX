@@ -416,6 +416,7 @@ public sealed class LastBossEffectIntegrationTests
         LastBossEffectController effects = CreateEffectController();
         SetPrivateField(effects, "auraSpriteSheet", CreateTexture("AuraFlip", 10, 12));
         SetPrivateField(effects, "auraFacingPush", 0.35f);
+        SetPrivateField(effects, "auraLeftFacingExtraPush", 0.2f);
 
         effects.SetFacingDirection(-1);
         effects.HandleResetToFull();
@@ -424,7 +425,7 @@ public sealed class LastBossEffectIntegrationTests
         SpriteRenderer auraRenderer = FindRendererNamed("LastBossAuraEffect");
         Assert.That(auraRenderer, Is.Not.Null);
         Assert.That(auraRenderer.flipX, Is.True);
-        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.35f).Within(0.001f));
+        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.55f).Within(0.001f));
 
         effects.SetFacingDirection(1);
         yield return null;
@@ -438,6 +439,7 @@ public sealed class LastBossEffectIntegrationTests
         LastBossEffectController effects = CreateEffectController();
         SetPrivateField(effects, "auraSpriteSheet", CreateTexture("AuraInspectorPush", 10, 12));
         SetPrivateField(effects, "auraFacingPush", 0.35f);
+        SetPrivateField(effects, "auraLeftFacingExtraPush", 0.2f);
 
         effects.SetFacingDirection(-1);
         effects.HandleResetToFull();
@@ -445,12 +447,12 @@ public sealed class LastBossEffectIntegrationTests
 
         SpriteRenderer auraRenderer = FindRendererNamed("LastBossAuraEffect");
         Assert.That(auraRenderer, Is.Not.Null);
-        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.35f).Within(0.001f));
+        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.55f).Within(0.001f));
 
         SetPrivateField(effects, "auraFacingPush", 0.55f);
         InvokePrivate(effects, "OnValidate");
 
-        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.55f).Within(0.001f));
+        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.75f).Within(0.001f));
     }
 
     [UnityTest]
@@ -465,6 +467,7 @@ public sealed class LastBossEffectIntegrationTests
         LastBossEffectController effects = bossObject.AddComponent<LastBossEffectController>();
         SetPrivateField(effects, "auraSpriteSheet", CreateTexture("AuraInitialFacing", 10, 12));
         SetPrivateField(effects, "auraFacingPush", 0.35f);
+        SetPrivateField(effects, "auraLeftFacingExtraPush", 0.2f);
         LastBossController boss = bossObject.AddComponent<LastBossController>();
 
         InvokePrivate(effects, "Awake");
@@ -476,7 +479,7 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(effects.FacingDirection, Is.EqualTo(-1));
         Assert.That(auraRenderer, Is.Not.Null);
         Assert.That(auraRenderer.flipX, Is.True);
-        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.35f).Within(0.001f));
+        Assert.That(auraRenderer.transform.position.x, Is.EqualTo(0.55f).Within(0.001f));
     }
 
     [UnityTest]
@@ -584,7 +587,8 @@ public sealed class LastBossEffectIntegrationTests
         Assert.That(GetPrivateField<LastBossSpriteAnimator>(boss, "spriteView"), Is.Not.Null);
         Assert.That(GetPrivateField<Color>(boss, "telegraphColor"), Is.EqualTo(new Color(1f, 1f, 1f, 0f)));
         Assert.That(GetPrivateField<Color>(boss, "attackColor"), Is.EqualTo(new Color(1f, 1f, 1f, 0f)));
-        Assert.That(GetPrivateField<float>(effects, "auraFacingPush"), Is.EqualTo(0.55f).Within(0.001f));
+        Assert.That(GetPrivateField<float>(effects, "auraFacingPush"), Is.EqualTo(0.3f).Within(0.001f));
+        Assert.That(GetPrivateField<float>(effects, "auraLeftFacingExtraPush"), Is.EqualTo(0.25f).Within(0.001f));
 
         string[] textureFields =
         {

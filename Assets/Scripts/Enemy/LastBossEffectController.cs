@@ -74,6 +74,7 @@ namespace GameName.Enemy
         [SerializeField] private Vector3 deathOffset;
         [SerializeField, Min(0.01f)] private float auraSizeMultiplier = 1.35f;
         [SerializeField, Min(0f)] private float auraFacingPush = 0.35f;
+        [SerializeField, Min(0f)] private float auraLeftFacingExtraPush = 0f;
         [SerializeField, Min(0.01f)] private float shieldSizeMultiplier = 1.35f;
         [SerializeField, Min(0.01f)] private float shieldBreakSizeMultiplier = 1.45f;
         [SerializeField, Min(0.01f)] private float deathSizeMultiplier = 1.8f;
@@ -188,6 +189,8 @@ namespace GameName.Enemy
             bossHideFrameIndex = Mathf.Max(0, bossHideFrameIndex);
             groundBladeUprightFrameIndex = Mathf.Max(0, groundBladeUprightFrameIndex);
             auraSizeMultiplier = Mathf.Max(0.01f, auraSizeMultiplier);
+            auraFacingPush = Mathf.Max(0f, auraFacingPush);
+            auraLeftFacingExtraPush = Mathf.Max(0f, auraLeftFacingExtraPush);
             shieldSizeMultiplier = Mathf.Max(0.01f, shieldSizeMultiplier);
             shieldBreakSizeMultiplier = Mathf.Max(0.01f, shieldBreakSizeMultiplier);
             deathSizeMultiplier = Mathf.Max(0.01f, deathSizeMultiplier);
@@ -1213,7 +1216,13 @@ namespace GameName.Enemy
 
         private Vector3 ResolveAuraOffset()
         {
-            return auraOffset - new Vector3(Mathf.Max(0f, auraFacingPush), 0f, 0f);
+            float horizontalPush = Mathf.Max(0f, auraFacingPush);
+            if (facingDirection < 0)
+            {
+                horizontalPush += Mathf.Max(0f, auraLeftFacingExtraPush);
+            }
+
+            return auraOffset - new Vector3(horizontalPush, 0f, 0f);
         }
 
         private static Vector3 ResolveFacingOffset(Vector3 localOffset, int direction)

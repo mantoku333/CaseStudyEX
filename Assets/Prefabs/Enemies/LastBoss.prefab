@@ -1577,6 +1577,7 @@ MonoBehaviour:
   deathOffset: {x: 0, y: 0, z: 0}
   auraSizeMultiplier: 0.75
   auraFacingPush: 0.3
+  auraLeftFacingExtraPush: 0.25
   shieldSizeMultiplier: 1.3
   shieldBreakSizeMultiplier: 3.2
   deathSizeMultiplier: 1.8
