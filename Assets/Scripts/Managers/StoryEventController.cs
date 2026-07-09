@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Metroidvania.Managers;
 using Metroidvania.UI;
+using Player;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -97,6 +98,8 @@ public sealed class StoryEventController : MonoBehaviour
     [SerializeField] private StoryFlagConditionSet conditions = new StoryFlagConditionSet();
     [SerializeField] private StoryFlagMutationSet onStartMutations = new StoryFlagMutationSet();
     [SerializeField] private StoryFlagMutationSet onCompleteMutations = new StoryFlagMutationSet();
+    [SerializeField] private PlayerAbilityType[] unlockAbilitiesOnStart = Array.Empty<PlayerAbilityType>();
+    [SerializeField] private PlayerAbilityType[] unlockAbilitiesOnComplete = Array.Empty<PlayerAbilityType>();
 
     [Header("Completion")]
     [SerializeField] private StoryPausePolicy pausePolicy = StoryPausePolicy.GameplayOnly;
@@ -1441,6 +1444,7 @@ public sealed class StoryEventController : MonoBehaviour
 
         startMutationsApplied = true;
         onStartMutations?.Apply();
+        UnlockAbilities(unlockAbilitiesOnStart);
     }
 
     private void ApplyCompletionState()
@@ -1526,6 +1530,82 @@ public sealed class StoryEventController : MonoBehaviour
 
         completeMutationsApplied = true;
         onCompleteMutations?.Apply();
+        UnlockAbilities(unlockAbilitiesOnComplete);
+    }
+
+    private static void UnlockAbilities(PlayerAbilityType[] abilityTypes)
+    {
+        if (abilityTypes == null || abilityTypes.Length == 0)
+        {
+            return;
+        }
+
+        PlayerAbilityController abilityController = ResolvePlayerAbilityController();
+        for (int i = 0; i < abilityTypes.Length; i++)
+        {
+            PlayerAbilityType abilityType = abilityTypes[i];
+            if (abilityType == PlayerAbilityType.None)
+            {
+                continue;
+            }
+
+            if (abilityController != null)
+            {
+                abilityController.UnlockAbility(abilityType);
+                continue;
+            }
+
+            SetAbilityFlag(abilityType);
+        }
+    }
+
+    private static PlayerAbilityController ResolvePlayerAbilityController()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
+        {
+            PlayerAbilityController abilityController = playerObject.GetComponent<PlayerAbilityController>();
+            if (abilityController != null)
+            {
+                return abilityController;
+            }
+
+            abilityController = playerObject.GetComponentInChildren<PlayerAbilityController>(true);
+            if (abilityController != null)
+            {
+                return abilityController;
+            }
+
+            abilityController = playerObject.GetComponentInParent<PlayerAbilityController>();
+            if (abilityController != null)
+            {
+                return abilityController;
+            }
+        }
+
+        return FindFirstObjectByType<PlayerAbilityController>(FindObjectsInactive.Include);
+    }
+
+    private static void SetAbilityFlag(PlayerAbilityType abilityType)
+    {
+        switch (abilityType)
+        {
+            case PlayerAbilityType.Dodge:
+                GameProgressFlags.Set(GameProgressKeys.AbilityDodgeUnlocked, true);
+                break;
+            case PlayerAbilityType.Glide:
+                GameProgressFlags.Set(GameProgressKeys.AbilityGlideUnlocked, true);
+                break;
+            case PlayerAbilityType.GunRecoil:
+                GameProgressFlags.Set(GameProgressKeys.AbilityGunRecoilUnlocked, true);
+                break;
+            case PlayerAbilityType.Parry:
+                GameProgressFlags.Set(GameProgressKeys.AbilityParryUnlocked, true);
+                break;
+            case PlayerAbilityType.DiveAttack:
+                GameProgressFlags.Set(GameProgressKeys.AbilityDiveAttackUnlocked, true);
+                break;
+        }
     }
 
     private void OnDirectorStopped(PlayableDirector stoppedDirector)
