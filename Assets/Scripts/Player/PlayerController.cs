@@ -95,6 +95,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsMoving => externalMovementActive || (!externalControlLocked && Mathf.Abs(moveInput) > 0.01f);
     public bool IsGliding =>
         umbrellaController != null &&
+        CanUseGlideAbility() &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open &&
         !isGround;
     public bool IsUmbrellaOpen =>
@@ -118,6 +119,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsDiveAttacking => diveAttackController != null && diveAttackController.IsDiveAttacking;
     public bool IsDiveAttackLanding => diveAttackController != null && diveAttackController.IsDiveAttackLanding;
     public bool IsDiveAttackBouncing => diveAttackController != null && diveAttackController.IsDiveAttackBouncing;
+
+    private bool CanUseGlideAbility()
+    {
+        return playerAbilityController != null && playerAbilityController.GetCanGlide();
+    }
 
     private void Awake()
     {
@@ -537,6 +543,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
 
         bool isGliding =
+            CanUseGlideAbility() &&
             umbrellaController.GetUmbrellaState() ==
             UmbrellaController.UmbrellaState.Open;
 
@@ -807,7 +814,10 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         Vector2 velocity = rigidBody2d.linearVelocity;
 
-        bool isGliding = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open && !isGround;
+        bool isGliding =
+            CanUseGlideAbility() &&
+            umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open &&
+            !isGround;
 
         float horizontalInput = ResolveHorizontalMoveInput();
 
@@ -1023,7 +1033,9 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
-        bool isGliding = (umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open);
+        bool isGliding =
+            CanUseGlideAbility() &&
+            umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open;
 
         if (isGround)
         {

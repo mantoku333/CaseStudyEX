@@ -327,7 +327,7 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
             return pose;
         }
 
-        if (TryResolveDefaultFollowPose(fallbackPosition, out pose))
+        if (TryResolveDefaultFollowPose(room, fallbackPosition, out pose))
         {
             return pose;
         }
@@ -404,10 +404,14 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
             poseAtEntry.Position.x = followPosition.x;
             poseAtEntry.Position.y = followPosition.y;
         }
-        else if (TryResolveDefaultFollowPose(playerPosition, out CameraPose followPose))
+        else if (TryResolveDefaultFollowPose(room, playerPosition, out CameraPose followPose))
         {
             poseAtEntry = followPose;
         }
+
+        bool hasLensOverride = room.HasDefaultFollowCameraLensOverride;
+        poseAtEntry.OrthographicSize = room.ResolveDefaultFollowCameraOrthographicSize(
+            poseAtEntry.OrthographicSize);
 
         if (!allowDefaultAreaPreview ||
             !room.PreviewDefaultCameraByAreaBounds ||
@@ -425,24 +429,35 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
         float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
         float boundsSize = Mathf.Max(bounds.extents.y, bounds.extents.x / aspect);
-        float previewSize = Mathf.Lerp(
-            poseAtEntry.OrthographicSize,
-            boundsSize,
-            room.DefaultCameraPreviewZoomWeight);
-
-        if (room.MaxDefaultCameraPreviewSize > 0f)
+        if (!hasLensOverride)
         {
-            previewSize = Mathf.Min(previewSize, room.MaxDefaultCameraPreviewSize);
+            float previewSize = Mathf.Lerp(
+                poseAtEntry.OrthographicSize,
+                boundsSize,
+                room.DefaultCameraPreviewZoomWeight);
+
+            if (room.MaxDefaultCameraPreviewSize > 0f)
+            {
+                previewSize = Mathf.Min(previewSize, room.MaxDefaultCameraPreviewSize);
+            }
+
+            poseAtEntry.OrthographicSize = Mathf.Max(
+                minimumOrthographicSize,
+                poseAtEntry.OrthographicSize,
+                previewSize);
+        }
+        else
+        {
+            poseAtEntry.OrthographicSize = Mathf.Max(minimumOrthographicSize, poseAtEntry.OrthographicSize);
         }
 
-        poseAtEntry.OrthographicSize = Mathf.Max(
-            minimumOrthographicSize,
-            poseAtEntry.OrthographicSize,
-            previewSize);
         return poseAtEntry;
     }
 
-    private bool TryResolveDefaultFollowPose(Vector3 playerPosition, out CameraPose pose)
+    private bool TryResolveDefaultFollowPose(
+        RoomCameraTrigger room,
+        Vector3 playerPosition,
+        out CameraPose pose)
     {
         if (!TryFindFollowCamera(out CinemachineCamera followCamera))
         {
@@ -453,13 +468,16 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         pose.Position = playerPosition;
         pose.Position.z = followCamera.transform.position.z;
         pose.OrthographicSize = Mathf.Max(minimumOrthographicSize, followCamera.Lens.OrthographicSize);
+        pose.OrthographicSize = room != null
+            ? room.ResolveDefaultFollowCameraOrthographicSize(pose.OrthographicSize)
+            : pose.OrthographicSize;
 
-        if (TryApplyPositionComposerPose(followCamera, playerPosition, ref pose))
+        if (TryApplyPositionComposerPose(room, followCamera, playerPosition, ref pose))
         {
             return true;
         }
 
-        if (TryApplyDirectFollowPose(followCamera, playerPosition, ref pose))
+        if (TryApplyDirectFollowPose(room, followCamera, playerPosition, ref pose))
         {
             return true;
         }
@@ -494,6 +512,7 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
     }
 
     private static bool TryApplyPositionComposerPose(
+        RoomCameraTrigger room,
         CinemachineCamera followCamera,
         Vector3 playerPosition,
         ref CameraPose pose)
@@ -505,14 +524,26 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         }
 
         float aspect = Camera.main != null ? Camera.main.aspect : 16f / 9f;
-        Vector3 trackedPosition = playerPosition + composer.TargetOffset;
+        Vector3 targetOffset = composer.TargetOffset;
+        if (room != null)
+        {
+            targetOffset.y = room.ResolveDefaultFollowCameraTargetOffsetY(targetOffset.y);
+        }
+
+        Vector3 trackedPosition = playerPosition + targetOffset;
         Vector2 screenPosition = composer.Composition.ScreenPosition;
+        if (room != null)
+        {
+            screenPosition.y = room.ResolveDefaultFollowCameraScreenPositionY(screenPosition.y);
+        }
+
         pose.Position.x = trackedPosition.x - screenPosition.x * pose.OrthographicSize * aspect * 2f;
         pose.Position.y = trackedPosition.y - screenPosition.y * pose.OrthographicSize * 2f;
         return true;
     }
 
     private static bool TryApplyDirectFollowPose(
+        RoomCameraTrigger room,
         CinemachineCamera followCamera,
         Vector3 playerPosition,
         ref CameraPose pose)
@@ -524,6 +555,11 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         }
 
         Vector3 followOffset = directFollow.FollowOffset;
+        if (room != null)
+        {
+            followOffset.y = room.ResolveDefaultFollowCameraTargetOffsetY(followOffset.y);
+        }
+
         pose.Position.x = playerPosition.x + followOffset.x;
         pose.Position.y = playerPosition.y + followOffset.y;
         return true;

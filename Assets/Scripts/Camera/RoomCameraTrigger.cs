@@ -24,6 +24,25 @@ public class RoomCameraTrigger : MonoBehaviour
     [SerializeField]
     private bool _useDefaultCameraWhenEntered;
 
+    [Header("Default Follow Camera Overrides")]
+    [SerializeField]
+    private bool _overrideDefaultFollowCameraOrthographicSize;
+
+    [SerializeField, Min(0f)]
+    private float _defaultFollowCameraOrthographicSize;
+
+    [SerializeField]
+    private bool _overrideDefaultFollowCameraTargetOffsetY;
+
+    [SerializeField]
+    private float _defaultFollowCameraTargetOffsetY;
+
+    [SerializeField]
+    private bool _overrideDefaultFollowCameraScreenPositionY;
+
+    [SerializeField, Range(-1f, 1f)]
+    private float _defaultFollowCameraScreenPositionY;
+
     [Header("Horizontal Follow Camera")]
     [SerializeField]
     private bool _useHorizontalFollowCameraWhenEntered;
@@ -84,10 +103,38 @@ public class RoomCameraTrigger : MonoBehaviour
     public bool HasAssignedRoomCamera => HasRoomCamera;
     public bool UsesHorizontalFollowCameraWhenEntered => IsHorizontalFollowTrigger;
     public bool IsBossRoom => HasBossAreaController();
+    public bool HasDefaultFollowCameraLensOverride =>
+        _overrideDefaultFollowCameraOrthographicSize && _defaultFollowCameraOrthographicSize > 0f;
+    public float DefaultFollowCameraOrthographicSize => _defaultFollowCameraOrthographicSize;
+    public bool HasDefaultFollowCameraTargetOffsetYOverride => _overrideDefaultFollowCameraTargetOffsetY;
+    public float DefaultFollowCameraTargetOffsetY => _defaultFollowCameraTargetOffsetY;
+    public bool HasDefaultFollowCameraScreenPositionYOverride => _overrideDefaultFollowCameraScreenPositionY;
+    public float DefaultFollowCameraScreenPositionY => _defaultFollowCameraScreenPositionY;
     public bool PreviewDefaultCameraByAreaBounds => _previewDefaultCameraByAreaBounds;
     public float DefaultCameraPreviewWeight => _defaultCameraPreviewWeight;
     public float DefaultCameraPreviewZoomWeight => _defaultCameraPreviewZoomWeight;
     public float MaxDefaultCameraPreviewSize => _maxDefaultCameraPreviewSize;
+
+    public float ResolveDefaultFollowCameraOrthographicSize(float fallbackOrthographicSize)
+    {
+        return HasDefaultFollowCameraLensOverride
+            ? _defaultFollowCameraOrthographicSize
+            : fallbackOrthographicSize;
+    }
+
+    public float ResolveDefaultFollowCameraTargetOffsetY(float fallbackTargetOffsetY)
+    {
+        return HasDefaultFollowCameraTargetOffsetYOverride
+            ? _defaultFollowCameraTargetOffsetY
+            : fallbackTargetOffsetY;
+    }
+
+    public float ResolveDefaultFollowCameraScreenPositionY(float fallbackScreenPositionY)
+    {
+        return HasDefaultFollowCameraScreenPositionYOverride
+            ? _defaultFollowCameraScreenPositionY
+            : fallbackScreenPositionY;
+    }
 
     public bool TryGetCameraPose(out Vector3 position, out float orthographicSize)
     {
@@ -107,6 +154,7 @@ public class RoomCameraTrigger : MonoBehaviour
 
         if (IsDefaultTrigger && TryGetDefaultFollowCameraPose(out position, out orthographicSize))
         {
+            orthographicSize = ResolveDefaultFollowCameraOrthographicSize(orthographicSize);
             return true;
         }
 
@@ -539,6 +587,7 @@ public class RoomCameraTrigger : MonoBehaviour
         if (CameraManager.Instance != null &&
             CameraManager.Instance.SwitchToFollowCamera())
         {
+            defaultTrigger?.ApplyDefaultFollowCameraOverrides();
             return;
         }
 
@@ -577,12 +626,47 @@ public class RoomCameraTrigger : MonoBehaviour
 
         followCamera.Priority.Value = 10;
         followCamera.Priority.Enabled = true;
+        defaultTrigger?.ApplyDefaultFollowCameraOverrides(followCamera);
 
         if (directFollowCamera != null)
         {
             directFollowCamera.Priority.Value = 0;
             directFollowCamera.Priority.Enabled = true;
         }
+    }
+
+    private void ApplyDefaultFollowCameraOverrides(CinemachineCamera followCamera = null)
+    {
+        if (CameraManager.Instance != null &&
+            CameraManager.Instance.TryApplyFollowCameraAreaSettings(
+                HasDefaultFollowCameraLensOverride,
+                _defaultFollowCameraOrthographicSize,
+                HasDefaultFollowCameraTargetOffsetYOverride,
+                _defaultFollowCameraTargetOffsetY,
+                HasDefaultFollowCameraScreenPositionYOverride,
+                _defaultFollowCameraScreenPositionY))
+        {
+            return;
+        }
+
+        if (!HasDefaultFollowCameraLensOverride)
+        {
+            return;
+        }
+
+        if (followCamera == null)
+        {
+            TryFindDefaultFollowCamera(out followCamera);
+        }
+
+        if (followCamera == null)
+        {
+            return;
+        }
+
+        LensSettings lens = followCamera.Lens;
+        lens.OrthographicSize = _defaultFollowCameraOrthographicSize;
+        followCamera.Lens = lens;
     }
 
     private static void ValidateActiveRoomAgainstPlayer()
@@ -825,18 +909,8 @@ public class RoomCameraTrigger : MonoBehaviour
             return true;
         }
 
-        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
-
-        for (int i = 0; i < cameras.Length; i++)
+        if (TryFindDefaultFollowCamera(out CinemachineCamera camera))
         {
-            CinemachineCamera camera = cameras[i];
-            if (camera == null || camera.gameObject.name != "CN_FollowCam")
-            {
-                continue;
-            }
-
             position = camera.transform.position;
             orthographicSize = camera.Lens.OrthographicSize;
             return true;
@@ -844,6 +918,26 @@ public class RoomCameraTrigger : MonoBehaviour
 
         position = Vector3.zero;
         orthographicSize = 0f;
+        return false;
+    }
+
+    private static bool TryFindDefaultFollowCamera(out CinemachineCamera followCamera)
+    {
+        CinemachineCamera[] cameras = FindObjectsByType<CinemachineCamera>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            CinemachineCamera camera = cameras[i];
+            if (camera != null && camera.gameObject.name == "CN_FollowCam")
+            {
+                followCamera = camera;
+                return true;
+            }
+        }
+
+        followCamera = null;
         return false;
     }
 
