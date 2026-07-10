@@ -7,6 +7,7 @@ public enum StoryTimelineAudioKind
 {
     Bgm = 0,
     Se = 1,
+    Ambience = 2,
 }
 
 public enum StoryTimelineAudioAction
