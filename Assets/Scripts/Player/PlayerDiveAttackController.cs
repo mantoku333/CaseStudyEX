@@ -151,6 +151,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
 
     private readonly Collider2D[] overlapResults = new Collider2D[32];
     private readonly HashSet<EnemyController> hitEnemies = new HashSet<EnemyController>();
+    private readonly HashSet<LastBossController> hitLastBosses = new HashSet<LastBossController>();
     private readonly HashSet<AttackDestructible> hitDestructibles = new HashSet<AttackDestructible>();
     private readonly List<Sprite> generatedHitEffectSprites = new List<Sprite>();
 
@@ -269,6 +270,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         diveAttackLandingVisualEndTime = 0f;
         diveAttackBounceVisualEndTime = 0f;
         hitEnemies.Clear();
+        hitLastBosses.Clear();
         hitDestructibles.Clear();
 
         PlaySE(落下開始SE, 落下開始SE音量);
@@ -506,6 +508,32 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
                 }
 
                 HitStopController.RequestPlayerToEnemy();
+                continue;
+            }
+
+            LastBossController lastBoss = hitCollider.GetComponentInParent<LastBossController>();
+            if (lastBoss != null)
+            {
+                foundAnyTarget = true;
+                if (!hitLastBosses.Add(lastBoss))
+                {
+                    continue;
+                }
+
+                appliedNewHit = true;
+                if (!appliedNewEnemyHit)
+                {
+                    appliedNewEnemyHit = true;
+                    enemyHitEffectPosition = ResolveEnemyHitEffectPosition(center, hitCollider);
+                    enemyHitCollider = hitCollider;
+                }
+
+                if (lastBoss.TakeDirectPlayerDamage(ダメージ量))
+                {
+                    killedAnyEnemy = true;
+                    equipmentController?.NotifyEnemyKilledByPlayerAttack();
+                }
+
                 continue;
             }
 

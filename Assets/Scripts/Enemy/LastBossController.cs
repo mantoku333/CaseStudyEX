@@ -436,24 +436,14 @@ namespace GameName.Enemy
                 return;
             }
 
-            bool wasAlive = currentHealth > 0;
-
-            PlayHitFlash();
-            currentHealth = Mathf.Max(0, currentHealth - damage);
-            NotifyHealthChanged();
-            HitStopController.RequestPlayerToEnemy();
-            TryEnterEnraged();
-
-            if (currentHealth <= 0)
+            if (ApplyDamage(damage))
             {
-                if (wasAlive && attacker != null)
+                if (attacker != null)
                 {
                     PlayerEquipmentController equipmentController =
                         attacker.GetComponentInParent<PlayerEquipmentController>();
                     equipmentController?.NotifyEnemyKilledByPlayerAttack();
                 }
-
-                Die();
                 return;
             }
 
@@ -461,6 +451,47 @@ namespace GameName.Enemy
             {
                 AddDownCount(1);
             }
+        }
+
+        /// <summary>
+        /// Applies damage from player attacks that do not use an AttackHitbox, such as the dive attack.
+        /// Returns true when this hit kills the boss.
+        /// </summary>
+        public bool TakeDirectPlayerDamage(int damage)
+        {
+            if (damage <= 0 || state == BossState.Dead || currentHealth <= 0)
+            {
+                return false;
+            }
+
+            if (IsShieldDamageReductionActive())
+            {
+                damage = Mathf.CeilToInt(damage * Mathf.Clamp(shieldDamageMultiplier, 0.01f, 1f));
+            }
+
+            return ApplyDamage(damage);
+        }
+
+        private bool ApplyDamage(int damage)
+        {
+            if (damage <= 0 || state == BossState.Dead || currentHealth <= 0)
+            {
+                return false;
+            }
+
+            PlayHitFlash();
+            currentHealth = Mathf.Max(0, currentHealth - damage);
+            NotifyHealthChanged();
+            HitStopController.RequestPlayerToEnemy();
+            TryEnterEnraged();
+
+            if (currentHealth > 0)
+            {
+                return false;
+            }
+
+            Die();
+            return true;
         }
 
         private void UpdateInitialDelay()
