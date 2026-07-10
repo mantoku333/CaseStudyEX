@@ -12,8 +12,18 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private const string ShaderName = "CaseStudy/RoomFogOverlay";
     private const string OverlayObjectName = "FOG";
     private const float RoomRefreshInterval = 0.15f;
+    private const float RevealFrontStart = -0.12f;
+    private const float RevealFrontEnd = 1.12f;
+    private const float RevealFieldMin = -0.25f;
+    private const float RevealFieldMax = 1.25f;
+    private const int RevealFieldMaxByte = 254;
 
     private static RoomFogRevealManager instance;
+    private static readonly int RevealFrontPropertyId = Shader.PropertyToID("_RevealFront");
+    private static readonly int ConcealFrontPropertyId = Shader.PropertyToID("_ConcealFront");
+    private static readonly int PreviousActivePropertyId = Shader.PropertyToID("_PreviousActive");
+    private static readonly int PreviousPortalStrengthPropertyId =
+        Shader.PropertyToID("_PreviousPortalStrength");
     private static readonly ProfilerMarker RoomMaskUpdateMarker =
         new ProfilerMarker("CaseStudy.RoomFog.UpdateRoomMask");
     private static readonly ProfilerMarker EntranceMaskUpdateMarker =
@@ -28,7 +38,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private static readonly int[] OverlayTriangles = { 0, 2, 1, 0, 3, 2 };
 
     [SerializeField] private bool fogEnabled = true;
-    [SerializeField, Min(64)] private int textureResolution = 1024;
+    [SerializeField, Min(64)] private int textureResolution = 512;
     [SerializeField, Min(0f)] private float worldPadding = 6f;
     [SerializeField] private Shader fogShader;
 
@@ -86,6 +96,10 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private bool refreshRequested = true;
     private bool roomMaskDirty = true;
     private bool entranceMaskDirty = true;
+    private float appliedRevealFront = float.NaN;
+    private float appliedConcealFront = float.NaN;
+    private float appliedPreviousActive = float.NaN;
+    private float appliedPreviousPortalStrength = float.NaN;
     private Transform cachedPlayerTransform;
 
 #if UNITY_EDITOR
@@ -399,17 +413,9 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             RevealCurrentRoomFromRuntimeState();
         }
 
-        // Capture these before resolving progress. ResolveConcealProgress clears
-        // concealingRoom on its final frame, which still needs one last upload.
-        bool revealWasAnimating = revealingRoom != null && !revealComplete;
-        bool concealWasAnimating = concealingRoom != null && !concealComplete;
         float revealProgress = ResolveRevealProgress();
         float concealProgress = ResolveConcealProgress();
-        FlushDirtyMasks(
-            revealProgress,
-            concealProgress,
-            revealWasAnimating || concealWasAnimating,
-            concealWasAnimating);
+        FlushDirtyMasks(revealProgress, concealProgress);
     }
 
     public void Capture(SaveGameData saveData)
@@ -458,7 +464,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         EnsureTextures();
         EnsureOverlay();
         ApplyMaterialProperties();
-        FlushDirtyMasks(ResolveRevealProgress(), ResolveConcealProgress(), false, false);
+        FlushDirtyMasks(ResolveRevealProgress(), ResolveConcealProgress());
         SetOverlayVisible(true);
     }
 
@@ -723,47 +729,45 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         return bestRoom;
     }
 
-    private void FlushDirtyMasks(
-        float revealProgress,
-        float concealProgress,
-        bool roomAnimationChanged,
-        bool entranceAnimationChanged)
+    private void FlushDirtyMasks(float revealProgress, float concealProgress)
     {
-        bool updateRoomMask = roomMaskDirty || roomAnimationChanged;
-        bool updateEntranceMask = entranceMaskDirty || entranceAnimationChanged;
-        if (!updateRoomMask && !updateEntranceMask)
+        ApplyTransitionProgress(revealProgress, concealProgress);
+
+        if (!roomMaskDirty && !entranceMaskDirty)
         {
             return;
         }
 
-        if (updateRoomMask && maskTexture != null && maskPixels != null)
+        if (roomMaskDirty && maskTexture != null && maskPixels != null)
         {
             using (RoomMaskUpdateMarker.Auto())
             {
-                ClearPixels(maskPixels);
+                // R stores the current-room reveal threshold, G the previous-room
+                // conceal threshold. 255 is reserved for pixels outside a room.
+                ClearTransitionPixels(maskPixels);
 
                 if (fogEnabled)
                 {
                     if (concealingRoom != null && !concealComplete)
                     {
-                        PaintRoom(
+                        PaintRoomField(
                             concealingRoom,
                             concealingBounds,
                             concealingPaintBounds,
                             concealCenter,
                             concealRadius,
-                            Mathf.Lerp(1.12f, -0.12f, concealProgress));
+                            false);
                     }
 
                     if (revealingRoom != null)
                     {
-                        PaintRoom(
+                        PaintRoomField(
                             revealingRoom,
                             revealingBounds,
                             revealingPaintBounds,
                             revealCenter,
                             revealRadius,
-                            Mathf.Lerp(-0.12f, 1.12f, revealProgress));
+                            true);
                     }
                 }
 
@@ -774,18 +778,20 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             roomMaskDirty = false;
         }
 
-        if (updateEntranceMask && entranceMaskTexture != null && entranceMaskPixels != null)
+        if (entranceMaskDirty && entranceMaskTexture != null && entranceMaskPixels != null)
         {
             using (EntranceMaskUpdateMarker.Auto())
             {
+                // Portal strengths use R=current and G=previous so their fade can
+                // be animated in the shader without uploading another texture.
                 ClearPixels(entranceMaskPixels);
 
                 if (fogEnabled)
                 {
-                    PaintPortalDents(currentRoom, 1f);
+                    PaintPortalDents(currentRoom, 1f, true);
                     if (concealingRoom != null && !concealComplete)
                     {
-                        PaintPortalDents(concealingRoom, 1f - concealProgress);
+                        PaintPortalDents(concealingRoom, 1f, false);
                     }
                 }
 
@@ -797,13 +803,49 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         }
     }
 
-    private void PaintRoom(
+    private void ApplyTransitionProgress(float revealProgress, float concealProgress)
+    {
+        if (fogMaterial == null)
+        {
+            return;
+        }
+
+        float revealFront = Mathf.Lerp(RevealFrontStart, RevealFrontEnd, revealProgress);
+        float concealFront = Mathf.Lerp(RevealFrontEnd, RevealFrontStart, concealProgress);
+        float previousActive = concealingRoom != null && !concealComplete ? 1f : 0f;
+        float previousPortalStrength = previousActive * (1f - concealProgress);
+        if (!Mathf.Approximately(revealFront, appliedRevealFront))
+        {
+            fogMaterial.SetFloat(RevealFrontPropertyId, revealFront);
+            appliedRevealFront = revealFront;
+        }
+
+        if (!Mathf.Approximately(concealFront, appliedConcealFront))
+        {
+            fogMaterial.SetFloat(ConcealFrontPropertyId, concealFront);
+            appliedConcealFront = concealFront;
+        }
+
+        if (!Mathf.Approximately(previousActive, appliedPreviousActive))
+        {
+            fogMaterial.SetFloat(PreviousActivePropertyId, previousActive);
+            appliedPreviousActive = previousActive;
+        }
+
+        if (!Mathf.Approximately(previousPortalStrength, appliedPreviousPortalStrength))
+        {
+            fogMaterial.SetFloat(PreviousPortalStrengthPropertyId, previousPortalStrength);
+            appliedPreviousPortalStrength = previousPortalStrength;
+        }
+    }
+
+    private void PaintRoomField(
         RoomCameraTrigger room,
         Bounds roomBounds,
         Bounds paintBounds,
         Vector2 center,
         float radius,
-        float revealFront)
+        bool writeRevealChannel)
     {
         int width = maskTexture.width;
         int height = maskTexture.height;
@@ -829,15 +871,27 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 float normalizedDistance = distance / Mathf.Max(0.001f, radius);
                 float noise = ValueNoise(new Vector2(worldX, worldY) * 0.45f);
                 float noisyDistance = normalizedDistance + (noise - 0.5f) * revealNoiseStrength;
-                if (noisyDistance <= revealFront)
+                byte threshold = EncodeRevealThreshold(noisyDistance);
+                int pixelIndex = row + x;
+                Color32 pixel = maskPixels[pixelIndex];
+                if (writeRevealChannel)
                 {
-                    maskPixels[row + x] = RevealedPixel(1f);
+                    pixel.r = threshold;
                 }
+                else
+                {
+                    pixel.g = threshold;
+                }
+
+                maskPixels[pixelIndex] = pixel;
             }
         }
     }
 
-    private void PaintPortalDents(RoomCameraTrigger sourceRoom, float strengthMultiplier)
+    private void PaintPortalDents(
+        RoomCameraTrigger sourceRoom,
+        float strengthMultiplier,
+        bool writeCurrentChannel)
     {
         if (!revealPortalEntrances ||
             sourceRoom == null ||
@@ -865,7 +919,12 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 continue;
             }
 
-            PaintPortalDent(dent, sourceRoom, destinationRoom, strengthMultiplier);
+            PaintPortalDent(
+                dent,
+                sourceRoom,
+                destinationRoom,
+                strengthMultiplier,
+                writeCurrentChannel);
         }
     }
 
@@ -873,7 +932,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         PortalDent dent,
         RoomCameraTrigger sourceRoom,
         RoomCameraTrigger destinationRoom,
-        float strengthMultiplier)
+        float strengthMultiplier,
+        bool writeCurrentChannel)
     {
         if (dent.PortalObject == null ||
             !TryGetObjectBounds(dent.Colliders2D, dent.Colliders, out Bounds portalBounds) ||
@@ -937,8 +997,22 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 }
 
                 int pixelIndex = row + x;
-                float existing = entranceMaskPixels[pixelIndex].r / 255f;
-                entranceMaskPixels[pixelIndex] = RevealedPixel(Mathf.Max(existing, strength));
+                byte value = (byte)Mathf.Clamp(Mathf.RoundToInt(strength * 255f), 0, 255);
+                Color32 pixel = entranceMaskPixels[pixelIndex];
+                if (writeCurrentChannel)
+                {
+                    if (value > pixel.r)
+                    {
+                        pixel.r = value;
+                    }
+                }
+                else if (value > pixel.g)
+                {
+                    pixel.g = value;
+                }
+
+                pixel.a = 255;
+                entranceMaskPixels[pixelIndex] = pixel;
             }
         }
     }
@@ -1025,10 +1099,12 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 name = "RoomFogOverlayRuntimeMaterial",
                 hideFlags = HideFlags.DontSave
             };
+            ResetAppliedTransitionProperties();
         }
         else if (fogMaterial.shader != fogShader)
         {
             fogMaterial.shader = fogShader;
+            ResetAppliedTransitionProperties();
         }
 
         if (overlayObject == null)
@@ -1130,6 +1206,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
         DestroyUnityObject(fogMaterial);
         fogMaterial = null;
+        ResetAppliedTransitionProperties();
 
         DestroyTexture(maskTexture);
         maskTexture = null;
@@ -1139,6 +1216,14 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         entranceMaskTexture = null;
         entranceMaskPixels = null;
         MarkAllMasksDirty();
+    }
+
+    private void ResetAppliedTransitionProperties()
+    {
+        appliedRevealFront = float.NaN;
+        appliedConcealFront = float.NaN;
+        appliedPreviousActive = float.NaN;
+        appliedPreviousPortalStrength = float.NaN;
     }
 
     private void ResolveDefaultShader()
@@ -1182,10 +1267,22 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         }
     }
 
-    private static Color32 RevealedPixel(float strength)
+    private static void ClearTransitionPixels(Color32[] pixels)
     {
-        byte value = (byte)Mathf.Clamp(Mathf.RoundToInt(strength * 255f), 0, 255);
-        return new Color32(value, value, value, 255);
+        Color32 outsideRoom = new Color32(255, 255, 0, 255);
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            pixels[i] = outsideRoom;
+        }
+    }
+
+    private static byte EncodeRevealThreshold(float noisyDistance)
+    {
+        float normalized = Mathf.InverseLerp(RevealFieldMin, RevealFieldMax, noisyDistance);
+        return (byte)Mathf.Clamp(
+            Mathf.RoundToInt(normalized * RevealFieldMaxByte),
+            0,
+            RevealFieldMaxByte);
     }
 
     private float ValueNoise(Vector2 position)

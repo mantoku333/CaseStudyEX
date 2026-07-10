@@ -11,6 +11,8 @@ Shader "CaseStudy/RoomFogOverlay"
         _NoiseScale ("Noise Scale", Float) = 0.32
         _RevealFront ("Reveal Front", Range(-0.12, 1.12)) = -0.12
         _ConcealFront ("Conceal Front", Range(-0.12, 1.12)) = -0.12
+        _PreviousActive ("Previous Room Active", Range(0, 1)) = 0
+        _PreviousPortalStrength ("Previous Portal Strength", Range(0, 1)) = 0
         _WorldMin ("World Min", Vector) = (0, 0, 0, 0)
         _WorldSize ("World Size", Vector) = (1, 1, 0, 0)
     }
@@ -45,6 +47,8 @@ Shader "CaseStudy/RoomFogOverlay"
             float _NoiseScale;
             float _RevealFront;
             float _ConcealFront;
+            float _PreviousActive;
+            float _PreviousPortalStrength;
             float4 _WorldMin;
             float4 _WorldSize;
 
@@ -96,15 +100,20 @@ Shader "CaseStudy/RoomFogOverlay"
                 float2 encodedDistances = tex2D(_MaskTex, maskUv).rg;
                 float2 validDistances = 1.0 - step(254.5 / 255.0, encodedDistances);
                 float2 roomDistances = lerp(
-                    float2(-0.12, -0.12),
-                    float2(1.12, 1.12),
+                    float2(-0.25, -0.25),
+                    float2(1.25, 1.25),
                     saturate(encodedDistances * (255.0 / 254.0)));
                 float2 roomRevealed = validDistances * step(
                     roomDistances,
                     float2(_RevealFront, _ConcealFront));
+                roomRevealed.g *= _PreviousActive;
+                float2 entranceMasks = tex2D(_EntranceMaskTex, maskUv).rg;
+                float entranceRevealed = max(
+                    entranceMasks.r,
+                    entranceMasks.g * _PreviousPortalStrength);
                 float revealed = max(
                     max(roomRevealed.r, roomRevealed.g),
-                    tex2D(_EntranceMaskTex, maskUv).r);
+                    entranceRevealed);
                 float hidden = 1.0 - smoothstep(0.01, max(_EdgeSoftness, 0.011), revealed);
 
                 if (hidden <= 0.0)
