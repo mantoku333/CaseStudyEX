@@ -360,7 +360,7 @@ public sealed class TitleSaveListPanelDesign2Skin : MonoBehaviour
         string stageName = controller != null ? controller.GetStageDisplayName(slotMeta.SceneName, slotMeta.LocationId) : slotMeta.SceneName;
         string savedAt = FormatSavedAt(slotMeta.SavedAtUtc);
         SetPreviewText(stageName, $"保存日時  {savedAt}\nロードするデータを選択してください");
-        SetPreviewThumbnail(controller != null ? controller.GetStageThumbnail(slotMeta.SceneName, slotMeta.LocationId) : null);
+        SetPreviewThumbnail(controller != null ? controller.GetSaveSlotThumbnail(slotIndex, slotMeta.SceneName, slotMeta.LocationId) : null);
     }
 
     private void SetPreviewText(string title, string body)

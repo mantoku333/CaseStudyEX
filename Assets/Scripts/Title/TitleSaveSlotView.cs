@@ -82,7 +82,7 @@ public sealed class TitleSaveSlotView : MonoBehaviour
 
         SetText(savedAtText, FormatSavedAt(slotMeta.SavedAtUtc));
         SetText(stageNameText, titleController != null ? titleController.GetStageDisplayName(slotMeta.SceneName, slotMeta.LocationId) : slotMeta.SceneName);
-        SetThumbnail(titleController != null ? titleController.GetStageThumbnail(slotMeta.SceneName, slotMeta.LocationId) : null);
+        SetThumbnail(titleController != null ? titleController.GetSaveSlotThumbnail(slotIndex, slotMeta.SceneName, slotMeta.LocationId) : null);
     }
 
     private void ResolveReferences()
