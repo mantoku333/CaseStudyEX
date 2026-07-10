@@ -115,6 +115,12 @@ public sealed class StoryEventController : MonoBehaviour
     [SerializeField] private bool restorePlayerTransformOnExit;
     [SerializeField] private bool restoreSpriteFacingOnExit = true;
     [SerializeField] private bool restoreRigidbodyVelocityOnExit = false;
+    [Tooltip("Restore the scripted movement state that existed before this event. Enable for events that issue a temporary player walk command.")]
+    [SerializeField] private bool restoreExternalMovementStateOnExit;
+    [Tooltip("After this event's dialogue is complete, explicitly release any DialogueGamePauser state before restoring player control. Enable only for events that need this recovery.")]
+    [SerializeField] private bool forceResumeDialoguePauseOnExit;
+    [Tooltip("Force normal player input after this event's cinematic cleanup. Enable only for a handoff that must never retain an external control lock.")]
+    [SerializeField] private bool ensurePlayerControlOnExit;
 
     [Header("Letter Box")]
     [SerializeField] private bool showLetterBoxDuringEvent = true;
@@ -147,6 +153,10 @@ public sealed class StoryEventController : MonoBehaviour
     private Coroutine dialogueRoutine;
     private DialogueRunner activeDialogueRunner;
     private bool waitingDialogueCompletion;
+    // Do not treat Yarn as stopped during the same frame StartDialogue was called.
+    // Both the timeline and dialogue coroutines inspect this state, so frame-based
+    // grace prevents one caller from consuming another caller's startup grace.
+    private int dialogueStartedFrame = -1;
     private Coroutine panelRoutine;
     private EventPanelPresenter activePanelPresenter;
     private PlayableDirector panelPausedDirector;
@@ -249,6 +259,7 @@ public sealed class StoryEventController : MonoBehaviour
 
     public void StopEvent()
     {
+        bool hadCinematicState = cinematicSnapshot != null;
         StopActiveDialogue();
         StopPanelFromTimeline(resumeDirector: false);
 
@@ -282,7 +293,12 @@ public sealed class StoryEventController : MonoBehaviour
         RestoreLetterBoxViewVisibility();
         RestoreEventCameraPriority();
         RestoreRoomCameraOnEventExit();
+        ForceResumeDialoguePauseForEventExit();
         RestoreCinematicState();
+        if (hadCinematicState)
+        {
+            EnsurePlayerControlOnEventExit();
+        }
         directorStopped = false;
         startMutationsApplied = false;
         firedDialogueClipKeys.Clear();
@@ -607,7 +623,7 @@ public sealed class StoryEventController : MonoBehaviour
             resolvedDirector,
             lastPointProcessTime,
             ResolveFinalTimelinePointProcessTime(resolvedDirector, lastPointProcessTime));
-        while (waitingDialogueCompletion)
+        while (IsDialogueCompletionPending())
         {
             yield return null;
         }
@@ -617,7 +633,18 @@ public sealed class StoryEventController : MonoBehaviour
         StoryPauseRuntime.ClearOverride();
         yield return RestorePresentationOnEventExitRoutine();
         RestoreGameplayUiVisibility();
+        ForceResumeDialoguePauseForEventExit();
         RestoreCinematicState();
+
+        // Dialogue completion callbacks can run in LateUpdate after the snapshot
+        // has been restored. Reassert this event's requested handoff on the next
+        // frame so such a callback cannot leave the player externally locked.
+        if (ensurePlayerControlOnExit)
+        {
+            EnsurePlayerControlOnEventExit();
+            yield return null;
+            EnsurePlayerControlOnEventExit();
+        }
 
         playRoutine = null;
         PlayNextEventOnCompleteIfNeeded();
@@ -1228,6 +1255,7 @@ public sealed class StoryEventController : MonoBehaviour
 
         activeDialogueRunner = runner;
         waitingDialogueCompletion = true;
+        dialogueStartedFrame = Time.frameCount;
         activeDialogueRunner.onDialogueComplete?.AddListener(OnDialogueComplete);
 
         DialogueStyle style = useControllerDefaultStyle ? defaultDialogueStyle : dialogueStyle;
@@ -1241,7 +1269,7 @@ public sealed class StoryEventController : MonoBehaviour
             speakerTargetResolver,
             speakerTargetResolver != null);
 
-        while (waitingDialogueCompletion)
+        while (IsDialogueCompletionPending())
         {
             yield return null;
         }
@@ -1621,6 +1649,42 @@ public sealed class StoryEventController : MonoBehaviour
         waitingDialogueCompletion = false;
     }
 
+    private bool IsDialogueCompletionPending()
+    {
+        DialogueRunner runner = activeDialogueRunner;
+        return UpdateDialogueCompletionPending(
+            runner != null,
+            runner != null && runner.IsDialogueRunning,
+            Time.frameCount == dialogueStartedFrame);
+    }
+
+    private bool UpdateDialogueCompletionPending(
+        bool hasRunner,
+        bool runnerIsDialogueRunning,
+        bool isDialogueStartFrame)
+    {
+        if (!waitingDialogueCompletion)
+        {
+            dialogueStartedFrame = -1;
+            return false;
+        }
+
+        if (hasRunner && runnerIsDialogueRunning)
+        {
+            return true;
+        }
+
+        if (isDialogueStartFrame)
+        {
+            // StartDialogue can take until the next player-loop update to report
+            // IsDialogueRunning. Never recover during that startup frame.
+            return true;
+        }
+
+        waitingDialogueCompletion = false;
+        return false;
+    }
+
     private void StopActiveDialogue()
     {
         DialogueRunner runner = activeDialogueRunner;
@@ -1642,7 +1706,8 @@ public sealed class StoryEventController : MonoBehaviour
             restoreActorTransformsOnExit,
             restorePlayerTransformOnExit,
             restoreSpriteFacingOnExit,
-            restoreRigidbodyVelocityOnExit);
+            restoreRigidbodyVelocityOnExit,
+            restoreExternalMovementStateOnExit);
     }
 
     private void ApplyCinematicState()
@@ -1664,6 +1729,53 @@ public sealed class StoryEventController : MonoBehaviour
 
         cinematicSnapshot.Restore();
         cinematicSnapshot = null;
+    }
+
+    private void ForceResumeDialoguePauseForEventExit()
+    {
+        if (!forceResumeDialoguePauseOnExit || cinematicSnapshot == null)
+        {
+            return;
+        }
+
+        DialogueGamePauser[] pausers = FindObjectsByType<DialogueGamePauser>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+        for (int i = 0; i < pausers.Length; i++)
+        {
+            pausers[i]?.ForceResumeForStoryEventExit();
+        }
+    }
+
+    private void EnsurePlayerControlOnEventExit()
+    {
+        if (!ensurePlayerControlOnExit)
+        {
+            return;
+        }
+
+        GameObject playerObject = ResolvePlayerObjectForCameraRestore();
+        PlayerInput playerInput = playerObject != null
+            ? playerObject.GetComponent<PlayerInput>()
+            : FindFirstObjectByType<PlayerInput>(FindObjectsInactive.Include);
+        if (playerInput != null)
+        {
+            playerInput.enabled = true;
+        }
+
+        PlayerController playerController = playerObject != null
+            ? playerObject.GetComponent<PlayerController>()
+            : FindFirstObjectByType<PlayerController>(FindObjectsInactive.Include);
+        if (playerController == null)
+        {
+            return;
+        }
+
+        playerController.enabled = true;
+        playerController.SetExternalControlLocked(false);
+        playerController.SetExternalMovementSuppressed(false);
+        playerController.ClearExternalMovementDirection();
+        playerController.SetExternalFacingLocked(false, playerController.IsFacingRight);
     }
 
     private void ShowLetterBoxView()
@@ -2499,6 +2611,7 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         waitingDialogueCompletion = false;
+        dialogueStartedFrame = -1;
     }
 
     private void HideGameplayUiForEvent()
@@ -2812,7 +2925,8 @@ public sealed class StoryEventController : MonoBehaviour
             bool captureTransforms,
             bool capturePlayerTransform,
             bool captureSpriteFacing,
-            bool captureRigidbodyVelocity)
+            bool captureRigidbodyVelocity,
+            bool captureExternalMovementState)
         {
             GameObject playerObject = ResolvePlayerObject();
             Transform playerTransform = playerObject != null ? playerObject.transform : null;
@@ -2824,7 +2938,7 @@ public sealed class StoryEventController : MonoBehaviour
                 : FindFirstObjectByType<PlayerInput>(FindObjectsInactive.Include);
 
             var snapshot = new CinematicStateSnapshot(
-                PlayerControllerState.Capture(playerController),
+                PlayerControllerState.Capture(playerController, captureExternalMovementState),
                 PlayerInputState.Capture(playerInput),
                 PlayerControlBehaviourState.Capture(playerObject, captureRigidbodyVelocity));
 
@@ -3062,18 +3176,28 @@ public sealed class StoryEventController : MonoBehaviour
         private readonly bool externalControlLocked;
         private readonly bool externalFacingLocked;
         private readonly bool facingRight;
+        private readonly bool restoreExternalMovementState;
+        private readonly PlayerController.ExternalMovementState externalMovementState;
 
-        private PlayerControllerState(PlayerController target)
+        private PlayerControllerState(PlayerController target, bool restoreExternalMovementState)
         {
             this.target = target;
             externalControlLocked = target.IsExternalControlLocked;
             externalFacingLocked = target.IsExternalFacingLocked;
             facingRight = target.IsFacingRight;
+            this.restoreExternalMovementState = restoreExternalMovementState;
+            externalMovementState = restoreExternalMovementState
+                ? target.CaptureExternalMovementState()
+                : default;
         }
 
-        public static PlayerControllerState Capture(PlayerController target)
+        public static PlayerControllerState Capture(
+            PlayerController target,
+            bool restoreExternalMovementState)
         {
-            return target != null ? new PlayerControllerState(target) : null;
+            return target != null
+                ? new PlayerControllerState(target, restoreExternalMovementState)
+                : null;
         }
 
         public void ApplyCinematicLocks(bool lockControl, bool lockFacing)
@@ -3103,6 +3227,10 @@ public sealed class StoryEventController : MonoBehaviour
 
             target.SetExternalFacingLocked(true, facingRight);
             target.SetExternalControlLocked(externalControlLocked);
+            if (restoreExternalMovementState)
+            {
+                target.RestoreExternalMovementState(externalMovementState);
+            }
             target.SetExternalFacingLocked(externalFacingLocked, facingRight);
         }
     }
