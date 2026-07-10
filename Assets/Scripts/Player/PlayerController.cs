@@ -95,6 +95,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsMoving => externalMovementActive || (!externalControlLocked && Mathf.Abs(moveInput) > 0.01f);
     public bool IsGliding =>
         umbrellaController != null &&
+        CanUseGlideAbility() &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open &&
         !isGround;
     public bool IsUmbrellaOpen =>
@@ -118,6 +119,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsDiveAttacking => diveAttackController != null && diveAttackController.IsDiveAttacking;
     public bool IsDiveAttackLanding => diveAttackController != null && diveAttackController.IsDiveAttackLanding;
     public bool IsDiveAttackBouncing => diveAttackController != null && diveAttackController.IsDiveAttackBouncing;
+
+    private bool CanUseGlideAbility()
+    {
+        return playerAbilityController != null && playerAbilityController.GetCanGlide();
+    }
 
     private void Awake()
     {
@@ -537,6 +543,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
 
         bool isGliding =
+            CanUseGlideAbility() &&
             umbrellaController.GetUmbrellaState() ==
             UmbrellaController.UmbrellaState.Open;
 
@@ -553,6 +560,13 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         bool isDownHeld = move.y < -0.5f;
 
         if (diveAttackController != null && diveAttackController.IsDiveAttacking)
+        {
+            jumpInput = false;
+            wasDownHeld = isDownHeld;
+            return;
+        }
+
+        if (IsDiveAttackLandingRecoveryActive())
         {
             jumpInput = false;
             wasDownHeld = isDownHeld;
@@ -800,7 +814,10 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         Vector2 velocity = rigidBody2d.linearVelocity;
 
-        bool isGliding = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open && !isGround;
+        bool isGliding =
+            CanUseGlideAbility() &&
+            umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open &&
+            !isGround;
 
         float horizontalInput = ResolveHorizontalMoveInput();
 
@@ -1006,12 +1023,19 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
+        if (IsDiveAttackLandingRecoveryActive())
+        {
+            return;
+        }
+
         if (umbrellaController == null)
         {
             return;
         }
 
-        bool isGliding = (umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open);
+        bool isGliding =
+            CanUseGlideAbility() &&
+            umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open;
 
         if (isGround)
         {
@@ -1075,6 +1099,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             isFacingRight = false;
         }
+    }
+
+    private bool IsDiveAttackLandingRecoveryActive()
+    {
+        return diveAttackController != null && diveAttackController.IsDiveAttackLanding;
     }
 
     private void RefreshParryColliderFacing()

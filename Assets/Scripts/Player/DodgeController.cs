@@ -110,6 +110,21 @@ public class DodgeController : MonoBehaviour
         return dodgeCooldown;
     }
 
+    public float GetDodgeCooldownRemaining()
+    {
+        return Mathf.Max(0f, nextDodgeTime - Time.unscaledTime);
+    }
+
+    public float GetDodgeCooldownRemaining01()
+    {
+        if (dodgeCooldown <= 0f)
+        {
+            return 0f;
+        }
+
+        return Mathf.Clamp01(GetDodgeCooldownRemaining() / dodgeCooldown);
+    }
+
     public bool CanDodge()
     {
         return !isDodging && Time.unscaledTime >= nextDodgeTime;

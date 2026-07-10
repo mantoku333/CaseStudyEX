@@ -18,7 +18,7 @@ public sealed class RoomCameraGate : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (TryResolvePlayerTransform(collision.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out _))
         {
             HandlePlayerEntered();
         }
@@ -26,7 +26,7 @@ public sealed class RoomCameraGate : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (TryResolvePlayerTransform(collision.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out _))
         {
             overlapCount = Mathf.Max(0, overlapCount - 1);
         }
@@ -34,7 +34,7 @@ public sealed class RoomCameraGate : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (TryResolvePlayerTransform(other.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(other, playerTag, out _))
         {
             HandlePlayerEntered();
         }
@@ -42,7 +42,7 @@ public sealed class RoomCameraGate : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (TryResolvePlayerTransform(other.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(other, playerTag, out _))
         {
             overlapCount = Mathf.Max(0, overlapCount - 1);
         }
@@ -59,28 +59,5 @@ public sealed class RoomCameraGate : MonoBehaviour
         }
 
         targetRoom.ActivateCamera();
-    }
-
-    private bool TryResolvePlayerTransform(Transform source, out Transform resolvedPlayer)
-    {
-        resolvedPlayer = null;
-        if (source == null || string.IsNullOrWhiteSpace(playerTag))
-        {
-            return false;
-        }
-
-        Transform current = source;
-        while (current != null)
-        {
-            if (current.CompareTag(playerTag))
-            {
-                resolvedPlayer = current;
-                return true;
-            }
-
-            current = current.parent;
-        }
-
-        return false;
     }
 }
