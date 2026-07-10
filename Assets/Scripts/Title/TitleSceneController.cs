@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -50,6 +51,7 @@ public class TitleSceneController : MonoBehaviour
 
     private int selectedSaveSlotIndex = SaveManager.DefaultSlotIndex;
     private Coroutine delayedButtonActionRoutine;
+    private readonly Dictionary<int, Sprite> savePreviewThumbnailCache = new Dictionary<int, Sprite>();
     private bool titleRainAudioWasPlaying;
     private bool startingNewGame;
 
@@ -61,6 +63,7 @@ public class TitleSceneController : MonoBehaviour
     private void OnDisable()
     {
         StopDelayedButtonAction();
+        ClearSavePreviewThumbnailCache();
     }
 
     private void Start()
@@ -475,6 +478,7 @@ public class TitleSceneController : MonoBehaviour
             return;
         }
 
+        ClearSavePreviewThumbnailCache();
         saveListPanel.transform.SetAsLastSibling();
         RefreshSaveSlotViews();
         saveListPanel.SetActive(true);
@@ -623,9 +627,71 @@ public class TitleSceneController : MonoBehaviour
         return defaultStageThumbnail;
     }
 
+    public Sprite GetSaveSlotThumbnail(int slotIndex, string sceneName, string locationId)
+    {
+        if (TryGetSavePreviewThumbnail(slotIndex, out Sprite previewThumbnail))
+        {
+            return previewThumbnail;
+        }
+
+        return GetStageThumbnail(sceneName, locationId);
+    }
+
     public Sprite GetEmptySlotThumbnail()
     {
         return emptySlotThumbnail != null ? emptySlotThumbnail : defaultStageThumbnail;
+    }
+
+    private bool TryGetSavePreviewThumbnail(int slotIndex, out Sprite thumbnail)
+    {
+        if (savePreviewThumbnailCache.TryGetValue(slotIndex, out thumbnail))
+        {
+            return thumbnail != null;
+        }
+
+        if (!SaveRepository.TryLoadPreviewSprite(slotIndex, out thumbnail))
+        {
+            return false;
+        }
+
+        savePreviewThumbnailCache[slotIndex] = thumbnail;
+        return thumbnail != null;
+    }
+
+    private void ClearSavePreviewThumbnailCache()
+    {
+        foreach (Sprite sprite in savePreviewThumbnailCache.Values)
+        {
+            DestroyRuntimePreviewSprite(sprite);
+        }
+
+        savePreviewThumbnailCache.Clear();
+    }
+
+    private static void DestroyRuntimePreviewSprite(Sprite sprite)
+    {
+        if (sprite == null)
+        {
+            return;
+        }
+
+        Texture texture = sprite.texture;
+        if (Application.isPlaying)
+        {
+            Destroy(sprite);
+            if (texture != null)
+            {
+                Destroy(texture);
+            }
+        }
+        else
+        {
+            DestroyImmediate(sprite);
+            if (texture != null)
+            {
+                DestroyImmediate(texture);
+            }
+        }
     }
 
     public void OnClickLoadConfirmYesButton()

@@ -5,6 +5,7 @@ using UnityEngine;
 public static class SaveRepository
 {
     private const string SaveFileNameFormat = "save_slot_{0:D2}.json";
+    private const string PreviewFileNameFormat = "save_slot_{0:D2}_preview.png";
 
     public static bool HasSave(int slotIndex)
     {
@@ -111,16 +112,17 @@ public static class SaveRepository
     public static bool TryDelete(int slotIndex)
     {
         string savePath = GetSaveFilePath(slotIndex);
+        bool previewDeleted = TryDeletePreview(slotIndex);
 
         if (!File.Exists(savePath))
         {
-            return true;
+            return previewDeleted;
         }
 
         try
         {
             File.Delete(savePath);
-            return true;
+            return previewDeleted;
         }
         catch (Exception exception)
         {
@@ -132,6 +134,110 @@ public static class SaveRepository
     public static string GetSaveFilePath(int slotIndex)
     {
         return Path.Combine(Application.persistentDataPath, string.Format(SaveFileNameFormat, slotIndex));
+    }
+
+    public static string GetPreviewImagePath(int slotIndex)
+    {
+        return Path.Combine(Application.persistentDataPath, string.Format(PreviewFileNameFormat, slotIndex));
+    }
+
+    public static bool HasPreviewImage(int slotIndex)
+    {
+        return File.Exists(GetPreviewImagePath(slotIndex));
+    }
+
+    public static bool TryWritePreviewPng(int slotIndex, byte[] pngBytes)
+    {
+        if (pngBytes == null || pngBytes.Length == 0)
+        {
+            Debug.LogWarning("[SaveRepository] Preview PNG data is empty.");
+            return false;
+        }
+
+        string previewPath = GetPreviewImagePath(slotIndex);
+        string tempPath = previewPath + ".tmp";
+
+        try
+        {
+            File.WriteAllBytes(tempPath, pngBytes);
+
+            if (File.Exists(previewPath))
+            {
+                File.Delete(previewPath);
+            }
+
+            File.Move(tempPath, previewPath);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[SaveRepository] Failed to write save preview: {exception}");
+            return false;
+        }
+        finally
+        {
+            TryDeleteTempFile(tempPath);
+        }
+    }
+
+    public static bool TryLoadPreviewSprite(int slotIndex, out Sprite sprite)
+    {
+        sprite = null;
+        string previewPath = GetPreviewImagePath(slotIndex);
+        if (!File.Exists(previewPath))
+        {
+            return false;
+        }
+
+        try
+        {
+            byte[] pngBytes = File.ReadAllBytes(previewPath);
+            if (pngBytes == null || pngBytes.Length == 0)
+            {
+                return false;
+            }
+
+            var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            texture.name = $"SaveSlotPreviewTexture_{slotIndex:D2}";
+            if (!texture.LoadImage(pngBytes, markNonReadable: false))
+            {
+                DestroyRuntimeObject(texture);
+                return false;
+            }
+
+            sprite = Sprite.Create(
+                texture,
+                new Rect(0f, 0f, texture.width, texture.height),
+                new Vector2(0.5f, 0.5f),
+                100f);
+            sprite.name = $"SaveSlotPreview_{slotIndex:D2}";
+            return true;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[SaveRepository] Failed to load save preview: {exception}");
+            return false;
+        }
+    }
+
+    public static bool TryDeletePreview(int slotIndex)
+    {
+        string previewPath = GetPreviewImagePath(slotIndex);
+        if (!File.Exists(previewPath))
+        {
+            return true;
+        }
+
+        try
+        {
+            File.Delete(previewPath);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[SaveRepository] Failed to delete save preview: {exception}");
+            return false;
+        }
     }
 
     private static void TryDeleteTempFile(string tempPath)
@@ -146,6 +252,23 @@ public static class SaveRepository
         catch
         {
             // Best effort cleanup only.
+        }
+    }
+
+    private static void DestroyRuntimeObject(UnityEngine.Object obj)
+    {
+        if (obj == null)
+        {
+            return;
+        }
+
+        if (Application.isPlaying)
+        {
+            UnityEngine.Object.Destroy(obj);
+        }
+        else
+        {
+            UnityEngine.Object.DestroyImmediate(obj);
         }
     }
 }
