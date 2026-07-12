@@ -14,6 +14,34 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 {
+    /// <summary>
+    /// Snapshot of a scripted horizontal movement command.
+    /// Cutscenes use this to return the player to the exact control state that
+    /// existed before they issued timeline movement commands.
+    /// </summary>
+    public readonly struct ExternalMovementState
+    {
+        internal ExternalMovementState(
+            bool isActive,
+            bool isSuppressed,
+            float moveInput,
+            bool hasTarget,
+            float targetX)
+        {
+            IsActive = isActive;
+            IsSuppressed = isSuppressed;
+            MoveInput = moveInput;
+            HasTarget = hasTarget;
+            TargetX = targetX;
+        }
+
+        internal bool IsActive { get; }
+        internal bool IsSuppressed { get; }
+        internal float MoveInput { get; }
+        internal bool HasTarget { get; }
+        internal float TargetX { get; }
+    }
+
     private const string PlayerActionMapName = "Player";
     private const float ExternalMoveArrivalThreshold = 0.03f;
     private const float AttackMoveInputDeadZone = 0.01f;
@@ -375,6 +403,38 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         externalMovementActive = false;
         externalMoveInput = 0.0f;
         externalMovementHasTarget = false;
+    }
+
+    /// <summary>
+    /// Captures the current scripted movement command so a temporary cinematic
+    /// command cannot leak into normal player control after the event ends.
+    /// </summary>
+    public ExternalMovementState CaptureExternalMovementState()
+    {
+        return new ExternalMovementState(
+            externalMovementActive,
+            externalMovementSuppressed,
+            externalMoveInput,
+            externalMovementHasTarget,
+            externalMovementTargetX);
+    }
+
+    /// <summary>
+    /// Restores a previously captured scripted movement command.
+    /// </summary>
+    public void RestoreExternalMovementState(ExternalMovementState state)
+    {
+        externalMovementActive = state.IsActive;
+        externalMovementSuppressed = state.IsSuppressed;
+        externalMoveInput = state.MoveInput;
+        externalMovementHasTarget = state.HasTarget;
+        externalMovementTargetX = state.TargetX;
+
+        if (!externalMovementActive)
+        {
+            externalMoveInput = 0.0f;
+            externalMovementHasTarget = false;
+        }
     }
 
     private void FindComponents()

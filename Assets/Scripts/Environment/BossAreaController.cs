@@ -878,17 +878,27 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             if (TryFindSceneStoryEventController(storyEventId, out StoryEventController controller) &&
                 controller != null)
             {
-                if (controller.HasCompleted)
-                {
-                    yield break;
-                }
-
                 if (controller.IsPlaying)
                 {
                     observedEventRunning = true;
                 }
+
+                // A scene controller is authoritative for its own cleanup. In
+                // particular, its completion flag is set before it restores the
+                // PlayerInput/player-behaviour snapshot. Do not fall through to the
+                // global dialogue check here: dialogue becomes idle during that
+                // cleanup window and used to start LastBoss too early.
+                if (IsExternalStoryEventFullyFinished(controller.HasCompleted, controller.IsPlaying) ||
+                    (observedEventRunning && !controller.IsPlaying))
+                {
+                    yield break;
+                }
+
+                yield return null;
+                continue;
             }
-            else if (!loggedMissingEvent)
+
+            if (!loggedMissingEvent)
             {
                 LogMissingStoryEvent(storyEventId);
                 loggedMissingEvent = true;
@@ -919,6 +929,11 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 #endif
 
         return StoryEventRuntimeService.HasPendingEvents || IsActiveDialogueRunning();
+    }
+
+    private static bool IsExternalStoryEventFullyFinished(bool hasCompleted, bool isPlaying)
+    {
+        return hasCompleted && !isPlaying;
     }
 
     private static bool TryFindSceneStoryEventController(

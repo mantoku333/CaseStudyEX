@@ -4102,6 +4102,9 @@ MonoBehaviour:
   restoreActorTransformsOnExit: 1
   restoreSpriteFacingOnExit: 1
   restoreRigidbodyVelocityOnExit: 0
+  restoreExternalMovementStateOnExit: 1
+  forceResumeDialoguePauseOnExit: 1
+  ensurePlayerControlOnExit: 1
   showLetterBoxDuringEvent: 1
   letterBoxView: {fileID: 0}
   letterBoxViewName: LetterBoxView
