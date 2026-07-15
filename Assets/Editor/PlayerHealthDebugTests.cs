@@ -10,10 +10,44 @@ public sealed class PlayerHealthDebugTests
     [TearDown]
     public void TearDown()
     {
+        PvModeState.SetActive(false);
+
         if (playerObject != null)
         {
             Object.DestroyImmediate(playerObject);
         }
+    }
+
+    [Test]
+    public void PvMode_BlocksDamageUntilDisabled()
+    {
+        PlayerHealth playerHealth = CreatePlayerHealth();
+
+        PvModeState.SetActive(true);
+        bool didDamageInPvMode = playerHealth.TryTakeDamage(1, 0f);
+
+        Assert.That(didDamageInPvMode, Is.False);
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(playerHealth.MaxHealth));
+
+        PvModeState.SetActive(false);
+        bool didDamageAfterDisable = playerHealth.TryTakeDamage(1, 0f);
+
+        Assert.That(didDamageAfterDisable, Is.True);
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void DisablingPvMode_DoesNotDisableDebugInvincibility()
+    {
+        PlayerHealth playerHealth = CreatePlayerHealth();
+        playerHealth.DebugInvincible = true;
+
+        PvModeState.SetActive(true);
+        PvModeState.SetActive(false);
+
+        Assert.That(playerHealth.DebugInvincible, Is.True);
+        Assert.That(playerHealth.TryTakeDamage(1, 0f), Is.False);
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(playerHealth.MaxHealth));
     }
 
     [Test]

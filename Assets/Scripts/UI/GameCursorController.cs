@@ -180,6 +180,12 @@ public sealed class GameCursorController : MonoBehaviour
     private void Update()
     {
         SetSystemCursorVisible(false);
+
+        if (HideCursorForPvMode())
+        {
+            return;
+        }
+
         ResolvePlayerReferences();
 
         if (!TryGetPointerScreenPosition(out Vector2 rawScreenPosition))
@@ -234,6 +240,17 @@ public sealed class GameCursorController : MonoBehaviour
         }
 
         ShowCursor(rawScreenPosition);
+    }
+
+    private bool HideCursorForPvMode()
+    {
+        if (!PvModeState.IsActive)
+        {
+            return false;
+        }
+
+        HideAllImages();
+        return true;
     }
 
     private void OnApplicationFocus(bool hasFocus)
