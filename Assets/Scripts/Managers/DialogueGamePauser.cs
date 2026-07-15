@@ -60,6 +60,35 @@ namespace Metroidvania.Managers
             ResumeGame();
         }
 
+        private void LateUpdate()
+        {
+            if (ShouldRecoverMissedDialogueCompletion(
+                    gameplayPaused || timeScalePaused,
+                    dialogueRunner != null,
+                    dialogueRunner != null && dialogueRunner.IsDialogueRunning))
+            {
+                ResumeGame();
+            }
+        }
+
+        /// <summary>
+        /// Releases only this pauser's cached state when a story event has reached
+        /// its own exit cleanup. StoryEventController restores its player snapshot
+        /// immediately afterwards, so this cannot overwrite the pre-event state.
+        /// </summary>
+        public void ForceResumeForStoryEventExit()
+        {
+            ResumeGame();
+        }
+
+        private static bool ShouldRecoverMissedDialogueCompletion(
+            bool isPaused,
+            bool hasDialogueRunner,
+            bool isDialogueRunning)
+        {
+            return isPaused && (!hasDialogueRunner || !isDialogueRunning);
+        }
+
         private void PauseGame()
         {
             StoryPausePolicy policy = StoryPauseRuntime.EffectivePolicy;

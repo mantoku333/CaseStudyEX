@@ -139,7 +139,7 @@ namespace Player
                 return false;
             }
 
-            if (debugInvincible)
+            if (debugInvincible || PvModeState.IsActive)
             {
                 return false;
             }

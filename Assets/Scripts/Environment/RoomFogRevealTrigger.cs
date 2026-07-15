@@ -14,7 +14,7 @@ public sealed class RoomFogRevealTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (TryResolvePlayerTransform(collision.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out _))
         {
             RevealDestinationRooms();
         }
@@ -22,7 +22,7 @@ public sealed class RoomFogRevealTrigger : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (TryResolvePlayerTransform(collision.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out _))
         {
             RevealDestinationRooms();
         }
@@ -31,7 +31,7 @@ public sealed class RoomFogRevealTrigger : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider != null &&
-            TryResolvePlayerTransform(collision.collider.transform, out _))
+            PlayerCameraColliderUtility.TryResolvePlayerTransform(collision.collider, playerTag, out _))
         {
             RevealDestinationRooms();
         }
@@ -39,7 +39,7 @@ public sealed class RoomFogRevealTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (TryResolvePlayerTransform(other.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(other, playerTag, out _))
         {
             RevealDestinationRooms();
         }
@@ -47,7 +47,7 @@ public sealed class RoomFogRevealTrigger : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (TryResolvePlayerTransform(other.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(other, playerTag, out _))
         {
             RevealDestinationRooms();
         }
@@ -56,7 +56,7 @@ public sealed class RoomFogRevealTrigger : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.collider != null &&
-            TryResolvePlayerTransform(collision.collider.transform, out _))
+            PlayerCameraColliderUtility.TryResolvePlayerTransform(collision.collider, playerTag, out _))
         {
             RevealDestinationRooms();
         }
@@ -104,28 +104,5 @@ public sealed class RoomFogRevealTrigger : MonoBehaviour
 
             RoomFogRevealManager.RevealRoom(targetRoom);
         }
-    }
-
-    private bool TryResolvePlayerTransform(Transform source, out Transform resolvedPlayer)
-    {
-        resolvedPlayer = null;
-        if (source == null || string.IsNullOrWhiteSpace(playerTag))
-        {
-            return false;
-        }
-
-        Transform current = source;
-        while (current != null)
-        {
-            if (current.CompareTag(playerTag))
-            {
-                resolvedPlayer = current;
-                return true;
-            }
-
-            current = current.parent;
-        }
-
-        return false;
     }
 }

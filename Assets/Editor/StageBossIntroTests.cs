@@ -148,7 +148,7 @@ public sealed class StageBossIntroTests
     }
 
     [Test]
-    public void PlayStageBossIntroRoutine_WithConfiguredStoryEvent_WaitsForDialogueBeforeHpAndActivation()
+    public void PlayStageBossIntroRoutine_WithEvent10_WaitsForDialogueBeforeHpAndActivation()
     {
         bool dialogueRunning = true;
         SetPrivateStaticField<BossAreaController>(
@@ -169,7 +169,7 @@ public sealed class StageBossIntroTests
             stageBoss,
             revealDuration: 0f,
             hpLeadInSeconds: 0f,
-            preEncounterStoryEventId: "Event_StageBossIntro",
+            preEncounterStoryEventId: "Event_10",
             logMissingStoryEvents: false);
         InvokePrivate(bossArea, "Awake");
         SetPrivateField(bossArea, "encounterStarted", true);
@@ -656,7 +656,7 @@ public sealed class StageBossIntroTests
     public void StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForExternalStoryEventTrigger()
     {
         LastBossController lastBoss = CreateLastBoss(Vector2.zero);
-        StoryEventController storyEvent = CreateStoryEventController("Event_10");
+        StoryEventController storyEvent = CreateStoryEventController("Event_33");
         GameObject areaObject = CreateInactiveBossAreaObject();
         BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
         ConfigureLastBossArea(bossArea, lastBoss);
@@ -669,7 +669,7 @@ public sealed class StageBossIntroTests
         IEnumerator storyWait = (IEnumerator)InvokePrivate(
             bossArea,
             "WaitForConfiguredStoryEventTriggerAndCompletion",
-            "Event_10");
+            "Event_33");
         IEnumerator routine = (IEnumerator)InvokePrivate(
             bossArea,
             "StartEncounterAfterStoryRoutine",
@@ -696,10 +696,22 @@ public sealed class StageBossIntroTests
     }
 
     [Test]
-    public void StartEncounterAfterStoryRoutine_ForLastBoss_StartsAfterObservedExternalEventBecomesIdle()
+    public void CompletedExternalStoryEvent_DoesNotStartLastBossUntilControllerCleanupFinishes()
+    {
+        Assert.That(
+            InvokeExternalStoryEventFullyFinished(hasCompleted: true, isPlaying: true),
+            Is.False,
+            "Completion mutations alone must not start combat while cinematic cleanup is active.");
+        Assert.That(
+            InvokeExternalStoryEventFullyFinished(hasCompleted: true, isPlaying: false),
+            Is.True);
+    }
+
+    [Test]
+    public void StartEncounterAfterStoryRoutine_ForLastBoss_DoesNotUseIdleDialogueToBypassControllerCleanup()
     {
         LastBossController lastBoss = CreateLastBoss(Vector2.zero);
-        CreateStoryEventController("Event_10");
+        StoryEventController storyEvent = CreateStoryEventController("Event_33");
         GameObject areaObject = CreateInactiveBossAreaObject();
         BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
         ConfigureLastBossArea(bossArea, lastBoss);
@@ -717,7 +729,7 @@ public sealed class StageBossIntroTests
         IEnumerator storyWait = (IEnumerator)InvokePrivate(
             bossArea,
             "WaitForConfiguredStoryEventTriggerAndCompletion",
-            "Event_10");
+            "Event_33");
         IEnumerator routine = (IEnumerator)InvokePrivate(
             bossArea,
             "StartEncounterAfterStoryRoutine",
@@ -736,6 +748,12 @@ public sealed class StageBossIntroTests
         Assert.That(lastBoss.IsEncounterActive, Is.False);
 
         dialogueRunning = false;
+        Assert.That(nestedStoryWait.MoveNext(), Is.True,
+            "A registered scene event remains authoritative after dialogue closes.");
+        Assert.That(encounterStartedCount, Is.EqualTo(0));
+        Assert.That(lastBoss.IsEncounterActive, Is.False);
+
+        SetPrivateField(storyEvent, "completeMutationsApplied", true);
         Assert.That(nestedStoryWait.MoveNext(), Is.False);
         Assert.That(routine.MoveNext(), Is.True);
         RunNestedEnumerator(routine.Current);
@@ -817,6 +835,15 @@ public sealed class StageBossIntroTests
         StoryEventController controller = eventObject.AddComponent<StoryEventController>();
         SetPrivateField(controller, "eventId", eventId);
         return controller;
+    }
+
+    private static bool InvokeExternalStoryEventFullyFinished(bool hasCompleted, bool isPlaying)
+    {
+        MethodInfo method = typeof(BossAreaController).GetMethod(
+            "IsExternalStoryEventFullyFinished",
+            PrivateStatic);
+        Assert.That(method, Is.Not.Null);
+        return (bool)method.Invoke(null, new object[] { hasCompleted, isPlaying });
     }
 
     private StoryEventTrigger2D CreateStoryEventTrigger(

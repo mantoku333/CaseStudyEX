@@ -11,6 +11,15 @@ public class CameraManager : MonoBehaviour
     private bool isFollowCamActive = true;
     private CinemachineCamera followCam;
     private CinemachineCamera directFollowCam;
+    private CinemachineCamera cachedDefaultSettingsFollowCam;
+    private bool hasDefaultFollowOrthographicSize;
+    private float defaultFollowOrthographicSize;
+    private bool hasDefaultFollowComposerTargetOffsetY;
+    private float defaultFollowComposerTargetOffsetY;
+    private bool hasDefaultFollowComposerScreenPositionY;
+    private float defaultFollowComposerScreenPositionY;
+    private bool hasDefaultDirectFollowOffsetY;
+    private float defaultDirectFollowOffsetY;
     private Coroutine restoreFollowCenterOnActivateRoutine;
     private CinemachinePositionComposer cachedFollowPositionComposer;
     private bool cachedFollowCenterOnActivate;
@@ -74,6 +83,7 @@ public class CameraManager : MonoBehaviour
         }
 
         EnsurePlayerFollowBiasComponents();
+        CacheDefaultFollowCameraSettings();
     }
 
     private void EnsurePlayerFollowBiasComponents()
@@ -175,6 +185,167 @@ public class CameraManager : MonoBehaviour
         lens.OrthographicSize = orthographicSize;
         followCam.Lens = lens;
         return true;
+    }
+
+    public bool TrySetFollowCameraOrthographicSize(float orthographicSize)
+    {
+        if (followCam == null)
+        {
+            FindCameras();
+        }
+
+        if (followCam == null || orthographicSize <= 0f)
+        {
+            return false;
+        }
+
+        LensSettings lens = followCam.Lens;
+        lens.OrthographicSize = orthographicSize;
+        followCam.Lens = lens;
+        return true;
+    }
+
+    public bool TryApplyFollowCameraAreaSettings(
+        bool overrideOrthographicSize,
+        float orthographicSize,
+        bool overrideTargetOffsetY,
+        float targetOffsetY,
+        bool overrideScreenPositionY,
+        float screenPositionY)
+    {
+        if (followCam == null)
+        {
+            FindCameras();
+        }
+
+        if (followCam == null)
+        {
+            return false;
+        }
+
+        CacheDefaultFollowCameraSettings();
+
+        if (overrideOrthographicSize && orthographicSize > 0f)
+        {
+            SetFollowCameraOrthographicSize(orthographicSize);
+        }
+        else if (hasDefaultFollowOrthographicSize)
+        {
+            SetFollowCameraOrthographicSize(defaultFollowOrthographicSize);
+        }
+
+        CinemachinePositionComposer positionComposer = followCam.GetComponent<CinemachinePositionComposer>();
+        if (positionComposer != null)
+        {
+            if (overrideTargetOffsetY)
+            {
+                SetFollowComposerTargetOffsetY(positionComposer, targetOffsetY);
+            }
+            else if (hasDefaultFollowComposerTargetOffsetY)
+            {
+                SetFollowComposerTargetOffsetY(positionComposer, defaultFollowComposerTargetOffsetY);
+            }
+
+            if (overrideScreenPositionY)
+            {
+                SetFollowComposerScreenPositionY(positionComposer, screenPositionY);
+            }
+            else if (hasDefaultFollowComposerScreenPositionY)
+            {
+                SetFollowComposerScreenPositionY(positionComposer, defaultFollowComposerScreenPositionY);
+            }
+        }
+
+        CinemachineFollow directFollow = followCam.GetComponent<CinemachineFollow>();
+        if (directFollow != null)
+        {
+            if (overrideTargetOffsetY)
+            {
+                SetDirectFollowOffsetY(directFollow, targetOffsetY);
+            }
+            else if (hasDefaultDirectFollowOffsetY)
+            {
+                SetDirectFollowOffsetY(directFollow, defaultDirectFollowOffsetY);
+            }
+        }
+
+        return true;
+    }
+
+    private void CacheDefaultFollowCameraSettings()
+    {
+        if (followCam == null || cachedDefaultSettingsFollowCam == followCam)
+        {
+            return;
+        }
+
+        cachedDefaultSettingsFollowCam = followCam;
+        hasDefaultFollowOrthographicSize = true;
+        defaultFollowOrthographicSize = followCam.Lens.OrthographicSize;
+
+        CinemachinePositionComposer positionComposer = followCam.GetComponent<CinemachinePositionComposer>();
+        hasDefaultFollowComposerTargetOffsetY = positionComposer != null;
+        defaultFollowComposerTargetOffsetY = positionComposer != null
+            ? positionComposer.TargetOffset.y
+            : 0f;
+        hasDefaultFollowComposerScreenPositionY = positionComposer != null;
+        defaultFollowComposerScreenPositionY = positionComposer != null
+            ? positionComposer.Composition.ScreenPosition.y
+            : 0f;
+
+        CinemachineFollow directFollow = followCam.GetComponent<CinemachineFollow>();
+        hasDefaultDirectFollowOffsetY = directFollow != null;
+        defaultDirectFollowOffsetY = directFollow != null
+            ? directFollow.FollowOffset.y
+            : 0f;
+    }
+
+    private void SetFollowCameraOrthographicSize(float orthographicSize)
+    {
+        LensSettings lens = followCam.Lens;
+        lens.OrthographicSize = orthographicSize;
+        followCam.Lens = lens;
+    }
+
+    private void SetFollowComposerTargetOffsetY(
+        CinemachinePositionComposer positionComposer,
+        float targetOffsetY)
+    {
+        FollowCameraFacingBias facingBias = followCam.GetComponent<FollowCameraFacingBias>();
+        if (facingBias != null)
+        {
+            facingBias.SetBaseComposerOffsetY(targetOffsetY);
+            return;
+        }
+
+        Vector3 targetOffset = positionComposer.TargetOffset;
+        targetOffset.y = targetOffsetY;
+        positionComposer.TargetOffset = targetOffset;
+    }
+
+    private static void SetFollowComposerScreenPositionY(
+        CinemachinePositionComposer positionComposer,
+        float screenPositionY)
+    {
+        var composition = positionComposer.Composition;
+        Vector2 screenPosition = composition.ScreenPosition;
+        screenPosition.y = screenPositionY;
+        composition.ScreenPosition = screenPosition;
+        positionComposer.Composition = composition;
+    }
+
+    private void SetDirectFollowOffsetY(CinemachineFollow directFollow, float offsetY)
+    {
+        FollowCameraFacingBias facingBias = followCam.GetComponent<FollowCameraFacingBias>();
+        if (facingBias != null)
+        {
+            facingBias.SetBaseDirectFollowOffsetY(offsetY);
+            return;
+        }
+
+        Vector3 followOffset = directFollow.FollowOffset;
+        followOffset.y = offsetY;
+        directFollow.FollowOffset = followOffset;
     }
 
     public void SuppressFollowCameraCenterOnActivateForFrames(int frameCount = 3)

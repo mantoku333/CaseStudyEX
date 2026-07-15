@@ -29,7 +29,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!TryResolvePlayerTransform(collision.transform, out Transform player))
+        if (!PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out Transform player))
         {
             return;
         }
@@ -54,7 +54,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (!TryResolvePlayerTransform(collision.transform, out Transform player))
+        if (!PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out Transform player))
         {
             return;
         }
@@ -137,29 +137,9 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
             return fallbackPosition;
         }
 
-        Collider2D[] colliders = player.GetComponentsInChildren<Collider2D>();
-        bool hasBounds = false;
-        Bounds bounds = default;
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            Collider2D collider = colliders[i];
-            if (collider == null || !collider.enabled || collider.isTrigger)
-            {
-                continue;
-            }
-
-            if (!hasBounds)
-            {
-                bounds = collider.bounds;
-                hasBounds = true;
-            }
-            else
-            {
-                bounds.Encapsulate(collider.bounds);
-            }
-        }
-
-        return hasBounds ? bounds.center : fallbackPosition;
+        return PlayerCameraColliderUtility.TryGetCameraPoint(player, out Vector3 center)
+            ? center
+            : fallbackPosition;
     }
 
     private static Vector3 ResolveRoomCenter(RoomCameraTrigger room, Vector3 fallback)
@@ -172,26 +152,4 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
         return room != null ? room.transform.position : fallback;
     }
 
-    private bool TryResolvePlayerTransform(Transform source, out Transform player)
-    {
-        player = null;
-        if (source == null || string.IsNullOrWhiteSpace(playerTag))
-        {
-            return false;
-        }
-
-        Transform current = source;
-        while (current != null)
-        {
-            if (current.CompareTag(playerTag))
-            {
-                player = current;
-                return true;
-            }
-
-            current = current.parent;
-        }
-
-        return false;
-    }
 }

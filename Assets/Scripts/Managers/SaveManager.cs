@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -322,7 +323,13 @@ public sealed class SaveManager : MonoBehaviour
 
         CaptureModules(saveData);
 
-        return SaveRepository.TryWrite(slotIndex, saveData);
+        bool saved = SaveRepository.TryWrite(slotIndex, saveData);
+        if (saved && instance != null)
+        {
+            instance.StartCoroutine(SavePreviewCaptureService.CaptureAndStorePreview(slotIndex));
+        }
+
+        return saved;
     }
 
     public static bool TryLoadGame(string fallbackSceneName = null)
@@ -728,4 +735,93 @@ public sealed class SaveManager : MonoBehaviour
         return string.Empty;
     }
 
+}
+
+internal static class SavePreviewCaptureService
+{
+    private const int PreviewWidth = 512;
+    private const int PreviewHeight = 288;
+
+    public static IEnumerator CaptureAndStorePreview(int slotIndex)
+    {
+        yield return new WaitForEndOfFrame();
+
+        Camera sourceCamera = ResolveSourceCamera();
+        if (sourceCamera == null)
+        {
+            Debug.LogWarning("[SavePreviewCaptureService] No camera found. Save preview skipped.");
+            yield break;
+        }
+
+        if (!TryCaptureCameraPng(sourceCamera, out byte[] pngBytes))
+        {
+            yield break;
+        }
+
+        SaveRepository.TryWritePreviewPng(slotIndex, pngBytes);
+    }
+
+    private static Camera ResolveSourceCamera()
+    {
+        if (Camera.main != null && Camera.main.isActiveAndEnabled)
+        {
+            return Camera.main;
+        }
+
+        Camera[] cameras = UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            Camera candidate = cameras[i];
+            if (candidate != null && candidate.isActiveAndEnabled && candidate.targetTexture == null)
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool TryCaptureCameraPng(Camera sourceCamera, out byte[] pngBytes)
+    {
+        pngBytes = null;
+        RenderTexture previousTargetTexture = sourceCamera.targetTexture;
+        RenderTexture previousActiveTexture = RenderTexture.active;
+        RenderTexture renderTexture = null;
+        Texture2D texture = null;
+
+        try
+        {
+            renderTexture = RenderTexture.GetTemporary(PreviewWidth, PreviewHeight, 24, RenderTextureFormat.ARGB32);
+            texture = new Texture2D(PreviewWidth, PreviewHeight, TextureFormat.RGB24, false);
+
+            sourceCamera.targetTexture = renderTexture;
+            RenderTexture.active = renderTexture;
+            sourceCamera.Render();
+
+            texture.ReadPixels(new Rect(0f, 0f, PreviewWidth, PreviewHeight), 0, 0);
+            texture.Apply(updateMipmaps: false, makeNoLongerReadable: false);
+            pngBytes = texture.EncodeToPNG();
+            return pngBytes != null && pngBytes.Length > 0;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning($"[SavePreviewCaptureService] Failed to capture save preview. {exception}");
+            return false;
+        }
+        finally
+        {
+            sourceCamera.targetTexture = previousTargetTexture;
+            RenderTexture.active = previousActiveTexture;
+
+            if (renderTexture != null)
+            {
+                RenderTexture.ReleaseTemporary(renderTexture);
+            }
+
+            if (texture != null)
+            {
+                UnityEngine.Object.Destroy(texture);
+            }
+        }
+    }
 }

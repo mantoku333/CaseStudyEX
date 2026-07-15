@@ -183,6 +183,13 @@ public class GunController : MonoBehaviour
         preserveHorizontalRecoilMomentum = false;
     }
 
+    public void RestoreAllRecoilUses()
+    {
+        currentCoolTime = 0.0f;
+        currentCoolTimeDuration = 0.0f;
+        ResetRecoilCycle();
+    }
+
 
 
     /// <summary>

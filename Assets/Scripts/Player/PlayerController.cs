@@ -14,6 +14,34 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 {
+    /// <summary>
+    /// Snapshot of a scripted horizontal movement command.
+    /// Cutscenes use this to return the player to the exact control state that
+    /// existed before they issued timeline movement commands.
+    /// </summary>
+    public readonly struct ExternalMovementState
+    {
+        internal ExternalMovementState(
+            bool isActive,
+            bool isSuppressed,
+            float moveInput,
+            bool hasTarget,
+            float targetX)
+        {
+            IsActive = isActive;
+            IsSuppressed = isSuppressed;
+            MoveInput = moveInput;
+            HasTarget = hasTarget;
+            TargetX = targetX;
+        }
+
+        internal bool IsActive { get; }
+        internal bool IsSuppressed { get; }
+        internal float MoveInput { get; }
+        internal bool HasTarget { get; }
+        internal float TargetX { get; }
+    }
+
     private const string PlayerActionMapName = "Player";
     private const float ExternalMoveArrivalThreshold = 0.03f;
     private const float AttackMoveInputDeadZone = 0.01f;
@@ -95,6 +123,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsMoving => externalMovementActive || (!externalControlLocked && Mathf.Abs(moveInput) > 0.01f);
     public bool IsGliding =>
         umbrellaController != null &&
+        CanUseGlideAbility() &&
         umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open &&
         !isGround;
     public bool IsUmbrellaOpen =>
@@ -118,6 +147,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     public bool IsDiveAttacking => diveAttackController != null && diveAttackController.IsDiveAttacking;
     public bool IsDiveAttackLanding => diveAttackController != null && diveAttackController.IsDiveAttackLanding;
     public bool IsDiveAttackBouncing => diveAttackController != null && diveAttackController.IsDiveAttackBouncing;
+
+    private bool CanUseGlideAbility()
+    {
+        return playerAbilityController != null && playerAbilityController.GetCanGlide();
+    }
 
     private void Awake()
     {
@@ -371,6 +405,38 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         externalMovementHasTarget = false;
     }
 
+    /// <summary>
+    /// Captures the current scripted movement command so a temporary cinematic
+    /// command cannot leak into normal player control after the event ends.
+    /// </summary>
+    public ExternalMovementState CaptureExternalMovementState()
+    {
+        return new ExternalMovementState(
+            externalMovementActive,
+            externalMovementSuppressed,
+            externalMoveInput,
+            externalMovementHasTarget,
+            externalMovementTargetX);
+    }
+
+    /// <summary>
+    /// Restores a previously captured scripted movement command.
+    /// </summary>
+    public void RestoreExternalMovementState(ExternalMovementState state)
+    {
+        externalMovementActive = state.IsActive;
+        externalMovementSuppressed = state.IsSuppressed;
+        externalMoveInput = state.MoveInput;
+        externalMovementHasTarget = state.HasTarget;
+        externalMovementTargetX = state.TargetX;
+
+        if (!externalMovementActive)
+        {
+            externalMoveInput = 0.0f;
+            externalMovementHasTarget = false;
+        }
+    }
+
     private void FindComponents()
     {
         if (collisionMover == null)
@@ -537,6 +603,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         }
 
         bool isGliding =
+            CanUseGlideAbility() &&
             umbrellaController.GetUmbrellaState() ==
             UmbrellaController.UmbrellaState.Open;
 
@@ -553,6 +620,13 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         bool isDownHeld = move.y < -0.5f;
 
         if (diveAttackController != null && diveAttackController.IsDiveAttacking)
+        {
+            jumpInput = false;
+            wasDownHeld = isDownHeld;
+            return;
+        }
+
+        if (IsDiveAttackLandingRecoveryActive())
         {
             jumpInput = false;
             wasDownHeld = isDownHeld;
@@ -800,7 +874,10 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
 
         Vector2 velocity = rigidBody2d.linearVelocity;
 
-        bool isGliding = umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open && !isGround;
+        bool isGliding =
+            CanUseGlideAbility() &&
+            umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open &&
+            !isGround;
 
         float horizontalInput = ResolveHorizontalMoveInput();
 
@@ -1006,12 +1083,19 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return;
         }
 
+        if (IsDiveAttackLandingRecoveryActive())
+        {
+            return;
+        }
+
         if (umbrellaController == null)
         {
             return;
         }
 
-        bool isGliding = (umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open);
+        bool isGliding =
+            CanUseGlideAbility() &&
+            umbrellaController.GetUmbrellaState() == UmbrellaController.UmbrellaState.Open;
 
         if (isGround)
         {
@@ -1075,6 +1159,11 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             isFacingRight = false;
         }
+    }
+
+    private bool IsDiveAttackLandingRecoveryActive()
+    {
+        return diveAttackController != null && diveAttackController.IsDiveAttackLanding;
     }
 
     private void RefreshParryColliderFacing()

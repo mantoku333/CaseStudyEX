@@ -59,7 +59,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (TryResolvePlayerTransform(collision.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out _))
         {
             HandlePlayerEntered(collision);
         }
@@ -67,7 +67,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (TryResolvePlayerTransform(collision.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out _))
         {
             HandlePlayerEntered(collision);
         }
@@ -75,7 +75,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (TryResolvePlayerTransform(collision.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out _))
         {
             overlappingPlayerColliders2D.Remove(collision);
             ResetActivationWhenOutsidePortal();
@@ -86,7 +86,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
     {
         Collider2D playerCollider = collision.collider;
         if (playerCollider != null &&
-            TryResolvePlayerTransform(playerCollider.transform, out _))
+            PlayerCameraColliderUtility.TryResolvePlayerTransform(playerCollider, playerTag, out _))
         {
             HandlePlayerEntered(playerCollider);
         }
@@ -96,7 +96,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
     {
         Collider2D playerCollider = collision.collider;
         if (playerCollider != null &&
-            TryResolvePlayerTransform(playerCollider.transform, out _))
+            PlayerCameraColliderUtility.TryResolvePlayerTransform(playerCollider, playerTag, out _))
         {
             HandlePlayerEntered(playerCollider);
         }
@@ -106,7 +106,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
     {
         Collider2D playerCollider = collision.collider;
         if (playerCollider != null &&
-            TryResolvePlayerTransform(playerCollider.transform, out _))
+            PlayerCameraColliderUtility.TryResolvePlayerTransform(playerCollider, playerTag, out _))
         {
             overlappingPlayerColliders2D.Remove(playerCollider);
             ResetActivationWhenOutsidePortal();
@@ -115,7 +115,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (TryResolvePlayerTransform(other.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(other, playerTag, out _))
         {
             HandlePlayerEntered(other);
         }
@@ -123,7 +123,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (TryResolvePlayerTransform(other.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(other, playerTag, out _))
         {
             HandlePlayerEntered(other);
         }
@@ -131,7 +131,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (TryResolvePlayerTransform(other.transform, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(other, playerTag, out _))
         {
             overlappingPlayerColliders.Remove(other);
             ResetActivationWhenOutsidePortal();
@@ -142,7 +142,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
     {
         Collider playerCollider = collision.collider;
         if (playerCollider != null &&
-            TryResolvePlayerTransform(playerCollider.transform, out _))
+            PlayerCameraColliderUtility.TryResolvePlayerTransform(playerCollider, playerTag, out _))
         {
             HandlePlayerEntered(playerCollider);
         }
@@ -152,7 +152,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
     {
         Collider playerCollider = collision.collider;
         if (playerCollider != null &&
-            TryResolvePlayerTransform(playerCollider.transform, out _))
+            PlayerCameraColliderUtility.TryResolvePlayerTransform(playerCollider, playerTag, out _))
         {
             HandlePlayerEntered(playerCollider);
         }
@@ -162,7 +162,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
     {
         Collider playerCollider = collision.collider;
         if (playerCollider != null &&
-            TryResolvePlayerTransform(playerCollider.transform, out _))
+            PlayerCameraColliderUtility.TryResolvePlayerTransform(playerCollider, playerTag, out _))
         {
             overlappingPlayerColliders.Remove(playerCollider);
             ResetActivationWhenOutsidePortal();
@@ -211,7 +211,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
                 Collider2D overlap = polledColliderBuffer2D[j];
                 polledColliderBuffer2D[j] = null;
                 if (overlap == null ||
-                    !TryResolvePlayerTransform(overlap.transform, out _))
+                    !PlayerCameraColliderUtility.TryResolvePlayerTransform(overlap, playerTag, out _))
                 {
                     continue;
                 }
@@ -271,7 +271,11 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
         RefreshPortalColliders2D();
 
-        Collider2D[] playerColliders = player.GetComponentsInChildren<Collider2D>();
+        if (!PlayerCameraColliderUtility.TryFindCameraCollider(player, out Collider2D playerCameraCollider))
+        {
+            return false;
+        }
+
         for (int i = 0; i < portalColliders2D.Count; i++)
         {
             Collider2D portalCollider = portalColliders2D[i];
@@ -280,19 +284,13 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
                 continue;
             }
 
-            for (int j = 0; j < playerColliders.Length; j++)
+            if (!portalCollider.bounds.Intersects(playerCameraCollider.bounds))
             {
-                Collider2D playerCollider = playerColliders[j];
-                if (playerCollider == null ||
-                    !playerCollider.enabled ||
-                    !portalCollider.bounds.Intersects(playerCollider.bounds))
-                {
-                    continue;
-                }
-
-                ActivateTargetRoomFromTeleport();
-                return true;
+                continue;
             }
+
+            ActivateTargetRoomFromTeleport();
+            return true;
         }
 
         return false;
@@ -363,28 +361,5 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
             this,
             RoomCameraTrigger.ActiveRoom,
             targetRoom);
-    }
-
-    private bool TryResolvePlayerTransform(Transform source, out Transform resolvedPlayer)
-    {
-        resolvedPlayer = null;
-        if (source == null || string.IsNullOrWhiteSpace(playerTag))
-        {
-            return false;
-        }
-
-        Transform current = source;
-        while (current != null)
-        {
-            if (current.CompareTag(playerTag))
-            {
-                resolvedPlayer = current;
-                return true;
-            }
-
-            current = current.parent;
-        }
-
-        return false;
     }
 }

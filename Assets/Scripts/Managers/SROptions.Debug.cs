@@ -18,6 +18,15 @@ public partial class SROptions
     private SaveSlotMeta SelectedSlotMeta => SaveManager.GetSlotMeta(selectedSaveSlot);
 
     [Category(DebugCategory)]
+    [DisplayName("PV Mode")]
+    [Sort(-102)]
+    public bool IsPvMode
+    {
+        get => PvModeState.IsActive;
+        set => PvModeState.SetActive(value);
+    }
+
+    [Category(DebugCategory)]
     [DisplayName("プレイヤー位置を原点に戻す")]
     [Sort(-101)]
     public void ResetPlayerPositionToOrigin()

@@ -76,6 +76,32 @@ public sealed class FollowCameraFacingBias : MonoBehaviour
             : Vector3.zero;
     }
 
+    public void SetBaseComposerOffsetY(float offsetY)
+    {
+        baseComposerOffsetY = offsetY;
+        if (positionComposer == null)
+        {
+            return;
+        }
+
+        Vector3 targetOffset = positionComposer.TargetOffset;
+        targetOffset.y = offsetY;
+        positionComposer.TargetOffset = targetOffset;
+    }
+
+    public void SetBaseDirectFollowOffsetY(float offsetY)
+    {
+        baseDirectFollowOffset.y = offsetY;
+        if (directFollow == null)
+        {
+            return;
+        }
+
+        Vector3 followOffset = directFollow.FollowOffset;
+        followOffset.y = offsetY;
+        directFollow.FollowOffset = followOffset;
+    }
+
     private void Update()
     {
         if (!EnsureLookAheadTrackingTarget())
