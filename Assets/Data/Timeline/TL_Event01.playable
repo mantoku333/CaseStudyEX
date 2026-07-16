@@ -282,11 +282,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 662be744134a56144b84df107eb21272, type: 3}
   m_Name: Story/Audio Point
   m_EditorClassIdentifier: Assembly-CSharp::StoryAudioMarker
-  m_Time: 9.484761555989582
+  m_Time: 9.366666666666667
   audioKind: 2
   action: 1
   audioClip: {fileID: 0}
-  volume: 1
+  volume: 0
   loop: 0
   fadeSeconds: 0.5
 --- !u!114 &-7501001001001001001
