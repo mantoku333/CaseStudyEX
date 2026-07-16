@@ -33,6 +33,7 @@ public sealed class OptionsMenu : MonoBehaviour
     private const float KeyboardScrollPixelsPerWheelTick = 56f;
     private const float KeyboardScrollbarMinHandleHeight = 44f;
     private const float ButtonActionDelay = 0.32f;
+    private const int TopSortingOrder = 10000;
 
     private static readonly string[] PlayerControlBehaviourNames =
     {
@@ -308,6 +309,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
         rootCanvas = GetComponent<Canvas>();
         graphicRaycaster = GetComponent<GraphicRaycaster>();
+        EnsureTopSortingOrder();
 
         menuRoot = FindChildObject("MenuRoot");
         optionPanel = FindChildObject("MenuRoot/OptionPanel");
@@ -2513,6 +2515,7 @@ public sealed class OptionsMenu : MonoBehaviour
     {
         if (rootCanvas != null)
         {
+            EnsureTopSortingOrder();
             rootCanvas.enabled = visible;
         }
 
@@ -2520,6 +2523,17 @@ public sealed class OptionsMenu : MonoBehaviour
         {
             graphicRaycaster.enabled = visible;
         }
+    }
+
+    private void EnsureTopSortingOrder()
+    {
+        if (rootCanvas == null)
+        {
+            return;
+        }
+
+        rootCanvas.overrideSorting = true;
+        rootCanvas.sortingOrder = TopSortingOrder;
     }
 
     private void SetAlternateMainMenuVisible(bool visible)

@@ -15,6 +15,7 @@ public class TitleSceneController : MonoBehaviour
 
     [Header("確認ウィンドウ")]
     [SerializeField] private GameObject quitConfirmPanel;
+    [SerializeField] private GameObject titleLogoPanel;
 
     [Header("ボタン")]
     [SerializeField] private Button noButton;
@@ -54,6 +55,7 @@ public class TitleSceneController : MonoBehaviour
     private readonly Dictionary<int, Sprite> savePreviewThumbnailCache = new Dictionary<int, Sprite>();
     private bool titleRainAudioWasPlaying;
     private bool startingNewGame;
+    private bool titleLogoPanelDefaultActive = true;
 
     private void OnEnable()
     {
@@ -83,6 +85,9 @@ public class TitleSceneController : MonoBehaviour
             loadConfirmPanel.SetActive(false);
         }
 
+        ResolveTitleLogoPanel();
+        titleLogoPanelDefaultActive = titleLogoPanel == null || titleLogoPanel.activeSelf;
+        RefreshTitleLogoPanelVisibility();
         SetTitleFadeAlpha(0f);
         ResolveButtonReferences();
         ResolveRainReferences();
@@ -295,6 +300,7 @@ public class TitleSceneController : MonoBehaviour
         }
 
         quitConfirmPanel.SetActive(true);
+        RefreshTitleLogoPanelVisibility();
         TitleButtonState.ResetPointerVisualMode();
 
         if (EventSystem.current != null && noButton != null)
@@ -315,6 +321,8 @@ public class TitleSceneController : MonoBehaviour
         {
             quitConfirmPanel.SetActive(false);
         }
+
+        RefreshTitleLogoPanelVisibility();
 
         if (EventSystem.current != null)
         {
@@ -482,6 +490,7 @@ public class TitleSceneController : MonoBehaviour
         saveListPanel.transform.SetAsLastSibling();
         RefreshSaveSlotViews();
         saveListPanel.SetActive(true);
+        RefreshTitleLogoPanelVisibility();
         SetTitleRainPausedForSaveList(true);
 
         TitleSaveListPanelDesign2Skin saveListSkin = saveListPanel.GetComponent<TitleSaveListPanelDesign2Skin>();
@@ -508,6 +517,7 @@ public class TitleSceneController : MonoBehaviour
             saveListPanel.SetActive(false);
         }
 
+        RefreshTitleLogoPanelVisibility();
         SetTitleRainPausedForSaveList(false);
 
         if (EventSystem.current != null)
@@ -531,6 +541,38 @@ public class TitleSceneController : MonoBehaviour
                 titleRainAudioSource = rainAudioObject.GetComponent<AudioSource>();
             }
         }
+    }
+
+    private void ResolveTitleLogoPanel()
+    {
+        if (titleLogoPanel != null)
+        {
+            return;
+        }
+
+        GameObject logoOverlayCanvas = GameObject.Find("LogoOverlayCanvas");
+        if (logoOverlayCanvas != null)
+        {
+            titleLogoPanel = logoOverlayCanvas;
+            return;
+        }
+
+        titleLogoPanel = GameObject.Find("rogo");
+    }
+
+    private void RefreshTitleLogoPanelVisibility()
+    {
+        ResolveTitleLogoPanel();
+        if (titleLogoPanel == null)
+        {
+            return;
+        }
+
+        bool overlayOpen =
+            (saveListPanel != null && saveListPanel.activeSelf) ||
+            (quitConfirmPanel != null && quitConfirmPanel.activeSelf);
+
+        titleLogoPanel.SetActive(titleLogoPanelDefaultActive && !overlayOpen);
     }
 
     private void EnsureTitleRainActive()
