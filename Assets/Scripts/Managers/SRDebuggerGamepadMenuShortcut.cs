@@ -1,3 +1,4 @@
+#if !DISABLE_SRDEBUGGER && (UNITY_EDITOR || DEVELOPMENT_BUILD)
 using SRDebugger;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -80,3 +81,4 @@ public class SRDebuggerGamepadMenuShortcut : MonoBehaviour
         }
     }
 }
+#endif
