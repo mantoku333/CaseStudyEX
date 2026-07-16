@@ -9,9 +9,14 @@ namespace GameName.UI
     {
         private const string DownAttackIconName = "SkillIcon_DownAttack";
         private const string DodgeIconName = "SkillIcon_Dodge";
+        private const string GlideIconName = "SkillIcon_Gride";
+        private const string GlideIconNameAlternate = "SkillIcon_Glide";
+        private const string GunIconName = "SkillIcon_Shot";
 
         [SerializeField] private Transform downAttackIcon;
         [SerializeField] private Transform dodgeIcon;
+        [SerializeField] private Transform glideIcon;
+        [SerializeField] private Transform gunIcon;
         [SerializeField] private string playerTag = "Player";
         [SerializeField] private bool autoFindPlayer = true;
         [SerializeField] private Color readyColor = Color.white;
@@ -21,9 +26,13 @@ namespace GameName.UI
 
         private PlayerAbilityController abilityController;
         private DodgeController dodgeController;
+        private GunController gunController;
+        private PlayerController playerController;
         private PlayerDiveAttackController diveAttackController;
         private SkillIconView downAttackView;
         private SkillIconView dodgeView;
+        private SkillIconView glideView;
+        private SkillIconView gunView;
 
         private void Awake()
         {
@@ -45,15 +54,27 @@ namespace GameName.UI
                 (abilityController != null && abilityController.GetCanDiveAttack());
             bool hasDodge = GameProgressFlags.Get(GameProgressKeys.AbilityDodgeUnlocked) ||
                 (abilityController != null && abilityController.GetCanDodge());
+            bool hasGlide = GameProgressFlags.Get(GameProgressKeys.AbilityGlideUnlocked) ||
+                (abilityController != null && abilityController.GetCanGlide());
+            bool hasGun = GameProgressFlags.Get(GameProgressKeys.AbilityGunRecoilUnlocked) ||
+                (abilityController != null && abilityController.GetCanGunRecoil());
 
             Color downAttackColor = hasDownAttack ? GetDownAttackIconColor() : unavailableColor;
+            Color gunColor = CanShootGunNow(hasGun) ? readyColor : unavailableColor;
             downAttackView.Update(hasDownAttack, downAttackColor, cooldownOverlayColor, 0f, overlaySortingOrderOffset);
             dodgeView.Update(hasDodge, readyColor, cooldownOverlayColor, GetDodgeOverlayAmount(), overlaySortingOrderOffset);
+            glideView.Update(hasGlide, readyColor, cooldownOverlayColor, 0f, overlaySortingOrderOffset);
+            gunView.Update(hasGun, gunColor, cooldownOverlayColor, GetGunOverlayAmount(), overlaySortingOrderOffset);
         }
 
         private float GetDodgeOverlayAmount()
         {
             return dodgeController != null ? dodgeController.GetDodgeCooldownRemaining01() : 0f;
+        }
+
+        private float GetGunOverlayAmount()
+        {
+            return gunController != null ? gunController.ReloadRemainingRatio : 0f;
         }
 
         private Color GetDownAttackIconColor()
@@ -64,6 +85,28 @@ namespace GameName.UI
             }
 
             return diveAttackController.CanStartDiveAttackFromAir() ? readyColor : unavailableColor;
+        }
+
+        private bool CanShootGunNow(bool hasGun)
+        {
+            if (!hasGun || gunController == null)
+            {
+                return false;
+            }
+
+            if (playerController == null)
+            {
+                return true;
+            }
+
+            if (!playerController.IsUmbrellaOpen ||
+                playerController.IsGrounded ||
+                playerController.IsExternalControlLocked)
+            {
+                return false;
+            }
+
+            return playerController.TryGetRecoilDirectionForPreview(out _);
         }
 
         private void ResolveIconReferences()
@@ -78,13 +121,34 @@ namespace GameName.UI
                 dodgeIcon = FindDeepChild(transform, DodgeIconName);
             }
 
+            if (glideIcon == null)
+            {
+                glideIcon = FindDeepChild(transform, GlideIconName);
+                if (glideIcon == null)
+                {
+                    glideIcon = FindDeepChild(transform, GlideIconNameAlternate);
+                }
+            }
+
+            if (gunIcon == null)
+            {
+                gunIcon = FindDeepChild(transform, GunIconName);
+            }
+
             downAttackView.Resolve(downAttackIcon);
             dodgeView.Resolve(dodgeIcon);
+            glideView.Resolve(glideIcon);
+            gunView.Resolve(gunIcon);
         }
 
         private void ResolvePlayerReferences()
         {
-            if (!autoFindPlayer || (abilityController != null && dodgeController != null && diveAttackController != null))
+            if (!autoFindPlayer ||
+                (abilityController != null &&
+                dodgeController != null &&
+                gunController != null &&
+                playerController != null &&
+                diveAttackController != null))
             {
                 return;
             }
@@ -103,6 +167,16 @@ namespace GameName.UI
             if (dodgeController == null)
             {
                 dodgeController = playerObject.GetComponent<DodgeController>();
+            }
+
+            if (gunController == null)
+            {
+                gunController = playerObject.GetComponentInChildren<GunController>();
+            }
+
+            if (playerController == null)
+            {
+                playerController = playerObject.GetComponent<PlayerController>();
             }
 
             if (diveAttackController == null)
@@ -233,9 +307,9 @@ namespace GameName.UI
                 overlayImage.raycastTarget = false;
                 overlayImage.sprite = sourceRenderer.sprite;
                 overlayImage.type = Image.Type.Filled;
-                overlayImage.fillMethod = Image.FillMethod.Vertical;
-                overlayImage.fillOrigin = (int)Image.OriginVertical.Top;
-                overlayImage.fillClockwise = true;
+                overlayImage.fillMethod = Image.FillMethod.Radial360;
+                overlayImage.fillOrigin = (int)Image.Origin360.Top;
+                overlayImage.fillClockwise = false;
                 overlayImage.preserveAspect = true;
                 overlayImage.enabled = false;
             }
