@@ -9,6 +9,8 @@ namespace GameName.Enemy
         [SerializeField] private GameObject deathEffectPrefab;
         [SerializeField] private Vector3 spawnOffset;
         [SerializeField] private bool useColliderCenter = true;
+        [SerializeField] private bool overrideDeathEffectScale;
+        [SerializeField, Min(0.01f)] private float deathEffectScaleMultiplier = 1f;
 
         private EnemyController enemyController;
         private Collider2D bodyCollider;
@@ -62,7 +64,15 @@ namespace GameName.Enemy
                 spawnPosition = bodyCollider.bounds.center;
             }
 
-            Instantiate(deathEffectPrefab, spawnPosition + spawnOffset, Quaternion.identity);
+            GameObject effectInstance = Instantiate(
+                deathEffectPrefab,
+                spawnPosition + spawnOffset,
+                Quaternion.identity);
+
+            if (overrideDeathEffectScale)
+            {
+                effectInstance.transform.localScale *= Mathf.Max(0.01f, deathEffectScaleMultiplier);
+            }
         }
     }
 }

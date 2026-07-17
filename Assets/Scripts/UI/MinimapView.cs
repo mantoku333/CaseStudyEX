@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public sealed class MinimapView : MonoBehaviour
 {
     private const string MiniMapBackgroundName = "MiniMapBackGround";
+    private const int DefaultFullMapSortingOrder = 300;
 
     [Header("Minimap Panel")]
     [SerializeField] private Vector2 miniMapSize = new Vector2(290f, 170f);
@@ -63,6 +64,7 @@ public sealed class MinimapView : MonoBehaviour
     private RectTransform miniMapContent;
     private RectTransform fullMapPanel;
     private RectTransform fullMapContent;
+    private Canvas fullMapOverrideCanvas;
     private CanvasGroup miniMapCanvasGroup;
     private CanvasGroup miniMapBackgroundCanvasGroup;
     private PlayerController cachedPlayer;
@@ -170,6 +172,19 @@ public sealed class MinimapView : MonoBehaviour
         SetPanelVisibility(!visible, visible);
     }
 
+    public void SetFullMapSortingOrder(int sortingOrder)
+    {
+        if (fullMapOverrideCanvas != null)
+        {
+            fullMapOverrideCanvas.sortingOrder = sortingOrder;
+        }
+    }
+
+    public void RestoreFullMapSortingOrder()
+    {
+        SetFullMapSortingOrder(DefaultFullMapSortingOrder);
+    }
+
     public void SetPanelVisibility(bool miniVisible, bool fullVisible)
     {
         bool changed = false;
@@ -220,9 +235,14 @@ public sealed class MinimapView : MonoBehaviour
 
         fullMapPanel = CreatePanel("FullMapPanel", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), fullMapSize, Vector2.zero, fullMapPanelColor);
         fullMapPanel.localScale = new Vector3(fullMapScale, fullMapScale, 1f);
-        Canvas fullMapOverrideCanvas = fullMapPanel.gameObject.AddComponent<Canvas>();
+        fullMapOverrideCanvas = fullMapPanel.gameObject.AddComponent<Canvas>();
         fullMapOverrideCanvas.overrideSorting = true;
+<<<<<<< HEAD
         fullMapOverrideCanvas.sortingOrder = 300;
+=======
+        fullMapOverrideCanvas.sortingOrder = DefaultFullMapSortingOrder;
+        fullMapPanel.gameObject.AddComponent<GraphicRaycaster>();
+>>>>>>> origin/Develop
         fullMapContent = CreateRect("Content", fullMapPanel);
         Stretch(fullMapContent, fullMapContentPadding);
         fullMapPanel.gameObject.SetActive(false);
