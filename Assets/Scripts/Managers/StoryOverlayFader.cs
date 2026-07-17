@@ -89,11 +89,6 @@ public sealed class StoryOverlayFader : MonoBehaviour
             canvas.sortingOrder = 32767;
         }
 
-        if (gameObject.GetComponent<GraphicRaycaster>() == null)
-        {
-            gameObject.AddComponent<GraphicRaycaster>();
-        }
-
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
         if (canvasGroup == null)
         {

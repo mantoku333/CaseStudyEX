@@ -238,7 +238,6 @@ public sealed class MinimapView : MonoBehaviour
         fullMapOverrideCanvas = fullMapPanel.gameObject.AddComponent<Canvas>();
         fullMapOverrideCanvas.overrideSorting = true;
         fullMapOverrideCanvas.sortingOrder = DefaultFullMapSortingOrder;
-        fullMapPanel.gameObject.AddComponent<GraphicRaycaster>();
         fullMapContent = CreateRect("Content", fullMapPanel);
         Stretch(fullMapContent, fullMapContentPadding);
         fullMapPanel.gameObject.SetActive(false);
@@ -1391,7 +1390,6 @@ public sealed class MinimapView : MonoBehaviour
         CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920f, 1080f);
-        canvasObject.AddComponent<GraphicRaycaster>();
         return canvas;
     }
 
