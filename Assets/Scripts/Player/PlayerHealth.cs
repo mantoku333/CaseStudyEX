@@ -30,6 +30,7 @@ namespace Player
 
         private int currentHealth;
         private float nextDamageTime;
+        private float nextRainDamageTime;
         private float attackPriorityInvulnerableUntilTime;
         private bool deathNotified;
         private bool restoredFromSave;
@@ -133,6 +134,25 @@ namespace Player
         /// <param name="cooldownSeconds">次にダメージを受けられるまでの秒数</param>
         public bool TryTakeDamage(int damage, float cooldownSeconds)
         {
+            return TryTakeDamageInternal(damage, cooldownSeconds, ref nextDamageTime);
+        }
+
+        /// <summary>
+        /// 雨専用のクールダウンでダメージを受けた場合は true を返す。
+        /// 敵やその他のダメージのクールダウンとは互いに干渉しない。
+        /// </summary>
+        /// <param name="damage">受けるダメージ量</param>
+        /// <param name="cooldownSeconds">次に雨ダメージを受けられるまでの秒数</param>
+        public bool TryTakeRainDamage(int damage, float cooldownSeconds)
+        {
+            return TryTakeDamageInternal(damage, cooldownSeconds, ref nextRainDamageTime);
+        }
+
+        private bool TryTakeDamageInternal(
+            int damage,
+            float cooldownSeconds,
+            ref float nextAllowedDamageTime)
+        {
             // 無効なダメージ、またはすでに死亡しているなら何もしない
             if (damage <= 0 || currentHealth <= 0)
             {
@@ -155,7 +175,7 @@ namespace Player
                 return false;
             }
 
-            if (Time.time < nextDamageTime)
+            if (Time.time < nextAllowedDamageTime)
             {
                 return false;
             }
@@ -167,7 +187,7 @@ namespace Player
 
             LogHealthDebug($"ダメージ後 HP: {currentHealth} / {MaxHealth}");
 
-            nextDamageTime = Time.time + Mathf.Max(0f, cooldownSeconds);
+            nextAllowedDamageTime = Time.time + Mathf.Max(0f, cooldownSeconds);
 
             PlaySE(playerDamageClip, playerDamageVolume);
             NotifyHealthChanged();
@@ -248,6 +268,7 @@ namespace Player
         {
             currentHealth = MaxHealth;
             nextDamageTime = 0f;
+            nextRainDamageTime = 0f;
             NotifyHealthChanged();
         }
 
