@@ -48,6 +48,58 @@ public sealed class RainDamageAreaTests
     }
 
     [Test]
+    public void FixedUpdate_WhenRainCooldownIsActive_EnemyDamageUsesIndependentCooldown()
+    {
+        RainDamageArea rainArea = CreateRainDamageArea(true);
+        PlayerHealth playerHealth = CreatePlayer(Vector2.zero);
+        playerHealth.AddMaxHealth(3, true);
+        Physics2D.SyncTransforms();
+
+        InvokeFixedUpdate(rainArea);
+        bool didTakeEnemyDamage = playerHealth.TryTakeDamage(1, 10f);
+        InvokeFixedUpdate(rainArea);
+        bool didRepeatEnemyDamage = playerHealth.TryTakeDamage(1, 10f);
+
+        Assert.That(didTakeEnemyDamage, Is.True);
+        Assert.That(didRepeatEnemyDamage, Is.False);
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void FixedUpdate_WhenEnemyCooldownIsActive_RainDamageUsesIndependentCooldown()
+    {
+        RainDamageArea rainArea = CreateRainDamageArea(true);
+        PlayerHealth playerHealth = CreatePlayer(Vector2.zero);
+        playerHealth.AddMaxHealth(3, true);
+        Physics2D.SyncTransforms();
+
+        bool didTakeEnemyDamage = playerHealth.TryTakeDamage(1, 10f);
+        InvokeFixedUpdate(rainArea);
+        bool didRepeatEnemyDamage = playerHealth.TryTakeDamage(1, 10f);
+        InvokeFixedUpdate(rainArea);
+
+        Assert.That(didTakeEnemyDamage, Is.True);
+        Assert.That(didRepeatEnemyDamage, Is.False);
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void RestoreFullHealth_ClearsRainAndEnemyDamageCooldowns()
+    {
+        PlayerHealth playerHealth = CreatePlayer(Vector2.zero);
+        playerHealth.AddMaxHealth(4, true);
+
+        Assert.That(playerHealth.TryTakeDamage(1, 10f), Is.True);
+        Assert.That(playerHealth.TryTakeRainDamage(1, 10f), Is.True);
+
+        playerHealth.RestoreFullHealth();
+
+        Assert.That(playerHealth.TryTakeDamage(1, 10f), Is.True);
+        Assert.That(playerHealth.TryTakeRainDamage(1, 10f), Is.True);
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(playerHealth.MaxHealth - 2));
+    }
+
+    [Test]
     public void FixedUpdate_WhenSolidCoverBlocksAllRainPaths_DoesNotDamagePlayer()
     {
         RainDamageArea rainArea = CreateRainDamageArea(true);

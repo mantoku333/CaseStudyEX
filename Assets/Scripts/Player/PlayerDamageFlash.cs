@@ -34,6 +34,12 @@ namespace Metroidvania.Player
             CaptureCurrentColors();
         }
 
+        private void OnDisable()
+        {
+            StopActiveFlashAndRestore();
+            nextFlashTime = 0f;
+        }
+
         /// <summary>
         /// 被弾時の赤点滅演出を再生
         /// </summary>
@@ -67,10 +73,22 @@ namespace Metroidvania.Player
 
             if (flashCoroutine != null)
             {
-                StopCoroutine(flashCoroutine);
+                StopActiveFlashAndRestore();
             }
 
             flashCoroutine = StartCoroutine(FlashCoroutine());
+        }
+
+        private void StopActiveFlashAndRestore()
+        {
+            if (flashCoroutine == null)
+            {
+                return;
+            }
+
+            StopCoroutine(flashCoroutine);
+            flashCoroutine = null;
+            RestoreDefaultColors();
         }
 
         private IEnumerator FlashCoroutine()
