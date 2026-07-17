@@ -237,12 +237,7 @@ public sealed class MinimapView : MonoBehaviour
         fullMapPanel.localScale = new Vector3(fullMapScale, fullMapScale, 1f);
         fullMapOverrideCanvas = fullMapPanel.gameObject.AddComponent<Canvas>();
         fullMapOverrideCanvas.overrideSorting = true;
-<<<<<<< HEAD
-        fullMapOverrideCanvas.sortingOrder = 300;
-=======
         fullMapOverrideCanvas.sortingOrder = DefaultFullMapSortingOrder;
-        fullMapPanel.gameObject.AddComponent<GraphicRaycaster>();
->>>>>>> origin/Develop
         fullMapContent = CreateRect("Content", fullMapPanel);
         Stretch(fullMapContent, fullMapContentPadding);
         fullMapPanel.gameObject.SetActive(false);
