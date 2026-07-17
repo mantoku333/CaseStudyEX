@@ -15,7 +15,7 @@ MonoBehaviour:
   moveSpeed: 7
   glideMoveSpeed: 10
   fallSpeed: 3
-  jumpForce: 3
+  jumpForce: 3.2
   dodgeDistance: 6
   dodgeDuration: 0.5
   dodgeCooldown: 3
