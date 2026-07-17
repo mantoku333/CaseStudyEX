@@ -576,6 +576,56 @@ public sealed class StageBossIntroTests
     }
 
     [Test]
+    public void Restore_UnfinishedLastBossEncounter_ReenablesTriggerAndAllowsReentry()
+    {
+        Rigidbody2D playerRigidbody = CreatePlayer(Vector2.zero, out _, addPlayerHealth: true);
+        Collider2D playerBodyCollider = playerRigidbody.GetComponent<Collider2D>();
+        LastBossController lastBoss = CreateLastBoss(new Vector2(2f, 0f));
+
+        GameObject areaObject = CreateInactiveBossAreaObject();
+        BossAreaController bossArea = areaObject.GetComponent<BossAreaController>();
+        Collider2D areaTrigger = areaObject.GetComponent<Collider2D>();
+        ConfigureLastBossArea(bossArea, lastBoss);
+        SetPrivateField(bossArea, "disableTriggerAfterStart", true);
+        areaObject.SetActive(true);
+        Physics2D.SyncTransforms();
+
+        int encounterStartedCount = 0;
+        encounterStartedHandler = _ => encounterStartedCount++;
+        BossAreaController.EncounterStarted += encounterStartedHandler;
+
+        InvokePrivate(bossArea, "TryStartEncounterFrom2DTrigger", playerBodyCollider);
+
+        Assert.That(encounterStartedCount, Is.EqualTo(1));
+        Assert.That(lastBoss.IsEncounterActive, Is.True);
+        Assert.That(areaTrigger.enabled, Is.False);
+
+        playerRigidbody.position = new Vector2(10f, 0f);
+        playerRigidbody.transform.position = playerRigidbody.position;
+        Physics2D.SyncTransforms();
+
+        bossArea.Restore(new SaveGameData());
+
+        Assert.That(GetPrivateField<bool>(bossArea, "encounterStarted"), Is.False);
+        Assert.That(GetPrivateField<bool>(bossArea, "encounterCompleted"), Is.False);
+        Assert.That(lastBoss.IsEncounterActive, Is.False);
+        Assert.That(areaTrigger.enabled, Is.True, "Retry must re-enable the room entrance trigger.");
+        Assert.That(encounterStartedCount, Is.EqualTo(1), "Respawning outside the room must not start the fight early.");
+
+        playerRigidbody.position = Vector2.zero;
+        playerRigidbody.transform.position = playerRigidbody.position;
+        Physics2D.SyncTransforms();
+        InvokePrivate(bossArea, "OnTriggerEnter2D", playerBodyCollider);
+
+        Assert.That(encounterStartedCount, Is.EqualTo(2));
+        Assert.That(lastBoss.IsEncounterActive, Is.True);
+        Assert.That(areaTrigger.enabled, Is.False);
+
+        BossAreaController.EncounterStarted -= encounterStartedHandler;
+        encounterStartedHandler = null;
+    }
+
+    [Test]
     public void StartEncounterAfterStoryRoutine_ForLastBoss_WaitsForStoryBeforeStarting()
     {
         LastBossController lastBoss = CreateLastBoss(Vector2.zero);

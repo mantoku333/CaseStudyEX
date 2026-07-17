@@ -4094,7 +4094,7 @@ MonoBehaviour:
     setFalseFlags: []
     clearFlags: []
   pausePolicy: 2
-  autoSaveOnComplete: 1
+  autoSaveOnComplete: 0
   markRunOnceFlagOnComplete: 1
   deactivateObjectsOnComplete: []
   lockPlayerControlDuringEvent: 1
