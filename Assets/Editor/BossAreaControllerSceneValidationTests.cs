@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using GameName.Enemy;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,12 +10,42 @@ using UnityEngine.SceneManagement;
 public sealed class BossAreaControllerSceneValidationTests
 {
     private const string ScenePath = "Assets/Scenes/Fix_Alpha4_Fuyuno.unity";
+    private const string EventsPrefabPath = "Assets/Prefabs/Events.prefab";
     private static readonly FieldInfo BossDefeatedFlagKeyField =
         typeof(BossAreaController).GetField("bossDefeatedFlagKey", BindingFlags.Instance | BindingFlags.NonPublic);
     private static readonly FieldInfo BossRootField =
         typeof(BossAreaController).GetField("bossRoot", BindingFlags.Instance | BindingFlags.NonPublic);
     private static readonly FieldInfo BossBgmField =
         typeof(BossAreaController).GetField("bossBgm", BindingFlags.Instance | BindingFlags.NonPublic);
+    private static readonly FieldInfo AutoSaveOnCompleteField =
+        typeof(StoryEventController).GetField("autoSaveOnComplete", BindingFlags.Instance | BindingFlags.NonPublic);
+
+    [Test]
+    public void EventsPrefab_LastBossPreEncounterDoesNotOverwriteRespawnSave()
+    {
+        GameObject eventsPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(EventsPrefabPath);
+        Assert.That(eventsPrefab, Is.Not.Null, $"Prefab could not be loaded: {EventsPrefabPath}");
+        Assert.That(AutoSaveOnCompleteField, Is.Not.Null);
+
+        StoryEventController[] storyEvents =
+            eventsPrefab.GetComponentsInChildren<StoryEventController>(includeInactive: true);
+        StoryEventController lastBossPreEncounter = null;
+
+        for (int i = 0; i < storyEvents.Length; i++)
+        {
+            if (storyEvents[i] != null && storyEvents[i].EventId == "Event_33")
+            {
+                lastBossPreEncounter = storyEvents[i];
+                break;
+            }
+        }
+
+        Assert.That(lastBossPreEncounter, Is.Not.Null, "Event_33 must exist in the shared Events prefab.");
+        Assert.That(
+            (bool)AutoSaveOnCompleteField.GetValue(lastBossPreEncounter),
+            Is.False,
+            "Event_33 moves the player into the LastBoss room, so saving on completion replaces the safe respawn position.");
+    }
 
     [Test]
     public void FixAlpha4Fuyuno_BossAreasUseUniqueDefeatedFlags()

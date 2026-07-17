@@ -81,7 +81,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -3251518452618743937, guid: ee9d63449b3cbdc46b5239c0adb20980, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1632,6 +1632,7 @@ MonoBehaviour:
   magicCircleWorldSize: {x: 5, y: 5}
   groundBladeVisualFrameSizeMultiplier: {x: 1.2, y: 1}
   rainBladeVisualFrameSizeMultiplier: {x: 1, y: 1}
+  effectBaseSortingOrder: 10
   auraSortingOrderOffset: -1
   shieldSortingOrderOffset: 2
   shieldBreakSortingOrderOffset: 3
@@ -1673,4 +1674,4 @@ MonoBehaviour:
   playerTag: Player
   hitInterval: 0.2
   applyDamageInPassThrough: 1
-  contactDamage: 10
+  contactDamage: 20

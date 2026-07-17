@@ -17,6 +17,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private const float RevealFieldMin = -0.25f;
     private const float RevealFieldMax = 1.25f;
     private const int RevealFieldMaxByte = 254;
+    private const int MinimumOverlaySortingOrder = 100;
 
     private static RoomFogRevealManager instance;
     private static readonly int RevealFrontPropertyId = Shader.PropertyToID("_RevealFront");
@@ -47,7 +48,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     [SerializeField, Range(0.01f, 1f)] private float edgeSoftness = 0.22f;
     [SerializeField, Range(0f, 1f)] private float noiseStrength = 0.18f;
     [SerializeField, Min(0.1f)] private float noiseScale = 0.32f;
-    [SerializeField] private int sortingOrder = 30000;
+    [SerializeField, Min(MinimumOverlaySortingOrder)] private int sortingOrder = 30000;
     [SerializeField] private float overlayZ = -1f;
 
     [SerializeField, Min(0.01f)] private float revealDuration = 1.6f;
@@ -243,6 +244,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         revealDuration = Mathf.Max(0.01f, revealDuration);
         concealDuration = Mathf.Max(0.01f, concealDuration);
         edgeSoftness = Mathf.Max(0.01f, edgeSoftness);
+        sortingOrder = Mathf.Max(MinimumOverlaySortingOrder, sortingOrder);
         ResolveDefaultShader();
         RequestFullRefresh();
     }
@@ -1145,7 +1147,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
         overlayRenderer.sharedMaterial = fogMaterial;
         overlayRenderer.sortingLayerID = 0;
-        overlayRenderer.sortingOrder = sortingOrder;
+        overlayRenderer.sortingOrder = Mathf.Max(MinimumOverlaySortingOrder, sortingOrder);
     }
 
     private void ApplyMaterialProperties()
