@@ -280,9 +280,7 @@ public class ItemEffectController : MonoBehaviour
                 settings.pickupRows,
                 settings.pickupFrameCount,
                 settings.pickupFrames,
-                out pickupFrameOffsets,
-                true,
-                false);
+                out pickupFrameOffsets);
         }
     }
 
@@ -292,13 +290,12 @@ public class ItemEffectController : MonoBehaviour
         int rows,
         int frameCount,
         Sprite[] fallbackFrames,
-        out Vector3[] frameOffsets,
-        bool stabilizeX = true,
-        bool stabilizeY = true)
+        out Vector3[] frameOffsets)
     {
+        Vector3 baseOffset = settings != null ? settings.visualOffset : Vector3.zero;
         if (spriteSheet == null || columns <= 0 || rows <= 0 || frameCount <= 0)
         {
-            frameOffsets = BuildZeroOffsets(fallbackFrames);
+            frameOffsets = BuildLockedOffsets(fallbackFrames, baseOffset);
             return fallbackFrames;
         }
 
@@ -307,7 +304,7 @@ public class ItemEffectController : MonoBehaviour
 
         if (frameWidth <= 0 || frameHeight <= 0)
         {
-            frameOffsets = BuildZeroOffsets(fallbackFrames);
+            frameOffsets = BuildLockedOffsets(fallbackFrames, baseOffset);
             return fallbackFrames;
         }
 
@@ -315,9 +312,10 @@ public class ItemEffectController : MonoBehaviour
         Sprite[] frames = new Sprite[maxFrameCount];
         frameOffsets = new Vector3[maxFrameCount];
         int index = 0;
-        Color32[] pixels = spriteSheet.GetPixels32();
-        int textureWidth = spriteSheet.width;
-        Vector3 baseOffset = settings != null ? settings.visualOffset : Vector3.zero;
+        float sizeCompensatedPixelsPerUnit =
+            SpriteSheetResolutionUtility.GetSizeCompensatedPixelsPerUnit(
+                spriteSheet,
+                settings.pixelsPerUnit);
 
         for (int row = 0; row < rows && index < maxFrameCount; row++)
         {
@@ -334,82 +332,36 @@ public class ItemEffectController : MonoBehaviour
                     spriteSheet,
                     rect,
                     new Vector2(0.5f, 0.5f),
-                    settings.pixelsPerUnit,
+                    sizeCompensatedPixelsPerUnit,
                     0,
                     SpriteMeshType.FullRect);
 
                 frames[index++] = sprite;
                 generatedSprites.Add(sprite);
-                frameOffsets[index - 1] = baseOffset + CalculateFrameOffset(
-                    pixels,
-                    textureWidth,
-                    column * frameWidth,
-                    y,
-                    frameWidth,
-                    frameHeight,
-                    settings.pixelsPerUnit,
-                    stabilizeX,
-                    stabilizeY);
+                // The sprite sheet already preserves the authored position inside each
+                // fixed grid cell. Keep one anchor for every frame, like LastBoss effects,
+                // instead of following the changing center of the visible pixels.
+                frameOffsets[index - 1] = baseOffset;
             }
         }
 
         return frames;
     }
 
-    private static Vector3[] BuildZeroOffsets(Sprite[] frames)
+    private static Vector3[] BuildLockedOffsets(Sprite[] frames, Vector3 lockedOffset)
     {
-        return frames == null ? null : new Vector3[frames.Length];
-    }
-
-    private static Vector3 CalculateFrameOffset(
-        Color32[] pixels,
-        int textureWidth,
-        int xMin,
-        int yMin,
-        int frameWidth,
-        int frameHeight,
-        float pixelsPerUnit,
-        bool stabilizeX,
-        bool stabilizeY)
-    {
-        int minX = frameWidth;
-        int minY = frameHeight;
-        int maxX = -1;
-        int maxY = -1;
-
-        for (int y = 0; y < frameHeight; y++)
+        if (frames == null)
         {
-            int rowIndex = (yMin + y) * textureWidth;
-
-            for (int x = 0; x < frameWidth; x++)
-            {
-                Color32 pixel = pixels[rowIndex + xMin + x];
-                if (pixel.a <= 10)
-                {
-                    continue;
-                }
-
-                if (x < minX) { minX = x; }
-                if (y < minY) { minY = y; }
-                if (x > maxX) { maxX = x; }
-                if (y > maxY) { maxY = y; }
-            }
+            return null;
         }
 
-        if (maxX < 0 || maxY < 0 || pixelsPerUnit <= 0f)
+        Vector3[] offsets = new Vector3[frames.Length];
+        for (int i = 0; i < offsets.Length; i++)
         {
-            return Vector3.zero;
+            offsets[i] = lockedOffset;
         }
 
-        float contentCenterX = (minX + maxX) * 0.5f;
-        float contentCenterY = (minY + maxY) * 0.5f;
-        float frameCenterX = (frameWidth - 1) * 0.5f;
-        float frameCenterY = (frameHeight - 1) * 0.5f;
-
-        return new Vector3(
-            stabilizeX ? (frameCenterX - contentCenterX) / pixelsPerUnit : 0f,
-            stabilizeY ? (frameCenterY - contentCenterY) / pixelsPerUnit : 0f,
-            0f);
+        return offsets;
     }
 
     private void ApplyFrameOffset(
@@ -424,19 +376,10 @@ public class ItemEffectController : MonoBehaviour
         }
 
         Vector3 baseOffset = settings != null ? settings.visualOffset : Vector3.zero;
-        if (frameOffsets == null || index < 0 || index >= frameOffsets.Length)
-        {
-            effectTransform.localPosition = anchoredBasePosition ?? baseOffset;
-            return;
-        }
-
-        if (anchoredBasePosition.HasValue && anchoredReferenceOffset.HasValue)
-        {
-            effectTransform.localPosition = anchoredBasePosition.Value + (frameOffsets[index] - anchoredReferenceOffset.Value);
-            return;
-        }
-
-        effectTransform.localPosition = frameOffsets[index];
+        // Frame offsets used to follow each frame's visible-pixel center. That moves the
+        // renderer even though every generated sprite uses the same fixed grid. Lock the
+        // transform instead, matching LastBoss effect playback.
+        effectTransform.localPosition = anchoredBasePosition ?? baseOffset;
     }
     private void DisablePickupColliders()
     {
