@@ -15,12 +15,12 @@ public class WindRiseZoneTests
     }
 
     [Test]
-    public void TryBuildTarget_AcceptsPlayerBodyCapsule()
+    public void TryBuildTarget_AcceptsPlayerBodyPolygon()
     {
         WindRiseZone windRise = CreateWindRise();
-        CapsuleCollider2D bodyCapsule = CreatePlayer();
+        PolygonCollider2D bodyPolygon = CreatePlayer();
 
-        Assert.That(TryBuildTarget(windRise, bodyCapsule), Is.True);
+        Assert.That(TryBuildTarget(windRise, bodyPolygon), Is.True);
     }
 
     [Test]
@@ -42,12 +42,22 @@ public class WindRiseZoneTests
         return windObject.AddComponent<WindRiseZone>();
     }
 
-    private CapsuleCollider2D CreatePlayer()
+    private PolygonCollider2D CreatePlayer()
     {
         playerObject = new GameObject("Player");
         playerObject.tag = "Player";
         playerObject.AddComponent<Rigidbody2D>();
-        return playerObject.AddComponent<CapsuleCollider2D>();
+        PolygonCollider2D polygon = playerObject.AddComponent<PolygonCollider2D>();
+        polygon.points = new[]
+        {
+            new Vector2(-0.5f, 1.0f),
+            new Vector2(0.5f, 1.0f),
+            new Vector2(0.5f, -0.25f),
+            new Vector2(0.25f, -0.5f),
+            new Vector2(-0.25f, -0.5f),
+            new Vector2(-0.5f, -0.25f)
+        };
+        return polygon;
     }
 
     private static bool TryBuildTarget(WindRiseZone windRise, Collider2D collider)

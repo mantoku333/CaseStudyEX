@@ -39,7 +39,7 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
     private PlayerAbilityController abilityController;
     private UmbrellaController umbrellaController;
     private Rigidbody2D playerRigidbody;
-    private CapsuleCollider2D playerCollider;
+    private Collider2D playerCollider;
     private Transform dashRoot;
     private LineRenderer arrowLine;
     private Material previewMaterial;
@@ -117,7 +117,7 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
         umbrellaController = root.GetComponentInChildren<UmbrellaController>();
         playerRigidbody = root.GetComponentInChildren<Rigidbody2D>();
         playerCollider = playerRigidbody != null
-            ? playerRigidbody.GetComponent<CapsuleCollider2D>()
+            ? playerRigidbody.GetComponent<Collider2D>()
             : null;
         solidLayerMask = LayerMask.GetMask(GroundLayerName);
     }
@@ -270,14 +270,13 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
             return false;
         }
 
-        Vector2 lossyScale = playerCollider.transform.lossyScale;
-        Vector2 capsuleSize = Vector2.Scale(
-            playerCollider.size,
-            new Vector2(Mathf.Abs(lossyScale.x), Mathf.Abs(lossyScale.y)));
+        // PolygonCollider2D には PolygonCast がないため、軌道表示だけは外接カプセルで予測する。
+        // 実際の移動・衝突判定は PlayerCollisionMover2D の Collider2D.Cast でポリゴン形状のまま行う。
+        Vector2 capsuleSize = playerCollider.bounds.size;
         RaycastHit2D hit = Physics2D.CapsuleCast(
             position,
             capsuleSize,
-            playerCollider.direction,
+            CapsuleDirection2D.Vertical,
             playerRigidbody.rotation,
             desiredDelta / distance,
             distance + CollisionSkin,
