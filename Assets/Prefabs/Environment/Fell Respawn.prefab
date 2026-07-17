@@ -223,6 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RespawnOnFall
   respawnPoint: {fileID: 5304105105324090791}
+  respawnDamage: 10
 --- !u!61 &6118200729095044322
 BoxCollider2D:
   m_ObjectHideFlags: 0
