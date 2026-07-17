@@ -93,6 +93,7 @@ namespace GameName.Ending
         private Coroutine endingRoutine;
         private bool subscribedToBoss;
         private bool endingStarted;
+        private bool canSkipCredits;
         private bool returningToTitle;
         private bool runtimeSkyImageCreated;
         private bool runtimeCreditsCanvasCreated;
@@ -150,7 +151,11 @@ namespace GameName.Ending
                 TrySubscribeToBoss();
             }
 
-            if (endingStarted && !returningToTitle && Time.unscaledTime >= skipInputIgnoreUntil && WasSpacePressedThisFrame())
+            if (endingStarted &&
+                canSkipCredits &&
+                !returningToTitle &&
+                Time.unscaledTime >= skipInputIgnoreUntil &&
+                WasSpacePressedThisFrame())
             {
                 ReturnToTitle();
             }
@@ -202,6 +207,7 @@ namespace GameName.Ending
         private IEnumerator PlayArcancielRewardThenEndingRoutine()
         {
             endingStarted = true;
+            canSkipCredits = false;
             skipInputIgnoreUntil = float.PositiveInfinity;
 
             ResolveSceneReferences();
@@ -221,7 +227,8 @@ namespace GameName.Ending
         private IEnumerator PlayEndingRoutine(bool gameplayControlsAlreadyDisabled = false)
         {
             endingStarted = true;
-            skipInputIgnoreUntil = Time.unscaledTime + 0.25f;
+            canSkipCredits = false;
+            skipInputIgnoreUntil = float.PositiveInfinity;
 
             ResolveSceneReferences();
             if (!gameplayControlsAlreadyDisabled)
@@ -433,7 +440,7 @@ namespace GameName.Ending
                 yield break;
             }
 
-            yield return creditsCanvasPanel.Play(() => returningToTitle);
+            yield return creditsCanvasPanel.Play(() => returningToTitle, EnableCreditsSkip);
         }
 
         private void ReturnToTitle()
@@ -444,6 +451,7 @@ namespace GameName.Ending
             }
 
             returningToTitle = true;
+            canSkipCredits = false;
             Time.timeScale = 1f;
 
             if (stopTimelineBgmOnReturn)
@@ -1129,6 +1137,12 @@ namespace GameName.Ending
         private static bool WasSpacePressedThisFrame()
         {
             return Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        }
+
+        private void EnableCreditsSkip()
+        {
+            canSkipCredits = true;
+            skipInputIgnoreUntil = Time.unscaledTime + 0.25f;
         }
 
         private bool IsInConfiguredEndingScene()

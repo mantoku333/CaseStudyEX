@@ -69,7 +69,7 @@ namespace GameName.Ending
             ConfigureInitialImage();
         }
 
-        public IEnumerator Play(Func<bool> shouldCancel)
+        public IEnumerator Play(Func<bool> shouldCancel, Action onCreditsRollStarted = null)
         {
             AutoBind();
             ApplyCreditsText();
@@ -96,7 +96,13 @@ namespace GameName.Ending
             yield return FadeCanvas(1f, canvasFadeInDuration, shouldCancel);
             yield return FadeImage(1f, imageFadeDuration, shouldCancel);
 
+            if (IsCancelled(shouldCancel))
+            {
+                yield break;
+            }
+
             StartImageRotation(shouldCancel);
+            onCreditsRollStarted?.Invoke();
 
             while (!IsCancelled(shouldCancel) && textRect.anchoredPosition.y < endY)
             {
