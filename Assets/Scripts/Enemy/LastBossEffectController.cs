@@ -92,6 +92,7 @@ namespace GameName.Enemy
         [SerializeField] private Vector2 rainBladeVisualFrameSizeMultiplier = Vector2.one;
 
         [Header("Sorting")]
+        [SerializeField] private int effectBaseSortingOrder = 10;
         [SerializeField] private int auraSortingOrderOffset = -2;
         [SerializeField] private int shieldSortingOrderOffset = 2;
         [SerializeField] private int shieldBreakSortingOrderOffset = 3;
@@ -132,6 +133,7 @@ namespace GameName.Enemy
         public Vector2 RainBladeVisualFrameSizeMultiplier => SanitizeVectorMultiplier(rainBladeVisualFrameSizeMultiplier);
         public float RangeEffectSizeMultiplier => Mathf.Max(0.01f, rangeEffectSizeMultiplier);
         public float GroundBladeClipDuration => GroundBladeClip.DurationSeconds;
+        public int EffectBaseSortingOrder => effectBaseSortingOrder;
 
         public GridSpriteSheetClip GroundBladeClip => CreateStableClip(
             underAttackSpriteSheet,
@@ -852,6 +854,7 @@ namespace GameName.Enemy
             player.ConfigureRenderer(renderer);
             player.SetTargetWorldSize(targetWorldSize);
             player.ApplyRendererSettings(bossRenderer, sortingOrderOffset, copyBossMaterial);
+            renderer.sortingOrder = effectBaseSortingOrder + sortingOrderOffset;
             return player;
         }
 
