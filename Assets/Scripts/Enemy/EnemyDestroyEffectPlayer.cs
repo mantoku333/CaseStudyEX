@@ -66,6 +66,7 @@ namespace GameName.Enemy
             }
 
             targetRenderer.enabled = true;
+            Vector3 lockedLocalPosition = targetRenderer.transform.localPosition;
 
             for (int i = 0; i < playbackFrames.Length; i++)
             {
@@ -78,7 +79,10 @@ namespace GameName.Enemy
                 targetRenderer.sprite = frame;
                 if (centerFramesOnOrigin)
                 {
-                    targetRenderer.transform.localPosition = -frame.bounds.center;
+                    // Match LastBoss death playback: the fixed-grid frame changes while
+                    // the effect anchor stays still. Re-centering from each sprite's
+                    // visible bounds makes trimmed/fallback frames visibly shake.
+                    targetRenderer.transform.localPosition = lockedLocalPosition;
                 }
 
                 yield return new WaitForSeconds(frameSeconds);
@@ -132,6 +136,10 @@ namespace GameName.Enemy
             generatedFrames = new Sprite[frameColumns * frameRows];
             int frameIndex = 0;
             Vector2 pivot = new Vector2(0.5f, 0.5f);
+            float sizeCompensatedPixelsPerUnit =
+                SpriteSheetResolutionUtility.GetSizeCompensatedPixelsPerUnit(
+                    spriteSheetTexture,
+                    pixelsPerUnit);
 
             for (int visualRow = 0; visualRow < frameRows; visualRow++)
             {
@@ -145,7 +153,7 @@ namespace GameName.Enemy
                         spriteSheetTexture,
                         rect,
                         pivot,
-                        pixelsPerUnit,
+                        sizeCompensatedPixelsPerUnit,
                         0,
                         SpriteMeshType.FullRect);
                 }

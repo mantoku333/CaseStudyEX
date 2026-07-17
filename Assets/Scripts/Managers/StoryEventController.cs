@@ -1346,8 +1346,14 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         string alias = ResolveSpeakerActorAlias(speakerName);
-        return !string.Equals(alias, speakerName, StringComparison.OrdinalIgnoreCase) &&
-               TryResolveBubbleTargetBySpeakerName(alias, out target, out targetOffset);
+        if (!string.Equals(alias, speakerName, StringComparison.OrdinalIgnoreCase) &&
+            TryResolveBubbleTargetBySpeakerName(alias, out target, out targetOffset))
+        {
+            return true;
+        }
+
+        return string.Equals(alias, "thanatos", StringComparison.OrdinalIgnoreCase) &&
+               TryResolveThanatosBubbleTarget(out target, out targetOffset);
     }
 
     private bool TryResolveBubbleTargetBySpeakerName(string speakerName, out Transform target, out Vector3 targetOffset)
@@ -1441,6 +1447,62 @@ public sealed class StoryEventController : MonoBehaviour
         return player != null ? player.transform : null;
     }
 
+    private static bool TryResolveThanatosBubbleTarget(out Transform target, out Vector3 targetOffset)
+    {
+        target = ResolveThanatosTransform();
+        targetOffset = target != null ? new Vector3(0f, 0.3f, 0f) : Vector3.zero;
+        return target != null;
+    }
+
+    private static Transform ResolveThanatosTransform()
+    {
+        GameName.Enemy.LastBossController lastBoss =
+            FindFirstObjectByType<GameName.Enemy.LastBossController>(FindObjectsInactive.Include);
+        if (lastBoss != null)
+        {
+            return lastBoss.transform;
+        }
+
+        return FindTransformByExactName(
+            "LastBoss",
+            "Thanatos",
+            "thanatos",
+            "PG_ACTOR_thanatos",
+            "_PG_ACTOR_thanatos");
+    }
+
+    private static Transform FindTransformByExactName(params string[] candidateNames)
+    {
+        if (candidateNames == null || candidateNames.Length == 0)
+        {
+            return null;
+        }
+
+        Transform[] transforms = FindObjectsByType<Transform>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        for (int i = 0; i < candidateNames.Length; i++)
+        {
+            string name = candidateNames[i];
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                continue;
+            }
+
+            for (int j = 0; j < transforms.Length; j++)
+            {
+                Transform tf = transforms[j];
+                if (tf != null && string.Equals(tf.name, name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return tf;
+                }
+            }
+        }
+
+        return null;
+    }
+
     private static string ResolveSpeakerActorAlias(string speakerName)
     {
         if (string.IsNullOrWhiteSpace(speakerName))
@@ -1458,6 +1520,12 @@ public sealed class StoryEventController : MonoBehaviour
         if (string.Equals(speaker, "\u30CE\u30AF\u30B9", StringComparison.OrdinalIgnoreCase))
         {
             return "nox";
+        }
+
+        if (string.Equals(speaker, "\u30BF\u30CA\u30C8\u30B9", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(speaker, "thanatos", StringComparison.OrdinalIgnoreCase))
+        {
+            return "thanatos";
         }
 
         return speaker;

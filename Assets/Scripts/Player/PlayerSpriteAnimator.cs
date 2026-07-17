@@ -36,6 +36,8 @@ namespace Player
         [SerializeField] private string dodgeStateName = "dodge";
         [SerializeField] private string parryStateName = "parry";
         [SerializeField] private string changeStateName = "change";
+        [SerializeField] private string closeToOpenChangeStateName = "change_close_to_open";
+        [SerializeField] private string openToCloseChangeStateName = "change_open_to_close";
         [SerializeField] private string attackStateName = "attack";
         [SerializeField] private string diveAttackStateName = "dive_attack";
         [SerializeField] private string diveAttackLandStateName = "dive_attack_land";
@@ -561,7 +563,7 @@ namespace Player
                 case VisualState.Parry:
                     return parryStateName;
                 case VisualState.Change:
-                    return changeStateName;
+                    return GetChangeStateName(isUmbrellaOpen);
                 case VisualState.Attack:
                     return attackStateName;
                 case VisualState.DiveAttack:
@@ -644,8 +646,23 @@ namespace Player
                     if (AnimatorHasState("parry")) return "parry";
                     break;
                 case VisualState.Change:
-                    if (IsDefaultStateName(primary, "change") && AnimatorHasState("Change")) return "Change";
                     if (AnimatorHasState(primary)) return primary;
+                    if (isUmbrellaOpen)
+                    {
+                        if (AnimatorHasState("change_close_to_open")) return "change_close_to_open";
+                        if (AnimatorHasState("change_closed_to_open")) return "change_closed_to_open";
+                        if (AnimatorHasState("ChangeCloseToOpen")) return "ChangeCloseToOpen";
+                        if (AnimatorHasState("CloseToOpen")) return "CloseToOpen";
+                    }
+                    else
+                    {
+                        if (AnimatorHasState("change_open_to_close")) return "change_open_to_close";
+                        if (AnimatorHasState("change_opened_to_closed")) return "change_opened_to_closed";
+                        if (AnimatorHasState("ChangeOpenToClose")) return "ChangeOpenToClose";
+                        if (AnimatorHasState("OpenToClose")) return "OpenToClose";
+                    }
+                    if (IsDefaultStateName(changeStateName, "change") && AnimatorHasState("Change")) return "Change";
+                    if (AnimatorHasState(changeStateName)) return changeStateName;
                     if (AnimatorHasState("Change")) return "Change";
                     if (AnimatorHasState("change")) return "change";
                     break;
@@ -703,6 +720,21 @@ namespace Player
             }
 
             return primary;
+        }
+
+        private string GetChangeStateName(bool isUmbrellaOpen)
+        {
+            if (isUmbrellaOpen && !string.IsNullOrEmpty(closeToOpenChangeStateName))
+            {
+                return closeToOpenChangeStateName;
+            }
+
+            if (!isUmbrellaOpen && !string.IsNullOrEmpty(openToCloseChangeStateName))
+            {
+                return openToCloseChangeStateName;
+            }
+
+            return changeStateName;
         }
 
         private string BuildCurrentSpriteLog()

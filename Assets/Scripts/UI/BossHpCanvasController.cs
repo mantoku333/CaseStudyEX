@@ -445,7 +445,8 @@ namespace GameName.UI
 
             if (graphicRaycaster != null)
             {
-                graphicRaycaster.enabled = visible;
+                // Boss HP UI is display-only; it must never participate in UI raycasts.
+                graphicRaycaster.enabled = false;
             }
         }
 
