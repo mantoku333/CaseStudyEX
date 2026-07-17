@@ -391,7 +391,7 @@ public class RoomCameraTrigger : MonoBehaviour
             Collider roomCollider = colliders[i];
             if (roomCollider != null &&
                 roomCollider.enabled &&
-                roomCollider.bounds.Contains(worldPosition))
+                IsPointInsideCollider(roomCollider, worldPosition))
             {
                 return true;
             }
@@ -799,7 +799,7 @@ public class RoomCameraTrigger : MonoBehaviour
                 Collider areaCollider = _areaColliders[i];
                 if (areaCollider != null &&
                     areaCollider.enabled &&
-                    areaCollider.bounds.Contains(worldPosition))
+                    IsPointInsideCollider(areaCollider, worldPosition))
                 {
                     return true;
                 }
@@ -807,6 +807,12 @@ public class RoomCameraTrigger : MonoBehaviour
         }
 
         return false;
+    }
+
+    private static bool IsPointInsideCollider(Collider collider, Vector3 worldPosition)
+    {
+        Vector3 closestPoint = collider.ClosestPoint(worldPosition);
+        return (closestPoint - worldPosition).sqrMagnitude <= 0.0001f;
     }
 
     private float GetSmallestBoundsArea()

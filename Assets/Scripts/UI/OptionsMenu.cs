@@ -34,6 +34,7 @@ public sealed class OptionsMenu : MonoBehaviour
     private const float KeyboardScrollbarMinHandleHeight = 44f;
     private const float ButtonActionDelay = 0.32f;
     private const int TopSortingOrder = 10000;
+    private const int FullMapSortingOrder = TopSortingOrder + 10;
 
     private static readonly string[] PlayerControlBehaviourNames =
     {
@@ -737,6 +738,15 @@ public sealed class OptionsMenu : MonoBehaviour
         bool showDecorationPage = page == OptionPage.Decoration;
         if (cachedMinimapView != null)
         {
+            if (showMapPage)
+            {
+                cachedMinimapView.SetFullMapSortingOrder(FullMapSortingOrder);
+            }
+            else
+            {
+                cachedMinimapView.RestoreFullMapSortingOrder();
+            }
+
             cachedMinimapView.SetFullMapVisible(showMapPage);
         }
         SetActiveIfChanged(optionDetailPanel, showSettingsPage);
@@ -848,6 +858,7 @@ public sealed class OptionsMenu : MonoBehaviour
         if (cachedMinimapView != null)
         {
             cachedMinimapView.SetPanelVisibility(false, false);
+            cachedMinimapView.RestoreFullMapSortingOrder();
         }
     }
 
@@ -1270,6 +1281,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
         if (cachedMinimapView != null)
         {
+            cachedMinimapView.RestoreFullMapSortingOrder();
             cachedMinimapView.SetPanelVisibility(previousMinimapVisible, previousFullMapVisible);
             cachedMinimapView = null;
         }
