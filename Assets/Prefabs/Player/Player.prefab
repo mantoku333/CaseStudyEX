@@ -759,7 +759,7 @@ MonoBehaviour:
   damageCooldownSeconds: 3
   maxHealthBonus: 0
   playerDamageClip: {fileID: 8300000, guid: 5d07316111d5d54458cae5d7e4158754, type: 3}
-  playerDamageVolume: 0.25
+  playerDamageVolume: 0.15
   damageKnockbackSpeed: 6
   damageKnockbackDuration: 0.18
   damageKnockbackUpwardSpeed: 3.5
@@ -1448,6 +1448,8 @@ MonoBehaviour:
   dodgeStateName: dodge
   parryStateName: parry
   changeStateName: change
+  closeToOpenChangeStateName: change_close_to_open
+  openToCloseChangeStateName: change_open_to_close
   attackStateName: attack
   diveAttackStateName: dive_attack
   diveAttackLandStateName: dive_attack_land
