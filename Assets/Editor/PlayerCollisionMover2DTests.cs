@@ -44,6 +44,7 @@ public sealed class PlayerCollisionMover2DTests
         Assert.That(points[4].y, Is.EqualTo(points[5].y).Within(0.0001f));
         Assert.That(points[4].x, Is.LessThan(points[3].x));
         Assert.That(points[5].x, Is.GreaterThan(points[6].x));
+        Assert.That(points[3].y - points[4].y, Is.EqualTo(0.4f).Within(0.0001f));
 
         GroundCheck groundCheck = playerPrefab.GetComponentInChildren<GroundCheck>(true);
         Assert.That(groundCheck, Is.Not.Null);
