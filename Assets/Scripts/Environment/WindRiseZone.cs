@@ -130,7 +130,7 @@ public class WindRiseZone : MonoBehaviour
 
     private void AddTarget(Collider2D other)
     {
-        // プレイヤー本体の CapsuleCollider2D 以外（攻撃・パリィ判定など）は対象外。
+        // プレイヤー本体以外（攻撃・パリィ判定など）は対象外。
         if (!TryBuildTarget(other, out PlayerWindTarget target))
         {
             return;
@@ -185,7 +185,7 @@ public class WindRiseZone : MonoBehaviour
             return false;
         }
 
-        CapsuleCollider2D bodyCollider = body.GetComponent<CapsuleCollider2D>();
+        Collider2D bodyCollider = body.GetComponent<Collider2D>();
         if (bodyCollider == null || other != bodyCollider)
         {
             return false;

@@ -690,8 +690,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!70 &3375801726536475401
-CapsuleCollider2D:
+--- !u!60 &3375801726536475401
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -724,9 +724,26 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.51, y: 1.53}
-  m_Size: {x: 1.35, y: 2.94}
-  m_Direction: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -1.12, y: 3}
+      - {x: 0.1, y: 3}
+      - {x: 0.165, y: 2.935}
+      - {x: 0.165, y: 0.36}
+      - {x: -0.035, y: 0.06}
+      - {x: -0.985, y: 0.06}
+      - {x: -1.185, y: 0.36}
+      - {x: -1.185, y: 2.935}
 --- !u!114 &3047304842873908124
 MonoBehaviour:
   m_ObjectHideFlags: 0

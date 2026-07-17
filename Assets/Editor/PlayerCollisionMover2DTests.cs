@@ -8,6 +8,8 @@ using Object = UnityEngine.Object;
 
 public sealed class PlayerCollisionMover2DTests
 {
+    private const string PlayerPrefabPath = "Assets/Prefabs/Player/Player.prefab";
+
     private readonly List<GameObject> objectsToDestroy = new List<GameObject>();
 
     [TearDown]
@@ -22,6 +24,38 @@ public sealed class PlayerCollisionMover2DTests
         }
 
         objectsToDestroy.Clear();
+    }
+
+    [Test]
+    public void PlayerPrefab_UsesChamferedPolygonBodyAndKeepsGroundCheck()
+    {
+        GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerPrefabPath);
+
+        Assert.That(playerPrefab, Is.Not.Null);
+        Assert.That(playerPrefab.GetComponent<CapsuleCollider2D>(), Is.Null);
+
+        PolygonCollider2D body = playerPrefab.GetComponent<PolygonCollider2D>();
+        Assert.That(body, Is.Not.Null);
+        Assert.That(body.pathCount, Is.EqualTo(1));
+
+        Vector2[] points = body.GetPath(0);
+        Assert.That(points, Has.Length.EqualTo(8));
+        Assert.That(points[3].x, Is.EqualTo(points[2].x).Within(0.0001f));
+        Assert.That(points[4].y, Is.EqualTo(points[5].y).Within(0.0001f));
+        Assert.That(points[4].x, Is.LessThan(points[3].x));
+        Assert.That(points[5].x, Is.GreaterThan(points[6].x));
+
+        GroundCheck groundCheck = playerPrefab.GetComponentInChildren<GroundCheck>(true);
+        Assert.That(groundCheck, Is.Not.Null);
+        BoxCollider2D groundTrigger = groundCheck.GetComponent<BoxCollider2D>();
+        Assert.That(groundTrigger, Is.Not.Null);
+        Assert.That(groundTrigger.isTrigger, Is.True);
+
+        float groundCheckCenterY = groundCheck.transform.localPosition.y +
+            groundTrigger.offset.y * groundCheck.transform.localScale.y;
+        float groundCheckHalfHeight = groundTrigger.size.y * groundCheck.transform.localScale.y * 0.5f;
+        Assert.That(groundCheckCenterY - groundCheckHalfHeight, Is.LessThanOrEqualTo(points[4].y));
+        Assert.That(groundCheckCenterY + groundCheckHalfHeight, Is.GreaterThanOrEqualTo(points[4].y));
     }
 
     [Test]
