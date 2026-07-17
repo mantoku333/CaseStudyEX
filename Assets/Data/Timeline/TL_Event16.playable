@@ -632,7 +632,10 @@ MonoBehaviour:
   - {fileID: -8606093688992002792, guid: 953dbdc96295f584b94d572c0d34e5ba, type: 3}
   - {fileID: -2800462606238301537, guid: 953dbdc96295f584b94d572c0d34e5ba, type: 3}
   - {fileID: 7393583223893798557, guid: 953dbdc96295f584b94d572c0d34e5ba, type: 3}
-  animationFramesPerSecond: 12
+  - {fileID: -4825302752510583739, guid: 43682dd5c0ade9242af7aaf5c581af4e, type: 3}
+  - {fileID: 7583967700057067833, guid: 43682dd5c0ade9242af7aaf5c581af4e, type: 3}
+  - {fileID: 8625694004475087545, guid: 43682dd5c0ade9242af7aaf5c581af4e, type: 3}
+  animationFramesPerSecond: 30
   animationLoopIntervalSeconds: 0.5
   pauseTimelineUntilClosed: 1
   autoCloseSecondsWhenNoButton: 3
@@ -722,7 +725,7 @@ MonoBehaviour:
   - {fileID: 4445258897571193940, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
   - {fileID: 1228929565730294400, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
   - {fileID: -2130727791062742564, guid: f2859bad6835adf4fb807fd0345dcf80, type: 3}
-  animationFramesPerSecond: 12
+  animationFramesPerSecond: 30
   animationLoopIntervalSeconds: 0.5
   pauseTimelineUntilClosed: 1
   autoCloseSecondsWhenNoButton: 3

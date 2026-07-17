@@ -28,6 +28,19 @@ namespace Metroidvania.UI
     {
         public delegate bool SpeakerTargetResolver(string characterName, out Transform? target, out Vector3 offset);
 
+        private static readonly string[] SpeakerNameImageObjectNames =
+        {
+            "iris_speaker",
+            "nox_speaker",
+            "thanatos_speaker",
+            "thanatosSpeaker",
+            "t_Text",
+            "iris_speaker_unknown",
+            "iris_unknown_speaker",
+            "nox_speaker_unknown",
+            "nox_unknown_speaker"
+        };
+
         [Header("UI Elements")]
         [SerializeField] private GameObject bubblePanel = null!;
         [SerializeField] private TextMeshProUGUI dialogueText = null!;
@@ -74,6 +87,7 @@ namespace Metroidvania.UI
         [Header("Speaker Name Images")]
         [SerializeField] private GameObject? irisSpeakerImage;
         [SerializeField] private GameObject? noxSpeakerImage;
+        [SerializeField] private GameObject? thanatosSpeakerImage;
         [SerializeField] private GameObject? irisUnknownSpeakerImage;
         [SerializeField] private GameObject? noxUnknownSpeakerImage;
         [SerializeField] private Sprite? irisUnknownSpeakerSprite;
@@ -105,6 +119,7 @@ namespace Metroidvania.UI
         private bool _event01NoxNameRevealed;
         private Sprite? _irisDefaultSpeakerSprite;
         private Sprite? _noxDefaultSpeakerSprite;
+        private Sprite? _thanatosDefaultSpeakerSprite;
 
         private void Awake()
         {
@@ -646,6 +661,20 @@ namespace Metroidvania.UI
                 }
             }
 
+            if (string.Equals(alias, "thanatos", StringComparison.OrdinalIgnoreCase))
+            {
+                Transform? thanatosTransform = FindTransformByExactName(
+                    "LastBoss",
+                    "Thanatos",
+                    "thanatos",
+                    "PG_ACTOR_thanatos",
+                    "_PG_ACTOR_thanatos");
+                if (thanatosTransform != null)
+                {
+                    return thanatosTransform;
+                }
+            }
+
             Transform[] transforms = UnityEngine.Object.FindObjectsByType<Transform>(
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
@@ -733,6 +762,12 @@ namespace Metroidvania.UI
                 return "nox";
             }
 
+            if (string.Equals(trimmed, "\u30BF\u30CA\u30C8\u30B9", StringComparison.OrdinalIgnoreCase) || // タナトス
+                string.Equals(trimmed, "thanatos", StringComparison.OrdinalIgnoreCase))
+            {
+                return "thanatos";
+            }
+
             if (string.Equals(trimmed, "\u30CA\u30EC\u30FC\u30B7\u30E7\u30F3", StringComparison.OrdinalIgnoreCase) || // ナレーション
                 string.Equals(trimmed, "narration", StringComparison.OrdinalIgnoreCase))
             {
@@ -746,10 +781,12 @@ namespace Metroidvania.UI
         {
             ResolveSpeakerImages();
             CacheDefaultSpeakerSprites();
+            HideAllSpeakerNameImageCandidates();
 
             string? alias = ResolveSpeakerAlias(characterName);
             bool showIris = string.Equals(alias, "iris", StringComparison.OrdinalIgnoreCase);
             bool showNox = string.Equals(alias, "nox", StringComparison.OrdinalIgnoreCase);
+            bool showThanatos = string.Equals(alias, "thanatos", StringComparison.OrdinalIgnoreCase);
             bool showIrisUnknown =
                 showIris &&
                 useEvent01UnknownSpeakerImages &&
@@ -777,6 +814,12 @@ namespace Metroidvania.UI
                 noxSpeakerImage.SetActive(showNox && (!showNoxUnknown || useNoxUnknownSprite));
             }
 
+            if (thanatosSpeakerImage != null)
+            {
+                SetImageSprite(thanatosSpeakerImage, _thanatosDefaultSpeakerSprite);
+                thanatosSpeakerImage.SetActive(showThanatos);
+            }
+
             if (irisUnknownSpeakerImage != null)
             {
                 irisUnknownSpeakerImage.SetActive(showIrisUnknown && !useIrisUnknownSprite);
@@ -802,6 +845,12 @@ namespace Metroidvania.UI
                 noxSpeakerImage.SetActive(false);
             }
 
+            if (thanatosSpeakerImage != null)
+            {
+                SetImageSprite(thanatosSpeakerImage, _thanatosDefaultSpeakerSprite);
+                thanatosSpeakerImage.SetActive(false);
+            }
+
             if (irisUnknownSpeakerImage != null)
             {
                 irisUnknownSpeakerImage.SetActive(false);
@@ -811,6 +860,8 @@ namespace Metroidvania.UI
             {
                 noxUnknownSpeakerImage.SetActive(false);
             }
+
+            HideAllSpeakerNameImageCandidates();
         }
 
         private void CacheDefaultSpeakerSprites()
@@ -823,6 +874,11 @@ namespace Metroidvania.UI
             if (_noxDefaultSpeakerSprite == null && noxSpeakerImage != null)
             {
                 _noxDefaultSpeakerSprite = GetImageSprite(noxSpeakerImage);
+            }
+
+            if (_thanatosDefaultSpeakerSprite == null && thanatosSpeakerImage != null)
+            {
+                _thanatosDefaultSpeakerSprite = GetImageSprite(thanatosSpeakerImage);
             }
         }
 
@@ -841,6 +897,50 @@ namespace Metroidvania.UI
             }
 
             image.sprite = sprite;
+        }
+
+        private void HideAllSpeakerNameImageCandidates()
+        {
+            Transform? root = transform.root != null ? transform.root : transform;
+            SetGameObjectsByNameActive(root, SpeakerNameImageObjectNames, false);
+        }
+
+        private static void SetGameObjectsByNameActive(Transform? root, string[] objectNames, bool active)
+        {
+            if (root == null || objectNames == null || objectNames.Length == 0)
+            {
+                return;
+            }
+
+            Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                Transform tf = transforms[i];
+                if (tf == null || !MatchesAnyName(tf.name, objectNames))
+                {
+                    continue;
+                }
+
+                tf.gameObject.SetActive(active);
+            }
+        }
+
+        private static bool MatchesAnyName(string? objectName, string[] candidateNames)
+        {
+            if (string.IsNullOrWhiteSpace(objectName))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < candidateNames.Length; i++)
+            {
+                if (string.Equals(objectName, candidateNames[i], StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void UpdateEvent01UnknownSpeakerState(string? characterName, string text)
@@ -1120,6 +1220,20 @@ namespace Metroidvania.UI
                     FindGameObjectByName(transform, "nox_speaker") ??
                     FindGameObjectByName(transform.parent, "nox_speaker") ??
                     FindGameObjectByName(transform.root, "nox_speaker");
+            }
+
+            if (thanatosSpeakerImage == null)
+            {
+                thanatosSpeakerImage =
+                    FindGameObjectByName(transform, "thanatos_speaker") ??
+                    FindGameObjectByName(transform.parent, "thanatos_speaker") ??
+                    FindGameObjectByName(transform.root, "thanatos_speaker") ??
+                    FindGameObjectByName(transform, "thanatosSpeaker") ??
+                    FindGameObjectByName(transform.parent, "thanatosSpeaker") ??
+                    FindGameObjectByName(transform.root, "thanatosSpeaker") ??
+                    FindGameObjectByName(transform, "t_Text") ??
+                    FindGameObjectByName(transform.parent, "t_Text") ??
+                    FindGameObjectByName(transform.root, "t_Text");
             }
 
             if (irisUnknownSpeakerImage == null)
