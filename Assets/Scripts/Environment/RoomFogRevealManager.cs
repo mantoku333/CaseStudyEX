@@ -17,6 +17,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private const float RevealFieldMin = -0.25f;
     private const float RevealFieldMax = 1.25f;
     private const int RevealFieldMaxByte = 254;
+    private const float PortalPreviewInitialRevealProgress = 0.28f;
 
     private static RoomFogRevealManager instance;
     private static readonly int RevealFrontPropertyId = Shader.PropertyToID("_RevealFront");
@@ -60,6 +61,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private readonly List<PortalDent> portalDents = new List<PortalDent>();
     private readonly Vector3[] overlayVertices = new Vector3[4];
     private RoomCameraTrigger currentRoom;
+    private RoomCameraTrigger portalPreviewRoom;
     private RoomCameraTrigger entranceSourceRoom;
     private RoomCameraTrigger revealingRoom;
     private RoomCameraTrigger concealingRoom;
@@ -130,7 +132,43 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             return false;
         }
 
-        manager.SetCurrentRoom(room, true);
+        manager.portalPreviewRoom = null;
+        manager.SetEntranceSourceRoom(room);
+        manager.SetCurrentRoom(room, false);
+        return true;
+    }
+
+    public static bool PreviewRoomFromPortal(RoomCameraTrigger room)
+    {
+        return PreviewRoomFromPortal(room, Vector3.zero, false);
+    }
+
+    public static bool PreviewRoomFromPortal(RoomCameraTrigger room, Vector3 revealOrigin)
+    {
+        return PreviewRoomFromPortal(room, revealOrigin, true);
+    }
+
+    private static bool PreviewRoomFromPortal(
+        RoomCameraTrigger room,
+        Vector3 revealOrigin,
+        bool useRevealOrigin)
+    {
+        if (room == null || !TryGetInstance(out RoomFogRevealManager manager))
+        {
+            return false;
+        }
+
+        manager.portalPreviewRoom = room;
+        manager.SetEntranceSourceRoom(room);
+        manager.SetCurrentRoom(
+            room,
+            false,
+            useRevealOrigin,
+            new Vector2(revealOrigin.x, revealOrigin.y));
+        manager.PrimePortalPreviewRevealProgress();
+        manager.FlushDirtyMasks(
+            manager.ResolveRevealProgress(),
+            manager.ResolveConcealProgress());
         return true;
     }
 
@@ -565,6 +603,13 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private RoomCameraTrigger ResolveCurrentRoomFromRuntimeState()
     {
+        if (portalPreviewRoom != null &&
+            portalPreviewRoom.gameObject.scene == managedScene &&
+            portalPreviewRoom.isActiveAndEnabled)
+        {
+            return portalPreviewRoom;
+        }
+
         if (TryGetPlayerPosition(out Vector3 playerPosition))
         {
             RoomCameraTrigger containingRoom = ResolveSmallestRoomContaining(playerPosition);
@@ -580,7 +625,11 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             : null;
     }
 
-    private void SetCurrentRoom(RoomCameraTrigger room, bool restartEvenIfSame)
+    private void SetCurrentRoom(
+        RoomCameraTrigger room,
+        bool restartEvenIfSame,
+        bool useRevealCenterOverride = false,
+        Vector2 revealCenterOverride = default)
     {
         if (room == null || room.gameObject.scene != managedScene)
         {
@@ -617,11 +666,33 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         revealingRoom = room;
         revealingBounds = roomBounds;
         revealingPaintBounds = CreateRevealBounds(roomBounds);
-        revealCenter = ResolveRevealCenter(roomBounds);
+        revealCenter = useRevealCenterOverride
+            ? ClampPointToBounds(revealCenterOverride, roomBounds)
+            : ResolveRevealCenter(roomBounds);
         revealRadius = ResolveRevealRadius(revealCenter, revealingPaintBounds);
         revealStartedAt = Application.isPlaying ? Time.unscaledTime : 0f;
         revealComplete = !Application.isPlaying || revealDuration <= 0.01f;
         MarkAllMasksDirty();
+    }
+
+    private void PrimePortalPreviewRevealProgress()
+    {
+        if (!Application.isPlaying || revealComplete || revealDuration <= 0.01f)
+        {
+            return;
+        }
+
+        float primedStartTime =
+            Time.unscaledTime - revealDuration * PortalPreviewInitialRevealProgress;
+        revealStartedAt = Mathf.Min(revealStartedAt, primedStartTime);
+        MarkAllMasksDirty();
+    }
+
+    private static Vector2 ClampPointToBounds(Vector2 point, Bounds bounds)
+    {
+        return new Vector2(
+            Mathf.Clamp(point.x, bounds.min.x, bounds.max.x),
+            Mathf.Clamp(point.y, bounds.min.y, bounds.max.y));
     }
 
     private void RefreshTrackedRoomGeometry()

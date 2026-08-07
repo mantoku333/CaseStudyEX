@@ -48,6 +48,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
         if (destinationRoom != null &&
             RoomPortalAccessCondition.AllowsPreview(this, entryRoom, destinationRoom))
         {
+            RoomFogRevealManager.PreviewRoomFromPortal(destinationRoom, playerPosition);
             destinationRoom.ActivateCamera();
         }
     }
@@ -73,7 +74,12 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
             finalRoom = entryRoom;
         }
 
-        finalRoom?.ActivateCamera();
+        if (finalRoom != null)
+        {
+            RoomFogRevealManager.RevealRoom(finalRoom);
+            finalRoom.ActivateCamera();
+        }
+
         entryRoom = null;
         destinationRoom = null;
     }

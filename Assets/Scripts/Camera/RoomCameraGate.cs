@@ -18,9 +18,12 @@ public sealed class RoomCameraGate : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(collision, playerTag, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(
+                collision,
+                playerTag,
+                out Transform player))
         {
-            HandlePlayerEntered();
+            HandlePlayerEntered(player);
         }
     }
 
@@ -34,9 +37,12 @@ public sealed class RoomCameraGate : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(other, playerTag, out _))
+        if (PlayerCameraColliderUtility.TryResolvePlayerTransform(
+                other,
+                playerTag,
+                out Transform player))
         {
-            HandlePlayerEntered();
+            HandlePlayerEntered(player);
         }
     }
 
@@ -48,7 +54,7 @@ public sealed class RoomCameraGate : MonoBehaviour
         }
     }
 
-    private void HandlePlayerEntered()
+    private void HandlePlayerEntered(Transform player)
     {
         bool wasOutsideGate = overlapCount == 0;
         overlapCount++;
@@ -58,6 +64,14 @@ public sealed class RoomCameraGate : MonoBehaviour
             return;
         }
 
+        Vector3 revealOrigin = player != null ? player.position : transform.position;
+        if (player != null &&
+            PlayerCameraColliderUtility.TryGetCameraPoint(player, out Vector3 cameraPoint))
+        {
+            revealOrigin = cameraPoint;
+        }
+
+        RoomFogRevealManager.PreviewRoomFromPortal(targetRoom, revealOrigin);
         targetRoom.ActivateCamera();
     }
 }

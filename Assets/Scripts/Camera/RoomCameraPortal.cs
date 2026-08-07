@@ -54,6 +54,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
     private float transitionZoomVelocity;
     private bool transitionActive;
     private bool transitionCommitted;
+    private bool fogPreviewStarted;
 
     private void OnDisable()
     {
@@ -65,6 +66,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
         transitionVelocity = Vector3.zero;
         transitionZoomVelocity = 0f;
         transitionCommitted = false;
+        fogPreviewStarted = false;
         StopTransitionCamera();
     }
 
@@ -94,6 +96,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
                 pendingToRoom = null;
                 followOffsetAtEntry = Vector3.zero;
                 transitionCommitted = false;
+                fogPreviewStarted = false;
                 StopTransitionCamera();
             }
         }
@@ -114,6 +117,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
         BeginPendingTransition(playerCommitPoint);
         if (CanPreviewPendingRoom())
         {
+            RevealPendingDestinationRoom(playerCommitPoint);
             StartTransitionCamera(playerCommitPoint);
         }
     }
@@ -125,6 +129,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
         fromPoseAtEntry = ResolveRoomPose(pendingFromRoom, playerPosition);
         toPoseAtEntry = ResolveRoomPose(pendingToRoom, playerPosition);
         followOffsetAtEntry = ResolveFollowOffsetAtEntry(playerPosition);
+        fogPreviewStarted = false;
     }
 
     private void CommitPendingTransition(Vector3 playerPosition)
@@ -190,6 +195,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
         if (!CanPreviewPendingRoom())
         {
+            CancelPendingDestinationReveal();
             if (transitionActive)
             {
                 StopTransitionCamera();
@@ -198,12 +204,14 @@ public sealed class RoomCameraPortal : MonoBehaviour
             return;
         }
 
+        Vector3 playerPosition = ResolvePlayerCommitPoint(
+            playerTransform,
+            playerTransform.position);
+        RevealPendingDestinationRoom(playerPosition);
+
         if (!transitionActive)
         {
-            Vector3 startPosition = ResolvePlayerCommitPoint(
-                playerTransform,
-                playerTransform.position);
-            StartTransitionCamera(startPosition);
+            StartTransitionCamera(playerPosition);
             if (!transitionActive)
             {
                 return;
@@ -221,7 +229,6 @@ public sealed class RoomCameraPortal : MonoBehaviour
             return;
         }
 
-        Vector3 playerPosition = ResolvePlayerCommitPoint(playerTransform, playerTransform.position);
         CameraPose targetPose = BuildTransitionPose(playerPosition);
         if (smoothTime <= 0f)
         {
@@ -794,9 +801,32 @@ public sealed class RoomCameraPortal : MonoBehaviour
         }
 
         AlignDefaultFollowCameraBeforeCommit(room);
+        RoomFogRevealManager.RevealRoom(room);
         room.ActivateCamera();
         StopTransitionCamera();
         transitionCommitted = true;
+    }
+
+    private void RevealPendingDestinationRoom(Vector3 revealOrigin)
+    {
+        if (pendingToRoom == null || fogPreviewStarted)
+        {
+            return;
+        }
+
+        fogPreviewStarted =
+            RoomFogRevealManager.PreviewRoomFromPortal(pendingToRoom, revealOrigin);
+    }
+
+    private void CancelPendingDestinationReveal()
+    {
+        if (!fogPreviewStarted)
+        {
+            return;
+        }
+
+        fogPreviewStarted = false;
+        RoomFogRevealManager.RevealRoom(pendingFromRoom);
     }
 
     private bool CanPreviewPendingRoom()

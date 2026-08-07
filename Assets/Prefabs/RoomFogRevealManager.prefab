@@ -45,17 +45,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomFogRevealManager
   fogEnabled: 1
-  textureResolution: 1024
+  textureResolution: 4096
   fogShader: {fileID: 4800000, guid: 2f558d7901b14b7d8b7c5f32bb4909f2, type: 3}
   worldPadding: 6
   fogColor: {r: 0, g: 0, b: 0, a: 1}
   fogAlpha: 1
-  edgeSoftness: 0.22
-  noiseStrength: 0.18
+  edgeSoftness: 0.03
+  noiseStrength: 0.04
   noiseScale: 0.32
   sortingOrder: 30000
   overlayZ: -1
   revealDuration: 1.6
   concealDuration: 1.8
-  revealNoiseStrength: 0.18
+  revealNoiseStrength: 0.02
   revealPortalEntrances: 1
