@@ -1697,9 +1697,10 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
-        float bgmVolume = ReadVolume(BgmVolumeKey, 1f);
-        float seVolume = ReadVolume(SeVolumeKey, 1f);
-        float systemVolume = ReadVolume(SystemVolumeKey, 1f);
+        float masterVolume = ReadVolume(SystemVolumeKey, 1f);
+        float bgmVolume = masterVolume * ReadVolume(BgmVolumeKey, 1f);
+        float seVolume = masterVolume * ReadVolume(SeVolumeKey, 1f);
+        float systemVolume = masterVolume;
 
         for (int i = 0; i < audioSources.Length; i++)
         {
@@ -1739,7 +1740,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
             if (!capturedAudioBaseVolumes.TryGetValue(id, out float baseVolume))
             {
-                baseVolume = multiplier > 0.0001f ? currentVolume / multiplier : currentVolume;
+                baseVolume = forceRefreshAll || multiplier <= 0.0001f ? currentVolume : currentVolume / multiplier;
                 capturedAudioBaseVolumes[id] = baseVolume;
             }
             else if (!forceRefreshAll &&

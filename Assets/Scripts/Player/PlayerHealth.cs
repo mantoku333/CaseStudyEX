@@ -12,6 +12,7 @@ namespace Player
 
         [SerializeField] private PlayerStatsData statsData;
         [SerializeField] private global::DodgeController dodgeController;
+        [SerializeField] private global::PlayerDiveAttackController diveAttackController;
         [SerializeField, Min(0f)] private float damageCooldownSeconds = 3f;
         [SerializeField] private int maxHealthBonus = 0;
 
@@ -80,6 +81,7 @@ namespace Player
         {
             TryResolveStatsData();
             TryResolveDodgeController();
+            TryResolveDiveAttackController();
             TryResolveAudioSource();
         }
 
@@ -134,7 +136,7 @@ namespace Player
         /// <param name="cooldownSeconds">次にダメージを受けられるまでの秒数</param>
         public bool TryTakeDamage(int damage, float cooldownSeconds)
         {
-            return TryTakeDamageInternal(damage, cooldownSeconds, ref nextDamageTime);
+            return TryTakeDamageInternal(damage, cooldownSeconds, ref nextDamageTime, true);
         }
 
         /// <summary>
@@ -145,13 +147,14 @@ namespace Player
         /// <param name="cooldownSeconds">次に雨ダメージを受けられるまでの秒数</param>
         public bool TryTakeRainDamage(int damage, float cooldownSeconds)
         {
-            return TryTakeDamageInternal(damage, cooldownSeconds, ref nextRainDamageTime);
+            return TryTakeDamageInternal(damage, cooldownSeconds, ref nextRainDamageTime, false);
         }
 
         private bool TryTakeDamageInternal(
             int damage,
             float cooldownSeconds,
-            ref float nextAllowedDamageTime)
+            ref float nextAllowedDamageTime,
+            bool blockDuringDiveAttack)
         {
             // 無効なダメージ、またはすでに死亡しているなら何もしない
             if (damage <= 0 || currentHealth <= 0)
@@ -166,6 +169,11 @@ namespace Player
 
             TryResolveDodgeController();
             if (dodgeController != null && dodgeController.IsDodgeInvincible())
+            {
+                return false;
+            }
+
+            if (blockDuringDiveAttack && IsDiveAttackInvulnerable())
             {
                 return false;
             }
@@ -213,6 +221,12 @@ namespace Player
         public void ClearAttackPriorityInvulnerability()
         {
             attackPriorityInvulnerableUntilTime = 0f;
+        }
+
+        private bool IsDiveAttackInvulnerable()
+        {
+            TryResolveDiveAttackController();
+            return diveAttackController != null && diveAttackController.IsDiveAttacking;
         }
 
         /// <summary>
@@ -413,6 +427,25 @@ namespace Player
             if (dodgeController == null)
             {
                 dodgeController = GetComponentInChildren<global::DodgeController>(true);
+            }
+        }
+
+        private void TryResolveDiveAttackController()
+        {
+            if (diveAttackController != null)
+            {
+                return;
+            }
+
+            diveAttackController = GetComponent<global::PlayerDiveAttackController>();
+            if (diveAttackController == null)
+            {
+                diveAttackController = GetComponentInParent<global::PlayerDiveAttackController>();
+            }
+
+            if (diveAttackController == null)
+            {
+                diveAttackController = GetComponentInChildren<global::PlayerDiveAttackController>(true);
             }
         }
 

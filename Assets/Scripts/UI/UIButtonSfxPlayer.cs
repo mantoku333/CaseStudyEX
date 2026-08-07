@@ -206,7 +206,7 @@ public sealed class UIButtonSfxPlayer : MonoBehaviour
             return;
         }
 
-        // Title has no OptionsMenu to apply the saved system volume, so refresh it here too.
+        // Title has no OptionsMenu to apply the saved master volume, so refresh it here too.
         audioSource.volume = settings.Volume * PlayerPrefs.GetFloat(SystemVolumeKey, 1f);
         audioSource.PlayOneShot(clip);
     }

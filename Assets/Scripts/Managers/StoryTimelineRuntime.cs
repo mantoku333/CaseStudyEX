@@ -8,6 +8,7 @@ public sealed class StoryTimelineRuntime : MonoBehaviour
     private const string RuntimeObjectName = "[StoryTimelineRuntime]";
     private const string BgmVolumeKey = "Options.BgmVolume";
     private const string SeVolumeKey = "Options.SeVolume";
+    private const string SystemVolumeKey = "Options.SystemVolume";
 
     private static StoryTimelineRuntime instance;
 
@@ -399,16 +400,23 @@ public sealed class StoryTimelineRuntime : MonoBehaviour
 
     private static float ResolveBgmVolume(float baseVolume)
     {
-        return Mathf.Clamp01(baseVolume) * Mathf.Clamp01(PlayerPrefs.GetFloat(BgmVolumeKey, 1f));
+        return Mathf.Clamp01(baseVolume) *
+               ResolveMasterVolume() *
+               Mathf.Clamp01(PlayerPrefs.GetFloat(BgmVolumeKey, 1f));
     }
 
     private static float ResolveSeVolume()
     {
-        return Mathf.Clamp01(PlayerPrefs.GetFloat(SeVolumeKey, 1f));
+        return ResolveMasterVolume() * Mathf.Clamp01(PlayerPrefs.GetFloat(SeVolumeKey, 1f));
     }
 
     private static float ResolveSeVolume(float baseVolume)
     {
         return Mathf.Clamp01(baseVolume) * ResolveSeVolume();
+    }
+
+    private static float ResolveMasterVolume()
+    {
+        return Mathf.Clamp01(PlayerPrefs.GetFloat(SystemVolumeKey, 1f));
     }
 }

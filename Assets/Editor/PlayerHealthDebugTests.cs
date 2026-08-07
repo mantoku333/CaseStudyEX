@@ -68,6 +68,21 @@ public sealed class PlayerHealthDebugTests
         Assert.That(playerHealth.CurrentHealth, Is.EqualTo(0));
     }
 
+    [Test]
+    public void TryTakeDamage_WhenDiveAttacking_BlocksDamage()
+    {
+        PlayerHealth playerHealth = CreatePlayerHealth();
+        playerObject.AddComponent<Rigidbody2D>();
+        PlayerDiveAttackController diveAttack = playerObject.AddComponent<PlayerDiveAttackController>();
+
+        Assert.That(diveAttack.TryStartDiveAttack(), Is.True);
+
+        bool didDamage = playerHealth.TryTakeDamage(1, 0f);
+
+        Assert.That(didDamage, Is.False);
+        Assert.That(playerHealth.CurrentHealth, Is.EqualTo(playerHealth.MaxHealth));
+    }
+
     private PlayerHealth CreatePlayerHealth()
     {
         playerObject = new GameObject("Player");
