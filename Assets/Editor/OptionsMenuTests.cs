@@ -89,6 +89,51 @@ public sealed class OptionsMenuTests
         }
     }
 
+    [Test]
+    public void ApplyAudioSettings_MasterVolumeScalesBgmAndSe()
+    {
+        const string bgmVolumeKey = "Options.BgmVolume";
+        const string seVolumeKey = "Options.SeVolume";
+        const string masterVolumeKey = "Options.SystemVolume";
+        bool hadBgmValue = PlayerPrefs.HasKey(bgmVolumeKey);
+        bool hadSeValue = PlayerPrefs.HasKey(seVolumeKey);
+        bool hadMasterValue = PlayerPrefs.HasKey(masterVolumeKey);
+        float savedBgmValue = PlayerPrefs.GetFloat(bgmVolumeKey, 1f);
+        float savedSeValue = PlayerPrefs.GetFloat(seVolumeKey, 1f);
+        float savedMasterValue = PlayerPrefs.GetFloat(masterVolumeKey, 1f);
+
+        try
+        {
+            OptionsMenu menu = CreateMenu();
+
+            GameObject bgmObject = new GameObject("TestBgmSource");
+            objectsToDestroy.Add(bgmObject);
+            AudioSource bgmSource = bgmObject.AddComponent<AudioSource>();
+            bgmSource.loop = true;
+            bgmSource.volume = 0.8f;
+
+            GameObject seObject = new GameObject("TestSeSource");
+            objectsToDestroy.Add(seObject);
+            AudioSource seSource = seObject.AddComponent<AudioSource>();
+            seSource.loop = false;
+            seSource.volume = 0.6f;
+
+            PlayerPrefs.SetFloat(bgmVolumeKey, 0.5f);
+            PlayerPrefs.SetFloat(seVolumeKey, 0.25f);
+            PlayerPrefs.SetFloat(masterVolumeKey, 0.5f);
+            InvokePrivate(menu, "ApplyAudioSettingsToScene", true);
+
+            Assert.That(bgmSource.volume, Is.EqualTo(0.2f).Within(0.001f));
+            Assert.That(seSource.volume, Is.EqualTo(0.075f).Within(0.001f));
+        }
+        finally
+        {
+            RestoreVolumePref(bgmVolumeKey, hadBgmValue, savedBgmValue);
+            RestoreVolumePref(seVolumeKey, hadSeValue, savedSeValue);
+            RestoreVolumePref(masterVolumeKey, hadMasterValue, savedMasterValue);
+        }
+    }
+
     private OptionsMenu CreateMenu()
     {
         GameObject menuObject = new GameObject("OptionsMenu");
@@ -116,5 +161,17 @@ public sealed class OptionsMenuTests
 
         Assert.That(method, Is.Not.Null, $"{methodName} must exist.");
         method.Invoke(menu, arguments);
+    }
+
+    private static void RestoreVolumePref(string key, bool hadSavedValue, float savedValue)
+    {
+        if (hadSavedValue)
+        {
+            PlayerPrefs.SetFloat(key, savedValue);
+        }
+        else
+        {
+            PlayerPrefs.DeleteKey(key);
+        }
     }
 }
