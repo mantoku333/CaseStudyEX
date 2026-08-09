@@ -62,6 +62,7 @@ public sealed class DecorationPage : MonoBehaviour
     private bool purchaseModalOpen;
 
     public bool IsPurchaseModalOpen => purchaseModalOpen;
+    public bool IsShopEnabled => DecorationShopFeature.Enabled;
 
     private void Awake()
     {
@@ -92,23 +93,38 @@ public sealed class DecorationPage : MonoBehaviour
             UIButtonSfxPlayer.Register(removeButton);
         }
 
-        EnsureElegantPointBalanceText();
-        EnsurePurchaseModal();
-        ConfigurePurchaseButtonNavigation();
-        purchaseYesButton.onClick.AddListener(OnPurchaseYesClicked);
-        purchaseNoButton.onClick.AddListener(OnPurchaseNoClicked);
-        UIButtonSfxPlayer.Register(purchaseYesButton);
-        UIButtonSfxPlayer.Register(purchaseNoButton);
-        SetPurchaseModalVisible(false);
+        if (IsShopEnabled)
+        {
+            EnsureElegantPointBalanceText();
+            EnsurePurchaseModal();
+            ConfigurePurchaseButtonNavigation();
+            purchaseYesButton.onClick.AddListener(OnPurchaseYesClicked);
+            purchaseNoButton.onClick.AddListener(OnPurchaseNoClicked);
+            UIButtonSfxPlayer.Register(purchaseYesButton);
+            UIButtonSfxPlayer.Register(purchaseNoButton);
+            SetPurchaseModalVisible(false);
+            RefreshElegantPointBalance();
+        }
+        else
+        {
+            HideShopUi();
+        }
+
         ClearRightPanel();
-        RefreshElegantPointBalance();
     }
 
     private void OnEnable()
     {
         ElegantPointWallet.BalanceChanged -= OnElegantPointBalanceChanged;
-        ElegantPointWallet.BalanceChanged += OnElegantPointBalanceChanged;
-        RefreshElegantPointBalance();
+        if (IsShopEnabled)
+        {
+            ElegantPointWallet.BalanceChanged += OnElegantPointBalanceChanged;
+            RefreshElegantPointBalance();
+        }
+        else
+        {
+            HideShopUi();
+        }
     }
 
     private void OnDisable()
@@ -128,7 +144,7 @@ public sealed class DecorationPage : MonoBehaviour
 
     public bool TryCancelPurchaseModal()
     {
-        if (!purchaseModalOpen)
+        if (!IsShopEnabled || !purchaseModalOpen)
             return false;
 
         ClosePurchaseModal(restoreSlotFocus: true);
@@ -154,7 +170,7 @@ public sealed class DecorationPage : MonoBehaviour
             bool isEquipped = isOwned && PlayerEquipmentState.IsEquipped(data);
 
             DecorationItemSlot slot = Instantiate(slotPrefab, slotContainer);
-            slot.Initialize(data, isOwned, isEquipped, OnSlotSelected);
+            slot.Initialize(data, isOwned, isEquipped, IsShopEnabled, OnSlotSelected);
             slots.Add(slot);
 
             if (data != null && (data == preferredSelection || (preferredSelection == null && isEquipped)))
@@ -246,7 +262,7 @@ public sealed class DecorationPage : MonoBehaviour
 
         if (!slot.IsOwned)
         {
-            if (slot.ItemData.elegantPointCost > 0)
+            if (IsShopEnabled && slot.ItemData.elegantPointCost > 0)
                 OpenPurchaseModal(slot);
             return;
         }
@@ -286,6 +302,9 @@ public sealed class DecorationPage : MonoBehaviour
 
     private void OpenPurchaseModal(DecorationItemSlot slot)
     {
+        if (!IsShopEnabled || slot == null || slot.ItemData == null)
+            return;
+
         pendingPurchaseItem = slot.ItemData;
         purchaseReturnSlot = slot;
         purchaseModalOpen = true;
@@ -313,7 +332,7 @@ public sealed class DecorationPage : MonoBehaviour
 
     private void OnPurchaseYesClicked()
     {
-        if (!purchaseModalOpen || pendingPurchaseItem == null)
+        if (!IsShopEnabled || !purchaseModalOpen || pendingPurchaseItem == null)
             return;
 
         ItemData purchasedItem = pendingPurchaseItem;
@@ -506,6 +525,9 @@ public sealed class DecorationPage : MonoBehaviour
 
     private void OnElegantPointBalanceChanged(int _)
     {
+        if (!IsShopEnabled)
+            return;
+
         RefreshElegantPointBalance();
         if (purchaseModalOpen)
             RefreshPurchaseAffordability();
@@ -513,8 +535,16 @@ public sealed class DecorationPage : MonoBehaviour
 
     private void RefreshElegantPointBalance()
     {
+        if (!IsShopEnabled)
+        {
+            if (elegantPointBalanceText != null)
+                elegantPointBalanceText.gameObject.SetActive(false);
+            return;
+        }
+
         if (elegantPointBalanceText != null)
         {
+            elegantPointBalanceText.gameObject.SetActive(true);
             elegantPointBalanceText.text = string.Format(
                 elegantPointBalanceFormat,
                 ElegantPointWallet.Balance,
@@ -524,6 +554,9 @@ public sealed class DecorationPage : MonoBehaviour
 
     private void EnsureElegantPointBalanceText()
     {
+        if (!IsShopEnabled)
+            return;
+
         if (elegantPointBalanceText != null)
             return;
 
@@ -544,6 +577,9 @@ public sealed class DecorationPage : MonoBehaviour
 
     private void EnsurePurchaseModal()
     {
+        if (!IsShopEnabled)
+            return;
+
         bool hasFunctionalModal =
             purchaseModal != null &&
             purchaseItemNameText != null &&
@@ -763,6 +799,18 @@ public sealed class DecorationPage : MonoBehaviour
         purchaseModal.SetActive(visible);
         if (visible)
             purchaseModal.transform.SetAsLastSibling();
+    }
+
+    private void HideShopUi()
+    {
+        purchaseModalOpen = false;
+        pendingPurchaseItem = null;
+        purchaseReturnSlot = null;
+
+        if (elegantPointBalanceText != null)
+            elegantPointBalanceText.gameObject.SetActive(false);
+        if (purchaseModal != null)
+            purchaseModal.SetActive(false);
     }
 
     private static void SelectButton(Button button)

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Reflection;
 using Metroidvania.Data;
 using NUnit.Framework;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 
@@ -192,6 +194,111 @@ public sealed class DecorationPurchaseServiceTests
         Assert.That(CatalogContains(catalog, arcanciel), Is.True, "Arcanciel is missing from Player equipmentCatalog.");
     }
 
+    [Test]
+    public void DecorationSlot_ShopDisabledHidesPriceAndLocksUnownedItem()
+    {
+        GameObject slotObject = InstantiateSlotPrefab();
+        try
+        {
+            DecorationItemSlot slot = slotObject.GetComponent<DecorationItemSlot>();
+            ItemData item = CreateDecoration("locked_decoration", 50);
+
+            slot.Initialize(item, owned: false, isEquipped: false, enableShop: false, onSelected: null);
+
+            Assert.That(slot.Button.interactable, Is.False);
+            var serializedSlot = new SerializedObject(slot);
+            Assert.That(serializedSlot.FindProperty("priceText").objectReferenceValue, Is.Null);
+            Assert.That(slotObject.transform.Find("PriceText (Runtime)"), Is.Null);
+        }
+        finally
+        {
+            Object.DestroyImmediate(slotObject);
+        }
+    }
+
+    [Test]
+    public void DecorationSlot_ShopDisabledKeepsOwnedItemInteractive()
+    {
+        GameObject slotObject = InstantiateSlotPrefab();
+        try
+        {
+            DecorationItemSlot slot = slotObject.GetComponent<DecorationItemSlot>();
+            ItemData item = CreateDecoration("owned_drop", 50);
+            DecorationItemSlot selectedSlot = null;
+
+            slot.Initialize(
+                item,
+                owned: true,
+                isEquipped: false,
+                enableShop: false,
+                onSelected: selected => selectedSlot = selected);
+
+            Assert.That(slot.Button.interactable, Is.True);
+            slot.Button.onClick.Invoke();
+            Assert.That(selectedSlot, Is.SameAs(slot));
+        }
+        finally
+        {
+            Object.DestroyImmediate(slotObject);
+        }
+    }
+
+    [Test]
+    public void DecorationSlot_ShopEnabledPreservesDormantPriceAndPurchaseInteraction()
+    {
+        GameObject slotObject = InstantiateSlotPrefab();
+        try
+        {
+            DecorationItemSlot slot = slotObject.GetComponent<DecorationItemSlot>();
+            ItemData item = CreateDecoration("future_shop_item", 70);
+
+            slot.Initialize(item, owned: false, isEquipped: false, enableShop: true, onSelected: null);
+
+            Assert.That(slot.Button.interactable, Is.True);
+            var serializedSlot = new SerializedObject(slot);
+            var priceText = serializedSlot.FindProperty("priceText").objectReferenceValue as TextMeshProUGUI;
+            Assert.That(priceText, Is.Not.Null);
+            Assert.That(priceText.gameObject.activeSelf, Is.True);
+            Assert.That(priceText.text, Is.EqualTo("70 Pt"));
+        }
+        finally
+        {
+            Object.DestroyImmediate(slotObject);
+        }
+    }
+
+    [Test]
+    public void DecorationPage_ShopDisabledHidesSerializedShopUiWithoutCreatingFallbacks()
+    {
+        var root = new GameObject("DecorationPage Test", typeof(RectTransform));
+        root.SetActive(false);
+        try
+        {
+            DecorationPage page = root.AddComponent<DecorationPage>();
+            var balanceObject = new GameObject("Serialized Balance", typeof(RectTransform));
+            balanceObject.transform.SetParent(root.transform, false);
+            TextMeshProUGUI balanceText = balanceObject.AddComponent<TextMeshProUGUI>();
+            var modalObject = new GameObject("Serialized Modal", typeof(RectTransform));
+            modalObject.transform.SetParent(root.transform, false);
+
+            SetPrivateField(page, "elegantPointBalanceText", balanceText);
+            SetPrivateField(page, "purchaseModal", modalObject);
+
+            InvokePrivateMethod(page, "Awake");
+
+            Assert.That(page.IsShopEnabled, Is.False);
+            Assert.That(page.IsPurchaseModalOpen, Is.False);
+            Assert.That(balanceObject.activeSelf, Is.False);
+            Assert.That(modalObject.activeSelf, Is.False);
+            Assert.That(root.transform.Find("ElegantPointBalanceText (Runtime)"), Is.Null);
+            Assert.That(root.transform.Find("PurchaseModal (Runtime)"), Is.Null);
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+    }
+
     private ItemData CreateDecoration(string itemId, int cost)
     {
         ItemData item = ScriptableObject.CreateInstance<ItemData>();
@@ -201,6 +308,32 @@ public sealed class DecorationPurchaseServiceTests
         item.elegantPointCost = cost;
         createdItems.Add(item);
         return item;
+    }
+
+    private static GameObject InstantiateSlotPrefab()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            "Assets/Prefabs/UI/DecorationItemSlot.prefab");
+        Assert.That(prefab, Is.Not.Null);
+        return Object.Instantiate(prefab);
+    }
+
+    private static void SetPrivateField<T>(object target, string fieldName, T value)
+    {
+        FieldInfo field = target.GetType().GetField(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(field, Is.Not.Null, fieldName);
+        field.SetValue(target, value);
+    }
+
+    private static void InvokePrivateMethod(object target, string methodName)
+    {
+        MethodInfo method = target.GetType().GetMethod(
+            methodName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(method, Is.Not.Null, methodName);
+        method.Invoke(target, null);
     }
 
     private static ItemData GetCatalogItem(SerializedProperty catalog, int index)

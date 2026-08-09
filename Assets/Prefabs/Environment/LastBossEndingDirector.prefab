@@ -59,6 +59,14 @@ MonoBehaviour:
   blackHoldSeconds: 1.35
   skyRiseDuration: 5
   endingBgmStartBeforeFadeEndSeconds: 0.5
+  arcancielRewardItemData: {fileID: 11400000, guid: 6c949d385be7b974e80518772677af58, type: 2}
+  arcancielRewardProgressFlagKey: Equipment_Arcanciel_Unlock
+  arcancielRewardNotificationSprite: {fileID: -7729522202017503734, guid: d3829420113d0974da5a76e401f579ea, type: 3}
+  arcancielRewardNotificationSize: {x: 512, y: 130}
+  arcancielRewardNotificationBottomLeftOffset: {x: 32, y: 32}
+  arcancielRewardSlideInDuration: 0.45
+  arcancielRewardHoldSeconds: 1.2
+  arcancielRewardSlideOutDuration: 0.35
   skyImageSprite: {fileID: 0}
   skyImageRenderer: {fileID: 0}
   skyImageCanvasGroup: {fileID: 0}

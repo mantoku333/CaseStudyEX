@@ -22,6 +22,7 @@ public sealed class DecorationItemSlot : MonoBehaviour
     private Action<DecorationItemSlot> onSelected;
     private Button button;
     private bool isOwned;
+    private bool shopEnabled;
 
     public ItemData ItemData => itemData;
     public bool IsOwned => isOwned;
@@ -31,6 +32,7 @@ public sealed class DecorationItemSlot : MonoBehaviour
         ItemData data,
         bool owned,
         bool isEquipped,
+        bool enableShop,
         Action<DecorationItemSlot> onSelected)
     {
         MigrateLegacyEnglishPriceFormat();
@@ -38,6 +40,7 @@ public sealed class DecorationItemSlot : MonoBehaviour
 
         itemData = data;
         isOwned = owned;
+        shopEnabled = enableShop;
         this.onSelected = onSelected;
 
         bool showIcon = owned && data != null && data.icon != null;
@@ -53,10 +56,11 @@ public sealed class DecorationItemSlot : MonoBehaviour
         if (itemNameText != null)
             itemNameText.text = owned && data != null ? data.itemName : string.Empty;
 
-        EnsurePriceText();
+        if (shopEnabled)
+            EnsurePriceText();
         if (priceText != null)
         {
-            bool showPrice = !owned && data != null && data.elegantPointCost > 0;
+            bool showPrice = shopEnabled && !owned && data != null && data.elegantPointCost > 0;
             priceText.gameObject.SetActive(showPrice);
             priceText.text = showPrice
                 ? string.Format(priceFormat, data.elegantPointCost)
@@ -82,7 +86,7 @@ public sealed class DecorationItemSlot : MonoBehaviour
         {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(OnClick);
-            button.interactable = data != null;
+            button.interactable = data != null && (owned || shopEnabled);
             UIButtonSfxPlayer.Register(button);
         }
     }
@@ -96,7 +100,7 @@ public sealed class DecorationItemSlot : MonoBehaviour
     public void SetInteractionEnabled(bool enabled)
     {
         if (Button != null)
-            Button.interactable = enabled && itemData != null;
+            Button.interactable = enabled && itemData != null && (isOwned || shopEnabled);
     }
 
     private void OnClick()
