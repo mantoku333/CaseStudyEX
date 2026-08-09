@@ -18,6 +18,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: d7733374c8c86254b856728946bf6513, type: 3}
   illustration: {fileID: 21300000, guid: 6b9c5c983bb738848913bd06c1fc9719, type: 3}
   itemType: 2
+  elegantPointCost: 50
   healAmount: 0
   staminaAmount: 0
   maxHealthBonus: 0

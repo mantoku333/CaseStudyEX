@@ -59,7 +59,6 @@ MonoBehaviour:
   blackHoldSeconds: 1.35
   skyRiseDuration: 5
   endingBgmStartBeforeFadeEndSeconds: 0.5
-  grantArcancielReward: 1
   arcancielRewardItemData: {fileID: 11400000, guid: 6c949d385be7b974e80518772677af58, type: 2}
   arcancielRewardProgressFlagKey: Equipment_Arcanciel_Unlock
   arcancielRewardNotificationSprite: {fileID: -7729522202017503734, guid: d3829420113d0974da5a76e401f579ea, type: 3}

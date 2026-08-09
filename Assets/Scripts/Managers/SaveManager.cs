@@ -680,6 +680,7 @@ public sealed class SaveManager : MonoBehaviour
         GameProgressFlags.RestoreFromSaveData(saveData);
         GameItems.RestoreFromSaveData(saveData);
         CurrentLocationService.RestoreFromSaveData(saveData);
+        ElegantPointWallet.RestoreFromSaveData(saveData);
     }
 
     private static List<ISaveDataModule> CollectModules()

@@ -43,7 +43,6 @@ namespace GameName.Ending
         [SerializeField, Min(0f)] private float endingBgmStartBeforeFadeEndSeconds = 0.5f;
 
         [Header("Arcanciel Reward")]
-        [SerializeField] private bool grantArcancielReward = true;
         [SerializeField] private ItemData arcancielRewardItemData;
         [SerializeField] private string arcancielRewardProgressFlagKey = GameProgressKeys.EquipmentArcancielUnlocked;
         [SerializeField] private Sprite arcancielRewardNotificationSprite;
@@ -213,7 +212,7 @@ namespace GameName.Ending
             ResolveSceneReferences();
             DisableGameplayControls();
 
-            bool rewardGranted = grantArcancielReward &&
+            bool rewardGranted = !DecorationShopFeature.Enabled &&
                 TryGrantArcancielReward(arcancielRewardItemData, arcancielRewardProgressFlagKey);
 
             if (rewardGranted)
@@ -276,7 +275,9 @@ namespace GameName.Ending
         public static bool TryGrantArcancielReward(ItemData rewardItemData, string fallbackProgressFlagKey)
         {
             string itemId = ResolveArcancielRewardItemId(rewardItemData, fallbackProgressFlagKey);
-            if (string.IsNullOrWhiteSpace(itemId) || GameProgressFlags.Get(itemId))
+            if (string.IsNullOrWhiteSpace(itemId) ||
+                GameProgressFlags.Get(itemId) ||
+                GameItems.GetCount(itemId) > 0)
             {
                 return false;
             }

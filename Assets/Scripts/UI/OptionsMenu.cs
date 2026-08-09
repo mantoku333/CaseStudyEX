@@ -257,7 +257,18 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
-        if (!isRebinding && ShouldToggleMenu())
+        bool cancelledPurchaseModal =
+            !isRebinding &&
+            decorationPage != null &&
+            decorationPage.IsPurchaseModalOpen &&
+            ShouldCancelDecorationPurchaseModal() &&
+            decorationPage.TryCancelPurchaseModal();
+
+        if (cancelledPurchaseModal)
+        {
+            UIButtonSfxPlayer.PlayClick();
+        }
+        else if (!isRebinding && ShouldToggleMenu())
         {
             HandleToggleRequest();
             UIButtonSfxPlayer.PlayClick();
@@ -619,6 +630,13 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
+        // The header Back button acts as modal cancellation while a decoration
+        // purchase is pending and must not navigate away underneath it.
+        if (decorationPage != null && decorationPage.TryCancelPurchaseModal())
+        {
+            return;
+        }
+
         ResolveReferences();
         if (optionPanel == null && alternateMainMenuPanel == null)
         {
@@ -713,6 +731,11 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
+        if (decorationPage != null && decorationPage.IsPurchaseModalOpen)
+        {
+            return;
+        }
+
         bool animateSelectionMarker =
             optionPageHeaderAvailable &&
             isOpen &&
@@ -777,6 +800,11 @@ public sealed class OptionsMenu : MonoBehaviour
     private void HandleOptionPageKeyboardInput()
     {
         if (!referencesResolved || !isOpen || Keyboard.current == null)
+        {
+            return;
+        }
+
+        if (decorationPage != null && decorationPage.IsPurchaseModalOpen)
         {
             return;
         }
@@ -1178,6 +1206,11 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private void HandleToggleRequest()
     {
+        if (decorationPage != null && decorationPage.TryCancelPurchaseModal())
+        {
+            return;
+        }
+
         if (!isOpen)
         {
             OpenMenu();
@@ -2439,6 +2472,14 @@ public sealed class OptionsMenu : MonoBehaviour
     {
         return (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) ||
                (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame);
+    }
+
+    private bool ShouldCancelDecorationPurchaseModal()
+    {
+        return (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) ||
+               (Gamepad.current != null &&
+                (Gamepad.current.buttonEast.wasPressedThisFrame ||
+                 Gamepad.current.startButton.wasPressedThisFrame));
     }
 
     private float ReadVolume(string key, float defaultValue)

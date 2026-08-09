@@ -278,6 +278,7 @@ public class TitleSceneController : MonoBehaviour
         SaveManager.ClearAllFlags();
         SaveManager.ClearAllItems();
         CurrentLocationService.ClearCurrentLocation();
+        ElegantPointWallet.Clear();
 
         SceneManager.LoadScene(gameSceneName);
     }

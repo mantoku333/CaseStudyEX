@@ -10090,10 +10090,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d665ce43d0f245549b47b2582cb2653f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DecorationPage
+  shopFont: {fileID: 11400000, guid: 7d5b643ad04c2154ebad182b952e95d5, type: 2}
   itemCatalog:
-  - {fileID: 11400000, guid: 6c949d385be7b974e80518772677af58, type: 2}
   - {fileID: 11400000, guid: 68d6a21a28bdfcf4ab6c01702137cb07, type: 2}
   - {fileID: 11400000, guid: e11306a07cd06454f8ef2cf6bd04879f, type: 2}
+  - {fileID: 11400000, guid: 6c949d385be7b974e80518772677af58, type: 2}
   minimumSlotCount: 9
   slotContainer: {fileID: 8445599707947819264}
   slotPrefab: {fileID: 5304237040880253994, guid: fece3786061b58d4ca6b1b578b537b49, type: 3}
@@ -10104,6 +10105,19 @@ MonoBehaviour:
   abilityTagPrefab: {fileID: 0}
   confirmButton: {fileID: 2435023698224145988}
   removeButton: {fileID: 5128774249039275598}
+  elegantPointBalanceText: {fileID: 0}
+  elegantPointBalanceFormat: '{0} / {1}'
+  purchaseModal: {fileID: 0}
+  purchaseItemImage: {fileID: 0}
+  purchaseItemNameText: {fileID: 0}
+  purchasePriceText: {fileID: 0}
+  purchaseBalanceText: {fileID: 0}
+  purchaseStatusText: {fileID: 0}
+  purchaseYesButton: {fileID: 0}
+  purchaseNoButton: {fileID: 0}
+  purchasePriceFormat: '{0} Pt'
+  purchaseBalanceFormat: "\u6240\u6301\u30DD\u30A4\u30F3\u30C8: {0} / {1}"
+  insufficientPointsMessage: "\u512A\u96C5\u30DD\u30A4\u30F3\u30C8\u304C\u8DB3\u308A\u307E\u305B\u3093\u3002"
 --- !u!1 &5659813391944761006
 GameObject:
   m_ObjectHideFlags: 0
