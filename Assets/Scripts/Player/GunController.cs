@@ -43,6 +43,7 @@ public class GunController : MonoBehaviour
     [SerializeField] private int recoilEffectSortingOrderOffset = 3;
 
     private bool isRecoiling = false;   　//反動が起きているかどうか
+    private bool airborneRecoilStartedForCurrentAction = false;
     private bool preserveHorizontalRecoilMomentum = false;
     private float firstRecoilCoolTime = 0.5f;
     private float secondRecoilCoolTime = 2.5f;
@@ -51,6 +52,7 @@ public class GunController : MonoBehaviour
     private bool isSecondRecoilNext = false;
     private Rigidbody2D rigidBody2d;      //反動を加えるためのRigidbody2D
     private PlayerCollisionMover2D collisionMover;
+    private Player.IPlayerViewStateProvider playerStateProvider;
     private float defaultLinearDamping = 0.0f;
     private float recoilForceBonus = 0.0f;
 
@@ -58,6 +60,15 @@ public class GunController : MonoBehaviour
     private SpriteRenderer sourceSpriteRenderer;
     private Sprite[] recoilEffectSprites;
     private RecoilTrajectoryPreview trajectoryPreview;
+
+    /// <summary>
+    /// Raised at most once per physical recoil, on the first frame that recoil
+    /// is observed airborne. Once started, ground-check flicker does not end or
+    /// restart the action; it remains active until the recoil itself ends.
+    /// </summary>
+    public event System.Action AirborneRecoilStarted;
+
+    public bool IsAirborneRecoilActive { get; private set; }
 
     public float CurrentCoolTime => Mathf.Max(0.0f, currentCoolTime);
     public float ReloadDuration => Mathf.Max(0.0f, currentCoolTimeDuration);
@@ -75,7 +86,14 @@ public class GunController : MonoBehaviour
         {
             defaultLinearDamping = rigidBody2d.linearDamping;
             collisionMover = rigidBody2d.GetComponent<PlayerCollisionMover2D>();
+
+            if (groundCheck == null)
+            {
+                groundCheck = rigidBody2d.GetComponentInChildren<GroundCheck>(true);
+            }
         }
+
+        playerStateProvider = GetComponentInParent<Player.IPlayerViewStateProvider>();
 
         //AudioSourceの取得
         audioSource = GetComponentInParent<AudioSource>();
@@ -97,12 +115,15 @@ public class GunController : MonoBehaviour
         {
             currentCoolTime = Mathf.Max(0.0f, currentCoolTime - Time.deltaTime);
         }
+
+        UpdateAirborneRecoilLifecycle();
     }
 
     void FixedUpdate()
     {
         // 反動中は毎FixedUpdateで壁向きの速度を削り、壁に押し込まれず沿って流れるようにする。
         ProjectRecoilVelocityForNextFixedStep();
+        UpdateAirborneRecoilLifecycle();
     }
 
 
@@ -273,6 +294,8 @@ public class GunController : MonoBehaviour
     private void BeginRecoil(float duration)
     {
         isRecoiling = true;
+        airborneRecoilStartedForCurrentAction = false;
+        IsAirborneRecoilActive = false;
         if (rigidBody2d != null)
         {
             rigidBody2d.linearDamping = 2.0f;
@@ -281,6 +304,29 @@ public class GunController : MonoBehaviour
 
         CancelInvoke(nameof(EndRecoil));
         Invoke(nameof(EndRecoil), duration);
+        UpdateAirborneRecoilLifecycle();
+    }
+
+    private void UpdateAirborneRecoilLifecycle()
+    {
+        if (!isRecoiling || airborneRecoilStartedForCurrentAction || !IsCurrentlyAirborne())
+        {
+            return;
+        }
+
+        airborneRecoilStartedForCurrentAction = true;
+        IsAirborneRecoilActive = true;
+        AirborneRecoilStarted?.Invoke();
+    }
+
+    private bool IsCurrentlyAirborne()
+    {
+        if (playerStateProvider != null)
+        {
+            return !playerStateProvider.IsGrounded;
+        }
+
+        return groundCheck != null && !groundCheck.IsGround();
     }
 
     private void ProjectRecoilVelocityForNextFixedStep()
@@ -331,6 +377,8 @@ public class GunController : MonoBehaviour
     void EndRecoil()
     {
         isRecoiling = false;
+        airborneRecoilStartedForCurrentAction = false;
+        IsAirborneRecoilActive = false;
         if (rigidBody2d != null)
         {
             rigidBody2d.linearDamping = defaultLinearDamping;

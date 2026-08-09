@@ -35,6 +35,15 @@ public class UmbrellaController : MonoBehaviour
     private SpriteRenderer spriteRenderer;  //デバッグ用のスプライトレンダラー(傘が出来たら削除)
     private float changeAnimationTimer;
 
+    /// <summary>
+    /// Raised once when an open-umbrella airborne glide first becomes applicable.
+    /// Temporary recoil, dive, or upward movement does not create another glide
+    /// action; the action remains active until landing or closing the umbrella.
+    /// </summary>
+    public event System.Action GlideStarted;
+
+    public bool IsGlideActionActive { get; private set; }
+
     [Header("SE")]
     [SerializeField] private AudioClip umbrella_open;       //傘開くSE
     [SerializeField] private AudioClip umbrella_close;      //傘閉じるSE
@@ -45,7 +54,10 @@ public class UmbrellaController : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigidBody2D = GetComponentInParent<Rigidbody2D>();
-        gunController = GetComponentInParent<GunController>();
+        if (gunController == null && rigidBody2D != null)
+        {
+            gunController = rigidBody2D.GetComponentInChildren<GunController>(true);
+        }
         audioSource = GetComponentInParent<AudioSource>();
         playerAbilityController = GetComponentInParent<Player.PlayerAbilityController>();
         diveAttackController = GetComponentInParent<PlayerDiveAttackController>();
@@ -89,6 +101,12 @@ public class UmbrellaController : MonoBehaviour
 
             umbrellaState = state;
         }
+
+        if (state == UmbrellaState.Closed)
+        {
+            EndGlideActionSession();
+        }
+
         UpdateDebugColor();
     }
 
@@ -147,11 +165,13 @@ public class UmbrellaController : MonoBehaviour
     {
         if (umbrellaState == UmbrellaState.Closed)
         {
+            EndGlideActionSession();
             UpdateDebugColor();
             return;
         }
 
         umbrellaState = UmbrellaState.Closed;
+        EndGlideActionSession();
         StartChangeAnimation();
         PlaySE(umbrella_close);
         UpdateDebugColor();
@@ -178,6 +198,12 @@ public class UmbrellaController : MonoBehaviour
     /// </summary>
     private void Glide()
     {
+        if (umbrellaState == UmbrellaState.Closed ||
+            (playerStateProvider != null && playerStateProvider.IsGrounded))
+        {
+            EndGlideActionSession();
+        }
+
         if (rigidBody2D == null) { return; }
 
         // Do not keep applying glide fall velocity while the landing contact is
@@ -197,6 +223,8 @@ public class UmbrellaController : MonoBehaviour
 
         if (rigidBody2D.linearVelocity.y >= 0) { return; }
 
+        BeginGlideActionSession();
+
         float maxFallVelocity = -Mathf.Abs(glideFallSpeed);
 
         if (rigidBody2D.linearVelocity.y < maxFallVelocity)
@@ -205,6 +233,22 @@ public class UmbrellaController : MonoBehaviour
             velocity.y = maxFallVelocity;
             rigidBody2D.linearVelocity = velocity;
         }
+    }
+
+    private void BeginGlideActionSession()
+    {
+        if (IsGlideActionActive)
+        {
+            return;
+        }
+
+        IsGlideActionActive = true;
+        GlideStarted?.Invoke();
+    }
+
+    private void EndGlideActionSession()
+    {
+        IsGlideActionActive = false;
     }
 
     /// <summary>

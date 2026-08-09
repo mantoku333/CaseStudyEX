@@ -36,6 +36,12 @@ namespace Metroidvania.Data
         [Label("アイテムタイプ")]
         public ItemType itemType;
 
+        [Header("デコレーション購入")]
+        [Label("エレガントポイント価格")]
+        [Tooltip("0以下のアイテムはデコレーションショップで購入できません")]
+        [Min(0)]
+        public int elegantPointCost;
+
         [Header("効果")]
         [Label("HP回復量")]
         [Tooltip("回復量（回復アイテムの場合）")]

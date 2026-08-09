@@ -105,6 +105,61 @@ public sealed class GunControllerRecoilTests
         Assert.That(gun.CurrentCoolTime, Is.EqualTo(0.25f).Within(0.001f));
     }
 
+    [Test]
+    public void AirborneRecoil_RaisesOneStartAndStaysActiveThroughGroundFlicker()
+    {
+        GunController gun = CreateGun(out _);
+        TestPlayerStateProvider stateProvider = new TestPlayerStateProvider
+        {
+            IsGrounded = false
+        };
+        SetPrivateField(gun, "playerStateProvider", stateProvider);
+        int startCount = 0;
+        gun.AirborneRecoilStarted += () => startCount++;
+
+        bool applied = InvokeTryApplyRecoil(gun, Vector2.right, 1f);
+
+        Assert.That(applied, Is.True);
+        Assert.That(startCount, Is.EqualTo(1));
+        Assert.That(gun.IsAirborneRecoilActive, Is.True);
+
+        stateProvider.IsGrounded = true;
+        InvokePrivate(gun, "UpdateAirborneRecoilLifecycle");
+
+        Assert.That(startCount, Is.EqualTo(1));
+        Assert.That(gun.IsAirborneRecoilActive, Is.True);
+
+        InvokePrivate(gun, "EndRecoil");
+
+        Assert.That(gun.IsAirborneRecoilActive, Is.False);
+    }
+
+    [Test]
+    public void GroundedRecoil_RaisesStartOnlyAfterBecomingAirborne()
+    {
+        GunController gun = CreateGun(out _);
+        TestPlayerStateProvider stateProvider = new TestPlayerStateProvider
+        {
+            IsGrounded = true
+        };
+        SetPrivateField(gun, "playerStateProvider", stateProvider);
+        int startCount = 0;
+        gun.AirborneRecoilStarted += () => startCount++;
+
+        bool applied = InvokeTryApplyRecoil(gun, Vector2.right, 1f);
+
+        Assert.That(applied, Is.True);
+        Assert.That(startCount, Is.Zero);
+        Assert.That(gun.IsAirborneRecoilActive, Is.False);
+
+        stateProvider.IsGrounded = false;
+        InvokePrivate(gun, "UpdateAirborneRecoilLifecycle");
+        InvokePrivate(gun, "UpdateAirborneRecoilLifecycle");
+
+        Assert.That(startCount, Is.EqualTo(1));
+        Assert.That(gun.IsAirborneRecoilActive, Is.True);
+    }
+
     private GunController CreateGun(out Rigidbody2D rigidbody2D)
     {
         GameObject player = new GameObject("Player");
@@ -137,5 +192,29 @@ public sealed class GunControllerRecoilTests
         MethodInfo method = target.GetType().GetMethod(methodName, InstancePrivate);
         Assert.That(method, Is.Not.Null, methodName);
         method.Invoke(target, null);
+    }
+
+    private static void SetPrivateField(object target, string fieldName, object value)
+    {
+        FieldInfo field = target.GetType().GetField(fieldName, InstancePrivate);
+        Assert.That(field, Is.Not.Null, fieldName);
+        field.SetValue(target, value);
+    }
+
+    private sealed class TestPlayerStateProvider : Player.IPlayerViewStateProvider
+    {
+        public bool IsGrounded { get; set; }
+        public bool IsMoving => false;
+        public bool IsGliding => false;
+        public bool IsUmbrellaOpen => false;
+        public bool IsFacingRight => true;
+        public bool IsDodging => false;
+        public bool IsParrying => false;
+        public bool IsUmbrellaChanging => false;
+        public bool IsAttacking => false;
+        public bool IsDiveAttacking => false;
+        public bool IsDiveAttackLanding => false;
+        public bool IsDiveAttackBouncing => false;
+        public bool IsRecoilBoosting => false;
     }
 }

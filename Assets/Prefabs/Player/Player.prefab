@@ -574,6 +574,7 @@ GameObject:
   - component: {fileID: 2558782520259632627}
   - component: {fileID: 6872356164271042961}
   - component: {fileID: 3125339716678325347}
+  - component: {fileID: 907000000000000002}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -1123,6 +1124,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerEquipmentController
   equipmentCatalog:
+  - {fileID: 11400000, guid: 68d6a21a28bdfcf4ab6c01702137cb07, type: 2}
+  - {fileID: 11400000, guid: e11306a07cd06454f8ef2cf6bd04879f, type: 2}
   - {fileID: 11400000, guid: 6c949d385be7b974e80518772677af58, type: 2}
   visualAnchor: {fileID: 0}
   backVisualRoot: {fileID: 0}
@@ -1183,6 +1186,25 @@ MonoBehaviour:
   currentLevel: 0
   lastAction: 0
   logLevelChanges: 0
+--- !u!114 &907000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b5b1f6aa8ad4ddcbb030c60c439a993, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerElegantPointController
+  chainTimeoutSeconds: 1
+  playerController: {fileID: 0}
+  normalAttackController: {fileID: 0}
+  diveAttackController: {fileID: 0}
+  glideController: {fileID: 7507060558087119698}
+  recoilController: {fileID: 8928624073132878326}
+  playerHealth: {fileID: 0}
 --- !u!1 &5437759847484700699
 GameObject:
   m_ObjectHideFlags: 0
