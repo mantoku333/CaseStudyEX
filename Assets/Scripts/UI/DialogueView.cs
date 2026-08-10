@@ -1,60 +1,108 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Yarn.Unity;
-using Cysharp.Threading.Tasks;
 
 #nullable enable
 
 namespace Metroidvania.UI
 {
+    public enum DialoguePortraitSlot
+    {
+        Left,
+        Right
+    }
+
     [Serializable]
     public struct CharacterPortrait
     {
         public string characterName;
         public Sprite portraitSprite;
+        public DialoguePortraitSlot slot;
     }
 
     /// <summary>
-    /// Yarn Spinner用のカスタムダイアログView（ADV形式）。
-    /// 話者名、テキストタイプライター表示、立ち絵表示、選択肢に対応。
+    /// Fixed-screen ADV dialogue presenter.
+    /// This is the only dialogue presenter used by the story runtime after the
+    /// bubble-to-ADV cutover. It owns presentation state, but not story-event
+    /// completion or Timeline control.
     /// </summary>
-    public class DialogueView : DialoguePresenterBase
+    public sealed class DialogueView : DialoguePresenterBase
     {
-        [Header("UI Elements")]
+        private enum LinePresentationState
+        {
+            Idle,
+            Typing,
+            WaitingForAdvance
+        }
+
+        [Header("Presentation Root")]
+        [SerializeField] private GameObject presentationRoot = null!;
         [SerializeField] private GameObject dialoguePanel = null!;
+
+        [Header("Dialogue")]
         [SerializeField] private TextMeshProUGUI speakerNameText = null!;
         [SerializeField] private TextMeshProUGUI dialogueText = null!;
-        [SerializeField] private Image portraitImage = null!;
         [SerializeField] private GameObject nextIndicator = null!;
 
-        [Header("Options UI Elements")]
-        [SerializeField] private GameObject optionsPanel = null!;
-        [SerializeField] private GameObject optionButtonPrefab = null!;
-        [SerializeField] private Transform optionsContainer = null!;
+        [Header("Portraits")]
+        [SerializeField] private Image leftPortraitImage = null!;
+        [SerializeField] private Image rightPortraitImage = null!;
+        [SerializeField] private Color speakingPortraitColor = Color.white;
+        [SerializeField] private Color inactivePortraitColor = new Color(0.32f, 0.32f, 0.32f, 1f);
+        [SerializeField] private List<CharacterPortrait> characterPortraits = new();
 
-        [Header("Character Portraits")]
-        [Tooltip("話者名と立ち絵の対応リスト")]
-        [SerializeField] private System.Collections.Generic.List<CharacterPortrait> characterPortraits = new();
+        [Header("Log")]
+        [SerializeField] private Button? logButton;
+        [SerializeField] private GameObject? logPanel;
+        [SerializeField] private TextMeshProUGUI? logText;
+        [SerializeField] private Button? logCloseButton;
+
+        [Header("Skip")]
+        [SerializeField] private Button? skipButton;
+        [SerializeField] private GameObject? skipConfirmPanel;
+        [SerializeField] private Button? skipConfirmYesButton;
+        [SerializeField] private Button? skipConfirmNoButton;
 
         [Header("Settings")]
-        [SerializeField] private float textSpeed = 30f; // character per second
-        [SerializeField] private float indicatorBlinkSpeed = 0.5f;
+        [SerializeField, Min(1f)] private float textSpeed = 30f;
 
-        private Action<int>? _onOptionSelected;
-
-        // 進行管理用のCancellationTokenSource
+        private readonly List<string> _logEntries = new();
+        private readonly StringBuilder _logBuilder = new();
         private CancellationTokenSource? _currentLineCts;
+        private LinePresentationState _lineState;
+        private bool _revealAllRequested;
         private bool _presentationEnabled = true;
+        private bool _modalOpen;
+        private int _lastAdvanceFrame = -1;
+        private string? _leftCharacterName;
+        private string? _rightCharacterName;
+        private string _conversationNodeName = string.Empty;
+
+        public event Action? SkipRequested;
+
+        public bool IsPresentationEnabled => _presentationEnabled;
 
         private void Awake()
         {
+            RegisterButtonSounds();
             HideView();
         }
 
-        public bool IsPresentationEnabled => _presentationEnabled;
+        private void OnDisable()
+        {
+            _currentLineCts?.Cancel();
+        }
+
+        public void PrepareConversation(string nodeName)
+        {
+            _conversationNodeName = string.IsNullOrWhiteSpace(nodeName) ? string.Empty : nodeName.Trim();
+        }
 
         public void SetPresentationEnabled(bool enabled)
         {
@@ -63,7 +111,6 @@ namespace Metroidvania.UI
             if (!enabled)
             {
                 _currentLineCts?.Cancel();
-                _onOptionSelected = null;
                 HideView();
             }
         }
@@ -77,11 +124,33 @@ namespace Metroidvania.UI
             }
 
             gameObject.SetActive(true);
-            if (dialoguePanel != null) dialoguePanel.SetActive(true);
-            if (optionsPanel != null) optionsPanel.SetActive(false);
-            if (speakerNameText != null) speakerNameText.text = "";
-            if (dialogueText != null) dialogueText.text = "";
-            if (nextIndicator != null) nextIndicator.SetActive(false);
+            SetActive(presentationRoot, true);
+            SetActive(dialoguePanel, true);
+            SetActive(logPanel, false);
+            SetActive(skipConfirmPanel, false);
+            SetActive(nextIndicator, false);
+            SetActive(leftPortraitImage, false);
+            SetActive(rightPortraitImage, false);
+
+            _leftCharacterName = null;
+            _rightCharacterName = null;
+            _lineState = LinePresentationState.Idle;
+            _modalOpen = false;
+            _revealAllRequested = false;
+            _logEntries.Clear();
+            RefreshLogText();
+
+            if (speakerNameText != null)
+            {
+                speakerNameText.text = string.Empty;
+            }
+
+            if (dialogueText != null)
+            {
+                dialogueText.text = string.Empty;
+                dialogueText.maxVisibleCharacters = int.MaxValue;
+            }
+
             return YarnTask.CompletedTask;
         }
 
@@ -98,211 +167,346 @@ namespace Metroidvania.UI
                 return YarnTask.CompletedTask;
             }
 
-            var taskCompletionSource = new YarnTaskCompletionSource();
-            RunLineInternalAsync(line, token, taskCompletionSource).Forget();
-            return taskCompletionSource.Task;
+            var completionSource = new YarnTaskCompletionSource();
+            RunLineInternalAsync(line, token, completionSource).Forget();
+            return completionSource.Task;
         }
 
-        private async UniTaskVoid RunLineInternalAsync(LocalizedLine line, LineCancellationToken token, YarnTaskCompletionSource tcs)
+        private async UniTaskVoid RunLineInternalAsync(
+            LocalizedLine line,
+            LineCancellationToken token,
+            YarnTaskCompletionSource completionSource)
         {
             _currentLineCts?.Cancel();
             _currentLineCts?.Dispose();
             _currentLineCts = new CancellationTokenSource();
 
-            // 元々のYarn提供のTokenと自分の入力用Tokenをリンクさせる
-            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+            using var completionTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
                 token.NextContentToken,
-                token.HurryUpToken,
-                _currentLineCts.Token
-            );
-            var mergedToken = linkedTokenSource.Token;
+                _currentLineCts.Token);
+            CancellationToken completionToken = completionTokenSource.Token;
 
-            if (speakerNameText != null) speakerNameText.text = line.CharacterName ?? "";
-            if (dialogueText != null) dialogueText.text = "";
-            if (nextIndicator != null) nextIndicator.SetActive(false);
+            string speakerName = line.CharacterName?.Trim() ?? string.Empty;
+            string text = line.TextWithoutCharacterName.Text;
 
-            // 立ち絵の切り替え
-            if (portraitImage != null)
+            ApplySpeaker(speakerName);
+            AddLogEntry(speakerName, text);
+
+            if (speakerNameText != null)
             {
-                var portraitData = characterPortraits.Find(p => p.characterName == line.CharacterName);
-                if (portraitData.portraitSprite != null)
-                {
-                    portraitImage.sprite = portraitData.portraitSprite;
-                    portraitImage.gameObject.SetActive(true);
-                }
-                else
-                {
-                    // データがない場合は非表示
-                    portraitImage.gameObject.SetActive(false);
-                }
+                speakerNameText.text = speakerName;
+                speakerNameText.gameObject.SetActive(!string.IsNullOrEmpty(speakerName));
             }
 
-            var text = line.TextWithoutCharacterName.Text;
+            _revealAllRequested = false;
+            _lineState = LinePresentationState.Typing;
+            SetActive(nextIndicator, false);
 
             try
             {
-                // タイプライター演出
-                int textLength = text.Length;
-                float delayBetweenChars = 1f / textSpeed;
+                int characterCount = PrepareTypewriterText(text);
+                float secondsPerCharacter = 1f / Mathf.Max(1f, textSpeed);
 
-                for (int i = 0; i < textLength; i++)
+                for (int visibleCharacters = 1; visibleCharacters <= characterCount; visibleCharacters++)
                 {
+                    while (_modalOpen && !completionToken.IsCancellationRequested)
+                    {
+                        await UniTask.Yield(PlayerLoopTiming.Update, completionToken);
+                    }
+
+                    if (_revealAllRequested || token.HurryUpToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
                     if (dialogueText != null)
                     {
-                        dialogueText.text = text.Substring(0, i + 1);
+                        dialogueText.maxVisibleCharacters = visibleCharacters;
                     }
 
-                    // HurryUp（スキップ指示）が来たら即全文表示
-                    if (token.HurryUpToken.IsCancellationRequested)
-                    {
-                        if (dialogueText != null) dialogueText.text = text;
-                        break;
-                    }
-
-                    // NextContent または 行自体のキャンセル（ユーザー入力等）が来たら中断
-                    if (mergedToken.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
-                    // unscaledDeltaTimeで待機
-                    await UniTask.WaitForSeconds(delayBetweenChars, ignoreTimeScale: true, cancellationToken: mergedToken);
+                    await UniTask.WaitForSeconds(
+                        secondsPerCharacter,
+                        ignoreTimeScale: true,
+                        cancellationToken: completionToken);
                 }
+
+                ShowFullLine();
+                _lineState = LinePresentationState.WaitingForAdvance;
+                SetActive(nextIndicator, true);
+
+                await UniTask.WaitUntilCanceled(completionToken);
             }
             catch (OperationCanceledException)
             {
-                // キャンセル時は全文表示
-                if (dialogueText != null) dialogueText.text = text;
-            }
-
-            // 全文表示後、次へマーカー点滅
-            BlinkIndicatorTask(mergedToken).Forget();
-
-            // NextContentTokenが呼ばれるか、ユーザー入力（_currentLineCts）が発火するまで待機
-            try
-            {
-                await UniTask.WaitUntilCanceled(mergedToken);
-            }
-            catch (OperationCanceledException)
-            {
-                // 次に進む合図
+                // The next line or story shutdown was requested.
             }
             finally
             {
+                SetActive(nextIndicator, false);
+                _lineState = LinePresentationState.Idle;
+                _revealAllRequested = false;
+
                 _currentLineCts?.Dispose();
                 _currentLineCts = null;
-                tcs.TrySetResult();
+                completionSource.TrySetResult();
+            }
+        }
+
+        private int PrepareTypewriterText(string text)
+        {
+            if (dialogueText == null)
+            {
+                return 0;
+            }
+
+            dialogueText.text = text;
+            dialogueText.maxVisibleCharacters = 0;
+            dialogueText.ForceMeshUpdate();
+            return dialogueText.textInfo?.characterCount ?? text.Length;
+        }
+
+        private void ShowFullLine()
+        {
+            if (dialogueText != null)
+            {
+                dialogueText.maxVisibleCharacters = int.MaxValue;
             }
         }
 
         public void OnContinueClicked()
         {
-            _currentLineCts?.Cancel();
-        }
+            if (!_presentationEnabled || _modalOpen || _lastAdvanceFrame == Time.frameCount)
+            {
+                return;
+            }
 
-        private async UniTask BlinkIndicatorTask(CancellationToken token)
-        {
-            if (nextIndicator == null) return;
-            nextIndicator.SetActive(true);
-            
-            try
+            _lastAdvanceFrame = Time.frameCount;
+
+            if (_lineState == LinePresentationState.Typing)
             {
-                while (!token.IsCancellationRequested)
-                {
-                    nextIndicator.SetActive(!nextIndicator.activeSelf);
-                    await UniTask.WaitForSeconds(indicatorBlinkSpeed, ignoreTimeScale: true, cancellationToken: token);
-                }
+                _revealAllRequested = true;
+                ShowFullLine();
+                return;
             }
-            catch (OperationCanceledException)
+
+            if (_lineState == LinePresentationState.WaitingForAdvance)
             {
-                // token cancelled
-            }
-            finally
-            {
-                if (nextIndicator != null)
-                {
-                    nextIndicator.SetActive(false);
-                }
+                _currentLineCts?.Cancel();
             }
         }
 
-        public override YarnTask<DialogueOption?> RunOptionsAsync(DialogueOption[] dialogueOptions, LineCancellationToken cancellationToken)
+        public void OnLogClicked()
         {
-            if (!_presentationEnabled)
+            if (logPanel == null)
             {
-                return YarnTask.FromResult<DialogueOption?>(dialogueOptions.Length > 0 ? dialogueOptions[0] : null);
+                return;
             }
 
-            var taskCompletionSource = new YarnTaskCompletionSource<DialogueOption?>();
-            RunOptionsInternalAsync(dialogueOptions, cancellationToken, taskCompletionSource).Forget();
-            return taskCompletionSource.Task;
+            RefreshLogText();
+            _modalOpen = true;
+            logPanel.SetActive(true);
         }
 
-        private async UniTaskVoid RunOptionsInternalAsync(DialogueOption[] dialogueOptions, LineCancellationToken cancellationToken, YarnTaskCompletionSource<DialogueOption?> outTcs)
+        public void OnLogCloseClicked()
         {
-            optionsPanel.SetActive(true);
+            SetActive(logPanel, false);
+            _modalOpen = skipConfirmPanel != null && skipConfirmPanel.activeSelf;
+        }
 
-            // 既存のボタンをクリア
-            foreach (Transform child in optionsContainer)
+        public void OnSkipClicked()
+        {
+            if (skipConfirmPanel == null)
             {
-                Destroy(child.gameObject);
+                return;
             }
 
-            // ボタン生成
-            for (int i = 0; i < dialogueOptions.Length; i++)
+            _modalOpen = true;
+            skipConfirmPanel.SetActive(true);
+        }
+
+        public void OnSkipConfirmNoClicked()
+        {
+            SetActive(skipConfirmPanel, false);
+            _modalOpen = logPanel != null && logPanel.activeSelf;
+        }
+
+        public void OnSkipConfirmYesClicked()
+        {
+            SetActive(skipConfirmPanel, false);
+            _modalOpen = false;
+            SkipRequested?.Invoke();
+        }
+
+        public override YarnTask<DialogueOption?> RunOptionsAsync(
+            DialogueOption[] dialogueOptions,
+            LineCancellationToken cancellationToken)
+        {
+            Debug.LogError(
+                $"[DialogueView] Yarn options are not supported by the current ADV specification. " +
+                $"node='{_conversationNodeName}', optionCount={dialogueOptions.Length}",
+                this);
+            return YarnTask.FromResult<DialogueOption?>(null);
+        }
+
+        private void ApplySpeaker(string speakerName)
+        {
+            CharacterPortrait? portrait = FindPortrait(speakerName);
+            if (portrait.HasValue && portrait.Value.portraitSprite != null)
             {
-                var option = dialogueOptions[i];
-                var buttonObj = Instantiate(optionButtonPrefab, optionsContainer);
-                buttonObj.SetActive(true);
-
-                var textComp = buttonObj.GetComponentInChildren<TextMeshProUGUI>();
-                if (textComp != null)
+                CharacterPortrait value = portrait.Value;
+                if (value.slot == DialoguePortraitSlot.Right)
                 {
-                    textComp.text = option.Line.Text.Text;
+                    SetPortrait(rightPortraitImage, value.portraitSprite, true);
+                    _rightCharacterName = speakerName;
                 }
-
-                var buttonComp = buttonObj.GetComponent<Button>();
-                if (buttonComp != null)
+                else
                 {
-                    UIButtonSfxPlayer.Register(buttonComp);
-
-                    int index = i;
-                    buttonComp.onClick.AddListener(() =>
-                    {
-                        _onOptionSelected?.Invoke(index);
-                    });
+                    SetPortrait(leftPortraitImage, value.portraitSprite, true);
+                    _leftCharacterName = speakerName;
                 }
             }
 
-            // 選択されるまで待機
-            var tcs = new UniTaskCompletionSource<DialogueOption?>();
-            _onOptionSelected = (index) =>
-            {
-                _onOptionSelected = null;
-                optionsPanel.SetActive(false);
-                tcs.TrySetResult(dialogueOptions[index]);
-            };
+            bool hasSpeaker = !string.IsNullOrWhiteSpace(speakerName);
+            SetPortraitColor(
+                leftPortraitImage,
+                hasSpeaker && string.Equals(_leftCharacterName, speakerName, StringComparison.OrdinalIgnoreCase));
+            SetPortraitColor(
+                rightPortraitImage,
+                hasSpeaker && string.Equals(_rightCharacterName, speakerName, StringComparison.OrdinalIgnoreCase));
+        }
 
-            // キャンセルされたらnullを返す
-            using var reg = cancellationToken.NextContentToken.Register(() =>
+        private CharacterPortrait? FindPortrait(string speakerName)
+        {
+            if (string.IsNullOrWhiteSpace(speakerName))
             {
-                _onOptionSelected = null;
-                optionsPanel.SetActive(false);
-                tcs.TrySetResult(null);
-            });
+                return null;
+            }
 
-            var result = await tcs.Task;
-            outTcs.TrySetResult(result);
+            for (int i = 0; i < characterPortraits.Count; i++)
+            {
+                CharacterPortrait portrait = characterPortraits[i];
+                if (string.Equals(
+                        portrait.characterName?.Trim(),
+                        speakerName,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return portrait;
+                }
+            }
+
+            return null;
+        }
+
+        private void SetPortraitColor(Image? image, bool isSpeaking)
+        {
+            if (image != null && image.gameObject.activeSelf)
+            {
+                image.color = isSpeaking ? speakingPortraitColor : inactivePortraitColor;
+            }
+        }
+
+        private static void SetPortrait(Image? image, Sprite sprite, bool visible)
+        {
+            if (image == null)
+            {
+                return;
+            }
+
+            image.sprite = sprite;
+            image.preserveAspect = true;
+            image.gameObject.SetActive(visible);
+        }
+
+        private void AddLogEntry(string speakerName, string text)
+        {
+            string entry = string.IsNullOrWhiteSpace(speakerName)
+                ? text
+                : $"{speakerName}\n{text}";
+            _logEntries.Add(entry);
+            RefreshLogText();
+        }
+
+        private void RefreshLogText()
+        {
+            if (logText == null)
+            {
+                return;
+            }
+
+            _logBuilder.Clear();
+            for (int i = 0; i < _logEntries.Count; i++)
+            {
+                if (i > 0)
+                {
+                    _logBuilder.Append("\n\n");
+                }
+
+                _logBuilder.Append(_logEntries[i]);
+            }
+
+            logText.text = _logBuilder.ToString();
+        }
+
+        private void RegisterButtonSounds()
+        {
+            RegisterButtonSound(logButton);
+            RegisterButtonSound(logCloseButton);
+            RegisterButtonSound(skipButton);
+            RegisterButtonSound(skipConfirmYesButton);
+            RegisterButtonSound(skipConfirmNoButton);
+        }
+
+        private static void RegisterButtonSound(Button? button)
+        {
+            if (button != null)
+            {
+                UIButtonSfxPlayer.Register(button);
+            }
         }
 
         private void HideView()
         {
-            if (dialoguePanel != null) dialoguePanel.SetActive(false);
-            if (optionsPanel != null) optionsPanel.SetActive(false);
-            if (speakerNameText != null) speakerNameText.text = "";
-            if (dialogueText != null) dialogueText.text = "";
-            if (nextIndicator != null) nextIndicator.SetActive(false);
-            if (portraitImage != null) portraitImage.gameObject.SetActive(false);
+            _currentLineCts?.Cancel();
+            _lineState = LinePresentationState.Idle;
+            _modalOpen = false;
+            _revealAllRequested = false;
+            _leftCharacterName = null;
+            _rightCharacterName = null;
+
+            SetActive(nextIndicator, false);
+            SetActive(logPanel, false);
+            SetActive(skipConfirmPanel, false);
+            SetActive(leftPortraitImage, false);
+            SetActive(rightPortraitImage, false);
+            SetActive(dialoguePanel, false);
+            SetActive(presentationRoot, false);
+
+            if (speakerNameText != null)
+            {
+                speakerNameText.text = string.Empty;
+            }
+
+            if (dialogueText != null)
+            {
+                dialogueText.text = string.Empty;
+                dialogueText.maxVisibleCharacters = int.MaxValue;
+            }
+        }
+
+        private static void SetActive(GameObject? target, bool active)
+        {
+            if (target != null)
+            {
+                target.SetActive(active);
+            }
+        }
+
+        private static void SetActive(Component? target, bool active)
+        {
+            if (target != null)
+            {
+                target.gameObject.SetActive(active);
+            }
         }
     }
 }

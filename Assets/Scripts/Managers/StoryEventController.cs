@@ -85,7 +85,7 @@ public sealed class StoryEventController : MonoBehaviour
 
     [Header("Dialogue")]
     [SerializeField] private DialogueManager dialogueManager;
-    [SerializeField] private DialogueStyle defaultDialogueStyle = DialogueStyle.Bubble;
+    [SerializeField] private DialogueStyle defaultDialogueStyle = DialogueStyle.ADV;
     [SerializeField] private Transform defaultBubbleTarget;
     [SerializeField] private bool skipWhenDialogueRunning = true;
 
@@ -304,6 +304,26 @@ public sealed class StoryEventController : MonoBehaviour
         firedDialogueClipKeys.Clear();
         firedPanelClipKeys.Clear();
         firedTimelinePointKeys.Clear();
+    }
+
+    /// <summary>
+    /// Ends the currently playing story immediately, applies its completion
+    /// state exactly once, and returns control to gameplay without executing
+    /// the remaining Timeline content.
+    /// </summary>
+    public bool SkipEventAndComplete()
+    {
+        if (playRoutine == null)
+        {
+            return false;
+        }
+
+        // A manually-started or partially-initialised event must still receive
+        // the same flag/ability contract as a normally completed event.
+        ApplyStartMutations();
+        StopEvent();
+        ApplyCompletionState();
+        return true;
     }
 
     public Transform GetMarkerTransform(int markerNo)
