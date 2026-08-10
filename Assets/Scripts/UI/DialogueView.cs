@@ -232,6 +232,7 @@ namespace Metroidvania.UI
             string speakerName = line.CharacterName?.Trim() ?? string.Empty;
             string text = line.TextWithoutCharacterName.Text;
             string expressionName = GetExpressionName(line.Metadata);
+            bool isNarration = IsNarration(speakerName);
 
             ApplyLineTextEffects(line.Metadata);
             ApplySpeaker(speakerName, expressionName);
@@ -240,7 +241,7 @@ namespace Metroidvania.UI
             if (speakerNameText != null)
             {
                 speakerNameText.text = speakerName;
-                speakerNameText.gameObject.SetActive(!string.IsNullOrEmpty(speakerName));
+                speakerNameText.gameObject.SetActive(!isNarration);
             }
 
             _revealAllRequested = false;
@@ -482,6 +483,13 @@ namespace Metroidvania.UI
 
         private void ApplySpeaker(string speakerName, string expressionName)
         {
+            if (IsNarration(speakerName))
+            {
+                SetPortraitColor(leftPortraitImage, false);
+                SetPortraitColor(rightPortraitImage, false);
+                return;
+            }
+
             CharacterPortrait? portrait = FindPortrait(speakerName);
             if (portrait.HasValue)
             {
@@ -499,13 +507,17 @@ namespace Metroidvania.UI
                 }
             }
 
-            bool hasSpeaker = !string.IsNullOrWhiteSpace(speakerName);
             SetPortraitColor(
                 leftPortraitImage,
-                hasSpeaker && string.Equals(_leftCharacterName, speakerName, StringComparison.OrdinalIgnoreCase));
+                string.Equals(_leftCharacterName, speakerName, StringComparison.OrdinalIgnoreCase));
             SetPortraitColor(
                 rightPortraitImage,
-                hasSpeaker && string.Equals(_rightCharacterName, speakerName, StringComparison.OrdinalIgnoreCase));
+                string.Equals(_rightCharacterName, speakerName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool IsNarration(string? speakerName)
+        {
+            return string.IsNullOrWhiteSpace(speakerName);
         }
 
         private CharacterPortrait? FindPortrait(string speakerName)

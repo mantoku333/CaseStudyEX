@@ -168,3 +168,29 @@ public sealed class DialogueTextEffectTests
         return (float)method.Invoke(null, new object[] { metadata });
     }
 }
+
+public sealed class DialogueNarrationTests
+{
+    private const BindingFlags PrivateStatic = BindingFlags.Static | BindingFlags.NonPublic;
+
+    [Test]
+    public void MissingSpeaker_IsNarration()
+    {
+        Assert.That(IsNarration(null), Is.True);
+        Assert.That(IsNarration(string.Empty), Is.True);
+        Assert.That(IsNarration("   "), Is.True);
+    }
+
+    [Test]
+    public void NamedSpeaker_IsNotNarration()
+    {
+        Assert.That(IsNarration("イリス"), Is.False);
+    }
+
+    private static bool IsNarration(string speakerName)
+    {
+        MethodInfo method = typeof(DialogueView).GetMethod("IsNarration", PrivateStatic);
+        Assert.That(method, Is.Not.Null);
+        return (bool)method.Invoke(null, new object[] { speakerName });
+    }
+}
