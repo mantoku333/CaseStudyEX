@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -88,6 +89,16 @@ namespace Metroidvania.UI
         [Header("Settings")]
         [SerializeField, Min(1f)] private float textSpeed = 30f;
 
+        [Header("Text Effects")]
+        [Tooltip("Per-character position amplitude in UI pixels for Yarn lines tagged #shake.")]
+        [SerializeField, Min(0f)] private float shakePositionAmplitude = 2.5f;
+        [Tooltip("Per-character rotation amplitude in degrees for Yarn lines tagged #shake.")]
+        [SerializeField, Min(0f)] private float shakeRotationAmplitude = 3f;
+        [Tooltip("Animation speed for Yarn lines tagged #shake.")]
+        [SerializeField, Min(0f)] private float shakeSpeed = 12f;
+        [Tooltip("Maximum accepted value for Yarn tags such as #size:1.5.")]
+        [SerializeField, Min(1f)] private float maximumFontScale = 3f;
+
         private readonly List<string> _logEntries = new();
         private readonly StringBuilder _logBuilder = new();
         private readonly HashSet<string> _missingExpressionWarnings = new(StringComparer.OrdinalIgnoreCase);
@@ -100,6 +111,8 @@ namespace Metroidvania.UI
         private string? _leftCharacterName;
         private string? _rightCharacterName;
         private string _conversationNodeName = string.Empty;
+        private float _baseDialogueFontSize;
+        private bool _shakeTextActive;
 
         public event Action? SkipRequested;
 
@@ -107,8 +120,20 @@ namespace Metroidvania.UI
 
         private void Awake()
         {
+            CaptureBaseDialogueFontSize();
             RegisterButtonSounds();
             HideView();
+        }
+
+        private void LateUpdate()
+        {
+            if (_shakeTextActive &&
+                _presentationEnabled &&
+                dialogueText != null &&
+                dialogueText.gameObject.activeInHierarchy)
+            {
+                ApplyPerCharacterShake();
+            }
         }
 
         private void OnDisable()
@@ -208,6 +233,7 @@ namespace Metroidvania.UI
             string text = line.TextWithoutCharacterName.Text;
             string expressionName = GetExpressionName(line.Metadata);
 
+            ApplyLineTextEffects(line.Metadata);
             ApplySpeaker(speakerName, expressionName);
             AddLogEntry(speakerName, text);
 
@@ -290,6 +316,93 @@ namespace Metroidvania.UI
             {
                 dialogueText.maxVisibleCharacters = int.MaxValue;
             }
+        }
+
+        private void CaptureBaseDialogueFontSize()
+        {
+            if (dialogueText != null && _baseDialogueFontSize <= 0f)
+            {
+                _baseDialogueFontSize = dialogueText.fontSize;
+            }
+        }
+
+        private void ApplyLineTextEffects(string[]? metadata)
+        {
+            _shakeTextActive = HasMetadataTag(metadata, "shake");
+
+            if (dialogueText == null)
+            {
+                return;
+            }
+
+            CaptureBaseDialogueFontSize();
+            float fontScale = Mathf.Clamp(GetLineFontScale(metadata), 1f, Mathf.Max(1f, maximumFontScale));
+            dialogueText.fontSize = _baseDialogueFontSize * fontScale;
+        }
+
+        private void ResetLineTextEffects()
+        {
+            _shakeTextActive = false;
+            if (dialogueText != null && _baseDialogueFontSize > 0f)
+            {
+                dialogueText.fontSize = _baseDialogueFontSize;
+            }
+        }
+
+        private void ApplyPerCharacterShake()
+        {
+            dialogueText.ForceMeshUpdate();
+            TMP_TextInfo textInfo = dialogueText.textInfo;
+            if (textInfo == null || textInfo.characterCount == 0)
+            {
+                return;
+            }
+
+            int visibleCharacterCount = dialogueText.maxVisibleCharacters == int.MaxValue
+                ? textInfo.characterCount
+                : Mathf.Min(dialogueText.maxVisibleCharacters, textInfo.characterCount);
+            float time = Time.unscaledTime * shakeSpeed;
+
+            for (int characterIndex = 0; characterIndex < visibleCharacterCount; characterIndex++)
+            {
+                TMP_CharacterInfo characterInfo = textInfo.characterInfo[characterIndex];
+                if (!characterInfo.isVisible)
+                {
+                    continue;
+                }
+
+                int materialIndex = characterInfo.materialReferenceIndex;
+                int vertexIndex = characterInfo.vertexIndex;
+                if (materialIndex < 0 || materialIndex >= textInfo.meshInfo.Length)
+                {
+                    continue;
+                }
+
+                Vector3[] vertices = textInfo.meshInfo[materialIndex].vertices;
+                if (vertexIndex < 0 || vertexIndex + 3 >= vertices.Length)
+                {
+                    continue;
+                }
+
+                Vector3 center = (vertices[vertexIndex] + vertices[vertexIndex + 2]) * 0.5f;
+                float phase = characterIndex * 1.618034f;
+                var offset = new Vector3(
+                    Mathf.Sin(time * 1.13f + phase) * shakePositionAmplitude,
+                    Mathf.Sin(time * 1.47f + phase * 2.17f) * shakePositionAmplitude,
+                    0f);
+                Quaternion rotation = Quaternion.Euler(
+                    0f,
+                    0f,
+                    Mathf.Sin(time * 0.91f + phase * 1.31f) * shakeRotationAmplitude);
+
+                for (int corner = 0; corner < 4; corner++)
+                {
+                    int index = vertexIndex + corner;
+                    vertices[index] = center + rotation * (vertices[index] - center) + offset;
+                }
+            }
+
+            dialogueText.UpdateVertexData(TMP_VertexDataUpdateFlags.Vertices);
         }
 
         public void OnContinueClicked()
@@ -440,6 +553,51 @@ namespace Metroidvania.UI
             return "default";
         }
 
+        private static bool HasMetadataTag(string[]? metadata, string expectedTag)
+        {
+            if (metadata == null || string.IsNullOrWhiteSpace(expectedTag))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < metadata.Length; i++)
+            {
+                string tag = (metadata[i] ?? string.Empty).Trim().TrimStart('#');
+                if (string.Equals(tag, expectedTag, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static float GetLineFontScale(string[]? metadata)
+        {
+            if (metadata == null)
+            {
+                return 1f;
+            }
+
+            const string prefix = "size:";
+            for (int i = 0; i < metadata.Length; i++)
+            {
+                string tag = (metadata[i] ?? string.Empty).Trim().TrimStart('#');
+                if (!tag.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                string value = tag.Substring(prefix.Length).Trim();
+                return float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out float scale) &&
+                       scale > 0f
+                    ? scale
+                    : 1f;
+            }
+
+            return 1f;
+        }
+
         private Sprite? FindExpressionSprite(CharacterPortrait portrait, string expressionName)
         {
             if (string.IsNullOrWhiteSpace(expressionName) ||
@@ -552,6 +710,7 @@ namespace Metroidvania.UI
             _revealAllRequested = false;
             _leftCharacterName = null;
             _rightCharacterName = null;
+            ResetLineTextEffects();
 
             SetActive(nextIndicator, false);
             SetActive(logPanel, false);

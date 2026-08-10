@@ -2351,6 +2351,10 @@ MonoBehaviour:
   skipConfirmYesButton: {fileID: 1056632284203451856}
   skipConfirmNoButton: {fileID: 4552611233961154487}
   textSpeed: 30
+  shakePositionAmplitude: 2.5
+  shakeRotationAmplitude: 3
+  shakeSpeed: 12
+  maximumFontScale: 3
 --- !u!1 &5799732105555949436
 GameObject:
   m_ObjectHideFlags: 0

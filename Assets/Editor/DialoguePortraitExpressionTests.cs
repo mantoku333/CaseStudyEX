@@ -128,3 +128,43 @@ public sealed class DialoguePortraitExpressionTests
         return (Sprite)method.Invoke(view, new object[] { portrait, expressionName });
     }
 }
+
+public sealed class DialogueTextEffectTests
+{
+    private const BindingFlags PrivateStatic = BindingFlags.Static | BindingFlags.NonPublic;
+
+    [Test]
+    public void ShakeTag_IsDetectedCaseInsensitively()
+    {
+        Assert.That(HasMetadataTag(new[] { "line:example", "#SHAKE" }, "shake"), Is.True);
+        Assert.That(HasMetadataTag(new[] { "face:smile" }, "shake"), Is.False);
+    }
+
+    [Test]
+    public void SizeTag_ReturnsRequestedScale()
+    {
+        Assert.That(GetLineFontScale(new[] { "line:example", "size:1.5" }), Is.EqualTo(1.5f));
+    }
+
+    [Test]
+    public void MissingOrInvalidSizeTag_ReturnsNormalScale()
+    {
+        Assert.That(GetLineFontScale(null), Is.EqualTo(1f));
+        Assert.That(GetLineFontScale(new[] { "size:not-a-number" }), Is.EqualTo(1f));
+        Assert.That(GetLineFontScale(new[] { "size:0" }), Is.EqualTo(1f));
+    }
+
+    private static bool HasMetadataTag(string[] metadata, string expectedTag)
+    {
+        MethodInfo method = typeof(DialogueView).GetMethod("HasMetadataTag", PrivateStatic);
+        Assert.That(method, Is.Not.Null);
+        return (bool)method.Invoke(null, new object[] { metadata, expectedTag });
+    }
+
+    private static float GetLineFontScale(string[] metadata)
+    {
+        MethodInfo method = typeof(DialogueView).GetMethod("GetLineFontScale", PrivateStatic);
+        Assert.That(method, Is.Not.Null);
+        return (float)method.Invoke(null, new object[] { metadata });
+    }
+}
