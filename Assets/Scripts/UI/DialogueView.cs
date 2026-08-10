@@ -19,11 +19,27 @@ namespace Metroidvania.UI
     }
 
     [Serializable]
+    public struct PortraitExpression
+    {
+        [Tooltip("Yarn line tag name used as #face:<name>.")]
+        public string expressionName;
+
+        public Sprite portraitSprite;
+    }
+
+    [Serializable]
     public struct CharacterPortrait
     {
+        [Tooltip("Must match the speaker name written in Yarn.")]
         public string characterName;
+
+        [Tooltip("Used when the line has no #face tag or uses #face:default.")]
         public Sprite portraitSprite;
+
         public DialoguePortraitSlot slot;
+
+        [Tooltip("Optional expression sprites selected with Yarn tags such as #face:smile.")]
+        public PortraitExpression[] expressionPortraits;
     }
 
     /// <summary>
@@ -74,6 +90,7 @@ namespace Metroidvania.UI
 
         private readonly List<string> _logEntries = new();
         private readonly StringBuilder _logBuilder = new();
+        private readonly HashSet<string> _missingExpressionWarnings = new(StringComparer.OrdinalIgnoreCase);
         private CancellationTokenSource? _currentLineCts;
         private LinePresentationState _lineState;
         private bool _revealAllRequested;
@@ -138,6 +155,7 @@ namespace Metroidvania.UI
             _modalOpen = false;
             _revealAllRequested = false;
             _logEntries.Clear();
+            _missingExpressionWarnings.Clear();
             RefreshLogText();
 
             if (speakerNameText != null)
@@ -188,8 +206,9 @@ namespace Metroidvania.UI
 
             string speakerName = line.CharacterName?.Trim() ?? string.Empty;
             string text = line.TextWithoutCharacterName.Text;
+            string expressionName = GetExpressionName(line.Metadata);
 
-            ApplySpeaker(speakerName);
+            ApplySpeaker(speakerName, expressionName);
             AddLogEntry(speakerName, text);
 
             if (speakerNameText != null)
@@ -348,20 +367,21 @@ namespace Metroidvania.UI
             return YarnTask.FromResult<DialogueOption?>(null);
         }
 
-        private void ApplySpeaker(string speakerName)
+        private void ApplySpeaker(string speakerName, string expressionName)
         {
             CharacterPortrait? portrait = FindPortrait(speakerName);
-            if (portrait.HasValue && portrait.Value.portraitSprite != null)
+            if (portrait.HasValue)
             {
                 CharacterPortrait value = portrait.Value;
-                if (value.slot == DialoguePortraitSlot.Right)
+                Sprite? sprite = FindExpressionSprite(value, expressionName);
+                if (sprite != null && value.slot == DialoguePortraitSlot.Right)
                 {
-                    SetPortrait(rightPortraitImage, value.portraitSprite, true);
+                    SetPortrait(rightPortraitImage, sprite, true);
                     _rightCharacterName = speakerName;
                 }
-                else
+                else if (sprite != null)
                 {
-                    SetPortrait(leftPortraitImage, value.portraitSprite, true);
+                    SetPortrait(leftPortraitImage, sprite, true);
                     _leftCharacterName = speakerName;
                 }
             }
@@ -395,6 +415,66 @@ namespace Metroidvania.UI
             }
 
             return null;
+        }
+
+        private static string GetExpressionName(string[]? metadata)
+        {
+            if (metadata == null)
+            {
+                return "default";
+            }
+
+            const string prefix = "face:";
+            for (int i = 0; i < metadata.Length; i++)
+            {
+                string tag = (metadata[i] ?? string.Empty).Trim().TrimStart('#');
+                if (!tag.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                string expressionName = tag.Substring(prefix.Length).Trim();
+                return string.IsNullOrEmpty(expressionName) ? "default" : expressionName;
+            }
+
+            return "default";
+        }
+
+        private Sprite? FindExpressionSprite(CharacterPortrait portrait, string expressionName)
+        {
+            if (string.IsNullOrWhiteSpace(expressionName) ||
+                string.Equals(expressionName, "default", StringComparison.OrdinalIgnoreCase))
+            {
+                return portrait.portraitSprite;
+            }
+
+            PortraitExpression[]? expressions = portrait.expressionPortraits;
+            if (expressions != null)
+            {
+                for (int i = 0; i < expressions.Length; i++)
+                {
+                    PortraitExpression expression = expressions[i];
+                    if (string.Equals(
+                            expression.expressionName?.Trim(),
+                            expressionName,
+                            StringComparison.OrdinalIgnoreCase) &&
+                        expression.portraitSprite != null)
+                    {
+                        return expression.portraitSprite;
+                    }
+                }
+            }
+
+            string warningKey = $"{portrait.characterName}\n{expressionName}";
+            if (_missingExpressionWarnings.Add(warningKey))
+            {
+                Debug.LogWarning(
+                    $"[DialogueView] Portrait expression was not found; using the default portrait. " +
+                    $"node='{_conversationNodeName}', character='{portrait.characterName}', face='{expressionName}'",
+                    this);
+            }
+
+            return portrait.portraitSprite;
         }
 
         private void SetPortraitColor(Image? image, bool isSpeaking)

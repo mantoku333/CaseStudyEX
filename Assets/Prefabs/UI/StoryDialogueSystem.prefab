@@ -2329,6 +2329,19 @@ MonoBehaviour:
   - characterName: "\u30A4\u30EA\u30B9"
     portraitSprite: {fileID: 21300000, guid: 19415e01ce41e824082992d57acb96f2, type: 3}
     slot: 1
+    expressionPortraits:
+    - expressionName: soft_smile
+      portraitSprite: {fileID: 0}
+    - expressionName: sad
+      portraitSprite: {fileID: 0}
+    - expressionName: surprised
+      portraitSprite: {fileID: 0}
+    - expressionName: jitome
+      portraitSprite: {fileID: 0}
+    - expressionName: smile
+      portraitSprite: {fileID: 0}
+    - expressionName: assertive
+      portraitSprite: {fileID: 0}
   logButton: {fileID: 2835584596739363870}
   logPanel: {fileID: 343508730723719429}
   logText: {fileID: 6438837381159774148}

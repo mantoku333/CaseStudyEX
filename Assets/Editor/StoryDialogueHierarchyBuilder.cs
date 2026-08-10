@@ -316,6 +316,19 @@ public static class StoryDialogueHierarchyBuilder
 
     private static GameObject BuildDialogueSystemPrefab()
     {
+        List<CharacterPortrait> portraitConfigurations = CapturePortraitConfigurations();
+        Sprite irisPortrait = AssetDatabase.LoadAllAssetsAtPath(IrisPortraitPath).OfType<Sprite>().FirstOrDefault();
+        if (portraitConfigurations.Count == 0 && irisPortrait != null)
+        {
+            portraitConfigurations.Add(new CharacterPortrait
+            {
+                characterName = "イリス",
+                portraitSprite = irisPortrait,
+                slot = DialoguePortraitSlot.Right,
+                expressionPortraits = Array.Empty<PortraitExpression>()
+            });
+        }
+
         var root = new GameObject("StoryDialogueSystem", typeof(RectTransform));
         Stretch((RectTransform)root.transform);
         SetLayerRecursively(root, LayerMask.NameToLayer("UI"));
@@ -324,7 +337,6 @@ public static class StoryDialogueHierarchyBuilder
         DialogueGamePauser pauser = root.AddComponent<DialogueGamePauser>();
         DialogueView view = root.AddComponent<DialogueView>();
         TMP_FontAsset font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
-        Sprite irisPortrait = AssetDatabase.LoadAllAssetsAtPath(IrisPortraitPath).OfType<Sprite>().FirstOrDefault();
 
         GameObject presentationRoot = CreateUiObject("PresentationRoot", root.transform);
         Stretch(presentationRoot.GetComponent<RectTransform>());
@@ -360,7 +372,10 @@ public static class StoryDialogueHierarchyBuilder
         SetRect(rightPortrait.rectTransform, new Vector2(1f, 0f), new Vector2(720f, 900f), new Vector2(-360f, 450f));
         rightPortrait.preserveAspect = true;
         rightPortrait.raycastTarget = false;
-        rightPortrait.sprite = irisPortrait;
+        rightPortrait.sprite = portraitConfigurations
+            .Where(portrait => portrait.slot == DialoguePortraitSlot.Right)
+            .Select(portrait => portrait.portraitSprite)
+            .FirstOrDefault(sprite => sprite != null) ?? irisPortrait;
         rightPortrait.gameObject.SetActive(false);
 
         Image dialogueWindow = CreateImage(
@@ -494,7 +509,7 @@ public static class StoryDialogueHierarchyBuilder
             skipModal,
             skipYes,
             skipNo,
-            irisPortrait);
+            portraitConfigurations);
         ConfigureDialogueRuntime(runner, manager, pauser, view);
 
         presentationRoot.SetActive(false);
@@ -529,7 +544,7 @@ public static class StoryDialogueHierarchyBuilder
         GameObject skipPanel,
         Button skipYes,
         Button skipNo,
-        Sprite irisPortrait)
+        IReadOnlyList<CharacterPortrait> portraitConfigurations)
     {
         var serialized = new SerializedObject(view);
         SetReference(serialized, "presentationRoot", presentationRoot);
@@ -549,16 +564,74 @@ public static class StoryDialogueHierarchyBuilder
         SetReference(serialized, "skipConfirmNoButton", skipNo);
 
         SerializedProperty portraits = serialized.FindProperty("characterPortraits");
-        portraits.arraySize = irisPortrait != null ? 1 : 0;
-        if (portraits.arraySize == 1)
+        portraits.arraySize = portraitConfigurations.Count;
+        for (int portraitIndex = 0; portraitIndex < portraitConfigurations.Count; portraitIndex++)
         {
-            SerializedProperty iris = portraits.GetArrayElementAtIndex(0);
-            iris.FindPropertyRelative("characterName").stringValue = "イリス";
-            iris.FindPropertyRelative("portraitSprite").objectReferenceValue = irisPortrait;
-            iris.FindPropertyRelative("slot").enumValueIndex = (int)DialoguePortraitSlot.Right;
+            CharacterPortrait configuration = portraitConfigurations[portraitIndex];
+            SerializedProperty portrait = portraits.GetArrayElementAtIndex(portraitIndex);
+            portrait.FindPropertyRelative("characterName").stringValue = configuration.characterName;
+            portrait.FindPropertyRelative("portraitSprite").objectReferenceValue = configuration.portraitSprite;
+            portrait.FindPropertyRelative("slot").enumValueIndex = (int)configuration.slot;
+
+            SerializedProperty expressionPortraits = portrait.FindPropertyRelative("expressionPortraits");
+            PortraitExpression[] expressions = configuration.expressionPortraits ?? Array.Empty<PortraitExpression>();
+            expressionPortraits.arraySize = expressions.Length;
+            for (int expressionIndex = 0; expressionIndex < expressions.Length; expressionIndex++)
+            {
+                PortraitExpression expression = expressions[expressionIndex];
+                SerializedProperty expressionProperty = expressionPortraits.GetArrayElementAtIndex(expressionIndex);
+                expressionProperty.FindPropertyRelative("expressionName").stringValue = expression.expressionName;
+                expressionProperty.FindPropertyRelative("portraitSprite").objectReferenceValue = expression.portraitSprite;
+            }
         }
 
         serialized.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static List<CharacterPortrait> CapturePortraitConfigurations()
+    {
+        var result = new List<CharacterPortrait>();
+        GameObject existingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(DialogueSystemPrefabPath);
+        DialogueView existingView = existingPrefab != null ? existingPrefab.GetComponent<DialogueView>() : null;
+        if (existingView == null)
+        {
+            return result;
+        }
+
+        var serialized = new SerializedObject(existingView);
+        serialized.Update();
+        SerializedProperty portraits = serialized.FindProperty("characterPortraits");
+        if (portraits == null)
+        {
+            return result;
+        }
+
+        for (int portraitIndex = 0; portraitIndex < portraits.arraySize; portraitIndex++)
+        {
+            SerializedProperty portrait = portraits.GetArrayElementAtIndex(portraitIndex);
+            SerializedProperty expressionsProperty = portrait.FindPropertyRelative("expressionPortraits");
+            int expressionCount = expressionsProperty != null ? expressionsProperty.arraySize : 0;
+            var expressions = new PortraitExpression[expressionCount];
+            for (int expressionIndex = 0; expressionIndex < expressionCount; expressionIndex++)
+            {
+                SerializedProperty expression = expressionsProperty.GetArrayElementAtIndex(expressionIndex);
+                expressions[expressionIndex] = new PortraitExpression
+                {
+                    expressionName = expression.FindPropertyRelative("expressionName").stringValue,
+                    portraitSprite = expression.FindPropertyRelative("portraitSprite").objectReferenceValue as Sprite
+                };
+            }
+
+            result.Add(new CharacterPortrait
+            {
+                characterName = portrait.FindPropertyRelative("characterName").stringValue,
+                portraitSprite = portrait.FindPropertyRelative("portraitSprite").objectReferenceValue as Sprite,
+                slot = (DialoguePortraitSlot)portrait.FindPropertyRelative("slot").enumValueIndex,
+                expressionPortraits = expressions
+            });
+        }
+
+        return result;
     }
 
     private static void ConfigureDialogueRuntime(
