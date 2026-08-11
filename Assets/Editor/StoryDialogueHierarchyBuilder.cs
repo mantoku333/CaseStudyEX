@@ -317,6 +317,7 @@ public static class StoryDialogueHierarchyBuilder
     private static GameObject BuildDialogueSystemPrefab()
     {
         List<CharacterPortrait> portraitConfigurations = CapturePortraitConfigurations();
+        List<DialogueIllustration> illustrationConfigurations = CaptureIllustrationConfigurations();
         Sprite irisPortrait = AssetDatabase.LoadAllAssetsAtPath(IrisPortraitPath).OfType<Sprite>().FirstOrDefault();
         if (portraitConfigurations.Count == 0 && irisPortrait != null)
         {
@@ -401,7 +402,9 @@ public static class StoryDialogueHierarchyBuilder
             34f,
             TextAlignmentOptions.TopLeft,
             Color.white);
-        SetRect(dialogueText.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(1360f, 130f), new Vector2(0f, -30f));
+        // Keep the original left edge while limiting a normal-size line to
+        // approximately 30 full-width Japanese characters (34 px x 30).
+        SetRect(dialogueText.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(1020f, 130f), new Vector2(-170f, -30f));
         dialogueText.textWrappingMode = TextWrappingModes.Normal;
         dialogueText.overflowMode = TextOverflowModes.Overflow;
         dialogueText.lineSpacing = 8f;
@@ -498,6 +501,7 @@ public static class StoryDialogueHierarchyBuilder
             dialogueWindow.gameObject,
             speakerName,
             dialogueText,
+            centerIllustration,
             nextIndicator.gameObject,
             leftPortrait,
             rightPortrait,
@@ -509,7 +513,8 @@ public static class StoryDialogueHierarchyBuilder
             skipModal,
             skipYes,
             skipNo,
-            portraitConfigurations);
+            portraitConfigurations,
+            illustrationConfigurations);
         ConfigureDialogueRuntime(runner, manager, pauser, view);
 
         presentationRoot.SetActive(false);
@@ -533,6 +538,7 @@ public static class StoryDialogueHierarchyBuilder
         GameObject dialoguePanel,
         TextMeshProUGUI speakerName,
         TextMeshProUGUI dialogueText,
+        Image centerIllustration,
         GameObject nextIndicator,
         Image leftPortrait,
         Image rightPortrait,
@@ -544,13 +550,15 @@ public static class StoryDialogueHierarchyBuilder
         GameObject skipPanel,
         Button skipYes,
         Button skipNo,
-        IReadOnlyList<CharacterPortrait> portraitConfigurations)
+        IReadOnlyList<CharacterPortrait> portraitConfigurations,
+        IReadOnlyList<DialogueIllustration> illustrationConfigurations)
     {
         var serialized = new SerializedObject(view);
         SetReference(serialized, "presentationRoot", presentationRoot);
         SetReference(serialized, "dialoguePanel", dialoguePanel);
         SetReference(serialized, "speakerNameText", speakerName);
         SetReference(serialized, "dialogueText", dialogueText);
+        SetReference(serialized, "centerIllustrationImage", centerIllustration);
         SetReference(serialized, "nextIndicator", nextIndicator);
         SetReference(serialized, "leftPortraitImage", leftPortrait);
         SetReference(serialized, "rightPortraitImage", rightPortrait);
@@ -583,6 +591,17 @@ public static class StoryDialogueHierarchyBuilder
                 expressionProperty.FindPropertyRelative("expressionName").stringValue = expression.expressionName;
                 expressionProperty.FindPropertyRelative("portraitSprite").objectReferenceValue = expression.portraitSprite;
             }
+        }
+
+        SerializedProperty illustrations = serialized.FindProperty("centerIllustrations");
+        illustrations.arraySize = illustrationConfigurations.Count;
+        for (int illustrationIndex = 0; illustrationIndex < illustrationConfigurations.Count; illustrationIndex++)
+        {
+            DialogueIllustration configuration = illustrationConfigurations[illustrationIndex];
+            SerializedProperty illustration = illustrations.GetArrayElementAtIndex(illustrationIndex);
+            illustration.FindPropertyRelative("illustrationName").stringValue = configuration.illustrationName;
+            illustration.FindPropertyRelative("illustrationSprite").objectReferenceValue = configuration.illustrationSprite;
+            illustration.FindPropertyRelative("displaySfx").objectReferenceValue = configuration.displaySfx;
         }
 
         serialized.ApplyModifiedPropertiesWithoutUndo();
@@ -628,6 +647,38 @@ public static class StoryDialogueHierarchyBuilder
                 portraitSprite = portrait.FindPropertyRelative("portraitSprite").objectReferenceValue as Sprite,
                 slot = (DialoguePortraitSlot)portrait.FindPropertyRelative("slot").enumValueIndex,
                 expressionPortraits = expressions
+            });
+        }
+
+        return result;
+    }
+
+    private static List<DialogueIllustration> CaptureIllustrationConfigurations()
+    {
+        var result = new List<DialogueIllustration>();
+        GameObject existingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(DialogueSystemPrefabPath);
+        DialogueView existingView = existingPrefab != null ? existingPrefab.GetComponent<DialogueView>() : null;
+        if (existingView == null)
+        {
+            return result;
+        }
+
+        var serialized = new SerializedObject(existingView);
+        serialized.Update();
+        SerializedProperty illustrations = serialized.FindProperty("centerIllustrations");
+        if (illustrations == null)
+        {
+            return result;
+        }
+
+        for (int illustrationIndex = 0; illustrationIndex < illustrations.arraySize; illustrationIndex++)
+        {
+            SerializedProperty illustration = illustrations.GetArrayElementAtIndex(illustrationIndex);
+            result.Add(new DialogueIllustration
+            {
+                illustrationName = illustration.FindPropertyRelative("illustrationName").stringValue,
+                illustrationSprite = illustration.FindPropertyRelative("illustrationSprite").objectReferenceValue as Sprite,
+                displaySfx = illustration.FindPropertyRelative("displaySfx").objectReferenceValue as AudioClip
             });
         }
 

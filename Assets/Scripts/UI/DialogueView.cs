@@ -43,6 +43,18 @@ namespace Metroidvania.UI
         public PortraitExpression[] expressionPortraits;
     }
 
+    [Serializable]
+    public struct DialogueIllustration
+    {
+        [Tooltip("Yarn line tag name used as #illustration:<name>.")]
+        public string illustrationName;
+
+        public Sprite illustrationSprite;
+
+        [Tooltip("Optional. Uses the shared panel-open SE when this is not assigned.")]
+        public AudioClip displaySfx;
+    }
+
     /// <summary>
     /// Fixed-screen ADV dialogue presenter.
     /// This is the only dialogue presenter used by the story runtime after the
@@ -74,6 +86,13 @@ namespace Metroidvania.UI
         [SerializeField] private Color inactivePortraitColor = new Color(0.32f, 0.32f, 0.32f, 1f);
         [SerializeField] private List<CharacterPortrait> characterPortraits = new();
 
+        [Header("Center Illustrations")]
+        [SerializeField] private Image? centerIllustrationImage;
+        [SerializeField] private List<DialogueIllustration> centerIllustrations = new();
+        [SerializeField, Range(0f, 1f)] private float illustrationSfxVolume = 1f;
+        [SerializeField, Min(0f)] private float illustrationEntranceSeconds = 0.2f;
+        [SerializeField, Min(0f)] private float illustrationEntranceOffset = 60f;
+
         [Header("Log")]
         [SerializeField] private Button? logButton;
         [SerializeField] private GameObject? logPanel;
@@ -102,6 +121,7 @@ namespace Metroidvania.UI
         private readonly List<string> _logEntries = new();
         private readonly StringBuilder _logBuilder = new();
         private readonly HashSet<string> _missingExpressionWarnings = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _missingIllustrationWarnings = new(StringComparer.OrdinalIgnoreCase);
         private CancellationTokenSource? _currentLineCts;
         private LinePresentationState _lineState;
         private bool _revealAllRequested;
@@ -113,6 +133,9 @@ namespace Metroidvania.UI
         private string _conversationNodeName = string.Empty;
         private float _baseDialogueFontSize;
         private bool _shakeTextActive;
+        private CancellationTokenSource? _illustrationAnimationCts;
+        private Vector2 _illustrationRestPosition;
+        private bool _illustrationRestPositionCaptured;
 
         public event Action? SkipRequested;
 
@@ -121,6 +144,7 @@ namespace Metroidvania.UI
         private void Awake()
         {
             CaptureBaseDialogueFontSize();
+            CaptureIllustrationRestPosition();
             RegisterButtonSounds();
             HideView();
         }
@@ -139,6 +163,7 @@ namespace Metroidvania.UI
         private void OnDisable()
         {
             _currentLineCts?.Cancel();
+            CancelIllustrationAnimation();
         }
 
         public void PrepareConversation(string nodeName)
@@ -173,6 +198,7 @@ namespace Metroidvania.UI
             SetActive(nextIndicator, false);
             SetActive(leftPortraitImage, false);
             SetActive(rightPortraitImage, false);
+            HideCenterIllustration();
 
             _leftCharacterName = null;
             _rightCharacterName = null;
@@ -181,6 +207,7 @@ namespace Metroidvania.UI
             _revealAllRequested = false;
             _logEntries.Clear();
             _missingExpressionWarnings.Clear();
+            _missingIllustrationWarnings.Clear();
             RefreshLogText();
 
             if (speakerNameText != null)
@@ -235,6 +262,7 @@ namespace Metroidvania.UI
             bool isNarration = IsNarration(speakerName);
 
             ApplyLineTextEffects(line.Metadata);
+            ApplyIllustrationMetadata(line.Metadata);
             ApplySpeaker(speakerName, expressionName);
             AddLogEntry(speakerName, text);
 
@@ -610,6 +638,209 @@ namespace Metroidvania.UI
             return 1f;
         }
 
+        private void ApplyIllustrationMetadata(string[]? metadata)
+        {
+            string? command = GetIllustrationCommand(metadata);
+            if (command == null)
+            {
+                return;
+            }
+
+            if (IsIllustrationHideCommand(command))
+            {
+                HideCenterIllustration();
+                return;
+            }
+
+            DialogueIllustration? illustration = FindIllustration(command);
+            if (!illustration.HasValue || illustration.Value.illustrationSprite == null)
+            {
+                if (_missingIllustrationWarnings.Add(command))
+                {
+                    Debug.LogWarning(
+                        $"[DialogueView] Center illustration was not found; hiding the illustration. " +
+                        $"node='{_conversationNodeName}', illustration='{command}'",
+                        this);
+                }
+
+                HideCenterIllustration();
+                return;
+            }
+
+            ShowCenterIllustration(illustration.Value);
+        }
+
+        private void ShowCenterIllustration(DialogueIllustration illustration)
+        {
+            if (centerIllustrationImage == null)
+            {
+                return;
+            }
+
+            centerIllustrationImage.sprite = illustration.illustrationSprite;
+            centerIllustrationImage.preserveAspect = true;
+            centerIllustrationImage.color = Color.white;
+            centerIllustrationImage.gameObject.SetActive(true);
+            StartIllustrationEntrance();
+
+            if (illustration.displaySfx != null)
+            {
+                StoryTimelineRuntime.Instance.PlaySe(illustration.displaySfx, illustrationSfxVolume);
+            }
+            else
+            {
+                UIButtonSfxPlayer.PlayPanelOpen();
+            }
+        }
+
+        private void HideCenterIllustration()
+        {
+            CancelIllustrationAnimation();
+            if (centerIllustrationImage == null)
+            {
+                return;
+            }
+
+            CaptureIllustrationRestPosition();
+            centerIllustrationImage.rectTransform.anchoredPosition = _illustrationRestPosition;
+            centerIllustrationImage.gameObject.SetActive(false);
+            centerIllustrationImage.sprite = null;
+        }
+
+        private void CaptureIllustrationRestPosition()
+        {
+            if (centerIllustrationImage != null && !_illustrationRestPositionCaptured)
+            {
+                _illustrationRestPosition = centerIllustrationImage.rectTransform.anchoredPosition;
+                _illustrationRestPositionCaptured = true;
+            }
+        }
+
+        private void StartIllustrationEntrance()
+        {
+            if (centerIllustrationImage == null)
+            {
+                return;
+            }
+
+            CancelIllustrationAnimation();
+            CaptureIllustrationRestPosition();
+
+            RectTransform rectTransform = centerIllustrationImage.rectTransform;
+            if (illustrationEntranceSeconds <= 0f || illustrationEntranceOffset <= 0f)
+            {
+                rectTransform.anchoredPosition = _illustrationRestPosition;
+                return;
+            }
+
+            rectTransform.anchoredPosition =
+                _illustrationRestPosition + Vector2.down * illustrationEntranceOffset;
+            _illustrationAnimationCts = new CancellationTokenSource();
+            AnimateIllustrationEntranceAsync(rectTransform, _illustrationAnimationCts).Forget();
+        }
+
+        private async UniTaskVoid AnimateIllustrationEntranceAsync(
+            RectTransform rectTransform,
+            CancellationTokenSource animationCts)
+        {
+            CancellationToken cancellationToken = animationCts.Token;
+            Vector2 startPosition = rectTransform.anchoredPosition;
+            float elapsed = 0f;
+
+            try
+            {
+                while (elapsed < illustrationEntranceSeconds)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    elapsed += Time.unscaledDeltaTime;
+                    float progress = Mathf.Clamp01(elapsed / illustrationEntranceSeconds);
+                    rectTransform.anchoredPosition = Vector2.LerpUnclamped(
+                        startPosition,
+                        _illustrationRestPosition,
+                        EaseOutCubic(progress));
+                    await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
+                }
+
+                rectTransform.anchoredPosition = _illustrationRestPosition;
+            }
+            catch (OperationCanceledException)
+            {
+                // A replacement illustration, hide command, or dialogue shutdown interrupted the entrance.
+            }
+            finally
+            {
+                if (ReferenceEquals(_illustrationAnimationCts, animationCts))
+                {
+                    _illustrationAnimationCts = null;
+                }
+
+                animationCts.Dispose();
+            }
+        }
+
+        private void CancelIllustrationAnimation()
+        {
+            CancellationTokenSource? animationCts = _illustrationAnimationCts;
+            _illustrationAnimationCts = null;
+            if (animationCts == null)
+            {
+                return;
+            }
+
+            animationCts.Cancel();
+        }
+
+        private static float EaseOutCubic(float progress)
+        {
+            float clamped = Mathf.Clamp01(progress);
+            return 1f - Mathf.Pow(1f - clamped, 3f);
+        }
+
+        private DialogueIllustration? FindIllustration(string illustrationName)
+        {
+            for (int i = 0; i < centerIllustrations.Count; i++)
+            {
+                DialogueIllustration illustration = centerIllustrations[i];
+                if (string.Equals(
+                        illustration.illustrationName?.Trim(),
+                        illustrationName,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return illustration;
+                }
+            }
+
+            return null;
+        }
+
+        private static string? GetIllustrationCommand(string[]? metadata)
+        {
+            if (metadata == null)
+            {
+                return null;
+            }
+
+            const string prefix = "illustration:";
+            for (int i = 0; i < metadata.Length; i++)
+            {
+                string tag = (metadata[i] ?? string.Empty).Trim().TrimStart('#');
+                if (tag.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    return tag.Substring(prefix.Length).Trim();
+                }
+            }
+
+            return null;
+        }
+
+        private static bool IsIllustrationHideCommand(string command)
+        {
+            return string.IsNullOrWhiteSpace(command) ||
+                   string.Equals(command, "hide", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(command, "none", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(command, "off", StringComparison.OrdinalIgnoreCase);
+        }
+
         private Sprite? FindExpressionSprite(CharacterPortrait portrait, string expressionName)
         {
             if (string.IsNullOrWhiteSpace(expressionName) ||
@@ -729,6 +960,7 @@ namespace Metroidvania.UI
             SetActive(skipConfirmPanel, false);
             SetActive(leftPortraitImage, false);
             SetActive(rightPortraitImage, false);
+            HideCenterIllustration();
             SetActive(dialoguePanel, false);
             SetActive(presentationRoot, false);
 

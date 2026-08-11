@@ -1628,8 +1628,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: 1360, y: 130}
+  m_AnchoredPosition: {x: -170, y: -30}
+  m_SizeDelta: {x: 1020, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &840206787393158368
 CanvasRenderer:
@@ -2342,6 +2342,14 @@ MonoBehaviour:
       portraitSprite: {fileID: 0}
     - expressionName: assertive
       portraitSprite: {fileID: 0}
+  centerIllustrationImage: {fileID: 2302914473111721585}
+  centerIllustrations:
+  - illustrationName: event99_sample
+    illustrationSprite: {fileID: -6718912808605188643, guid: 27af7d10773216e41af728e7d3a36a2a, type: 3}
+    displaySfx: {fileID: 0}
+  illustrationSfxVolume: 1
+  illustrationEntranceSeconds: 0.2
+  illustrationEntranceOffset: 60
   logButton: {fileID: 2835584596739363870}
   logPanel: {fileID: 343508730723719429}
   logText: {fileID: 6438837381159774148}

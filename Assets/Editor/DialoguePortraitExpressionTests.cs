@@ -194,3 +194,67 @@ public sealed class DialogueNarrationTests
         return (bool)method.Invoke(null, new object[] { speakerName });
     }
 }
+
+public sealed class DialogueIllustrationMetadataTests
+{
+    private const BindingFlags PrivateStatic = BindingFlags.Static | BindingFlags.NonPublic;
+
+    [Test]
+    public void IllustrationTag_ReturnsConfiguredKey()
+    {
+        Assert.That(
+            GetIllustrationCommand(new[] { "line:example", "#ILLUSTRATION:castle" }),
+            Is.EqualTo("castle"));
+    }
+
+    [Test]
+    public void MissingIllustrationTag_DoesNotChangeCurrentIllustration()
+    {
+        Assert.That(GetIllustrationCommand(new[] { "face:smile" }), Is.Null);
+        Assert.That(GetIllustrationCommand(null), Is.Null);
+    }
+
+    [TestCase("")]
+    [TestCase("hide")]
+    [TestCase("NONE")]
+    [TestCase("off")]
+    public void HideCommands_AreRecognized(string command)
+    {
+        Assert.That(IsIllustrationHideCommand(command), Is.True);
+    }
+
+    [Test]
+    public void IllustrationKey_IsNotHideCommand()
+    {
+        Assert.That(IsIllustrationHideCommand("castle"), Is.False);
+    }
+
+    [Test]
+    public void IllustrationEntrance_UsesEaseOutCurve()
+    {
+        Assert.That(EaseOutCubic(0f), Is.EqualTo(0f));
+        Assert.That(EaseOutCubic(0.5f), Is.GreaterThan(0.5f));
+        Assert.That(EaseOutCubic(1f), Is.EqualTo(1f));
+    }
+
+    private static string GetIllustrationCommand(string[] metadata)
+    {
+        MethodInfo method = typeof(DialogueView).GetMethod("GetIllustrationCommand", PrivateStatic);
+        Assert.That(method, Is.Not.Null);
+        return (string)method.Invoke(null, new object[] { metadata });
+    }
+
+    private static bool IsIllustrationHideCommand(string command)
+    {
+        MethodInfo method = typeof(DialogueView).GetMethod("IsIllustrationHideCommand", PrivateStatic);
+        Assert.That(method, Is.Not.Null);
+        return (bool)method.Invoke(null, new object[] { command });
+    }
+
+    private static float EaseOutCubic(float progress)
+    {
+        MethodInfo method = typeof(DialogueView).GetMethod("EaseOutCubic", PrivateStatic);
+        Assert.That(method, Is.Not.Null);
+        return (float)method.Invoke(null, new object[] { progress });
+    }
+}
