@@ -40,10 +40,12 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     [SerializeField] private bool fogEnabled = true;
     [SerializeField, Min(64)] private int textureResolution = 1024;
+    [SerializeField, Min(0.01f)] private float targetWorldUnitsPerPixel = 0.08f;
+    [SerializeField, Min(64)] private int maximumTextureResolution = 4096;
     [SerializeField, Min(0f)] private float worldPadding = 6f;
     [SerializeField] private Shader fogShader;
 
-    [SerializeField] private Color fogColor = new Color(0f, 0f, 0f, 0.92f);
+    [SerializeField] private Color fogColor = Color.black;
     [SerializeField, Range(0f, 1f)] private float fogAlpha = 1f;
     [SerializeField, Range(0.01f, 1f)] private float edgeSoftness = 0.22f;
     [SerializeField, Range(0f, 1f)] private float noiseStrength = 0.18f;
@@ -241,6 +243,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private void OnValidate()
     {
         textureResolution = Mathf.Max(64, textureResolution);
+        targetWorldUnitsPerPixel = Mathf.Max(0.01f, targetWorldUnitsPerPixel);
+        maximumTextureResolution = Mathf.Max(textureResolution, maximumTextureResolution);
         revealDuration = Mathf.Max(0.01f, revealDuration);
         concealDuration = Mathf.Max(0.01f, concealDuration);
         edgeSoftness = Mathf.Max(0.01f, edgeSoftness);
@@ -1030,7 +1034,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void EnsureTextures()
     {
-        int resolution = Mathf.Max(64, textureResolution);
+        int resolution = ResolveTextureResolution();
         if (maskTexture != null &&
             maskTexture.width == resolution &&
             maskTexture.height == resolution &&
@@ -1049,6 +1053,20 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         maskPixels = new Color32[resolution * resolution];
         entranceMaskPixels = new Color32[resolution * resolution];
         MarkAllMasksDirty();
+    }
+
+    private int ResolveTextureResolution()
+    {
+        int minimumResolution = Mathf.Max(64, textureResolution);
+        int maximumResolution = Mathf.Max(minimumResolution, maximumTextureResolution);
+        if (!hasRooms || targetWorldUnitsPerPixel <= 0.01f)
+        {
+            return minimumResolution;
+        }
+
+        float longestWorldAxis = Mathf.Max(worldBounds.size.x, worldBounds.size.y);
+        int worldResolution = Mathf.CeilToInt(longestWorldAxis / targetWorldUnitsPerPixel);
+        return Mathf.Clamp(Mathf.NextPowerOfTwo(worldResolution), minimumResolution, maximumResolution);
     }
 
     private static Texture2D CreateMaskTexture(string textureName, int resolution, FilterMode filterMode)
