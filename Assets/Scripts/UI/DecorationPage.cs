@@ -4,6 +4,7 @@ using Metroidvania.Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -60,6 +61,9 @@ public sealed class DecorationPage : MonoBehaviour
     private GameObject itemNameBase;
     private Sprite defaultPreviewSprite;
     private bool purchaseModalOpen;
+    private TextMeshProUGUI lockedTooltipText;
+    private RectTransform lockedTooltipRect;
+    private bool lockedTooltipVisible;
 
     public bool IsPurchaseModalOpen => purchaseModalOpen;
     public bool IsShopEnabled => DecorationShopFeature.Enabled;
@@ -133,6 +137,12 @@ public sealed class DecorationPage : MonoBehaviour
         ClosePurchaseModal(restoreSlotFocus: false);
     }
 
+    private void LateUpdate()
+    {
+        if (lockedTooltipVisible)
+            SetLockedTooltipPosition(GetPointerScreenPosition());
+    }
+
     /// <summary>
     /// Rebuilds the catalog. Every configured decoration is shown in canonical
     /// shop order, whether it has been purchased or not.
@@ -170,14 +180,13 @@ public sealed class DecorationPage : MonoBehaviour
             bool isEquipped = isOwned && PlayerEquipmentState.IsEquipped(data);
 
             DecorationItemSlot slot = Instantiate(slotPrefab, slotContainer);
-            slot.Initialize(data, isOwned, isEquipped, IsShopEnabled, OnSlotSelected);
+            slot.Initialize(data, isOwned, isEquipped, IsShopEnabled, OnSlotSelected, OnLockedSlotHoverChanged);
             slots.Add(slot);
 
             if (data != null && (data == preferredSelection || (preferredSelection == null && isEquipped)))
             {
                 selectedItem = data;
                 selectedSlot = slot;
-                slot.SetSelected(true);
             }
         }
 
@@ -267,12 +276,8 @@ public sealed class DecorationPage : MonoBehaviour
             return;
         }
 
-        if (selectedSlot != null)
-            selectedSlot.SetSelected(false);
-
         selectedItem = slot.ItemData;
         selectedSlot = slot;
-        selectedSlot.SetSelected(true);
         RefreshRightPanel();
     }
 
@@ -308,23 +313,25 @@ public sealed class DecorationPage : MonoBehaviour
         pendingPurchaseItem = slot.ItemData;
         purchaseReturnSlot = slot;
         purchaseModalOpen = true;
+        SetLockedTooltipVisible(false);
         SetUnderlyingInteractionEnabled(false);
         SetPurchaseModalVisible(true);
 
         if (purchaseItemImage != null)
-        {
-            Sprite displaySprite = pendingPurchaseItem.illustration != null
-                ? pendingPurchaseItem.illustration
-                : pendingPurchaseItem.icon;
-            purchaseItemImage.sprite = displaySprite;
-            purchaseItemImage.preserveAspect = true;
-            purchaseItemImage.gameObject.SetActive(displaySprite != null);
-        }
+            purchaseItemImage.gameObject.SetActive(false);
 
         if (purchaseItemNameText != null)
-            purchaseItemNameText.text = pendingPurchaseItem.itemName;
+            purchaseItemNameText.text = string.Format(
+                "{0}ポイントを消費して、\n「{1}」を\n交換しますか？",
+                pendingPurchaseItem.elegantPointCost,
+                pendingPurchaseItem.itemName);
         if (purchasePriceText != null)
-            purchasePriceText.text = string.Format(purchasePriceFormat, pendingPurchaseItem.elegantPointCost);
+        {
+            purchasePriceText.gameObject.SetActive(true);
+            purchasePriceText.text = $"消費ポイント: {pendingPurchaseItem.elegantPointCost}";
+        }
+        if (purchaseBalanceText != null)
+            purchaseBalanceText.gameObject.SetActive(false);
 
         RefreshPurchaseAffordability();
         SelectButton(purchaseNoButton);
@@ -352,7 +359,10 @@ public sealed class DecorationPage : MonoBehaviour
         }
 
         if (purchaseStatusText != null)
+        {
+            purchaseStatusText.gameObject.SetActive(true);
             purchaseStatusText.text = GetPurchaseFailureMessage(result);
+        }
         RefreshPurchaseAffordability(preserveFailureMessage: true);
         SelectButton(purchaseNoButton);
     }
@@ -400,7 +410,10 @@ public sealed class DecorationPage : MonoBehaviour
             purchaseYesButton.interactable = affordable;
 
         if (purchaseStatusText != null && !preserveFailureMessage)
+        {
+            purchaseStatusText.gameObject.SetActive(!affordable);
             purchaseStatusText.text = affordable ? string.Empty : insufficientPointsMessage;
+        }
     }
 
     private void SetUnderlyingInteractionEnabled(bool enabled)
@@ -533,6 +546,88 @@ public sealed class DecorationPage : MonoBehaviour
             RefreshPurchaseAffordability();
     }
 
+    private void OnLockedSlotHoverChanged(DecorationItemSlot slot, bool visible, Vector2 screenPosition)
+    {
+        if (purchaseModalOpen || slot == null || slot.IsOwned)
+            visible = false;
+
+        if (!visible)
+        {
+            SetLockedTooltipVisible(false);
+            return;
+        }
+
+        EnsureLockedTooltip();
+        lockedTooltipText.text = "ロックされている";
+        SetLockedTooltipPosition(screenPosition.sqrMagnitude > 0f ? screenPosition : GetPointerScreenPosition());
+        SetLockedTooltipVisible(true);
+    }
+
+    private void EnsureLockedTooltip()
+    {
+        if (lockedTooltipText != null)
+            return;
+
+        GameObject tooltipObject = CreateUiObject("LockedTooltip (Runtime)", ResolvePurchaseModalHost());
+        lockedTooltipRect = (RectTransform)tooltipObject.transform;
+        lockedTooltipRect.anchorMin = Vector2.zero;
+        lockedTooltipRect.anchorMax = Vector2.zero;
+        lockedTooltipRect.pivot = new Vector2(0f, 1f);
+        lockedTooltipRect.sizeDelta = new Vector2(220f, 44f);
+
+        lockedTooltipText = tooltipObject.AddComponent<TextMeshProUGUI>();
+        ApplyShopFont(lockedTooltipText);
+        lockedTooltipText.fontSize = 24f;
+        lockedTooltipText.alignment = TextAlignmentOptions.Left;
+        lockedTooltipText.color = Color.white;
+        lockedTooltipText.raycastTarget = false;
+        tooltipObject.SetActive(false);
+    }
+
+    private void SetLockedTooltipPosition(Vector2 screenPosition)
+    {
+        if (lockedTooltipRect == null)
+            return;
+
+        Vector2 targetScreenPosition = screenPosition + new Vector2(28f, -8f);
+        RectTransform parentRect = lockedTooltipRect.parent as RectTransform;
+        Canvas canvas = lockedTooltipRect.GetComponentInParent<Canvas>();
+        Camera eventCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? canvas.worldCamera
+            : null;
+
+        if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            lockedTooltipRect.position = targetScreenPosition;
+        }
+        else if (parentRect != null &&
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(parentRect, targetScreenPosition, eventCamera, out Vector3 worldPosition))
+        {
+            lockedTooltipRect.position = worldPosition;
+        }
+        else
+        {
+            lockedTooltipRect.position = targetScreenPosition;
+        }
+
+        lockedTooltipRect.SetAsLastSibling();
+    }
+
+    private void SetLockedTooltipVisible(bool visible)
+    {
+        lockedTooltipVisible = visible;
+        if (lockedTooltipText != null)
+            lockedTooltipText.gameObject.SetActive(visible);
+    }
+
+    private static Vector2 GetPointerScreenPosition()
+    {
+        if (Mouse.current != null)
+            return Mouse.current.position.ReadValue();
+
+        return Vector2.zero;
+    }
+
     private void RefreshElegantPointBalance()
     {
         if (!IsShopEnabled)
@@ -606,7 +701,7 @@ public sealed class DecorationPage : MonoBehaviour
         RectTransform modalRect = (RectTransform)purchaseModal.transform;
         Stretch(modalRect);
         Image overlay = purchaseModal.AddComponent<Image>();
-        overlay.color = new Color(0.03f, 0.01f, 0.06f, 0.82f);
+        overlay.color = new Color(0f, 0f, 0f, 0.35f);
         overlay.raycastTarget = true;
 
         GameObject panel = CreateUiObject("Panel", purchaseModal.transform);
@@ -614,12 +709,9 @@ public sealed class DecorationPage : MonoBehaviour
         panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.anchoredPosition = Vector2.zero;
-        panelRect.sizeDelta = new Vector2(680f, 460f);
+        panelRect.sizeDelta = new Vector2(560f, 300f);
         Image panelImage = panel.AddComponent<Image>();
-        panelImage.color = new Color(0.13f, 0.07f, 0.19f, 0.98f);
-        Outline outline = panel.AddComponent<Outline>();
-        outline.effectColor = new Color(0.75f, 0.25f, 0.9f, 0.95f);
-        outline.effectDistance = new Vector2(3f, -3f);
+        panelImage.color = Color.white;
 
         GameObject imageObject = CreateUiObject("ItemImage", panel.transform);
         RectTransform imageRect = (RectTransform)imageObject.transform;
@@ -629,21 +721,25 @@ public sealed class DecorationPage : MonoBehaviour
         imageRect.sizeDelta = new Vector2(180f, 180f);
         purchaseItemImage = imageObject.AddComponent<Image>();
         purchaseItemImage.raycastTarget = false;
+        purchaseItemImage.gameObject.SetActive(false);
 
-        purchaseItemNameText = CreateRuntimeText("ItemName", panel.transform, 36f, TextAlignmentOptions.Center, Color.white);
-        ConfigureCenteredRect(purchaseItemNameText.rectTransform, new Vector2(105f, 145f), new Vector2(360f, 60f));
+        purchaseItemNameText = CreateRuntimeText("ItemName", panel.transform, 25f, TextAlignmentOptions.Center, new Color(0.08f, 0.08f, 0.08f, 1f));
+        purchaseItemNameText.fontStyle = FontStyles.Bold;
+        ConfigureCenteredRect(purchaseItemNameText.rectTransform, new Vector2(0f, 78f), new Vector2(500f, 110f));
 
-        purchasePriceText = CreateRuntimeText("Price", panel.transform, 28f, TextAlignmentOptions.Center, Color.white);
-        ConfigureCenteredRect(purchasePriceText.rectTransform, new Vector2(105f, 75f), new Vector2(360f, 48f));
+        purchasePriceText = CreateRuntimeText("Price", panel.transform, 20f, TextAlignmentOptions.Center, new Color(0.08f, 0.08f, 0.08f, 1f));
+        purchasePriceText.fontStyle = FontStyles.Bold;
+        ConfigureCenteredRect(purchasePriceText.rectTransform, new Vector2(0f, -4f), new Vector2(500f, 34f));
 
         purchaseBalanceText = CreateRuntimeText("Balance", panel.transform, 25f, TextAlignmentOptions.Center, new Color(0.95f, 0.75f, 1f, 1f));
         ConfigureCenteredRect(purchaseBalanceText.rectTransform, new Vector2(105f, 20f), new Vector2(360f, 44f));
+        purchaseBalanceText.gameObject.SetActive(false);
 
-        purchaseStatusText = CreateRuntimeText("Status", panel.transform, 23f, TextAlignmentOptions.Center, new Color(1f, 0.55f, 0.65f, 1f));
-        ConfigureCenteredRect(purchaseStatusText.rectTransform, new Vector2(0f, -65f), new Vector2(600f, 55f));
+        purchaseStatusText = CreateRuntimeText("Status", panel.transform, 20f, TextAlignmentOptions.Center, new Color(0.72f, 0.1f, 0.18f, 1f));
+        ConfigureCenteredRect(purchaseStatusText.rectTransform, new Vector2(0f, -38f), new Vector2(500f, 36f));
 
-        purchaseYesButton = CreateRuntimeButton("YesButton", panel.transform, "はい", new Vector2(-100f, -160f));
-        purchaseNoButton = CreateRuntimeButton("NoButton", panel.transform, "いいえ", new Vector2(100f, -160f));
+        purchaseYesButton = CreateRuntimeButton("YesButton", panel.transform, "はい", new Vector2(0f, -76f));
+        purchaseNoButton = CreateRuntimeButton("NoButton", panel.transform, "いいえ", new Vector2(0f, -132f));
         purchaseModal.SetActive(false);
     }
 
@@ -713,19 +809,21 @@ public sealed class DecorationPage : MonoBehaviour
         rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.pivot = new Vector2(0.5f, 0.5f);
         rect.anchoredPosition = position;
-        rect.sizeDelta = new Vector2(160f, 60f);
+        rect.sizeDelta = new Vector2(180f, 46f);
 
         Image image = buttonObject.AddComponent<Image>();
-        image.color = new Color(0.48f, 0.17f, 0.62f, 1f);
+        image.color = new Color(1f, 1f, 1f, 0f);
         Button button = buttonObject.AddComponent<Button>();
         button.targetGraphic = image;
         ColorBlock colors = button.colors;
-        colors.highlightedColor = new Color(0.72f, 0.3f, 0.9f, 1f);
+        colors.normalColor = new Color(1f, 1f, 1f, 0f);
+        colors.highlightedColor = new Color(0.88f, 0.88f, 0.88f, 0.55f);
         colors.selectedColor = colors.highlightedColor;
-        colors.pressedColor = new Color(0.35f, 0.1f, 0.48f, 1f);
+        colors.pressedColor = new Color(0.78f, 0.78f, 0.78f, 0.7f);
         button.colors = colors;
 
-        TextMeshProUGUI labelText = CreateRuntimeText("Label", buttonObject.transform, 28f, TextAlignmentOptions.Center, Color.white);
+        TextMeshProUGUI labelText = CreateRuntimeText("Label", buttonObject.transform, 28f, TextAlignmentOptions.Center, new Color(0.02f, 0.02f, 0.02f, 1f));
+        labelText.fontStyle = FontStyles.Bold;
         Stretch(labelText.rectTransform);
         labelText.text = label;
         return button;
@@ -811,6 +909,7 @@ public sealed class DecorationPage : MonoBehaviour
             elegantPointBalanceText.gameObject.SetActive(false);
         if (purchaseModal != null)
             purchaseModal.SetActive(false);
+        SetLockedTooltipVisible(false);
     }
 
     private static void SelectButton(Button button)

@@ -244,7 +244,7 @@ public sealed class DecorationPurchaseServiceTests
     }
 
     [Test]
-    public void DecorationSlot_ShopEnabledPreservesDormantPriceAndPurchaseInteraction()
+    public void DecorationSlot_ShopEnabledLocksUnownedItemWithoutInlinePrice()
     {
         GameObject slotObject = InstantiateSlotPrefab();
         try
@@ -258,8 +258,8 @@ public sealed class DecorationPurchaseServiceTests
             var serializedSlot = new SerializedObject(slot);
             var priceText = serializedSlot.FindProperty("priceText").objectReferenceValue as TextMeshProUGUI;
             Assert.That(priceText, Is.Not.Null);
-            Assert.That(priceText.gameObject.activeSelf, Is.True);
-            Assert.That(priceText.text, Is.EqualTo("70 Pt"));
+            Assert.That(priceText.gameObject.activeSelf, Is.False);
+            Assert.That(priceText.text, Is.Empty);
         }
         finally
         {
@@ -268,7 +268,7 @@ public sealed class DecorationPurchaseServiceTests
     }
 
     [Test]
-    public void DecorationPage_ShopDisabledHidesSerializedShopUiWithoutCreatingFallbacks()
+    public void DecorationPage_ShopEnabledShowsBalanceAndCreatesPurchaseFallbacks()
     {
         var root = new GameObject("DecorationPage Test", typeof(RectTransform));
         root.SetActive(false);
@@ -286,12 +286,12 @@ public sealed class DecorationPurchaseServiceTests
 
             InvokePrivateMethod(page, "Awake");
 
-            Assert.That(page.IsShopEnabled, Is.False);
+            Assert.That(page.IsShopEnabled, Is.True);
             Assert.That(page.IsPurchaseModalOpen, Is.False);
-            Assert.That(balanceObject.activeSelf, Is.False);
+            Assert.That(balanceObject.activeSelf, Is.True);
             Assert.That(modalObject.activeSelf, Is.False);
             Assert.That(root.transform.Find("ElegantPointBalanceText (Runtime)"), Is.Null);
-            Assert.That(root.transform.Find("PurchaseModal (Runtime)"), Is.Null);
+            Assert.That(root.transform.Find("PurchaseModal (Runtime)"), Is.Not.Null);
         }
         finally
         {
