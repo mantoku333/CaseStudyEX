@@ -56,6 +56,9 @@ public class TitleSceneController : MonoBehaviour
     private bool titleRainAudioWasPlaying;
     private bool startingNewGame;
     private bool titleLogoPanelDefaultActive = true;
+    private Canvas titleLogoCanvas;
+    private int titleLogoCanvasDefaultSortingOrder;
+    private bool hasTitleLogoCanvasDefaultSortingOrder;
 
     private void OnEnable()
     {
@@ -548,6 +551,7 @@ public class TitleSceneController : MonoBehaviour
     {
         if (titleLogoPanel != null)
         {
+            CacheTitleLogoCanvasSortingOrder();
             return;
         }
 
@@ -555,10 +559,12 @@ public class TitleSceneController : MonoBehaviour
         if (logoOverlayCanvas != null)
         {
             titleLogoPanel = logoOverlayCanvas;
+            CacheTitleLogoCanvasSortingOrder();
             return;
         }
 
         titleLogoPanel = GameObject.Find("rogo");
+        CacheTitleLogoCanvasSortingOrder();
     }
 
     private void RefreshTitleLogoPanelVisibility()
@@ -573,7 +579,83 @@ public class TitleSceneController : MonoBehaviour
             (saveListPanel != null && saveListPanel.activeSelf) ||
             (quitConfirmPanel != null && quitConfirmPanel.activeSelf);
 
-        titleLogoPanel.SetActive(titleLogoPanelDefaultActive && !overlayOpen);
+        titleLogoPanel.SetActive(titleLogoPanelDefaultActive);
+        ApplyTitleLogoCanvasSortingOrder(overlayOpen);
+    }
+
+    private void CacheTitleLogoCanvasSortingOrder()
+    {
+        if (titleLogoPanel == null || hasTitleLogoCanvasDefaultSortingOrder)
+        {
+            return;
+        }
+
+        titleLogoCanvas = titleLogoPanel.GetComponent<Canvas>();
+        if (titleLogoCanvas == null)
+        {
+            titleLogoCanvas = titleLogoPanel.GetComponentInParent<Canvas>();
+        }
+
+        if (titleLogoCanvas == null)
+        {
+            return;
+        }
+
+        titleLogoCanvasDefaultSortingOrder = titleLogoCanvas.sortingOrder;
+        hasTitleLogoCanvasDefaultSortingOrder = true;
+    }
+
+    private void ApplyTitleLogoCanvasSortingOrder(bool overlayOpen)
+    {
+        CacheTitleLogoCanvasSortingOrder();
+        if (titleLogoCanvas == null || !hasTitleLogoCanvasDefaultSortingOrder)
+        {
+            return;
+        }
+
+        if (!overlayOpen)
+        {
+            titleLogoCanvas.sortingOrder = titleLogoCanvasDefaultSortingOrder;
+            return;
+        }
+
+        titleLogoCanvas.sortingOrder = titleLogoCanvasDefaultSortingOrder;
+        BringOpenOverlayPanelInFrontOfTitleLogo();
+    }
+
+    private void BringOpenOverlayPanelInFrontOfTitleLogo()
+    {
+        if (saveListPanel != null && saveListPanel.activeSelf)
+        {
+            BringPanelInFrontOfTitleLogo(saveListPanel);
+        }
+
+        if (quitConfirmPanel != null && quitConfirmPanel.activeSelf)
+        {
+            BringPanelInFrontOfTitleLogo(quitConfirmPanel);
+        }
+    }
+
+    private void BringPanelInFrontOfTitleLogo(GameObject panel)
+    {
+        if (panel == null)
+        {
+            return;
+        }
+
+        Canvas panelCanvas = panel.GetComponent<Canvas>();
+        if (panelCanvas == null)
+        {
+            panelCanvas = panel.AddComponent<Canvas>();
+        }
+
+        panelCanvas.overrideSorting = true;
+        panelCanvas.sortingOrder = titleLogoCanvasDefaultSortingOrder + 1;
+
+        if (!panel.TryGetComponent(out GraphicRaycaster _))
+        {
+            panel.AddComponent<GraphicRaycaster>();
+        }
     }
 
     private void EnsureTitleRainActive()
