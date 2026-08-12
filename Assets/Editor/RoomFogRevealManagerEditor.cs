@@ -6,6 +6,8 @@ public sealed class RoomFogRevealManagerEditor : Editor
 {
     private SerializedProperty fogEnabled;
     private SerializedProperty textureResolution;
+    private SerializedProperty targetWorldUnitsPerPixel;
+    private SerializedProperty maximumTextureResolution;
     private SerializedProperty worldPadding;
     private SerializedProperty fogShader;
     private SerializedProperty fogColor;
@@ -28,6 +30,8 @@ public sealed class RoomFogRevealManagerEditor : Editor
     {
         fogEnabled = serializedObject.FindProperty("fogEnabled");
         textureResolution = serializedObject.FindProperty("textureResolution");
+        targetWorldUnitsPerPixel = serializedObject.FindProperty("targetWorldUnitsPerPixel");
+        maximumTextureResolution = serializedObject.FindProperty("maximumTextureResolution");
         worldPadding = serializedObject.FindProperty("worldPadding");
         fogShader = serializedObject.FindProperty("fogShader");
         fogColor = serializedObject.FindProperty("fogColor");
@@ -55,37 +59,59 @@ public sealed class RoomFogRevealManagerEditor : Editor
 
         EditorGUILayout.Space(8f);
         EditorGUILayout.LabelField("見た目", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(fogColor, new GUIContent("Fogの色"));
-        EditorGUILayout.PropertyField(fogAlpha, new GUIContent("Fogの濃さ"));
-        EditorGUILayout.PropertyField(edgeSoftness, new GUIContent("境界のぼかし"));
-        EditorGUILayout.PropertyField(noiseStrength, new GUIContent("ゆらぎの強さ"));
-        EditorGUILayout.PropertyField(noiseScale, new GUIContent("ゆらぎの細かさ"));
+        if (fogColor != null)
+        {
+            Color color = fogColor.colorValue;
+            Color nextColor = EditorGUILayout.ColorField(
+                new GUIContent("Fogの色"),
+                color,
+                true,
+                false,
+                false);
+            nextColor.a = color.a;
+            fogColor.colorValue = nextColor;
+        }
+
+        DrawProperty(fogAlpha, "Fogの濃さ");
+        DrawProperty(edgeSoftness, "境界のぼかし");
+        DrawProperty(noiseStrength, "ゆらぎの強さ");
+        DrawProperty(noiseScale, "ゆらぎの細かさ");
 
         EditorGUILayout.Space(8f);
         EditorGUILayout.LabelField("エリアに入った時の消え方", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(revealDuration, new GUIContent("消える時間"));
-        EditorGUILayout.PropertyField(concealDuration, new GUIContent("出たエリアが隠れる時間"));
-        EditorGUILayout.PropertyField(revealNoiseStrength, new GUIContent("消え際のゆらぎ"));
+        DrawProperty(revealDuration, "消える時間");
+        DrawProperty(concealDuration, "出たエリアが隠れる時間");
+        DrawProperty(revealNoiseStrength, "消え際のゆらぎ");
 
         EditorGUILayout.Space(8f);
         EditorGUILayout.LabelField("ポータルの凹み", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(revealPortalEntrances, new GUIContent("凹みを表示する"));
-        using (new EditorGUI.DisabledScope(!revealPortalEntrances.boolValue))
+        DrawProperty(revealPortalEntrances, "凹みを表示する");
+        using (new EditorGUI.DisabledScope(revealPortalEntrances == null || !revealPortalEntrances.boolValue))
         {
-            EditorGUILayout.PropertyField(portalEntranceDepth, new GUIContent("奥へのえぐれ量"));
-            EditorGUILayout.PropertyField(portalEntranceRadius, new GUIContent("口の広がり"));
-            EditorGUILayout.PropertyField(portalEntranceSoftness, new GUIContent("凹みのぼかし"));
-            EditorGUILayout.PropertyField(portalEntranceEdgeNoise, new GUIContent("輪郭のゆらぎ"));
+            DrawProperty(portalEntranceDepth, "奥へのえぐれ量");
+            DrawProperty(portalEntranceRadius, "口の広がり");
+            DrawProperty(portalEntranceSoftness, "凹みのぼかし");
+            DrawProperty(portalEntranceEdgeNoise, "輪郭のゆらぎ");
         }
 
         EditorGUILayout.Space(8f);
         EditorGUILayout.LabelField("基本設定", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(textureResolution, new GUIContent("マスク解像度"));
-        EditorGUILayout.PropertyField(worldPadding, new GUIContent("マップ外側の余白"));
-        EditorGUILayout.PropertyField(sortingOrder, new GUIContent("描画順"));
-        EditorGUILayout.PropertyField(overlayZ, new GUIContent("FOGのZ位置"));
-        EditorGUILayout.PropertyField(fogShader, new GUIContent("Fogシェーダー"));
+        DrawProperty(textureResolution, "最低マスク解像度");
+        DrawProperty(targetWorldUnitsPerPixel, "Fogの細かさ");
+        DrawProperty(maximumTextureResolution, "最大マスク解像度");
+        DrawProperty(worldPadding, "マップ外側の余白");
+        DrawProperty(sortingOrder, "描画順");
+        DrawProperty(overlayZ, "FOGのZ位置");
+        DrawProperty(fogShader, "Fogシェーダー");
 
         serializedObject.ApplyModifiedProperties();
+    }
+
+    private static void DrawProperty(SerializedProperty property, string label)
+    {
+        if (property != null)
+        {
+            EditorGUILayout.PropertyField(property, new GUIContent(label));
+        }
     }
 }

@@ -59,9 +59,9 @@ public sealed class LastBossArcancielRewardTests
     }
 
     [Test]
-    public void ShopFeature_IsDisabledByDefault()
+    public void ShopFeature_IsEnabledByDefault()
     {
-        Assert.That(DecorationShopFeature.Enabled, Is.False);
+        Assert.That(DecorationShopFeature.Enabled, Is.True);
     }
 
     [Test]

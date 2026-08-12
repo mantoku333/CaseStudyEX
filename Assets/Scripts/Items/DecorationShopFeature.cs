@@ -4,5 +4,5 @@
 /// </summary>
 public static class DecorationShopFeature
 {
-    public const bool Enabled = false;
+    public const bool Enabled = true;
 }
