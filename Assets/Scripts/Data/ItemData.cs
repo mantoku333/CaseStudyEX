@@ -109,7 +109,17 @@ namespace Metroidvania.Data
         [InspectorName("敵撃破時HP回復")]
         HealPercentOnEnemyKill, //敵撃破時HP回復
         [InspectorName("銃反動量アップ")]
-        GunRecoilForceBonus     //銃反動量をマス単位で追加
+        GunRecoilForceBonus,    //銃反動量をマス単位で追加
+        [InspectorName("反動移動クールタイム倍率")]
+        RecoilCooldownMultiplier,   // 反動移動CT倍率。10%減なら0.9
+        [InspectorName("ジャンプ高さアップ")]
+        JumpHeightBonus,            // ジャンプ高さ加算。+0.5マスなら0.5
+        [InspectorName("HP上限倍率")]
+        MaxHealthMultiplier,        // HP上限倍率。+10%なら1.1
+        [InspectorName("反動移動クールタイムなし")]
+        RecoilCooldownDisabled,     // 反動移動CTなし
+        [InspectorName("優雅ポイント獲得倍率")]
+        ElegantPointGainMultiplier  // 優雅ポイント獲得倍率。+5%なら1.05
     }
 
     public enum EquipmentVisualParent
@@ -130,7 +140,7 @@ namespace Metroidvania.Data
         public EquipmentAbilityType abilityType;
 
         [Label("効果値")]
-        [Tooltip("効果値。攻撃力5%アップなら1.05、撃破時HP2%回復なら0.02、銃反動+1マスなら1")]
+        [Tooltip("効果値。攻撃力5%アップなら1.05、撃破時HP2%回復なら0.02、銃反動+1マスなら1、反動CT10%減なら0.9、ジャンプ+0.5マスなら0.5、HP上限10%アップなら1.1、反動CTなしなら1、優雅ポイント5%アップなら1.05")]
         public float value = 1f;
     }
 

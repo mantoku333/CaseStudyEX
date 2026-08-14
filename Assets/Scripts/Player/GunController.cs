@@ -47,6 +47,8 @@ public class GunController : MonoBehaviour
     private bool preserveHorizontalRecoilMomentum = false;
     private float firstRecoilCoolTime = 0.5f;
     private float secondRecoilCoolTime = 2.5f;
+    private float recoilCooldownMultiplier = 1.0f;
+    private bool recoilCooldownDisabled = false;
     private float currentCoolTime = 0.0f; //クールタイムの残り時間    
     private float currentCoolTimeDuration = 0.0f;
     private bool isSecondRecoilNext = false;
@@ -196,6 +198,18 @@ public class GunController : MonoBehaviour
     {
         firstRecoilCoolTime = Mathf.Max(0.0f, firstCoolTime);
         secondRecoilCoolTime = Mathf.Max(0.0f, secondCoolTime);
+    }
+
+    public void SetRecoilCooldownModifier(float multiplier, bool disabled)
+    {
+        recoilCooldownMultiplier = Mathf.Max(0.0f, multiplier);
+        recoilCooldownDisabled = disabled;
+
+        if (recoilCooldownDisabled)
+        {
+            currentCoolTime = 0.0f;
+            currentCoolTimeDuration = 0.0f;
+        }
     }
 
     public void ResetRecoilCycle()
@@ -364,11 +378,22 @@ public class GunController : MonoBehaviour
 
     private void StartRecoilCoolTime()
     {
-        currentCoolTimeDuration = isSecondRecoilNext
-            ? secondRecoilCoolTime
-            : firstRecoilCoolTime;
+        currentCoolTimeDuration = GetCurrentRecoilCoolTimeDuration();
         currentCoolTime = currentCoolTimeDuration;
         isSecondRecoilNext = !isSecondRecoilNext;
+    }
+
+    private float GetCurrentRecoilCoolTimeDuration()
+    {
+        if (recoilCooldownDisabled)
+        {
+            return 0.0f;
+        }
+
+        float baseCoolTime = isSecondRecoilNext
+            ? secondRecoilCoolTime
+            : firstRecoilCoolTime;
+        return Mathf.Max(0.0f, baseCoolTime * recoilCooldownMultiplier);
     }
 
     /// <summary>

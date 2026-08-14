@@ -942,6 +942,16 @@ public sealed class DecorationPage : MonoBehaviour
         {
             case EquipmentAbilityType.GunRecoilForceBonus:
                 return "反動移動の距離 UP";
+            case EquipmentAbilityType.RecoilCooldownMultiplier:
+                return "反動移動 CT 短縮";
+            case EquipmentAbilityType.RecoilCooldownDisabled:
+                return "反動移動 CT なし";
+            case EquipmentAbilityType.JumpHeightBonus:
+                return "ジャンプ高さ UP";
+            case EquipmentAbilityType.MaxHealthMultiplier:
+                return "HP 上限 UP";
+            case EquipmentAbilityType.ElegantPointGainMultiplier:
+                return "優雅ポイント獲得量 UP";
             case EquipmentAbilityType.AttackPowerMultiplier:
                 return "攻撃力 UP";
             case EquipmentAbilityType.HealPercentOnEnemyKill:
