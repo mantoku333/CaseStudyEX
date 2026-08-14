@@ -15,6 +15,7 @@ namespace Player
         [SerializeField] private global::PlayerDiveAttackController diveAttackController;
         [SerializeField, Min(0f)] private float damageCooldownSeconds = 3f;
         [SerializeField] private int maxHealthBonus = 0;
+        private float equipmentMaxHealthMultiplier = 1f;
 
         [Header("SE")]
         [SerializeField] private AudioClip playerDamageClip;
@@ -35,6 +36,7 @@ namespace Player
         private float attackPriorityInvulnerableUntilTime;
         private bool deathNotified;
         private bool restoredFromSave;
+        private bool healthInitialized;
         private AudioSource audioSource;
 
         public int Priority => 230;
@@ -73,7 +75,10 @@ namespace Player
                     baseMaxHealth = statsData.MaxHealth;
                 }
 
-                return baseMaxHealth + maxHealthBonus;
+                int permanentMaxHealth = Mathf.Max(1, baseMaxHealth + maxHealthBonus);
+                return Mathf.Max(
+                    1,
+                    Mathf.CeilToInt(permanentMaxHealth * Mathf.Max(0f, equipmentMaxHealthMultiplier)));
             }
         }
 
@@ -102,11 +107,13 @@ namespace Player
         {
             if (restoredFromSave)
             {
+                healthInitialized = true;
                 NotifyHealthChanged();
                 return;
             }
 
             currentHealth = MaxHealth;
+            healthInitialized = true;
             NotifyHealthChanged();
         }
 
@@ -323,6 +330,24 @@ namespace Player
             NotifyHealthChanged();
         }
 
+        public void SetEquipmentMaxHealthMultiplier(float multiplier)
+        {
+            float nextMultiplier = Mathf.Max(0f, multiplier);
+            if (Mathf.Approximately(equipmentMaxHealthMultiplier, nextMultiplier))
+            {
+                return;
+            }
+
+            equipmentMaxHealthMultiplier = nextMultiplier;
+            if (!healthInitialized)
+            {
+                return;
+            }
+
+            currentHealth = Mathf.Clamp(currentHealth, 0, MaxHealth);
+            NotifyHealthChanged();
+        }
+
         /// <summary>
         /// セーブデータから現在HPを復元する
         /// </summary>
@@ -368,6 +393,7 @@ namespace Player
                 maxHealthBonus = Mathf.Max(0, payload.maxHealthBonus);
                 currentHealth = Mathf.Clamp(payload.currentHealth, 0, MaxHealth);
                 restoredFromSave = true;
+                healthInitialized = true;
                 NotifyHealthChanged();
             }
             catch (Exception exception)

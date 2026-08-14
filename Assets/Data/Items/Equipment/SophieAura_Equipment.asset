@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a596a0122d176fd4d81638a716f851d2, type: 3}
+  m_Name: SophieAura_Equipment
+  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
+  itemName: SophieAura
+  itemId: Equipment_SophieAura_Unlock
+  description: 
+  icon: {fileID: 0}
+  illustration: {fileID: 0}
+  itemType: 2
+  elegantPointCost: 250
+  healAmount: 0
+  maxHealthBonus: 0
+  attackDamageBonus: 0
+  abilityType: 0
+  stackable: 0
+  maxStackSize: 99
+  pickupSound: {fileID: 0}
+  equipmentBadge: {fileID: 0}
+  equipmentAbility:
+  - abilityType: 5
+    value: 1.1
+  equipmentVisualLayers:
+  - layerName: SophieAura_Back
+    sprite: {fileID: 5781224606500129785, guid: 07641d9fb0dbf8142b297ddf7310313b, type: 3}
+    parent: 0
+    localPosition: {x: 0, y: 4.3, z: 0}
+    useLeftFacingLocalPosition: 0
+    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
+    localEulerAngles: {x: 0, y: 0, z: 0}
+    localScale: {x: 0.25, y: 0.25, z: 0.25}
+    sortingOrderOffset: -1
+  - layerName: SophieAura_Front
+    sprite: {fileID: -5168684853450709781, guid: 1a70faacf716b544d9c000cd76d4808d, type: 3}
+    parent: 1
+    localPosition: {x: 0, y: 4, z: 0}
+    useLeftFacingLocalPosition: 0
+    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
+    localEulerAngles: {x: 0, y: 0, z: 0}
+    localScale: {x: 0.25, y: 0.25, z: 0.25}
+    sortingOrderOffset: 1

@@ -15,8 +15,10 @@ public sealed class PlayerElegantPointController : MonoBehaviour
     [SerializeField] private UmbrellaController glideController;
     [SerializeField] private GunController recoilController;
     [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private PlayerEquipmentController equipmentController;
 
     private ElegantActionChain chain;
+    private float pendingElegantPointFraction;
 
     private UmbrellaAttackController subscribedNormalAttackController;
     private PlayerDiveAttackController subscribedDiveAttackController;
@@ -219,6 +221,15 @@ public sealed class PlayerElegantPointController : MonoBehaviour
                 playerHealth = GetComponentInParent<PlayerHealth>();
             }
         }
+
+        if (equipmentController == null)
+        {
+            equipmentController = GetComponent<PlayerEquipmentController>();
+            if (equipmentController == null)
+            {
+                equipmentController = GetComponentInParent<PlayerEquipmentController>();
+            }
+        }
     }
 
     private void RefreshSubscriptions()
@@ -404,11 +415,24 @@ public sealed class PlayerElegantPointController : MonoBehaviour
         SettleChain();
     }
 
-    private static void Award(int reward)
+    private void Award(int reward)
     {
-        if (reward > 0)
+        if (reward <= 0)
         {
-            ElegantPointWallet.Add(reward);
+            return;
+        }
+
+        ResolveReferences();
+        float multiplier = equipmentController != null
+            ? Mathf.Max(0f, equipmentController.ElegantPointGainMultiplier)
+            : 1f;
+        float scaledReward = reward * multiplier + pendingElegantPointFraction;
+        int amount = Mathf.FloorToInt(scaledReward);
+        pendingElegantPointFraction = scaledReward - amount;
+
+        if (amount > 0)
+        {
+            ElegantPointWallet.Add(amount);
         }
     }
 }

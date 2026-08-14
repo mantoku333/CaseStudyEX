@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a596a0122d176fd4d81638a716f851d2, type: 3}
+  m_Name: GraceAura_Equipment
+  m_EditorClassIdentifier: Assembly-CSharp::Metroidvania.Data.ItemData
+  itemName: GraceAura
+  itemId: Equipment_GraceAura_Unlock
+  description: 
+  icon: {fileID: -8093655033023989504, guid: 4d1a7c425c51a2c4ea3245c948737c43, type: 3}
+  illustration: {fileID: 0}
+  itemType: 2
+  elegantPointCost: 250
+  healAmount: 0
+  maxHealthBonus: 0
+  attackDamageBonus: 0
+  abilityType: 0
+  stackable: 0
+  maxStackSize: 99
+  pickupSound: {fileID: 0}
+  equipmentBadge: {fileID: 0}
+  equipmentAbility:
+  - abilityType: 6
+    value: 1
+  equipmentVisualLayers:
+  - layerName: GraceAura_Back
+    sprite: {fileID: 8007227618121771478, guid: 4651a9a844e2d6541b350e3a31e970e6, type: 3}
+    parent: 0
+    localPosition: {x: 0, y: 4.3, z: 0}
+    useLeftFacingLocalPosition: 0
+    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
+    localEulerAngles: {x: 0, y: 0, z: 0}
+    localScale: {x: 0.25, y: 0.25, z: 0.25}
+    sortingOrderOffset: -1
+  - layerName: GraceAura_Front
+    sprite: {fileID: 5989339267792759376, guid: b006d9522d878e24cbeea5409ff29cf3, type: 3}
+    parent: 0
+    localPosition: {x: 0, y: 4, z: 0}
+    useLeftFacingLocalPosition: 0
+    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
+    localEulerAngles: {x: 0, y: 0, z: 0}
+    localScale: {x: 0.25, y: 0.25, z: 0.25}
+    sortingOrderOffset: 1
