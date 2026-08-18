@@ -1188,7 +1188,7 @@ namespace GameName.Ending
 
         private void StopCurrentBgmOnBlackout()
         {
-            if (!stopCurrentBgmOnBlackout)
+            if (!stopCurrentBgmOnBlackout || IsEndingBgmAlreadyPlaying())
             {
                 return;
             }
@@ -1200,6 +1200,22 @@ namespace GameName.Ending
             }
 
             global::StoryTimelineRuntime.Instance.StopBgm(stopCurrentBgmFadeSeconds);
+        }
+
+        private bool IsEndingBgmAlreadyPlaying()
+        {
+            if (endingBgm == null)
+            {
+                return false;
+            }
+
+            global::StageBgmController resolvedStageBgm = stageBgm;
+            if (resolvedStageBgm == null)
+            {
+                resolvedStageBgm = FindFirstObjectByType<global::StageBgmController>(FindObjectsInactive.Include);
+            }
+
+            return resolvedStageBgm != null && resolvedStageBgm.RequestedBgmClip == endingBgm;
         }
 
         private void PrepareCreditsCanvas()
