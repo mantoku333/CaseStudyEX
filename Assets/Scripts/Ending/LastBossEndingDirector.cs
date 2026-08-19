@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GameName.Enemy;
 using GameName.UI;
 using Metroidvania.Data;
+using Metroidvania.Managers;
 using Player;
 using Spine;
 using Spine.Unity;
@@ -26,6 +27,8 @@ namespace GameName.Ending
         [SerializeField] private LastBossController targetLastBoss;
         [SerializeField] private string lastBossObjectName = "LastBoss";
         [SerializeField] private string titleSceneName = "Title";
+        [SerializeField] private bool waitForBossAreaCompletionBeforeEnding = true;
+        [SerializeField] private bool waitForStoryEventsBeforeEnding = true;
 
         [Header("Camera")]
         [SerializeField] private CinemachineCamera endingCamera;
@@ -200,14 +203,17 @@ namespace GameName.Ending
                 StopCoroutine(endingRoutine);
             }
 
-            endingRoutine = StartCoroutine(PlayArcancielRewardThenEndingRoutine());
+            global::BossAreaController targetBossArea = ResolveTargetBossArea();
+            endingRoutine = StartCoroutine(PlayArcancielRewardThenEndingRoutine(targetBossArea));
         }
 
-        private IEnumerator PlayArcancielRewardThenEndingRoutine()
+        private IEnumerator PlayArcancielRewardThenEndingRoutine(global::BossAreaController targetBossArea)
         {
             endingStarted = true;
             canSkipCredits = false;
             skipInputIgnoreUntil = float.PositiveInfinity;
+
+            yield return WaitForBossAreaAndStoryEventsBeforeEnding(targetBossArea);
 
             ResolveSceneReferences();
             DisableGameplayControls();
@@ -221,6 +227,85 @@ namespace GameName.Ending
             }
 
             yield return PlayEndingRoutine(true);
+        }
+
+        private IEnumerator WaitForBossAreaAndStoryEventsBeforeEnding(global::BossAreaController targetBossArea)
+        {
+            if (waitForBossAreaCompletionBeforeEnding && targetBossArea != null)
+            {
+                while (!returningToTitle && targetBossArea != null && !targetBossArea.IsEncounterCompleted)
+                {
+                    yield return null;
+                }
+            }
+
+            if (!waitForStoryEventsBeforeEnding)
+            {
+                yield break;
+            }
+
+            // BossAreaController starts the post-defeat event after it publishes
+            // EncounterCompleted, so give that same frame a chance to enqueue it.
+            yield return null;
+
+            while (!returningToTitle && HasStoryEventActivity())
+            {
+                yield return null;
+            }
+        }
+
+        private global::BossAreaController ResolveTargetBossArea()
+        {
+            ResolveTargetBoss();
+            if (targetLastBoss == null)
+            {
+                return null;
+            }
+
+            global::BossAreaController[] bossAreas =
+                FindObjectsByType<global::BossAreaController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < bossAreas.Length; i++)
+            {
+                global::BossAreaController bossArea = bossAreas[i];
+                if (IsBossAreaForTargetLastBoss(bossArea, targetLastBoss))
+                {
+                    return bossArea;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool IsBossAreaForTargetLastBoss(
+            global::BossAreaController bossArea,
+            LastBossController lastBoss)
+        {
+            if (bossArea == null || lastBoss == null)
+            {
+                return false;
+            }
+
+            if (bossArea.LastBossController == lastBoss)
+            {
+                return true;
+            }
+
+            Transform bossRoot = bossArea.BossRoot;
+            Transform lastBossTransform = lastBoss.transform;
+            return bossRoot != null && lastBossTransform != null && bossRoot == lastBossTransform;
+        }
+
+        private static bool HasStoryEventActivity()
+        {
+            return StoryEventRuntimeService.HasPendingEvents || IsActiveDialogueRunning();
+        }
+
+        private static bool IsActiveDialogueRunning()
+        {
+            DialogueManager dialogueManager = FindFirstObjectByType<DialogueManager>();
+            return dialogueManager != null &&
+                   dialogueManager.Runner != null &&
+                   dialogueManager.Runner.IsDialogueRunning;
         }
 
         private IEnumerator PlayEndingRoutine(bool gameplayControlsAlreadyDisabled = false)
@@ -1103,7 +1188,7 @@ namespace GameName.Ending
 
         private void StopCurrentBgmOnBlackout()
         {
-            if (!stopCurrentBgmOnBlackout)
+            if (!stopCurrentBgmOnBlackout || IsEndingBgmAlreadyPlaying())
             {
                 return;
             }
@@ -1115,6 +1200,22 @@ namespace GameName.Ending
             }
 
             global::StoryTimelineRuntime.Instance.StopBgm(stopCurrentBgmFadeSeconds);
+        }
+
+        private bool IsEndingBgmAlreadyPlaying()
+        {
+            if (endingBgm == null)
+            {
+                return false;
+            }
+
+            global::StageBgmController resolvedStageBgm = stageBgm;
+            if (resolvedStageBgm == null)
+            {
+                resolvedStageBgm = FindFirstObjectByType<global::StageBgmController>(FindObjectsInactive.Include);
+            }
+
+            return resolvedStageBgm != null && resolvedStageBgm.RequestedBgmClip == endingBgm;
         }
 
         private void PrepareCreditsCanvas()
