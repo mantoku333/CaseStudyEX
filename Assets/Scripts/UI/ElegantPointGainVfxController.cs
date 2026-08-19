@@ -8,6 +8,7 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
     [SerializeField] private Camera worldCamera;
     [SerializeField] private Vector3 spawnOffset = new Vector3(0f, 1.1f, 0f);
     [SerializeField] private Vector3 gaugeWorldOffset = new Vector3(0f, 0f, 0f);
+    [SerializeField, Min(0.01f)] private float liveParticleAttractionDuration = 1.45f;
     [SerializeField, Min(0f)] private float gaugePulseScale = 1.08f;
     [SerializeField, Min(0.01f)] private float gaugePulseDuration = 0.16f;
 
@@ -55,8 +56,14 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
         ResolveReferences();
         UpdateAttractionTargetPosition();
 
-        if (attractorPrefab == null || attractionTarget == null)
+        if (attractionTarget == null)
         {
+            return;
+        }
+
+        if (TryAttractExistingActionParticles(gainEvent.WorldPosition))
+        {
+            pulseTimer = gaugePulseDuration;
             return;
         }
 
@@ -64,6 +71,34 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
         ElegantPointGainAttractorVfx instance = CreateAttractor(spawnPosition);
         instance.Initialize(spawnPosition, attractionTarget, gainEvent.Amount);
         pulseTimer = gaugePulseDuration;
+    }
+
+    private bool TryAttractExistingActionParticles(Vector3 origin)
+    {
+        PlayerGracefulActionEffectManager[] managers = FindObjectsByType<PlayerGracefulActionEffectManager>(
+            FindObjectsInactive.Exclude,
+            FindObjectsSortMode.None);
+        PlayerGracefulActionEffectManager closestManager = null;
+        float closestSqrDistance = float.PositiveInfinity;
+
+        for (int i = 0; i < managers.Length; i++)
+        {
+            PlayerGracefulActionEffectManager manager = managers[i];
+            if (manager == null)
+            {
+                continue;
+            }
+
+            float sqrDistance = (manager.transform.position - origin).sqrMagnitude;
+            if (sqrDistance < closestSqrDistance)
+            {
+                closestSqrDistance = sqrDistance;
+                closestManager = manager;
+            }
+        }
+
+        return closestManager != null &&
+               closestManager.TryAttractLiveParticles(attractionTarget, liveParticleAttractionDuration);
     }
 
     private ElegantPointGainAttractorVfx CreateAttractor(Vector3 spawnPosition)

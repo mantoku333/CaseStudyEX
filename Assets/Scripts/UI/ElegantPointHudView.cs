@@ -6,10 +6,7 @@ using UnityEngine.UI;
 public sealed class ElegantPointHudView : MonoBehaviour
 {
     private const string GaugeObjectName = "Elegant Point Gauge";
-    private const float FillAnchorLeft = 0.015f;
-    private const float FillAnchorRight = 0.985f;
-    private const float FillAnchorBottom = 0.16f;
-    private const float FillAnchorTop = 0.84f;
+    private const float DefaultFillWidth = 271f;
 
     [SerializeField] private Transform hudGroup;
     [SerializeField] private Image gaugeFill;
@@ -61,20 +58,21 @@ public sealed class ElegantPointHudView : MonoBehaviour
             float normalizedBalance = ElegantPointWallet.MaxBalance > 0
                 ? clampedBalance / (float)ElegantPointWallet.MaxBalance
                 : 0f;
-            gaugeFill.fillAmount = normalizedBalance;
 
             RectTransform fillRect = gaugeFill.rectTransform;
-            fillRect.anchorMin = new Vector2(FillAnchorLeft, FillAnchorBottom);
-            fillRect.anchorMax = new Vector2(
-                Mathf.Lerp(FillAnchorLeft, FillAnchorRight, normalizedBalance),
-                FillAnchorTop);
-            fillRect.offsetMin = Vector2.zero;
-            fillRect.offsetMax = Vector2.zero;
+            fillRect.pivot = new Vector2(0f, 1f);
+            Vector2 size = fillRect.sizeDelta;
+            if (size.x <= 0f)
+            {
+                size.x = DefaultFillWidth;
+            }
+            size.x = DefaultFillWidth * normalizedBalance;
+            fillRect.sizeDelta = size;
         }
 
         if (balanceText != null)
         {
-            balanceText.text = $"{clampedBalance} / {ElegantPointWallet.MaxBalance}";
+            balanceText.text = clampedBalance.ToString();
         }
     }
 
@@ -121,10 +119,11 @@ public sealed class ElegantPointHudView : MonoBehaviour
             : CreateUiObject("Fill", gaugeObject.transform);
 
         RectTransform fillRect = fillObject.GetComponent<RectTransform>();
-        fillRect.anchorMin = new Vector2(FillAnchorLeft, FillAnchorBottom);
-        fillRect.anchorMax = new Vector2(FillAnchorRight, FillAnchorTop);
-        fillRect.offsetMin = Vector2.zero;
-        fillRect.offsetMax = Vector2.zero;
+        fillRect.anchorMin = new Vector2(0f, 1f);
+        fillRect.anchorMax = new Vector2(0f, 1f);
+        fillRect.pivot = new Vector2(0f, 1f);
+        fillRect.anchoredPosition = new Vector2(81f, -12f);
+        fillRect.sizeDelta = new Vector2(DefaultFillWidth, 13f);
 
         gaugeFill = fillObject.GetComponent<Image>();
         if (gaugeFill == null)
