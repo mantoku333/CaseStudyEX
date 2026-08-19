@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7047892141914012833}
   - component: {fileID: 3789131507061198842}
   - component: {fileID: 907000000000000001}
+  - component: {fileID: 907000000000000002}
   m_Layer: 5
   m_Name: PlayerHUDCanvas
   m_TagString: Untagged
@@ -147,6 +148,25 @@ MonoBehaviour:
   hudGroup: {fileID: 2601249560326758850}
   gaugeFill: {fileID: 907000000000001013}
   balanceText: {fileID: 907000000000001022}
+--- !u!114 &907000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 119518719397966961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: deedf36a8b5d4bdc9cd0058b2826860a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElegantPointGainVfxController
+  hudView: {fileID: 907000000000000001}
+  attractorPrefab: {fileID: 907000000000002001, guid: 379e29a45bcc45aba8f2c1cd72996b70, type: 3}
+  worldCamera: {fileID: 0}
+  spawnOffset: {x: 0, y: 1.1, z: 0}
+  gaugeWorldOffset: {x: 0, y: 0, z: 0}
+  gaugePulseScale: 1.08
+  gaugePulseDuration: 0.16
 --- !u!1 &431326288967822201
 GameObject:
   m_ObjectHideFlags: 0

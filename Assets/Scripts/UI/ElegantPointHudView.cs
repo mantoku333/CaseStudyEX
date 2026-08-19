@@ -15,14 +15,29 @@ public sealed class ElegantPointHudView : MonoBehaviour
     [SerializeField] private Image gaugeFill;
     [SerializeField] private TMP_Text balanceText;
 
+    public RectTransform AbsorbTargetRect
+    {
+        get
+        {
+            if (gaugeFill != null)
+            {
+                return gaugeFill.rectTransform;
+            }
+
+            return transform as RectTransform;
+        }
+    }
+
     private void Awake()
     {
         EnsureView();
+        EnsureGainVfxController();
     }
 
     private void OnEnable()
     {
         EnsureView();
+        EnsureGainVfxController();
         ElegantPointWallet.BalanceChanged += HandleBalanceChanged;
         Refresh(ElegantPointWallet.Balance);
     }
@@ -149,5 +164,13 @@ public sealed class ElegantPointHudView : MonoBehaviour
         gameObject.layer = parent.gameObject.layer;
         gameObject.transform.SetParent(parent, false);
         return gameObject;
+    }
+
+    private void EnsureGainVfxController()
+    {
+        if (GetComponent<ElegantPointGainVfxController>() == null)
+        {
+            gameObject.AddComponent<ElegantPointGainVfxController>();
+        }
     }
 }
