@@ -5179,6 +5179,14 @@ MonoBehaviour:
   startRainMaxParticles: 50000
   startRainTargetVolume: 0.8
   startFadeTargetAlpha: 1
+  loadingText: "Now Loading\u2026\u2026"
+  loadingFont: {fileID: 11400000, guid: f4320de5a493a47ab9c25cdfea10d7fa, type: 2}
+  loadingFontSize: 48
+  loadingTextColor: {r: 1, g: 1, b: 1, a: 1}
+  loadingTextAreaSize: {x: 520, y: 96}
+  loadingTextMargin: {x: 72, y: 56}
+  continueFadeOutDuration: 0.45
+  loadingFadeOutDuration: 0
 --- !u!4 &977257629
 Transform:
   m_ObjectHideFlags: 0
