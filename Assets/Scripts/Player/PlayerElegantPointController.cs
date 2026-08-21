@@ -432,7 +432,11 @@ public sealed class PlayerElegantPointController : MonoBehaviour
 
         if (amount > 0)
         {
-            ElegantPointWallet.Add(amount);
+            int amountAdded = ElegantPointWallet.Add(amount);
+            if (amountAdded > 0)
+            {
+                ElegantPointGainEvents.Raise(amountAdded, ElegantPointWallet.Balance, transform.position);
+            }
         }
     }
 }
