@@ -14,6 +14,7 @@ public sealed class SaveManager : MonoBehaviour
     private const int TraceFrameCount = 120;
     private const float TraceThreshold = 0.001f;
     private const int PendingLoadPositionApplyFrameCount = 5;
+    private const float PendingLoadAsyncWaitTimeoutSeconds = 10f;
 
     private static SaveManager instance;
     private static SaveGameData pendingLoadData;
@@ -412,6 +413,84 @@ public sealed class SaveManager : MonoBehaviour
         return true;
     }
 
+    public static IEnumerator LoadGameAsync(int slotIndex, string fallbackSceneName = null, bool reloadCurrentScene = false)
+    {
+        if (!TryValidateSlotIndex(slotIndex))
+        {
+            yield break;
+        }
+
+        EnsureInstance();
+        int loadRequestId = ++loadRequestSequence;
+
+        if (!SaveRepository.TryRead(slotIndex, out var saveData))
+        {
+            if (EnableLoadTrace)
+            {
+                Debug.Log(
+                    $"[SaveManager][Trace#{loadRequestId}] LoadGameAsync failed: slot={slotIndex}, save file not found or unreadable. fallback='{fallbackSceneName}'");
+            }
+
+            if (!string.IsNullOrEmpty(fallbackSceneName))
+            {
+                yield return LoadSceneAsyncByName(fallbackSceneName);
+            }
+
+            yield break;
+        }
+
+        pendingLoadData = saveData;
+        pendingLoadRequestId = loadRequestId;
+        pendingLoadSlotIndex = slotIndex;
+        pendingLoadPositionApplyFramesRemaining = PendingLoadPositionApplyFrameCount;
+        pendingLoadModulesRestored = false;
+
+        RestorePreSceneState(saveData);
+
+        if (EnableLoadTrace)
+        {
+            Debug.Log(
+                $"[SaveManager][Trace#{loadRequestId}] LoadGameAsync slot={slotIndex}, saveScene='{saveData.sceneName}', savePos={saveData.playerPosition.ToVector3()}, fallback='{fallbackSceneName}', activeScene='{SceneManager.GetActiveScene().name}', frame={Time.frameCount}");
+            LogPlayerSnapshot($"LoadGameAsync#{loadRequestId}/BeforeLoad");
+        }
+
+        string sceneToLoad = ResolveSceneToLoad(saveData.sceneName, fallbackSceneName);
+
+        if (string.IsNullOrEmpty(sceneToLoad))
+        {
+            Debug.LogError(
+                $"[SaveManager] No loadable scene found. requestId={loadRequestId}, slot={slotIndex}, saveScene='{saveData.sceneName}', fallbackScene='{fallbackSceneName}'.");
+            ClearPendingLoad();
+            yield break;
+        }
+
+        Scene activeScene = SceneManager.GetActiveScene();
+        bool isSameLoadedScene =
+            activeScene.IsValid() &&
+            activeScene.isLoaded &&
+            string.Equals(activeScene.name, sceneToLoad, StringComparison.Ordinal);
+
+        if (isSameLoadedScene && !reloadCurrentScene)
+        {
+            if (EnableLoadTrace)
+            {
+                Debug.Log($"[SaveManager][Trace#{loadRequestId}] Same scene load detected. Skip LoadSceneAsync and apply in runtime scene: '{sceneToLoad}'.");
+            }
+
+            yield return WaitForPendingLoadAsync();
+            yield break;
+        }
+
+        yield return LoadSceneAsyncByName(sceneToLoad);
+
+        if (EnableLoadTrace)
+        {
+            Debug.Log($"[SaveManager][Trace#{loadRequestId}] LoadSceneAsync completed: '{sceneToLoad}'");
+        }
+
+        yield return WaitForPendingLoadAsync();
+    }
+
     public static bool DeleteSave()
     {
         return DeleteSave(DefaultSlotIndex);
@@ -734,6 +813,48 @@ public sealed class SaveManager : MonoBehaviour
         }
 
         return string.Empty;
+    }
+
+    private static IEnumerator LoadSceneAsyncByName(string sceneName)
+    {
+        string targetSceneName = string.IsNullOrWhiteSpace(sceneName) ? string.Empty : sceneName.Trim();
+        if (string.IsNullOrEmpty(targetSceneName))
+        {
+            Debug.LogError("[SaveManager] Scene name is empty.");
+            yield break;
+        }
+
+        AsyncOperation operation;
+        try
+        {
+            operation = SceneManager.LoadSceneAsync(targetSceneName);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[SaveManager] Failed to load scene '{targetSceneName}'. {exception}");
+            yield break;
+        }
+
+        if (operation == null)
+        {
+            Debug.LogError($"[SaveManager] Failed to start loading scene '{targetSceneName}'.");
+            yield break;
+        }
+
+        while (!operation.isDone)
+        {
+            yield return null;
+        }
+    }
+
+    private static IEnumerator WaitForPendingLoadAsync()
+    {
+        float elapsed = 0f;
+        while (pendingLoadData != null && elapsed < PendingLoadAsyncWaitTimeoutSeconds)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
     }
 
 }
