@@ -274,19 +274,14 @@ namespace CaseStudy.EditorTools
                         GUI.FocusControl(null);
                     }
                 }
+            }
 
-                GUILayout.Space(10f);
-                pendingNodeTitle = EditorGUILayout.TextField(
-                    pendingNodeTitle,
-                    GUILayout.MinWidth(120f),
-                    GUILayout.MaxWidth(240f));
-                using (new EditorGUI.DisabledScope(string.IsNullOrWhiteSpace(pendingNodeTitle)))
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("＋ 新しいイベントを追加", GUILayout.Width(180f), GUILayout.Height(26f)))
                 {
-                    if (GUILayout.Button("新しいイベントを追加", GUILayout.Width(142f)))
-                    {
-                        AddNode();
-                        GUIUtility.ExitGUI();
-                    }
+                    NewEventNameWindow.Open(this, pendingNodeTitle);
                 }
             }
         }
@@ -325,7 +320,12 @@ namespace CaseStudy.EditorTools
                     EventCreationDialogueLine line = dialogueLines[index];
                     bool selected = line.SourceLineIndex == selectedSourceLine;
                     string summary = BuildLineSummary(index, line);
-                    if (GUILayout.Toggle(selected, summary, "Button", GUILayout.MinHeight(38f)))
+                    bool nextSelected = GUILayout.Toggle(
+                        selected,
+                        summary,
+                        "Button",
+                        GUILayout.MinHeight(38f));
+                    if (nextSelected && !selected)
                     {
                         selectedSourceLine = line.SourceLineIndex;
                         GUI.FocusControl(null);
@@ -409,7 +409,6 @@ namespace CaseStudy.EditorTools
                 {
                     document.UpdateDialogueLine(line);
                     CaptureDirtyWorkingText();
-                    RefreshDialogueLines(selectedSourceLine);
                     SetStatus("変更があります。ファイルを切り替える前に保存してください。", MessageType.Info);
                 }
 
@@ -680,7 +679,7 @@ namespace CaseStudy.EditorTools
             return string.IsNullOrEmpty(folder) ? fileName : $"{fileName}  —  {folder}";
         }
 
-        private void AddNode()
+        private bool AddNode()
         {
             try
             {
@@ -691,11 +690,21 @@ namespace CaseStudy.EditorTools
                 CaptureDirtyWorkingText();
                 RefreshDialogueLines();
                 SetStatus("新しいイベントを追加しました。会話を追加して保存してください。", MessageType.Info);
+                return true;
             }
             catch (ArgumentException exception)
             {
                 EditorUtility.DisplayDialog(WindowTitle, exception.Message, "OK");
+                return false;
             }
+        }
+
+        private bool AddNode(string nodeTitle)
+        {
+            pendingNodeTitle = nodeTitle ?? string.Empty;
+            bool added = AddNode();
+            Repaint();
+            return added;
         }
 
         private void ShowSpeakerMenu(int sourceLineIndex)
@@ -773,6 +782,7 @@ namespace CaseStudy.EditorTools
             }
 
             selectedNodeIndex = Mathf.Clamp(selectedNodeIndex, 0, document.Nodes.Count - 1);
+            CollectDocumentSpeakerNames();
             dialogueLines.AddRange(document.GetDialogueLines(selectedNodeIndex));
             foreach (EventCreationDialogueLine line in dialogueLines)
             {
@@ -797,6 +807,27 @@ namespace CaseStudy.EditorTools
                 requestedLine = dialogueLines.Count > 0 ? dialogueLines[0].SourceLineIndex : -1;
             }
             selectedSourceLine = requestedLine;
+        }
+
+        private void CollectDocumentSpeakerNames()
+        {
+            if (document == null)
+            {
+                return;
+            }
+
+            for (int nodeIndex = 0; nodeIndex < document.Nodes.Count; nodeIndex++)
+            {
+                List<EventCreationDialogueLine> nodeLines = document.GetDialogueLines(nodeIndex);
+                for (int lineIndex = 0; lineIndex < nodeLines.Count; lineIndex++)
+                {
+                    string speaker = nodeLines[lineIndex].Speaker?.Trim();
+                    if (!string.IsNullOrEmpty(speaker))
+                    {
+                        speakerNames.Add(speaker);
+                    }
+                }
+            }
         }
 
         private void RefreshYarnFiles()
@@ -1176,6 +1207,85 @@ namespace CaseStudy.EditorTools
             workingText = document.ToText();
             workingTextHasUtf8Bom = document.HasUtf8Bom;
             isDirty = true;
+        }
+
+        private sealed class NewEventNameWindow : EditorWindow
+        {
+            private const string NameControl = "EventCreationKun.NewEventName";
+
+            private EventCreationWindow owner;
+            private string eventName = string.Empty;
+            private bool focusApplied;
+
+            public static void Open(EventCreationWindow owner, string currentName)
+            {
+                NewEventNameWindow window = CreateInstance<NewEventNameWindow>();
+                window.owner = owner;
+                window.eventName = currentName ?? string.Empty;
+                window.titleContent = new GUIContent("新しいイベント");
+                window.minSize = new Vector2(420f, 125f);
+                window.maxSize = new Vector2(420f, 125f);
+                window.ShowUtility();
+                window.Focus();
+            }
+
+            private void OnGUI()
+            {
+                EditorGUILayout.Space(10f);
+                EditorGUILayout.LabelField("新しいイベント名を入力してください。", EditorStyles.boldLabel);
+                EditorGUILayout.Space(4f);
+
+                GUI.SetNextControlName(NameControl);
+                eventName = EditorGUILayout.TextField("イベント名", eventName);
+                if (!focusApplied)
+                {
+                    EditorGUI.FocusTextInControl(NameControl);
+                    focusApplied = true;
+                }
+
+                EditorGUILayout.Space(8f);
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button("キャンセル", GUILayout.Width(90f)))
+                    {
+                        Close();
+                    }
+
+                    if (GUILayout.Button("追加", GUILayout.Width(90f)))
+                    {
+                        TryAdd();
+                    }
+                }
+
+                Event currentEvent = Event.current;
+                if (currentEvent != null &&
+                    currentEvent.type == EventType.KeyDown &&
+                    (currentEvent.keyCode == KeyCode.Return || currentEvent.keyCode == KeyCode.KeypadEnter))
+                {
+                    currentEvent.Use();
+                    TryAdd();
+                }
+            }
+
+            private void TryAdd()
+            {
+                if (string.IsNullOrWhiteSpace(eventName))
+                {
+                    EditorUtility.DisplayDialog(
+                        WindowTitle,
+                        "イベント名を入力してください。",
+                        "OK");
+                    Focus();
+                    EditorGUI.FocusTextInControl(NameControl);
+                    return;
+                }
+
+                if (owner != null && owner.AddNode(eventName))
+                {
+                    Close();
+                }
+            }
         }
     }
 }

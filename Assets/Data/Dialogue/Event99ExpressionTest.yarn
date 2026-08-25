@@ -28,3 +28,19 @@ title: Event99_ExpressionTest
 イリス: フォントサイズ1.5倍テスト #size:1.5
 イリス: 文字揺れ＋フォントサイズ1.5倍テスト #shake #size:1.5
 ===
+
+title: ADVtest_01
+---
+イリス: aaaaa
+ノクス: aaaaa
+===
+
+title: ADVtest_02
+---
+イベントテストです
+イリス: イリス
+ノクス: ノクス
+文字揺れ #shake #size:1.5
+一枚絵 #illustration:event99_sample
+一枚絵おわり #illustration:hide
+===
