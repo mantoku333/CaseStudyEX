@@ -21,6 +21,30 @@ namespace EditorTools
             return !replaceExistingOnly || hasExistingBlock;
         }
 
+        /// <summary>Uses column faces only after the complete column has passed isolation checks.</summary>
+        public static StageBlockFace Resolve(StageBlockNeighborState neighbors, bool isIsolatedVerticalColumn)
+        {
+            if (isIsolatedVerticalColumn && !neighbors.left && !neighbors.right)
+            {
+                if (!neighbors.up && neighbors.down)
+                {
+                    return StageBlockFace.J;
+                }
+
+                if (neighbors.up && neighbors.down)
+                {
+                    return StageBlockFace.K;
+                }
+
+                if (neighbors.up && !neighbors.down)
+                {
+                    return StageBlockFace.M;
+                }
+            }
+
+            return Resolve(neighbors);
+        }
+
         public static StageBlockFace Resolve(StageBlockNeighborState neighbors)
         {
             bool exposedLeft = !neighbors.left;

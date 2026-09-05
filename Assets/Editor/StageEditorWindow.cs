@@ -1298,16 +1298,10 @@ namespace EditorTools
             }
 
             StageBlockTileSet tileSet = GetSelectedStageBlockTileSet();
-            if (tileSet == null || !tileSet.HasAllTiles())
+            if (tileSet != null && tileSet.HasAllTiles())
             {
-                return;
-            }
-
-            for (int y = bounds.yMin; y < bounds.yMax; y++)
-            {
-                for (int x = bounds.xMin; x < bounds.xMax; x++)
+                foreach (Vector3Int cell in bounds.allPositionsWithin)
                 {
-                    Vector3Int cell = new Vector3Int(x, y, 0);
                     if (!IsSolidBlockTile(targetStageTilemap.GetTile(cell)))
                     {
                         continue;
@@ -1315,6 +1309,29 @@ namespace EditorTools
 
                     StageBlockFace face = StageBlockAutoTileResolver.Resolve(GetNeighborState(cell));
                     SetTileWithTransform(cell, tileSet.GetTile(face), Matrix4x4.identity);
+                }
+            }
+
+            // Erasing must also repair Stage2 columns when another, incomplete set is selected.
+            StageBlockTileSet stage2 = palette != null ? palette.Stage2Blocks : null;
+            if (stage2 == null || !stage2.HasAllTiles() || !stage2.HasColumnTiles())
+            {
+                return;
+            }
+
+            List<BoundsInt> columns = StageBlockColumnUtility.CollectColumns(
+                bounds, cell => stage2.Contains(targetStageTilemap.GetTile(cell)));
+            foreach (BoundsInt column in columns)
+            {
+                bool isolated = StageBlockColumnUtility.IsIsolatedColumn(column, targetStageTilemap.HasTile);
+                foreach (Vector3Int cell in column.allPositionsWithin)
+                {
+                    StageBlockFace face = StageBlockAutoTileResolver.Resolve(GetNeighborState(cell), isolated);
+                    TileBase resolvedTile = stage2.GetTile(face);
+                    if (targetStageTilemap.GetTile(cell) != resolvedTile)
+                    {
+                        SetTileWithTransform(cell, resolvedTile, Matrix4x4.identity);
+                    }
                 }
             }
         }

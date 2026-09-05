@@ -14,7 +14,10 @@ namespace EditorTools
         F,
         G,
         H,
-        I
+        I,
+        J,
+        K,
+        M
     }
 
     public enum WaterFloorFace
@@ -39,6 +42,9 @@ namespace EditorTools
         [SerializeField] private TileBase g;
         [SerializeField] private TileBase h;
         [SerializeField] private TileBase i;
+        [SerializeField] private TileBase j;
+        [SerializeField] private TileBase k;
+        [SerializeField] private TileBase m;
 
         public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? "Stage" : displayName;
 
@@ -64,6 +70,12 @@ namespace EditorTools
                     return h;
                 case StageBlockFace.I:
                     return i;
+                case StageBlockFace.J:
+                    return j;
+                case StageBlockFace.K:
+                    return k;
+                case StageBlockFace.M:
+                    return m;
                 default:
                     return null;
             }
@@ -84,7 +96,10 @@ namespace EditorTools
                    tile == f ||
                    tile == g ||
                    tile == h ||
-                   tile == i;
+                   tile == i ||
+                   tile == j ||
+                   tile == k ||
+                   tile == m;
         }
 
         public bool HasTile(StageBlockFace face)
@@ -103,6 +118,12 @@ namespace EditorTools
                    g != null &&
                    h != null &&
                    i != null;
+        }
+
+        /// <summary>Whether the optional isolated-column faces are all assigned.</summary>
+        public bool HasColumnTiles()
+        {
+            return j != null && k != null && m != null;
         }
 
         public TileBase FirstAvailableTile()
