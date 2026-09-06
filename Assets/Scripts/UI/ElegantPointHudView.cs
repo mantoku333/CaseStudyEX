@@ -7,6 +7,12 @@ public sealed class ElegantPointHudView : MonoBehaviour
 {
     private const string GaugeObjectName = "Elegant Point Gauge";
     private const float DefaultFillWidth = 271f;
+    private static readonly Vector2 GaugePosition = new Vector2(117f, -106f);
+    private static readonly Vector2 GaugeSize = new Vector2(441f, 38f);
+    private static readonly Vector2 FillPosition = new Vector2(81f, -12f);
+    private static readonly Vector2 FillSize = new Vector2(DefaultFillWidth, 13f);
+    private static readonly Vector2 BalancePosition = new Vector2(370f, 0f);
+    private static readonly Vector2 BalanceSize = new Vector2(55f, 35f);
 
     [SerializeField] private Transform hudGroup;
     [SerializeField] private Image gaugeFill;
@@ -60,12 +66,13 @@ public sealed class ElegantPointHudView : MonoBehaviour
                 : 0f;
 
             RectTransform fillRect = gaugeFill.rectTransform;
+            fillRect.anchorMin = new Vector2(0f, 1f);
+            fillRect.anchorMax = new Vector2(0f, 1f);
             fillRect.pivot = new Vector2(0f, 1f);
+            fillRect.localScale = Vector3.one;
+            fillRect.anchoredPosition = FillPosition;
             Vector2 size = fillRect.sizeDelta;
-            if (size.x <= 0f)
-            {
-                size.x = DefaultFillWidth;
-            }
+            size.y = FillSize.y;
             size.x = DefaultFillWidth * normalizedBalance;
             fillRect.sizeDelta = size;
         }
@@ -78,11 +85,6 @@ public sealed class ElegantPointHudView : MonoBehaviour
 
     private void EnsureView()
     {
-        if (gaugeFill != null && balanceText != null)
-        {
-            return;
-        }
-
         if (hudGroup == null)
         {
             hudGroup = transform.Find("Player HP");
@@ -99,18 +101,19 @@ public sealed class ElegantPointHudView : MonoBehaviour
             : CreateUiObject(GaugeObjectName, hudGroup);
 
         RectTransform gaugeRect = gaugeObject.GetComponent<RectTransform>();
-        gaugeRect.anchorMin = new Vector2(0.5f, 0.5f);
-        gaugeRect.anchorMax = new Vector2(0.5f, 0.5f);
+        gaugeRect.anchorMin = new Vector2(0f, 1f);
+        gaugeRect.anchorMax = new Vector2(0f, 1f);
         gaugeRect.pivot = new Vector2(0f, 1f);
-        gaugeRect.anchoredPosition = new Vector2(124.8f, -50f);
-        gaugeRect.sizeDelta = new Vector2(439f, 22f);
+        gaugeRect.localScale = Vector3.one;
+        gaugeRect.anchoredPosition = GaugePosition;
+        gaugeRect.sizeDelta = GaugeSize;
 
         Image background = gaugeObject.GetComponent<Image>();
         if (background == null)
         {
             background = gaugeObject.AddComponent<Image>();
+            background.color = new Color(0.12f, 0.035f, 0.17f, 0.92f);
         }
-        background.color = new Color(0.12f, 0.035f, 0.17f, 0.92f);
         background.raycastTarget = false;
 
         Transform existingFill = gaugeObject.transform.Find("Fill");
@@ -122,15 +125,16 @@ public sealed class ElegantPointHudView : MonoBehaviour
         fillRect.anchorMin = new Vector2(0f, 1f);
         fillRect.anchorMax = new Vector2(0f, 1f);
         fillRect.pivot = new Vector2(0f, 1f);
-        fillRect.anchoredPosition = new Vector2(81f, -12f);
-        fillRect.sizeDelta = new Vector2(DefaultFillWidth, 13f);
+        fillRect.localScale = Vector3.one;
+        fillRect.anchoredPosition = FillPosition;
+        fillRect.sizeDelta = FillSize;
 
         gaugeFill = fillObject.GetComponent<Image>();
         if (gaugeFill == null)
         {
             gaugeFill = fillObject.AddComponent<Image>();
+            gaugeFill.color = new Color(0.86f, 0.12f, 0.91f, 1f);
         }
-        gaugeFill.color = new Color(0.86f, 0.12f, 0.91f, 1f);
         gaugeFill.type = Image.Type.Simple;
         gaugeFill.raycastTarget = false;
 
@@ -140,19 +144,21 @@ public sealed class ElegantPointHudView : MonoBehaviour
             : CreateUiObject("Balance", gaugeObject.transform);
 
         RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = Vector2.zero;
-        textRect.offsetMax = Vector2.zero;
+        textRect.anchorMin = new Vector2(0f, 1f);
+        textRect.anchorMax = new Vector2(0f, 1f);
+        textRect.pivot = new Vector2(0f, 1f);
+        textRect.localScale = Vector3.one;
+        textRect.anchoredPosition = BalancePosition;
+        textRect.sizeDelta = BalanceSize;
 
         balanceText = textObject.GetComponent<TextMeshProUGUI>();
         if (balanceText == null)
         {
             balanceText = textObject.AddComponent<TextMeshProUGUI>();
+            balanceText.color = new Color(0.8196079f, 0.5137255f, 0.9490197f, 1f);
         }
-        balanceText.alignment = TextAlignmentOptions.Center;
-        balanceText.color = Color.white;
-        balanceText.fontSize = 16f;
+        balanceText.alignment = TextAlignmentOptions.Left;
+        balanceText.fontSize = 24f;
         balanceText.fontStyle = FontStyles.Bold;
         balanceText.raycastTarget = false;
     }
