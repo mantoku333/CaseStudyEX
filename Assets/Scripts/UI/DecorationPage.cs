@@ -13,6 +13,9 @@ public sealed class DecorationPage : MonoBehaviour
     private const string DefaultPurchasePriceFormat = "{0} Pt";
     private const string DefaultPurchaseBalanceFormat = "所持ポイント: {0} / {1}";
     private const string DefaultInsufficientPointsMessage = "優雅ポイントが足りません。";
+    private const string PurchaseConfirmResourceRoot = "Figma/Design2/PurchaseConfirm/";
+    private static readonly Color PurchaseBalanceNormalColor = Color.white;
+    private static readonly Color PurchaseBalanceInsufficientColor = new Color(1f, 0.37f, 0.37f, 1f);
 
     [Header("Typography")]
     [SerializeField] private TMP_FontAsset shopFont;
@@ -321,17 +324,17 @@ public sealed class DecorationPage : MonoBehaviour
             purchaseItemImage.gameObject.SetActive(false);
 
         if (purchaseItemNameText != null)
-            purchaseItemNameText.text = string.Format(
-                "{0}ポイントを消費して、\n「{1}」を\n交換しますか？",
-                pendingPurchaseItem.elegantPointCost,
-                pendingPurchaseItem.itemName);
+        {
+            purchaseItemNameText.gameObject.SetActive(false);
+            purchaseItemNameText.text = pendingPurchaseItem.itemName;
+        }
         if (purchasePriceText != null)
         {
             purchasePriceText.gameObject.SetActive(true);
-            purchasePriceText.text = $"消費ポイント: {pendingPurchaseItem.elegantPointCost}";
+            purchasePriceText.text = pendingPurchaseItem.elegantPointCost.ToString();
         }
         if (purchaseBalanceText != null)
-            purchaseBalanceText.gameObject.SetActive(false);
+            purchaseBalanceText.gameObject.SetActive(true);
 
         RefreshPurchaseAffordability();
         SelectButton(purchaseNoButton);
@@ -396,7 +399,7 @@ public sealed class DecorationPage : MonoBehaviour
     {
         int balance = ElegantPointWallet.Balance;
         if (purchaseBalanceText != null)
-            purchaseBalanceText.text = string.Format(purchaseBalanceFormat, balance, ElegantPointWallet.MaxBalance);
+            purchaseBalanceText.text = balance.ToString();
 
         if (pendingPurchaseItem == null)
         {
@@ -408,10 +411,14 @@ public sealed class DecorationPage : MonoBehaviour
         bool affordable = balance >= pendingPurchaseItem.elegantPointCost;
         if (purchaseYesButton != null)
             purchaseYesButton.interactable = affordable;
+        if (purchaseBalanceText != null)
+            purchaseBalanceText.color = affordable
+                ? PurchaseBalanceNormalColor
+                : PurchaseBalanceInsufficientColor;
 
         if (purchaseStatusText != null && !preserveFailureMessage)
         {
-            purchaseStatusText.gameObject.SetActive(!affordable);
+            purchaseStatusText.gameObject.SetActive(false);
             purchaseStatusText.text = affordable ? string.Empty : insufficientPointsMessage;
         }
     }
@@ -653,7 +660,10 @@ public sealed class DecorationPage : MonoBehaviour
             return;
 
         if (elegantPointBalanceText != null)
+        {
+            ConfigureElegantPointBalanceText();
             return;
+        }
 
         elegantPointBalanceText = CreateRuntimeText(
             "ElegantPointBalanceText (Runtime)",
@@ -661,11 +671,24 @@ public sealed class DecorationPage : MonoBehaviour
             28f,
             TextAlignmentOptions.TopRight,
             new Color(0.95f, 0.75f, 1f, 1f));
+        ConfigureElegantPointBalanceText();
+    }
+
+    private void ConfigureElegantPointBalanceText()
+    {
+        if (elegantPointBalanceText == null)
+            return;
+
+        ApplyShopFont(elegantPointBalanceText);
+        elegantPointBalanceText.alignment = TextAlignmentOptions.TopRight;
+        elegantPointBalanceText.fontSize = 28f;
+        elegantPointBalanceText.color = new Color(0.95f, 0.75f, 1f, 1f);
 
         RectTransform rect = elegantPointBalanceText.rectTransform;
         rect.anchorMin = Vector2.one;
         rect.anchorMax = Vector2.one;
         rect.pivot = Vector2.one;
+        rect.localScale = Vector3.one;
         rect.anchoredPosition = new Vector2(-35f, -30f);
         rect.sizeDelta = new Vector2(340f, 50f);
     }
@@ -701,17 +724,24 @@ public sealed class DecorationPage : MonoBehaviour
         RectTransform modalRect = (RectTransform)purchaseModal.transform;
         Stretch(modalRect);
         Image overlay = purchaseModal.AddComponent<Image>();
-        overlay.color = new Color(0f, 0f, 0f, 0.35f);
+        overlay.color = new Color(0f, 0f, 0f, 0.84f);
         overlay.raycastTarget = true;
 
-        GameObject panel = CreateUiObject("Panel", purchaseModal.transform);
+        GameObject panel = CreateUiObject("FigmaPanel", purchaseModal.transform);
         RectTransform panelRect = (RectTransform)panel.transform;
-        panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 0.5f);
-        panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.anchoredPosition = Vector2.zero;
-        panelRect.sizeDelta = new Vector2(560f, 300f);
-        Image panelImage = panel.AddComponent<Image>();
-        panelImage.color = Color.white;
+        Stretch(panelRect);
+        DisableRaycastImage(panel);
+
+        CreateFigmaImage(panel.transform, "Back", "back", 0f, 398f, 2659f, 251f);
+        CreateFigmaImage(panel.transform, "Title", "title_purchase", 786f, 463f, 347f, 49f);
+        CreateFigmaImage(panel.transform, "BalanceFrame", "balance_frame", 810f, 520f, 295f, 45f);
+        CreateFigmaImage(panel.transform, "Star", "star", 914f, 526f, 32f, 31f);
+        CreateFigmaImage(panel.transform, "Multiply", "multiply", 954f, 533f, 16f, 16f);
+
+        TextMeshProUGUI balanceLabel = CreateRuntimeText("BalanceLabel", panel.transform, 20f, TextAlignmentOptions.Right, Color.white);
+        balanceLabel.text = "所持数:";
+        balanceLabel.fontStyle = FontStyles.Bold;
+        SetFigmaRect(balanceLabel.rectTransform, 814f, 527f, 88f, 28f);
 
         GameObject imageObject = CreateUiObject("ItemImage", panel.transform);
         RectTransform imageRect = (RectTransform)imageObject.transform;
@@ -723,24 +753,96 @@ public sealed class DecorationPage : MonoBehaviour
         purchaseItemImage.raycastTarget = false;
         purchaseItemImage.gameObject.SetActive(false);
 
-        purchaseItemNameText = CreateRuntimeText("ItemName", panel.transform, 25f, TextAlignmentOptions.Center, new Color(0.08f, 0.08f, 0.08f, 1f));
+        purchaseItemNameText = CreateRuntimeText("ItemName", panel.transform, 22f, TextAlignmentOptions.Center, Color.white);
         purchaseItemNameText.fontStyle = FontStyles.Bold;
-        ConfigureCenteredRect(purchaseItemNameText.rectTransform, new Vector2(0f, 78f), new Vector2(500f, 110f));
+        SetFigmaRect(purchaseItemNameText.rectTransform, 710f, 430f, 500f, 34f);
+        purchaseItemNameText.gameObject.SetActive(false);
 
-        purchasePriceText = CreateRuntimeText("Price", panel.transform, 20f, TextAlignmentOptions.Center, new Color(0.08f, 0.08f, 0.08f, 1f));
+        purchasePriceText = CreateRuntimeText("Price", panel.transform, 22f, TextAlignmentOptions.Center, Color.white);
         purchasePriceText.fontStyle = FontStyles.Bold;
-        ConfigureCenteredRect(purchasePriceText.rectTransform, new Vector2(0f, -4f), new Vector2(500f, 34f));
+        purchasePriceText.enableAutoSizing = true;
+        purchasePriceText.fontSizeMin = 18f;
+        purchasePriceText.fontSizeMax = 22f;
+        SetFigmaRect(purchasePriceText.rectTransform, 978f, 526f, 50f, 31f);
 
-        purchaseBalanceText = CreateRuntimeText("Balance", panel.transform, 25f, TextAlignmentOptions.Center, new Color(0.95f, 0.75f, 1f, 1f));
-        ConfigureCenteredRect(purchaseBalanceText.rectTransform, new Vector2(105f, 20f), new Vector2(360f, 44f));
-        purchaseBalanceText.gameObject.SetActive(false);
+        purchaseBalanceText = CreateRuntimeText("Balance", panel.transform, 22f, TextAlignmentOptions.Center, PurchaseBalanceNormalColor);
+        purchaseBalanceText.fontStyle = FontStyles.Bold;
+        purchaseBalanceText.enableAutoSizing = true;
+        purchaseBalanceText.fontSizeMin = 18f;
+        purchaseBalanceText.fontSizeMax = 22f;
+        SetFigmaRect(purchaseBalanceText.rectTransform, 1048f, 526f, 50f, 31f);
 
         purchaseStatusText = CreateRuntimeText("Status", panel.transform, 20f, TextAlignmentOptions.Center, new Color(0.72f, 0.1f, 0.18f, 1f));
-        ConfigureCenteredRect(purchaseStatusText.rectTransform, new Vector2(0f, -38f), new Vector2(500f, 36f));
+        SetFigmaRect(purchaseStatusText.rectTransform, 710f, 568f, 500f, 30f);
+        purchaseStatusText.gameObject.SetActive(false);
 
-        purchaseYesButton = CreateRuntimeButton("YesButton", panel.transform, "はい", new Vector2(0f, -76f));
-        purchaseNoButton = CreateRuntimeButton("NoButton", panel.transform, "いいえ", new Vector2(0f, -132f));
+        purchaseYesButton = CreateFigmaSpriteButton("YesButton", panel.transform, "yes_normal", "yes_selected", 594f, 594f, 346f, 80f);
+        purchaseNoButton = CreateFigmaSpriteButton("NoButton", panel.transform, "no_normal", "no_selected", 981f, 594f, 346f, 80f);
         purchaseModal.SetActive(false);
+    }
+
+    private void DisableRaycastImage(GameObject target)
+    {
+        Image image = target.AddComponent<Image>();
+        image.color = new Color(1f, 1f, 1f, 0f);
+        image.raycastTarget = false;
+    }
+
+    private Image CreateFigmaImage(Transform parent, string objectName, string resourceName, float x, float y, float width, float height)
+    {
+        GameObject imageObject = CreateUiObject(objectName, parent);
+        Image image = imageObject.AddComponent<Image>();
+        image.sprite = LoadPurchaseConfirmSprite(resourceName);
+        image.preserveAspect = false;
+        image.raycastTarget = false;
+        SetFigmaRect((RectTransform)imageObject.transform, x, y, width, height);
+        return image;
+    }
+
+    private Button CreateFigmaSpriteButton(
+        string objectName,
+        Transform parent,
+        string normalResourceName,
+        string selectedResourceName,
+        float x,
+        float y,
+        float width,
+        float height)
+    {
+        GameObject buttonObject = CreateUiObject(objectName, parent);
+        RectTransform rect = (RectTransform)buttonObject.transform;
+        SetFigmaRect(rect, x, y, width, height);
+
+        Image image = buttonObject.AddComponent<Image>();
+        Sprite normal = LoadPurchaseConfirmSprite(normalResourceName);
+        Sprite selected = LoadPurchaseConfirmSprite(selectedResourceName);
+        image.sprite = normal;
+        image.raycastTarget = true;
+
+        Button button = buttonObject.AddComponent<Button>();
+        button.targetGraphic = image;
+        button.transition = Selectable.Transition.SpriteSwap;
+        button.spriteState = new SpriteState
+        {
+            highlightedSprite = selected,
+            selectedSprite = selected,
+            pressedSprite = selected,
+            disabledSprite = normal
+        };
+        return button;
+    }
+
+    private static Sprite LoadPurchaseConfirmSprite(string resourceName)
+    {
+        Texture2D texture = Resources.Load<Texture2D>(PurchaseConfirmResourceRoot + resourceName);
+        if (texture == null)
+            return null;
+
+        return Sprite.Create(
+            texture,
+            new Rect(0f, 0f, texture.width, texture.height),
+            new Vector2(0.5f, 0.5f),
+            100f);
     }
 
     private void MovePurchaseModalToCanvasOverlay()
@@ -887,6 +989,14 @@ public sealed class DecorationPage : MonoBehaviour
         rect.anchorMax = Vector2.one;
         rect.offsetMin = Vector2.zero;
         rect.offsetMax = Vector2.zero;
+    }
+
+    private static void SetFigmaRect(RectTransform rect, float x, float y, float width, float height)
+    {
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = new Vector2(x + width * 0.5f - 960f, 540f - y - height * 0.5f);
+        rect.sizeDelta = new Vector2(width, height);
     }
 
     private void SetPurchaseModalVisible(bool visible)
