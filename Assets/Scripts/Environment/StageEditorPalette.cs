@@ -17,7 +17,9 @@ namespace EditorTools
         I,
         J,
         K,
-        M
+        M,
+        N,
+        O
     }
 
     public enum WaterFloorFace
@@ -45,6 +47,8 @@ namespace EditorTools
         [SerializeField] private TileBase j;
         [SerializeField] private TileBase k;
         [SerializeField] private TileBase m;
+        [SerializeField] private TileBase n;
+        [SerializeField] private TileBase o;
 
         public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? "Stage" : displayName;
 
@@ -76,6 +80,10 @@ namespace EditorTools
                     return k;
                 case StageBlockFace.M:
                     return m;
+                case StageBlockFace.N:
+                    return n;
+                case StageBlockFace.O:
+                    return o;
                 default:
                     return null;
             }
@@ -99,7 +107,9 @@ namespace EditorTools
                    tile == i ||
                    tile == j ||
                    tile == k ||
-                   tile == m;
+                   tile == m ||
+                   tile == n ||
+                   tile == o;
         }
 
         public bool HasTile(StageBlockFace face)
@@ -124,6 +134,12 @@ namespace EditorTools
         public bool HasColumnTiles()
         {
             return j != null && k != null && m != null;
+        }
+
+        /// <summary>Whether both optional floor-to-wall corner faces are assigned.</summary>
+        public bool HasSurfaceCornerTiles()
+        {
+            return n != null && o != null;
         }
 
         public TileBase FirstAvailableTile()

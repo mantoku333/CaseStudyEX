@@ -23,6 +23,7 @@ public sealed class StageEditorGrassColumnTests
         palette = AssetDatabase.LoadAssetAtPath<StageEditorPalette>("Assets/Editor/StageEditorPalette.asset");
         Assert.That(palette, Is.Not.Null);
         Assert.That(palette.Stage2Blocks.HasColumnTiles(), Is.True);
+        Assert.That(palette.Stage2Blocks.HasSurfaceCornerTiles(), Is.True);
 
         GameObject grid = CreateObject("Grass Column Test Grid");
         grid.AddComponent<Grid>();
@@ -91,14 +92,14 @@ public sealed class StageEditorGrassColumnTests
     {
         Invoke("ApplyTileEditRectangle", Vector3Int.zero, new Vector3Int(12, 0, 0));
         Invoke("ApplyTileEditRectangle", Vector3Int.zero, new Vector3Int(0, height - 1, 0));
-        AssertLayout(Vector3Int.zero, "GBBBBBBBBBBBC");
+        AssertLayout(Vector3Int.zero, "OBBBBBBBBBBBC");
         AssertFace(0, height - 1, StageBlockFace.J);
         for (int y = 1; y < height - 1; y++) AssertFace(0, y, StageBlockFace.K);
 
         Invoke("EraseTile", new Vector3Int(0, 1, 0));
         AssertLayout(Vector3Int.zero, "ABBBBBBBBBBBC");
         Invoke("PaintTile", new Vector3Int(0, 1, 0));
-        AssertLayout(Vector3Int.zero, "GBBBBBBBBBBBC");
+        AssertLayout(Vector3Int.zero, "OBBBBBBBBBBBC");
     }
 
     [Test]
@@ -113,9 +114,9 @@ public sealed class StageEditorGrassColumnTests
             Invoke("PaintTile", mirror ? new Vector3Int(width + 1 - cell.x, cell.y, 0) : cell);
         }
 
-        string emptyRow = new string('O', width + 2);
-        AssertMirroredLayout(mirror, emptyRow, "OJ" + new string('O', width),
-            "OG" + new string('B', width - 2) + "CO", emptyRow);
+        string emptyRow = new string('X', width + 2);
+        AssertMirroredLayout(mirror, emptyRow, "XJ" + new string('X', width),
+            "XO" + new string('B', width - 2) + "CX", emptyRow);
     }
 
     [TestCase(true)]
@@ -124,7 +125,7 @@ public sealed class StageEditorGrassColumnTests
     {
         SeedLegacyHorizontalArm();
         Invoke(erase ? "EraseTile" : "PaintTile", new Vector3Int(0, erase ? 1 : 2, 0));
-        AssertLayout(Vector3Int.zero, erase ? "ABBBBBBBBBBBC" : "GBBBBBBBBBBBC");
+        AssertLayout(Vector3Int.zero, erase ? "ABBBBBBBBBBBC" : "OBBBBBBBBBBBC");
         AssertFace(12, 0, StageBlockFace.C);
     }
 
@@ -134,7 +135,196 @@ public sealed class StageEditorGrassColumnTests
         Invoke("ApplyTileEditRectangle", Vector3Int.zero, new Vector3Int(2, 0, 0));
         Invoke("ApplyTileEditRectangle", new Vector3Int(0, 2, 0), new Vector3Int(2, 2, 0));
         Invoke("PaintTile", new Vector3Int(1, 1, 0));
-        AssertLayout(Vector3Int.zero, "ABC", "OKO", "AHC");
+        AssertLayout(Vector3Int.zero, "ABC", "XKX", "AHC");
+    }
+
+    [Test]
+    public void SurfaceCorner_UpdatesWhenUpperDiagonalOrWallChanges([Values] bool mirror)
+    {
+        int cornerX = mirror ? 0 : 2;
+        int surfaceX = 1;
+        Invoke("ApplyTileEditRectangle", Vector3Int.zero, new Vector3Int(2, 0, 0));
+        Invoke("PaintTile", new Vector3Int(cornerX, 1, 0));
+        AssertFace(cornerX, 0, mirror ? StageBlockFace.O : StageBlockFace.N);
+
+        Invoke("PaintTile", new Vector3Int(surfaceX, 1, 0));
+        AssertFace(cornerX, 0, mirror ? StageBlockFace.G : StageBlockFace.I);
+        Invoke("EraseTile", new Vector3Int(surfaceX, 1, 0));
+        AssertFace(cornerX, 0, mirror ? StageBlockFace.O : StageBlockFace.N);
+
+        // Erase still repairs grass when a different, incomplete block set is selected.
+        SetField("selectedStageBlockSetIndex", 0);
+        Invoke("EraseTile", new Vector3Int(cornerX, 1, 0));
+        AssertLayout(Vector3Int.zero, "ABC");
+    }
+
+    [Test]
+    public void ThickTerrain_UsesSurfaceCornersAndTwoSidedFallback([Values] bool solidBelow)
+    {
+        int bottom = solidBelow ? -1 : 0;
+        Invoke("ApplyTileEditRectangle", new Vector3Int(0, bottom, 0), new Vector3Int(4, 0, 0));
+        Invoke("ApplyTileEditRectangle", new Vector3Int(2, 1, 0), new Vector3Int(4, 2, 0));
+        AssertFace(2, 0, StageBlockFace.N);
+        Invoke("EraseTile", new Vector3Int(3, 1, 0));
+        AssertFace(2, 0, solidBelow ? StageBlockFace.E : StageBlockFace.H);
+        Invoke("ApplyTileEditRectangle", new Vector3Int(0, 1, 0), new Vector3Int(2, 2, 0));
+        AssertFace(2, 0, StageBlockFace.O);
+    }
+
+    [Test]
+    public void SurfaceCorners_AreRecognizedForManualPlacementAndReplaceOnly([Values] bool mirror)
+    {
+        StageBlockFace face = mirror ? StageBlockFace.O : StageBlockFace.N;
+        SetEnum("stageBlockPaintMode", "ManualFace");
+        SetField("manualBlockFace", face);
+        Assert.That(Invoke("HasValidStagePaintTile"), Is.True);
+        Invoke("PaintTile", Vector3Int.zero);
+        AssertFace(0, 0, face);
+        Assert.That(Invoke("IsSolidBlockTile", palette.Stage2Blocks.GetTile(face)), Is.True);
+
+        SetEnum("stageBlockPaintMode", "AutoBlock");
+        SetEnum("stagePaintScope", "ReplaceExistingOnly");
+        Invoke("PaintTile", Vector3Int.zero);
+        AssertFace(0, 0, StageBlockFace.E);
+        Invoke("PaintTile", Vector3Int.up);
+        Assert.That(tilemap.HasTile(Vector3Int.up), Is.False);
+    }
+
+    [Test]
+    public void RecalculateAll_RepairsEveryGrassFaceAndPreservesOtherContentAndUndo()
+    {
+        SeedColumn(0, 0, 4);
+        for (int x = 5; x <= 7; x++) tilemap.SetTile(new Vector3Int(x, 0, 0), palette.Stage2Blocks.GetTile(StageBlockFace.M));
+        tilemap.SetTile(new Vector3Int(7, 1, 0), palette.Stage2Blocks.GetTile(StageBlockFace.N));
+        for (int x = 10; x <= 12; x++) tilemap.SetTile(new Vector3Int(x, 0, 0), palette.Stage2Blocks.GetTile(StageBlockFace.K));
+        tilemap.SetTile(new Vector3Int(10, 1, 0), palette.Stage2Blocks.GetTile(StageBlockFace.O));
+        tilemap.SetTile(new Vector3Int(15, 0, 0), palette.Stage2Blocks.GetTile(StageBlockFace.J));
+        tilemap.SetTile(new Vector3Int(17, 0, 0), palette.Stage2Blocks.GetTile(StageBlockFace.N));
+        tilemap.SetTile(new Vector3Int(19, 0, 0), palette.Stage2Blocks.GetTile(StageBlockFace.O));
+
+        TileBase[] foreignTiles =
+        {
+            palette.Stage1Blocks.FirstAvailableTile(), palette.Stage3Blocks.FirstAvailableTile(),
+            palette.WaterFloorTiles.FirstAvailableTile(), palette.LegacyStageTile, CreateBlocker("Unknown")
+        };
+        for (int index = 0; index < foreignTiles.Length; index++)
+            tilemap.SetTile(new Vector3Int(25 + index, 0, 0), foreignTiles[index]);
+        Tilemap otherTilemap = CreateTilemap(tilemap.transform.parent);
+        otherTilemap.SetTile(Vector3Int.zero, palette.Stage2Blocks.GetTile(StageBlockFace.N));
+
+        Vector3Int decoratedCell = new Vector3Int(7, 0, 0);
+        Matrix4x4 transform = Matrix4x4.Rotate(Quaternion.Euler(0, 0, 180));
+        tilemap.SetTileFlags(decoratedCell, TileFlags.None);
+        tilemap.SetColor(decoratedCell, Color.cyan);
+        tilemap.SetTransformMatrix(decoratedCell, transform);
+        tilemap.SetTileFlags(decoratedCell, TileFlags.LockAll);
+        BoundsInt bounds = tilemap.cellBounds;
+        TileBase[] originalTiles = tilemap.GetTilesBlock(bounds);
+
+        SetField("selectedStageBlockSetIndex", 0);
+        SetEnum("stageTilePaintKind", "WaterFloor");
+        SetEnum("stageBlockPaintMode", "ManualFace");
+        SetField("hasTileSelection", true);
+        SetField("selectedBounds", new BoundsInt(0, 0, 0, 1, 1, 1));
+        Undo.IncrementCurrentGroup();
+        Assert.That(Invoke("RecalculateAllGrassTiles"), Is.EqualTo(15));
+        Undo.FlushUndoRecordObjects();
+
+        AssertColumn(0, 0, 4);
+        AssertLayout(new Vector3Int(5, 0, 0), "XXJ", "ABN");
+        AssertLayout(new Vector3Int(10, 0, 0), "JXX", "OBC");
+        foreach (int x in new[] { 15, 17, 19 }) AssertFace(x, 0, StageBlockFace.E);
+        for (int index = 0; index < foreignTiles.Length; index++)
+            Assert.That(tilemap.GetTile(new Vector3Int(25 + index, 0, 0)), Is.SameAs(foreignTiles[index]));
+        Assert.That(otherTilemap.GetTile(Vector3Int.zero), Is.SameAs(palette.Stage2Blocks.GetTile(StageBlockFace.N)));
+        Assert.That(tilemap.GetColor(decoratedCell), Is.EqualTo(Color.cyan));
+        Assert.That(tilemap.GetTransformMatrix(decoratedCell), Is.EqualTo(transform));
+        Assert.That(tilemap.GetTileFlags(decoratedCell), Is.EqualTo(TileFlags.LockAll));
+        Assert.That(tilemap.cellBounds, Is.EqualTo(bounds));
+        TileBase[] resolvedTiles = tilemap.GetTilesBlock(bounds);
+        for (int index = 0; index < originalTiles.Length; index++)
+            Assert.That(resolvedTiles[index] != null, Is.EqualTo(originalTiles[index] != null));
+
+        // A no-op click must not create an extra Undo step.
+        Undo.IncrementCurrentGroup();
+        Assert.That(Invoke("RecalculateAllGrassTiles"), Is.EqualTo(0));
+        Undo.FlushUndoRecordObjects();
+        Undo.PerformUndo();
+        Assert.That(tilemap.GetTilesBlock(bounds), Is.EqualTo(originalTiles));
+        Undo.PerformRedo();
+        Assert.That(tilemap.GetTilesBlock(bounds), Is.EqualTo(resolvedTiles));
+        Assert.That(tilemap.GetColor(decoratedCell), Is.EqualTo(Color.cyan));
+        Assert.That(tilemap.GetTransformMatrix(decoratedCell), Is.EqualTo(transform));
+        Assert.That(tilemap.GetTileFlags(decoratedCell), Is.EqualTo(TileFlags.LockAll));
+    }
+
+    [TestCase("n")]
+    [TestCase("o")]
+    [TestCase("k")]
+    public void OptionalGrassGroups_FallBackIndependentlyWithoutErasing(string missingFace)
+    {
+        StageEditorPalette incompletePalette = Object.Instantiate(palette);
+        objectsToDestroy.Add(incompletePalette);
+        SerializedObject serialized = new SerializedObject(incompletePalette);
+        serialized.FindProperty("stage2Blocks").FindPropertyRelative(missingFace).objectReferenceValue = null;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        SetField("palette", incompletePalette);
+        Assert.That(Invoke("HasValidStagePaintTile"), Is.True);
+        Assert.That(Invoke("CanRecalculateAllGrassTiles"), Is.True);
+
+        Invoke("ApplyTileEditRectangle", Vector3Int.zero, new Vector3Int(2, 0, 0));
+        Invoke("PaintTile", new Vector3Int(2, 1, 0));
+        AssertFace(2, 0, missingFace == "k" ? StageBlockFace.N : StageBlockFace.I);
+        AssertFace(2, 1, missingFace == "k" ? StageBlockFace.A : StageBlockFace.J);
+        AssertLayout(Vector3Int.zero, missingFace == "k" ? "ABN" : "ABI");
+        Assert.That(Invoke("RecalculateAllGrassTiles"), Is.EqualTo(0));
+
+        SetEnum("stageBlockPaintMode", "ManualFace");
+        foreach (StageBlockFace face in new[] { StageBlockFace.N, StageBlockFace.O })
+        {
+            SetField("manualBlockFace", face);
+            Assert.That(Invoke("HasValidStagePaintTile"), Is.EqualTo(face.ToString().ToLowerInvariant() != missingFace));
+        }
+    }
+
+    [TestCase("palette")]
+    [TestCase("targetStageTilemap")]
+    [TestCase("a")]
+    public void RecalculateAll_WithoutRequiredDataDoesNothing(string missing)
+    {
+        SeedColumn(0, 0, 4);
+        if (missing == "a")
+        {
+            StageEditorPalette incompletePalette = Object.Instantiate(palette);
+            objectsToDestroy.Add(incompletePalette);
+            SerializedObject serialized = new SerializedObject(incompletePalette);
+            serialized.FindProperty("stage2Blocks").FindPropertyRelative("a").objectReferenceValue = null;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            SetField("palette", incompletePalette);
+        }
+        else SetField(missing, null);
+
+        Assert.That(Invoke("CanRecalculateAllGrassTiles"), Is.False);
+        Assert.That(Invoke("RecalculateAllGrassTiles"), Is.EqualTo(0));
+        for (int y = 0; y < 4; y++) AssertFace(0, y, StageBlockFace.E);
+    }
+
+    [TestCase("Stage1")]
+    [TestCase("Water")]
+    [TestCase("Unknown")]
+    public void RecalculateAll_SurfaceCornersUseSameMapOccupancy(string blockerKind)
+    {
+        TileBase blocker = CreateBlocker(blockerKind);
+        tilemap.SetTile(Vector3Int.zero, palette.Stage2Blocks.GetTile(StageBlockFace.E));
+        tilemap.SetTile(Vector3Int.up, blocker);
+        tilemap.SetTile(Vector3Int.left, blocker);
+        Tilemap otherTilemap = CreateTilemap(tilemap.transform.parent);
+        otherTilemap.SetTile(Vector3Int.up + Vector3Int.left, blocker);
+
+        Assert.That(Invoke("RecalculateAllGrassTiles"), Is.EqualTo(1));
+        AssertFace(0, 0, StageBlockFace.N);
+        Assert.That(tilemap.GetTile(Vector3Int.up), Is.SameAs(blocker));
+        Assert.That(tilemap.GetTile(Vector3Int.left), Is.SameAs(blocker));
     }
 
     [Test]
@@ -145,12 +335,12 @@ public sealed class StageEditorGrassColumnTests
     }
 
     [Test]
-    public void HorizontalRowWithConnectionsAboveAndBelow_KeepsLegacyFaces()
+    public void HorizontalRowWithConnectionsAboveAndBelow_UsesSurfaceCorner()
     {
         Invoke("ApplyTileEditRectangle", Vector3Int.zero, new Vector3Int(4, 0, 0));
         Invoke("PaintTile", new Vector3Int(0, 1, 0));
         Invoke("PaintTile", new Vector3Int(4, -1, 0));
-        AssertLayout(new Vector3Int(0, -1, 0), "JOOOO", "GBBBC", "OOOOM");
+        AssertLayout(new Vector3Int(0, -1, 0), "JXXXX", "OBBBC", "XXXXM");
     }
 
     [TestCase(0)]
@@ -215,8 +405,8 @@ public sealed class StageEditorGrassColumnTests
         Assert.That(result.ConvertedColumns, Is.EqualTo(1));
         Assert.That(result.ConvertedTiles, Is.EqualTo(3));
         AssertLayout(Vector3Int.zero, growsUp
-            ? new[] { "OOOOO", "OOJOO", "OOKOO", "OOKOO", "OOEEO", "OOOOO" }
-            : new[] { "OOOOO", "OEEOO", "OOKOO", "OOKOO", "OOMOO", "OOOOO" });
+            ? new[] { "XXXXX", "XXJXX", "XXKXX", "XXKXX", "XXEEX", "XXXXX" }
+            : new[] { "XXXXX", "XEEXX", "XXKXX", "XXKXX", "XXMXX", "XXXXX" });
         Assert.That(StageBlockColumnConversion.ConvertTilemap(tilemap, palette.Stage2Blocks, false).ConvertedTiles,
             Is.Zero);
     }
@@ -234,7 +424,7 @@ public sealed class StageEditorGrassColumnTests
         StageBlockColumnConversion.Result result = StageBlockColumnConversion.ConvertTilemap(
             tilemap, palette.Stage2Blocks, false);
         Assert.That(result.ConvertedTiles, Is.EqualTo(1));
-        AssertLayout(Vector3Int.zero, "EEE", "OKO", "EEE");
+        AssertLayout(Vector3Int.zero, "EEE", "XKX", "EEE");
     }
 
     [Test]
@@ -378,7 +568,7 @@ public sealed class StageEditorGrassColumnTests
         Undo.IncrementCurrentGroup();
         int group = Undo.GetCurrentGroup();
         Invoke("ApplyBrushCell", new Vector3Int(0, 2, 0));
-        AssertLayout(Vector3Int.zero, "GBBBBBBBBBBBC");
+        AssertLayout(Vector3Int.zero, "OBBBBBBBBBBBC");
         AssertFace(0, 1, StageBlockFace.K);
         Undo.FlushUndoRecordObjects();
         Undo.CollapseUndoOperations(group);
@@ -386,7 +576,7 @@ public sealed class StageEditorGrassColumnTests
         AssertLayout(Vector3Int.zero, "GHHHHHHHHHHHI");
         AssertFace(0, 1, StageBlockFace.J);
         Undo.PerformRedo();
-        AssertLayout(Vector3Int.zero, "GBBBBBBBBBBBC");
+        AssertLayout(Vector3Int.zero, "OBBBBBBBBBBBC");
         AssertFace(0, 1, StageBlockFace.K);
     }
 
@@ -491,7 +681,8 @@ public sealed class StageEditorGrassColumnTests
     public void ImportedTiles_AlignToCellsAndRetainFullGridCollisions()
     {
         Tile reference = (Tile)palette.Stage2Blocks.GetTile(StageBlockFace.A);
-        foreach (StageBlockFace face in new[] { StageBlockFace.J, StageBlockFace.K, StageBlockFace.M })
+        foreach (StageBlockFace face in new[]
+                 { StageBlockFace.J, StageBlockFace.K, StageBlockFace.M, StageBlockFace.N, StageBlockFace.O })
         {
             Tile tile = (Tile)palette.Stage2Blocks.GetTile(face);
             Assert.That(tile.sprite, Is.Not.Null);
@@ -515,6 +706,15 @@ public sealed class StageEditorGrassColumnTests
         {
             Assert.That(collider.OverlapPoint(new Vector2(0.5f, y + 0.5f)), Is.True);
         }
+
+        tilemap.SetTile(new Vector3Int(3, 0, 0), palette.Stage2Blocks.GetTile(StageBlockFace.N));
+        tilemap.SetTile(new Vector3Int(4, 0, 0), palette.Stage2Blocks.GetTile(StageBlockFace.O));
+        collider.ProcessTilemapChanges();
+        Physics2D.SyncTransforms();
+        foreach (int x in new[] { 3, 4 })
+        foreach (float dx in new[] { 0.05f, 0.95f })
+        foreach (float dy in new[] { 0.05f, 0.95f })
+            Assert.That(collider.OverlapPoint(new Vector2(x + dx, dy)), Is.True);
     }
 
     private void SeedColumn(int x, int bottom, int height)
@@ -554,8 +754,8 @@ public sealed class StageEditorGrassColumnTests
     private void AssertBentStroke(bool growsUp, bool mirror)
     {
         string[] rows = growsUp
-            ? new[] { "OOOOO", "OOJOO", "OOKOO", "OOKOO", "OOGCO", "OOOOO" }
-            : new[] { "OOOOO", "OACOO", "OOKOO", "OOKOO", "OOMOO", "OOOOO" };
+            ? new[] { "XXXXX", "XXJXX", "XXKXX", "XXKXX", "XXOCX", "XXXXX" }
+            : new[] { "XXXXX", "XACXX", "XXKXX", "XXKXX", "XXMXX", "XXXXX" };
         AssertMirroredLayout(mirror, rows);
     }
 
@@ -570,7 +770,8 @@ public sealed class StageEditorGrassColumnTests
                 for (int x = 0; x < row.Length; x++)
                 {
                     row[x] = row[x] == 'A' ? 'C' : row[x] == 'C' ? 'A' :
-                        row[x] == 'G' ? 'I' : row[x] == 'I' ? 'G' : row[x];
+                        row[x] == 'G' ? 'I' : row[x] == 'I' ? 'G' :
+                        row[x] == 'N' ? 'O' : row[x] == 'O' ? 'N' : row[x];
                 }
 
                 rows[y] = new string(row);
@@ -587,7 +788,7 @@ public sealed class StageEditorGrassColumnTests
             for (int x = 0; x < rows[row].Length; x++)
             {
                 Vector3Int cell = bottomLeft + new Vector3Int(x, rows.Length - row - 1, 0);
-                if (rows[row][x] == 'O')
+                if (rows[row][x] == 'X')
                 {
                     Assert.That(tilemap.HasTile(cell), Is.False, cell.ToString());
                 }
@@ -610,7 +811,7 @@ public sealed class StageEditorGrassColumnTests
         for (int y = 0; y < 13; y++)
         {
             StageBlockFace face = y == connectionY
-                ? y == 0 ? StageBlockFace.G : y == 12 ? StageBlockFace.A : StageBlockFace.D
+                ? y == 12 ? StageBlockFace.A : StageBlockFace.O
                 : y == 0 ? StageBlockFace.M : y == 12 ? StageBlockFace.J : StageBlockFace.K;
             AssertFace(0, y, face);
         }
@@ -684,9 +885,9 @@ public sealed class StageEditorGrassColumnTests
         field.SetValue(window, Enum.Parse(field.FieldType, value));
     }
 
-    private void Invoke(string name, params object[] args)
+    private object Invoke(string name, params object[] args)
     {
-        typeof(StageEditorWindow).GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic).Invoke(window, args);
+        return typeof(StageEditorWindow).GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic).Invoke(window, args);
     }
 }
 
