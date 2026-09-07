@@ -21,25 +21,43 @@ namespace EditorTools
             return !replaceExistingOnly || hasExistingBlock;
         }
 
-        /// <summary>Uses column faces only after the complete column has passed isolation checks.</summary>
+        /// <summary>Resolves a narrow cell independently of connections elsewhere in its column.</summary>
+        public static bool TryResolveColumn(StageBlockNeighborState neighbors, out StageBlockFace face)
+        {
+            face = StageBlockFace.E;
+            if (neighbors.left || neighbors.right || (!neighbors.up && !neighbors.down))
+            {
+                return false;
+            }
+
+            face = !neighbors.up ? StageBlockFace.J : !neighbors.down ? StageBlockFace.M : StageBlockFace.K;
+            return true;
+        }
+
+        /// <summary>Uses column faces when enabled by the caller.</summary>
         public static StageBlockFace Resolve(StageBlockNeighborState neighbors, bool isIsolatedVerticalColumn)
         {
-            if (isIsolatedVerticalColumn && !neighbors.left && !neighbors.right)
+            if (isIsolatedVerticalColumn && TryResolveColumn(neighbors, out StageBlockFace face))
             {
-                if (!neighbors.up && neighbors.down)
-                {
-                    return StageBlockFace.J;
-                }
+                return face;
+            }
 
-                if (neighbors.up && neighbors.down)
-                {
-                    return StageBlockFace.K;
-                }
+            return Resolve(neighbors);
+        }
 
-                if (neighbors.up && !neighbors.down)
-                {
-                    return StageBlockFace.M;
-                }
+        /// <summary>Grass arms inherit their top/bottom orientation from the complete horizontal run.</summary>
+        public static StageBlockFace ResolveGrass(
+            StageBlockNeighborState neighbors, bool rowHasUpNeighbor, bool rowHasDownNeighbor)
+        {
+            if (TryResolveColumn(neighbors, out StageBlockFace face))
+            {
+                return face;
+            }
+
+            if (!neighbors.up && !neighbors.down && (neighbors.left || neighbors.right) &&
+                rowHasUpNeighbor && !rowHasDownNeighbor)
+            {
+                return !neighbors.left ? StageBlockFace.G : !neighbors.right ? StageBlockFace.I : StageBlockFace.H;
             }
 
             return Resolve(neighbors);

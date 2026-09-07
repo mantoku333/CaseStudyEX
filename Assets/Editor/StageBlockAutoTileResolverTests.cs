@@ -77,6 +77,31 @@ public sealed class StageBlockAutoTileResolverTests
         Assert.AreEqual(StageBlockFace.F, StageBlockAutoTileResolver.Resolve(neighbors));
     }
 
+    [TestCase(true)]
+    [TestCase(false)]
+    public void ResolveGrass_CeilingFloorConnector_UsesKRegardlessOfDiagonals(bool connectsRight)
+    {
+        StageBlockNeighborState neighbors = new StageBlockNeighborState
+        {
+            up = true,
+            down = true,
+            upRight = connectsRight,
+            downRight = connectsRight,
+            upLeft = !connectsRight,
+            downLeft = !connectsRight
+        };
+
+        Assert.AreEqual(StageBlockFace.K, StageBlockAutoTileResolver.ResolveGrass(neighbors, true, true));
+    }
+
+    [Test]
+    public void ResolveGrass_IsolatedCell_UsesE()
+    {
+        Assert.AreEqual(StageBlockFace.E,
+            StageBlockAutoTileResolver.ResolveGrass(default, false, false));
+        Assert.IsFalse(StageBlockAutoTileResolver.TryResolveColumn(default, out _));
+    }
+
     [Test]
     public void ExpandByOneCell_ExpandsEditedBoundsByOneCellBorder()
     {

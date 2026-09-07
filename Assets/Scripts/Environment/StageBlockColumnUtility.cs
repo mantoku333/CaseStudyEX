@@ -43,6 +43,60 @@ namespace EditorTools
             return columns;
         }
 
+        /// <summary>Finds complete horizontal grass runs touching the columns, visiting each run once.</summary>
+        public static List<BoundsInt> CollectRows(IEnumerable<BoundsInt> columns, Func<Vector3Int, bool> isGrassBlock)
+        {
+            List<BoundsInt> rows = new List<BoundsInt>();
+            HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
+            foreach (BoundsInt column in columns)
+            {
+                foreach (Vector3Int seed in column.allPositionsWithin)
+                {
+                    if (visited.Contains(seed) || !isGrassBlock(seed))
+                    {
+                        continue;
+                    }
+
+                    Vector3Int left = seed;
+                    while (isGrassBlock(left + Vector3Int.left))
+                    {
+                        left += Vector3Int.left;
+                    }
+
+                    Vector3Int right = seed;
+                    while (isGrassBlock(right + Vector3Int.right))
+                    {
+                        right += Vector3Int.right;
+                    }
+
+                    BoundsInt row = new BoundsInt(left.x, left.y, left.z, right.x - left.x + 1, 1, 1);
+                    rows.Add(row);
+                    foreach (Vector3Int cell in row.allPositionsWithin)
+                    {
+                        visited.Add(cell);
+                    }
+                }
+            }
+
+            return rows;
+        }
+
+        /// <summary>Painting and conversion both treat any occupied cell on this tilemap as a neighbor.</summary>
+        public static StageBlockNeighborState GetNeighborState(Vector3Int cell, Func<Vector3Int, bool> hasTile)
+        {
+            return new StageBlockNeighborState
+            {
+                left = hasTile(cell + Vector3Int.left),
+                right = hasTile(cell + Vector3Int.right),
+                up = hasTile(cell + Vector3Int.up),
+                down = hasTile(cell + Vector3Int.down),
+                upLeft = hasTile(cell + Vector3Int.up + Vector3Int.left),
+                upRight = hasTile(cell + Vector3Int.up + Vector3Int.right),
+                downLeft = hasTile(cell + Vector3Int.down + Vector3Int.left),
+                downRight = hasTile(cell + Vector3Int.down + Vector3Int.right)
+            };
+        }
+
         /// <summary>Requires at least two cells and an empty edge border; diagonals do not count.</summary>
         public static bool IsIsolatedColumn(BoundsInt column, Func<Vector3Int, bool> hasTile)
         {

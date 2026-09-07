@@ -8,7 +8,7 @@ using UnityEngine.Tilemaps;
 
 namespace EditorTools
 {
-    /// <summary>Converts existing isolated grass columns without retiling other scene content.</summary>
+    /// <summary>Converts eligible grass cells to column faces without retiling other scene content.</summary>
     public static class StageBlockColumnConversion
     {
         public const string FixCapcomScenePath = "Assets/Scenes/FixScenes/Fix_CAPCOM.unity";
@@ -26,7 +26,7 @@ namespace EditorTools
             }
         }
 
-        /// <summary>Changes only eligible columns, preserving each cell's color, transform, and flags.</summary>
+        /// <summary>Changes only eligible cells, preserving each cell's color, transform, and flags.</summary>
         public static Result ConvertTilemap(Tilemap tilemap, StageBlockTileSet stage2, bool recordUndo = true)
         {
             if (tilemap == null || stage2 == null || !stage2.HasAllTiles() || !stage2.HasColumnTiles())
@@ -41,19 +41,15 @@ namespace EditorTools
 
             foreach (BoundsInt column in columns)
             {
-                if (!StageBlockColumnUtility.IsIsolatedColumn(column, tilemap.HasTile))
-                {
-                    continue;
-                }
-
                 int changesBeforeColumn = changes.Count;
                 foreach (Vector3Int cell in column.allPositionsWithin)
                 {
-                    StageBlockFace face = StageBlockAutoTileResolver.Resolve(new StageBlockNeighborState
+                    if (!StageBlockAutoTileResolver.TryResolveColumn(
+                        StageBlockColumnUtility.GetNeighborState(cell, tilemap.HasTile), out StageBlockFace face))
                     {
-                        up = cell.y < column.yMax - 1,
-                        down = cell.y > column.yMin
-                    }, true);
+                        continue;
+                    }
+
                     TileBase tile = stage2.GetTile(face);
                     if (tilemap.GetTile(cell) == tile)
                     {
@@ -77,7 +73,7 @@ namespace EditorTools
 
             if (changes.Count > 0 && recordUndo)
             {
-                Undo.RegisterCompleteObjectUndo(tilemap, "Convert Isolated Grass Columns");
+                Undo.RegisterCompleteObjectUndo(tilemap, "Convert Grass Column Tiles");
             }
 
             foreach (var entry in changes)

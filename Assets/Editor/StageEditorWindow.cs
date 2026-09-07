@@ -805,13 +805,7 @@ namespace EditorTools
                         // Brush モードなら、押した瞬間に1マス編集する
                         if (tileEditMode == TileEditMode.Brush)
                         {
-                            if (CanApplyTileEdit(cell))
-                            {
-                                RegisterTileDragUndoIfNeeded();
-                                ApplyTileEdit(cell);
-                            }
-
-                            lastDraggedCell = cell;
+                            ApplyBrushCell(cell);
                         }
                         // このイベントはここで処理済みにする
                         e.Use();
@@ -837,17 +831,7 @@ namespace EditorTools
 
                         if (tileEditMode == TileEditMode.Brush)
                         {
-                            // Brush モードでは、前回と違うセルに入ったときだけ編集する
-                            if (cell != lastDraggedCell)
-                            {
-                                if (CanApplyTileEdit(cell))
-                                {
-                                    RegisterTileDragUndoIfNeeded();
-                                    ApplyTileEdit(cell);
-                                }
-
-                                lastDraggedCell = cell;
-                            }
+                            ApplyBrushCell(cell);
                         }
                         else
                         {
@@ -873,13 +857,7 @@ namespace EditorTools
                             dragCurrentCell = cell;
                         }
 
-                        // Rectangle モードなら、開始セルから終了セルまでを一括編集する
-                        if (tileEditMode == TileEditMode.Rectangle)
-                        {
-                            ApplyTileEditRectangle(dragStartCell, dragCurrentCell);
-                        }
-                        // ドラッグ状態をリセット
-                        CancelTileDrag();
+                        CompleteTileDrag();
                         e.Use();
                         break;
                     }
@@ -1321,12 +1299,23 @@ namespace EditorTools
 
             List<BoundsInt> columns = StageBlockColumnUtility.CollectColumns(
                 bounds, cell => stage2.Contains(targetStageTilemap.GetTile(cell)));
-            foreach (BoundsInt column in columns)
+            List<BoundsInt> rows = StageBlockColumnUtility.CollectRows(
+                columns, cell => stage2.Contains(targetStageTilemap.GetTile(cell)));
+            foreach (BoundsInt row in rows)
             {
-                bool isolated = StageBlockColumnUtility.IsIsolatedColumn(column, targetStageTilemap.HasTile);
-                foreach (Vector3Int cell in column.allPositionsWithin)
+                bool hasUpNeighbor = false;
+                bool hasDownNeighbor = false;
+                foreach (Vector3Int cell in row.allPositionsWithin)
                 {
-                    StageBlockFace face = StageBlockAutoTileResolver.Resolve(GetNeighborState(cell), isolated);
+                    hasUpNeighbor |= targetStageTilemap.HasTile(cell + Vector3Int.up);
+                    hasDownNeighbor |= targetStageTilemap.HasTile(cell + Vector3Int.down);
+                }
+
+                foreach (Vector3Int cell in row.allPositionsWithin)
+                {
+                    StageBlockFace face = StageBlockAutoTileResolver.ResolveGrass(
+                        StageBlockColumnUtility.GetNeighborState(cell, targetStageTilemap.HasTile),
+                        hasUpNeighbor, hasDownNeighbor);
                     TileBase resolvedTile = stage2.GetTile(face);
                     if (targetStageTilemap.GetTile(cell) != resolvedTile)
                     {
@@ -1508,6 +1497,42 @@ namespace EditorTools
 
             // Handles 色を元に戻す
             Handles.color = oldColor;
+        }
+
+        /// <summary>Edits one sampled brush cell, including the release position.</summary>
+        private void ApplyBrushCell(Vector3Int cell)
+        {
+            if (cell == lastDraggedCell)
+            {
+                return;
+            }
+
+            if (CanApplyTileEdit(cell))
+            {
+                RegisterTileDragUndoIfNeeded();
+                ApplyTileEdit(cell);
+            }
+
+            lastDraggedCell = cell;
+        }
+
+        private void CompleteTileDrag()
+        {
+            if (!isTileDragging)
+            {
+                return;
+            }
+
+            if (tileEditMode == TileEditMode.Rectangle)
+            {
+                ApplyTileEditRectangle(dragStartCell, dragCurrentCell);
+            }
+            else if (tileEditMode == TileEditMode.Brush)
+            {
+                ApplyBrushCell(dragCurrentCell);
+            }
+
+            CancelTileDrag();
         }
 
         /// <summary>
