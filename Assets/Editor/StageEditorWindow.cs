@@ -192,6 +192,17 @@ namespace EditorTools
                 typeof(Tilemap),
                 true);
 
+            using (new EditorGUI.DisabledScope(!CanRecalculateAllGrassTiles()))
+            {
+                if (GUILayout.Button(new GUIContent("Recalculate Grass Tiles",
+                    "Recalculate all Stage2 grass faces on the target tilemap. Supports Undo; does not save the scene.")))
+                {
+                    int changedTiles = RecalculateAllGrassTiles();
+                    Debug.Log($"[Grass Tiles] Recalculated {targetStageTilemap.name}: {changedTiles} tiles changed.",
+                        targetStageTilemap);
+                }
+            }
+
             PlayerStatsData newStatsData = (PlayerStatsData)EditorGUILayout.ObjectField(
                 "Player Stats",
                 playerStatsData,
@@ -805,13 +816,7 @@ namespace EditorTools
                         // Brush モードなら、押した瞬間に1マス編集する
                         if (tileEditMode == TileEditMode.Brush)
                         {
-                            if (CanApplyTileEdit(cell))
-                            {
-                                RegisterTileDragUndoIfNeeded();
-                                ApplyTileEdit(cell);
-                            }
-
-                            lastDraggedCell = cell;
+                            ApplyBrushCell(cell);
                         }
                         // このイベントはここで処理済みにする
                         e.Use();
@@ -837,17 +842,7 @@ namespace EditorTools
 
                         if (tileEditMode == TileEditMode.Brush)
                         {
-                            // Brush モードでは、前回と違うセルに入ったときだけ編集する
-                            if (cell != lastDraggedCell)
-                            {
-                                if (CanApplyTileEdit(cell))
-                                {
-                                    RegisterTileDragUndoIfNeeded();
-                                    ApplyTileEdit(cell);
-                                }
-
-                                lastDraggedCell = cell;
-                            }
+                            ApplyBrushCell(cell);
                         }
                         else
                         {
@@ -873,13 +868,7 @@ namespace EditorTools
                             dragCurrentCell = cell;
                         }
 
-                        // Rectangle モードなら、開始セルから終了セルまでを一括編集する
-                        if (tileEditMode == TileEditMode.Rectangle)
-                        {
-                            ApplyTileEditRectangle(dragStartCell, dragCurrentCell);
-                        }
-                        // ドラッグ状態をリセット
-                        CancelTileDrag();
+                        CompleteTileDrag();
                         e.Use();
                         break;
                     }
@@ -959,7 +948,7 @@ namespace EditorTools
             return labels;
         }
 
-        private static StageBlockFace DrawManualBlockFaceGrid(StageBlockFace selectedFace)
+        private StageBlockFace DrawManualBlockFaceGrid(StageBlockFace selectedFace)
         {
             int selectedIndex = (int)selectedFace;
 
@@ -977,7 +966,34 @@ namespace EditorTools
                 }
             }
 
-            return (StageBlockFace)selectedIndex;
+            selectedFace = (StageBlockFace)selectedIndex;
+            if (selectedStageBlockSetIndex == 1)
+            {
+                StageBlockTileSet grassTiles = GetSelectedStageBlockTileSet();
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    selectedFace = DrawOptionalGrassFaceButton(selectedFace, StageBlockFace.N,
+                        "N: 左の床に接続", grassTiles);
+                    selectedFace = DrawOptionalGrassFaceButton(selectedFace, StageBlockFace.O,
+                        "O: 右の床に接続", grassTiles);
+                }
+            }
+
+            return selectedFace;
+        }
+
+        private static StageBlockFace DrawOptionalGrassFaceButton(
+            StageBlockFace selectedFace, StageBlockFace face, string label, StageBlockTileSet grassTiles)
+        {
+            using (new EditorGUI.DisabledScope(grassTiles == null || !grassTiles.HasTile(face)))
+            {
+                if (GUILayout.Toggle(selectedFace == face, label, EditorStyles.miniButton))
+                {
+                    return face;
+                }
+            }
+
+            return selectedFace;
         }
 
         private StageBlockTileSet GetSelectedStageBlockTileSet()
@@ -1298,16 +1314,10 @@ namespace EditorTools
             }
 
             StageBlockTileSet tileSet = GetSelectedStageBlockTileSet();
-            if (tileSet == null || !tileSet.HasAllTiles())
+            if (tileSet != null && tileSet.HasAllTiles())
             {
-                return;
-            }
-
-            for (int y = bounds.yMin; y < bounds.yMax; y++)
-            {
-                for (int x = bounds.xMin; x < bounds.xMax; x++)
+                foreach (Vector3Int cell in bounds.allPositionsWithin)
                 {
-                    Vector3Int cell = new Vector3Int(x, y, 0);
                     if (!IsSolidBlockTile(targetStageTilemap.GetTile(cell)))
                     {
                         continue;
@@ -1317,6 +1327,95 @@ namespace EditorTools
                     SetTileWithTransform(cell, tileSet.GetTile(face), Matrix4x4.identity);
                 }
             }
+
+            // Erasing must also repair Stage2 grass when another, incomplete set is selected.
+            StageBlockTileSet stage2 = palette != null ? palette.Stage2Blocks : null;
+            if (stage2 == null || !stage2.HasAllTiles())
+            {
+                return;
+            }
+
+            List<BoundsInt> columns = StageBlockColumnUtility.CollectColumns(
+                bounds, cell => stage2.Contains(targetStageTilemap.GetTile(cell)));
+            List<BoundsInt> rows = StageBlockColumnUtility.CollectRows(
+                columns, cell => stage2.Contains(targetStageTilemap.GetTile(cell)));
+            RecalculateGrassTiles(stage2, rows, false);
+        }
+
+        private bool CanRecalculateAllGrassTiles()
+        {
+            return !EditorApplication.isPlayingOrWillChangePlaymode &&
+                   targetStageTilemap != null && palette != null &&
+                   palette.Stage2Blocks != null && palette.Stage2Blocks.HasAllTiles();
+        }
+
+        private int RecalculateAllGrassTiles()
+        {
+            if (!CanRecalculateAllGrassTiles())
+            {
+                return 0;
+            }
+
+            int changedTiles = RecalculateGrassTiles(
+                palette.Stage2Blocks, new[] { targetStageTilemap.cellBounds }, true);
+            if (changedTiles > 0 && targetStageTilemap.gameObject.scene.IsValid())
+            {
+                EditorSceneManager.MarkSceneDirty(targetStageTilemap.gameObject.scene);
+                SceneView.RepaintAll();
+            }
+
+            return changedTiles;
+        }
+
+        /// <summary>Retiles recognized grass only, preserving cell properties and existing occupancy.</summary>
+        private int RecalculateGrassTiles(StageBlockTileSet grassTiles, IEnumerable<BoundsInt> regions, bool recordUndo)
+        {
+            bool useColumnFaces = grassTiles.HasColumnTiles();
+            bool useSurfaceCornerFaces = grassTiles.HasSurfaceCornerTiles();
+            List<(TileChangeData change, TileFlags flags)> changes = new List<(TileChangeData, TileFlags)>();
+            HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
+
+            foreach (BoundsInt region in regions)
+            {
+                foreach (Vector3Int cell in region.allPositionsWithin)
+                {
+                    TileBase currentTile = targetStageTilemap.GetTile(cell);
+                    if (!grassTiles.Contains(currentTile) || !visited.Add(cell))
+                    {
+                        continue;
+                    }
+
+                    StageBlockFace face = StageBlockAutoTileResolver.ResolveGrass(
+                        StageBlockColumnUtility.GetNeighborState(cell, targetStageTilemap.HasTile),
+                        useColumnFaces, useSurfaceCornerFaces);
+                    TileBase resolvedTile = grassTiles.GetTile(face);
+                    if (resolvedTile == null || currentTile == resolvedTile)
+                    {
+                        continue;
+                    }
+
+                    changes.Add((new TileChangeData
+                    {
+                        position = cell,
+                        tile = resolvedTile,
+                        color = targetStageTilemap.GetColor(cell),
+                        transform = targetStageTilemap.GetTransformMatrix(cell)
+                    }, targetStageTilemap.GetTileFlags(cell)));
+                }
+            }
+
+            if (changes.Count > 0 && recordUndo)
+            {
+                Undo.RegisterCompleteObjectUndo(targetStageTilemap, "Recalculate Grass Tiles");
+            }
+
+            foreach (var entry in changes)
+            {
+                targetStageTilemap.SetTile(entry.change, true);
+                targetStageTilemap.SetTileFlags(entry.change.position, entry.flags);
+            }
+
+            return changes.Count;
         }
 
         private void RecalculateWaterFloorTilesAroundBounds(BoundsInt editedBounds)
@@ -1491,6 +1590,42 @@ namespace EditorTools
 
             // Handles 色を元に戻す
             Handles.color = oldColor;
+        }
+
+        /// <summary>Edits one sampled brush cell, including the release position.</summary>
+        private void ApplyBrushCell(Vector3Int cell)
+        {
+            if (cell == lastDraggedCell)
+            {
+                return;
+            }
+
+            if (CanApplyTileEdit(cell))
+            {
+                RegisterTileDragUndoIfNeeded();
+                ApplyTileEdit(cell);
+            }
+
+            lastDraggedCell = cell;
+        }
+
+        private void CompleteTileDrag()
+        {
+            if (!isTileDragging)
+            {
+                return;
+            }
+
+            if (tileEditMode == TileEditMode.Rectangle)
+            {
+                ApplyTileEditRectangle(dragStartCell, dragCurrentCell);
+            }
+            else if (tileEditMode == TileEditMode.Brush)
+            {
+                ApplyBrushCell(dragCurrentCell);
+            }
+
+            CancelTileDrag();
         }
 
         /// <summary>

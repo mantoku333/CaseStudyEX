@@ -77,6 +77,31 @@ public sealed class StageBlockAutoTileResolverTests
         Assert.AreEqual(StageBlockFace.F, StageBlockAutoTileResolver.Resolve(neighbors));
     }
 
+    [TestCase(true)]
+    [TestCase(false)]
+    public void ResolveGrass_CeilingFloorConnector_UsesKRegardlessOfDiagonals(bool connectsRight)
+    {
+        StageBlockNeighborState neighbors = new StageBlockNeighborState
+        {
+            up = true,
+            down = true,
+            upRight = connectsRight,
+            downRight = connectsRight,
+            upLeft = !connectsRight,
+            downLeft = !connectsRight
+        };
+
+        Assert.AreEqual(StageBlockFace.K, StageBlockAutoTileResolver.ResolveGrass(neighbors));
+    }
+
+    [Test]
+    public void ResolveGrass_IsolatedCell_UsesE()
+    {
+        Assert.AreEqual(StageBlockFace.E,
+            StageBlockAutoTileResolver.ResolveGrass(default));
+        Assert.IsFalse(StageBlockAutoTileResolver.TryResolveColumn(default, out _));
+    }
+
     [Test]
     public void ExpandByOneCell_ExpandsEditedBoundsByOneCellBorder()
     {
@@ -90,6 +115,71 @@ public sealed class StageBlockAutoTileResolverTests
         Assert.AreEqual(2, expandedBounds.yMin);
         Assert.AreEqual(5, expandedBounds.size.x);
         Assert.AreEqual(6, expandedBounds.size.y);
+    }
+
+    [Test]
+    public void ResolveGrass_SurfaceMeetsWall_UsesCornerAtAnyThickness(
+        [Values] bool mirror, [Values] bool solidBelow, [Values] bool thickWall)
+    {
+        StageBlockNeighborState neighbors = new StageBlockNeighborState
+        {
+            up = true,
+            down = solidBelow,
+            left = !mirror || thickWall,
+            right = mirror || thickWall,
+            upLeft = mirror && thickWall,
+            upRight = !mirror && thickWall,
+            downLeft = solidBelow,
+            downRight = solidBelow
+        };
+
+        Assert.AreEqual(mirror ? StageBlockFace.O : StageBlockFace.N,
+            StageBlockAutoTileResolver.ResolveGrass(neighbors));
+    }
+
+    [Test]
+    public void ResolveGrass_WithoutExposedSurfaceOrWall_UsesStandardFace(
+        [Values] bool mirror, [Values] bool blockAbove)
+    {
+        StageBlockNeighborState neighbors = new StageBlockNeighborState
+        {
+            up = blockAbove,
+            left = !mirror,
+            right = mirror,
+            upLeft = blockAbove && !mirror,
+            upRight = blockAbove && mirror
+        };
+        StageBlockFace expected = blockAbove
+            ? mirror ? StageBlockFace.G : StageBlockFace.I
+            : mirror ? StageBlockFace.A : StageBlockFace.C;
+
+        Assert.AreEqual(expected, StageBlockAutoTileResolver.ResolveGrass(neighbors));
+    }
+
+    [TestCase(false, StageBlockFace.H)]
+    [TestCase(true, StageBlockFace.E)]
+    public void ResolveGrass_TwoExposedSurfaces_UsesStandardFace(bool solidBelow, StageBlockFace expected)
+    {
+        StageBlockNeighborState neighbors = new StageBlockNeighborState
+        {
+            up = true, left = true, right = true, down = solidBelow
+        };
+
+        Assert.AreEqual(expected, StageBlockAutoTileResolver.ResolveGrass(neighbors));
+    }
+
+    [TestCase(false, false, StageBlockFace.A, StageBlockFace.I)]
+    [TestCase(true, false, StageBlockFace.J, StageBlockFace.I)]
+    [TestCase(false, true, StageBlockFace.A, StageBlockFace.N)]
+    [TestCase(true, true, StageBlockFace.J, StageBlockFace.N)]
+    public void ResolveGrass_OptionalGroupsAreIndependent(
+        bool useColumns, bool useCorners, StageBlockFace expectedColumn, StageBlockFace expectedCorner)
+    {
+        Assert.AreEqual(expectedColumn, StageBlockAutoTileResolver.ResolveGrass(
+            new StageBlockNeighborState { down = true }, useColumns, useCorners));
+        StageBlockNeighborState corner = new StageBlockNeighborState { up = true, left = true };
+        Assert.AreEqual(expectedCorner, StageBlockAutoTileResolver.ResolveGrass(corner, useColumns, useCorners));
+        Assert.AreEqual(StageBlockFace.I, StageBlockAutoTileResolver.Resolve(corner));
     }
 
     [Test]

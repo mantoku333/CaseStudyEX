@@ -14,7 +14,12 @@ namespace EditorTools
         F,
         G,
         H,
-        I
+        I,
+        J,
+        K,
+        M,
+        N,
+        O
     }
 
     public enum WaterFloorFace
@@ -39,6 +44,11 @@ namespace EditorTools
         [SerializeField] private TileBase g;
         [SerializeField] private TileBase h;
         [SerializeField] private TileBase i;
+        [SerializeField] private TileBase j;
+        [SerializeField] private TileBase k;
+        [SerializeField] private TileBase m;
+        [SerializeField] private TileBase n;
+        [SerializeField] private TileBase o;
 
         public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? "Stage" : displayName;
 
@@ -64,6 +74,16 @@ namespace EditorTools
                     return h;
                 case StageBlockFace.I:
                     return i;
+                case StageBlockFace.J:
+                    return j;
+                case StageBlockFace.K:
+                    return k;
+                case StageBlockFace.M:
+                    return m;
+                case StageBlockFace.N:
+                    return n;
+                case StageBlockFace.O:
+                    return o;
                 default:
                     return null;
             }
@@ -84,7 +104,12 @@ namespace EditorTools
                    tile == f ||
                    tile == g ||
                    tile == h ||
-                   tile == i;
+                   tile == i ||
+                   tile == j ||
+                   tile == k ||
+                   tile == m ||
+                   tile == n ||
+                   tile == o;
         }
 
         public bool HasTile(StageBlockFace face)
@@ -103,6 +128,18 @@ namespace EditorTools
                    g != null &&
                    h != null &&
                    i != null;
+        }
+
+        /// <summary>Whether the optional isolated-column faces are all assigned.</summary>
+        public bool HasColumnTiles()
+        {
+            return j != null && k != null && m != null;
+        }
+
+        /// <summary>Whether both optional floor-to-wall corner faces are assigned.</summary>
+        public bool HasSurfaceCornerTiles()
+        {
+            return n != null && o != null;
         }
 
         public TileBase FirstAvailableTile()
