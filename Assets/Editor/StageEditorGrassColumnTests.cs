@@ -87,18 +87,45 @@ public sealed class StageEditorGrassColumnTests
 
     [TestCase(2)]
     [TestCase(100)]
-    public void LongHorizontalArm_UpdatesItsFarEndWhenVerticalConnectionChanges(int height)
+    public void LongHorizontalArm_KeepsExposedTopFacesWhenVerticalConnectionChanges(int height)
     {
         Invoke("ApplyTileEditRectangle", Vector3Int.zero, new Vector3Int(12, 0, 0));
         Invoke("ApplyTileEditRectangle", Vector3Int.zero, new Vector3Int(0, height - 1, 0));
-        AssertLayout(Vector3Int.zero, "GHHHHHHHHHHHI");
+        AssertLayout(Vector3Int.zero, "GBBBBBBBBBBBC");
         AssertFace(0, height - 1, StageBlockFace.J);
         for (int y = 1; y < height - 1; y++) AssertFace(0, y, StageBlockFace.K);
 
         Invoke("EraseTile", new Vector3Int(0, 1, 0));
         AssertLayout(Vector3Int.zero, "ABBBBBBBBBBBC");
         Invoke("PaintTile", new Vector3Int(0, 1, 0));
-        AssertLayout(Vector3Int.zero, "GHHHHHHHHHHHI");
+        AssertLayout(Vector3Int.zero, "GBBBBBBBBBBBC");
+    }
+
+    [Test]
+    public void HorizontalArm_UsesExposedTopFaces(
+        [Values(2, 3, 4)] int width, [Values] bool mirror, [Values] bool reverseOrder)
+    {
+        List<Vector3Int> stroke = new List<Vector3Int> { new Vector3Int(1, 2, 0) };
+        for (int x = 1; x <= width; x++) stroke.Add(new Vector3Int(x, 1, 0));
+        if (reverseOrder) stroke.Reverse();
+        foreach (Vector3Int cell in stroke)
+        {
+            Invoke("PaintTile", mirror ? new Vector3Int(width + 1 - cell.x, cell.y, 0) : cell);
+        }
+
+        string emptyRow = new string('O', width + 2);
+        AssertMirroredLayout(mirror, emptyRow, "OJ" + new string('O', width),
+            "OG" + new string('B', width - 2) + "CO", emptyRow);
+    }
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public void EditingColumn_RepairsLegacyArmBeyondEditedBounds(bool erase)
+    {
+        SeedLegacyHorizontalArm();
+        Invoke(erase ? "EraseTile" : "PaintTile", new Vector3Int(0, erase ? 1 : 2, 0));
+        AssertLayout(Vector3Int.zero, erase ? "ABBBBBBBBBBBC" : "GBBBBBBBBBBBC");
+        AssertFace(12, 0, StageBlockFace.C);
     }
 
     [Test]
@@ -107,7 +134,7 @@ public sealed class StageEditorGrassColumnTests
         Invoke("ApplyTileEditRectangle", Vector3Int.zero, new Vector3Int(2, 0, 0));
         Invoke("ApplyTileEditRectangle", new Vector3Int(0, 2, 0), new Vector3Int(2, 2, 0));
         Invoke("PaintTile", new Vector3Int(1, 1, 0));
-        AssertLayout(Vector3Int.zero, "ABC", "OKO", "GHI");
+        AssertLayout(Vector3Int.zero, "ABC", "OKO", "AHC");
     }
 
     [Test]
@@ -347,17 +374,20 @@ public sealed class StageEditorGrassColumnTests
     [Test]
     public void UndoRedo_IncludesFarEndOfHorizontalArm()
     {
-        Invoke("ApplyTileEditRectangle", Vector3Int.zero, new Vector3Int(12, 0, 0));
+        SeedLegacyHorizontalArm();
         Undo.IncrementCurrentGroup();
         int group = Undo.GetCurrentGroup();
-        Invoke("ApplyBrushCell", new Vector3Int(0, 1, 0));
-        AssertLayout(Vector3Int.zero, "GHHHHHHHHHHHI");
+        Invoke("ApplyBrushCell", new Vector3Int(0, 2, 0));
+        AssertLayout(Vector3Int.zero, "GBBBBBBBBBBBC");
+        AssertFace(0, 1, StageBlockFace.K);
         Undo.FlushUndoRecordObjects();
         Undo.CollapseUndoOperations(group);
         Undo.PerformUndo();
-        AssertLayout(Vector3Int.zero, "ABBBBBBBBBBBC");
-        Undo.PerformRedo();
         AssertLayout(Vector3Int.zero, "GHHHHHHHHHHHI");
+        AssertFace(0, 1, StageBlockFace.J);
+        Undo.PerformRedo();
+        AssertLayout(Vector3Int.zero, "GBBBBBBBBBBBC");
+        AssertFace(0, 1, StageBlockFace.K);
     }
 
     [TestCase("ManualFace")]
@@ -495,6 +525,17 @@ public sealed class StageEditorGrassColumnTests
         }
     }
 
+    private void SeedLegacyHorizontalArm()
+    {
+        for (int x = 0; x <= 12; x++)
+        {
+            StageBlockFace face = x == 0 ? StageBlockFace.G : x == 12 ? StageBlockFace.I : StageBlockFace.H;
+            tilemap.SetTile(new Vector3Int(x, 0, 0), palette.Stage2Blocks.GetTile(face));
+        }
+
+        tilemap.SetTile(new Vector3Int(0, 1, 0), palette.Stage2Blocks.GetTile(StageBlockFace.J));
+    }
+
     private static List<Vector3Int> CreateBentStroke(bool growsUp)
     {
         return growsUp
@@ -513,8 +554,13 @@ public sealed class StageEditorGrassColumnTests
     private void AssertBentStroke(bool growsUp, bool mirror)
     {
         string[] rows = growsUp
-            ? new[] { "OOOOO", "OOJOO", "OOKOO", "OOKOO", "OOGIO", "OOOOO" }
+            ? new[] { "OOOOO", "OOJOO", "OOKOO", "OOKOO", "OOGCO", "OOOOO" }
             : new[] { "OOOOO", "OACOO", "OOKOO", "OOKOO", "OOMOO", "OOOOO" };
+        AssertMirroredLayout(mirror, rows);
+    }
+
+    private void AssertMirroredLayout(bool mirror, params string[] rows)
+    {
         if (mirror)
         {
             for (int y = 0; y < rows.Length; y++)

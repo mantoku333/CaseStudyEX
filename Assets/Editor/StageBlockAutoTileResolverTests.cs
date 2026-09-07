@@ -91,14 +91,14 @@ public sealed class StageBlockAutoTileResolverTests
             downLeft = !connectsRight
         };
 
-        Assert.AreEqual(StageBlockFace.K, StageBlockAutoTileResolver.ResolveGrass(neighbors, true, true));
+        Assert.AreEqual(StageBlockFace.K, StageBlockAutoTileResolver.ResolveGrass(neighbors));
     }
 
     [Test]
     public void ResolveGrass_IsolatedCell_UsesE()
     {
         Assert.AreEqual(StageBlockFace.E,
-            StageBlockAutoTileResolver.ResolveGrass(default, false, false));
+            StageBlockAutoTileResolver.ResolveGrass(default));
         Assert.IsFalse(StageBlockAutoTileResolver.TryResolveColumn(default, out _));
     }
 

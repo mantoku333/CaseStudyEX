@@ -1303,19 +1303,10 @@ namespace EditorTools
                 columns, cell => stage2.Contains(targetStageTilemap.GetTile(cell)));
             foreach (BoundsInt row in rows)
             {
-                bool hasUpNeighbor = false;
-                bool hasDownNeighbor = false;
-                foreach (Vector3Int cell in row.allPositionsWithin)
-                {
-                    hasUpNeighbor |= targetStageTilemap.HasTile(cell + Vector3Int.up);
-                    hasDownNeighbor |= targetStageTilemap.HasTile(cell + Vector3Int.down);
-                }
-
                 foreach (Vector3Int cell in row.allPositionsWithin)
                 {
                     StageBlockFace face = StageBlockAutoTileResolver.ResolveGrass(
-                        StageBlockColumnUtility.GetNeighborState(cell, targetStageTilemap.HasTile),
-                        hasUpNeighbor, hasDownNeighbor);
+                        StageBlockColumnUtility.GetNeighborState(cell, targetStageTilemap.HasTile));
                     TileBase resolvedTile = stage2.GetTile(face);
                     if (targetStageTilemap.GetTile(cell) != resolvedTile)
                     {

@@ -45,19 +45,12 @@ namespace EditorTools
             return Resolve(neighbors);
         }
 
-        /// <summary>Grass arms inherit their top/bottom orientation from the complete horizontal run.</summary>
-        public static StageBlockFace ResolveGrass(
-            StageBlockNeighborState neighbors, bool rowHasUpNeighbor, bool rowHasDownNeighbor)
+        /// <summary>Resolves grass from local exposure, with column faces taking precedence.</summary>
+        public static StageBlockFace ResolveGrass(StageBlockNeighborState neighbors)
         {
             if (TryResolveColumn(neighbors, out StageBlockFace face))
             {
                 return face;
-            }
-
-            if (!neighbors.up && !neighbors.down && (neighbors.left || neighbors.right) &&
-                rowHasUpNeighbor && !rowHasDownNeighbor)
-            {
-                return !neighbors.left ? StageBlockFace.G : !neighbors.right ? StageBlockFace.I : StageBlockFace.H;
             }
 
             return Resolve(neighbors);
