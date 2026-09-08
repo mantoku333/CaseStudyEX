@@ -12,8 +12,10 @@ namespace Player
 
         [SerializeField] private PlayerStatsData statsData;
         [SerializeField] private global::DodgeController dodgeController;
+        [SerializeField] private global::PlayerDiveAttackController diveAttackController;
         [SerializeField, Min(0f)] private float damageCooldownSeconds = 3f;
         [SerializeField] private int maxHealthBonus = 0;
+        private float equipmentMaxHealthMultiplier = 1f;
 
         [Header("SE")]
         [SerializeField] private AudioClip playerDamageClip;
@@ -30,9 +32,11 @@ namespace Player
 
         private int currentHealth;
         private float nextDamageTime;
+        private float nextRainDamageTime;
         private float attackPriorityInvulnerableUntilTime;
         private bool deathNotified;
         private bool restoredFromSave;
+        private bool healthInitialized;
         private AudioSource audioSource;
 
         public int Priority => 230;
@@ -71,7 +75,10 @@ namespace Player
                     baseMaxHealth = statsData.MaxHealth;
                 }
 
-                return baseMaxHealth + maxHealthBonus;
+                int permanentMaxHealth = Mathf.Max(1, baseMaxHealth + maxHealthBonus);
+                return Mathf.Max(
+                    1,
+                    Mathf.CeilToInt(permanentMaxHealth * Mathf.Max(0f, equipmentMaxHealthMultiplier)));
             }
         }
 
@@ -79,6 +86,7 @@ namespace Player
         {
             TryResolveStatsData();
             TryResolveDodgeController();
+            TryResolveDiveAttackController();
             TryResolveAudioSource();
         }
 
@@ -99,11 +107,13 @@ namespace Player
         {
             if (restoredFromSave)
             {
+                healthInitialized = true;
                 NotifyHealthChanged();
                 return;
             }
 
             currentHealth = MaxHealth;
+            healthInitialized = true;
             NotifyHealthChanged();
         }
 
@@ -133,6 +143,26 @@ namespace Player
         /// <param name="cooldownSeconds">次にダメージを受けられるまでの秒数</param>
         public bool TryTakeDamage(int damage, float cooldownSeconds)
         {
+            return TryTakeDamageInternal(damage, cooldownSeconds, ref nextDamageTime, true);
+        }
+
+        /// <summary>
+        /// 雨専用のクールダウンでダメージを受けた場合は true を返す。
+        /// 敵やその他のダメージのクールダウンとは互いに干渉しない。
+        /// </summary>
+        /// <param name="damage">受けるダメージ量</param>
+        /// <param name="cooldownSeconds">次に雨ダメージを受けられるまでの秒数</param>
+        public bool TryTakeRainDamage(int damage, float cooldownSeconds)
+        {
+            return TryTakeDamageInternal(damage, cooldownSeconds, ref nextRainDamageTime, false);
+        }
+
+        private bool TryTakeDamageInternal(
+            int damage,
+            float cooldownSeconds,
+            ref float nextAllowedDamageTime,
+            bool blockDuringDiveAttack)
+        {
             // 無効なダメージ、またはすでに死亡しているなら何もしない
             if (damage <= 0 || currentHealth <= 0)
             {
@@ -150,12 +180,17 @@ namespace Player
                 return false;
             }
 
+            if (blockDuringDiveAttack && IsDiveAttackInvulnerable())
+            {
+                return false;
+            }
+
             if (Time.time < attackPriorityInvulnerableUntilTime)
             {
                 return false;
             }
 
-            if (Time.time < nextDamageTime)
+            if (Time.time < nextAllowedDamageTime)
             {
                 return false;
             }
@@ -167,7 +202,7 @@ namespace Player
 
             LogHealthDebug($"ダメージ後 HP: {currentHealth} / {MaxHealth}");
 
-            nextDamageTime = Time.time + Mathf.Max(0f, cooldownSeconds);
+            nextAllowedDamageTime = Time.time + Mathf.Max(0f, cooldownSeconds);
 
             PlaySE(playerDamageClip, playerDamageVolume);
             NotifyHealthChanged();
@@ -193,6 +228,12 @@ namespace Player
         public void ClearAttackPriorityInvulnerability()
         {
             attackPriorityInvulnerableUntilTime = 0f;
+        }
+
+        private bool IsDiveAttackInvulnerable()
+        {
+            TryResolveDiveAttackController();
+            return diveAttackController != null && diveAttackController.IsDiveAttacking;
         }
 
         /// <summary>
@@ -248,6 +289,7 @@ namespace Player
         {
             currentHealth = MaxHealth;
             nextDamageTime = 0f;
+            nextRainDamageTime = 0f;
             NotifyHealthChanged();
         }
 
@@ -285,6 +327,24 @@ namespace Player
 
             LogHealthDebug($"上限増加後 HP: {currentHealth} / {MaxHealth}");
 
+            NotifyHealthChanged();
+        }
+
+        public void SetEquipmentMaxHealthMultiplier(float multiplier)
+        {
+            float nextMultiplier = Mathf.Max(0f, multiplier);
+            if (Mathf.Approximately(equipmentMaxHealthMultiplier, nextMultiplier))
+            {
+                return;
+            }
+
+            equipmentMaxHealthMultiplier = nextMultiplier;
+            if (!healthInitialized)
+            {
+                return;
+            }
+
+            currentHealth = Mathf.Clamp(currentHealth, 0, MaxHealth);
             NotifyHealthChanged();
         }
 
@@ -333,6 +393,7 @@ namespace Player
                 maxHealthBonus = Mathf.Max(0, payload.maxHealthBonus);
                 currentHealth = Mathf.Clamp(payload.currentHealth, 0, MaxHealth);
                 restoredFromSave = true;
+                healthInitialized = true;
                 NotifyHealthChanged();
             }
             catch (Exception exception)
@@ -392,6 +453,25 @@ namespace Player
             if (dodgeController == null)
             {
                 dodgeController = GetComponentInChildren<global::DodgeController>(true);
+            }
+        }
+
+        private void TryResolveDiveAttackController()
+        {
+            if (diveAttackController != null)
+            {
+                return;
+            }
+
+            diveAttackController = GetComponent<global::PlayerDiveAttackController>();
+            if (diveAttackController == null)
+            {
+                diveAttackController = GetComponentInParent<global::PlayerDiveAttackController>();
+            }
+
+            if (diveAttackController == null)
+            {
+                diveAttackController = GetComponentInChildren<global::PlayerDiveAttackController>(true);
             }
         }
 

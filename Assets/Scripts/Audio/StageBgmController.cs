@@ -5,6 +5,7 @@ using UnityEngine;
 public sealed class StageBgmController : MonoBehaviour
 {
     private const string BgmVolumeKey = "Options.BgmVolume";
+    private const string SystemVolumeKey = "Options.SystemVolume";
 
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioClip normalStageBgm;
@@ -414,7 +415,8 @@ public sealed class StageBgmController : MonoBehaviour
 
     private static float ResolveOptionsBgmVolume()
     {
-        return Mathf.Clamp01(PlayerPrefs.GetFloat(BgmVolumeKey, 1f));
+        return Mathf.Clamp01(PlayerPrefs.GetFloat(SystemVolumeKey, 1f)) *
+               Mathf.Clamp01(PlayerPrefs.GetFloat(BgmVolumeKey, 1f));
     }
 
     private void SetSourceBaseVolume(AudioSource source, float baseVolume)

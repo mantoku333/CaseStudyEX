@@ -17,6 +17,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private const float RevealFieldMin = -0.25f;
     private const float RevealFieldMax = 1.25f;
     private const int RevealFieldMaxByte = 254;
+    private const int MinimumOverlaySortingOrder = 100;
 
     private static RoomFogRevealManager instance;
     private static readonly int RevealFrontPropertyId = Shader.PropertyToID("_RevealFront");
@@ -38,32 +39,31 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private static readonly int[] OverlayTriangles = { 0, 2, 1, 0, 3, 2 };
 
     [SerializeField] private bool fogEnabled = true;
-    [SerializeField, Min(64)] private int textureResolution = 512;
+    [SerializeField, Min(64)] private int textureResolution = 1024;
+    [SerializeField, Min(0.01f)] private float targetWorldUnitsPerPixel = 0.08f;
+    [SerializeField, Min(64)] private int maximumTextureResolution = 4096;
     [SerializeField, Min(0f)] private float worldPadding = 6f;
     [SerializeField] private Shader fogShader;
 
-    [SerializeField] private Color fogColor = new Color(0f, 0f, 0f, 0.92f);
+    [SerializeField] private Color fogColor = Color.black;
     [SerializeField, Range(0f, 1f)] private float fogAlpha = 1f;
     [SerializeField, Range(0.01f, 1f)] private float edgeSoftness = 0.22f;
     [SerializeField, Range(0f, 1f)] private float noiseStrength = 0.18f;
     [SerializeField, Min(0.1f)] private float noiseScale = 0.32f;
-    [SerializeField] private int sortingOrder = 30000;
+    [SerializeField, Min(MinimumOverlaySortingOrder)] private int sortingOrder = 30000;
     [SerializeField] private float overlayZ = -1f;
 
-    [SerializeField, Min(0.01f)] private float revealDuration = 2.55f;
-    [SerializeField, Min(0.01f)] private float concealDuration = 2.55f;
+    [SerializeField, Min(0.01f)] private float revealDuration = 1.6f;
+    [SerializeField, Min(0.01f)] private float concealDuration = 1.8f;
     [SerializeField, Range(0f, 0.5f)] private float revealNoiseStrength = 0.18f;
 
     [SerializeField] private bool revealPortalEntrances = true;
-    [SerializeField, Min(0f)] private float portalEntranceDepth = 2.5f;
-    [SerializeField, Min(0.05f)] private float portalEntranceRadius = 1.2f;
-    [SerializeField, Range(0.01f, 1f)] private float portalEntranceSoftness = 0.35f;
-    [SerializeField, Range(0f, 0.5f)] private float portalEntranceEdgeNoise = 0.12f;
 
     private readonly List<RoomCameraTrigger> rooms = new List<RoomCameraTrigger>();
     private readonly List<PortalDent> portalDents = new List<PortalDent>();
     private readonly Vector3[] overlayVertices = new Vector3[4];
     private RoomCameraTrigger currentRoom;
+    private RoomCameraTrigger entranceSourceRoom;
     private RoomCameraTrigger revealingRoom;
     private RoomCameraTrigger concealingRoom;
     private Bounds revealingBounds;
@@ -129,11 +129,6 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     public static bool RevealRoom(RoomCameraTrigger room)
     {
         if (room == null || !TryGetInstance(out RoomFogRevealManager manager))
-        {
-            return false;
-        }
-
-        if (!manager.IsRoomCurrentByRuntimeState(room))
         {
             return false;
         }
@@ -248,11 +243,12 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private void OnValidate()
     {
         textureResolution = Mathf.Max(64, textureResolution);
+        targetWorldUnitsPerPixel = Mathf.Max(0.01f, targetWorldUnitsPerPixel);
+        maximumTextureResolution = Mathf.Max(textureResolution, maximumTextureResolution);
         revealDuration = Mathf.Max(0.01f, revealDuration);
         concealDuration = Mathf.Max(0.01f, concealDuration);
         edgeSoftness = Mathf.Max(0.01f, edgeSoftness);
-        portalEntranceRadius = Mathf.Max(0.05f, portalEntranceRadius);
-        portalEntranceSoftness = Mathf.Max(0.01f, portalEntranceSoftness);
+        sortingOrder = Mathf.Max(MinimumOverlaySortingOrder, sortingOrder);
         ResolveDefaultShader();
         RequestFullRefresh();
     }
@@ -433,6 +429,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         refreshRequested = false;
         managedScene = gameObject.scene.IsValid() ? gameObject.scene : SceneManager.GetActiveScene();
         cachedPlayerTransform = null;
+        entranceSourceRoom = null;
         ResolveDefaultShader();
         CollectRooms();
 
@@ -538,8 +535,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 PortalObject = portal.gameObject,
                 RoomA = roomA,
                 RoomB = roomB,
-                Colliders2D = portal.GetComponents<Collider2D>(),
-                Colliders = portal.GetComponents<Collider>()
+                Colliders2D = portal.GetComponentsInChildren<Collider2D>(true),
+                Colliders = portal.GetComponentsInChildren<Collider>(true)
             });
         }
     }
@@ -554,8 +551,22 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         RoomCameraTrigger room = ResolveCurrentRoomFromRuntimeState();
         if (room != null)
         {
+            SetEntranceSourceRoom(room);
             SetCurrentRoom(room, false);
         }
+    }
+
+    private void SetEntranceSourceRoom(RoomCameraTrigger room)
+    {
+        if (room == null ||
+            room.gameObject.scene != managedScene ||
+            entranceSourceRoom == room)
+        {
+            return;
+        }
+
+        entranceSourceRoom = room;
+        entranceMaskDirty = true;
     }
 
     private RoomCameraTrigger ResolveCurrentRoomFromRuntimeState()
@@ -573,11 +584,6 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         return activeRoom != null && activeRoom.gameObject.scene == managedScene
             ? activeRoom
             : null;
-    }
-
-    private bool IsRoomCurrentByRuntimeState(RoomCameraTrigger room)
-    {
-        return room != null && ResolveCurrentRoomFromRuntimeState() == room;
     }
 
     private void SetCurrentRoom(RoomCameraTrigger room, bool restartEvenIfSame)
@@ -788,7 +794,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
                 if (fogEnabled)
                 {
-                    PaintPortalDents(currentRoom, 1f, true);
+                    PaintPortalDents(entranceSourceRoom, 1f, true);
                     if (concealingRoom != null && !concealComplete)
                     {
                         PaintPortalDents(concealingRoom, 1f, false);
@@ -853,7 +859,6 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         int maxX = Mathf.Clamp(WorldToPixelX(paintBounds.max.x, width) + 1, 0, width - 1);
         int minY = Mathf.Clamp(WorldToPixelY(paintBounds.min.y, height) - 1, 0, height - 1);
         int maxY = Mathf.Clamp(WorldToPixelY(paintBounds.max.y, height) + 1, 0, height - 1);
-
         for (int y = minY; y <= maxY; y++)
         {
             float worldY = PixelToWorldY(y, height);
@@ -895,7 +900,6 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     {
         if (!revealPortalEntrances ||
             sourceRoom == null ||
-            portalEntranceDepth <= 0f ||
             strengthMultiplier <= 0f)
         {
             return;
@@ -904,25 +908,13 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         for (int i = 0; i < portalDents.Count; i++)
         {
             PortalDent dent = portalDents[i];
-            RoomCameraTrigger destinationRoom = null;
-            if (dent.RoomA == sourceRoom)
-            {
-                destinationRoom = dent.RoomB;
-            }
-            else if (dent.RoomB == sourceRoom)
-            {
-                destinationRoom = dent.RoomA;
-            }
-
-            if (destinationRoom == null)
+            if (dent.RoomA != sourceRoom && dent.RoomB != sourceRoom)
             {
                 continue;
             }
 
             PaintPortalDent(
                 dent,
-                sourceRoom,
-                destinationRoom,
                 strengthMultiplier,
                 writeCurrentChannel);
         }
@@ -930,48 +922,22 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void PaintPortalDent(
         PortalDent dent,
-        RoomCameraTrigger sourceRoom,
-        RoomCameraTrigger destinationRoom,
         float strengthMultiplier,
         bool writeCurrentChannel)
     {
         if (dent.PortalObject == null ||
-            !TryGetObjectBounds(dent.Colliders2D, dent.Colliders, out Bounds portalBounds) ||
-            !sourceRoom.TryGetAreaBounds(out Bounds sourceBounds) ||
-            !destinationRoom.TryGetAreaBounds(out Bounds destinationBounds))
+            !TryGetObjectBounds(dent.Colliders2D, dent.Colliders, out Bounds portalBounds))
         {
             return;
         }
-
-        Vector2 forward = new Vector2(
-            destinationBounds.center.x - sourceBounds.center.x,
-            destinationBounds.center.y - sourceBounds.center.y);
-        if (forward.sqrMagnitude < 0.001f)
-        {
-            return;
-        }
-
-        forward.Normalize();
-        Vector2 side = new Vector2(-forward.y, forward.x);
-        Vector2 center = new Vector2(portalBounds.center.x, portalBounds.center.y);
-        Vector2 extents = new Vector2(portalBounds.extents.x, portalBounds.extents.y);
-        float halfPortalDepth = Mathf.Abs(forward.x) * extents.x + Mathf.Abs(forward.y) * extents.y;
-        float halfPortalWidth = Mathf.Abs(side.x) * extents.x + Mathf.Abs(side.y) * extents.y;
-        float halfWidth = Mathf.Max(0.05f, halfPortalWidth + portalEntranceRadius);
-        float halfDepth = Mathf.Max(0.05f, halfPortalDepth + portalEntranceDepth);
-
-        Vector2 dentCenter = center + forward * (portalEntranceDepth * 0.45f);
-        float paintRadius = Mathf.Sqrt(halfWidth * halfWidth + halfDepth * halfDepth);
-        Bounds paintBounds = new Bounds(
-            new Vector3(dentCenter.x, dentCenter.y, portalBounds.center.z),
-            new Vector3(paintRadius * 2f, paintRadius * 2f, 0f));
 
         int width = entranceMaskTexture.width;
         int height = entranceMaskTexture.height;
-        int minX = Mathf.Clamp(WorldToPixelX(paintBounds.min.x, width) - 1, 0, width - 1);
-        int maxX = Mathf.Clamp(WorldToPixelX(paintBounds.max.x, width) + 1, 0, width - 1);
-        int minY = Mathf.Clamp(WorldToPixelY(paintBounds.min.y, height) - 1, 0, height - 1);
-        int maxY = Mathf.Clamp(WorldToPixelY(paintBounds.max.y, height) + 1, 0, height - 1);
+        int minX = Mathf.Clamp(WorldToPixelX(portalBounds.min.x, width) - 1, 0, width - 1);
+        int maxX = Mathf.Clamp(WorldToPixelX(portalBounds.max.x, width) + 1, 0, width - 1);
+        int minY = Mathf.Clamp(WorldToPixelY(portalBounds.min.y, height) - 1, 0, height - 1);
+        int maxY = Mathf.Clamp(WorldToPixelY(portalBounds.max.y, height) + 1, 0, height - 1);
+        byte value = (byte)Mathf.Clamp(Mathf.RoundToInt(strengthMultiplier * 255f), 0, 255);
 
         for (int y = minY; y <= maxY; y++)
         {
@@ -980,24 +946,15 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             for (int x = minX; x <= maxX; x++)
             {
                 float worldX = PixelToWorldX(x, width);
-                Vector2 offset = new Vector2(worldX, worldY) - dentCenter;
-                float localForward = Vector2.Dot(offset, forward);
-                float localSide = Vector2.Dot(offset, side);
-                float noise = (ValueNoise(new Vector2(worldX, worldY) * 1.2f) - 0.5f) * portalEntranceEdgeNoise;
-                float normalized = Mathf.Sqrt(
-                    Mathf.Pow(localSide / halfWidth, 2f) +
-                    Mathf.Pow(localForward / halfDepth, 2f)) + noise;
-                float strength = (1f - Mathf.SmoothStep(
-                    Mathf.Clamp01(1f - portalEntranceSoftness),
-                    1f,
-                    normalized)) * strengthMultiplier;
-                if (strength <= 0f)
+                Vector3 worldPoint = new Vector3(worldX, worldY, portalBounds.center.z);
+                if (!IsPointInsidePortal(dent, worldPoint) ||
+                    (!IsPointInsideRevealArea(dent.RoomA, worldPoint) &&
+                     !IsPointInsideRevealArea(dent.RoomB, worldPoint)))
                 {
                     continue;
                 }
 
                 int pixelIndex = row + x;
-                byte value = (byte)Mathf.Clamp(Mathf.RoundToInt(strength * 255f), 0, 255);
                 Color32 pixel = entranceMaskPixels[pixelIndex];
                 if (writeCurrentChannel)
                 {
@@ -1015,6 +972,42 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 entranceMaskPixels[pixelIndex] = pixel;
             }
         }
+    }
+
+    private static bool IsPointInsidePortal(PortalDent dent, Vector3 worldPoint)
+    {
+        if (dent.Colliders2D != null)
+        {
+            Vector2 point2D = new Vector2(worldPoint.x, worldPoint.y);
+            for (int i = 0; i < dent.Colliders2D.Length; i++)
+            {
+                Collider2D collider = dent.Colliders2D[i];
+                if (collider != null && collider.enabled && collider.OverlapPoint(point2D))
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (dent.Colliders != null)
+        {
+            for (int i = 0; i < dent.Colliders.Length; i++)
+            {
+                Collider collider = dent.Colliders[i];
+                if (collider == null || !collider.enabled)
+                {
+                    continue;
+                }
+
+                Vector3 closestPoint = collider.ClosestPoint(worldPoint);
+                if ((closestPoint - worldPoint).sqrMagnitude <= 0.0001f)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private bool IsPointInsideRevealArea(RoomCameraTrigger room, Vector3 point)
@@ -1041,7 +1034,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void EnsureTextures()
     {
-        int resolution = Mathf.Max(64, textureResolution);
+        int resolution = ResolveTextureResolution();
         if (maskTexture != null &&
             maskTexture.width == resolution &&
             maskTexture.height == resolution &&
@@ -1060,6 +1053,20 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         maskPixels = new Color32[resolution * resolution];
         entranceMaskPixels = new Color32[resolution * resolution];
         MarkAllMasksDirty();
+    }
+
+    private int ResolveTextureResolution()
+    {
+        int minimumResolution = Mathf.Max(64, textureResolution);
+        int maximumResolution = Mathf.Max(minimumResolution, maximumTextureResolution);
+        if (!hasRooms || targetWorldUnitsPerPixel <= 0.01f)
+        {
+            return minimumResolution;
+        }
+
+        float longestWorldAxis = Mathf.Max(worldBounds.size.x, worldBounds.size.y);
+        int worldResolution = Mathf.CeilToInt(longestWorldAxis / targetWorldUnitsPerPixel);
+        return Mathf.Clamp(Mathf.NextPowerOfTwo(worldResolution), minimumResolution, maximumResolution);
     }
 
     private static Texture2D CreateMaskTexture(string textureName, int resolution, FilterMode filterMode)
@@ -1158,7 +1165,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
         overlayRenderer.sharedMaterial = fogMaterial;
         overlayRenderer.sortingLayerID = 0;
-        overlayRenderer.sortingOrder = sortingOrder;
+        overlayRenderer.sortingOrder = Mathf.Max(MinimumOverlaySortingOrder, sortingOrder);
     }
 
     private void ApplyMaterialProperties()
@@ -1237,13 +1244,13 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private int WorldToPixelX(float worldX, int width)
     {
         float normalized = Mathf.InverseLerp(worldBounds.min.x, worldBounds.max.x, worldX);
-        return Mathf.FloorToInt(normalized * (width - 1));
+        return Mathf.FloorToInt(normalized * width);
     }
 
     private int WorldToPixelY(float worldY, int height)
     {
         float normalized = Mathf.InverseLerp(worldBounds.min.y, worldBounds.max.y, worldY);
-        return Mathf.FloorToInt(normalized * (height - 1));
+        return Mathf.FloorToInt(normalized * height);
     }
 
     private float PixelToWorldX(int x, int width)

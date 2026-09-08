@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using GameName.Enemy;
@@ -161,6 +162,8 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     private PlayerHealth playerHealth;
     private GunController gunController;
     private bool isDiveAttacking;
+    private bool diveAttackEventPending;
+    private bool currentDiveAttackHitEnemy;
     private float diveStartedTime;
     private float bounceControlEndTime;
     private float diveAttackLandingVisualEndTime;
@@ -174,6 +177,23 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     public bool IsDiveAttackBouncing => !isDiveAttacking && Time.time < diveAttackBounceVisualEndTime;
     public bool IsBounceControlActive => Time.time < bounceControlEndTime;
     public float BounceControlSpeed => 跳ね上がり左右調整速度;
+
+    /// <summary>
+    /// Raised once after a dive attack has passed all start guards.
+    /// </summary>
+    public event Action ActionStarted;
+
+    /// <summary>
+    /// Raised once for the first enemy or boss hit by the current dive attack.
+    /// Destructibles do not raise this event.
+    /// </summary>
+    public event Action FirstEnemyHit;
+
+    /// <summary>
+    /// Raised once when the current dive attack finishes. The argument is true
+    /// when that attack hit at least one enemy or boss.
+    /// </summary>
+    public event Action<bool> ActionEnded;
 
     private void Awake()
     {
@@ -272,6 +292,10 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         hitEnemies.Clear();
         hitLastBosses.Clear();
         hitDestructibles.Clear();
+        diveAttackEventPending = true;
+        currentDiveAttackHitEnemy = false;
+
+        ActionStarted?.Invoke();
 
         PlaySE(落下開始SE, 落下開始SE音量);
 
@@ -370,6 +394,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
 
         if (!applyLanding)
         {
+            CompleteDiveAttackEvent();
             return;
         }
 
@@ -390,6 +415,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
 
         if (appliedNewEnemyHit)
         {
+            NotifyFirstEnemyHit();
             gunController?.RestoreAllRecoilUses();
             PlayEnemyHitEffect(enemyHitEffectPosition, enemyHitCollider);
         }
@@ -401,11 +427,13 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
 
         if (killedAnyEnemy && 敵撃破時に跳ねる)
         {
+            CompleteDiveAttackEvent();
             BounceUp();
             return;
         }
 
         RequestDiveAttackLandingFollowThrough();
+        CompleteDiveAttackEvent();
     }
 
     private void UpdateDiveAttackHit()
@@ -438,6 +466,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
 
         if (appliedNewEnemyHit)
         {
+            NotifyFirstEnemyHit();
             gunController?.RestoreAllRecoilUses();
             PlayEnemyHitEffect(enemyHitEffectPosition, enemyHitCollider);
         }
@@ -754,6 +783,28 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         diveAttackLandingVisualEndTime = Time.time + diveAttackLandingVisualSeconds;
     }
 
+    private void NotifyFirstEnemyHit()
+    {
+        if (!diveAttackEventPending || currentDiveAttackHitEnemy)
+        {
+            return;
+        }
+
+        currentDiveAttackHitEnemy = true;
+        FirstEnemyHit?.Invoke();
+    }
+
+    private void CompleteDiveAttackEvent()
+    {
+        if (!diveAttackEventPending)
+        {
+            return;
+        }
+
+        diveAttackEventPending = false;
+        ActionEnded?.Invoke(currentDiveAttackHitEnemy);
+    }
+
     private void PlaySE(AudioClip clip, float volume)
     {
         if (SE再生AudioSource == null || clip == null || volume <= 0f)
@@ -766,6 +817,8 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
 
     private void OnDestroy()
     {
+        CompleteDiveAttackEvent();
+
         for (int i = 0; i < generatedHitEffectSprites.Count; i++)
         {
             if (generatedHitEffectSprites[i] != null)

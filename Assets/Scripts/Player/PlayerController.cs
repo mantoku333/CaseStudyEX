@@ -102,6 +102,7 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
     private ParryHitbox parryHitbox;
     private AttackHitbox[] attackHitboxes;
     private DodgeController dodgeController;                   //回避関連のスクリプト
+    private PlayerEquipmentController equipmentController;
     private MonoBehaviour fallThroughController;               //床すり抜け関連のスクリプト
     private PlayerAbilityController playerAbilityController;   //能力管理のスクリプト
 
@@ -489,6 +490,8 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
         {
             Debug.LogError("DodgeControllerが見つかっていません");
         }
+
+        equipmentController = GetComponent<PlayerEquipmentController>();
 
         fallThroughController = GetComponent("FallThroughController") as MonoBehaviour;
         if (fallThroughController == null)
@@ -1049,7 +1052,20 @@ public class PlayerController : MonoBehaviour, IPlayerViewStateProvider
             return 0.0f;
         }
 
-        return Mathf.Sqrt(2.0f * gravity * playerStatsData.JumpForce);
+        float jumpHeight = Mathf.Max(0.0f, playerStatsData.JumpForce + GetEquipmentJumpHeightBonus());
+        return Mathf.Sqrt(2.0f * gravity * jumpHeight);
+    }
+
+    private float GetEquipmentJumpHeightBonus()
+    {
+        if (equipmentController == null)
+        {
+            equipmentController = GetComponent<PlayerEquipmentController>();
+        }
+
+        return equipmentController != null
+            ? Mathf.Max(0.0f, equipmentController.JumpHeightBonus)
+            : 0.0f;
     }
 
     /// <summary>

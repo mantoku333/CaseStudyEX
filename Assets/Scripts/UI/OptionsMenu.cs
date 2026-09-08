@@ -33,6 +33,8 @@ public sealed class OptionsMenu : MonoBehaviour
     private const float KeyboardScrollPixelsPerWheelTick = 56f;
     private const float KeyboardScrollbarMinHandleHeight = 44f;
     private const float ButtonActionDelay = 0.32f;
+    private const int TopSortingOrder = 10000;
+    private const int FullMapSortingOrder = TopSortingOrder + 10;
 
     private static readonly string[] PlayerControlBehaviourNames =
     {
@@ -255,7 +257,18 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
-        if (!isRebinding && ShouldToggleMenu())
+        bool cancelledPurchaseModal =
+            !isRebinding &&
+            decorationPage != null &&
+            decorationPage.IsPurchaseModalOpen &&
+            ShouldCancelDecorationPurchaseModal() &&
+            decorationPage.TryCancelPurchaseModal();
+
+        if (cancelledPurchaseModal)
+        {
+            UIButtonSfxPlayer.PlayClick();
+        }
+        else if (!isRebinding && ShouldToggleMenu())
         {
             HandleToggleRequest();
             UIButtonSfxPlayer.PlayClick();
@@ -308,6 +321,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
         rootCanvas = GetComponent<Canvas>();
         graphicRaycaster = GetComponent<GraphicRaycaster>();
+        EnsureTopSortingOrder();
 
         menuRoot = FindChildObject("MenuRoot");
         optionPanel = FindChildObject("MenuRoot/OptionPanel");
@@ -616,6 +630,13 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
+        // The header Back button acts as modal cancellation while a decoration
+        // purchase is pending and must not navigate away underneath it.
+        if (decorationPage != null && decorationPage.TryCancelPurchaseModal())
+        {
+            return;
+        }
+
         ResolveReferences();
         if (optionPanel == null && alternateMainMenuPanel == null)
         {
@@ -710,6 +731,11 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
+        if (decorationPage != null && decorationPage.IsPurchaseModalOpen)
+        {
+            return;
+        }
+
         bool animateSelectionMarker =
             optionPageHeaderAvailable &&
             isOpen &&
@@ -735,6 +761,15 @@ public sealed class OptionsMenu : MonoBehaviour
         bool showDecorationPage = page == OptionPage.Decoration;
         if (cachedMinimapView != null)
         {
+            if (showMapPage)
+            {
+                cachedMinimapView.SetFullMapSortingOrder(FullMapSortingOrder);
+            }
+            else
+            {
+                cachedMinimapView.RestoreFullMapSortingOrder();
+            }
+
             cachedMinimapView.SetFullMapVisible(showMapPage);
         }
         SetActiveIfChanged(optionDetailPanel, showSettingsPage);
@@ -765,6 +800,11 @@ public sealed class OptionsMenu : MonoBehaviour
     private void HandleOptionPageKeyboardInput()
     {
         if (!referencesResolved || !isOpen || Keyboard.current == null)
+        {
+            return;
+        }
+
+        if (decorationPage != null && decorationPage.IsPurchaseModalOpen)
         {
             return;
         }
@@ -846,6 +886,7 @@ public sealed class OptionsMenu : MonoBehaviour
         if (cachedMinimapView != null)
         {
             cachedMinimapView.SetPanelVisibility(false, false);
+            cachedMinimapView.RestoreFullMapSortingOrder();
         }
     }
 
@@ -1165,6 +1206,11 @@ public sealed class OptionsMenu : MonoBehaviour
 
     private void HandleToggleRequest()
     {
+        if (decorationPage != null && decorationPage.TryCancelPurchaseModal())
+        {
+            return;
+        }
+
         if (!isOpen)
         {
             OpenMenu();
@@ -1268,6 +1314,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
         if (cachedMinimapView != null)
         {
+            cachedMinimapView.RestoreFullMapSortingOrder();
             cachedMinimapView.SetPanelVisibility(previousMinimapVisible, previousFullMapVisible);
             cachedMinimapView = null;
         }
@@ -1683,9 +1730,10 @@ public sealed class OptionsMenu : MonoBehaviour
             return;
         }
 
-        float bgmVolume = ReadVolume(BgmVolumeKey, 1f);
-        float seVolume = ReadVolume(SeVolumeKey, 1f);
-        float systemVolume = ReadVolume(SystemVolumeKey, 1f);
+        float masterVolume = ReadVolume(SystemVolumeKey, 1f);
+        float bgmVolume = masterVolume * ReadVolume(BgmVolumeKey, 1f);
+        float seVolume = masterVolume * ReadVolume(SeVolumeKey, 1f);
+        float systemVolume = masterVolume;
 
         for (int i = 0; i < audioSources.Length; i++)
         {
@@ -1725,7 +1773,7 @@ public sealed class OptionsMenu : MonoBehaviour
 
             if (!capturedAudioBaseVolumes.TryGetValue(id, out float baseVolume))
             {
-                baseVolume = multiplier > 0.0001f ? currentVolume / multiplier : currentVolume;
+                baseVolume = forceRefreshAll || multiplier <= 0.0001f ? currentVolume : currentVolume / multiplier;
                 capturedAudioBaseVolumes[id] = baseVolume;
             }
             else if (!forceRefreshAll &&
@@ -2426,6 +2474,14 @@ public sealed class OptionsMenu : MonoBehaviour
                (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame);
     }
 
+    private bool ShouldCancelDecorationPurchaseModal()
+    {
+        return (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) ||
+               (Gamepad.current != null &&
+                (Gamepad.current.buttonEast.wasPressedThisFrame ||
+                 Gamepad.current.startButton.wasPressedThisFrame));
+    }
+
     private float ReadVolume(string key, float defaultValue)
     {
         return Mathf.Clamp01(PlayerPrefs.GetFloat(key, defaultValue));
@@ -2513,6 +2569,7 @@ public sealed class OptionsMenu : MonoBehaviour
     {
         if (rootCanvas != null)
         {
+            EnsureTopSortingOrder();
             rootCanvas.enabled = visible;
         }
 
@@ -2520,6 +2577,17 @@ public sealed class OptionsMenu : MonoBehaviour
         {
             graphicRaycaster.enabled = visible;
         }
+    }
+
+    private void EnsureTopSortingOrder()
+    {
+        if (rootCanvas == null)
+        {
+            return;
+        }
+
+        rootCanvas.overrideSorting = true;
+        rootCanvas.sortingOrder = TopSortingOrder;
     }
 
     private void SetAlternateMainMenuVisible(bool visible)

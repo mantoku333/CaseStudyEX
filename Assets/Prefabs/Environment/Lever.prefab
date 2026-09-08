@@ -132,7 +132,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 0.6666667}
+    oldSize: {x: 1.2321428, y: 0.7421875}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -159,7 +159,7 @@ MonoBehaviour:
   oneShot: 1
   leverAudioSource: {fileID: 6379162103528491407}
   activationClip: {fileID: 8300000, guid: a30e34e478303486da437678224ee437, type: 3}
-  activationVolume: 1
+  activationVolume: 0.5
 --- !u!82 &6379162103528491407
 AudioSource:
   m_ObjectHideFlags: 0

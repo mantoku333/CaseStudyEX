@@ -71,6 +71,15 @@ public sealed class PlayerGracefulActionEffectManager : MonoBehaviour
     public int CurrentLevel => currentLevel;
     public GracefulAction LastAction => lastAction;
 
+    public bool TryAttractLiveParticles(Transform target, float duration)
+    {
+        bool attractedAnyParticle = false;
+        attractedAnyParticle |= level1Sparkle.TryAttractLiveParticles(target, duration);
+        attractedAnyParticle |= level2Sparkle.TryAttractLiveParticles(target, duration);
+        attractedAnyParticle |= burstEffect.TryAttractLiveParticles(target, duration);
+        return attractedAnyParticle;
+    }
+
     private void Awake()
     {
         ResolveReferences();
@@ -460,6 +469,8 @@ public sealed class PlayerGracefulActionEffectManager : MonoBehaviour
                 }
 
                 RestoreRateOverTime(particle);
+                ParticleSystem.EmissionModule emission = particle.emission;
+                emission.enabled = true;
                 if (!particle.isPlaying)
                 {
                     particle.Play(true);
@@ -506,6 +517,8 @@ public sealed class PlayerGracefulActionEffectManager : MonoBehaviour
                 }
 
                 RestoreRateOverTime(particle);
+                ParticleSystem.EmissionModule emission = particle.emission;
+                emission.enabled = true;
                 if (clearBeforePlay)
                 {
                     particle.Clear(true);
@@ -514,6 +527,36 @@ public sealed class PlayerGracefulActionEffectManager : MonoBehaviour
                 particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
                 particle.Play(true);
             }
+        }
+
+        public bool TryAttractLiveParticles(Transform target, float duration)
+        {
+            if (target == null)
+            {
+                return false;
+            }
+
+            bool attractedAnyParticle = false;
+            ParticleSystem[] resolvedParticles = ResolveParticles();
+            for (int i = 0; i < resolvedParticles.Length; i++)
+            {
+                ParticleSystem particle = resolvedParticles[i];
+                if (particle == null || particle.particleCount <= 0)
+                {
+                    continue;
+                }
+
+                ElegantPointLiveParticleAttractor attractor =
+                    particle.GetComponent<ElegantPointLiveParticleAttractor>();
+                if (attractor == null)
+                {
+                    attractor = particle.gameObject.AddComponent<ElegantPointLiveParticleAttractor>();
+                }
+
+                attractedAnyParticle |= attractor.Initialize(particle, target, duration);
+            }
+
+            return attractedAnyParticle;
         }
 
         private ParticleSystem[] ResolveParticles()

@@ -1,9 +1,8 @@
 using System;
+using Metroidvania.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 using Yarn.Unity;
-using Metroidvania.UI;
 
 namespace Metroidvania.Managers
 {
@@ -14,39 +13,44 @@ namespace Metroidvania.Managers
     }
 
     /// <summary>
-    /// 会話システムの全体管理クラス。
-    /// Input Systemからの入力（Space / South Button）を受け取り、
-    /// DialogueRunnerや各アクティブなViewへ進行の合図を送る。
+    /// Owns the single story dialogue runner and routes progression input to
+    /// the fixed-screen ADV presenter. The legacy style arguments remain
+    /// temporarily so existing Timeline assets can migrate without data loss.
     /// </summary>
-    public class DialogueManager : MonoBehaviour
+    public sealed class DialogueManager : MonoBehaviour
     {
         [SerializeField] private DialogueRunner dialogueRunner = null!;
         [SerializeField] private InputActionReference nextAction = null!;
-        
-        [Header("Views")]
+
+        [Header("Presentation")]
         [SerializeField] private DialogueView advView = null!;
+
+        [Header("Legacy (migration only)")]
         [SerializeField] private BubbleDialogueView bubbleView = null!;
+
+        private DialogueView subscribedAdvView;
 
         public DialogueRunner Runner => dialogueRunner;
 
-        private int lastAdvanceFrame = -1;
-        private int ignoreAnyButtonInputFrame = -1;
+        private void Awake()
+        {
+            // Screen-space canvases authored by migration can be serialized
+            // with a zero transform scale. Restore it before any overlay UI is used.
+            EnsureCanvasHasVisibleScale(transform);
+        }
 
         private void Start()
         {
-            if (dialogueRunner == null)
-            {
-                dialogueRunner = FindFirstObjectByType<DialogueRunner>();
-            }
+            ResolveReferences();
 
             if (nextAction != null)
             {
-                // 入力イベントの購読
+                nextAction.action.performed -= OnNextPerformed;
                 nextAction.action.performed += OnNextPerformed;
             }
             else
             {
-                Debug.LogWarning("[DialogueManager] DialogueNextアクションが設定されていません。");
+                Debug.LogWarning("[DialogueManager] DialogueNext action is not assigned. Pointer input remains available.", this);
             }
         }
 
@@ -66,83 +70,36 @@ namespace Metroidvania.Managers
             }
         }
 
-        private void Update()
-        {
-            if (dialogueRunner == null || !dialogueRunner.IsDialogueRunning) return;
-            if (Time.frameCount <= ignoreAnyButtonInputFrame) return;
-            if (!WasAnyButtonPressedThisFrame()) return;
-
-            AdvanceActiveDialogueViews();
-        }
-
         private void OnDestroy()
         {
             if (nextAction != null)
             {
                 nextAction.action.performed -= OnNextPerformed;
             }
+
+            SubscribeToAdvView(null);
         }
 
         private void OnNextPerformed(InputAction.CallbackContext context)
         {
-            AdvanceActiveDialogueViews();
+            AdvanceActiveDialogue();
         }
 
-        private void AdvanceActiveDialogueViews()
+        private void AdvanceActiveDialogue()
         {
-            if (dialogueRunner == null || !dialogueRunner.IsDialogueRunning) return;
-            if (lastAdvanceFrame == Time.frameCount) return;
-
-            lastAdvanceFrame = Time.frameCount;
-
-            if (dialogueRunner.DialoguePresenters == null)
+            if (dialogueRunner == null || !dialogueRunner.IsDialogueRunning)
             {
                 return;
             }
 
-            // アクティブなViewのみ進行指示を出す
-            foreach (var view in dialogueRunner.DialoguePresenters)
-            {
-                if (view == null || view.gameObject == null || !view.gameObject.activeInHierarchy)
-                {
-                    continue;
-                }
-
-                if (view is DialogueView dv && dv.IsPresentationEnabled)
-                {
-                    dv.OnContinueClicked();
-                }
-
-                if (view is BubbleDialogueView bv && bv.IsPresentationEnabled)
-                {
-                    bv.OnContinueClicked();
-                }
-            }
-        }
-
-        private static bool WasAnyButtonPressedThisFrame()
-        {
-            foreach (var device in InputSystem.devices)
-            {
-                if (device == null || !device.enabled)
-                {
-                    continue;
-                }
-
-                foreach (var control in device.allControls)
-                {
-                    if (control is ButtonControl button && button.wasPressedThisFrame)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            ResolveReferences();
+            advView?.OnContinueClicked();
         }
 
         /// <summary>
-        /// スタイルを指定して会話を開始する（対象はBubble専用オプション）
+        /// Starts a conversation through the fixed ADV presenter. Style and
+        /// bubble-target arguments are intentionally ignored during the
+        /// compatibility window and will be removed after asset migration.
         /// </summary>
         public void StartConversation(
             string nodeName,
@@ -151,52 +108,112 @@ namespace Metroidvania.Managers
             BubbleDialogueView.SpeakerTargetResolver speakerTargetResolver = null,
             bool speakerTargetResolverOnly = false)
         {
-            if (dialogueRunner == null) return;
-            if (dialogueRunner.IsDialogueRunning) dialogueRunner.Stop();
-
-            if (advView == null) advView = FindFirstObjectByType<DialogueView>(FindObjectsInactive.Include);
-            bubbleView = ResolveBubbleView();
-
-            Debug.LogWarning(
-                $"[DialogueManager] StartConversation node='{nodeName}', style={style}, " +
-                $"target='{(target != null ? target.name : "null")}', " +
-                $"advViewFound={advView != null}, bubbleViewFound={bubbleView != null}, frame={Time.frameCount}");
-
-            if (style == DialogueStyle.ADV)
+            ResolveReferences();
+            if (dialogueRunner == null)
             {
-                if (advView != null)
-                {
-                    advView.gameObject.SetActive(true);
-                    advView.SetPresentationEnabled(true);
-                }
-
-                if (bubbleView != null)
-                {
-                    bubbleView.gameObject.SetActive(true);
-                    bubbleView.SetSpeakerTargetResolver(null, false);
-                    bubbleView.SetPresentationEnabled(false);
-                }
-            }
-            else if (style == DialogueStyle.Bubble)
-            {
-                if (advView != null)
-                {
-                    advView.gameObject.SetActive(true);
-                    advView.SetPresentationEnabled(false);
-                }
-
-                if (bubbleView != null)
-                {
-                    EnsureCanvasHasVisibleScale(bubbleView.transform);
-                    bubbleView.gameObject.SetActive(true);
-                    bubbleView.SetSpeakerTargetResolver(speakerTargetResolver, speakerTargetResolverOnly);
-                    bubbleView.SetPresentationEnabled(true);
-                    bubbleView.SetTarget(target);
-                }
+                Debug.LogError("[DialogueManager] DialogueRunner was not found.", this);
+                return;
             }
 
-            ignoreAnyButtonInputFrame = Time.frameCount;
+            if (dialogueRunner.IsDialogueRunning)
+            {
+                dialogueRunner.Stop();
+            }
+
+            if (advView == null)
+            {
+                Debug.LogError(
+                    $"[DialogueManager] ADV DialogueView was not found. node='{nodeName}'",
+                    this);
+                return;
+            }
+
+            EnsureCanvasHasVisibleScale(advView.transform);
+            advView.gameObject.SetActive(true);
+            advView.SetPresentationEnabled(true);
+            advView.PrepareConversation(nodeName);
+            dialogueRunner.DialoguePresenters = new DialoguePresenterBase[] { advView };
+
+            DisableLegacyBubbleViews();
+
+            Debug.Log(
+                $"[DialogueManager] StartConversation node='{nodeName}', requestedStyle={style}, presentation=ADV.",
+                this);
             dialogueRunner.StartDialogue(nodeName);
+        }
+
+        private void ResolveReferences()
+        {
+            if (dialogueRunner == null)
+            {
+                dialogueRunner = FindFirstObjectByType<DialogueRunner>(FindObjectsInactive.Include);
+            }
+
+            if (advView == null)
+            {
+                advView = FindFirstObjectByType<DialogueView>(FindObjectsInactive.Include);
+            }
+
+            SubscribeToAdvView(advView);
+        }
+
+        private void SubscribeToAdvView(DialogueView view)
+        {
+            if (subscribedAdvView == view)
+            {
+                return;
+            }
+
+            if (subscribedAdvView != null)
+            {
+                subscribedAdvView.SkipRequested -= OnSkipRequested;
+            }
+
+            subscribedAdvView = view;
+            if (subscribedAdvView != null)
+            {
+                subscribedAdvView.SkipRequested += OnSkipRequested;
+            }
+        }
+
+        private void OnSkipRequested()
+        {
+            StoryEventController[] controllers = FindObjectsByType<StoryEventController>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+
+            for (int i = 0; i < controllers.Length; i++)
+            {
+                StoryEventController controller = controllers[i];
+                if (controller != null && controller.IsPlaying && controller.SkipEventAndComplete())
+                {
+                    return;
+                }
+            }
+
+            if (dialogueRunner != null && dialogueRunner.IsDialogueRunning)
+            {
+                dialogueRunner.Stop();
+            }
+        }
+
+        private static void DisableLegacyBubbleViews()
+        {
+            BubbleDialogueView[] views = FindObjectsByType<BubbleDialogueView>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+
+            for (int i = 0; i < views.Length; i++)
+            {
+                BubbleDialogueView view = views[i];
+                if (view == null)
+                {
+                    continue;
+                }
+
+                view.SetSpeakerTargetResolver(null, false);
+                view.SetPresentationEnabled(false);
+            }
         }
 
         private static void EnsureCanvasHasVisibleScale(Transform viewTransform)
@@ -213,72 +230,7 @@ namespace Metroidvania.Managers
                 return;
             }
 
-            Debug.LogWarning(
-                $"[DialogueManager] Canvas '{canvasTransform.name}' had zero scale. Restoring it so dialogue is visible.",
-                canvasTransform);
             canvasTransform.localScale = Vector3.one;
-        }
-
-        private BubbleDialogueView ResolveBubbleView()
-        {
-            BubbleDialogueView preferredView = FindPreferredBubbleView();
-            if (preferredView != null)
-            {
-                return preferredView;
-            }
-
-            if (bubbleView != null)
-            {
-                return bubbleView;
-            }
-
-            return FindFirstObjectByType<BubbleDialogueView>(FindObjectsInactive.Include);
-        }
-
-        private static BubbleDialogueView FindPreferredBubbleView()
-        {
-            BubbleDialogueView[] views = FindObjectsByType<BubbleDialogueView>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
-
-            for (int i = 0; i < views.Length; i++)
-            {
-                BubbleDialogueView view = views[i];
-                if (view != null &&
-                    string.Equals(view.name, "BubbleView", StringComparison.OrdinalIgnoreCase) &&
-                    HasParentNamed(view.transform, "EventCanvas"))
-                {
-                    return view;
-                }
-            }
-
-            for (int i = 0; i < views.Length; i++)
-            {
-                BubbleDialogueView view = views[i];
-                if (view != null &&
-                    string.Equals(view.name, "BubbleView", StringComparison.OrdinalIgnoreCase))
-                {
-                    return view;
-                }
-            }
-
-            return null;
-        }
-
-        private static bool HasParentNamed(Transform transform, string parentName)
-        {
-            Transform current = transform;
-            while (current != null)
-            {
-                if (string.Equals(current.name, parentName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-
-                current = current.parent;
-            }
-
-            return false;
         }
     }
 }

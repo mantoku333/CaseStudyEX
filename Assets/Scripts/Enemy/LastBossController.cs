@@ -2496,7 +2496,16 @@ namespace GameName.Enemy
             telegraphCollider.enabled = false;
             telegraphRenderer.sprite = runtimeBoxSprite;
             SpriteRenderer mainRenderer = GetMainSpriteRenderer();
-            telegraphRenderer.sortingOrder = mainRenderer != null ? mainRenderer.sortingOrder + 1 : 1;
+            if (mainRenderer != null)
+            {
+                telegraphRenderer.sortingLayerID = mainRenderer.sortingLayerID;
+            }
+
+            telegraphRenderer.sortingOrder = effectController != null
+                ? effectController.EffectBaseSortingOrder + 1
+                : mainRenderer != null
+                    ? mainRenderer.sortingOrder + 1
+                    : 1;
             telegraphRenderer.enabled = false;
         }
 

@@ -21,6 +21,59 @@ namespace EditorTools
             return !replaceExistingOnly || hasExistingBlock;
         }
 
+        /// <summary>Resolves a narrow cell independently of connections elsewhere in its column.</summary>
+        public static bool TryResolveColumn(StageBlockNeighborState neighbors, out StageBlockFace face)
+        {
+            face = StageBlockFace.E;
+            if (neighbors.left || neighbors.right || (!neighbors.up && !neighbors.down))
+            {
+                return false;
+            }
+
+            face = !neighbors.up ? StageBlockFace.J : !neighbors.down ? StageBlockFace.M : StageBlockFace.K;
+            return true;
+        }
+
+        /// <summary>Uses column faces when enabled by the caller.</summary>
+        public static StageBlockFace Resolve(StageBlockNeighborState neighbors, bool isIsolatedVerticalColumn)
+        {
+            if (isIsolatedVerticalColumn && TryResolveColumn(neighbors, out StageBlockFace face))
+            {
+                return face;
+            }
+
+            return Resolve(neighbors);
+        }
+
+        /// <summary>Resolves grass from local exposure, with column faces taking precedence.</summary>
+        public static StageBlockFace ResolveGrass(StageBlockNeighborState neighbors)
+        {
+            return ResolveGrass(neighbors, true, true);
+        }
+
+        /// <summary>Enables column and surface-corner faces independently for partial palettes.</summary>
+        public static StageBlockFace ResolveGrass(
+            StageBlockNeighborState neighbors, bool useColumnFaces, bool useSurfaceCornerFaces)
+        {
+            if (useColumnFaces && TryResolveColumn(neighbors, out StageBlockFace face))
+            {
+                return face;
+            }
+
+            if (useSurfaceCornerFaces && neighbors.up)
+            {
+                bool surfaceOnLeft = neighbors.left && !neighbors.upLeft;
+                bool surfaceOnRight = neighbors.right && !neighbors.upRight;
+                // A two-sided join needs the standard face; neither N nor O covers both sides.
+                if (surfaceOnLeft != surfaceOnRight)
+                {
+                    return surfaceOnLeft ? StageBlockFace.N : StageBlockFace.O;
+                }
+            }
+
+            return Resolve(neighbors);
+        }
+
         public static StageBlockFace Resolve(StageBlockNeighborState neighbors)
         {
             bool exposedLeft = !neighbors.left;

@@ -39,6 +39,7 @@ public class UmbrellaAttackController : MonoBehaviour
     [SerializeField] private int attackEffectSortingOrderOffset = 2;
 
     private bool isAttacking;
+    private bool currentAttackHitEnemy;
     private float lastAttackTime = -999.0f;
 
     private AudioSource audioSource;
@@ -50,6 +51,23 @@ public class UmbrellaAttackController : MonoBehaviour
     private Vector3 attackColliderDefaultLocalPosition;
     private bool hasAttackColliderDefaultLocalPosition;
 
+    /// <summary>
+    /// Raised once after a normal attack has passed all start guards.
+    /// </summary>
+    public event Action ActionStarted;
+
+    /// <summary>
+    /// Raised once for the first enemy or boss hit by the current attack.
+    /// Destructibles do not raise this event.
+    /// </summary>
+    public event Action FirstEnemyHit;
+
+    /// <summary>
+    /// Raised once when the current attack finishes. The argument is true when
+    /// that attack hit at least one enemy or boss.
+    /// </summary>
+    public event Action<bool> ActionEnded;
+
     private void Awake()
     {
         if (attackCollider != null)
@@ -57,7 +75,7 @@ public class UmbrellaAttackController : MonoBehaviour
             attackHitbox = attackCollider.GetComponent<AttackHitbox>();
             if (attackHitbox != null)
             {
-                attackHitbox.OnHit += PlayAttackHitSE;
+                attackHitbox.OnHit += HandleAttackHit;
             }
 
             attackColliderDefaultLocalPosition = attackCollider.transform.localPosition;
@@ -104,7 +122,10 @@ public class UmbrellaAttackController : MonoBehaviour
         if (attackCollider == null) { return; }
 
         isAttacking = true;
+        currentAttackHitEnemy = false;
         var destroyToken = this.GetCancellationTokenOnDestroy();
+
+        ActionStarted?.Invoke();
 
         UpdateAttackColliderFacing();
         PlaySE(player_normalAttack);
@@ -121,15 +142,12 @@ public class UmbrellaAttackController : MonoBehaviour
         }
         catch (OperationCanceledException)
         {
-            return;
+            // CompleteAttack is idempotent and also runs from OnDisable/OnDestroy.
         }
-
-        if (attackCollider != null)
+        finally
         {
-            attackCollider.enabled = false;
+            CompleteAttack();
         }
-
-        isAttacking = false;
     }
 
     private async UniTaskVoid PlayAttackEffect()
@@ -310,11 +328,24 @@ public class UmbrellaAttackController : MonoBehaviour
         return new Rect(x, y, width, height);
     }
 
+    private void OnDisable()
+    {
+        // Options pauses by disabling player behaviours after setting scaled
+        // time to zero. Preserve an in-flight hit/miss result across that pause.
+        if (Time.timeScale > 0f)
+        {
+            CompleteAttack();
+            HideAttackEffectRenderer();
+        }
+    }
+
     private void OnDestroy()
     {
+        CompleteAttack();
+
         if (attackHitbox != null)
         {
-            attackHitbox.OnHit -= PlayAttackHitSE;
+            attackHitbox.OnHit -= HandleAttackHit;
         }
 
         HideAttackEffectRenderer();
@@ -333,12 +364,38 @@ public class UmbrellaAttackController : MonoBehaviour
         }
     }
 
-    private void PlayAttackHitSE(Collider2D collision)
+    private void HandleAttackHit(Collider2D collision)
     {
-        if (IsEnemyHit(collision))
+        if (!IsEnemyHit(collision))
         {
-            PlaySE(player_attackHit);
+            return;
         }
+
+        PlaySE(player_attackHit);
+
+        if (!isAttacking || currentAttackHitEnemy)
+        {
+            return;
+        }
+
+        currentAttackHitEnemy = true;
+        FirstEnemyHit?.Invoke();
+    }
+
+    private void CompleteAttack()
+    {
+        if (!isAttacking)
+        {
+            return;
+        }
+
+        if (attackCollider != null)
+        {
+            attackCollider.enabled = false;
+        }
+
+        isAttacking = false;
+        ActionEnded?.Invoke(currentAttackHitEnemy);
     }
 
     private void PlaySE(AudioClip clip)
@@ -354,8 +411,8 @@ public class UmbrellaAttackController : MonoBehaviour
             return false;
         }
 
-        return collision.GetComponentInParent<GameName.Enemy.EnemyController>() != null ||
-               collision.GetComponentInParent<GameName.Enemy.LastBossController>() != null;
+        return collision.GetComponentInParent<GameName.Enemy.EnemyController>(true) != null ||
+               collision.GetComponentInParent<GameName.Enemy.LastBossController>(true) != null;
     }
 
     private void HideAttackEffectRenderer()

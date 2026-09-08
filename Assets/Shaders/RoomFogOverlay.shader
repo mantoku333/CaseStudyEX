@@ -4,7 +4,7 @@ Shader "CaseStudy/RoomFogOverlay"
     {
         _MaskTex ("Reveal Mask", 2D) = "black" {}
         _EntranceMaskTex ("Portal Entrance Mask", 2D) = "black" {}
-        _FogColor ("Fog Color", Color) = (0, 0, 0, 0.92)
+        _FogColor ("Fog Color", Color) = (0, 0, 0, 1)
         _FogAlpha ("Fog Alpha", Range(0, 1)) = 1
         _EdgeSoftness ("Edge Softness", Range(0.01, 1)) = 0.22
         _NoiseStrength ("Noise Strength", Range(0, 1)) = 0.18
@@ -122,10 +122,9 @@ Shader "CaseStudy/RoomFogOverlay"
                 }
 
                 float noise = ValueNoise(i.worldPos.xy * _NoiseScale + _Time.y * 0.04);
-                float noisyAlpha = saturate(1.0 + (noise - 0.5) * _NoiseStrength);
-
                 fixed4 color = _FogColor;
-                color.a *= _FogAlpha * hidden * noisyAlpha;
+                color.rgb *= saturate(1.0 + (noise - 0.5) * _NoiseStrength);
+                color.a *= _FogAlpha * hidden;
                 return color;
             }
             ENDCG

@@ -1,0 +1,559 @@
+fileFormatVersion: 2
+guid: 4651a9a844e2d6541b350e3a31e970e6
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8007227618121771478
+    second: Test_DECO_GraceAura_Back_0
+  - first:
+      213: 938341605833831386
+    second: Test_DECO_GraceAura_Back_1
+  - first:
+      213: -4194487941473939322
+    second: Test_DECO_GraceAura_Back_2
+  - first:
+      213: 8123552978623061138
+    second: Test_DECO_GraceAura_Back_3
+  - first:
+      213: 3703165363043193366
+    second: Test_DECO_GraceAura_Back_4
+  - first:
+      213: 8729364420519819023
+    second: Test_DECO_GraceAura_Back_5
+  - first:
+      213: -3607158191647232257
+    second: Test_DECO_GraceAura_Back_6
+  - first:
+      213: -5710293004198292086
+    second: Test_DECO_GraceAura_Back_7
+  - first:
+      213: -1161946040864258979
+    second: Test_DECO_GraceAura_Back_8
+  - first:
+      213: 762705435740239384
+    second: Test_DECO_GraceAura_Back_9
+  - first:
+      213: 1973161481836305062
+    second: Test_DECO_GraceAura_Back_10
+  - first:
+      213: -3869062131377773181
+    second: Test_DECO_GraceAura_Back_11
+  - first:
+      213: 4634719260977036696
+    second: Test_DECO_GraceAura_Back_12
+  - first:
+      213: 1451041585865310708
+    second: Test_DECO_GraceAura_Back_13
+  - first:
+      213: 5399394479633810746
+    second: Test_DECO_GraceAura_Back_14
+  - first:
+      213: -1623207493705907503
+    second: Test_DECO_GraceAura_Back_15
+  - first:
+      213: -8261163629054707833
+    second: Test_DECO_GraceAura_Back_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_0
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 41
+        width: 1507
+        height: 954
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d968d538136f1f60800000000000000
+      internalID: 8007227618121771478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_1
+      rect:
+        serializedVersion: 2
+        x: 616
+        y: 925
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad3f1bd08b8a50d00800000000000000
+      internalID: 938341605833831386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_2
+      rect:
+        serializedVersion: 2
+        x: 861
+        y: 933
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68059c9c07f2ac5c0800000000000000
+      internalID: -4194487941473939322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_3
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 924
+        width: 7
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29cd4e4c468acb070800000000000000
+      internalID: 8123552978623061138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_4
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 916
+        width: 17
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61258b80749446330800000000000000
+      internalID: 3703165363043193366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_5
+      rect:
+        serializedVersion: 2
+        x: 886
+        y: 911
+        width: 13
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f077408b0bee42970800000000000000
+      internalID: 8729364420519819023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_6
+      rect:
+        serializedVersion: 2
+        x: 858
+        y: 919
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffee93a7cbcc0fdc0800000000000000
+      internalID: -3607158191647232257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_7
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 503
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a85dc5164c6f0c0b0800000000000000
+      internalID: -5710293004198292086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_8
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 503
+        width: 11
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d544d1a6b30ffdfe0800000000000000
+      internalID: -1161946040864258979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_9
+      rect:
+        serializedVersion: 2
+        x: 818
+        y: 487
+        width: 23
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8167e858d8ca59a00800000000000000
+      internalID: 762705435740239384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_10
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 495
+        width: 7
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6aa1659d9e3126b10800000000000000
+      internalID: 1973161481836305062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_11
+      rect:
+        serializedVersion: 2
+        x: 662
+        y: 479
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 385ef4d9d745e4ac0800000000000000
+      internalID: -3869062131377773181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_12
+      rect:
+        serializedVersion: 2
+        x: 946
+        y: 485
+        width: 10
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89d7230bc94d15040800000000000000
+      internalID: 4634719260977036696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_13
+      rect:
+        serializedVersion: 2
+        x: 710
+        y: 439
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f142d762a2232410800000000000000
+      internalID: 1451041585865310708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_14
+      rect:
+        serializedVersion: 2
+        x: 754
+        y: 457
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3547c80ca08eea40800000000000000
+      internalID: 5399394479633810746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_15
+      rect:
+        serializedVersion: 2
+        x: 722
+        y: 438
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d248e472653979e0800000000000000
+      internalID: -1623207493705907503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Test_DECO_GraceAura_Back_16
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 415
+        width: 9
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78731dae2737a5d80800000000000000
+      internalID: -8261163629054707833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Test_DECO_GraceAura_Back_0: 8007227618121771478
+      Test_DECO_GraceAura_Back_1: 938341605833831386
+      Test_DECO_GraceAura_Back_10: 1973161481836305062
+      Test_DECO_GraceAura_Back_11: -3869062131377773181
+      Test_DECO_GraceAura_Back_12: 4634719260977036696
+      Test_DECO_GraceAura_Back_13: 1451041585865310708
+      Test_DECO_GraceAura_Back_14: 5399394479633810746
+      Test_DECO_GraceAura_Back_15: -1623207493705907503
+      Test_DECO_GraceAura_Back_16: -8261163629054707833
+      Test_DECO_GraceAura_Back_2: -4194487941473939322
+      Test_DECO_GraceAura_Back_3: 8123552978623061138
+      Test_DECO_GraceAura_Back_4: 3703165363043193366
+      Test_DECO_GraceAura_Back_5: 8729364420519819023
+      Test_DECO_GraceAura_Back_6: -3607158191647232257
+      Test_DECO_GraceAura_Back_7: -5710293004198292086
+      Test_DECO_GraceAura_Back_8: -1161946040864258979
+      Test_DECO_GraceAura_Back_9: 762705435740239384
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

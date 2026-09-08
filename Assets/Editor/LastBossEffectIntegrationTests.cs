@@ -688,6 +688,87 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [Test]
+    public void LastBossBody_RendersBehindPlayerWhileEffectsKeepIsolatedOrders()
+    {
+        const int lastBossBodySortingOrder = 1;
+        const int lastBossBaseSortingOrder = 10;
+        const int lowestLastBossEffectSortingOrder = lastBossBaseSortingOrder - 1;
+        int defaultSortingLayerId = SortingLayer.NameToID("Default");
+
+        string[] lastBossVisualPrefabPaths =
+        {
+            "Assets/Prefabs/Enemies/LastBoss.prefab",
+            "Assets/Prefabs/Projectiles/GroundBlade.prefab",
+            "Assets/Prefabs/Projectiles/RainBlade.prefab"
+        };
+
+        for (int i = 0; i < lastBossVisualPrefabPaths.Length; i++)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(lastBossVisualPrefabPaths[i]);
+            Assert.That(prefab, Is.Not.Null, $"{lastBossVisualPrefabPaths[i]} should exist.");
+
+            SpriteRenderer[] renderers = prefab.GetComponentsInChildren<SpriteRenderer>(true);
+            Assert.That(renderers, Is.Not.Empty, $"{lastBossVisualPrefabPaths[i]} should have a visual renderer.");
+            int expectedSortingOrder = i == 0 ? lastBossBodySortingOrder : lastBossBaseSortingOrder;
+            for (int j = 0; j < renderers.Length; j++)
+            {
+                Assert.That(
+                    renderers[j].sortingLayerID,
+                    Is.EqualTo(defaultSortingLayerId),
+                    $"{lastBossVisualPrefabPaths[i]} renderer {renderers[j].name} should stay on the lit Default sorting layer.");
+                Assert.That(
+                    renderers[j].sortingOrder,
+                    Is.EqualTo(expectedSortingOrder),
+                    $"{lastBossVisualPrefabPaths[i]} renderer {renderers[j].name} should use its intended LastBoss sorting order.");
+            }
+        }
+
+        GameObject lastBossPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(lastBossVisualPrefabPaths[0]);
+        LastBossEffectController lastBossEffects = lastBossPrefab.GetComponent<LastBossEffectController>();
+        Assert.That(lastBossEffects, Is.Not.Null);
+        Assert.That(GetPrivateField<int>(lastBossEffects, "effectBaseSortingOrder"), Is.EqualTo(lastBossBaseSortingOrder));
+
+        GameObject playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Player/Player.prefab");
+        Assert.That(playerPrefab, Is.Not.Null);
+        SpriteRenderer[] playerRenderers = playerPrefab.GetComponentsInChildren<SpriteRenderer>(true);
+        Assert.That(playerRenderers, Is.Not.Empty);
+        int highestPlayerSortingOrder = int.MinValue;
+        for (int i = 0; i < playerRenderers.Length; i++)
+        {
+            highestPlayerSortingOrder = Mathf.Max(highestPlayerSortingOrder, playerRenderers[i].sortingOrder);
+            Assert.That(
+                playerRenderers[i].sortingLayerID,
+                Is.EqualTo(defaultSortingLayerId),
+                $"Player renderer {playerRenderers[i].name} should keep its existing sorting layer.");
+            Assert.That(
+                playerRenderers[i].sortingOrder,
+                Is.LessThan(lowestLastBossEffectSortingOrder),
+                $"Player renderer {playerRenderers[i].name} should remain below the LastBoss-only sorting range.");
+        }
+
+        Assert.That(highestPlayerSortingOrder, Is.GreaterThan(lastBossBodySortingOrder));
+    }
+
+    [Test]
+    public void RoomFogOverlay_StaysInFrontOfPlayerAndLastBossEffects()
+    {
+        GameObject fogPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/RoomFogRevealManager.prefab");
+        Assert.That(fogPrefab, Is.Not.Null);
+        RoomFogRevealManager prefabManager = fogPrefab.GetComponent<RoomFogRevealManager>();
+        Assert.That(prefabManager, Is.Not.Null);
+        Assert.That(GetPrivateField<int>(prefabManager, "sortingOrder"), Is.GreaterThan(15));
+
+        GameObject fogObject = CreateObject("RoomFogSortingMinimum", Vector2.zero);
+        fogObject.SetActive(false);
+        RoomFogRevealManager fogManager = fogObject.AddComponent<RoomFogRevealManager>();
+        SetPrivateField(fogManager, "sortingOrder", 0);
+
+        InvokePrivate(fogManager, "OnValidate");
+
+        Assert.That(GetPrivateField<int>(fogManager, "sortingOrder"), Is.EqualTo(100));
+    }
+
+    [Test]
     public void LastBossPrefab_HasSpriteSizedContactDamageCollider()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemies/LastBoss.prefab");
@@ -722,7 +803,7 @@ public sealed class LastBossEffectIntegrationTests
     }
 
     [UnityTest]
-    public IEnumerator EffectController_CopiesSortingFromSpriteViewChildRenderer()
+    public IEnumerator EffectController_UsesEffectSortingBaseAndCopiesLayerFromSpriteView()
     {
         GameObject bossObject = CreateObject("LastBossChildRendererEffectsOwner", Vector2.zero);
         bossObject.AddComponent<BoxCollider2D>();
@@ -730,10 +811,12 @@ public sealed class LastBossEffectIntegrationTests
         spriteViewObject.SetActive(false);
         spriteViewObject.transform.SetParent(bossObject.transform, false);
         SpriteRenderer childRenderer = spriteViewObject.AddComponent<SpriteRenderer>();
-        childRenderer.sortingOrder = 17;
+        childRenderer.sortingLayerID = SortingLayer.NameToID("Default");
+        childRenderer.sortingOrder = 1;
         spriteViewObject.AddComponent<LastBossSpriteAnimator>();
         LastBossEffectController effects = bossObject.AddComponent<LastBossEffectController>();
         SetPrivateField(effects, "auraSpriteSheet", CreateTexture("AuraChildRenderer", 10, 12));
+        SetPrivateField(effects, "effectBaseSortingOrder", 10);
         SetPrivateField(effects, "auraSortingOrderOffset", 6);
 
         InvokePrivate(effects, "Awake");
@@ -742,7 +825,30 @@ public sealed class LastBossEffectIntegrationTests
 
         SpriteRenderer auraRenderer = FindRendererNamed("LastBossAuraEffect");
         Assert.That(auraRenderer, Is.Not.Null);
-        Assert.That(auraRenderer.sortingOrder, Is.EqualTo(childRenderer.sortingOrder + 6));
+        Assert.That(auraRenderer.sortingLayerID, Is.EqualTo(childRenderer.sortingLayerID));
+        Assert.That(auraRenderer.sortingOrder, Is.EqualTo(16));
+    }
+
+    [Test]
+    public void LastBoss_AttackPreviewUsesEffectSortingBase()
+    {
+        GameObject bossObject = CreateObject("LastBossAttackPreviewSorting", Vector2.zero);
+        bossObject.SetActive(false);
+        SpriteRenderer bossRenderer = bossObject.AddComponent<SpriteRenderer>();
+        bossRenderer.sortingLayerID = SortingLayer.NameToID("Default");
+        bossRenderer.sortingOrder = 1;
+        bossObject.AddComponent<BoxCollider2D>();
+        bossObject.AddComponent<Rigidbody2D>().gravityScale = 0f;
+        LastBossEffectController effects = bossObject.AddComponent<LastBossEffectController>();
+        SetPrivateField(effects, "effectBaseSortingOrder", 10);
+        LastBossController boss = bossObject.AddComponent<LastBossController>();
+
+        InvokePrivate(boss, "Awake");
+
+        SpriteRenderer attackPreviewRenderer = GetPrivateField<SpriteRenderer>(boss, "telegraphRenderer");
+        Assert.That(attackPreviewRenderer, Is.Not.Null);
+        Assert.That(attackPreviewRenderer.sortingLayerID, Is.EqualTo(bossRenderer.sortingLayerID));
+        Assert.That(attackPreviewRenderer.sortingOrder, Is.EqualTo(11));
     }
 
     [UnityTest]

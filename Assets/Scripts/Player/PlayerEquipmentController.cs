@@ -39,9 +39,16 @@ public sealed class PlayerEquipmentController : MonoBehaviour
     private float attackPowerMultiplier = 1f;
     private float healPercentOnEnemyKill;
     private float gunRecoilForceBonus;
+    private float recoilCooldownMultiplier = 1f;
+    private float jumpHeightBonus;
+    private float maxHealthMultiplier = 1f;
+    private float elegantPointGainMultiplier = 1f;
+    private bool recoilCooldownDisabled;
     private bool lastFacingRight = true;
 
     public float AttackPowerMultiplier => attackPowerMultiplier;
+    public float JumpHeightBonus => jumpHeightBonus;
+    public float ElegantPointGainMultiplier => elegantPointGainMultiplier;
 
     private void Awake()
     {
@@ -67,7 +74,8 @@ public sealed class PlayerEquipmentController : MonoBehaviour
     private void OnDisable()
     {
         PlayerEquipmentState.EquippedItemChanged -= RefreshEquipment;
-        ApplyGunRecoilBonus(0f);
+        ResetEffects();
+        ApplyRuntimeEffects();
     }
 
     public void RefreshEquipment()
@@ -81,16 +89,18 @@ public sealed class PlayerEquipmentController : MonoBehaviour
         ClearVisuals();
         ResetEffects();
 
-        if (currentEquipment == null)
+        if (currentEquipment != null)
         {
-            ApplyGunRecoilBonus(0f);
-            return;
+            ApplyEffects(currentEquipment);
         }
 
-        ApplyEffects(currentEquipment);
-        ApplyGunRecoilBonus(gunRecoilForceBonus);
-        BuildVisuals(currentEquipment);
-        UpdateVisualFacing(true);
+        ApplyRuntimeEffects();
+
+        if (currentEquipment != null)
+        {
+            BuildVisuals(currentEquipment);
+            UpdateVisualFacing(true);
+        }
     }
 
     public void NotifyEnemyKilledByPlayerAttack()
@@ -146,6 +156,11 @@ public sealed class PlayerEquipmentController : MonoBehaviour
         attackPowerMultiplier = 1f;
         healPercentOnEnemyKill = 0f;
         gunRecoilForceBonus = 0f;
+        recoilCooldownMultiplier = 1f;
+        jumpHeightBonus = 0f;
+        maxHealthMultiplier = 1f;
+        elegantPointGainMultiplier = 1f;
+        recoilCooldownDisabled = false;
     }
 
     private void ApplyEffects(ItemData itemData)
@@ -171,8 +186,30 @@ public sealed class PlayerEquipmentController : MonoBehaviour
                 case EquipmentAbilityType.GunRecoilForceBonus:
                     gunRecoilForceBonus += Mathf.Max(0f, effect.value);
                     break;
+                case EquipmentAbilityType.RecoilCooldownMultiplier:
+                    recoilCooldownMultiplier *= Mathf.Max(0f, effect.value);
+                    break;
+                case EquipmentAbilityType.JumpHeightBonus:
+                    jumpHeightBonus += Mathf.Max(0f, effect.value);
+                    break;
+                case EquipmentAbilityType.MaxHealthMultiplier:
+                    maxHealthMultiplier *= Mathf.Max(0f, effect.value);
+                    break;
+                case EquipmentAbilityType.RecoilCooldownDisabled:
+                    recoilCooldownDisabled |= effect.value > 0f;
+                    break;
+                case EquipmentAbilityType.ElegantPointGainMultiplier:
+                    elegantPointGainMultiplier *= Mathf.Max(0f, effect.value);
+                    break;
             }
         }
+    }
+
+    private void ApplyRuntimeEffects()
+    {
+        ApplyGunRecoilBonus(gunRecoilForceBonus);
+        ApplyRecoilCooldownEffects(recoilCooldownMultiplier, recoilCooldownDisabled);
+        ApplyMaxHealthMultiplier(maxHealthMultiplier);
     }
 
     private void ApplyGunRecoilBonus(float bonus)
@@ -181,6 +218,24 @@ public sealed class PlayerEquipmentController : MonoBehaviour
         if (gunController != null)
         {
             gunController.SetRecoilForceBonus(bonus);
+        }
+    }
+
+    private void ApplyRecoilCooldownEffects(float multiplier, bool disabled)
+    {
+        ResolveReferences();
+        if (gunController != null)
+        {
+            gunController.SetRecoilCooldownModifier(multiplier, disabled);
+        }
+    }
+
+    private void ApplyMaxHealthMultiplier(float multiplier)
+    {
+        ResolveReferences();
+        if (playerHealth != null)
+        {
+            playerHealth.SetEquipmentMaxHealthMultiplier(multiplier);
         }
     }
 

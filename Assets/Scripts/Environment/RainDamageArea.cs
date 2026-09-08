@@ -134,7 +134,7 @@ public sealed class RainDamageArea : MonoBehaviour
             return;
         }
 
-        if (playerHealth.TryTakeDamage(damage, damageIntervalSeconds))
+        if (playerHealth.TryTakeRainDamage(damage, damageIntervalSeconds))
         {
             playerDamageFlash?.PlayFlashForced();
         }

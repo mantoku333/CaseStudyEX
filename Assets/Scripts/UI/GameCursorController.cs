@@ -19,6 +19,7 @@ public sealed class GameCursorController : MonoBehaviour
 
     private static GameCursorController instance;
     private static readonly HashSet<object> menuCursorModeOwners = new HashSet<object>();
+    private static readonly HashSet<object> forcedHiddenOwners = new HashSet<object>();
 
     [SerializeField] private Canvas canvas;
     [SerializeField] private Image cursorImage;
@@ -103,6 +104,29 @@ public sealed class GameCursorController : MonoBehaviour
         menuCursorModeOwners.Remove(owner);
     }
 
+    public static void SetCursorForcedHidden(object owner, bool hidden)
+    {
+        if (owner == null)
+        {
+            return;
+        }
+
+        if (hidden)
+        {
+            forcedHiddenOwners.Add(owner);
+        }
+        else
+        {
+            forcedHiddenOwners.Remove(owner);
+        }
+
+        if (instance != null)
+        {
+            instance.HideAllImages();
+            ApplySystemCursorVisibility();
+        }
+    }
+
     private static GameCursorController EnsureInstance()
     {
         if (instance != null)
@@ -180,6 +204,12 @@ public sealed class GameCursorController : MonoBehaviour
     private void Update()
     {
         SetSystemCursorVisible(false);
+
+        if (forcedHiddenOwners.Count > 0)
+        {
+            HideAllImages();
+            return;
+        }
 
         if (HideCursorForPvMode())
         {

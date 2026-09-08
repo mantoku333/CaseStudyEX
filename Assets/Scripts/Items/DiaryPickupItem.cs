@@ -1,32 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
-using Metroidvania.Managers;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
+[DisallowMultipleComponent]
 public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
 {
-    private const string DiaryPanelPresenterName = "DiaryView";
-
     [SerializeField] private DiaryEntryData diaryEntryData;
-    [Header("Pickup Event Name Override")]
-    [SerializeField] private string pickupEventName = "";
-    [SerializeField] private bool showDiaryPanelOnPickup = true;
 
-    private bool isPickedUp = false;
+    private bool isPickedUp;
 
     public int Priority => 253;
-
-    private void Awake()
-    {
-        if (diaryEntryData != null)
-        {
-            return;
-        }
-
-        Debug.LogWarning("DiaryEntryData is not assigned. DiaryPickupItem will be disabled.", this);
-        gameObject.SetActive(false);
-    }
 
     private void OnEnable()
     {
@@ -42,19 +23,7 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
 
     private void Start()
     {
-        if (diaryEntryData == null)
-        {
-            Debug.LogError("DiaryEntryData is not assigned.", this);
-            gameObject.SetActive(false);
-            return;
-        }
-
-        string flagKey = diaryEntryData.GetProgressFlagKey();
-
-        if (GameProgressFlags.Get(flagKey))
-        {
-            Destroy(gameObject);
-        }
+        RemoveIfAlreadyCollected();
     }
 
     private void Reset()
@@ -69,46 +38,12 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (isPickedUp){ return; }
-
-        if (diaryEntryData == null){ return; }
-
-        if (!other.CompareTag("Player")){ return; }
-
-        string flagKey = diaryEntryData.GetProgressFlagKey();
-
-        if (GameProgressFlags.Get(flagKey))
+        if (isPickedUp || other == null || !other.CompareTag("Player"))
         {
-            RemoveCollectedItem();
             return;
         }
 
-        isPickedUp = true;
-        GameProgressFlags.Set(flagKey, true);
-
-        Debug.Log($"Diary picked up: {diaryEntryData.GetTitle()}");
-
-        TryPlayPickupEvent();
-
         CompletePickup();
-    }
-
-    private void TryPlayPickupEvent()
-    {
-        string eventName = ResolvePickupEventName();
-        if (!showDiaryPanelOnPickup && string.IsNullOrWhiteSpace(eventName)){ return; }
-
-        DiaryPickupEventPlayer.Play(eventName, diaryEntryData, transform.position, name, showDiaryPanelOnPickup);
-    }
-
-    private string ResolvePickupEventName()
-    {
-        if (!string.IsNullOrWhiteSpace(pickupEventName))
-        {
-            return pickupEventName.Trim();
-        }
-
-        return diaryEntryData != null ? diaryEntryData.GetPickupEventName() : string.Empty;
     }
 
     private void CompletePickup()
@@ -126,17 +61,33 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
 
     private void OnProgressFlagChanged(string flagKey, bool value)
     {
-        if (!value || isPickedUp || diaryEntryData == null)
-        {
-            return;
-        }
-
-        if (!string.Equals(flagKey, diaryEntryData.GetProgressFlagKey(), System.StringComparison.Ordinal))
+        if (!value || isPickedUp || !MatchesProgressFlag(flagKey))
         {
             return;
         }
 
         RemoveCollectedItem();
+    }
+
+    private void RemoveIfAlreadyCollected()
+    {
+        string flagKey = ResolveProgressFlagKey();
+        if (!string.IsNullOrWhiteSpace(flagKey) && GameProgressFlags.Get(flagKey))
+        {
+            RemoveCollectedItem();
+        }
+    }
+
+    private bool MatchesProgressFlag(string flagKey)
+    {
+        string progressFlagKey = ResolveProgressFlagKey();
+        return !string.IsNullOrWhiteSpace(progressFlagKey) &&
+               string.Equals(flagKey, progressFlagKey, System.StringComparison.Ordinal);
+    }
+
+    private string ResolveProgressFlagKey()
+    {
+        return diaryEntryData != null ? diaryEntryData.GetProgressFlagKey() : string.Empty;
     }
 
     private void RemoveCollectedItem()
@@ -151,317 +102,6 @@ public class DiaryPickupItem : MonoBehaviour, ISaveDataModule
 
     public void Restore(SaveGameData saveData)
     {
-        if (diaryEntryData == null)
-        {
-            gameObject.SetActive(false);
-            return;
-        }
-
-        if (GameProgressFlags.Get(diaryEntryData.GetProgressFlagKey()))
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    private sealed class DiaryPickupEventPlayer : MonoBehaviour
-    {
-        private static readonly string[] PlayerControlBehaviourNames =
-        {
-            "PlayerController",
-            "PlayerController_ozono",
-            "PlayerPlatformerMockController",
-            "DodgeController",
-            "PlayerShooter",
-            "GunController",
-            "UmbrellaController",
-            "UmbrellaAttackController",
-            "UmbrellaParryController"
-        };
-
-        private readonly List<Behaviour> pausedBehaviours = new List<Behaviour>();
-        private GameObject dialogueTargetObject;
-        private DialogueManager dialogueManager;
-        private EventPanelPresenter diaryPanelPresenter;
-        private PlayerInput pausedPlayerInput;
-        private bool previousPlayerInputEnabled;
-        private bool waitingDialogueCompletion;
-        private bool waitingDiaryPanelClose;
-        private bool gameplayPaused;
-        private bool cleaningUp;
-
-        public static void Play(
-            string dialogueNodeName,
-            DiaryEntryData diaryEntryData,
-            Vector3 pickupPosition,
-            string sourceName,
-            bool showDiaryPanel)
-        {
-            GameObject playerObject = new GameObject("[DiaryPickupEventPlayer]");
-            DiaryPickupEventPlayer player = playerObject.AddComponent<DiaryPickupEventPlayer>();
-            player.StartCoroutine(
-                player.PlayRoutine(
-                    string.IsNullOrWhiteSpace(dialogueNodeName) ? string.Empty : dialogueNodeName.Trim(),
-                    diaryEntryData,
-                    pickupPosition,
-                    sourceName,
-                    showDiaryPanel));
-        }
-
-        private IEnumerator PlayRoutine(
-            string dialogueNodeName,
-            DiaryEntryData diaryEntryData,
-            Vector3 pickupPosition,
-            string sourceName,
-            bool showDiaryPanel)
-        {
-            // Trigger callbacks from the event area and the pickup can occur in the same
-            // physics step. Let the story event start first, then give its presentation
-            // priority while still keeping the diary's collected flag set by the pickup.
-            yield return null;
-            if (StoryEventRuntimeService.HasPendingEvents)
-            {
-                Debug.Log($"Diary pickup presentation skipped during story event: {sourceName}");
-                Cleanup();
-                yield break;
-            }
-
-            PausePlayerControl();
-
-            if (!string.IsNullOrWhiteSpace(dialogueNodeName))
-            {
-                yield return PlayDialogueRoutine(dialogueNodeName, pickupPosition, sourceName);
-            }
-
-            if (showDiaryPanel)
-            {
-                yield return ShowDiaryPanelRoutine(diaryEntryData);
-            }
-
-            Cleanup();
-        }
-
-        private IEnumerator PlayDialogueRoutine(string dialogueNodeName, Vector3 pickupPosition, string sourceName)
-        {
-            dialogueManager = FindFirstObjectByType<DialogueManager>();
-            if (dialogueManager == null || dialogueManager.Runner == null)
-            {
-                Debug.LogWarning($"Diary pickup dialogue manager not found: {dialogueNodeName}");
-                yield break;
-            }
-
-            if (dialogueManager.Runner.Dialogue == null || !dialogueManager.Runner.Dialogue.NodeExists(dialogueNodeName))
-            {
-                Debug.LogWarning($"Diary pickup dialogue node not found: {dialogueNodeName}");
-                yield break;
-            }
-
-            dialogueTargetObject = new GameObject($"[DiaryPickupDialogueTarget] {sourceName}");
-            dialogueTargetObject.transform.position = pickupPosition;
-
-            yield return StoryOverlayFader.Instance.FadeTo(1f, 0.5f, Color.black);
-            yield return StoryOverlayFader.Instance.FadeTo(0f, 0.5f, Color.black);
-
-            waitingDialogueCompletion = true;
-            dialogueManager.StartConversation(dialogueNodeName, DialogueStyle.Bubble, dialogueTargetObject.transform);
-            dialogueManager.Runner.onDialogueComplete?.AddListener(OnDialogueComplete);
-
-            while (waitingDialogueCompletion)
-            {
-                yield return null;
-            }
-        }
-
-        private IEnumerator ShowDiaryPanelRoutine(DiaryEntryData diaryEntryData)
-        {
-            if (diaryEntryData == null)
-            {
-                yield break;
-            }
-
-            diaryPanelPresenter = FindDiaryPanelPresenter();
-            if (diaryPanelPresenter == null)
-            {
-                Debug.LogWarning($"Diary panel presenter '{DiaryPanelPresenterName}' not found.");
-                yield break;
-            }
-
-            waitingDiaryPanelClose = true;
-            bool shown = diaryPanelPresenter.ShowDiary(diaryEntryData, OnDiaryPanelClosed);
-            if (!shown)
-            {
-                waitingDiaryPanelClose = false;
-                yield break;
-            }
-
-            while (waitingDiaryPanelClose)
-            {
-                yield return null;
-            }
-        }
-
-        private static EventPanelPresenter FindDiaryPanelPresenter()
-        {
-            EventPanelPresenter[] presenters =
-                FindObjectsByType<EventPanelPresenter>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            for (int i = 0; i < presenters.Length; i++)
-            {
-                EventPanelPresenter presenter = presenters[i];
-                if (presenter != null && presenter.name == DiaryPanelPresenterName)
-                {
-                    return presenter;
-                }
-            }
-
-            return null;
-        }
-
-        private void PausePlayerControl()
-        {
-            if (gameplayPaused)
-            {
-                return;
-            }
-
-            gameplayPaused = true;
-            pausedBehaviours.Clear();
-
-            GameObject player = ResolvePlayerObject();
-            if (player == null)
-            {
-                return;
-            }
-
-            pausedPlayerInput = player.GetComponentInChildren<PlayerInput>(includeInactive: true);
-            if (pausedPlayerInput != null)
-            {
-                previousPlayerInputEnabled = pausedPlayerInput.enabled;
-                pausedPlayerInput.enabled = false;
-            }
-
-            MonoBehaviour[] behaviours = player.GetComponentsInChildren<MonoBehaviour>(includeInactive: true);
-            for (int i = 0; i < behaviours.Length; i++)
-            {
-                MonoBehaviour behaviour = behaviours[i];
-                if (behaviour == null || !behaviour.enabled)
-                {
-                    continue;
-                }
-
-                if (!ShouldPauseBehaviour(behaviour.GetType().Name))
-                {
-                    continue;
-                }
-
-                behaviour.enabled = false;
-                pausedBehaviours.Add(behaviour);
-            }
-
-            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                rb.linearVelocity = Vector2.zero;
-                rb.angularVelocity = 0f;
-            }
-        }
-
-        private void ResumePlayerControl()
-        {
-            if (!gameplayPaused)
-            {
-                return;
-            }
-
-            gameplayPaused = false;
-
-            if (pausedPlayerInput != null)
-            {
-                pausedPlayerInput.enabled = previousPlayerInputEnabled;
-                pausedPlayerInput = null;
-            }
-
-            for (int i = 0; i < pausedBehaviours.Count; i++)
-            {
-                if (pausedBehaviours[i] != null)
-                {
-                    pausedBehaviours[i].enabled = true;
-                }
-            }
-
-            pausedBehaviours.Clear();
-        }
-
-        private static GameObject ResolvePlayerObject()
-        {
-            GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
-            if (taggedPlayer != null)
-            {
-                return taggedPlayer;
-            }
-
-            PlayerController playerController = FindFirstObjectByType<PlayerController>();
-            return playerController != null ? playerController.gameObject : null;
-        }
-
-        private static bool ShouldPauseBehaviour(string typeName)
-        {
-            for (int i = 0; i < PlayerControlBehaviourNames.Length; i++)
-            {
-                if (PlayerControlBehaviourNames[i] == typeName)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private void OnDialogueComplete()
-        {
-            waitingDialogueCompletion = false;
-        }
-
-        private void OnDiaryPanelClosed()
-        {
-            waitingDiaryPanelClose = false;
-        }
-
-        private void OnDestroy()
-        {
-            Cleanup();
-        }
-
-        private void Cleanup()
-        {
-            if (cleaningUp)
-            {
-                return;
-            }
-
-            cleaningUp = true;
-
-            if (dialogueManager != null && dialogueManager.Runner != null)
-            {
-                dialogueManager.Runner.onDialogueComplete?.RemoveListener(OnDialogueComplete);
-            }
-
-            if (diaryPanelPresenter != null)
-            {
-                diaryPanelPresenter.HideWithoutCallback();
-                diaryPanelPresenter = null;
-            }
-
-            ResumePlayerControl();
-
-            if (dialogueTargetObject != null)
-            {
-                Destroy(dialogueTargetObject);
-                dialogueTargetObject = null;
-            }
-
-            if (this != null)
-            {
-                Destroy(gameObject);
-            }
-        }
+        RemoveIfAlreadyCollected();
     }
 }
