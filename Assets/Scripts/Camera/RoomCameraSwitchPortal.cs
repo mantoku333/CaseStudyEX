@@ -41,6 +41,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
 
     private void OnDisable()
     {
+        RoomCameraTrigger.ReleaseCameraFromPortal(this);
         activePortals.Remove(this);
         overlappingPlayerColliders2D.Clear();
         overlappingPlayerColliders.Clear();
@@ -227,7 +228,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
         }
         else if (overlappingPlayerColliders.Count == 0)
         {
-            activatedDuringCurrentOverlap = false;
+            ResetActivationWhenOutsidePortal();
         }
     }
 
@@ -303,13 +304,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
             return;
         }
 
-        activatedDuringCurrentOverlap = true;
-        if (RoomCameraTrigger.ActiveRoom == targetRoom)
-        {
-            return;
-        }
-
-        ActivateTargetRoom();
+        activatedDuringCurrentOverlap = ActivateTargetRoom();
     }
 
     private void RefreshPortalColliders2D()
@@ -324,6 +319,7 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
             overlappingPlayerColliders.Count == 0)
         {
             activatedDuringCurrentOverlap = false;
+            RoomCameraTrigger.ReleaseCameraFromPortal(this);
         }
     }
 
@@ -336,23 +332,17 @@ public sealed class RoomCameraSwitchPortal : MonoBehaviour
             return;
         }
 
-        activatedDuringCurrentOverlap = true;
-        if (RoomCameraTrigger.ActiveRoom == targetRoom)
-        {
-            return;
-        }
-
-        ActivateTargetRoom();
+        activatedDuringCurrentOverlap = ActivateTargetRoom();
     }
 
-    private void ActivateTargetRoom()
+    private bool ActivateTargetRoom()
     {
         if (targetRoom == null)
         {
-            return;
+            return false;
         }
 
-        targetRoom.ActivateCamera();
+        return RoomCameraTrigger.HoldCameraForPortal(this, targetRoom);
     }
 
     private bool CanActivateTargetRoom()

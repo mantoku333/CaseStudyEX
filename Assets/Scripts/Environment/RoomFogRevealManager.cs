@@ -18,6 +18,9 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private const float RevealFieldMax = 1.25f;
     private const int RevealFieldMaxByte = 254;
     private const int MinimumOverlaySortingOrder = 100;
+    private const int TextureSizeAlignment = 64;
+    private const float MinimumDirectionalTravelDistance = 0.25f;
+    private const float PreserveFieldVisibilityThreshold = 0.999f;
 
     private static RoomFogRevealManager instance;
     private static readonly int RevealFrontPropertyId = Shader.PropertyToID("_RevealFront");
@@ -25,6 +28,10 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private static readonly int PreviousActivePropertyId = Shader.PropertyToID("_PreviousActive");
     private static readonly int PreviousPortalStrengthPropertyId =
         Shader.PropertyToID("_PreviousPortalStrength");
+    private static readonly int ContinuityFrontPropertyId =
+        Shader.PropertyToID("_ContinuityFront");
+    private static readonly int ContinuityStrengthPropertyId =
+        Shader.PropertyToID("_ContinuityStrength");
     private static readonly ProfilerMarker RoomMaskUpdateMarker =
         new ProfilerMarker("CaseStudy.RoomFog.UpdateRoomMask");
     private static readonly ProfilerMarker EntranceMaskUpdateMarker =
@@ -56,6 +63,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     [SerializeField, Min(0.01f)] private float revealDuration = 1.6f;
     [SerializeField, Min(0.01f)] private float concealDuration = 1.8f;
     [SerializeField, Range(0f, 0.5f)] private float revealNoiseStrength = 0.18f;
+    [SerializeField, Min(0f)] private float maskContinuityDuration = 0.15f;
 
     [SerializeField] private bool revealPortalEntrances = true;
 
@@ -74,6 +82,21 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private Vector2 concealCenter;
     private float revealRadius = 1f;
     private float concealRadius = 1f;
+    private DirectionalFogField revealDirectionalField;
+    private DirectionalFogField concealDirectionalField;
+    private Vector2 currentRoomEntryPoint;
+    private bool hasCurrentRoomEntryPoint;
+    private GameObject currentRoomEntryPortal;
+    private GameObject concealingRoomEntryPortal;
+    private RoomCameraTrigger continuityRoom;
+    private Bounds continuityBounds;
+    private Bounds continuityPaintBounds;
+    private Vector2 continuityCenter;
+    private float continuityRadius = 1f;
+    private DirectionalFogField continuityDirectionalField;
+    private float continuityFront = RevealFrontEnd;
+    private float continuityStartedAt;
+    private bool continuityActive;
     private float revealStartedAt;
     private float concealStartedAt;
     private bool revealComplete;
@@ -100,6 +123,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private float appliedConcealFront = float.NaN;
     private float appliedPreviousActive = float.NaN;
     private float appliedPreviousPortalStrength = float.NaN;
+    private float appliedContinuityFront = float.NaN;
+    private float appliedContinuityStrength = float.NaN;
     private Transform cachedPlayerTransform;
 
 #if UNITY_EDITOR
@@ -116,6 +141,22 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         public RoomCameraTrigger RoomB;
         public Collider2D[] Colliders2D;
         public Collider[] Colliders;
+    }
+
+    private struct DirectionalFogField
+    {
+        public bool Enabled;
+        public Vector2 Origin;
+        public Vector2 Direction;
+        public float Distance;
+        public bool Reverse;
+    }
+
+    private enum MaskChannel
+    {
+        Current,
+        Previous,
+        Continuity
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -247,6 +288,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         maximumTextureResolution = Mathf.Max(textureResolution, maximumTextureResolution);
         revealDuration = Mathf.Max(0.01f, revealDuration);
         concealDuration = Mathf.Max(0.01f, concealDuration);
+        maskContinuityDuration = Mathf.Max(0f, maskContinuityDuration);
         edgeSoftness = Mathf.Max(0.01f, edgeSoftness);
         sortingOrder = Mathf.Max(MinimumOverlaySortingOrder, sortingOrder);
         ResolveDefaultShader();
@@ -430,6 +472,10 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         managedScene = gameObject.scene.IsValid() ? gameObject.scene : SceneManager.GetActiveScene();
         cachedPlayerTransform = null;
         entranceSourceRoom = null;
+        currentRoomEntryPortal = null;
+        concealingRoomEntryPortal = null;
+        continuityRoom = null;
+        continuityActive = false;
         ResolveDefaultShader();
         CollectRooms();
 
@@ -511,6 +557,80 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         RegisterPortalDents<FallRoomCameraPortal>("upperRoom", "lowerRoom");
     }
 
+    private GameObject ResolveTraversedPortal(
+        RoomCameraTrigger sourceRoom,
+        RoomCameraTrigger destinationRoom,
+        Vector2 transitionPoint)
+    {
+        GameObject nearestPortal = null;
+        float nearestSqrDistance = float.PositiveInfinity;
+
+        for (int i = 0; i < portalDents.Count; i++)
+        {
+            PortalDent dent = portalDents[i];
+            bool connectsRooms =
+                (dent.RoomA == sourceRoom && dent.RoomB == destinationRoom) ||
+                (dent.RoomA == destinationRoom && dent.RoomB == sourceRoom);
+            if (!connectsRooms ||
+                dent.PortalObject == null ||
+                !TryGetObjectBounds(dent.Colliders2D, dent.Colliders, out Bounds bounds))
+            {
+                continue;
+            }
+
+            Vector3 worldPoint = new Vector3(
+                transitionPoint.x,
+                transitionPoint.y,
+                bounds.center.z);
+            if (IsPointInsidePortal(dent, worldPoint))
+            {
+                return dent.PortalObject;
+            }
+
+            Vector3 closestPoint = bounds.ClosestPoint(worldPoint);
+            float sqrDistance = new Vector2(
+                closestPoint.x - transitionPoint.x,
+                closestPoint.y - transitionPoint.y).sqrMagnitude;
+            if (sqrDistance < nearestSqrDistance)
+            {
+                nearestSqrDistance = sqrDistance;
+                nearestPortal = dent.PortalObject;
+            }
+        }
+
+        return nearestPortal;
+    }
+
+    private bool TryGetPortalDent(GameObject portalObject, out PortalDent portalDent)
+    {
+        if (portalObject != null)
+        {
+            for (int i = 0; i < portalDents.Count; i++)
+            {
+                if (portalDents[i].PortalObject == portalObject)
+                {
+                    portalDent = portalDents[i];
+                    return true;
+                }
+            }
+        }
+
+        portalDent = default;
+        return false;
+    }
+
+    private void ExpandBoundsToIncludePortal(GameObject portalObject, ref Bounds bounds)
+    {
+        if (TryGetPortalDent(portalObject, out PortalDent portalDent) &&
+            TryGetObjectBounds(
+                portalDent.Colliders2D,
+                portalDent.Colliders,
+                out Bounds portalBounds))
+        {
+            bounds.Encapsulate(portalBounds);
+        }
+    }
+
     private void RegisterPortalDents<T>(string firstRoomField, string secondRoomField)
         where T : Component
     {
@@ -543,6 +663,13 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void HandleActiveRoomChanged(RoomCameraTrigger activeRoom)
     {
+        if (activeRoom != null && activeRoom.gameObject.scene == managedScene)
+        {
+            SetEntranceSourceRoom(activeRoom);
+            SetCurrentRoom(activeRoom, false);
+            return;
+        }
+
         RevealCurrentRoomFromRuntimeState();
     }
 
@@ -571,6 +698,12 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private RoomCameraTrigger ResolveCurrentRoomFromRuntimeState()
     {
+        RoomCameraTrigger activeRoom = RoomCameraTrigger.ActiveRoom;
+        if (activeRoom != null && activeRoom.gameObject.scene == managedScene)
+        {
+            return activeRoom;
+        }
+
         if (TryGetPlayerPosition(out Vector3 playerPosition))
         {
             RoomCameraTrigger containingRoom = ResolveSmallestRoomContaining(playerPosition);
@@ -580,10 +713,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             }
         }
 
-        RoomCameraTrigger activeRoom = RoomCameraTrigger.ActiveRoom;
-        return activeRoom != null && activeRoom.gameObject.scene == managedScene
-            ? activeRoom
-            : null;
+        return null;
     }
 
     private void SetCurrentRoom(RoomCameraTrigger room, bool restartEvenIfSame)
@@ -603,30 +733,149 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             return;
         }
 
+        float transitionTime = Application.isPlaying ? Time.unscaledTime : 0f;
+        Vector3 transitionPosition = default;
+        bool hasTransitionPoint =
+            Application.isPlaying &&
+            TryGetPlayerPosition(out transitionPosition);
+        Vector2 transitionPoint = hasTransitionPoint
+            ? new Vector2(transitionPosition.x, transitionPosition.y)
+            : Vector2.zero;
         RoomCameraTrigger previousRoom = currentRoom;
+        Vector2 previousEntryPoint = currentRoomEntryPoint;
+        bool previousRoomHasEntryPoint = hasCurrentRoomEntryPoint;
+        GameObject previousEntryPortal = currentRoomEntryPortal;
+        GameObject transitionPortal =
+            hasTransitionPoint && previousRoom != null && previousRoom != room
+                ? ResolveTraversedPortal(previousRoom, room, transitionPoint)
+                : null;
+        bool returnedThroughEntry =
+            previousEntryPortal != null &&
+            transitionPortal == previousEntryPortal;
+        // Reversing through a portal continues from the currently visible front
+        // instead of restarting either room's fog animation.
+        float previousRoomVisibility = ResolveRoomVisibility(previousRoom, transitionTime);
+        float incomingRoomVisibility = restartEvenIfSame
+            ? 0f
+            : ResolveRoomVisibility(room, transitionTime);
+        bool preserveOutgoingField =
+            previousRoom != null &&
+            previousRoom == revealingRoom &&
+            previousRoomVisibility < PreserveFieldVisibilityThreshold &&
+            returnedThroughEntry;
+        bool preserveIncomingField = room == concealingRoom && !concealComplete;
+        Vector2 outgoingCenter = revealCenter;
+        float outgoingRadius = revealRadius;
+        DirectionalFogField outgoingDirectionalField = revealDirectionalField;
+        Vector2 incomingCenter = concealCenter;
+        float incomingRadius = concealRadius;
+        DirectionalFogField incomingDirectionalField = concealDirectionalField;
+
         if (Application.isPlaying &&
             previousRoom != null &&
             previousRoom != room &&
             previousRoom.gameObject.scene == managedScene &&
-            previousRoom.TryGetAreaBounds(out Bounds previousBounds))
+            previousRoom.TryGetAreaBounds(out Bounds previousBounds) &&
+            previousRoomVisibility > 0f)
         {
+            bool needsContinuityBridge =
+                !preserveOutgoingField &&
+                previousRoom == revealingRoom &&
+                previousRoomVisibility < PreserveFieldVisibilityThreshold &&
+                maskContinuityDuration > 0.01f;
+            if (needsContinuityBridge)
+            {
+                continuityRoom = previousRoom;
+                continuityBounds = previousBounds;
+                continuityPaintBounds = revealingPaintBounds;
+                continuityCenter = outgoingCenter;
+                continuityRadius = outgoingRadius;
+                continuityDirectionalField = outgoingDirectionalField;
+                continuityFront = Mathf.Lerp(
+                    RevealFrontStart,
+                    RevealFrontEnd,
+                    previousRoomVisibility);
+                continuityStartedAt = transitionTime;
+                continuityActive = true;
+            }
+            else
+            {
+                continuityRoom = null;
+                continuityActive = false;
+            }
+
             concealingRoom = previousRoom;
             concealingBounds = previousBounds;
             concealingPaintBounds = CreateRevealBounds(previousBounds);
-            concealCenter = ResolveConcealCenter(previousBounds);
-            concealRadius = ResolveRevealRadius(concealCenter, concealingPaintBounds);
-            concealStartedAt = Time.unscaledTime;
+            concealingRoomEntryPortal = previousEntryPortal;
+            ExpandBoundsToIncludePortal(
+                concealingRoomEntryPortal,
+                ref concealingPaintBounds);
+            concealCenter = preserveOutgoingField
+                ? outgoingCenter
+                : ResolveConcealCenter(previousBounds);
+            concealRadius = preserveOutgoingField
+                ? outgoingRadius
+                : ResolveRevealRadius(concealCenter, concealingPaintBounds);
+            concealDirectionalField = preserveOutgoingField
+                ? outgoingDirectionalField
+                : CreateConcealDirectionalField(
+                    previousEntryPoint,
+                    transitionPoint,
+                    previousRoomHasEntryPoint && hasTransitionPoint);
+            float concealProgress = 1f - previousRoomVisibility;
+            concealStartedAt = ResolveTransitionStartTime(
+                transitionTime,
+                concealDuration,
+                concealProgress);
             concealComplete = concealDuration <= 0.01f;
+        }
+        else
+        {
+            continuityRoom = null;
+            continuityActive = false;
+            concealingRoom = null;
+            concealComplete = true;
+            concealDirectionalField = default;
+            concealingRoomEntryPortal = null;
         }
 
         currentRoom = room;
         revealingRoom = room;
         revealingBounds = roomBounds;
         revealingPaintBounds = CreateRevealBounds(roomBounds);
-        revealCenter = ResolveRevealCenter(roomBounds);
-        revealRadius = ResolveRevealRadius(revealCenter, revealingPaintBounds);
-        revealStartedAt = Application.isPlaying ? Time.unscaledTime : 0f;
-        revealComplete = !Application.isPlaying || revealDuration <= 0.01f;
+        revealCenter = preserveIncomingField
+            ? incomingCenter
+            : ResolveRevealCenter(roomBounds);
+        revealRadius = preserveIncomingField
+            ? incomingRadius
+            : ResolveRevealRadius(revealCenter, revealingPaintBounds);
+        revealDirectionalField = preserveIncomingField
+            ? incomingDirectionalField
+            : CreateRevealDirectionalField(
+                roomBounds,
+                transitionPoint,
+                hasTransitionPoint && previousRoom != null && previousRoom != room);
+        revealStartedAt = ResolveTransitionStartTime(
+            transitionTime,
+            revealDuration,
+            incomingRoomVisibility);
+        revealComplete =
+            !Application.isPlaying ||
+            revealDuration <= 0.01f ||
+            incomingRoomVisibility >= 1f;
+
+        if (previousRoom != room)
+        {
+            hasCurrentRoomEntryPoint = hasTransitionPoint && previousRoom != null;
+            currentRoomEntryPoint = hasCurrentRoomEntryPoint
+                ? transitionPoint
+                : Vector2.zero;
+            currentRoomEntryPortal = hasCurrentRoomEntryPoint
+                ? transitionPortal
+                : null;
+        }
+
         MarkAllMasksDirty();
     }
 
@@ -647,6 +896,9 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         {
             concealingBounds = previousBounds;
             concealingPaintBounds = CreateRevealBounds(previousBounds);
+            ExpandBoundsToIncludePortal(
+                concealingRoomEntryPortal,
+                ref concealingPaintBounds);
             concealRadius = ResolveRevealRadius(concealCenter, concealingPaintBounds);
         }
     }
@@ -684,6 +936,141 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         }
 
         return smooth;
+    }
+
+    private float ResolveRoomVisibility(RoomCameraTrigger room, float transitionTime)
+    {
+        if (room == null)
+        {
+            return 0f;
+        }
+
+        if (room == revealingRoom)
+        {
+            if (!Application.isPlaying || revealComplete || revealDuration <= 0.01f)
+            {
+                return 1f;
+            }
+
+            float rawReveal = Mathf.Clamp01(
+                (transitionTime - revealStartedAt) / revealDuration);
+            return Mathf.SmoothStep(0f, 1f, rawReveal);
+        }
+
+        if (room == concealingRoom)
+        {
+            if (!Application.isPlaying || concealComplete || concealDuration <= 0.01f)
+            {
+                return 0f;
+            }
+
+            float rawConceal = Mathf.Clamp01(
+                (transitionTime - concealStartedAt) / concealDuration);
+            return 1f - Mathf.SmoothStep(0f, 1f, rawConceal);
+        }
+
+        return 0f;
+    }
+
+    private static float ResolveTransitionStartTime(
+        float transitionTime,
+        float duration,
+        float smoothProgress)
+    {
+        if (!Application.isPlaying || duration <= 0.01f)
+        {
+            return transitionTime;
+        }
+
+        float rawProgress = InverseSmoothStep(Mathf.Clamp01(smoothProgress));
+        return transitionTime - rawProgress * duration;
+    }
+
+    private static float InverseSmoothStep(float value)
+    {
+        return 0.5f - Mathf.Sin(Mathf.Asin(1f - 2f * value) / 3f);
+    }
+
+    private static DirectionalFogField CreateRevealDirectionalField(
+        Bounds roomBounds,
+        Vector2 entryPoint,
+        bool hasEntryPoint)
+    {
+        if (!hasEntryPoint)
+        {
+            return default;
+        }
+
+        Vector2 roomCenter = new Vector2(roomBounds.center.x, roomBounds.center.y);
+        Vector2 inwardVector = roomCenter - entryPoint;
+        if (inwardVector.sqrMagnitude <
+            MinimumDirectionalTravelDistance * MinimumDirectionalTravelDistance)
+        {
+            return default;
+        }
+
+        Vector2 direction = inwardVector.normalized;
+        float distance = ResolveMaximumProjection(entryPoint, direction, roomBounds);
+        if (distance < MinimumDirectionalTravelDistance)
+        {
+            return default;
+        }
+
+        return new DirectionalFogField
+        {
+            Enabled = true,
+            Origin = entryPoint,
+            Direction = direction,
+            Distance = distance,
+            Reverse = false
+        };
+    }
+
+    private static DirectionalFogField CreateConcealDirectionalField(
+        Vector2 entryPoint,
+        Vector2 exitPoint,
+        bool hasTraversalPoints)
+    {
+        if (!hasTraversalPoints)
+        {
+            return default;
+        }
+
+        Vector2 travelVector = exitPoint - entryPoint;
+        float distance = travelVector.magnitude;
+        if (distance < MinimumDirectionalTravelDistance)
+        {
+            return default;
+        }
+
+        return new DirectionalFogField
+        {
+            Enabled = true,
+            Origin = entryPoint,
+            Direction = travelVector / distance,
+            Distance = distance,
+            Reverse = true
+        };
+    }
+
+    private static float ResolveMaximumProjection(
+        Vector2 origin,
+        Vector2 direction,
+        Bounds bounds)
+    {
+        Vector2 min = bounds.min;
+        Vector2 max = bounds.max;
+        float maximum = Vector2.Dot(new Vector2(min.x, min.y) - origin, direction);
+        maximum = Mathf.Max(
+            maximum,
+            Vector2.Dot(new Vector2(max.x, min.y) - origin, direction));
+        maximum = Mathf.Max(
+            maximum,
+            Vector2.Dot(new Vector2(max.x, max.y) - origin, direction));
+        maximum = Mathf.Max(
+            maximum,
+            Vector2.Dot(new Vector2(min.x, max.y) - origin, direction));
+        return maximum;
     }
 
     private Vector2 ResolveRevealCenter(Bounds roomBounds)
@@ -748,8 +1135,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         {
             using (RoomMaskUpdateMarker.Auto())
             {
-                // R stores the current-room reveal threshold, G the previous-room
-                // conceal threshold. 255 is reserved for pixels outside a room.
+                // R stores current, G previous, and B the brief continuity field.
+                // 255 is reserved for pixels outside a room.
                 ClearTransitionPixels(maskPixels);
 
                 if (fogEnabled)
@@ -762,7 +1149,9 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                             concealingPaintBounds,
                             concealCenter,
                             concealRadius,
-                            false);
+                            concealDirectionalField,
+                            concealingRoomEntryPortal,
+                            MaskChannel.Previous);
                     }
 
                     if (revealingRoom != null)
@@ -773,7 +1162,22 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                             revealingPaintBounds,
                             revealCenter,
                             revealRadius,
-                            true);
+                            revealDirectionalField,
+                            null,
+                            MaskChannel.Current);
+                    }
+
+                    if (continuityActive && continuityRoom != null)
+                    {
+                        PaintRoomField(
+                            continuityRoom,
+                            continuityBounds,
+                            continuityPaintBounds,
+                            continuityCenter,
+                            continuityRadius,
+                            continuityDirectionalField,
+                            null,
+                            MaskChannel.Continuity);
                     }
                 }
 
@@ -788,16 +1192,22 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         {
             using (EntranceMaskUpdateMarker.Auto())
             {
-                // Portal strengths use R=current and G=previous so their fade can
-                // be animated in the shader without uploading another texture.
+                // Current-room routes remain open. The previous entrance is
+                // restored by the room mask so its edge and room share a front.
                 ClearPixels(entranceMaskPixels);
 
                 if (fogEnabled)
                 {
-                    PaintPortalDents(entranceSourceRoom, 1f, true);
-                    if (concealingRoom != null && !concealComplete)
+                    PaintPortalDents(
+                        entranceSourceRoom,
+                        1f,
+                        MaskChannel.Current);
+                    if (continuityActive && continuityRoom != null)
                     {
-                        PaintPortalDents(concealingRoom, 1f, false);
+                        PaintPortalDents(
+                            continuityRoom,
+                            1f,
+                            MaskChannel.Continuity);
                     }
                 }
 
@@ -819,7 +1229,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         float revealFront = Mathf.Lerp(RevealFrontStart, RevealFrontEnd, revealProgress);
         float concealFront = Mathf.Lerp(RevealFrontEnd, RevealFrontStart, concealProgress);
         float previousActive = concealingRoom != null && !concealComplete ? 1f : 0f;
-        float previousPortalStrength = previousActive * (1f - concealProgress);
+        float previousPortalStrength = 0f;
+        float continuityStrength = ResolveContinuityStrength();
         if (!Mathf.Approximately(revealFront, appliedRevealFront))
         {
             fogMaterial.SetFloat(RevealFrontPropertyId, revealFront);
@@ -843,6 +1254,40 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             fogMaterial.SetFloat(PreviousPortalStrengthPropertyId, previousPortalStrength);
             appliedPreviousPortalStrength = previousPortalStrength;
         }
+
+        if (!Mathf.Approximately(continuityFront, appliedContinuityFront))
+        {
+            fogMaterial.SetFloat(ContinuityFrontPropertyId, continuityFront);
+            appliedContinuityFront = continuityFront;
+        }
+
+        if (!Mathf.Approximately(continuityStrength, appliedContinuityStrength))
+        {
+            fogMaterial.SetFloat(ContinuityStrengthPropertyId, continuityStrength);
+            appliedContinuityStrength = continuityStrength;
+        }
+    }
+
+    private float ResolveContinuityStrength()
+    {
+        if (!Application.isPlaying ||
+            !continuityActive ||
+            continuityRoom == null ||
+            maskContinuityDuration <= 0.01f)
+        {
+            return 0f;
+        }
+
+        float raw = Mathf.Clamp01(
+            (Time.unscaledTime - continuityStartedAt) / maskContinuityDuration);
+        if (raw >= 1f)
+        {
+            continuityRoom = null;
+            continuityActive = false;
+            return 0f;
+        }
+
+        return 1f - Mathf.SmoothStep(0f, 1f, raw);
     }
 
     private void PaintRoomField(
@@ -851,8 +1296,18 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         Bounds paintBounds,
         Vector2 center,
         float radius,
-        bool writeRevealChannel)
+        DirectionalFogField directionalField,
+        GameObject includedPortal,
+        MaskChannel maskChannel)
     {
+        PortalDent includedPortalDent = default;
+        Bounds includedPortalBounds = default;
+        bool hasIncludedPortal =
+            TryGetPortalDent(includedPortal, out includedPortalDent) &&
+            TryGetObjectBounds(
+                includedPortalDent.Colliders2D,
+                includedPortalDent.Colliders,
+                out includedPortalBounds);
         int width = maskTexture.width;
         int height = maskTexture.height;
         int minX = Mathf.Clamp(WorldToPixelX(paintBounds.min.x, width) - 1, 0, width - 1);
@@ -867,25 +1322,55 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             {
                 float worldX = PixelToWorldX(x, width);
                 Vector3 worldPoint = new Vector3(worldX, worldY, roomBounds.center.z);
-                if (!IsPointInsideRevealArea(room, worldPoint))
+                bool insideRevealArea = IsPointInsideRevealArea(room, worldPoint);
+                if (!insideRevealArea && hasIncludedPortal)
+                {
+                    worldPoint.z = includedPortalBounds.center.z;
+                    insideRevealArea = IsPointInsidePortal(
+                        includedPortalDent,
+                        worldPoint);
+                }
+
+                if (!insideRevealArea)
                 {
                     continue;
                 }
 
-                float distance = Vector2.Distance(new Vector2(worldX, worldY), center);
-                float normalizedDistance = distance / Mathf.Max(0.001f, radius);
+                Vector2 pixelPosition = new Vector2(worldX, worldY);
+                float normalizedDistance;
+                if (directionalField.Enabled)
+                {
+                    float projectedDistance = Vector2.Dot(
+                        pixelPosition - directionalField.Origin,
+                        directionalField.Direction);
+                    float directionalProgress = Mathf.Clamp01(
+                        projectedDistance / directionalField.Distance);
+                    normalizedDistance = directionalField.Reverse
+                        ? 1f - directionalProgress
+                        : directionalProgress;
+                }
+                else
+                {
+                    float distance = Vector2.Distance(pixelPosition, center);
+                    normalizedDistance = distance / Mathf.Max(0.001f, radius);
+                }
+
                 float noise = ValueNoise(new Vector2(worldX, worldY) * 0.45f);
                 float noisyDistance = normalizedDistance + (noise - 0.5f) * revealNoiseStrength;
                 byte threshold = EncodeRevealThreshold(noisyDistance);
                 int pixelIndex = row + x;
                 Color32 pixel = maskPixels[pixelIndex];
-                if (writeRevealChannel)
+                switch (maskChannel)
                 {
-                    pixel.r = threshold;
-                }
-                else
-                {
-                    pixel.g = threshold;
+                    case MaskChannel.Current:
+                        pixel.r = threshold;
+                        break;
+                    case MaskChannel.Previous:
+                        pixel.g = threshold;
+                        break;
+                    case MaskChannel.Continuity:
+                        pixel.b = threshold;
+                        break;
                 }
 
                 maskPixels[pixelIndex] = pixel;
@@ -896,7 +1381,7 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private void PaintPortalDents(
         RoomCameraTrigger sourceRoom,
         float strengthMultiplier,
-        bool writeCurrentChannel)
+        MaskChannel maskChannel)
     {
         if (!revealPortalEntrances ||
             sourceRoom == null ||
@@ -916,14 +1401,14 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
             PaintPortalDent(
                 dent,
                 strengthMultiplier,
-                writeCurrentChannel);
+                maskChannel);
         }
     }
 
     private void PaintPortalDent(
         PortalDent dent,
         float strengthMultiplier,
-        bool writeCurrentChannel)
+        MaskChannel maskChannel)
     {
         if (dent.PortalObject == null ||
             !TryGetObjectBounds(dent.Colliders2D, dent.Colliders, out Bounds portalBounds))
@@ -956,16 +1441,17 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
                 int pixelIndex = row + x;
                 Color32 pixel = entranceMaskPixels[pixelIndex];
-                if (writeCurrentChannel)
+                switch (maskChannel)
                 {
-                    if (value > pixel.r)
-                    {
+                    case MaskChannel.Current when value > pixel.r:
                         pixel.r = value;
-                    }
-                }
-                else if (value > pixel.g)
-                {
-                    pixel.g = value;
+                        break;
+                    case MaskChannel.Previous when value > pixel.g:
+                        pixel.g = value;
+                        break;
+                    case MaskChannel.Continuity when value > pixel.b:
+                        pixel.b = value;
+                        break;
                 }
 
                 pixel.a = 255;
@@ -1034,13 +1520,13 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
 
     private void EnsureTextures()
     {
-        int resolution = ResolveTextureResolution();
+        Vector2Int textureSize = ResolveTextureSize();
         if (maskTexture != null &&
-            maskTexture.width == resolution &&
-            maskTexture.height == resolution &&
+            maskTexture.width == textureSize.x &&
+            maskTexture.height == textureSize.y &&
             entranceMaskTexture != null &&
-            entranceMaskTexture.width == resolution &&
-            entranceMaskTexture.height == resolution)
+            entranceMaskTexture.width == textureSize.x &&
+            entranceMaskTexture.height == textureSize.y)
         {
             return;
         }
@@ -1048,30 +1534,61 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         DestroyTexture(maskTexture);
         DestroyTexture(entranceMaskTexture);
 
-        maskTexture = CreateMaskTexture("RoomFogRevealMask", resolution, FilterMode.Point);
-        entranceMaskTexture = CreateMaskTexture("RoomFogPortalDentMask", resolution, FilterMode.Bilinear);
-        maskPixels = new Color32[resolution * resolution];
-        entranceMaskPixels = new Color32[resolution * resolution];
+        maskTexture = CreateMaskTexture(
+            "RoomFogRevealMask",
+            textureSize.x,
+            textureSize.y,
+            FilterMode.Point);
+        entranceMaskTexture = CreateMaskTexture(
+            "RoomFogPortalDentMask",
+            textureSize.x,
+            textureSize.y,
+            FilterMode.Bilinear);
+        maskPixels = new Color32[textureSize.x * textureSize.y];
+        entranceMaskPixels = new Color32[textureSize.x * textureSize.y];
         MarkAllMasksDirty();
     }
 
-    private int ResolveTextureResolution()
+    private Vector2Int ResolveTextureSize()
     {
         int minimumResolution = Mathf.Max(64, textureResolution);
         int maximumResolution = Mathf.Max(minimumResolution, maximumTextureResolution);
         if (!hasRooms || targetWorldUnitsPerPixel <= 0.01f)
         {
-            return minimumResolution;
+            return new Vector2Int(minimumResolution, minimumResolution);
         }
 
-        float longestWorldAxis = Mathf.Max(worldBounds.size.x, worldBounds.size.y);
+        Vector2 worldSize = new Vector2(
+            Mathf.Max(worldBounds.size.x, 0.001f),
+            Mathf.Max(worldBounds.size.y, 0.001f));
+        float longestWorldAxis = Mathf.Max(worldSize.x, worldSize.y);
         int worldResolution = Mathf.CeilToInt(longestWorldAxis / targetWorldUnitsPerPixel);
-        return Mathf.Clamp(Mathf.NextPowerOfTwo(worldResolution), minimumResolution, maximumResolution);
+        int longestAxisResolution = Mathf.Clamp(
+            Mathf.NextPowerOfTwo(worldResolution),
+            minimumResolution,
+            maximumResolution);
+        float actualWorldUnitsPerPixel = longestWorldAxis / longestAxisResolution;
+
+        int width = AlignTextureSize(Mathf.CeilToInt(worldSize.x / actualWorldUnitsPerPixel));
+        int height = AlignTextureSize(Mathf.CeilToInt(worldSize.y / actualWorldUnitsPerPixel));
+        return new Vector2Int(
+            Mathf.Clamp(width, TextureSizeAlignment, maximumResolution),
+            Mathf.Clamp(height, TextureSizeAlignment, maximumResolution));
     }
 
-    private static Texture2D CreateMaskTexture(string textureName, int resolution, FilterMode filterMode)
+    private static int AlignTextureSize(int size)
     {
-        return new Texture2D(resolution, resolution, TextureFormat.RGBA32, false, true)
+        return Mathf.CeilToInt(Mathf.Max(1, size) / (float)TextureSizeAlignment) *
+            TextureSizeAlignment;
+    }
+
+    private static Texture2D CreateMaskTexture(
+        string textureName,
+        int width,
+        int height,
+        FilterMode filterMode)
+    {
+        return new Texture2D(width, height, TextureFormat.RGBA32, false, true)
         {
             name = textureName,
             filterMode = filterMode,
@@ -1231,6 +1748,8 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         appliedConcealFront = float.NaN;
         appliedPreviousActive = float.NaN;
         appliedPreviousPortalStrength = float.NaN;
+        appliedContinuityFront = float.NaN;
+        appliedContinuityStrength = float.NaN;
     }
 
     private void ResolveDefaultShader()
@@ -1268,19 +1787,13 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     private static void ClearPixels(Color32[] pixels)
     {
         Color32 hidden = new Color32(0, 0, 0, 255);
-        for (int i = 0; i < pixels.Length; i++)
-        {
-            pixels[i] = hidden;
-        }
+        System.Array.Fill(pixels, hidden);
     }
 
     private static void ClearTransitionPixels(Color32[] pixels)
     {
-        Color32 outsideRoom = new Color32(255, 255, 0, 255);
-        for (int i = 0; i < pixels.Length; i++)
-        {
-            pixels[i] = outsideRoom;
-        }
+        Color32 outsideRoom = new Color32(255, 255, 255, 255);
+        System.Array.Fill(pixels, outsideRoom);
     }
 
     private static byte EncodeRevealThreshold(float noisyDistance)
