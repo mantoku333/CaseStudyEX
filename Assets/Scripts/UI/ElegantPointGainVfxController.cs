@@ -9,13 +9,9 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
     [SerializeField] private Vector3 spawnOffset = new Vector3(0f, 1.1f, 0f);
     [SerializeField] private Vector3 gaugeWorldOffset = new Vector3(0f, 0f, 0f);
     [SerializeField, Min(0.01f)] private float liveParticleAttractionDuration = 1.45f;
-    [SerializeField, Min(0f)] private float gaugePulseScale = 1.08f;
-    [SerializeField, Min(0.01f)] private float gaugePulseDuration = 0.16f;
+    [SerializeField, Range(0f, 1f)] private float gaugeArrivalFraction = 0.82f;
 
     private Transform attractionTarget;
-    private RectTransform pulsingGauge;
-    private Vector3 pulsingGaugeBaseScale = Vector3.one;
-    private float pulseTimer;
 
     private void Awake()
     {
@@ -31,10 +27,6 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
     private void OnDisable()
     {
         ElegantPointGainEvents.Gained -= HandleElegantPointGained;
-        if (pulsingGauge != null)
-        {
-            pulsingGauge.localScale = pulsingGaugeBaseScale;
-        }
     }
 
     private void OnDestroy()
@@ -48,7 +40,6 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
     private void Update()
     {
         UpdateAttractionTargetPosition();
-        UpdateGaugePulse();
     }
 
     private void HandleElegantPointGained(ElegantPointGainEvent gainEvent)
@@ -63,14 +54,14 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
 
         if (TryAttractExistingActionParticles(gainEvent.WorldPosition))
         {
-            pulseTimer = gaugePulseDuration;
+            HoldGauge(liveParticleAttractionDuration);
             return;
         }
 
         Vector3 spawnPosition = gainEvent.WorldPosition + spawnOffset;
         ElegantPointGainAttractorVfx instance = CreateAttractor(spawnPosition);
         instance.Initialize(spawnPosition, attractionTarget, gainEvent.Amount);
-        pulseTimer = gaugePulseDuration;
+        HoldGauge(instance.TravelDuration);
     }
 
     private bool TryAttractExistingActionParticles(Vector3 origin)
@@ -118,9 +109,9 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
         main.startLifetime = new ParticleSystem.MinMaxCurve(0.7f, 1.1f);
         main.startSpeed = new ParticleSystem.MinMaxCurve(1.4f, 3.1f);
         main.startSize = new ParticleSystem.MinMaxCurve(0.18f, 0.34f);
-        main.startColor = new ParticleSystem.MinMaxGradient(
-            new Color(1f, 0.9f, 1f, 1f),
-            new Color(0.9f, 0.25f, 1f, 1f));
+        // The trail is what the player just watched; the fallback burst wears the same palette.
+        main.startColor = new ParticleSystem.MinMaxGradient(GracefulPalette.CreateSpectrum())
+            { mode = ParticleSystemGradientMode.RandomColor };
 
         ParticleSystem.EmissionModule emission = particle.emission;
         emission.rateOverTime = 0f;
@@ -139,12 +130,14 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
         gradient.SetKeys(
             new[]
             {
-                new GradientColorKey(new Color(1f, 0.95f, 1f), 0f),
-                new GradientColorKey(new Color(0.8f, 0.2f, 1f), 1f)
+                new GradientColorKey(Color.white, 0f),
+                new GradientColorKey(Color.white, 1f)
             },
             new[]
             {
-                new GradientAlphaKey(1f, 0f),
+                new GradientAlphaKey(0f, 0f),
+                new GradientAlphaKey(1f, 0.12f),
+                new GradientAlphaKey(0.75f, 0.5f),
                 new GradientAlphaKey(0f, 1f)
             });
         colorOverLifetime.color = gradient;
@@ -195,17 +188,6 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
             return;
         }
 
-        if (pulsingGauge != targetRect)
-        {
-            if (pulsingGauge != null)
-            {
-                pulsingGauge.localScale = pulsingGaugeBaseScale;
-            }
-
-            pulsingGauge = targetRect;
-            pulsingGaugeBaseScale = pulsingGauge.localScale;
-        }
-
         Camera cameraToUse = worldCamera != null ? worldCamera : Camera.main;
         if (cameraToUse == null)
         {
@@ -218,16 +200,10 @@ public sealed class ElegantPointGainVfxController : MonoBehaviour
         attractionTarget.position = worldPosition + gaugeWorldOffset;
     }
 
-    private void UpdateGaugePulse()
+    // The gauge fills when the light actually reaches it, not when the chain settles. The
+    // wallet is already correct by then; only the bar waits.
+    private void HoldGauge(float travelSeconds)
     {
-        if (pulseTimer <= 0f || pulsingGauge == null)
-        {
-            return;
-        }
-
-        pulseTimer = Mathf.Max(0f, pulseTimer - Time.deltaTime);
-        float normalizedTime = 1f - (pulseTimer / gaugePulseDuration);
-        float pulse = Mathf.Sin(normalizedTime * Mathf.PI) * Mathf.Max(0f, gaugePulseScale - 1f);
-        pulsingGauge.localScale = pulsingGaugeBaseScale * (1f + pulse);
+        if (hudView != null) hudView.HoldGainUntilAbsorbed(travelSeconds * gaugeArrivalFraction);
     }
 }

@@ -11,6 +11,8 @@ public sealed class ElegantPointGainAttractorVfx : MonoBehaviour
     [SerializeField, Min(0f)] private float arrivalDistance = 0.12f;
     [SerializeField, Min(0f)] private float destroyDelay = 0.65f;
 
+    public float TravelDuration => travelDuration;
+
     private Transform target;
     private Vector3 startPosition;
     private float elapsed;

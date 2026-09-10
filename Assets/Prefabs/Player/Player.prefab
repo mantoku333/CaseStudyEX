@@ -575,6 +575,7 @@ GameObject:
   - component: {fileID: 6872356164271042961}
   - component: {fileID: 3125339716678325347}
   - component: {fileID: 907000000000000002}
+  - component: {fileID: 6442136536108689138}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -1162,7 +1163,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGracefulActionEffectManager
   targetPlayer: {fileID: 0}
   autoFindPlayerOnStart: 1
-  detectActionsFromPlayerState: 1
   autoFindEffectRoots: 1
   level1Sparkle:
     label: Lv1 Sparkle
@@ -1179,12 +1179,6 @@ MonoBehaviour:
     root: {fileID: 0}
     particles: []
     clearBeforePlay: 0
-  comboGraceSeconds: 1
-  requireDifferentActionForCombo: 1
-  resetAfterNoActionSeconds: 5
-  resetWhenPlayerStops: 1
-  stoppedVelocityThreshold: 0.05
-  stoppedResetDelay: 0.1
   currentLevel: 0
   lastAction: 0
   logLevelChanges: 0
@@ -1198,15 +1192,34 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b5b1f6aa8ad4ddcbb030c60c439a993, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerElegantPointController
   chainTimeoutSeconds: 1
+  pointsPerSuccess: 10
+  minimumRecoilDistance: 2
   playerController: {fileID: 0}
   normalAttackController: {fileID: 0}
   diveAttackController: {fileID: 0}
   glideController: {fileID: 7507060558087119698}
   recoilController: {fileID: 8928624073132878326}
   playerHealth: {fileID: 0}
+  equipmentController: {fileID: 0}
+--- !u!114 &6442136536108689138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600020788520051928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94f12b0b13c8d417693dd6cb0f7b6152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElegantActionSuccessSensor
+  minimumHeadClearance: 0.05
+  maximumHeadClearance: 2
+  backKillWindowSeconds: 2
+  teleportDistance: 4
 --- !u!1 &5437759847484700699
 GameObject:
   m_ObjectHideFlags: 0

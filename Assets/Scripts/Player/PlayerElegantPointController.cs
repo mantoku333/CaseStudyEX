@@ -5,10 +5,13 @@ using UnityEngine;
 /// Bridges player action lifecycles into the Elegant Point chain state machine.
 /// </summary>
 [DisallowMultipleComponent]
+[RequireComponent(typeof(ElegantActionSuccessSensor))]
 [DefaultExecutionOrder(100)]
 public sealed class PlayerElegantPointController : MonoBehaviour
 {
     [SerializeField, Min(0.01f)] private float chainTimeoutSeconds = ElegantActionChain.DefaultTimeoutSeconds;
+    [SerializeField, Min(1)] private int pointsPerSuccess = 10;
+    [SerializeField, Min(0.1f)] private float minimumRecoilDistance = 2f;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private UmbrellaAttackController normalAttackController;
     [SerializeField] private PlayerDiveAttackController diveAttackController;
@@ -19,6 +22,17 @@ public sealed class PlayerElegantPointController : MonoBehaviour
 
     private ElegantActionChain chain;
     private float pendingElegantPointFraction;
+    private ElegantActionSuccessSensor successSensor;
+    private Vector2 recoilOrigin;
+    private Vector2 previousRecoilPosition;
+    private bool recoilPending;
+    private bool recoilCounted;
+    private int recoilSequence;
+    private int publishedLevel;
+
+    public event System.Action<int> LevelChanged;
+    public event System.Action<ElegantActionType, int> ActionSucceeded;
+    public event System.Action<ElegantActionType, int> ActionRefined;
 
     private UmbrellaAttackController subscribedNormalAttackController;
     private PlayerDiveAttackController subscribedDiveAttackController;
@@ -26,10 +40,6 @@ public sealed class PlayerElegantPointController : MonoBehaviour
     private GunController subscribedRecoilController;
     private PlayerHealth subscribedPlayerHealth;
 
-    private bool previousGlideActionActive;
-    private bool previousDodging;
-    private bool previousRecoilActionActive;
-    private bool hasCapturedActionState;
     private bool actionActivitySinceLastUpdate;
 
     public bool IsChainArmed => chain != null && chain.IsArmed;
@@ -48,55 +58,42 @@ public sealed class PlayerElegantPointController : MonoBehaviour
         EnsureChain();
         ResolveReferences();
         RefreshSubscriptions();
-        CaptureActionState();
+        successSensor.Succeeded += NotifySuccessfulAction;
     }
 
     private void Update()
     {
+        AdvanceActions(Time.deltaTime);
+    }
+
+    private void AdvanceActions(float deltaTime)
+    {
         ResolveReferences();
         RefreshSubscriptions();
+        if (playerHealth != null && playerHealth.CurrentHealth <= 0) return;
 
-        if (!hasCapturedActionState)
-        {
-            CaptureActionState();
-        }
-
-        bool glideActionActive = glideController != null && glideController.IsGlideActionActive;
+        bool glideActionActive = glideController != null && glideController.IsGlideMotionActive;
         bool dodging = playerController != null && playerController.IsDodging;
         bool recoilActionActive = recoilController != null && recoilController.IsAirborneRecoilActive;
-        bool eligibleStateEndedThisFrame =
-            (!glideActionActive && previousGlideActionActive) ||
-            (!dodging && previousDodging) ||
-            (!recoilActionActive && previousRecoilActionActive);
+        UpdateRecoilSuccess();
+        // A glide session may outlive a chain (for example a long recoil interruption).
+        // Resuming actual glide after settlement starts a new level-one chain.
+        if (!chain.IsArmed && glideActionActive) NotifySuccessfulAction(ElegantActionType.Glide);
 
-        if (dodging && !previousDodging)
-        {
-            NotifyActionStarted(ElegantActionType.Dodge);
-        }
-
-        previousGlideActionActive = glideActionActive;
-        previousDodging = dodging;
-        previousRecoilActionActive = recoilActionActive;
-
-        bool eligibleActionHeld =
-            glideActionActive ||
-            dodging ||
-            recoilActionActive ||
-            (playerController != null && playerController.IsDiveAttackLanding) ||
-            (normalAttackController != null && normalAttackController.IsAttacking()) ||
-            (diveAttackController != null && diveAttackController.IsDiveAttacking) ||
-            eligibleStateEndedThisFrame ||
+        bool eligibleActionHeld = IsSuccessfulActionHeld(glideActionActive, dodging, recoilActionActive) ||
             actionActivitySinceLastUpdate;
 
         actionActivitySinceLastUpdate = false;
-        Award(chain.Advance(Time.deltaTime, eligibleActionHeld));
+        Award(chain.Advance(deltaTime, eligibleActionHeld));
+        PublishLevel();
     }
 
     private void OnDisable()
     {
+        if (successSensor != null) successSensor.Succeeded -= NotifySuccessfulAction;
         UnsubscribeAll();
-        hasCapturedActionState = false;
         actionActivitySinceLastUpdate = false;
+        if (Application.isPlaying && Time.timeScale > 0f) SettleChain();
     }
 
     private void OnDestroy()
@@ -119,6 +116,8 @@ public sealed class PlayerElegantPointController : MonoBehaviour
     private void OnValidate()
     {
         chainTimeoutSeconds = Mathf.Max(0.01f, chainTimeoutSeconds);
+        pointsPerSuccess = Mathf.Max(1, pointsPerSuccess);
+        minimumRecoilDistance = Mathf.Max(0.1f, minimumRecoilDistance);
     }
 
     /// <summary>
@@ -128,26 +127,26 @@ public sealed class PlayerElegantPointController : MonoBehaviour
     public void NotifyActionStarted(ElegantActionType action)
     {
         EnsureChain();
-        actionActivitySinceLastUpdate = true;
-
         int reward = action == ElegantActionType.NormalAttack || action == ElegantActionType.DiveAttack
             ? chain.RegisterAttackStart(action)
-            : chain.RegisterActionStart(action);
+            : 0;
         Award(reward);
     }
 
     public void NotifyAttackHit(ElegantActionType action)
     {
         EnsureChain();
-        actionActivitySinceLastUpdate = true;
+        int before = chain.ActionCount;
         Award(chain.RegisterAttackHit(action));
+        PublishSuccess(before);
     }
 
     public void NotifyAttackEnded(ElegantActionType action, bool hitEnemy)
     {
         EnsureChain();
-        actionActivitySinceLastUpdate = true;
+        int before = chain.ActionCount;
         Award(chain.RegisterAttackEnd(action, hitEnemy));
+        PublishSuccess(before);
     }
 
     public int SettleChain()
@@ -155,6 +154,7 @@ public sealed class PlayerElegantPointController : MonoBehaviour
         EnsureChain();
         int reward = chain.Settle();
         Award(reward);
+        PublishLevel();
         return reward;
     }
 
@@ -162,12 +162,17 @@ public sealed class PlayerElegantPointController : MonoBehaviour
     {
         if (chain == null)
         {
-            chain = new ElegantActionChain(chainTimeoutSeconds);
+            chain = new ElegantActionChain(chainTimeoutSeconds, pointsPerSuccess);
         }
     }
 
     private void ResolveReferences()
     {
+        if (successSensor == null)
+        {
+            successSensor = GetComponent<ElegantActionSuccessSensor>();
+            if (successSensor == null) successSensor = gameObject.AddComponent<ElegantActionSuccessSensor>();
+        }
         if (playerController == null)
         {
             playerController = GetComponent<PlayerController>();
@@ -248,6 +253,7 @@ public sealed class PlayerElegantPointController : MonoBehaviour
                 subscribedNormalAttackController.ActionStarted += HandleNormalAttackStarted;
                 subscribedNormalAttackController.FirstEnemyHit += HandleNormalAttackHit;
                 subscribedNormalAttackController.ActionEnded += HandleNormalAttackEnded;
+                subscribedNormalAttackController.EnemyHitResolved += HandleNormalAttackResult;
             }
         }
 
@@ -260,6 +266,7 @@ public sealed class PlayerElegantPointController : MonoBehaviour
                 subscribedDiveAttackController.ActionStarted += HandleDiveAttackStarted;
                 subscribedDiveAttackController.FirstEnemyHit += HandleDiveAttackHit;
                 subscribedDiveAttackController.ActionEnded += HandleDiveAttackEnded;
+                subscribedDiveAttackController.BouncedOnEnemy += HandleDiveBounce;
             }
         }
 
@@ -313,6 +320,7 @@ public sealed class PlayerElegantPointController : MonoBehaviour
         subscribedNormalAttackController.ActionStarted -= HandleNormalAttackStarted;
         subscribedNormalAttackController.FirstEnemyHit -= HandleNormalAttackHit;
         subscribedNormalAttackController.ActionEnded -= HandleNormalAttackEnded;
+        subscribedNormalAttackController.EnemyHitResolved -= HandleNormalAttackResult;
         subscribedNormalAttackController = null;
     }
 
@@ -326,6 +334,7 @@ public sealed class PlayerElegantPointController : MonoBehaviour
         subscribedDiveAttackController.ActionStarted -= HandleDiveAttackStarted;
         subscribedDiveAttackController.FirstEnemyHit -= HandleDiveAttackHit;
         subscribedDiveAttackController.ActionEnded -= HandleDiveAttackEnded;
+        subscribedDiveAttackController.BouncedOnEnemy -= HandleDiveBounce;
         subscribedDiveAttackController = null;
     }
 
@@ -362,14 +371,6 @@ public sealed class PlayerElegantPointController : MonoBehaviour
         subscribedPlayerHealth = null;
     }
 
-    private void CaptureActionState()
-    {
-        previousGlideActionActive = glideController != null && glideController.IsGlideActionActive;
-        previousDodging = playerController != null && playerController.IsDodging;
-        previousRecoilActionActive = recoilController != null && recoilController.IsAirborneRecoilActive;
-        hasCapturedActionState = playerController != null;
-    }
-
     private void HandleNormalAttackStarted()
     {
         NotifyActionStarted(ElegantActionType.NormalAttack);
@@ -402,12 +403,93 @@ public sealed class PlayerElegantPointController : MonoBehaviour
 
     private void HandleGlideStarted()
     {
-        NotifyActionStarted(ElegantActionType.Glide);
+        NotifySuccessfulAction(ElegantActionType.Glide);
     }
 
     private void HandleAirborneRecoilStarted()
     {
-        NotifyActionStarted(ElegantActionType.RecoilMove);
+        recoilOrigin = recoilController.RecoilStartPosition;
+        previousRecoilPosition = transform.position;
+        recoilSequence = recoilController.RecoilSequence;
+        recoilPending = true;
+        recoilCounted = false;
+    }
+
+    public void NotifySuccessfulAction(ElegantActionType action)
+    {
+        if (!isActiveAndEnabled) return;
+        EnsureChain();
+        int before = chain.ActionCount;
+        chain.RegisterSuccess(action);
+        PublishSuccess(before);
+    }
+
+    private void PublishSuccess(int before)
+    {
+        if (chain.ActionCount <= before) return;
+        actionActivitySinceLastUpdate = true;
+        PublishLevel();
+        ActionSucceeded?.Invoke(chain.LastAction.Value, chain.ActionCount);
+    }
+
+    private void PublishLevel()
+    {
+        if (publishedLevel == CurrentChainLength) return;
+        publishedLevel = CurrentChainLength;
+        LevelChanged?.Invoke(publishedLevel);
+    }
+
+    private void HandleNormalAttackResult(Component enemy, bool killed, bool fromBehind)
+    {
+        if (!killed || !fromBehind || !successSensor.ConsumeOverheadCrossing(enemy)) return;
+        int before = chain.ActionCount;
+        chain.RegisterAttackSuccess(ElegantActionType.NormalAttack, ElegantActionType.OverheadBackKill);
+        PublishSuccess(before);
+    }
+
+    private void HandleDiveBounce()
+    {
+        if (chain.RefineDiveBounce())
+            ActionRefined?.Invoke(ElegantActionType.DiveBounce, chain.ActionCount);
+    }
+
+    private void UpdateRecoilSuccess()
+    {
+        if (!recoilPending || recoilController == null) return;
+        Vector2 position = transform.position;
+        bool teleported = Vector2.Distance(position, previousRecoilPosition) > 4f;
+        previousRecoilPosition = position;
+        if (teleported || recoilSequence != recoilController.RecoilSequence)
+        {
+            recoilPending = false;
+            return;
+        }
+        if (!recoilCounted &&
+            Vector2.Distance(recoilOrigin, position) >= minimumRecoilDistance)
+        {
+            recoilCounted = true;
+            NotifySuccessfulAction(recoilController.CurrentRecoilIsJump ? ElegantActionType.RecoilJump : ElegantActionType.RecoilMove);
+        }
+        if (!recoilController.IsAirborneRecoilActive) recoilPending = false;
+    }
+
+    private bool IsSuccessfulActionHeld(bool glide, bool dodge, bool recoil)
+    {
+        // A sustained action that is still happening holds the window open even when it is no
+        // longer the latest success. Dodging or recoiling mid-glide must not settle the chain
+        // while the glide itself continues.
+        if (glide || (dodge && successSensor.CurrentDodgeSucceeded) || (recoil && recoilCounted)) return true;
+        switch (chain.LastAction)
+        {
+            case ElegantActionType.DiveAttack:
+            case ElegantActionType.DiveBounce:
+                return chain.LatestSuccessBelongsToCurrentAttack &&
+                    ((diveAttackController != null && diveAttackController.IsDiveAttacking) ||
+                    (playerController != null && playerController.IsDiveAttackLanding));
+            case ElegantActionType.OverheadBackKill:
+                return chain.LatestSuccessBelongsToCurrentAttack && normalAttackController != null && normalAttackController.IsAttacking();
+            default: return false;
+        }
     }
 
     private void HandlePlayerDied()
