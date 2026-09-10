@@ -3,6 +3,8 @@ using Cysharp.Threading.Tasks;
 
 public class DodgeController : MonoBehaviour
 {
+    public event System.Action Started;
+    public event System.Action Ended;
     [Header("回避距離")]
     [SerializeField] private float dodgeDistance = 3.0f;   //回避する距離
 
@@ -203,6 +205,7 @@ public class DodgeController : MonoBehaviour
         if (rigidBody2d == null) { return; }
 
         isDodging = true;
+        Started?.Invoke();
         dodgeInvincibleUntilTime
             = Time.time + dodgeDuration + postDodgeInvincibleSeconds; //回避開始時に無敵の終了時間を計算し設定
         int currentDodgeInvincibleSequence = ++dodgeInvincibleSequence;
@@ -244,6 +247,7 @@ public class DodgeController : MonoBehaviour
         dodgeMovementCancelled = false;
         Debug.Log("回避を終了しました");
         isDodging = false;
+        Ended?.Invoke();
 
         await LogDodgeInvincibleEndAsync(currentDodgeInvincibleSequence);
     }

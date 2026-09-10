@@ -528,6 +528,7 @@ namespace Metroidvania.Enemy
             
             
 
+            playerHealth.GetComponent<ElegantActionSuccessSensor>()?.NotifyDodgedProjectile();
             if (playerHealth.TryTakeDamage(damage))
             {
                 HitStopController.RequestEnemyToPlayer();

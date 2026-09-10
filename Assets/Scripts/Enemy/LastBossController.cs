@@ -182,6 +182,7 @@ namespace GameName.Enemy
 
         public bool IsEncounterActive => encounterActive;
         public int CurrentHealth => currentHealth;
+        public int FacingDirection => facingDirection;
         public int MaxHealth => Mathf.Max(1, maxHealth);
         private static bool UseLegacyBossHitStop => false;
 
@@ -436,7 +437,9 @@ namespace GameName.Enemy
                 return;
             }
 
-            if (ApplyDamage(damage))
+            bool killedByHit = ApplyDamage(damage);
+            attacker?.ReportEnemyHit(this, killedByHit, isBackAttack);
+            if (killedByHit)
             {
                 if (attacker != null)
                 {

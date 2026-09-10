@@ -85,7 +85,7 @@ MonoBehaviour:
   pickupVisualScale: {x: 1, y: 1, z: 1}
   playPickupEffectAtPlayer: 1
   playerPickupVisualOffset: {x: 0.2, y: 1, z: 0}
-  sortingOrder: 0
+  sortingOrder: 1000
   playHealEffectOnPlayer: 1
   healBackSpriteSheet: {fileID: 2800000, guid: a72a53c0ea44d8d43aeedd2f5145c887, type: 3}
   healFrontSpriteSheet: {fileID: 2800000, guid: 6584dafc6cd56d94abd31ede043c2fd3, type: 3}

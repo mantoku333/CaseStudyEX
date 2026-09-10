@@ -69,6 +69,9 @@ public class GunController : MonoBehaviour
     /// restart the action; it remains active until the recoil itself ends.
     /// </summary>
     public event System.Action AirborneRecoilStarted;
+    public bool CurrentRecoilIsJump { get; private set; }
+    public Vector2 RecoilStartPosition { get; private set; }
+    public int RecoilSequence { get; private set; }
 
     public bool IsAirborneRecoilActive { get; private set; }
 
@@ -295,7 +298,7 @@ public class GunController : MonoBehaviour
         rigidBody2d.linearVelocity =
             Vector2.up * GetModifiedAirRecoilPower() * recoilPowerMultiplier;
         preserveHorizontalRecoilMomentum = false;
-        BeginRecoil(recoilDuration);
+        BeginRecoil(recoilDuration, true);
         // リコイルジャンプも同じ補正を通し、天井や角で押し込まれないようにする。
         ProjectRecoilVelocityForNextFixedStep();
 
@@ -305,8 +308,11 @@ public class GunController : MonoBehaviour
         //Debug.Log("Jump Recoil!");
     }
 
-    private void BeginRecoil(float duration)
+    private void BeginRecoil(float duration, bool isJump = false)
     {
+        CurrentRecoilIsJump = isJump;
+        RecoilStartPosition = rigidBody2d != null ? rigidBody2d.position : (Vector2)transform.position;
+        RecoilSequence++;
         isRecoiling = true;
         airborneRecoilStartedForCurrentAction = false;
         IsAirborneRecoilActive = false;

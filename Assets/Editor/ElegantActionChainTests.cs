@@ -2,271 +2,164 @@ using NUnit.Framework;
 
 public sealed class ElegantActionChainTests
 {
-    [Test]
-    public void NonAttackAction_WhenUnarmed_IsIgnored()
+    [TestCase(ElegantActionType.Glide)]
+    [TestCase(ElegantActionType.Dodge)]
+    [TestCase(ElegantActionType.DodgeProjectile)]
+    [TestCase(ElegantActionType.RecoilMove)]
+    [TestCase(ElegantActionType.RecoilJump)]
+    public void AnySuccessfulMovement_CanStartAtLevelOne(ElegantActionType action)
     {
         var chain = new ElegantActionChain();
-
-        chain.RegisterActionStart(ElegantActionType.Glide);
-        chain.RegisterActionStart(ElegantActionType.Dodge);
-        chain.RegisterActionStart(ElegantActionType.RecoilMove);
-
+        chain.RegisterSuccess(action);
+        Assert.That(chain.ActionCount, Is.EqualTo(1));
+        // Level one is flourish only: a single glide must not feed the gauge.
+        Assert.That(chain.Settle(), Is.Zero);
         Assert.That(chain.IsArmed, Is.False);
+    }
+
+    [Test]
+    public void LevelOnePaysNothing_AndLevelTwoPaysTheWholeChain()
+    {
+        var chain = new ElegantActionChain();
+        chain.RegisterSuccess(ElegantActionType.Glide);
+        Assert.That(chain.Advance(1f, false), Is.Zero);
+        chain.RegisterSuccess(ElegantActionType.Glide);
+        Assert.That(chain.Advance(1f, false), Is.Zero);
+        chain.RegisterSuccess(ElegantActionType.Glide);
+        chain.RegisterSuccess(ElegantActionType.Dodge);
+        Assert.That(chain.Advance(1f, false), Is.EqualTo(20));
+        Assert.That(ElegantActionChain.CalculateReward(1), Is.Zero);
+        Assert.That(ElegantActionChain.CalculateReward(2), Is.EqualTo(20));
+    }
+
+    [Test]
+    public void RequestedSequence_AdvancesOneLevelPerSuccess()
+    {
+        var chain = new ElegantActionChain();
+        chain.RegisterSuccess(ElegantActionType.Glide);
+        Assert.That(chain.ActionCount, Is.EqualTo(1));
+        chain.RegisterAttackStart(ElegantActionType.DiveAttack);
+        Assert.That(chain.ActionCount, Is.EqualTo(1));
+        chain.RegisterAttackHit(ElegantActionType.DiveAttack);
+        Assert.That(chain.ActionCount, Is.EqualTo(2));
+        chain.RegisterAttackEnd(ElegantActionType.DiveAttack, true);
+        chain.RegisterSuccess(ElegantActionType.Dodge);
+        Assert.That(chain.ActionCount, Is.EqualTo(3));
+        chain.RegisterSuccess(ElegantActionType.RecoilMove);
+        Assert.That(chain.ActionCount, Is.EqualTo(4));
+        Assert.That(chain.Advance(1f, false), Is.EqualTo(40));
         Assert.That(chain.ActionCount, Is.Zero);
     }
 
     [Test]
-    public void SuccessfulAttack_ArmsOnFirstHit_AndRemainsPendingUntilEnd()
+    public void OrdinaryNormalHit_DoesNotStartOrAdvanceChain()
     {
         var chain = new ElegantActionChain();
-
         chain.RegisterAttackStart(ElegantActionType.NormalAttack);
-
-        Assert.That(chain.IsArmed, Is.False);
-        Assert.That(chain.IsAttackInProgress, Is.True);
-        Assert.That(chain.Advance(5f, false), Is.Zero);
-
         chain.RegisterAttackHit(ElegantActionType.NormalAttack);
-
-        Assert.That(chain.IsArmed, Is.True);
-        Assert.That(chain.ActionCount, Is.EqualTo(1));
-        Assert.That(chain.Advance(5f, false), Is.Zero);
-
         chain.RegisterAttackEnd(ElegantActionType.NormalAttack, true);
-
-        Assert.That(chain.IsAttackInProgress, Is.False);
-        Assert.That(chain.Advance(1f, false), Is.Zero);
-        Assert.That(chain.IsArmed, Is.False);
+        chain.RegisterSuccess(ElegantActionType.NormalAttack);
+        Assert.That(chain.ActionCount, Is.Zero);
+        chain.RegisterSuccess(ElegantActionType.Glide);
+        chain.RegisterAttackStart(ElegantActionType.NormalAttack);
+        chain.RegisterAttackEnd(ElegantActionType.NormalAttack, true);
+        Assert.That(chain.ActionCount, Is.EqualTo(1));
     }
 
     [Test]
-    public void AttackHit_WhenReportedMoreThanOnce_CountsOnlyOnce()
+    public void OverheadBackKill_CountsOncePerNormalAttack()
     {
         var chain = new ElegantActionChain();
+        chain.RegisterAttackStart(ElegantActionType.NormalAttack);
+        chain.RegisterAttackSuccess(ElegantActionType.NormalAttack, ElegantActionType.OverheadBackKill);
+        chain.RegisterAttackSuccess(ElegantActionType.NormalAttack, ElegantActionType.OverheadBackKill);
+        chain.RegisterAttackHit(ElegantActionType.NormalAttack);
+        chain.RegisterAttackEnd(ElegantActionType.NormalAttack, true);
+        Assert.That(chain.ActionCount, Is.EqualTo(1));
+        Assert.That(chain.LastAction, Is.EqualTo(ElegantActionType.OverheadBackKill));
+    }
 
+    [Test]
+    public void DiveHitAndBounce_RefineOneSuccessWithoutDoubleCounting()
+    {
+        var chain = new ElegantActionChain();
         chain.RegisterAttackStart(ElegantActionType.DiveAttack);
         chain.RegisterAttackHit(ElegantActionType.DiveAttack);
         chain.RegisterAttackHit(ElegantActionType.DiveAttack);
         chain.RegisterAttackEnd(ElegantActionType.DiveAttack, true);
-
+        Assert.That(chain.RefineDiveBounce(), Is.True);
+        Assert.That(chain.RefineDiveBounce(), Is.False);
         Assert.That(chain.ActionCount, Is.EqualTo(1));
+        Assert.That(chain.LastAction, Is.EqualTo(ElegantActionType.DiveBounce));
     }
 
     [Test]
-    public void NonAttackStartedAfterPendingAttackHit_IsNotDropped()
+    public void MissesAndPendingAttempts_DoNotRefreshTheWindow()
     {
         var chain = new ElegantActionChain();
-
-        chain.RegisterAttackStart(ElegantActionType.NormalAttack);
-        chain.RegisterAttackHit(ElegantActionType.NormalAttack);
-        chain.RegisterActionStart(ElegantActionType.Dodge);
-
-        Assert.That(chain.IsAttackInProgress, Is.True);
-        Assert.That(chain.ActionCount, Is.EqualTo(2));
-        Assert.That(chain.LastAction, Is.EqualTo(ElegantActionType.Dodge));
-    }
-
-    [Test]
-    public void NonAttackStartedBeforePendingAttackHit_IsDeferredForAnArmedChain()
-    {
-        var chain = new ElegantActionChain();
-        CompleteSuccessfulAttack(chain, ElegantActionType.NormalAttack);
-
+        chain.RegisterSuccess(ElegantActionType.Glide);
+        chain.RegisterSuccess(ElegantActionType.Dodge);
+        chain.Advance(0.7f, false);
         chain.RegisterAttackStart(ElegantActionType.DiveAttack);
-        chain.RegisterActionStart(ElegantActionType.Dodge);
+        chain.RegisterAttackEnd(ElegantActionType.DiveAttack, false);
+        chain.RegisterAttackStart(ElegantActionType.NormalAttack);
+        Assert.That(chain.Advance(0.3f, false), Is.EqualTo(20));
+    }
 
-        Assert.That(chain.ActionCount, Is.EqualTo(1));
+    [Test]
+    public void AttackStillInFlight_CanSucceedAfterPreviousChainExpires()
+    {
+        var chain = new ElegantActionChain();
+        chain.RegisterSuccess(ElegantActionType.Glide);
+        chain.RegisterSuccess(ElegantActionType.Dodge);
+        chain.RegisterAttackStart(ElegantActionType.DiveAttack);
+        Assert.That(chain.Advance(1f, false), Is.EqualTo(20));
         chain.RegisterAttackHit(ElegantActionType.DiveAttack);
-
-        Assert.That(chain.ActionCount, Is.EqualTo(3));
-        Assert.That(chain.LastAction, Is.EqualTo(ElegantActionType.Dodge));
+        Assert.That(chain.ActionCount, Is.EqualTo(1));
     }
 
     [Test]
-    public void NonAttackDuringFirstPendingAttack_RemainsIgnoredBeforeArmingHit()
+    public void DistinctExecutionsOfSameAction_CanContinueBeyondLevelTwo()
     {
         var chain = new ElegantActionChain();
-
-        chain.RegisterAttackStart(ElegantActionType.NormalAttack);
-        chain.RegisterActionStart(ElegantActionType.Dodge);
-        chain.RegisterAttackHit(ElegantActionType.NormalAttack);
-
-        Assert.That(chain.ActionCount, Is.EqualTo(1));
-        Assert.That(chain.LastAction, Is.EqualTo(ElegantActionType.NormalAttack));
+        for (int i = 0; i < 8; i++) chain.RegisterSuccess(ElegantActionType.Dodge);
+        Assert.That(chain.ActionCount, Is.EqualTo(8));
+        Assert.That(chain.Settle(), Is.EqualTo(80));
     }
 
     [Test]
-    public void DeferredNonAttack_IsDiscardedWhenPendingAttackMisses()
+    public void SuccessfulHeldAction_PreservesWindowButPauseDoesNotAdvanceIt()
     {
-        ElegantActionChain chain = CreateTwoActionChain();
-
-        chain.RegisterAttackStart(ElegantActionType.DiveAttack);
-        chain.RegisterActionStart(ElegantActionType.Dodge);
-        int reward = chain.RegisterAttackEnd(ElegantActionType.DiveAttack, false);
-
-        Assert.That(reward, Is.EqualTo(10));
-        Assert.That(chain.IsArmed, Is.False);
-        Assert.That(chain.ActionCount, Is.Zero);
-    }
-
-    [Test]
-    public void ReusedDeferredNonAttack_SettlesAfterPendingAttackHits()
-    {
-        ElegantActionChain chain = CreateTwoActionChain();
-
-        chain.RegisterAttackStart(ElegantActionType.DiveAttack);
-        chain.RegisterActionStart(ElegantActionType.Glide);
-        int reward = chain.RegisterAttackHit(ElegantActionType.DiveAttack);
-
-        Assert.That(reward, Is.EqualTo(20));
-        Assert.That(chain.IsArmed, Is.False);
-        Assert.That(chain.ActionCount, Is.Zero);
-        Assert.That(chain.IsAttackInProgress, Is.True);
-    }
-
-    [Test]
-    public void Timeout_AtExactlyOneScaledSecond_SettlesOnce()
-    {
-        ElegantActionChain chain = CreateTwoActionChain();
-
-        Assert.That(chain.Advance(0.5f, false), Is.Zero);
-        Assert.That(chain.Advance(0.5f, false), Is.EqualTo(10));
-        Assert.That(chain.IsArmed, Is.False);
+        var chain = new ElegantActionChain();
+        chain.RegisterSuccess(ElegantActionType.Glide);
+        chain.RegisterSuccess(ElegantActionType.Dodge);
+        chain.Advance(0.7f, false);
+        Assert.That(chain.Advance(5f, true), Is.Zero);
+        chain.Advance(0.7f, false);
+        Assert.That(chain.Advance(0f, false), Is.Zero);
+        Assert.That(chain.Advance(0.3f, false), Is.EqualTo(20));
         Assert.That(chain.Advance(1f, false), Is.Zero);
     }
 
     [Test]
-    public void HeldAction_ResetsInactivityAndProvidesFullWindowAfterRelease()
+    public void RewardRateAndTimeout_AreConfigurable()
     {
-        ElegantActionChain chain = CreateTwoActionChain();
-
-        Assert.That(chain.Advance(0.75f, false), Is.Zero);
-        Assert.That(chain.Advance(0.5f, true), Is.Zero);
-        Assert.That(chain.Advance(0.75f, false), Is.Zero);
-        Assert.That(chain.Advance(0.25f, false), Is.EqualTo(10));
+        var chain = new ElegantActionChain(2f, 7);
+        chain.RegisterSuccess(ElegantActionType.Glide);
+        chain.RegisterSuccess(ElegantActionType.Dodge);
+        Assert.That(chain.Advance(1.9f, false), Is.Zero);
+        Assert.That(chain.Advance(0.1f, false), Is.EqualTo(14));
     }
 
     [Test]
-    public void ZeroScaledDeltaTime_DoesNotAdvanceTimeout()
-    {
-        ElegantActionChain chain = CreateTwoActionChain();
-
-        Assert.That(chain.Advance(0.75f, false), Is.Zero);
-        Assert.That(chain.Advance(0f, false), Is.Zero);
-        Assert.That(chain.Advance(0.25f, false), Is.EqualTo(10));
-    }
-
-    [Test]
-    public void ReusedNonAttack_SettlesAndLeavesChainDisarmed()
+    public void DeathOrReset_SettlesOnlyOnceAndDropsPendingAttack()
     {
         var chain = new ElegantActionChain();
-        CompleteSuccessfulAttack(chain, ElegantActionType.NormalAttack);
-        chain.RegisterActionStart(ElegantActionType.Glide);
-        chain.RegisterActionStart(ElegantActionType.Dodge);
-
-        int reward = chain.RegisterActionStart(ElegantActionType.Glide);
-
-        Assert.That(reward, Is.EqualTo(20));
-        Assert.That(chain.IsArmed, Is.False);
-        Assert.That(chain.ActionCount, Is.Zero);
-    }
-
-    [Test]
-    public void ReusedSuccessfulAttack_SettlesThenRearmsAtStepOne()
-    {
-        var chain = new ElegantActionChain();
-        CompleteSuccessfulAttack(chain, ElegantActionType.NormalAttack);
-        chain.RegisterActionStart(ElegantActionType.Dodge);
-
-        int reward = chain.RegisterAttackStart(ElegantActionType.NormalAttack);
-
-        Assert.That(reward, Is.EqualTo(10));
-        Assert.That(chain.IsArmed, Is.False);
-        Assert.That(chain.IsAttackInProgress, Is.True);
-
-        chain.RegisterAttackHit(ElegantActionType.NormalAttack);
-        chain.RegisterAttackEnd(ElegantActionType.NormalAttack, true);
-
-        Assert.That(chain.IsArmed, Is.True);
-        Assert.That(chain.ActionCount, Is.EqualTo(1));
-        Assert.That(chain.LastAction, Is.EqualTo(ElegantActionType.NormalAttack));
-    }
-
-    [Test]
-    public void MissedAttack_SettlesExistingChainAndDisarms()
-    {
-        ElegantActionChain chain = CreateTwoActionChain();
-
+        chain.RegisterSuccess(ElegantActionType.Glide);
+        chain.RegisterSuccess(ElegantActionType.Dodge);
         chain.RegisterAttackStart(ElegantActionType.DiveAttack);
-        int reward = chain.RegisterAttackEnd(ElegantActionType.DiveAttack, false);
-
-        Assert.That(reward, Is.EqualTo(10));
-        Assert.That(chain.IsArmed, Is.False);
+        Assert.That(chain.Settle(), Is.EqualTo(20));
         Assert.That(chain.IsAttackInProgress, Is.False);
-    }
-
-    [Test]
-    public void AlternatingAttackAndGlide_CannotGrowOneFarmedChain()
-    {
-        var chain = new ElegantActionChain();
-        CompleteSuccessfulAttack(chain, ElegantActionType.NormalAttack);
-        chain.RegisterActionStart(ElegantActionType.Glide);
-
-        int firstReward = chain.RegisterAttackStart(ElegantActionType.NormalAttack);
-        chain.RegisterAttackHit(ElegantActionType.NormalAttack);
-        chain.RegisterAttackEnd(ElegantActionType.NormalAttack, true);
-        chain.RegisterActionStart(ElegantActionType.Glide);
-
-        int secondReward = chain.RegisterAttackStart(ElegantActionType.NormalAttack);
-
-        Assert.That(firstReward, Is.EqualTo(10));
-        Assert.That(secondReward, Is.EqualTo(10));
-        Assert.That(chain.IsArmed, Is.False);
-        Assert.That(chain.ActionCount, Is.Zero);
-        Assert.That(chain.IsAttackInProgress, Is.True);
-    }
-
-    [Test]
-    public void AllFiveEligibleActionTypes_AreMaximumBeforeReuseSettles()
-    {
-        var chain = new ElegantActionChain();
-        CompleteSuccessfulAttack(chain, ElegantActionType.NormalAttack);
-        chain.RegisterActionStart(ElegantActionType.Glide);
-        chain.RegisterActionStart(ElegantActionType.Dodge);
-        CompleteSuccessfulAttack(chain, ElegantActionType.DiveAttack);
-        chain.RegisterActionStart(ElegantActionType.RecoilMove);
-
-        Assert.That(chain.ActionCount, Is.EqualTo(5));
-        Assert.That(chain.RegisterActionStart(ElegantActionType.Glide), Is.EqualTo(50));
-        Assert.That(chain.IsArmed, Is.False);
-        Assert.That(chain.ActionCount, Is.Zero);
-    }
-
-    [TestCase(0, 0)]
-    [TestCase(1, 0)]
-    [TestCase(2, 10)]
-    [TestCase(3, 20)]
-    [TestCase(4, 40)]
-    [TestCase(7, 70)]
-    public void CalculateReward_UsesFinalChainLength(int actionCount, int expectedReward)
-    {
-        Assert.That(ElegantActionChain.CalculateReward(actionCount), Is.EqualTo(expectedReward));
-    }
-
-    private static ElegantActionChain CreateTwoActionChain()
-    {
-        var chain = new ElegantActionChain();
-        CompleteSuccessfulAttack(chain, ElegantActionType.NormalAttack);
-        chain.RegisterActionStart(ElegantActionType.Glide);
-        return chain;
-    }
-
-    private static void CompleteSuccessfulAttack(
-        ElegantActionChain chain,
-        ElegantActionType action)
-    {
-        chain.RegisterAttackStart(action);
-        chain.RegisterAttackHit(action);
-        chain.RegisterAttackEnd(action, true);
+        Assert.That(chain.Settle(), Is.Zero);
     }
 }

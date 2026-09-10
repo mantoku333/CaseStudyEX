@@ -14,6 +14,8 @@ public class RoomCameraTrigger : MonoBehaviour
     private static RoomCameraTrigger _activeTrigger;
     private static readonly List<RoomCameraTrigger> _registeredTriggers = new();
     private static int lastActiveRoomValidationFrame = -1;
+    private static MonoBehaviour portalCameraOwner;
+    private static RoomCameraTrigger portalCameraDestination;
 
     public static event Action<RoomCameraTrigger> ActiveRoomChanged;
 
@@ -217,6 +219,60 @@ public class RoomCameraTrigger : MonoBehaviour
         return room != null;
     }
 
+    public static bool HoldCameraForPortal(
+        MonoBehaviour portalOwner,
+        RoomCameraTrigger destinationRoom)
+    {
+        if (portalOwner == null ||
+            destinationRoom == null ||
+            !destinationRoom.isActiveAndEnabled ||
+            !destinationRoom.CanControlCamera())
+        {
+            return false;
+        }
+
+        portalCameraOwner = portalOwner;
+        portalCameraDestination = destinationRoom;
+        destinationRoom.ActivateCamera();
+        return _activeTrigger == destinationRoom;
+    }
+
+    public static void ReleaseCameraFromPortal(MonoBehaviour portalOwner)
+    {
+        if (portalOwner == null || portalCameraOwner != portalOwner)
+        {
+            return;
+        }
+
+        ClearPortalCameraHold();
+        lastActiveRoomValidationFrame = -1;
+    }
+
+    public static bool CommitCameraFromPortal(
+        MonoBehaviour portalOwner,
+        RoomCameraTrigger finalRoom)
+    {
+        if (portalOwner == null ||
+            (portalCameraOwner != null && portalCameraOwner != portalOwner))
+        {
+            return false;
+        }
+
+        if (portalCameraOwner == portalOwner)
+        {
+            ClearPortalCameraHold();
+        }
+
+        lastActiveRoomValidationFrame = -1;
+        if (finalRoom == null || !finalRoom.isActiveAndEnabled)
+        {
+            return false;
+        }
+
+        finalRoom.ActivateCamera();
+        return _activeTrigger == finalRoom;
+    }
+
     private void Awake()
     {
         if (!_registeredTriggers.Contains(this))
@@ -248,6 +304,11 @@ public class RoomCameraTrigger : MonoBehaviour
     private void OnDisable()
     {
         _registeredTriggers.Remove(this);
+
+        if (portalCameraDestination == this)
+        {
+            ClearPortalCameraHold();
+        }
 
         if (_activeTrigger == this)
         {
@@ -316,6 +377,11 @@ public class RoomCameraTrigger : MonoBehaviour
 
     public void ActivateCamera()
     {
+        if (IsActivationBlockedByPortalHold(this))
+        {
+            return;
+        }
+
         if (IsHorizontalFollowTrigger)
         {
             ActivateHorizontalFollowCamera();
@@ -677,6 +743,10 @@ public class RoomCameraTrigger : MonoBehaviour
         }
 
         lastActiveRoomValidationFrame = Time.frameCount;
+        if (EnforcePortalCameraHold())
+        {
+            return;
+        }
 
         if (!TryResolvePlayerCameraPointForValidation(out Vector3 playerPosition))
         {
@@ -702,6 +772,67 @@ public class RoomCameraTrigger : MonoBehaviour
         }
 
         ReleaseToGlobalDefaultFollowCamera();
+    }
+
+    private bool CanControlCamera()
+    {
+        if (IsHorizontalFollowTrigger)
+        {
+            return HasHorizontalFollowCamera;
+        }
+
+        return IsDefaultTrigger || HasRoomCamera;
+    }
+
+    private static bool IsActivationBlockedByPortalHold(RoomCameraTrigger requestedRoom)
+    {
+        if (!TryGetPortalCameraDestination(out RoomCameraTrigger destinationRoom))
+        {
+            return false;
+        }
+
+        return requestedRoom != destinationRoom;
+    }
+
+    private static bool EnforcePortalCameraHold()
+    {
+        if (!TryGetPortalCameraDestination(out RoomCameraTrigger destinationRoom))
+        {
+            return false;
+        }
+
+        if (_activeTrigger != destinationRoom)
+        {
+            destinationRoom.ActivateCamera();
+        }
+
+        return true;
+    }
+
+    private static bool TryGetPortalCameraDestination(out RoomCameraTrigger destinationRoom)
+    {
+        bool ownerIsUsable =
+            portalCameraOwner != null &&
+            portalCameraOwner.isActiveAndEnabled;
+        bool destinationIsUsable =
+            portalCameraDestination != null &&
+            portalCameraDestination.isActiveAndEnabled;
+
+        if (!ownerIsUsable || !destinationIsUsable)
+        {
+            ClearPortalCameraHold();
+            destinationRoom = null;
+            return false;
+        }
+
+        destinationRoom = portalCameraDestination;
+        return true;
+    }
+
+    private static void ClearPortalCameraHold()
+    {
+        portalCameraOwner = null;
+        portalCameraDestination = null;
     }
 
     private static bool TryResolvePlayerCameraPointForValidation(out Vector3 playerPosition)

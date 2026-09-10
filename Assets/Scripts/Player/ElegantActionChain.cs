@@ -1,248 +1,131 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Pure state machine for an Elegant Point action chain. It does not read
-/// Unity object state or mutate the wallet; callers award the returned value.
-/// </summary>
+/// <summary>Successful actions, not input edges, advance this chain.</summary>
 public sealed class ElegantActionChain
 {
     public const float DefaultTimeoutSeconds = 1f;
-
+    /// <summary>A single success is flourish only; the gauge accepts level two and above.</summary>
+    public const int MinimumRewardedActionCount = 2;
     private readonly float timeoutSeconds;
-
-    private bool isArmed;
-    private int actionCount;
-    private ElegantActionType? lastAction;
-    private readonly HashSet<ElegantActionType> actionsInChain =
-        new HashSet<ElegantActionType>();
+    private readonly int pointsPerSuccess;
     private float inactiveSeconds;
-
     private bool attackInProgress;
-    private bool activeAttackHitEnemy;
+    private bool attackCounted;
     private ElegantActionType activeAttack;
-    private readonly List<ElegantActionType> deferredNonAttackActions = new List<ElegantActionType>();
+    private int attackStep;
 
-    public ElegantActionChain(float timeoutSeconds = DefaultTimeoutSeconds)
+    public ElegantActionChain(float timeoutSeconds = DefaultTimeoutSeconds, int pointsPerSuccess = 10)
     {
         this.timeoutSeconds = Mathf.Max(0.01f, timeoutSeconds);
+        this.pointsPerSuccess = Mathf.Max(1, pointsPerSuccess);
     }
 
-    public bool IsArmed => isArmed;
-    public int ActionCount => actionCount;
-    public ElegantActionType? LastAction => lastAction;
+    public bool IsArmed => ActionCount > 0;
+    public int ActionCount { get; private set; }
+    public ElegantActionType? LastAction { get; private set; }
     public float InactiveSeconds => inactiveSeconds;
     public bool IsAttackInProgress => attackInProgress;
+    public bool LatestSuccessBelongsToCurrentAttack => attackCounted && attackStep > 0 && attackStep == ActionCount;
 
-    /// <summary>
-    /// Registers a glide, dodge, or airborne recoil start edge.
-    /// Returns a reward when the action repeats any action already used by
-    /// the current chain.
-    /// </summary>
     public int RegisterActionStart(ElegantActionType action)
     {
-        if (IsAttack(action) || !isArmed)
-        {
-            return 0;
-        }
+        if (action == ElegantActionType.NormalAttack || action == ElegantActionType.DiveAttack) return 0;
+        return RegisterSuccess(action);
+    }
 
-        // A valid action edge can overlap an unresolved attack. Preserve it
-        // only when a chain was already armed; an unarmed chain must still be
-        // started by the attack's first enemy hit.
-        if (attackInProgress && !activeAttackHitEnemy)
-        {
-            deferredNonAttackActions.Add(action);
-            return 0;
-        }
-
-        if (actionsInChain.Contains(action))
-        {
-            return SettleCurrentChain();
-        }
-
-        AppendAction(action);
+    public int RegisterSuccess(ElegantActionType action)
+    {
+        if (action == ElegantActionType.NormalAttack) return 0;
+        ActionCount++;
+        LastAction = action;
+        inactiveSeconds = 0f;
         return 0;
     }
 
-    /// <summary>
-    /// Starts a normal or dive attack. The attack remains pending until its
-    /// first enemy hit or its completion reports a miss.
-    /// </summary>
     public int RegisterAttackStart(ElegantActionType action)
     {
-        if (!IsAttack(action) || attackInProgress)
-        {
-            return 0;
-        }
-
-        int reward = 0;
-        if (isArmed && actionsInChain.Contains(action))
-        {
-            reward = SettleCurrentChain();
-        }
-
-        attackInProgress = true;
-        activeAttackHitEnemy = false;
+        if (attackInProgress || (action != ElegantActionType.NormalAttack && action != ElegantActionType.DiveAttack)) return 0;
         activeAttack = action;
-        deferredNonAttackActions.Clear();
-        inactiveSeconds = 0f;
-        return reward;
+        attackInProgress = true;
+        attackCounted = false;
+        attackStep = 0;
+        return 0;
     }
 
-    /// <summary>
-    /// Resolves the pending attack as successful on its first enemy/boss hit.
-    /// Additional hits from the same attack are ignored.
-    /// </summary>
     public int RegisterAttackHit(ElegantActionType action)
     {
-        if (!attackInProgress || activeAttack != action || activeAttackHitEnemy)
-        {
-            return 0;
-        }
-
-        activeAttackHitEnemy = true;
-        AppendAction(action);
-
-        int reward = 0;
-        for (int i = 0; i < deferredNonAttackActions.Count; i++)
-        {
-            reward += RegisterActionStart(deferredNonAttackActions[i]);
-        }
-
-        deferredNonAttackActions.Clear();
-        return reward;
+        return action == ElegantActionType.DiveAttack
+            ? RegisterAttackSuccess(action, ElegantActionType.DiveAttack) : 0;
     }
 
-    /// <summary>
-    /// Completes the pending attack. A miss settles the chain that existed
-    /// before the attack and leaves the state disarmed.
-    /// </summary>
+    public int RegisterAttackSuccess(ElegantActionType attack, ElegantActionType success)
+    {
+        if (!attackInProgress || activeAttack != attack || attackCounted) return 0;
+        bool valid = attack == ElegantActionType.NormalAttack
+            ? success == ElegantActionType.OverheadBackKill
+            : success == ElegantActionType.DiveAttack || success == ElegantActionType.DiveBounce;
+        if (!valid) return 0;
+        RegisterSuccess(success);
+        attackCounted = true;
+        attackStep = ActionCount;
+        return 0;
+    }
+
+    public bool RefineDiveBounce()
+    {
+        if (activeAttack != ElegantActionType.DiveAttack || !attackCounted ||
+            attackStep != ActionCount || LastAction != ElegantActionType.DiveAttack) return false;
+        LastAction = ElegantActionType.DiveBounce;
+        return true;
+    }
+
     public int RegisterAttackEnd(ElegantActionType action, bool hitEnemy)
     {
-        if (!attackInProgress || activeAttack != action)
-        {
-            return 0;
-        }
-
-        int reward = 0;
-        if (hitEnemy && !activeAttackHitEnemy)
-        {
-            reward += RegisterAttackHit(action);
-        }
-
-        if (!activeAttackHitEnemy)
-        {
-            reward += SettleCurrentChain();
-        }
-
+        if (!attackInProgress || activeAttack != action) return 0;
+        if (hitEnemy) RegisterAttackHit(action);
         attackInProgress = false;
-        activeAttackHitEnemy = false;
-        deferredNonAttackActions.Clear();
-        inactiveSeconds = 0f;
-        return reward;
+        return 0;
     }
 
-    /// <summary>
-    /// Advances the one-second inactivity window with scaled delta time.
-    /// Passing zero while paused freezes the chain. Any held eligible action,
-    /// including a pending attack, keeps a full timeout available after it ends.
-    /// </summary>
-    public int Advance(float scaledDeltaTime, bool eligibleActionHeld)
+    // A successful sustained action keeps its window open; an unsuccessful attempt does not.
+    public int Advance(float scaledDeltaTime, bool successfulActionHeld)
     {
-        if (!isArmed)
-        {
-            return 0;
-        }
-
-        if (attackInProgress || eligibleActionHeld)
+        if (!IsArmed || scaledDeltaTime <= 0f) return 0;
+        if (successfulActionHeld)
         {
             inactiveSeconds = 0f;
             return 0;
         }
-
-        inactiveSeconds += Mathf.Max(0f, scaledDeltaTime);
-        return inactiveSeconds >= timeoutSeconds
-            ? SettleCurrentChain()
-            : 0;
-    }
-
-    /// <summary>
-    /// Settles the current chain and cancels any unresolved attack.
-    /// Used for death and scene teardown.
-    /// </summary>
-    public int Settle()
-    {
-        int reward = SettleCurrentChain();
-        attackInProgress = false;
-        activeAttackHitEnemy = false;
-        deferredNonAttackActions.Clear();
+        inactiveSeconds += scaledDeltaTime;
+        if (inactiveSeconds < timeoutSeconds) return 0;
+        int reward = Reward;
+        ActionCount = 0;
+        LastAction = null;
         inactiveSeconds = 0f;
+        // An in-flight attack may start the next chain when it actually succeeds.
+        attackStep = 0;
         return reward;
     }
+
+    public int Settle()
+    {
+        int reward = Reward;
+        ResetWithoutReward();
+        return reward;
+    }
+
+    private int Reward => ActionCount >= MinimumRewardedActionCount ? ActionCount * pointsPerSuccess : 0;
 
     public void ResetWithoutReward()
     {
-        isArmed = false;
-        actionCount = 0;
-        lastAction = null;
-        actionsInChain.Clear();
+        ActionCount = 0;
+        LastAction = null;
         inactiveSeconds = 0f;
         attackInProgress = false;
-        activeAttackHitEnemy = false;
-        deferredNonAttackActions.Clear();
+        attackCounted = false;
+        attackStep = 0;
     }
 
-    public static int CalculateReward(int finalActionCount)
-    {
-        if (finalActionCount < 2)
-        {
-            return 0;
-        }
-
-        if (finalActionCount == 2)
-        {
-            return 10;
-        }
-
-        if (finalActionCount == 3)
-        {
-            return 20;
-        }
-
-        return finalActionCount * 10;
-    }
-
-    private void AppendAction(ElegantActionType action)
-    {
-        if (!isArmed)
-        {
-            isArmed = true;
-            actionCount = 1;
-        }
-        else
-        {
-            actionCount++;
-        }
-
-        lastAction = action;
-        actionsInChain.Add(action);
-        inactiveSeconds = 0f;
-    }
-
-    private int SettleCurrentChain()
-    {
-        int reward = CalculateReward(actionCount);
-        isArmed = false;
-        actionCount = 0;
-        lastAction = null;
-        actionsInChain.Clear();
-        inactiveSeconds = 0f;
-        return reward;
-    }
-
-    private static bool IsAttack(ElegantActionType action)
-    {
-        return action == ElegantActionType.NormalAttack ||
-               action == ElegantActionType.DiveAttack;
-    }
+    public static int CalculateReward(int count) =>
+        count >= MinimumRewardedActionCount ? count * 10 : 0;
 }
