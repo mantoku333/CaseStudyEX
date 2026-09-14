@@ -7,5 +7,9 @@ public enum ElegantActionType
     Glide,
     Dodge,
     DiveAttack,
-    RecoilMove
+    RecoilMove,
+    DiveBounce,
+    RecoilJump,
+    OverheadBackKill,
+    DodgeProjectile
 }

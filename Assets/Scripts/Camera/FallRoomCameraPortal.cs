@@ -22,6 +22,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
 
     private void OnDisable()
     {
+        RoomCameraTrigger.ReleaseCameraFromPortal(this);
         overlappingPlayerColliders.Clear();
         entryRoom = null;
         destinationRoom = null;
@@ -48,7 +49,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
         if (destinationRoom != null &&
             RoomPortalAccessCondition.AllowsPreview(this, entryRoom, destinationRoom))
         {
-            destinationRoom.ActivateCamera();
+            RoomCameraTrigger.HoldCameraForPortal(this, destinationRoom);
         }
     }
 
@@ -73,7 +74,7 @@ public sealed class FallRoomCameraPortal : MonoBehaviour
             finalRoom = entryRoom;
         }
 
-        finalRoom?.ActivateCamera();
+        RoomCameraTrigger.CommitCameraFromPortal(this, finalRoom);
         entryRoom = null;
         destinationRoom = null;
     }

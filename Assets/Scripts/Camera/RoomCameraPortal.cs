@@ -3,9 +3,8 @@ using Unity.Cinemachine;
 using UnityEngine;
 
 /// <summary>
-/// Bidirectional camera transition volume placed between two room areas.
-/// While the player stays inside, a temporary camera previews the transition
-/// without fully committing to the next room.
+/// Bidirectional camera boundary placed between two room areas.
+/// The destination room takes camera ownership as soon as the player enters.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class RoomCameraPortal : MonoBehaviour
@@ -57,6 +56,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
     private void OnDisable()
     {
+        RoomCameraTrigger.ReleaseCameraFromPortal(this);
         overlappingPlayerColliders.Clear();
         playerTransform = null;
         pendingFromRoom = null;
@@ -114,7 +114,10 @@ public sealed class RoomCameraPortal : MonoBehaviour
         BeginPendingTransition(playerCommitPoint);
         if (CanPreviewPendingRoom())
         {
-            StartTransitionCamera(playerCommitPoint);
+            if (!ActivatePendingDestination())
+            {
+                StartTransitionCamera(playerCommitPoint);
+            }
         }
     }
 
@@ -127,18 +130,36 @@ public sealed class RoomCameraPortal : MonoBehaviour
         followOffsetAtEntry = ResolveFollowOffsetAtEntry(playerPosition);
     }
 
+    private bool ActivatePendingDestination()
+    {
+        if (pendingToRoom == null)
+        {
+            return false;
+        }
+
+        StopTransitionCamera();
+        AlignDefaultFollowCameraBeforeCommit(pendingToRoom);
+        if (!RoomCameraTrigger.HoldCameraForPortal(this, pendingToRoom))
+        {
+            return false;
+        }
+
+        transitionCommitted = true;
+        return true;
+    }
+
     private void CommitPendingTransition(Vector3 playerPosition)
     {
-        RoomCameraTrigger finalRoom = ResolveRoomContaining(playerPosition);
+        RoomCameraTrigger finalRoom = ResolveRoomOnPortalSide(playerPosition);
+        if (finalRoom == null)
+        {
+            finalRoom = ResolveRoomContaining(playerPosition);
+        }
+
         if (finalRoom == null &&
             RoomCameraTrigger.TryGetRoomAtPosition(playerPosition, out RoomCameraTrigger containingRegisteredRoom))
         {
             finalRoom = containingRegisteredRoom;
-        }
-
-        if (finalRoom == null)
-        {
-            finalRoom = ResolveRoomOnPortalSide(playerPosition);
         }
 
         if (finalRoom == null)
@@ -794,7 +815,7 @@ public sealed class RoomCameraPortal : MonoBehaviour
         }
 
         AlignDefaultFollowCameraBeforeCommit(room);
-        room.ActivateCamera();
+        RoomCameraTrigger.CommitCameraFromPortal(this, room);
         StopTransitionCamera();
         transitionCommitted = true;
     }

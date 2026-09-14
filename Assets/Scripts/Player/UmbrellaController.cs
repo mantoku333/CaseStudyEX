@@ -43,6 +43,7 @@ public class UmbrellaController : MonoBehaviour
     public event System.Action GlideStarted;
 
     public bool IsGlideActionActive { get; private set; }
+    public bool IsGlideMotionActive { get; private set; }
 
     [Header("SE")]
     [SerializeField] private AudioClip umbrella_open;       //傘開くSE
@@ -198,6 +199,7 @@ public class UmbrellaController : MonoBehaviour
     /// </summary>
     private void Glide()
     {
+        IsGlideMotionActive = false;
         if (umbrellaState == UmbrellaState.Closed ||
             (playerStateProvider != null && playerStateProvider.IsGrounded))
         {
@@ -223,6 +225,7 @@ public class UmbrellaController : MonoBehaviour
 
         if (rigidBody2D.linearVelocity.y >= 0) { return; }
 
+        IsGlideMotionActive = true;
         BeginGlideActionSession();
 
         float maxFallVelocity = -Mathf.Abs(glideFallSpeed);
@@ -249,7 +252,10 @@ public class UmbrellaController : MonoBehaviour
     private void EndGlideActionSession()
     {
         IsGlideActionActive = false;
+        IsGlideMotionActive = false;
     }
+
+    private void OnDisable() { EndGlideActionSession(); }
 
     /// <summary>
     /// 傘の開閉に応じてスプライトの色を変える関数(デバッグ用)

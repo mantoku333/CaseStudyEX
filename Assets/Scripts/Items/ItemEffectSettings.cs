@@ -33,7 +33,15 @@ public class ItemEffectSettings : ScriptableObject
     public Vector3 pickupVisualScale = new Vector3(1.5f, 1.5f, 1f);
     public bool playPickupEffectAtPlayer;
     public Vector3 playerPickupVisualOffset = new Vector3(1f, 1.2f, 0f);
-    public int sortingOrder = 0;
+
+    /// <summary>
+    /// ワールドのスプライトより十分手前。0のままだと背景や地形と描画順が並び、
+    /// Z位置の前後でエフェクトが背景の裏に回ることがある。
+    /// </summary>
+    public const int FrontmostSortingOrder = 1000;
+
+    [Tooltip("アイテムのエフェクトは背景や地形に隠れてはいけないため、既定でワールドより手前に置きます。")]
+    public int sortingOrder = FrontmostSortingOrder;
 
     [Header("Heal Pickup")]
     public bool playHealEffectOnPlayer = true;

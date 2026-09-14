@@ -295,7 +295,11 @@ public sealed class RecoilTrajectoryPreview : MonoBehaviour
 
     private Vector2 GetColliderWorldCenter()
     {
-        return playerCollider.transform.TransformPoint(playerCollider.offset);
+        // The player's collider is a PolygonCollider2D whose points sit above and to the left of
+        // the transform origin, with a zero offset. TransformPoint(offset) therefore lands on the
+        // shape's bottom-right corner, which is where the preview used to start. The world bounds
+        // give the actual centre, and they already follow the sprite's facing flip.
+        return playerCollider.bounds.center;
     }
 
     private void DrawTrajectory()

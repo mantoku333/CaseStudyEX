@@ -188,6 +188,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     /// Destructibles do not raise this event.
     /// </summary>
     public event Action FirstEnemyHit;
+    public event Action BouncedOnEnemy;
 
     /// <summary>
     /// Raised once when the current dive attack finishes. The argument is true
@@ -775,6 +776,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         velocity.y = Mathf.Max(velocity.y, 跳ね上がり速度);
         rigidBody2d.linearVelocity = velocity;
         bounceControlEndTime = Time.time + 跳ね上がり操作時間;
+        if (currentDiveAttackHitEnemy) BouncedOnEnemy?.Invoke();
     }
 
     private void RequestDiveAttackLandingFollowThrough()

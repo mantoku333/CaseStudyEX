@@ -31,6 +31,12 @@ public class AttackHitbox : MonoBehaviour
     private PlayerEquipmentController equipmentController;
 
     public event Action<Collider2D> OnHit;
+    public event Action<Component, bool, bool> EnemyHitResolved;
+
+    public void ReportEnemyHit(Component enemy, bool killed, bool fromBehind)
+    {
+        EnemyHitResolved?.Invoke(enemy, killed, fromBehind);
+    }
 
     public int PlayerAttackDamage
     {

@@ -82,6 +82,63 @@ public sealed class ElegantPointIntegrationTests
     }
 
     [Test]
+    public void Gauge_WaitsForTheAbsorptionThenFillsWithoutEverScaling()
+    {
+        var hudObject = new GameObject("Test HUD", typeof(RectTransform));
+        hudObject.SetActive(false);
+        var groupObject = new GameObject("Player HP", typeof(RectTransform));
+        groupObject.transform.SetParent(hudObject.transform, false);
+        ElegantPointHudView view = hudObject.AddComponent<ElegantPointHudView>();
+
+        try
+        {
+            InvokePrivate(view, "EnsureView");
+            InvokePrivate(view, "Refresh", 100);
+            InvokePrivate(view, "Snap");
+
+            Image fill = GetPrivateField<Image>(view, "gaugeFill");
+            RectTransform fillRect = fill.rectTransform;
+            RectTransform gaugeRect = GetPrivateField<RectTransform>(view, "gaugeRoot");
+            float startWidth = fillRect.sizeDelta.x;
+            Assert.That(startWidth, Is.GreaterThan(0f));
+
+            // The points are already in the wallet; the bar must wait for the light to land.
+            InvokePrivate(view, "Refresh", 200);
+            view.HoldGainUntilAbsorbed(10f);
+            for (int frame = 0; frame < 30; frame++)
+            {
+                InvokePrivate(view, "Update");
+                Assert.That(fillRect.sizeDelta.x, Is.EqualTo(startWidth).Within(0.0001f),
+                    "The gauge must not move until the effect has been absorbed.");
+                AssertNothingScaled(fillRect, gaugeRect);
+            }
+
+            // Once the hold has elapsed the bar catches up, and still nothing is scaled.
+            SetPrivateField(view, "holdSeconds", 0f);
+            SetPrivateField(view, "fillRate", 100000f);
+            InvokePrivate(view, "Update");
+            AssertNothingScaled(fillRect, gaugeRect);
+            Assert.That(fillRect.sizeDelta.x, Is.GreaterThan(startWidth));
+            Assert.That(GetPrivateField<TMP_Text>(view, "balanceText").text, Is.EqualTo("200"));
+
+            // Spending is not something the player watches fly in, so it applies at once.
+            InvokePrivate(view, "Refresh", 50);
+            Assert.That(fillRect.sizeDelta.x, Is.LessThan(startWidth));
+            AssertNothingScaled(fillRect, gaugeRect);
+        }
+        finally
+        {
+            Object.DestroyImmediate(hudObject);
+        }
+    }
+
+    private static void AssertNothingScaled(RectTransform fillRect, RectTransform gaugeRect)
+    {
+        Assert.That(fillRect.localScale, Is.EqualTo(Vector3.one));
+        Assert.That(gaugeRect.localScale, Is.EqualTo(Vector3.one));
+    }
+
+    [Test]
     public void PlayerPrefab_UmbrellaAwakePreservesSiblingGunReference()
     {
         const string prefabPath = "Assets/Prefabs/Player/Player.prefab";
@@ -153,13 +210,16 @@ public sealed class ElegantPointIntegrationTests
             InvokePrivate(umbrella, "Glide");
             Assert.That(startCount, Is.EqualTo(1));
             Assert.That(umbrella.IsGlideActionActive, Is.True);
+            Assert.That(umbrella.IsGlideMotionActive, Is.True);
 
             SetPrivateField(gun, "isRecoiling", true);
             InvokePrivate(umbrella, "Glide");
+            Assert.That(umbrella.IsGlideMotionActive, Is.False, "An interrupted session must not hold the chain timeout open.");
             SetPrivateField(gun, "isRecoiling", false);
             InvokePrivate(umbrella, "Glide");
 
             Assert.That(startCount, Is.EqualTo(1), "Resuming the same held glide must not add a step.");
+            Assert.That(umbrella.IsGlideMotionActive, Is.True);
             Assert.That(umbrella.IsGlideActionActive, Is.True);
 
             state.IsGrounded = true;
@@ -215,8 +275,9 @@ public sealed class ElegantPointIntegrationTests
         chain.RegisterAttackHit(ElegantActionType.NormalAttack);
         chain.RegisterAttackEnd(ElegantActionType.NormalAttack, true);
         chain.RegisterActionStart(ElegantActionType.Glide);
+        chain.RegisterActionStart(ElegantActionType.Dodge);
 
-        Assert.That(chain.Settle(), Is.EqualTo(10));
+        Assert.That(chain.Settle(), Is.EqualTo(20));
         Assert.That(chain.Settle(), Is.Zero);
         Assert.That(chain.IsArmed, Is.False);
     }

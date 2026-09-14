@@ -20,6 +20,7 @@ public sealed class RoomFogRevealManagerEditor : Editor
     private SerializedProperty revealDuration;
     private SerializedProperty concealDuration;
     private SerializedProperty revealNoiseStrength;
+    private SerializedProperty maskContinuityDuration;
     private SerializedProperty revealPortalEntrances;
     private SerializedProperty portalEntranceDepth;
     private SerializedProperty portalEntranceRadius;
@@ -44,6 +45,7 @@ public sealed class RoomFogRevealManagerEditor : Editor
         revealDuration = serializedObject.FindProperty("revealDuration");
         concealDuration = serializedObject.FindProperty("concealDuration");
         revealNoiseStrength = serializedObject.FindProperty("revealNoiseStrength");
+        maskContinuityDuration = serializedObject.FindProperty("maskContinuityDuration");
         revealPortalEntrances = serializedObject.FindProperty("revealPortalEntrances");
         portalEntranceDepth = serializedObject.FindProperty("portalEntranceDepth");
         portalEntranceRadius = serializedObject.FindProperty("portalEntranceRadius");
@@ -82,6 +84,7 @@ public sealed class RoomFogRevealManagerEditor : Editor
         DrawProperty(revealDuration, "消える時間");
         DrawProperty(concealDuration, "出たエリアが隠れる時間");
         DrawProperty(revealNoiseStrength, "消え際のゆらぎ");
+        DrawProperty(maskContinuityDuration, "切り替え時のちらつき抑制時間");
 
         EditorGUILayout.Space(8f);
         EditorGUILayout.LabelField("ポータルの凹み", EditorStyles.boldLabel);
@@ -96,9 +99,9 @@ public sealed class RoomFogRevealManagerEditor : Editor
 
         EditorGUILayout.Space(8f);
         EditorGUILayout.LabelField("基本設定", EditorStyles.boldLabel);
-        DrawProperty(textureResolution, "最低マスク解像度");
+        DrawProperty(textureResolution, "長辺の最低マスク解像度");
         DrawProperty(targetWorldUnitsPerPixel, "Fogの細かさ");
-        DrawProperty(maximumTextureResolution, "最大マスク解像度");
+        DrawProperty(maximumTextureResolution, "長辺の最大マスク解像度");
         DrawProperty(worldPadding, "マップ外側の余白");
         DrawProperty(sortingOrder, "描画順");
         DrawProperty(overlayZ, "FOGのZ位置");

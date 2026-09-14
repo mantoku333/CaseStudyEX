@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 /// <summary>
-/// Camera transition volume for vertical movement between two stacked room areas.
-/// Place it on the boundary between the upper and lower room colliders.
+/// Camera boundary for vertical movement between two stacked room areas.
+/// The destination room takes camera ownership as soon as the player enters.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class VerticalRoomCameraPortal : MonoBehaviour
@@ -59,6 +59,7 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private void OnDisable()
     {
+        RoomCameraTrigger.ReleaseCameraFromPortal(this);
         overlappingPlayerColliders.Clear();
         playerTransform = null;
         pendingFromRoom = null;
@@ -116,7 +117,10 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         BeginTransition(playerCommitPoint);
         if (CanPreviewPendingRoom())
         {
-            StartTransitionCamera(playerCommitPoint);
+            if (!ActivatePendingDestination())
+            {
+                StartTransitionCamera(playerCommitPoint);
+            }
         }
     }
 
@@ -127,6 +131,24 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         fromPoseAtEntry = ResolveRoomPose(pendingFromRoom, playerPosition, true);
         toPoseAtEntry = ResolveRoomPose(pendingToRoom, playerPosition, false);
         followOffsetAtEntry = ResolveFollowOffsetAtEntry(playerPosition);
+    }
+
+    private bool ActivatePendingDestination()
+    {
+        if (pendingToRoom == null)
+        {
+            return false;
+        }
+
+        StopTransitionCamera();
+        AlignDefaultFollowCameraBeforeCommit(pendingToRoom);
+        if (!RoomCameraTrigger.HoldCameraForPortal(this, pendingToRoom))
+        {
+            return false;
+        }
+
+        transitionCommitted = true;
+        return true;
     }
 
     private void CommitExit(Vector3 playerPosition)
@@ -632,7 +654,7 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
         }
 
         AlignDefaultFollowCameraBeforeCommit(room);
-        room.ActivateCamera();
+        RoomCameraTrigger.CommitCameraFromPortal(this, room);
         StopTransitionCamera();
         transitionCommitted = true;
     }

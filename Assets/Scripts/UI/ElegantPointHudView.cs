@@ -16,8 +16,21 @@ public sealed class ElegantPointHudView : MonoBehaviour
 
     [SerializeField] private Transform hudGroup;
     [SerializeField] private Image gaugeFill;
+    [SerializeField] private RectTransform gaugeRoot;
     [SerializeField] private TMP_Text balanceText;
+    [SerializeField, Min(0.01f)] private float gainFillSeconds = 0.38f;
+    [SerializeField, Min(0f)] private float gainFlashSeconds = 0.3f;
+    [SerializeField, Range(0f, 1f)] private float gainFlashStrength = 0.5f;
 
+    private float displayedBalance;
+    private int targetBalance;
+    private float holdSeconds;
+    private float fillRate;
+    private float flashTimer;
+    private Color restingFillColor;
+    private bool restingFillColorCaptured;
+
+    /// <summary>Where the absorbed light is heading: the fill bar itself.</summary>
     public RectTransform AbsorbTargetRect
     {
         get
@@ -29,6 +42,15 @@ public sealed class ElegantPointHudView : MonoBehaviour
 
             return transform as RectTransform;
         }
+    }
+
+    /// <summary>
+    /// Keeps the gauge at its current reading until the absorbed light has had time to arrive.
+    /// The wallet is already correct; only the bar waits, so the fill and the effect land together.
+    /// </summary>
+    public void HoldGainUntilAbsorbed(float seconds)
+    {
+        holdSeconds = Mathf.Max(holdSeconds, Mathf.Max(0f, seconds));
     }
 
     private void Awake()
@@ -43,11 +65,14 @@ public sealed class ElegantPointHudView : MonoBehaviour
         EnsureGainVfxController();
         ElegantPointWallet.BalanceChanged += HandleBalanceChanged;
         Refresh(ElegantPointWallet.Balance);
+        Snap();
     }
 
     private void OnDisable()
     {
         ElegantPointWallet.BalanceChanged -= HandleBalanceChanged;
+        flashTimer = 0f;
+        ApplyView();
     }
 
     private void HandleBalanceChanged(int balance)
@@ -57,30 +82,79 @@ public sealed class ElegantPointHudView : MonoBehaviour
 
     private void Refresh(int balance)
     {
-        int clampedBalance = Mathf.Clamp(balance, 0, ElegantPointWallet.MaxBalance);
+        targetBalance = Mathf.Clamp(balance, 0, ElegantPointWallet.MaxBalance);
+        if (targetBalance <= displayedBalance)
+        {
+            // Spending, loading and resets are not something the player watches fly in.
+            Snap();
+            return;
+        }
 
+        fillRate = (targetBalance - displayedBalance) / gainFillSeconds;
+        ApplyView();
+    }
+
+    private void Snap()
+    {
+        displayedBalance = targetBalance;
+        holdSeconds = 0f;
+        fillRate = 0f;
+        ApplyView();
+    }
+
+    private void Update()
+    {
+        if (displayedBalance < targetBalance)
+        {
+            if (holdSeconds > 0f)
+            {
+                holdSeconds -= Time.deltaTime;
+            }
+            else
+            {
+                displayedBalance = Mathf.MoveTowards(displayedBalance, targetBalance, fillRate * Time.deltaTime);
+                flashTimer = gainFlashSeconds;
+                ApplyView();
+            }
+
+            return;
+        }
+
+        if (flashTimer <= 0f) return;
+        flashTimer = Mathf.Max(0f, flashTimer - Time.deltaTime);
+        ApplyView();
+    }
+
+    private void ApplyView()
+    {
+        int shown = Mathf.RoundToInt(displayedBalance);
         if (gaugeFill != null)
         {
             float normalizedBalance = ElegantPointWallet.MaxBalance > 0
-                ? clampedBalance / (float)ElegantPointWallet.MaxBalance
+                ? displayedBalance / ElegantPointWallet.MaxBalance
                 : 0f;
 
             RectTransform fillRect = gaugeFill.rectTransform;
             fillRect.anchorMin = new Vector2(0f, 1f);
             fillRect.anchorMax = new Vector2(0f, 1f);
             fillRect.pivot = new Vector2(0f, 1f);
+            // Nothing about this gauge is ever scaled; the width alone carries the balance.
             fillRect.localScale = Vector3.one;
             fillRect.anchoredPosition = FillPosition;
             Vector2 size = fillRect.sizeDelta;
             size.y = FillSize.y;
-            size.x = DefaultFillWidth * normalizedBalance;
+            size.x = DefaultFillWidth * Mathf.Clamp01(normalizedBalance);
             fillRect.sizeDelta = size;
+
+            if (restingFillColorCaptured)
+            {
+                float flash = gainFlashSeconds > 0f ? flashTimer / gainFlashSeconds : 0f;
+                gaugeFill.color = Color.Lerp(restingFillColor, Color.white, gainFlashStrength * flash);
+            }
         }
 
-        if (balanceText != null)
-        {
-            balanceText.text = clampedBalance.ToString();
-        }
+        if (gaugeRoot != null) gaugeRoot.localScale = Vector3.one;
+        if (balanceText != null) balanceText.text = shown.ToString();
     }
 
     private void EnsureView()
@@ -101,6 +175,7 @@ public sealed class ElegantPointHudView : MonoBehaviour
             : CreateUiObject(GaugeObjectName, hudGroup);
 
         RectTransform gaugeRect = gaugeObject.GetComponent<RectTransform>();
+        gaugeRoot = gaugeRect;
         gaugeRect.anchorMin = new Vector2(0f, 1f);
         gaugeRect.anchorMax = new Vector2(0f, 1f);
         gaugeRect.pivot = new Vector2(0f, 1f);
@@ -137,6 +212,11 @@ public sealed class ElegantPointHudView : MonoBehaviour
         }
         gaugeFill.type = Image.Type.Simple;
         gaugeFill.raycastTarget = false;
+        if (!restingFillColorCaptured)
+        {
+            restingFillColor = gaugeFill.color;
+            restingFillColorCaptured = true;
+        }
 
         Transform existingText = gaugeObject.transform.Find("Balance");
         GameObject textObject = existingText != null

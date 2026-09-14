@@ -61,6 +61,7 @@ public class UmbrellaAttackController : MonoBehaviour
     /// Destructibles do not raise this event.
     /// </summary>
     public event Action FirstEnemyHit;
+    public event Action<Component, bool, bool> EnemyHitResolved;
 
     /// <summary>
     /// Raised once when the current attack finishes. The argument is true when
@@ -76,6 +77,7 @@ public class UmbrellaAttackController : MonoBehaviour
             if (attackHitbox != null)
             {
                 attackHitbox.OnHit += HandleAttackHit;
+                attackHitbox.EnemyHitResolved += ForwardEnemyHitResult;
             }
 
             attackColliderDefaultLocalPosition = attackCollider.transform.localPosition;
@@ -346,6 +348,7 @@ public class UmbrellaAttackController : MonoBehaviour
         if (attackHitbox != null)
         {
             attackHitbox.OnHit -= HandleAttackHit;
+            attackHitbox.EnemyHitResolved -= ForwardEnemyHitResult;
         }
 
         HideAttackEffectRenderer();
@@ -380,6 +383,11 @@ public class UmbrellaAttackController : MonoBehaviour
 
         currentAttackHitEnemy = true;
         FirstEnemyHit?.Invoke();
+    }
+
+    private void ForwardEnemyHitResult(Component enemy, bool killed, bool fromBehind)
+    {
+        if (isAttacking) EnemyHitResolved?.Invoke(enemy, killed, fromBehind);
     }
 
     private void CompleteAttack()

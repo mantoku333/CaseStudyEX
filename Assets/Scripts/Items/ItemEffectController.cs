@@ -72,6 +72,8 @@ public class ItemEffectController : MonoBehaviour
 
         DisablePickupColliders();
         isPickupPlaying = true;
+        // The pickup effect is reparented to the player, so re-assert the sorting there too.
+        ApplyFrontmostSorting();
 
         if (settings != null && settings.playPickupEffectAtPlayer && pickupTarget != null)
         {
@@ -234,12 +236,31 @@ public class ItemEffectController : MonoBehaviour
         if (effectRenderer != null)
         {
             effectRenderer.color = Color.white;
-
-            if (settings != null)
-            {
-                effectRenderer.sortingOrder = settings.sortingOrder;
-            }
+            ApplyFrontmostSorting();
         }
+    }
+
+    /// <summary>
+    /// Item effects must read in front of the world. Only setting the order leaves them tied
+    /// with background and terrain sprites, where the Z position decides and the effect
+    /// sometimes lands behind them.
+    /// </summary>
+    private void ApplyFrontmostSorting()
+    {
+        if (effectRenderer == null)
+        {
+            return;
+        }
+
+        SortingLayer[] layers = SortingLayer.layers;
+        if (layers.Length > 0)
+        {
+            effectRenderer.sortingLayerID = layers[layers.Length - 1].id;
+        }
+
+        effectRenderer.sortingOrder = settings != null
+            ? settings.sortingOrder
+            : ItemEffectSettings.FrontmostSortingOrder;
     }
 
     private void ShowLoopFirstFrame()

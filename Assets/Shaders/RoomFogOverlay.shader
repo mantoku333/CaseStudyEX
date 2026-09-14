@@ -13,6 +13,8 @@ Shader "CaseStudy/RoomFogOverlay"
         _ConcealFront ("Conceal Front", Range(-0.12, 1.12)) = -0.12
         _PreviousActive ("Previous Room Active", Range(0, 1)) = 0
         _PreviousPortalStrength ("Previous Portal Strength", Range(0, 1)) = 0
+        _ContinuityFront ("Continuity Front", Range(-0.12, 1.12)) = 1.12
+        _ContinuityStrength ("Continuity Strength", Range(0, 1)) = 0
         _WorldMin ("World Min", Vector) = (0, 0, 0, 0)
         _WorldSize ("World Size", Vector) = (1, 1, 0, 0)
     }
@@ -49,6 +51,8 @@ Shader "CaseStudy/RoomFogOverlay"
             float _ConcealFront;
             float _PreviousActive;
             float _PreviousPortalStrength;
+            float _ContinuityFront;
+            float _ContinuityStrength;
             float4 _WorldMin;
             float4 _WorldSize;
 
@@ -97,17 +101,20 @@ Shader "CaseStudy/RoomFogOverlay"
             fixed4 frag(v2f i) : SV_Target
             {
                 float2 maskUv = (i.worldPos.xy - _WorldMin.xy) / max(_WorldSize.xy, float2(0.001, 0.001));
-                float2 encodedDistances = tex2D(_MaskTex, maskUv).rg;
-                float2 validDistances = 1.0 - step(254.5 / 255.0, encodedDistances);
-                float2 roomDistances = lerp(
-                    float2(-0.25, -0.25),
-                    float2(1.25, 1.25),
+                float3 encodedDistances = tex2D(_MaskTex, maskUv).rgb;
+                float3 validDistances = 1.0 - step(254.5 / 255.0, encodedDistances);
+                float3 roomDistances = lerp(
+                    float3(-0.25, -0.25, -0.25),
+                    float3(1.25, 1.25, 1.25),
                     saturate(encodedDistances * (255.0 / 254.0)));
-                float2 roomRevealed = validDistances * step(
-                    roomDistances,
+                float2 roomRevealed = validDistances.rg * step(
+                    roomDistances.rg,
                     float2(_RevealFront, _ConcealFront));
                 roomRevealed.g *= _PreviousActive;
-                float2 entranceMasks = tex2D(_EntranceMaskTex, maskUv).rg;
+                float continuityRoomRevealed = validDistances.b * step(
+                    roomDistances.b,
+                    _ContinuityFront);
+                float3 entranceMasks = tex2D(_EntranceMaskTex, maskUv).rgb;
                 float entranceRevealed = max(
                     entranceMasks.r,
                     entranceMasks.g * _PreviousPortalStrength);
@@ -115,6 +122,8 @@ Shader "CaseStudy/RoomFogOverlay"
                     max(roomRevealed.r, roomRevealed.g),
                     entranceRevealed);
                 float hidden = 1.0 - smoothstep(0.01, max(_EdgeSoftness, 0.011), revealed);
+                float continuityCoverage = max(continuityRoomRevealed, entranceMasks.b);
+                hidden *= 1.0 - saturate(continuityCoverage * _ContinuityStrength);
 
                 if (hidden <= 0.0)
                 {

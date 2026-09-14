@@ -807,8 +807,10 @@ namespace GameName.Enemy
         {
             int damage = CalculatePlayerAttackDamage(attacker);
             bool wasAlive = currentHealth > 0;
+            bool fromBehind = IsBackAttack(attacker);
 
             TakeDamage(damage);
+            if (wasAlive && damage > 0) attacker?.ReportEnemyHit(this, currentHealth <= 0, fromBehind);
             if (wasAlive && currentHealth <= 0)
             {
                 PlayerEquipmentController equipmentController = attacker != null
