@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
   itemData: {fileID: 11400000, guid: 63b7930bf0921a848a7d92059cdc398b, type: 2}
+  pickupSaveId: 
   equipOnPickupForDebug: 0
   equipmentPickupNotificationSprite: {fileID: 0}
   equipmentPickupNotificationSize: {x: 512, y: 130}
@@ -257,7 +258,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1000
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
