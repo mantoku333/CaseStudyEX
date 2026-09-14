@@ -21,6 +21,8 @@ public class RespawnOnFall : MonoBehaviour
             return;
         }
 
+        playerHealth.GetComponent<DodgeController>()?.CancelCurrentDodgeMovement();
+
         Vector3 respawnPosition = respawnPoint.position;
         Rigidbody2D rb = other.attachedRigidbody != null
             ? other.attachedRigidbody

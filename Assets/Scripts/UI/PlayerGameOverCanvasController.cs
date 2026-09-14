@@ -59,6 +59,7 @@ namespace GameName.UI
 
         private void OnEnable()
         {
+            SaveManager.LoadCompleted += OnLoadCompleted;
             ResolveReferences();
             SubscribeToHealth();
             HidePanel();
@@ -75,7 +76,16 @@ namespace GameName.UI
 
         private void OnDisable()
         {
+            SaveManager.LoadCompleted -= OnLoadCompleted;
             UnsubscribeFromHealth();
+        }
+
+        private void OnLoadCompleted()
+        {
+            if (isVisible)
+            {
+                RefreshRetryButtonState();
+            }
         }
 
         private void OnDestroy()
@@ -290,7 +300,7 @@ namespace GameName.UI
 
         private void RestartFromLastSavePoint()
         {
-            if (!SaveManager.TryGetLatestSaveSlot(out int latestSlotIndex, out _))
+            if (!SaveManager.TryGetResumeSaveSlot(out int resumeSlotIndex, out _))
             {
                 Debug.LogWarning(
                     "[PlayerGameOverCanvasController] No readable save found.",
@@ -304,10 +314,10 @@ namespace GameName.UI
             ReleaseHitStopExternalPause();
 
             string activeSceneName = SceneManager.GetActiveScene().name;
-            if (!SaveManager.TryLoadGame(latestSlotIndex, activeSceneName, reloadCurrentScene: true))
+            if (!SaveManager.TryLoadGame(resumeSlotIndex, activeSceneName, reloadCurrentScene: true))
             {
                 Debug.LogWarning(
-                    $"[PlayerGameOverCanvasController] Failed to load latest save slot {latestSlotIndex}. Returning to title.",
+                    $"[PlayerGameOverCanvasController] Failed to load checkpoint slot {resumeSlotIndex}. Returning to title.",
                     this);
                 SceneManager.LoadScene(titleSceneName);
             }
@@ -502,7 +512,7 @@ namespace GameName.UI
                 return;
             }
 
-            retryButton.interactable = SaveManager.TryGetLatestSaveSlot(out _, out _);
+            retryButton.interactable = SaveManager.TryGetResumeSaveSlot(out _, out _);
         }
 
         private void SetCanvasRenderingEnabled(bool isEnabled)

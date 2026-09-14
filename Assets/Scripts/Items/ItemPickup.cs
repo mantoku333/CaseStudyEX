@@ -8,6 +8,8 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
 {
     //--------------アイテムデータ関連------------------
     [SerializeField] private ItemData itemData;
+    [Tooltip("Optional permanent ID for this placed pickup. Empty uses the ItemData ID.")]
+    [SerializeField] private string pickupSaveId;
 
     [Header("Debug")]
     [SerializeField] private bool equipOnPickupForDebug;
@@ -27,10 +29,21 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
 
     private void OnEnable()
     {
+        GameProgressFlags.FlagChanged += OnProgressFlagChanged;
         SaveManager.RegisterModule(this);
     }
 
     private void OnDisable()
+    {
+        GameProgressFlags.FlagChanged -= OnProgressFlagChanged;
+        // Collected persistent pickups stay registered so an earlier in-place load can restore them.
+        if (!isPickedUp || !IsSaveTargetItem())
+        {
+            SaveManager.UnregisterModule(this);
+        }
+    }
+
+    private void OnDestroy()
     {
         SaveManager.UnregisterModule(this);
     }
@@ -52,7 +65,7 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
 
         if (IsAlreadyPickedUp())
         {
-            Destroy(gameObject);
+            HideCollectedPickup();
         }
     }
 
@@ -73,6 +86,11 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
         Debug.Log($"GunAbilityItemに触れた: {other.name}", this);
 
         if (isPickedUp) { return; }
+        if (IsAlreadyPickedUp())
+        {
+            HideCollectedPickup();
+            return;
+        }
 
         if (itemData == null)
         {
@@ -105,9 +123,10 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
 
         if (!isApplied) { return; }
 
+        isPickedUp = true;
         if (IsSaveTargetItem())
         {
-            GameProgressFlags.Set(itemData.itemId, true);
+            GameProgressFlags.Set(PickupSaveKey, true);
         }
 
         Debug.Log($"{itemData.itemName} を取得しました！");
@@ -226,8 +245,12 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
             return false;
         }
 
-        return GameProgressFlags.Get(itemData.itemId);
+        return GameProgressFlags.Get(PickupSaveKey);
     }
+
+    private string PickupSaveKey => !string.IsNullOrWhiteSpace(pickupSaveId)
+        ? pickupSaveId
+        : itemData != null ? itemData.itemId : string.Empty;
 
     private bool IsSaveTargetItem()
     {
@@ -236,7 +259,7 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
             return false;
         }
 
-        if (string.IsNullOrWhiteSpace(itemData.itemId))
+        if (string.IsNullOrWhiteSpace(PickupSaveKey))
         {
             return false;
         }
@@ -288,13 +311,40 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
                 effectController.PlayHealEffectOnPlayer(playerHealth);
             }
 
-            if (effectController.PlayPickupEffectAndDestroy(pickupEffectTarget))
+            bool effectStarted = IsSaveTargetItem()
+                ? effectController.PlayPickupEffectAndDeactivate(pickupEffectTarget)
+                : effectController.PlayPickupEffectAndDestroy(pickupEffectTarget);
+            if (effectStarted)
             {
                 return;
             }
         }
 
-        Destroy(gameObject);
+        if (IsSaveTargetItem())
+        {
+            HideCollectedPickup();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnProgressFlagChanged(string flagKey, bool value)
+    {
+        // Shop purchases and another drop can grant equipment while this drop already exists.
+        if (value && !isPickedUp && itemData != null && itemData.itemType == ItemType.Equipment &&
+            IsSaveTargetItem() && string.Equals(flagKey, PickupSaveKey, System.StringComparison.Ordinal))
+        {
+            HideCollectedPickup();
+        }
+    }
+
+    private void HideCollectedPickup()
+    {
+        isPickedUp = true;
+        GetComponent<ItemEffectController>()?.ResetPickupEffect();
+        gameObject.SetActive(false);
     }
 
     private void PlayEquipmentPickupNotification()
@@ -319,9 +369,20 @@ public class ItemPickup : MonoBehaviour, ISaveDataModule
 
     public void Restore(SaveGameData saveData)
     {
+        if (!IsSaveTargetItem())
+        {
+            return;
+        }
+
         if (IsAlreadyPickedUp())
         {
-            Destroy(gameObject);
+            HideCollectedPickup();
+        }
+        else if (isPickedUp)
+        {
+            isPickedUp = false;
+            GetComponent<ItemEffectController>()?.ResetPickupEffect();
+            gameObject.SetActive(true);
         }
     }
 

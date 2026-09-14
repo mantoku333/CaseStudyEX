@@ -297,6 +297,7 @@ public class TitleSceneController : MonoBehaviour
             return;
         }
 
+        SaveManager.ResetResumeCheckpoint();
         SaveManager.DeleteSave();
         SaveManager.ClearAllFlags();
         SaveManager.ClearAllItems();

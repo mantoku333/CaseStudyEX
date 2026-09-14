@@ -32,6 +32,35 @@ public class LeverSwitch2D : MonoBehaviour, IAttackReceiver
         InitializeIfNeeded();
     }
 
+    private void OnEnable()
+    {
+        InitializeIfNeeded();
+        if (shutterWall != null)
+        {
+            shutterWall.StateRestored += RestoreStateFromShutter;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (shutterWall != null)
+        {
+            shutterWall.StateRestored -= RestoreStateFromShutter;
+        }
+    }
+
+    private void RestoreStateFromShutter()
+    {
+        if (shutterWall == null)
+        {
+            return;
+        }
+
+        isOn = shutterWall.IsOpen;
+        consumed = oneShot && isOn;
+        SyncVisualState();
+    }
+
 #if UNITY_EDITOR
     private void OnValidate()
     {

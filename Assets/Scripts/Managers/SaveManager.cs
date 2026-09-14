@@ -20,6 +20,7 @@ public sealed class SaveManager : MonoBehaviour
     private static SaveGameData pendingLoadData;
     private static int pendingLoadRequestId;
     private static int pendingLoadSlotIndex;
+    private static int resumeSaveSlotIndex;
     private static int pendingLoadPositionApplyFramesRemaining;
     private static bool pendingLoadModulesRestored;
     private static bool sceneHookRegistered;
@@ -34,6 +35,13 @@ public sealed class SaveManager : MonoBehaviour
     private static readonly List<ISaveDataModule> moduleExecutionBuffer = new List<ISaveDataModule>();
 
     public static bool IsLoadInProgress => pendingLoadData != null;
+    public static event Action LoadCompleted;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    public static void ResetResumeCheckpoint()
+    {
+        resumeSaveSlotIndex = 0;
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
@@ -217,6 +225,19 @@ public sealed class SaveManager : MonoBehaviour
         return SaveRepository.GetSlotMeta(slotIndex);
     }
 
+    public static bool TryGetResumeSaveSlot(out int slotIndex, out SaveSlotMeta slotMeta)
+    {
+        slotIndex = resumeSaveSlotIndex;
+        slotMeta = default;
+        if (slotIndex < MinSlotIndex || slotIndex > MaxSlotIndex)
+        {
+            return false;
+        }
+
+        slotMeta = GetSlotMeta(slotIndex);
+        return slotMeta.HasSave && !slotMeta.IsCorrupted;
+    }
+
     public static bool TryGetLatestSaveSlot(out int slotIndex, out SaveSlotMeta slotMeta)
     {
         slotIndex = DefaultSlotIndex;
@@ -325,6 +346,11 @@ public sealed class SaveManager : MonoBehaviour
         CaptureModules(saveData);
 
         bool saved = SaveRepository.TryWrite(slotIndex, saveData);
+        if (saved)
+        {
+            resumeSaveSlotIndex = slotIndex;
+        }
+
         if (saved && instance != null)
         {
             instance.StartCoroutine(SavePreviewCaptureService.CaptureAndStorePreview(slotIndex));
@@ -364,6 +390,14 @@ public sealed class SaveManager : MonoBehaviour
             return false;
         }
 
+        string sceneToLoad = ResolveSceneToLoad(saveData.sceneName, fallbackSceneName);
+        if (string.IsNullOrEmpty(sceneToLoad))
+        {
+            Debug.LogError(
+                $"[SaveManager] No loadable scene found. requestId={loadRequestId}, slot={slotIndex}, saveScene='{saveData.sceneName}', fallbackScene='{fallbackSceneName}'.");
+            return false;
+        }
+
         pendingLoadData = saveData;
         pendingLoadRequestId = loadRequestId;
         pendingLoadSlotIndex = slotIndex;
@@ -377,16 +411,6 @@ public sealed class SaveManager : MonoBehaviour
             Debug.Log(
                 $"[SaveManager][Trace#{loadRequestId}] TryLoadGame slot={slotIndex}, saveScene='{saveData.sceneName}', savePos={saveData.playerPosition.ToVector3()}, fallback='{fallbackSceneName}', activeScene='{SceneManager.GetActiveScene().name}', frame={Time.frameCount}");
             LogPlayerSnapshot($"TryLoadGame#{loadRequestId}/BeforeLoad");
-        }
-
-        string sceneToLoad = ResolveSceneToLoad(saveData.sceneName, fallbackSceneName);
-
-        if (string.IsNullOrEmpty(sceneToLoad))
-        {
-            Debug.LogError(
-                $"[SaveManager] No loadable scene found. requestId={loadRequestId}, slot={slotIndex}, saveScene='{saveData.sceneName}', fallbackScene='{fallbackSceneName}'.");
-            ClearPendingLoad();
-            return false;
         }
 
         Scene activeScene = SceneManager.GetActiveScene();
@@ -439,6 +463,14 @@ public sealed class SaveManager : MonoBehaviour
             yield break;
         }
 
+        string sceneToLoad = ResolveSceneToLoad(saveData.sceneName, fallbackSceneName);
+        if (string.IsNullOrEmpty(sceneToLoad))
+        {
+            Debug.LogError(
+                $"[SaveManager] No loadable scene found. requestId={loadRequestId}, slot={slotIndex}, saveScene='{saveData.sceneName}', fallbackScene='{fallbackSceneName}'.");
+            yield break;
+        }
+
         pendingLoadData = saveData;
         pendingLoadRequestId = loadRequestId;
         pendingLoadSlotIndex = slotIndex;
@@ -452,16 +484,6 @@ public sealed class SaveManager : MonoBehaviour
             Debug.Log(
                 $"[SaveManager][Trace#{loadRequestId}] LoadGameAsync slot={slotIndex}, saveScene='{saveData.sceneName}', savePos={saveData.playerPosition.ToVector3()}, fallback='{fallbackSceneName}', activeScene='{SceneManager.GetActiveScene().name}', frame={Time.frameCount}");
             LogPlayerSnapshot($"LoadGameAsync#{loadRequestId}/BeforeLoad");
-        }
-
-        string sceneToLoad = ResolveSceneToLoad(saveData.sceneName, fallbackSceneName);
-
-        if (string.IsNullOrEmpty(sceneToLoad))
-        {
-            Debug.LogError(
-                $"[SaveManager] No loadable scene found. requestId={loadRequestId}, slot={slotIndex}, saveScene='{saveData.sceneName}', fallbackScene='{fallbackSceneName}'.");
-            ClearPendingLoad();
-            yield break;
         }
 
         Scene activeScene = SceneManager.GetActiveScene();
@@ -507,10 +529,19 @@ public sealed class SaveManager : MonoBehaviour
 
         if (!HasSave(slotIndex))
         {
+            if (resumeSaveSlotIndex == slotIndex)
+            {
+                ResetResumeCheckpoint();
+            }
             return true;
         }
 
-        return SaveRepository.TryDelete(slotIndex);
+        bool deleted = SaveRepository.TryDelete(slotIndex);
+        if (resumeSaveSlotIndex == slotIndex && (deleted || !HasSave(slotIndex)))
+        {
+            ResetResumeCheckpoint();
+        }
+        return deleted;
     }
 
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -588,7 +619,9 @@ public sealed class SaveManager : MonoBehaviour
         }
 
         BeginPostLoadTrace(playerController, pendingLoadRequestId);
+        resumeSaveSlotIndex = pendingLoadSlotIndex;
         ClearPendingLoad();
+        LoadCompleted?.Invoke();
     }
 
     private static void ClearPendingLoad()

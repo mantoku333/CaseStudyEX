@@ -7,6 +7,25 @@ public static class SaveRepository
     private const string SaveFileNameFormat = "save_slot_{0:D2}.json";
     private const string PreviewFileNameFormat = "save_slot_{0:D2}_preview.png";
 
+#if UNITY_EDITOR
+    // Editor tests redirect both save files and previews away from real player saves.
+    internal static string SaveDirectoryOverride { get; set; }
+#endif
+
+    private static string SaveDirectory
+    {
+        get
+        {
+#if UNITY_EDITOR
+            if (!string.IsNullOrWhiteSpace(SaveDirectoryOverride))
+            {
+                return SaveDirectoryOverride;
+            }
+#endif
+            return Application.persistentDataPath;
+        }
+    }
+
     public static bool HasSave(int slotIndex)
     {
         return File.Exists(GetSaveFilePath(slotIndex));
@@ -133,12 +152,12 @@ public static class SaveRepository
 
     public static string GetSaveFilePath(int slotIndex)
     {
-        return Path.Combine(Application.persistentDataPath, string.Format(SaveFileNameFormat, slotIndex));
+        return Path.Combine(SaveDirectory, string.Format(SaveFileNameFormat, slotIndex));
     }
 
     public static string GetPreviewImagePath(int slotIndex)
     {
-        return Path.Combine(Application.persistentDataPath, string.Format(PreviewFileNameFormat, slotIndex));
+        return Path.Combine(SaveDirectory, string.Format(PreviewFileNameFormat, slotIndex));
     }
 
     public static bool HasPreviewImage(int slotIndex)
