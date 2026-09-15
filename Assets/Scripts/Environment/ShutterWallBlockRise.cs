@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 // 下から並んだブロック群を段階的に上げ下げするシャッター壁
-public class ShutterWallBlockRise : MonoBehaviour
+public class ShutterWallBlockRise : MonoBehaviour, ISaveDataModule
 {
     // 下から上の順で扱うブロック一覧
     [SerializeField] private List<Transform> blocksFromBottom = new List<Transform>();
@@ -19,6 +20,12 @@ public class ShutterWallBlockRise : MonoBehaviour
     [SerializeField, Min(0f)] private float intervalBetweenBlocks = 0.06f;
     // オンの場合、開いた後は閉じない
     [SerializeField] private bool lockAfterOpen = true;
+
+    [Tooltip("Permanent progress flag for this shutter. Empty disables persistence.")]
+    [SerializeField] private string persistentStateKey;
+
+    public int Priority => 245;
+    public event Action StateRestored;
 
     // 各ブロックの閉状態ローカル座標（初期値）を保持
     private readonly List<Vector3> targetLocalPositions = new List<Vector3>();
@@ -55,6 +62,16 @@ public class ShutterWallBlockRise : MonoBehaviour
         InitializeIfNeeded();
     }
 
+    private void OnEnable()
+    {
+        SaveManager.RegisterModule(this);
+    }
+
+    private void OnDisable()
+    {
+        SaveManager.UnregisterModule(this);
+    }
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -81,6 +98,7 @@ public class ShutterWallBlockRise : MonoBehaviour
             return false;
         }
 
+        RecordTargetState(true);
         openRoutine = StartCoroutine(OpenRoutine(riseDurationPerBlock, intervalBetweenBlocks));
         return true;
     }
@@ -106,6 +124,7 @@ public class ShutterWallBlockRise : MonoBehaviour
             return false;
         }
 
+        RecordTargetState(false);
         openRoutine = StartCoroutine(CloseRoutine(durationPerBlock, intervalBetweenBlocksOverride));
         return true;
     }
@@ -146,11 +165,54 @@ public class ShutterWallBlockRise : MonoBehaviour
             targetLocalPositions.Add(target);
         }
 
-        isOpen = startsOpened;
-        if (startsOpened)
+        isOpen = GameProgressFlags.Get(persistentStateKey, startsOpened);
+        if (isOpen)
         {
             ApplyOpenPositionImmediate();
         }
+    }
+
+    private void RecordTargetState(bool opened)
+    {
+        if (!string.IsNullOrWhiteSpace(persistentStateKey))
+        {
+            // Save the accepted destination, including saves made while blocks are moving.
+            GameProgressFlags.Set(persistentStateKey, opened);
+        }
+    }
+
+    public void Capture(SaveGameData saveData)
+    {
+        // GameProgressFlags captures the target state recorded at activation time.
+    }
+
+    public void Restore(SaveGameData saveData)
+    {
+        if (string.IsNullOrWhiteSpace(persistentStateKey))
+        {
+            return;
+        }
+
+        InitializeIfNeeded();
+        StopAllCoroutines();
+        openRoutine = null;
+        isOpen = GameProgressFlags.Get(persistentStateKey, startsOpened);
+
+        // Always restore from the original closed layout, never from a partial animation.
+        for (int i = 0; i < blocksFromBottom.Count; i++)
+        {
+            if (blocksFromBottom[i] != null)
+            {
+                blocksFromBottom[i].localPosition = targetLocalPositions[i];
+            }
+        }
+
+        if (isOpen)
+        {
+            ApplyOpenPositionImmediate();
+        }
+
+        StateRestored?.Invoke();
     }
 
     private IEnumerator OpenRoutine(float durationPerBlock, float intervalBetweenBlocksOverride)

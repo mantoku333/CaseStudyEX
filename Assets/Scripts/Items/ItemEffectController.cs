@@ -20,17 +20,21 @@ public class ItemEffectController : MonoBehaviour
     private Vector3[] pickupFrameOffsets;
     private Vector3 pickupStartPosition;
     private bool isPickupEffectDetached;
+    private bool deactivateAfterPickup;
+    private Transform originalEffectParent;
+    private readonly List<Collider2D> disabledPickupColliders = new();
     private readonly List<Sprite> generatedSprites = new();
 
     private void Awake()
     {
         CacheReferences();
+        originalEffectParent = effectTransform != null ? effectTransform.parent : null;
         EnsureFramesBuilt();
         ApplyVisualSetup();
         ShowLoopFirstFrame();
     }
 
-    private void Start()
+    private void OnEnable()
     {
         if (isPickupPlaying || settings == null || effectRenderer == null)
         {
@@ -56,6 +60,16 @@ public class ItemEffectController : MonoBehaviour
 
     public bool PlayPickupEffectAndDestroy(Transform pickupTarget = null)
     {
+        return PlayPickupEffect(pickupTarget, deactivateOnCompletion: false);
+    }
+
+    public bool PlayPickupEffectAndDeactivate(Transform pickupTarget = null)
+    {
+        return PlayPickupEffect(pickupTarget, deactivateOnCompletion: true);
+    }
+
+    private bool PlayPickupEffect(Transform pickupTarget, bool deactivateOnCompletion)
+    {
         CacheReferences();
 
         if (isPickupPlaying)
@@ -72,6 +86,7 @@ public class ItemEffectController : MonoBehaviour
 
         DisablePickupColliders();
         isPickupPlaying = true;
+        deactivateAfterPickup = deactivateOnCompletion;
         // The pickup effect is reparented to the player, so re-assert the sorting there too.
         ApplyFrontmostSorting();
 
@@ -96,6 +111,34 @@ public class ItemEffectController : MonoBehaviour
     public bool PlayHealEffectOnPlayer(PlayerHealth playerHealth)
     {
         return LayeredHealEffectPlayer.Play(playerHealth, settings);
+    }
+
+    public void ResetPickupEffect()
+    {
+        if (playbackRoutine != null)
+        {
+            StopCoroutine(playbackRoutine);
+            playbackRoutine = null;
+        }
+
+        if (isPickupEffectDetached && effectTransform != null)
+        {
+            effectTransform.SetParent(originalEffectParent, false);
+        }
+
+        isPickupEffectDetached = false;
+        isPickupPlaying = false;
+        foreach (var collider in disabledPickupColliders)
+        {
+            if (collider != null) collider.enabled = true;
+        }
+        disabledPickupColliders.Clear();
+        ApplyVisualSetup();
+        ShowLoopFirstFrame();
+        if (isActiveAndEnabled && settings != null && effectRenderer != null)
+        {
+            StartLoopPlayback();
+        }
     }
 
     private void StartLoopPlayback()
@@ -128,6 +171,14 @@ public class ItemEffectController : MonoBehaviour
             null,
             settings.pickupFrameSeconds,
             pickupStartPosition);
+
+        playbackRoutine = null;
+        if (deactivateAfterPickup)
+        {
+            ResetPickupEffect();
+            gameObject.SetActive(false);
+            yield break;
+        }
 
         if (isPickupEffectDetached && effectTransform != null)
         {
@@ -408,7 +459,11 @@ public class ItemEffectController : MonoBehaviour
 
         for (int i = 0; i < colliders.Length; i++)
         {
-            colliders[i].enabled = false;
+            if (colliders[i].enabled)
+            {
+                disabledPickupColliders.Add(colliders[i]);
+                colliders[i].enabled = false;
+            }
         }
     }
 
