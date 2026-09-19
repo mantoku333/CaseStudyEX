@@ -46,6 +46,7 @@ public static class DecorationScrollInstaller
             if (alreadyDone)
             {
                 changed |= FixContentRT(existing.content);
+                changed |= EnsureDecorationPageSlotContainer(prefabRoot, existing.content);
                 return; // finally handles save/unload
             }
 
@@ -91,11 +92,7 @@ public static class DecorationScrollInstaller
         viewportGO.transform.SetParent(itemBg, false);
         viewportGO.transform.SetAsFirstSibling();
         RectTransform viewportRT = viewportGO.AddComponent<RectTransform>();
-        viewportRT.anchorMin = Vector2.zero;
-        viewportRT.anchorMax = Vector2.one;
-        viewportRT.offsetMin = Vector2.zero;
-        viewportRT.offsetMax = Vector2.zero;
-        viewportRT.localScale = Vector3.one;
+        ApplyViewportRT(viewportRT);
         viewportGO.AddComponent<RectMask2D>();
 
         // Content — top-anchored, grows downward, 3-column grid
@@ -105,13 +102,9 @@ public static class DecorationScrollInstaller
         RectTransform contentRT = contentGO.AddComponent<RectTransform>();
         ApplyContentRT(contentRT);
 
-        // Cell width is derived from the container so 3 columns always fit exactly.
-        // Formula: (containerWidth - leftPad - rightPad - spacing*(cols-1)) / cols
         const int cols = 3;
-        const int padH = 10, padV = 10, gap = 10;
-        float containerW = ((RectTransform)itemBg).sizeDelta.x;
-        float cellW = Mathf.Floor((containerW - padH * 2 - gap * (cols - 1)) / cols);
-        float cellH = Mathf.Round(314f * (containerW / 763f)); // keep height proportional
+        const int padH = 10, padV = 10, gap = 2;
+        const float cellW = 190f, cellH = 270f;
 
         GridLayoutGroup grid = contentGO.AddComponent<GridLayoutGroup>();
         grid.padding = new RectOffset(padH, padH, padV, padV);
@@ -156,6 +149,8 @@ public static class DecorationScrollInstaller
         scrollRect.decelerationRate = 0.135f;
         scrollRect.scrollSensitivity = 30f;
 
+        EnsureDecorationPageSlotContainer(prefabRoot, contentRT);
+
         Debug.Log($"[DecorationScrollInstaller] Full setup complete. {unknownItems.Count} items in Content.");
     }
 
@@ -184,6 +179,16 @@ public static class DecorationScrollInstaller
         rt.localScale = Vector3.one;
     }
 
+    private static void ApplyViewportRT(RectTransform rt)
+    {
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(72f, 9f);
+        rt.sizeDelta = new Vector2(185f, 77f);
+        rt.localScale = Vector3.one;
+    }
+
     private static bool FixContentRT(RectTransform rt)
     {
         bool ok = rt.anchorMin == new Vector2(0f, 1f)
@@ -193,6 +198,23 @@ public static class DecorationScrollInstaller
         if (ok) return false;
         ApplyContentRT(rt);
         Debug.Log("[DecorationScrollInstaller] Fixed Content RectTransform.");
+        return true;
+    }
+
+    private static bool EnsureDecorationPageSlotContainer(GameObject prefabRoot, RectTransform content)
+    {
+        if (prefabRoot == null || content == null) return false;
+
+        DecorationPage page = prefabRoot.GetComponentInChildren<DecorationPage>(true);
+        if (page == null) return false;
+
+        SerializedObject serializedPage = new SerializedObject(page);
+        SerializedProperty slotContainer = serializedPage.FindProperty("slotContainer");
+        if (slotContainer == null || slotContainer.objectReferenceValue == content) return false;
+
+        slotContainer.objectReferenceValue = content;
+        serializedPage.ApplyModifiedPropertiesWithoutUndo();
+        Debug.Log("[DecorationScrollInstaller] Pointed DecorationPage.slotContainer to ScrollRect Content.");
         return true;
     }
 
