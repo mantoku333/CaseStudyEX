@@ -1,7 +1,47 @@
 ﻿title: Prologue_Timeline_01
 ---
-イリス: ！！
-イリス: かみなり……？
+イリス: ！！ #face:surprised #shake #size:1.5
+イリス: かみなり……？ #face:surprised
+イリス: なんだか……いつもより寂しい感じがする…… #face:default
+イリス: お姉ちゃん、起きてるかな
+イリスが部屋を出ようとした、その時ーー
+ノクス: おい！そこのおまえ！！ #face:default #shake #size:1.5
+イリス: えっ……？ #face:surprised
+イリス: 傘が喋った？！ #face:surprised #shake #size:1.5
+ノクス: はやく助けろ！ #face:default
+どうやら傘はボタンで留められていて身動きが取れないようだ。
+打ち上げれられた魚のようにバタバタと暴れている。
+イリス: じっとして。助けてあげるから #face:default
+ノクス: フン…… #face:default
+イリス: これで大丈夫？ #face:soft_smile
+ノクス: あぁ。助かった #face:default
+イリス: ……じゃあ #face:default
+イリスが傘を持ち、ベランダから外に出そうとする。
+ノクス: おい！！なにする気だ！！！ #face:default #shake #size:1.5
+イリス: なにって…… #face:default
+イリス: 外から来たから帰してあげようと思って #face:default
+ノクス: 正気か？！ #face:default #shake #size:1.5
+ノクス: この雨の中でどうしろっていうんだ！ #face:default
+イリス: じゃあこの雨の中、どこからどうやってここに来たの？ #face:jitome #shake
+ノクス: …… #face:default
+ノクス: そうだ、ちょうどいい #face:default
+ノクス: おまえ、俺をあそこへ連れていけ！ #face:default
+そういってノクスは窓から見える城を指差した。
+イリス: まさか、あの海の上のリュミエール城のこと？ #illustration:event99_sample #face:surprised
+リュミエール城。
+大昔に高貴なものが住んでいたとされる、海の上に浮かぶ城。
+しかし今はそのリュミエール城の周りを赤黒い渦のようなものが取り囲んでいる。
+イリス: 無理だよ。どう見たって危険じゃない #face:surprised
+ノクス: …… #face:default
+ノクス: おまえ、名前は？ #face:default
+イリス: ……イリス #face:default
+ノクス: おれはノクスだ #face:default
+ノクス: お前が俺を連れて行ってくれないとずっとここにいる羽目になる #face:default
+イリス: ……それは嫌だな #face:jitome
+ノクス: 失礼なやつだな #face:default
+ノクス: まぁいい #face:default
+ノクス: 嫌ならおれを連れていけ #face:default
+イリス: ……分かった #face:jitome
 ===
 
 title: Prologue_Timeline_02
@@ -64,18 +104,20 @@ title: Prologue_Timeline_07
 
 title: TutorialStory_Attack1
 ---
-イリス:！！
-イリス:あれはなに？！
-ノクス:あいつは……
-ノクス:イリス、俺を使え
+イリス: ！！ #face:surprised
+イリス: あれはなに？！ #face:surprised
+ノクス: あいつは…… #face:default
+ノクス: イリス、俺を使え #face:default
+ノクス: あんな奴蹴散らしてやるんだ！ #face:default
 ===
 
 title: MiniEeventStory01
 ---
-イリス:お姉ちゃん！！大丈夫！？
-イリス:……お姉ちゃん？
-イリス:お姉ちゃん、どこに行ったの……？
-ノクス:……
+イリス: お姉ちゃん！！大丈夫！？ #face:sad #shake #size:1.5
+イリス: ……お姉ちゃん？ #face:surprised
+イリス: お姉ちゃん……なんでいないの？ #face:sad
+イリス: わたしを置いてどこに行っちゃったの…… #face:sad
+ノクス: …… #face:default
 ===
 
 title: TutorialStory_Gimmick
@@ -94,179 +136,164 @@ title: TutorialStory_Parry
 
 title: TutorialStory_Glide
 ---
-イリス:た、高い……
-イリス:こんなの降りれないよ
-ノクス:大丈夫だ
-ノクス:試してみろよ
+イリス: た、高い…… #face:surprised
+イリス: こんなの降りれないよ #face:surprised
+ノクス: 大丈夫だ #face:default
+ノクス: 試してみろよ #face:default
 ===
 
 title: TutorialStory_Save
 ---
-イリス:こんなところに鳥？
-ノクス:ちょうどいいな
-ノクス:おまえ物覚え悪そうだし、記録しておけ
-イリス:……
-イリス:置いて行ってもいいんだけど……
-ノクス:あ？なんか言ったか？
-イリス:……なんでもない
+イリス: こんなところに鳥？ #face:default
+ノクス: ちょうどいいな #face:default
+ノクス: おまえ物覚え悪そうだし、記録しておけ #face:default
+イリス: …… #face:jitome
+イリス: 置いて行ってもいいんだけど…… #face:jitome
+ノクス: あ？なんか言ったか？ #face:default
+イリス: ……なんでもない #face:jitome
 ===
 
 title: EeventStory01
 ---
-イリス:あの敵、今までのよりずっと大きい……！
-ノクス:来るぞ！
-ノクス:気をつけろよ、イリス！
+イリス: あの敵、今までのよりずっと大きい……！ #face:surprised
+ノクス: 来るぞ！ #shake #size:1.5
 ===
 
 title: EeventStory02
 ---
-イリス:この家で何が起きているの……？
-イリス:お姉ちゃんは無事なの……？
-ノクス:……行くぞ、イリス
-イリス:……
-イリス:ノクスは……何を知っているの？
-ノクス:……
-ノクス:真実はお前が自分で見つけるんだ
-ノクス:姉に会いたいなら立ち止まってる暇はないぞ
-イリス:……
+イリス: この家で何が起きているの……？ #face:sad
+イリス: お姉ちゃんは無事なの……？ #face:sad
+ノクス: ……行くぞ、イリス #face:default
+イリス: …… #face:sad
+イリス: ノクスは……何を知っているの？ #face:sad
+ノクス: ……さぁな #face:default
+イリス: …… #face:default
 ===
 
 title: TutorialStory_Rain
 ---
-イリス:雨……
-ノクス:気をつけろよ
-ノクス:この雨、おまえには毒になるようだ
-イリス:……ノクスは大丈夫なの？
-ノクス:俺は問題ない
-ノクス:雨が降っているときは俺を使え
-ノクス:あと、水たまりにも気をつけろよ
-イリス:……分かった
-イリス:ありがとう、ノクス
+イリス: 雨…… #face:default
+ノクス: 気をつけろよ #face:default
+ノクス: この雨、おまえには毒になるようだ #face:default
+イリス: ……ノクスは大丈夫なの？ #face:default
+ノクス: 俺は問題ない #face:default
+ノクス: 雨が降っているときは俺を使え #face:default
+ノクス: あと、水たまりにも気をつけろよ #face:default
+イリス: ……分かった #face:default
+イリス: ありがとう、ノクス #face:default
 ===
 
 title: TutorialStory_reaction
 ---
-ノクス:ふん
-ノクス:使えなさそうなものだな
-ノクス:捨てておけ
-イリス:……
-イリス:ううん
-イリス:使えるよ
-イリス:ノクスがいるから
-ノクス:……どういうことだ？
+ノクス: ふん #face:default
+ノクス: 使えなさそうなものだな #face:default
+ノクス: 捨てておけ #face:default
+イリス: …… #face:default
+イリス: ううん #face:soft_smile
+イリス: 使えるよ #face:soft_smile
+イリス: ノクスがいるから #face:soft_smile
+ノクス: ……どういうことだ？ #face:default
 ===
 
 title: TutorialStory_Evasion
 ---
-イリス:お姉ちゃん、どこまで行っちゃったの……
-ノクス:……
-ノクス:おまえの姉はどんなやつだ？
-イリス:お姉ちゃんは……
-イリス:すごく、優雅なひと
-ノクス:優雅？
-イリス:見た目も、性格も
-イリス:なんでも完璧にできて
-イリス:屋敷の人からも町の人からも
-イリス:愛されて、信頼されて
-イリス:わたしとは全然ちがう……
-イリス:わたしもお姉ちゃんみたいに……
-ノクス:……へぇ
+イリス: お姉ちゃん、どこまで行っちゃったの…… #face:sad
+ノクス: …… #face:default
+ノクス: おまえの姉はどんなやつだ？ #face:default
+イリス: お姉ちゃんは…… #face:default
+イリス: すごく、優雅なひと #face:soft_smile
+ノクス: 優雅？ #face:default
+イリス: なんでも完璧にできて……屋敷の人からも町の人からも愛されて、信頼されて #face:soft_smile
+イリス: わたしとは全然ちがう…… #face:sad
+イリス: わたしもお姉ちゃんみたいに…… #face:sad
+ノクス: ……へぇ #face:default
 ===
 
 title: EeventStory03
 ---
-イリス:またこの敵……！
-ノクス:気を付けろ
-ノクス:前回よりも手強そうだ
+イリス: またこの敵……！ #face:surprised
+ノクス: 気を付けろ #face:default
+ノクス: 前回よりも手強そうだ #face:default
 ===
 
 title: EeventStory04
 ---
-イリス:……
-イリス:少し、やすみたい……
-ノクス:だめだ
-ノクス:時間がない
-イリス:時間？
-イリス:なんの時間？
-ノクス:……急ぐぞ
-イリス:……？
+イリス: …… #face:sad
+イリス: 少し、やすみたい…… #face:sad
+ノクス: だめだ #face:default
+ノクス: 時間がない #face:default
+イリス: 時間？ #face:default
+イリス: なんの時間？ #face:default
+ノクス: とにかく急ぐぞ #face:default
+ノクス: 城はもう目の前だ #face:default
+イリス: ……わかった #face:default
 ===
 
 title: EeventStory05
 ---
-ノクス:やっと着いたな
-イリス:ここがリュミエール城……
-イリス:なんでだろう
-イリス:ずっと来たかった憧れの場所なのに
-イリス:すごく恐ろしい気がする……
-ノクス:……
+ノクス: やっと着いたな #face:default
+イリス: ここがリュミエール城…… #face:default
+イリス: ずっと来たかった憧れの場所なのに…… #face:default
+イリス: なんでだろう #face:sad
+イリス: すごく恐ろしい気がする…… #face:sad
 ===
 
 title: EeventStory06
 ---
-イリス:この先にいるのは……悪魔なの？
-ノクス:そうだ
-イリス:わたしを……殺そうとしてる？
-ノクス:そうだ
-イリス:ここは……現実じゃない？
-ノクス:そうだ
-ノクス:おまえは生きるために戦わなければいけない
-イリス:生きるため……
-イリス:お姉ちゃんは……
-イリス:もう、死んじゃったの？
-ノクス:……
-ノクス:そうだ
-イリス:…………
+イリス: この先にいるのは……悪魔なの？ #face:default
+ノクス: そうだ #face:default
+イリス: わたしを……殺そうとしてる？ #face:default
+ノクス: そうだ #face:default
+イリス: わたし……わたしは…… #face:sad
 ===
 
 title: EeventStory07
 ---
-ノクス:……イリス
-イリス:わかってるよ
-イリス:わたしは、
-イリス:前に進まなきゃいけないんだね
+ノクス: ……イリス #face:default
+イリス: わかってるよ #face:sad
+イリス: わたしは、前に進まなきゃいけないんだね #face:default
 ===
 
 title: EeventStory08
 ---
-ノクス:覚悟はできたか？
-イリス:うん
-イリス:もう、帰らないと
+ノクス: 覚悟はできたか？ #face:default
+イリス: うん #face:default
+イリス: もう、帰らないと #face:soft_smile
 ===
 
 title: EeventStory09
 ---
-タナトス:来たな
-タナトス:随分と手を焼かされた
-タナトス:だが、ここで終わりだ
-イリス:わたしは
-イリス:あなたを倒して現実に帰る！
-ノクス:そうだ
-ノクス:その邪魔をさせるわけにはいかない
+タナトス: 来たな #face:default
+タナトス: 随分と手を焼かされた #face:default
+タナトス: だが、ここで終わりだ #face:default #shake #size:1.5
+イリス: わたしは #face:default
+イリス: あなたを倒して現実に帰る！ #face:assertive #shake #size:1.5
+ノクス: そうだ #face:default
+ノクス: その邪魔をさせるわけにはいかない #shake #size:1.5
 ===
 
 title: EeventStory10
 ---
-タナトス:まさかここまでとは……
-タナトス:だが
-タナトス:ここで終わりだ！
+タナトス: まさかここまでとは…… #face:default
+タナトス: だが #face:default
+タナトス: ここで終わりだ！ #shake #size:1.5
 ===
 
 title: EeventStory11
 ---
-イリス:終わった……の？
-ノクス:あぁ
-ノクス:全部終わった
-ノクス:よく頑張ったな
-イリス:うん
-イリス:ひとりじゃなかったから……
-イリス:ありがとう、ノクス
+イリス: 終わった……の？ #face:surprised
+ノクス: あぁ #face:default
+ノクス: 全部終わった #face:default
+ノクス: よく頑張ったな #face:default
+イリス: うん #face:soft_smile
+イリス: ひとりじゃなかったから…… #face:soft_smile
+イリス: ありがとう、ノクス #face:smile
 ===
 
 title: EeventStory12
 ---
-イリス:お姉ちゃんも……
-イリス:私を守ってくれて、ありがとう
+イリス: お姉ちゃんも…… #face:soft_smile
+イリス: 私を守ってくれて、ありがとう #face:smile
 ===
 
 title: EeventStory13
