@@ -32,20 +32,11 @@ MonoBehaviour:
     value: 1
   equipmentVisualLayers:
   - layerName: GraceAura_Back
-    sprite: {fileID: 8007227618121771478, guid: 4651a9a844e2d6541b350e3a31e970e6, type: 3}
-    parent: 0
-    localPosition: {x: 0, y: 4.3, z: 0}
+    sprite: {fileID: 21300000, guid: 26a437a5a8f3845eb9b1ec2a8455c173, type: 3}
+    parent: 1
+    localPosition: {x: 0, y: 6, z: 0}
     useLeftFacingLocalPosition: 0
     leftFacingLocalPosition: {x: 0, y: 0, z: 0}
     localEulerAngles: {x: 0, y: 0, z: 0}
-    localScale: {x: 0.25, y: 0.25, z: 0.25}
-    sortingOrderOffset: -1
-  - layerName: GraceAura_Front
-    sprite: {fileID: 5989339267792759376, guid: b006d9522d878e24cbeea5409ff29cf3, type: 3}
-    parent: 0
-    localPosition: {x: 0, y: 4, z: 0}
-    useLeftFacingLocalPosition: 0
-    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
-    localEulerAngles: {x: 0, y: 0, z: 0}
-    localScale: {x: 0.25, y: 0.25, z: 0.25}
+    localScale: {x: 0.65, y: 0.65, z: 0.65}
     sortingOrderOffset: 1

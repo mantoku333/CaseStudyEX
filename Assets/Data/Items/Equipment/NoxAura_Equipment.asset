@@ -31,21 +31,12 @@ MonoBehaviour:
   - abilityType: 7
     value: 1.05
   equipmentVisualLayers:
-  - layerName: NoxAura_Back
-    sprite: {fileID: -2442917651307171311, guid: c5968051bb9266847bf5495698806dec, type: 3}
-    parent: 0
-    localPosition: {x: 0, y: 4.3, z: 0}
-    useLeftFacingLocalPosition: 0
-    leftFacingLocalPosition: {x: 0, y: 0, z: 0}
-    localEulerAngles: {x: 0, y: 0, z: 0}
-    localScale: {x: 0.25, y: 0.25, z: 0.25}
-    sortingOrderOffset: -1
-  - layerName: NoxAura_Front
-    sprite: {fileID: -6990563241179942193, guid: 8a53ce2a5c3ff6a4c9d15c52203816f5, type: 3}
+  - layerName: NoxAura_Full
+    sprite: {fileID: 21300000, guid: ec6d4a811e78f4fa09c312eb54b5625b, type: 3}
     parent: 1
-    localPosition: {x: 0, y: 4, z: 0}
+    localPosition: {x: 0, y: 6, z: 0}
     useLeftFacingLocalPosition: 0
     leftFacingLocalPosition: {x: 0, y: 0, z: 0}
     localEulerAngles: {x: 0, y: 0, z: 0}
-    localScale: {x: 0.25, y: 0.25, z: 0.25}
+    localScale: {x: 0.65, y: 0.65, z: 0.65}
     sortingOrderOffset: 1
