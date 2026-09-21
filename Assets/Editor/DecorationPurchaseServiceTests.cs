@@ -268,7 +268,7 @@ public sealed class DecorationPurchaseServiceTests
     }
 
     [Test]
-    public void DecorationPage_ShopEnabledShowsBalanceAndCreatesPurchaseFallbacks()
+    public void DecorationPage_ShopEnabledShowsBalanceAndDoesNotCreatePurchaseFallbacks()
     {
         var root = new GameObject("DecorationPage Test", typeof(RectTransform));
         root.SetActive(false);
@@ -291,7 +291,7 @@ public sealed class DecorationPurchaseServiceTests
             Assert.That(balanceObject.activeSelf, Is.True);
             Assert.That(modalObject.activeSelf, Is.False);
             Assert.That(root.transform.Find("ElegantPointBalanceText (Runtime)"), Is.Null);
-            Assert.That(root.transform.Find("PurchaseModal (Runtime)"), Is.Not.Null);
+            Assert.That(root.transform.Find("PurchaseModal (Runtime)"), Is.Null);
         }
         finally
         {

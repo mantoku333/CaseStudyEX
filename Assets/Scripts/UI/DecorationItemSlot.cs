@@ -19,6 +19,11 @@ public sealed class DecorationItemSlot : MonoBehaviour,
     [SerializeField] private GameObject equippedBadge;
     [SerializeField] private GameObject selectedIndicator;
     [SerializeField] private TextMeshProUGUI itemNameText;
+    [SerializeField] private TextMeshProUGUI unlockedDescriptionText;
+    [SerializeField] private GameObject equippedStateRoot;
+    [SerializeField] private GameObject lockedStateRoot;
+    [SerializeField] private Image lockIconImage;
+    [SerializeField] private TextMeshProUGUI lockedCostText;
     [SerializeField] private TextMeshProUGUI priceText;
     [SerializeField] private string priceFormat = DefaultPriceFormat;
     [SerializeField] private Color lockedTint = new Color(0.45f, 0.45f, 0.45f, 1f);
@@ -44,8 +49,10 @@ public sealed class DecorationItemSlot : MonoBehaviour,
         Action<DecorationItemSlot> onSelected,
         Action<DecorationItemSlot, bool, Vector2> onLockedHoverChanged = null)
     {
+        ResolveAdjustableStateReferences();
         MigrateLegacyEnglishPriceFormat();
         ApplyShopFont(itemNameText);
+        ApplyShopFont(unlockedDescriptionText);
         CaptureOriginalGraphicColors();
 
         itemData = data;
@@ -65,7 +72,13 @@ public sealed class DecorationItemSlot : MonoBehaviour,
             unknownOverlay.SetActive(data == null || !showIcon);
 
         if (itemNameText != null)
+        {
+            ConfigureItemNameText(itemNameText);
             itemNameText.text = data != null ? data.itemName : string.Empty;
+        }
+
+        if (unlockedDescriptionText != null)
+            unlockedDescriptionText.text = data != null ? data.description : string.Empty;
 
         if (shopEnabled)
             EnsurePriceText();
@@ -76,19 +89,10 @@ public sealed class DecorationItemSlot : MonoBehaviour,
         }
 
         if (equippedBadge != null)
-        {
-            bool hasBadge = owned && isEquipped && data != null && data.equipmentBadge != null;
-            equippedBadge.SetActive(hasBadge);
-            if (hasBadge)
-            {
-                Image badgeImage = equippedBadge.GetComponent<Image>();
-                if (badgeImage != null)
-                    badgeImage.sprite = data.equipmentBadge;
-            }
-        }
+            equippedBadge.SetActive(false);
 
         SetSelected(isEquipped);
-        ApplyLockedTint(!owned && data != null);
+        RefreshStateDecorations(data, owned, isEquipped);
 
         button = GetComponent<Button>();
         if (button != null)
@@ -104,6 +108,7 @@ public sealed class DecorationItemSlot : MonoBehaviour,
     {
         if (selectedIndicator != null)
             selectedIndicator.SetActive(selected);
+        RefreshStateDecorations(itemData, isOwned, selected);
     }
 
     public void SetInteractionEnabled(bool enabled)
@@ -152,6 +157,7 @@ public sealed class DecorationItemSlot : MonoBehaviour,
 
     private void ApplyLockedTint(bool locked)
     {
+        locked = false;
         if (tintGraphics == null || originalGraphicColors == null)
             return;
 
@@ -175,6 +181,82 @@ public sealed class DecorationItemSlot : MonoBehaviour,
                 original.a);
             graphic.color = tinted;
         }
+    }
+
+    private void RefreshStateDecorations(ItemData data, bool owned, bool isEquipped)
+    {
+        bool hasItem = data != null;
+        bool locked = hasItem && !owned;
+        bool equipped = hasItem && owned && isEquipped;
+        bool unlockedNotEquipped = hasItem && owned && !isEquipped;
+
+        if (equippedStateRoot != null)
+            equippedStateRoot.SetActive(equipped);
+        if (lockedStateRoot != null)
+            lockedStateRoot.SetActive(locked);
+        if (lockIconImage != null)
+            lockIconImage.gameObject.SetActive(locked);
+        if (unlockedDescriptionText != null)
+            unlockedDescriptionText.gameObject.SetActive(unlockedNotEquipped);
+        if (lockedCostText != null)
+        {
+            lockedCostText.gameObject.SetActive(locked);
+            lockedCostText.text = hasItem ? data.elegantPointCost.ToString() : string.Empty;
+            if (locked)
+                RestoreLockedCostTextVisibility();
+        }
+    }
+
+    private void ResolveAdjustableStateReferences()
+    {
+        if (unlockedDescriptionText == null)
+            unlockedDescriptionText = FindChildText("UnlockedDescriptionText");
+        if (equippedStateRoot == null)
+            equippedStateRoot = transform.Find("EquippedState")?.gameObject;
+        if (lockedStateRoot == null)
+            lockedStateRoot = transform.Find("LockedState")?.gameObject;
+        if (lockIconImage == null)
+            lockIconImage = FindChildImage("LockIcon");
+        if (lockedCostText == null)
+            lockedCostText = FindChildText("LockedState/LockedCostText");
+        if (lockedCostText == null)
+            lockedCostText = FindDescendantText("LockedCostText");
+    }
+
+    private TextMeshProUGUI FindChildText(string childName)
+    {
+        Transform child = transform.Find(childName);
+        return child != null ? child.GetComponent<TextMeshProUGUI>() : null;
+    }
+
+    private TextMeshProUGUI FindDescendantText(string childName)
+    {
+        TextMeshProUGUI[] texts = GetComponentsInChildren<TextMeshProUGUI>(true);
+        for (int i = 0; i < texts.Length; i++)
+        {
+            if (texts[i] != null && texts[i].name == childName)
+                return texts[i];
+        }
+
+        return null;
+    }
+
+    private Image FindChildImage(string childName)
+    {
+        Transform child = transform.Find(childName);
+        return child != null ? child.GetComponent<Image>() : null;
+    }
+
+    private void RestoreLockedCostTextVisibility()
+    {
+        lockedCostText.enabled = true;
+        lockedCostText.raycastTarget = false;
+        lockedCostText.alpha = 1f;
+        lockedCostText.color = new Color(1f, 1f, 1f, 1f);
+        lockedCostText.enableWordWrapping = false;
+        lockedCostText.overflowMode = TextOverflowModes.Overflow;
+        lockedCostText.transform.SetAsLastSibling();
+        lockedCostText.ForceMeshUpdate();
     }
 
     private void EnsurePriceText()
@@ -202,6 +284,15 @@ public sealed class DecorationItemSlot : MonoBehaviour,
     {
         if (text != null && shopFont != null)
             text.font = shopFont;
+    }
+
+    private static void ConfigureItemNameText(TextMeshProUGUI text)
+    {
+        text.enableWordWrapping = false;
+        text.overflowMode = TextOverflowModes.Ellipsis;
+        text.enableAutoSizing = true;
+        text.fontSizeMin = Mathf.Min(text.fontSize, 18f);
+        text.fontSizeMax = text.fontSize;
     }
 
     private void MigrateLegacyEnglishPriceFormat()

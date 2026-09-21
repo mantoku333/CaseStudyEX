@@ -16,7 +16,7 @@ MonoBehaviour:
   itemId: Equipment_BlueArcanciel_Unlock
   description: 
   icon: {fileID: 3023372677521376825, guid: a1dedf8fb20259d4eab7fddaefce3fe4, type: 3}
-  illustration: {fileID: 0}
+  illustration: {fileID: 3023372677521376825, guid: a1dedf8fb20259d4eab7fddaefce3fe4, type: 3}
   itemType: 2
   elegantPointCost: 250
   healAmount: 0
