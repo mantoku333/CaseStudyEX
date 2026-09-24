@@ -59,11 +59,11 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     [SerializeField, Tooltip("落下中攻撃判定の中心位置です。プレイヤー座標からのオフセットで、足元または傘先に合わせます。")]
     private Vector2 落下中攻撃判定オフセット = new Vector2(0f, -0.9f);
 
-    [Header("撃破時の跳ね返り")]
-    [SerializeField, Tooltip("落下攻撃で敵を倒したとき、上へ跳ね返るかどうかです。")]
+    [Header("敵・ボス命中時の跳ね返り")]
+    [SerializeField, Tooltip("落下攻撃で通常敵を倒したとき、またはボスに命中したとき、上へ跳ね返るかどうかです。")]
     private bool 敵撃破時に跳ねる = true;
 
-    [SerializeField, Min(0f), Tooltip("敵を倒したときに上へ跳ねる強さです。再度滑空へつなげやすくします。")]
+    [SerializeField, Min(0f), Tooltip("落下攻撃から上へ跳ね返る強さです。再度滑空へつなげやすくします。")]
     private float 跳ね上がり速度 = 12f;
 
     [SerializeField, Min(0f), Tooltip("跳ね上がった直後、左右入力で軌道調整できる時間です。")]
@@ -404,7 +404,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         bool foundAnyTarget = ApplyDamageAtPosition(
             transform.position,
             攻撃半径,
-            out bool killedAnyEnemy,
+            out bool shouldBounceOnEnemy,
             out bool appliedNewHit,
             out bool appliedNewEnemyHit,
             out Vector3 enemyHitEffectPosition,
@@ -426,7 +426,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
             playerHealth?.ClearAttackPriorityInvulnerability();
         }
 
-        if (killedAnyEnemy && 敵撃破時に跳ねる)
+        if (shouldBounceOnEnemy && 敵撃破時に跳ねる)
         {
             CompleteDiveAttackEvent();
             BounceUp();
@@ -449,7 +449,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
         bool foundAnyTarget = ApplyDamageAtPosition(
             attackCenter,
             落下中攻撃半径,
-            out bool killedAnyEnemy,
+            out bool shouldBounceOnEnemy,
             out bool appliedNewHit,
             out bool appliedNewEnemyHit,
             out Vector3 enemyHitEffectPosition,
@@ -472,7 +472,7 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
             PlayEnemyHitEffect(enemyHitEffectPosition, enemyHitCollider);
         }
 
-        if (killedAnyEnemy && 敵撃破時に跳ねる)
+        if (shouldBounceOnEnemy && 敵撃破時に跳ねる)
         {
             EndDiveAttack(false);
             BounceUp();
@@ -482,13 +482,13 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
     private bool ApplyDamageAtPosition(
         Vector2 center,
         float radius,
-        out bool killedAnyEnemy,
+        out bool shouldBounceOnEnemy,
         out bool appliedNewHit,
         out bool appliedNewEnemyHit,
         out Vector3 enemyHitEffectPosition,
         out Collider2D enemyHitCollider)
     {
-        killedAnyEnemy = false;
+        shouldBounceOnEnemy = false;
         appliedNewHit = false;
         appliedNewEnemyHit = false;
         enemyHitEffectPosition = center;
@@ -529,12 +529,17 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
                     enemyHitCollider = hitCollider;
                 }
 
+                bool isStageBoss = enemy.GetComponent<StageBossAttack>() != null;
                 int healthBefore = enemy.CurrentHealth;
                 enemy.TakeDamage(ダメージ量);
                 if (healthBefore > 0 && enemy.CurrentHealth <= 0)
                 {
-                    killedAnyEnemy = true;
                     equipmentController?.NotifyEnemyKilledByPlayerAttack();
+                }
+
+                if (healthBefore > 0 && (enemy.CurrentHealth <= 0 || isStageBoss))
+                {
+                    shouldBounceOnEnemy = true;
                 }
 
                 HitStopController.RequestPlayerToEnemy();
@@ -558,10 +563,15 @@ public sealed class PlayerDiveAttackController : MonoBehaviour
                     enemyHitCollider = hitCollider;
                 }
 
+                bool wasAlive = lastBoss.CurrentHealth > 0;
                 if (lastBoss.TakeDirectPlayerDamage(ダメージ量))
                 {
-                    killedAnyEnemy = true;
                     equipmentController?.NotifyEnemyKilledByPlayerAttack();
+                }
+
+                if (wasAlive)
+                {
+                    shouldBounceOnEnemy = true;
                 }
 
                 continue;

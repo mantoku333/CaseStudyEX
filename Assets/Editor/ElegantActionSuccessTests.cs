@@ -95,6 +95,29 @@ public sealed class ElegantActionSuccessTests
     }
 
     [Test]
+    public void Controller_RepeatedGlideSuccessesStayAtLevelOne()
+    {
+        var root = new GameObject("Glide duplicate test");
+        var controller = root.AddComponent<PlayerElegantPointController>();
+        var levels = new List<int>();
+        controller.LevelChanged += levels.Add;
+        try
+        {
+            controller.NotifySuccessfulAction(ElegantActionType.Glide);
+            controller.NotifySuccessfulAction(ElegantActionType.Glide);
+            controller.NotifySuccessfulAction(ElegantActionType.Glide);
+
+            Assert.That(controller.CurrentChainLength, Is.EqualTo(1));
+            CollectionAssert.AreEqual(new[] { 1 }, levels);
+
+            controller.NotifySuccessfulAction(ElegantActionType.Dodge);
+            Assert.That(controller.CurrentChainLength, Is.EqualTo(2));
+            CollectionAssert.AreEqual(new[] { 1, 2 }, levels);
+        }
+        finally { Object.DestroyImmediate(root); }
+    }
+
+    [Test]
     public void OverheadHistory_IsEnemySpecificAndConsumedOnce()
     {
         var root = new GameObject("Head crossing sensor");
