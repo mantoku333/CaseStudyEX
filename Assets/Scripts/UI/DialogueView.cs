@@ -102,6 +102,24 @@ namespace Metroidvania.UI
         [SerializeField] private Color inactivePortraitColor = new Color(0.32f, 0.32f, 0.32f, 1f);
         [SerializeField] private List<CharacterPortrait> characterPortraits = new();
 
+        [Header("Nox Placement")]
+        [SerializeField] private Vector2 noxLeftPosition = new(250f, 250f);
+        [SerializeField] private Vector2 noxLeftSize = new(418f, 525f);
+        [SerializeField] private Vector2 noxRightPosition = new(-113.4f, 433.9f);
+        [SerializeField] private Vector2 noxRightSize = new(520f, 650f);
+        [SerializeField] private float noxLeftRotation = 20f;
+        [SerializeField] private float noxRightRotation = -8.92f;
+        [SerializeField] private Vector2 irisWithNoxPosition = new(-180.5f, 280f);
+        [SerializeField] private Vector2 irisWithNoxSize = new(420f, 560f);
+        [SerializeField] private float irisWithNoxRotationY = 180f;
+        private bool _irisPairedLayout;
+        private Vector2 _irisOriginalPosition;
+        private Vector2 _irisOriginalSize;
+        private Quaternion _irisOriginalRotation;
+        private Image? _noxPortraitImage;
+        private DialoguePortraitSlot? _noxSlotOverride;
+        private readonly PortraitPlayback _noxPortraitPlayback = new();
+
         [Header("Center Illustrations")]
         [SerializeField] private Image? centerIllustrationImage;
         [SerializeField] private List<DialogueIllustration> centerIllustrations = new();
@@ -229,12 +247,17 @@ namespace Metroidvania.UI
             if (!_presentationEnabled) return;
             _leftPortraitPlayback.Advance(unscaledDeltaSeconds);
             _rightPortraitPlayback.Advance(unscaledDeltaSeconds);
+            _noxPortraitPlayback.Advance(unscaledDeltaSeconds);
         }
 
         private void StopPortraitAnimations()
         {
             _leftPortraitPlayback.Stop();
             _rightPortraitPlayback.Stop();
+            _noxPortraitPlayback.Stop();
+            _noxSlotOverride = null;
+            PositionIrisWithNox(false);
+            SetActive(_noxPortraitImage, false);
         }
 
         public void PrepareConversation(string nodeName)
@@ -336,6 +359,7 @@ namespace Metroidvania.UI
 
             ApplyLineTextEffects(line.Metadata);
             ApplyIllustrationMetadata(line.Metadata);
+            ApplyNoxPlacementMetadata(line.Metadata);
             ApplySpeaker(speakerName, expressionName);
             AddLogEntry(speakerName, text);
 
@@ -644,7 +668,9 @@ namespace Metroidvania.UI
 
         private void ApplySpeaker(string speakerName, string expressionName)
         {
+            if (speakerName == "タナトス") SetNoxSlot(DialoguePortraitSlot.Right);
             ApplySpeakerArtwork(speakerName);
+            SetPortraitColor(_noxPortraitImage, speakerName == "ノクス");
             if (IsNarration(speakerName))
             {
                 SetPortraitColor(leftPortraitImage, false);
@@ -658,7 +684,14 @@ namespace Metroidvania.UI
                 CharacterPortrait value = portrait.Value;
                 Sprite? sprite = FindExpressionSprite(value, expressionName);
                 PortraitAnimationClip? animation = FindExpressionAnimation(value, expressionName);
-                if (sprite != null && value.slot == DialoguePortraitSlot.Right)
+                if (sprite != null && speakerName == "ノクス")
+                {
+                    EnsureNoxPortrait();
+                    PositionNox(value.slot);
+                    _noxPortraitPlayback.Play(_noxPortraitImage, sprite, animation, speakerName);
+                    SetPortraitColor(_noxPortraitImage, true);
+                }
+                else if (sprite != null && value.slot == DialoguePortraitSlot.Right)
                 {
                     _rightPortraitPlayback.Play(rightPortraitImage, sprite, animation, speakerName);
                     _rightCharacterName = speakerName;
@@ -676,6 +709,73 @@ namespace Metroidvania.UI
             SetPortraitColor(
                 rightPortraitImage,
                 string.Equals(_rightCharacterName, speakerName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Tags let authored conversations return to the two-character layout mid-node.
+        private void ApplyNoxPlacementMetadata(string[] metadata)
+        {
+            if (metadata == null) return;
+            foreach (string tag in metadata)
+            {
+                if (tag == "nox:left") SetNoxSlot(DialoguePortraitSlot.Left);
+                else if (tag == "nox:right") SetNoxSlot(DialoguePortraitSlot.Right);
+            }
+        }
+
+        private void SetNoxSlot(DialoguePortraitSlot slot)
+        {
+            _noxSlotOverride = slot;
+            PositionNox(slot);
+        }
+
+        private void EnsureNoxPortrait()
+        {
+            if (_noxPortraitImage != null || rightPortraitImage == null) return;
+            var portrait = new GameObject("NoxPortrait", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            portrait.transform.SetParent(rightPortraitImage.transform.parent, false);
+            // The umbrella belongs behind Iris when they share the right side.
+            portrait.transform.SetSiblingIndex(rightPortraitImage.transform.GetSiblingIndex());
+            _noxPortraitImage = portrait.GetComponent<Image>();
+            _noxPortraitImage.preserveAspect = true;
+            _noxPortraitImage.raycastTarget = false;
+        }
+
+        private void PositionNox(DialoguePortraitSlot slot)
+        {
+            bool right = slot == DialoguePortraitSlot.Right;
+            PositionIrisWithNox(right);
+            if (_noxPortraitImage == null) return;
+            RectTransform rect = _noxPortraitImage.rectTransform;
+            rect.anchorMin = rect.anchorMax = new Vector2(right ? 1f : 0f, 0f);
+            rect.pivot = new Vector2(.5f, .5f);
+            rect.anchoredPosition = right ? noxRightPosition : noxLeftPosition;
+            rect.sizeDelta = right ? noxRightSize : noxLeftSize;
+            rect.localRotation = Quaternion.Euler(0f, 0f, right ? noxRightRotation : noxLeftRotation);
+        }
+
+        private void PositionIrisWithNox(bool paired)
+        {
+            if (rightPortraitImage == null) return;
+            RectTransform rect = rightPortraitImage.rectTransform;
+            if (paired)
+            {
+                if (!_irisPairedLayout)
+                {
+                    _irisOriginalPosition = rect.anchoredPosition;
+                    _irisOriginalSize = rect.sizeDelta;
+                    _irisOriginalRotation = rect.localRotation;
+                }
+                rect.anchoredPosition = irisWithNoxPosition;
+                rect.sizeDelta = irisWithNoxSize;
+                rect.localRotation = Quaternion.Euler(0f, irisWithNoxRotationY, 0f);
+            }
+            else if (_irisPairedLayout)
+            {
+                rect.anchoredPosition = _irisOriginalPosition;
+                rect.sizeDelta = _irisOriginalSize;
+                rect.localRotation = _irisOriginalRotation;
+            }
+            _irisPairedLayout = paired;
         }
 
         private void ApplySpeakerArtwork(string speakerName)
@@ -747,6 +847,8 @@ namespace Metroidvania.UI
                         speakerName,
                         StringComparison.OrdinalIgnoreCase))
                 {
+                    if (speakerName == "ノクス" && _noxSlotOverride.HasValue)
+                        portrait.slot = _noxSlotOverride.Value;
                     return portrait;
                 }
             }

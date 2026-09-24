@@ -121,10 +121,11 @@ public sealed class DialoguePortraitAnimationTests : PortraitAnimationTestFixtur
         Call(view, "AdvancePortraitAnimations", .15f);
         Call(view, "ApplySpeaker", "ノクス", "normal");
         Assert.That(right.sprite, Is.SameAs(normal.GetFrame(.15d)));
-        Assert.That(left.sprite, Is.SameAs(other.FirstFrame));
+        var nox = (Image)typeof(DialogueView).GetField("_noxPortraitImage", Private).GetValue(view);
+        Assert.That(nox.sprite, Is.SameAs(other.FirstFrame));
         Call(view, "AdvancePortraitAnimations", .10f);
         Assert.That(right.sprite, Is.SameAs(normal.GetFrame(.25d)));
-        Assert.That(left.sprite, Is.SameAs(other.GetFrame(.10d)));
+        Assert.That(nox.sprite, Is.SameAs(other.GetFrame(.10d)));
     }
 
     [Test]
