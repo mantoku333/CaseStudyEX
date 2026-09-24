@@ -19,10 +19,6 @@ namespace SRDebugger
         [RuntimeInitializeOnLoadMethod(InitializeLoadType)]
         public static void OnLoadBeforeScene()
         {
-#if !UNITY_EDITOR && !DEVELOPMENT_BUILD
-            return;
-#endif
-
             // Populate service manager with types from SRDebugger assembly (asmdef)
             SRServiceManager.RegisterAssembly<IDebugService>();
 
@@ -39,10 +35,6 @@ namespace SRDebugger
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         public static void OnLoad()
         {
-#if !UNITY_EDITOR && !DEVELOPMENT_BUILD
-            return;
-#endif
-
             if (Settings.Instance.IsEnabled)
             {
                 SRDebug.Init();

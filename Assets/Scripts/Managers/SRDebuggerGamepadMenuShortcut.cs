@@ -1,4 +1,4 @@
-#if !DISABLE_SRDEBUGGER && (UNITY_EDITOR || DEVELOPMENT_BUILD)
+#if !DISABLE_SRDEBUGGER
 using SRDebugger;
 using UnityEngine;
 using UnityEngine.InputSystem;
