@@ -419,9 +419,17 @@ public sealed class PlayerElegantPointController : MonoBehaviour
     {
         if (!isActiveAndEnabled) return;
         EnsureChain();
+        if (IsDuplicateGlideSuccess(action)) return;
         int before = chain.ActionCount;
         chain.RegisterSuccess(action);
         PublishSuccess(before);
+    }
+
+    private bool IsDuplicateGlideSuccess(ElegantActionType action)
+    {
+        return action == ElegantActionType.Glide &&
+               chain.IsArmed &&
+               chain.LastAction == ElegantActionType.Glide;
     }
 
     private void PublishSuccess(int before)
