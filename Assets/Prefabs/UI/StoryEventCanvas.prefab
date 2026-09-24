@@ -312,6 +312,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -6975902402337957982, guid: 1a164e44a04640941b0755a8fa76444c, type: 3}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[1].portraitAnimation
+      value: 
+      objectReference: {fileID: 11400000, guid: 1b934182cd0e2c2e706437dc7d9c03ec, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[1].portraitSprite
       value: 
       objectReference: {fileID: 5155163167032735316, guid: 27ed02f9d5375e743bf8f0a62889bc21, type: 3}
