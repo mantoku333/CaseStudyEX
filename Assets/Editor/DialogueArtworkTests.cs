@@ -38,6 +38,11 @@ public sealed class DialogueArtworkTests
             Assert.That(nox.rectTransform.sizeDelta, Is.EqualTo(new Vector2(418f, 525f)));
             Assert.That(Mathf.DeltaAngle(nox.rectTransform.localEulerAngles.z, 20f), Is.EqualTo(0f).Within(.01f));
             apply.Invoke(view, new object[] { "タナトス", "default" });
+            Assert.That(left.gameObject.activeSelf, Is.True);
+            Assert.That(left.sprite, Is.Not.Null);
+            Assert.That(AssetDatabase.GetAssetPath(left.sprite), Is.EqualTo("Assets/Art/temp/素材/Thanatos.png"));
+            Assert.That(left.color, Is.EqualTo(Color.white));
+            Assert.That(name.sprite, Is.EqualTo(serialized.FindProperty("thanatosNameSprite").objectReferenceValue));
             Assert.That(nox.rectTransform.anchorMin.x, Is.EqualTo(1));
             Assert.That(Mathf.DeltaAngle(nox.rectTransform.localEulerAngles.z, -8.92f), Is.EqualTo(0f).Within(.01f));
             apply.Invoke(view, new object[] { "ノクス", "default" });

@@ -28,6 +28,6 @@
 - DialogueView の Nox Placement で左右それぞれの位置・サイズ・Z回転（Rotation）を調整できる。左配置は位置 (250, 250)、サイズ (418, 525)、Z回転20度。
 - `Event99_ExpressionTest` 冒頭で左 → タナトス登場で右 → イリスとの重ね表示 → 左への復帰を確認できる。
 - Unity メニュー `Tools/CaseStudy/Story/Verify and Export Event UI Previews` で配置・表示維持・アニメーション・リセットを検証し、`outputs/event-ui` に左右のプレビューを出力する。
-- 現在の共有 Prefab にはタナトスの立ち絵登録がないため、タナトス本人の表示確認には素材登録が必要。
+- タナトスの立ち絵は `Assets/Art/temp/素材/Thanatos.png` の本体スプライトを左枠に登録。`ADVtest_Thanatos` でタナトス登場、ノクスの右移動、三人の表示と話者の明暗を確認できる。
 
 - 二人が右にいる配置：ノクス位置 (-113.4, 433.9)、サイズ (520, 650)、Z回転 -8.92度。イリス位置 (-180.5, 280)、サイズ (420, 560)、Y回転180度。`Nox Placement` の `Iris With Nox` 各項目で調整し、左配置へ戻る際と会話終了時にはイリスの元のTransformを復元する。

@@ -70,3 +70,15 @@ title: ADVtest_NoxRight
 ノクス: 話者が変わっても、二人とも右に残ります。 #face:normal
 イリス: クリックせずに、配置を調整できます。 #face:normal
 ===
+
+
+title: ADVtest_Thanatos
+---
+イリス: まず、ノクスと向かい合う配置です。 #face:normal
+ノクス: 左側から右側へ移動するテストです。 #nox:left #face:normal
+タナトス: タナトスの立ち絵と名前枠の表示テストです。 #face:default
+イリス: 左にタナトス、右にわたしとノクスがいます。 #face:normal
+ノクス: 話しているキャラだけ明るく表示されます。 #face:normal
+タナトス: このまま止めて、配置を確認できます。 #face:default
+三人の表示を保ったまま、地の文では全員が暗くなります。
+===
