@@ -85,6 +85,16 @@ namespace Metroidvania.UI
         [SerializeField] private TextMeshProUGUI dialogueText = null!;
         [SerializeField] private GameObject nextIndicator = null!;
 
+        [Header("Authored Dialogue Artwork")]
+        [SerializeField] private Image? dialogueBackground;
+        [SerializeField] private Image? speakerNameArtwork;
+        [SerializeField] private Sprite? leftDialogueSprite;
+        [SerializeField] private Sprite? rightDialogueSprite;
+        [SerializeField] private Sprite? irisNameSprite;
+        [SerializeField] private Sprite? noxLeftNameSprite;
+        [SerializeField] private Sprite? noxRightNameSprite;
+        [SerializeField] private Sprite? thanatosNameSprite;
+
         [Header("Portraits")]
         [SerializeField] private Image leftPortraitImage = null!;
         [SerializeField] private Image rightPortraitImage = null!;
@@ -121,8 +131,6 @@ namespace Metroidvania.UI
         [SerializeField, Min(0f)] private float shakeRotationAmplitude = 3f;
         [Tooltip("Animation speed for Yarn lines tagged #shake.")]
         [SerializeField, Min(0f)] private float shakeSpeed = 12f;
-        [Tooltip("Maximum accepted value for Yarn tags such as #size:1.5.")]
-        [SerializeField, Min(1f)] private float maximumFontScale = 3f;
 
         private readonly List<string> _logEntries = new();
         private readonly StringBuilder _logBuilder = new();
@@ -131,6 +139,10 @@ namespace Metroidvania.UI
         private CancellationTokenSource? _currentLineCts;
         private LinePresentationState _lineState;
         private bool _revealAllRequested;
+        private bool _pageAdvanceRequested;
+        private int _currentDialoguePage = 1;
+        private int _dialoguePageCount = 1;
+        private bool _emphasizedLine;
         private bool _presentationEnabled = true;
         private bool _modalOpen;
         private int _lastAdvanceFrame = -1;
@@ -258,6 +270,7 @@ namespace Metroidvania.UI
             SetActive(nextIndicator, false);
             SetActive(leftPortraitImage, false);
             SetActive(rightPortraitImage, false);
+            SetActive(speakerNameArtwork, false);
             HideCenterIllustration();
 
             _leftCharacterName = null;
@@ -329,7 +342,8 @@ namespace Metroidvania.UI
             if (speakerNameText != null)
             {
                 speakerNameText.text = speakerName;
-                speakerNameText.gameObject.SetActive(!isNarration);
+                speakerNameText.gameObject.SetActive(!isNarration &&
+                    (speakerNameArtwork == null || !speakerNameArtwork.gameObject.activeSelf));
             }
 
             _revealAllRequested = false;
@@ -341,34 +355,41 @@ namespace Metroidvania.UI
                 int characterCount = PrepareTypewriterText(text);
                 float secondsPerCharacter = 1f / Mathf.Max(1f, textSpeed);
 
-                for (int visibleCharacters = 1; visibleCharacters <= characterCount; visibleCharacters++)
+                for (_currentDialoguePage = 1; _currentDialoguePage <= _dialoguePageCount; _currentDialoguePage++)
                 {
-                    while (_modalOpen && !completionToken.IsCancellationRequested)
-                    {
-                        await UniTask.Yield(PlayerLoopTiming.Update, completionToken);
-                    }
-
-                    if (_revealAllRequested || token.HurryUpToken.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
+                    _pageAdvanceRequested = false;
+                    _revealAllRequested = false;
+                    _lineState = LinePresentationState.Typing;
+                    SetActive(nextIndicator, false);
+                    int firstCharacter = 0;
+                    int lastCharacter = characterCount;
                     if (dialogueText != null)
                     {
-                        dialogueText.maxVisibleCharacters = visibleCharacters;
+                        dialogueText.pageToDisplay = _currentDialoguePage;
+                        TMP_PageInfo page = dialogueText.textInfo.pageInfo[_currentDialoguePage - 1];
+                        firstCharacter = page.firstCharacterIndex;
+                        lastCharacter = page.lastCharacterIndex + 1;
+                        dialogueText.maxVisibleCharacters = firstCharacter;
                     }
 
-                    await UniTask.WaitForSeconds(
-                        secondsPerCharacter,
-                        ignoreTimeScale: true,
-                        cancellationToken: completionToken);
+                    for (int visibleCharacters = firstCharacter + 1; visibleCharacters <= lastCharacter; visibleCharacters++)
+                    {
+                        while (_modalOpen && !completionToken.IsCancellationRequested)
+                            await UniTask.Yield(PlayerLoopTiming.Update, completionToken);
+                        if (_revealAllRequested || token.HurryUpToken.IsCancellationRequested) break;
+                        if (dialogueText != null) dialogueText.maxVisibleCharacters = visibleCharacters;
+                        await UniTask.WaitForSeconds(secondsPerCharacter, ignoreTimeScale: true,
+                            cancellationToken: completionToken);
+                    }
+
+                    ShowFullLine();
+                    _lineState = LinePresentationState.WaitingForAdvance;
+                    SetActive(nextIndicator, true);
+                    if (_currentDialoguePage < _dialoguePageCount)
+                        await UniTask.WaitUntil(() => _pageAdvanceRequested, cancellationToken: completionToken);
+                    else
+                        await UniTask.WaitUntilCanceled(completionToken);
                 }
-
-                ShowFullLine();
-                _lineState = LinePresentationState.WaitingForAdvance;
-                SetActive(nextIndicator, true);
-
-                await UniTask.WaitUntilCanceled(completionToken);
             }
             catch (OperationCanceledException)
             {
@@ -379,6 +400,8 @@ namespace Metroidvania.UI
                 SetActive(nextIndicator, false);
                 _lineState = LinePresentationState.Idle;
                 _revealAllRequested = false;
+                _pageAdvanceRequested = false;
+                _currentDialoguePage = _dialoguePageCount = 1;
 
                 _currentLineCts?.Dispose();
                 _currentLineCts = null;
@@ -393,9 +416,54 @@ namespace Metroidvania.UI
                 return 0;
             }
 
-            dialogueText.text = text;
+            dialogueText.enableAutoSizing = false;
+            dialogueText.textWrappingMode = TextWrappingModes.NoWrap;
+            dialogueText.overflowMode = TextOverflowModes.Overflow;
+            dialogueText.pageToDisplay = 1;
+            dialogueText.maxVisibleCharacters = int.MaxValue;
+            dialogueText.text = text.Replace("\r\n", "\n").Replace('\r', '\n');
+            dialogueText.ForceMeshUpdate(true);
+
+            // TMP's parsed character indices exclude rich-text tags and treat sprite tags
+            // and surrogate pairs as one displayed character. Keep the original markup.
+            string source = dialogueText.text;
+            var formatted = new StringBuilder(source.Length + 32);
+            int sourceIndex = 0, column = 0, row = 0;
+            int columns = _emphasizedLine ? 20 : 30;
+            int rows = _emphasizedLine ? 1 : 2;
+            for (int i = 0; i < dialogueText.textInfo.characterCount; i++)
+            {
+                TMP_CharacterInfo character = dialogueText.textInfo.characterInfo[i];
+                if (character.index >= source.Length) break;
+                formatted.Append(source, sourceIndex, character.index - sourceIndex);
+                if (character.character == '\n')
+                {
+                    row++;
+                    formatted.Append(row >= rows ? "<page>" : "\n");
+                    if (row >= rows) row = 0;
+                    column = 0;
+                }
+                else
+                {
+                    if (column == columns)
+                    {
+                        row++;
+                        formatted.Append(row >= rows ? "<page>" : "\n");
+                        if (row >= rows) row = 0;
+                        column = 0;
+                    }
+                    formatted.Append(source, character.index, character.stringLength);
+                    column++;
+                }
+                sourceIndex = character.index + character.stringLength;
+            }
+            formatted.Append(source, sourceIndex, source.Length - sourceIndex);
+            dialogueText.text = formatted.ToString();
+            dialogueText.overflowMode = TextOverflowModes.Page;
+            dialogueText.ForceMeshUpdate(true);
+            _currentDialoguePage = 1;
+            _dialoguePageCount = Mathf.Max(1, dialogueText.textInfo.pageCount);
             dialogueText.maxVisibleCharacters = 0;
-            dialogueText.ForceMeshUpdate();
             return dialogueText.textInfo?.characterCount ?? text.Length;
         }
 
@@ -425,13 +493,15 @@ namespace Metroidvania.UI
             }
 
             CaptureBaseDialogueFontSize();
-            float fontScale = Mathf.Clamp(GetLineFontScale(metadata), 1f, Mathf.Max(1f, maximumFontScale));
+            _emphasizedLine = _shakeTextActive || GetLineFontScale(metadata) > 1f;
+            float fontScale = _emphasizedLine ? 1.5f : 1f;
             dialogueText.fontSize = _baseDialogueFontSize * fontScale;
         }
 
         private void ResetLineTextEffects()
         {
             _shakeTextActive = false;
+            _emphasizedLine = false;
             if (dialogueText != null && _baseDialogueFontSize > 0f)
             {
                 dialogueText.fontSize = _baseDialogueFontSize;
@@ -512,7 +582,10 @@ namespace Metroidvania.UI
 
             if (_lineState == LinePresentationState.WaitingForAdvance)
             {
-                _currentLineCts?.Cancel();
+                if (_currentDialoguePage < _dialoguePageCount)
+                    _pageAdvanceRequested = true;
+                else
+                    _currentLineCts?.Cancel();
             }
         }
 
@@ -571,6 +644,7 @@ namespace Metroidvania.UI
 
         private void ApplySpeaker(string speakerName, string expressionName)
         {
+            ApplySpeakerArtwork(speakerName);
             if (IsNarration(speakerName))
             {
                 SetPortraitColor(leftPortraitImage, false);
@@ -602,6 +676,55 @@ namespace Metroidvania.UI
             SetPortraitColor(
                 rightPortraitImage,
                 string.Equals(_rightCharacterName, speakerName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private void ApplySpeakerArtwork(string speakerName)
+        {
+            if (dialogueBackground == null || speakerNameArtwork == null) return;
+
+            // Prefer the authored portrait slot, including scenes that place Nox on the right.
+            CharacterPortrait? portrait = FindPortrait(speakerName);
+            bool right = portrait.HasValue
+                ? portrait.Value.slot == DialoguePortraitSlot.Right
+                : string.Equals(speakerName, "イリス", StringComparison.OrdinalIgnoreCase);
+            Sprite? name = speakerName switch
+            {
+                "イリス" => irisNameSprite,
+                "ノクス" => right ? noxRightNameSprite : noxLeftNameSprite,
+                "タナトス" => thanatosNameSprite,
+                _ => null
+            };
+
+            // Unnamed/unknown speakers keep a text label without revealing a character's name.
+            speakerNameArtwork.sprite = name;
+            speakerNameArtwork.gameObject.SetActive(name != null);
+            dialogueBackground.sprite = right ? rightDialogueSprite : leftDialogueSprite;
+            RectTransform window = dialogueBackground.rectTransform;
+            window.anchorMin = window.anchorMax = new Vector2(right ? 1f : 0f, 0f);
+            window.pivot = new Vector2(right ? 1f : 0f, 0f);
+            window.anchoredPosition = Vector2.zero;
+            window.sizeDelta = new Vector2(1600f, 271f);
+
+            if (dialogueText != null)
+            {
+                RectTransform text = dialogueText.rectTransform;
+                text.anchorMin = text.anchorMax = new Vector2(0f, 1f);
+                text.pivot = new Vector2(0f, 1f);
+                text.anchoredPosition = new Vector2(right ? 80f : 400f, -30f);
+                text.sizeDelta = new Vector2(1144f, 180f);
+            }
+            if (speakerNameText != null)
+            {
+                RectTransform label = speakerNameText.rectTransform;
+                label.anchoredPosition = new Vector2(right ? 897f : 609f, 54f);
+                speakerNameText.gameObject.SetActive(name == null && !IsNarration(speakerName));
+            }
+            if (nextIndicator != null)
+            {
+                RectTransform marker = (RectTransform)nextIndicator.transform;
+                marker.anchorMin = marker.anchorMax = Vector2.zero;
+                marker.anchoredPosition = new Vector2(right ? 1220f : 1540f, 70f);
+            }
         }
 
         private static bool IsNarration(string? speakerName)
