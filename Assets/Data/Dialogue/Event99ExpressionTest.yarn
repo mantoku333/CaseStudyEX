@@ -44,3 +44,13 @@ title: ADVtest_02
 一枚絵 #illustration:event99_sample
 一枚絵おわり #illustration:hide
 ===
+
+title: ADVtest_PortraitAnimation
+---
+イリス: 通常の立ち絵アニメーションです。 #face:normal
+イリス: 同じ表情のまま、アニメーションが続きます。 #face:normal
+イリス: 悲しい表情に切り替えます。 #face:sad
+イリス: この表情もループします。 #face:sad
+イリス: 静止画の笑顔に切り替えます。 #face:smile
+イリス: 通常のアニメーションに戻ります。 #face:default
+===

@@ -280,6 +280,14 @@ PrefabInstance:
       value: "\u30CE\u30AF\u30B9"
       objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].portraitAnimation
+      value: 
+      objectReference: {fileID: 11400000, guid: 5336aa9f5fbeb90530e0f1a0e61e1348, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[1].portraitAnimation
+      value: 
+      objectReference: {fileID: 11400000, guid: 97aca28da61850417f12b28516be957e, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].portraitSprite
       value: 
       objectReference: {fileID: -6975902402337957982, guid: 1a164e44a04640941b0755a8fa76444c, type: 3}

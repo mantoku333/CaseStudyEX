@@ -26,6 +26,9 @@ namespace Metroidvania.UI
         public string expressionName;
 
         public Sprite portraitSprite;
+
+        [Tooltip("Optional sprite animation. When assigned, it replaces the static expression sprite.")]
+        public PortraitAnimationClip? portraitAnimation;
     }
 
     [Serializable]
@@ -36,6 +39,9 @@ namespace Metroidvania.UI
 
         [Tooltip("Used when the line has no #face tag or uses #face:default.")]
         public Sprite portraitSprite;
+
+        [Tooltip("Optional default animation used by no tag, #face:default, or #face:normal.")]
+        public PortraitAnimationClip? portraitAnimation;
 
         public DialoguePortraitSlot slot;
 
@@ -136,6 +142,44 @@ namespace Metroidvania.UI
         private CancellationTokenSource? _illustrationAnimationCts;
         private Vector2 _illustrationRestPosition;
         private bool _illustrationRestPositionCaptured;
+        private readonly PortraitPlayback _leftPortraitPlayback = new();
+        private readonly PortraitPlayback _rightPortraitPlayback = new();
+
+        private sealed class PortraitPlayback
+        {
+            private Image? _image;
+            private PortraitAnimationClip? _clip;
+            private string? _characterName;
+            private double _elapsedSeconds;
+
+            public void Play(Image? image, Sprite sprite, PortraitAnimationClip? clip, string characterName)
+            {
+                if (image == null) { Stop(); return; }
+                bool continuing = _image == image && _clip != null && _clip == clip &&
+                    string.Equals(_characterName, characterName, StringComparison.OrdinalIgnoreCase);
+                _image = image;
+                _clip = clip;
+                _characterName = characterName;
+                if (!continuing) _elapsedSeconds = 0d;
+                SetPortrait(image, clip != null ? clip.GetFrame(_elapsedSeconds) ?? sprite : sprite, true);
+            }
+
+            public void Advance(float unscaledDeltaSeconds)
+            {
+                if (_clip == null || _image == null || !_image.gameObject.activeInHierarchy) return;
+                _elapsedSeconds += Math.Max(0f, unscaledDeltaSeconds);
+                Sprite frame = _clip.GetFrame(_elapsedSeconds);
+                if (frame != null && _image.sprite != frame) _image.sprite = frame;
+            }
+
+            public void Stop()
+            {
+                _image = null;
+                _clip = null;
+                _characterName = null;
+                _elapsedSeconds = 0d;
+            }
+        }
 
         public event Action? SkipRequested;
 
@@ -151,6 +195,7 @@ namespace Metroidvania.UI
 
         private void LateUpdate()
         {
+            AdvancePortraitAnimations(Time.unscaledDeltaTime);
             if (_shakeTextActive &&
                 _presentationEnabled &&
                 dialogueText != null &&
@@ -164,6 +209,20 @@ namespace Metroidvania.UI
         {
             _currentLineCts?.Cancel();
             CancelIllustrationAnimation();
+            StopPortraitAnimations();
+        }
+
+        private void AdvancePortraitAnimations(float unscaledDeltaSeconds)
+        {
+            if (!_presentationEnabled) return;
+            _leftPortraitPlayback.Advance(unscaledDeltaSeconds);
+            _rightPortraitPlayback.Advance(unscaledDeltaSeconds);
+        }
+
+        private void StopPortraitAnimations()
+        {
+            _leftPortraitPlayback.Stop();
+            _rightPortraitPlayback.Stop();
         }
 
         public void PrepareConversation(string nodeName)
@@ -191,6 +250,7 @@ namespace Metroidvania.UI
             }
 
             gameObject.SetActive(true);
+            StopPortraitAnimations();
             SetActive(presentationRoot, true);
             SetActive(dialoguePanel, true);
             SetActive(logPanel, false);
@@ -523,14 +583,15 @@ namespace Metroidvania.UI
             {
                 CharacterPortrait value = portrait.Value;
                 Sprite? sprite = FindExpressionSprite(value, expressionName);
+                PortraitAnimationClip? animation = FindExpressionAnimation(value, expressionName);
                 if (sprite != null && value.slot == DialoguePortraitSlot.Right)
                 {
-                    SetPortrait(rightPortraitImage, sprite, true);
+                    _rightPortraitPlayback.Play(rightPortraitImage, sprite, animation, speakerName);
                     _rightCharacterName = speakerName;
                 }
                 else if (sprite != null)
                 {
-                    SetPortrait(leftPortraitImage, sprite, true);
+                    _leftPortraitPlayback.Play(leftPortraitImage, sprite, animation, speakerName);
                     _leftCharacterName = speakerName;
                 }
             }
@@ -843,10 +904,9 @@ namespace Metroidvania.UI
 
         private Sprite? FindExpressionSprite(CharacterPortrait portrait, string expressionName)
         {
-            if (string.IsNullOrWhiteSpace(expressionName) ||
-                string.Equals(expressionName, "default", StringComparison.OrdinalIgnoreCase))
+            if (IsDefaultExpression(expressionName))
             {
-                return portrait.portraitSprite;
+                return portrait.portraitAnimation?.FirstFrame ?? portrait.portraitSprite;
             }
 
             PortraitExpression[]? expressions = portrait.expressionPortraits;
@@ -859,9 +919,9 @@ namespace Metroidvania.UI
                             expression.expressionName?.Trim(),
                             expressionName,
                             StringComparison.OrdinalIgnoreCase) &&
-                        expression.portraitSprite != null)
+                        (expression.portraitSprite != null || expression.portraitAnimation?.FirstFrame != null))
                     {
-                        return expression.portraitSprite;
+                        return expression.portraitAnimation?.FirstFrame ?? expression.portraitSprite;
                     }
                 }
             }
@@ -875,7 +935,26 @@ namespace Metroidvania.UI
                     this);
             }
 
-            return portrait.portraitSprite;
+            return portrait.portraitAnimation?.FirstFrame ?? portrait.portraitSprite;
+        }
+
+        private static bool IsDefaultExpression(string expressionName) =>
+            string.IsNullOrWhiteSpace(expressionName) ||
+            string.Equals(expressionName, "default", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(expressionName, "normal", StringComparison.OrdinalIgnoreCase);
+
+        private static PortraitAnimationClip? FindExpressionAnimation(CharacterPortrait portrait, string expressionName)
+        {
+            if (!IsDefaultExpression(expressionName) && portrait.expressionPortraits != null)
+            {
+                foreach (var expression in portrait.expressionPortraits)
+                {
+                    if (string.Equals(expression.expressionName?.Trim(), expressionName, StringComparison.OrdinalIgnoreCase) &&
+                        (expression.portraitSprite != null || expression.portraitAnimation?.FirstFrame != null))
+                        return expression.portraitAnimation?.FirstFrame != null ? expression.portraitAnimation : null;
+                }
+            }
+            return portrait.portraitAnimation?.FirstFrame != null ? portrait.portraitAnimation : null;
         }
 
         private void SetPortraitColor(Image? image, bool isSpeaking)
@@ -947,6 +1026,7 @@ namespace Metroidvania.UI
 
         private void HideView()
         {
+            StopPortraitAnimations();
             _currentLineCts?.Cancel();
             _lineState = LinePresentationState.Idle;
             _modalOpen = false;
