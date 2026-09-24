@@ -115,38 +115,6 @@ PrefabInstance:
       propertyPath: m_TextStyleHashCode
       value: -1183493901
       objectReference: {fileID: 0}
-    - target: {fileID: 2146578331094777699, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.8305572
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146578331094777699, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.8305572
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146578331094777699, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.8305572
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146578331094777699, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.954167
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146578331094777699, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146578331094777699, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146578331094777699, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.29927474
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146578331094777699, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 34.828
-      objectReference: {fileID: 0}
     - target: {fileID: 2331513028768191005, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
@@ -237,7 +205,27 @@ PrefabInstance:
       objectReference: {fileID: 5155163167032735316, guid: 27ed02f9d5375e743bf8f0a62889bc21, type: 3}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.size
-      value: 2
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].characterName
+      value: "\u30BF\u30CA\u30C8\u30B9"
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].slot
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].portraitSprite
+      value:
+      objectReference: {fileID: 6377198010540484827, guid: f2d00decbfdcfbe4d9c7f78c00371ab1, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].portraitAnimation
+      value:
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[1].slot
