@@ -33,8 +33,16 @@ public static class EventUiPreviewVerification
         {
             new DialogueArtworkTests().SharedPrefab_SwitchesArtworkAndKeepsUnknownNamesHidden();
             new DialogueArtworkTests().DialogueText_UsesThirtyByTwoOrTwentyByOneWithoutShrinking();
+            new DialogueArtworkTests().Nox_MovesBetweenSidesWithoutReplacingIrisAndResetsNextConversation();
+            var animationTests = new DialoguePortraitAnimationTests();
+            try
+            {
+                animationTests.LeftAndRightPortraits_KeepIndependentAnimationClocks();
+                animationTests.ExpressionChanges_RestartButRepeatedLinesKeepPlayingAndStaticFacesStop();
+            }
+            finally { animationTests.Cleanup(); }
             Render();
-            File.WriteAllText("Temp/EventUiPreview.result", "PASS: artwork routing, button bindings, 30x2 normal / 20x1 emphasis, no shrinking, rich text, manual breaks, shake enlargement and page advance; previews rendered.");
+            File.WriteAllText("Temp/EventUiPreview.result", "PASS: Nox left/right/return, Iris preserved, animation and conversation reset; artwork routing, button bindings, 30x2 normal / 20x1 emphasis, no shrinking, rich text, manual breaks, shake enlargement and page advance; previews rendered.");
         }
         catch (Exception e) { File.WriteAllText("Temp/EventUiPreview.result", e.ToString()); Debug.LogException(e); }
     }
@@ -52,6 +60,7 @@ public static class EventUiPreviewVerification
             var view = root.GetComponentInChildren<DialogueView>(true);
             var so = new SerializedObject(view);
             var presentation = (GameObject)so.FindProperty("presentationRoot").objectReferenceValue;
+            view.OnDialogueStartedAsync();
             presentation.SetActive(true);
             ((Image)so.FindProperty("centerIllustrationImage").objectReferenceValue).gameObject.SetActive(false);
             ((GameObject)so.FindProperty("dialoguePanel").objectReferenceValue).SetActive(true);
@@ -77,6 +86,15 @@ public static class EventUiPreviewVerification
             Capture(camera, texture, "iris");
             apply.Invoke(view, new object[] { "ノクス", "default" });
             Capture(camera, texture, "nox-left");
+            apply.Invoke(view, new object[] { "タナトス", "default" });
+            apply.Invoke(view, new object[] { "ノクス", "default" });
+            Capture(camera, texture, "nox-right");
+            apply.Invoke(view, new object[] { "イリス", "default" });
+            Capture(camera, texture, "iris-with-nox-right");
+            typeof(DialogueView).GetMethod("ApplyNoxPlacementMetadata", BindingFlags.NonPublic | BindingFlags.Instance)
+                .Invoke(view, new object[] { new[] { "nox:left" } });
+            apply.Invoke(view, new object[] { "ノクス", "default" });
+            Capture(camera, texture, "nox-return-left");
             ((GameObject)so.FindProperty("skipConfirmPanel").objectReferenceValue).SetActive(true);
             Capture(camera, texture, "skip-confirm");
             ((GameObject)so.FindProperty("skipConfirmPanel").objectReferenceValue).SetActive(false);

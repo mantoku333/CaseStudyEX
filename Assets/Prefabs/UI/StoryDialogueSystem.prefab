@@ -2147,13 +2147,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5633771438334276658}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3239838266053550541}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -200, y: 280}
@@ -2324,6 +2324,15 @@ MonoBehaviour:
   nextIndicator: {fileID: 8041768553622695691}
   leftPortraitImage: {fileID: 2795344621656142786}
   rightPortraitImage: {fileID: 7733518219101612638}
+  noxLeftPosition: {x: 250, y: 250}
+  noxLeftSize: {x: 418, y: 525}
+  noxLeftRotation: 20
+  noxRightPosition: {x: -113.4, y: 433.9}
+  noxRightSize: {x: 520, y: 650}
+  noxRightRotation: -8.92
+  irisWithNoxPosition: {x: -180.5, y: 280}
+  irisWithNoxSize: {x: 420, y: 560}
+  irisWithNoxRotationY: 180
   speakingPortraitColor: {r: 1, g: 1, b: 1, a: 1}
   inactivePortraitColor: {r: 0.32, g: 0.32, b: 0.32, a: 1}
   characterPortraits:
