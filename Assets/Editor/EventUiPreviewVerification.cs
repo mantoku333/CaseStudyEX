@@ -87,6 +87,7 @@ public static class EventUiPreviewVerification
             apply.Invoke(view, new object[] { "ノクス", "default" });
             Capture(camera, texture, "nox-left");
             apply.Invoke(view, new object[] { "タナトス", "default" });
+            Capture(camera, texture, "thanatos");
             apply.Invoke(view, new object[] { "ノクス", "default" });
             Capture(camera, texture, "nox-right");
             apply.Invoke(view, new object[] { "イリス", "default" });
