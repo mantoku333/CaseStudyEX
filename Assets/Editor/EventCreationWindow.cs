@@ -398,6 +398,9 @@ namespace CaseStudy.EditorTools
                 line.FontScale = FontScaleValues[fontScaleIndex];
                 line.HasFontScale = fontScaleIndex != 1;
 
+                EditorGUILayout.Space(10f);
+                DrawAudioSettings(line);
+
                 if (line.PreservedMetadata.Count > 0)
                 {
                     EditorGUILayout.HelpBox(
@@ -428,6 +431,74 @@ namespace CaseStudy.EditorTools
                     ShowSpeakerMenu(line.SourceLineIndex);
                 }
             }
+        }
+
+        private static void DrawAudioSettings(EventCreationDialogueLine line)
+        {
+            EditorGUILayout.LabelField("BGM・SE（このセリフの開始時）", EditorStyles.boldLabel);
+            int mode = string.IsNullOrEmpty(line.Bgm) ? 0 : line.Bgm == "stop" ? 2 : 1;
+            int nextMode = EditorGUILayout.Popup("BGM", mode, new[] { "変更しない", "再生・切り替え", "停止" });
+            if (nextMode != mode) line.Bgm = nextMode == 2 ? "stop" : nextMode == 1 ? "unassigned" : string.Empty;
+            if (nextMode == 1)
+            {
+                line.Bgm = DrawAudioClip("BGM音声", line.Bgm);
+                line.BgmVolume = EditorGUILayout.Slider("BGM音量", line.BgmVolume, 0f, 1f);
+            }
+            if (nextMode != 0)
+                line.BgmFade = Mathf.Max(0f, EditorGUILayout.FloatField("BGMフェード（秒）", line.BgmFade));
+            line.Se = DrawAudioClip("SE音声", line.Se);
+            if (!string.IsNullOrEmpty(line.Se))
+                line.SeVolume = EditorGUILayout.Slider("SE音量", line.SeVolume, 0f, 1f);
+            EditorGUILayout.HelpBox("BGMはループ再生し、停止・切り替えまで継続します。SEは一度だけ再生します。", MessageType.None);
+        }
+
+        private static string DrawAudioClip(string label, string key)
+        {
+            AudioClip current = AssetDatabase.LoadAssetAtPath<AudioClip>(AssetDatabase.GUIDToAssetPath(key));
+            EditorGUI.BeginChangeCheck();
+            AudioClip selected = (AudioClip)EditorGUILayout.ObjectField(label, current, typeof(AudioClip), false);
+            if (EditorGUI.EndChangeCheck())
+                return selected != null ? AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(selected)) : string.Empty;
+            if (key == "unassigned")
+                EditorGUILayout.HelpBox("再生するBGM音声を選択してください。", MessageType.Info);
+            else if (!string.IsNullOrEmpty(key) && current == null)
+                EditorGUILayout.HelpBox($"音声参照が見つかりません: {key}", MessageType.Warning);
+            return key;
+        }
+
+        private void SaveAudioReferences()
+        {
+            const string path = "Assets/Resources/Story/StoryDialogueAudioCatalog.asset";
+            var references = new Dictionary<string, AudioClip>();
+            for (int node = 0; node < document.Nodes.Count; node++)
+            {
+                foreach (EventCreationDialogueLine line in document.GetDialogueLines(node))
+                {
+                    foreach (string key in new[] { line.Bgm, line.Se })
+                    {
+                        if (string.IsNullOrEmpty(key) || key == "stop") continue;
+                        AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(AssetDatabase.GUIDToAssetPath(key));
+                        if (clip == null) throw new InvalidOperationException($"音声参照が見つかりません: {key}");
+                        references[key] = clip;
+                    }
+                }
+            }
+            if (references.Count == 0) return;
+            StoryDialogueAudioCatalog catalog = AssetDatabase.LoadAssetAtPath<StoryDialogueAudioCatalog>(path);
+            if (catalog == null)
+            {
+                catalog = CreateInstance<StoryDialogueAudioCatalog>();
+                AssetDatabase.CreateAsset(catalog, path);
+            }
+            foreach (var reference in references)
+            {
+                var entry = catalog.entries.Find(item => item != null && item.key == reference.Key);
+                if (entry == null)
+                    catalog.entries.Add(new StoryDialogueAudioCatalog.Entry { key = reference.Key, clip = reference.Value });
+                else entry.clip = reference.Value;
+            }
+            EditorUtility.SetDirty(catalog);
+            AssetDatabase.SaveAssetIfDirty(catalog);
         }
 
         private void DrawLineActions(EventCreationDialogueLine line)
@@ -631,6 +702,8 @@ namespace CaseStudy.EditorTools
             }
 
             var effects = new List<string>();
+            if (!string.IsNullOrEmpty(line.Bgm)) effects.Add(line.Bgm == "stop" ? "BGM停止" : "BGM");
+            if (!string.IsNullOrEmpty(line.Se)) effects.Add("SE");
             if (!string.IsNullOrWhiteSpace(line.Face))
             {
                 effects.Add(GetExpressionLabel(line.Face));
@@ -1093,6 +1166,7 @@ namespace CaseStudy.EditorTools
                 }
 
                 string backupPath = CreateBackup(absolutePath);
+                SaveAudioReferences();
                 string nextText = document.ToText();
                 File.WriteAllText(
                     absolutePath,

@@ -358,6 +358,7 @@ namespace Metroidvania.UI
             bool isNarration = IsNarration(speakerName);
 
             ApplyLineTextEffects(line.Metadata);
+            StoryDialogueAudioCatalog.ApplyLineMetadata(line.Metadata);
             ApplyIllustrationMetadata(line.Metadata);
             ApplyNoxPlacementMetadata(line.Metadata);
             ApplySpeaker(speakerName, expressionName);
