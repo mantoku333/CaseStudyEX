@@ -144,10 +144,10 @@ public sealed class StageBgmController : MonoBehaviour
         PlayImmediate(bossStageBgm, bgmVolume);
     }
 
-    public void PlayTimelineBgm(AudioClip clip, float volume)
+    public void PlayTimelineBgm(AudioClip clip, float volume, float fadeSeconds = -1f)
     {
         playbackContext = PlaybackContext.Timeline;
-        Play(clip, volume);
+        Play(clip, volume, fadeSeconds);
     }
 
     public void SetAreaBgm(Object owner, AudioClip clip, float volume, int priority = 0)
@@ -217,7 +217,7 @@ public sealed class StageBgmController : MonoBehaviour
         crossfadeCoroutine = StartCoroutine(FadeOutAll(fadeSeconds));
     }
 
-    private void Play(AudioClip clip, float baseVolume)
+    private void Play(AudioClip clip, float baseVolume, float fadeSeconds = -1f)
     {
         if (clip == null)
         {
@@ -240,7 +240,7 @@ public sealed class StageBgmController : MonoBehaviour
             crossfadeCoroutine = null;
         }
 
-        crossfadeCoroutine = StartCoroutine(CrossfadeTo(clip, baseVolume));
+        crossfadeCoroutine = StartCoroutine(CrossfadeTo(clip, baseVolume, fadeSeconds));
     }
 
     private void PlayImmediate(AudioClip clip, float baseVolume)
@@ -466,8 +466,9 @@ public sealed class StageBgmController : MonoBehaviour
         source.volume = ResolveEffectiveVolume(GetSourceBaseVolume(source));
     }
 
-    private System.Collections.IEnumerator CrossfadeTo(AudioClip nextClip, float nextBaseVolume)
+    private System.Collections.IEnumerator CrossfadeTo(AudioClip nextClip, float nextBaseVolume, float fadeSeconds = -1f)
     {
+        float duration = fadeSeconds >= 0f ? fadeSeconds : crossfadeDuration;
         AudioSource from = ResolveCurrentSource();
         AudioSource to = from == sourceA ? sourceB : sourceA;
 
@@ -481,7 +482,7 @@ public sealed class StageBgmController : MonoBehaviour
         to.volume = 0f;
         to.Play();
 
-        if (from == null || !from.isPlaying || crossfadeDuration <= 0f)
+        if (duration <= 0f || (fadeSeconds < 0f && (from == null || !from.isPlaying)))
         {
             to.volume = ResolveEffectiveVolume(nextBaseVolume);
             activeSource = to;
@@ -489,24 +490,27 @@ public sealed class StageBgmController : MonoBehaviour
             yield break;
         }
 
-        float fromStartBaseVolume = GetSourceBaseVolume(from);
+        float fromStartBaseVolume = from != null && from.isPlaying ? GetSourceBaseVolume(from) : 0f;
         float toBaseVolume = Mathf.Clamp01(nextBaseVolume);
         float elapsed = 0f;
 
-        while (elapsed < crossfadeDuration)
+        while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / crossfadeDuration);
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
             float optionsVolume = ResolveOptionsBgmVolume();
-            from.volume = Mathf.Lerp(fromStartBaseVolume, 0f, t) * optionsVolume;
+            if (from != null) from.volume = Mathf.Lerp(fromStartBaseVolume, 0f, t) * optionsVolume;
             to.volume = Mathf.Lerp(0f, toBaseVolume, t) * optionsVolume;
             yield return null;
         }
 
-        from.Stop();
-        from.clip = null;
-        SetSourceBaseVolume(from, 0f);
-        from.volume = 0f;
+        if (from != null)
+        {
+            from.Stop();
+            from.clip = null;
+            SetSourceBaseVolume(from, 0f);
+            from.volume = 0f;
+        }
 
         to.volume = ResolveEffectiveVolume(toBaseVolume);
         activeSource = to;
@@ -522,7 +526,7 @@ public sealed class StageBgmController : MonoBehaviour
 
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
 
             if (sourceA != null)
