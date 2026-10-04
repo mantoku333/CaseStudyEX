@@ -1,0 +1,15 @@
+title: ADVtest_Audio
+---
+BGM・SEのテストを始めます。 #bgm:stop #bgmfade:0
+イリス: 森の奥から、音楽が聞こえる。 #face:default #bgm:6173ec6252f2abf4fa9a2cc0e057774f #bgmvolume:0.3 #bgmfade:1
+ノクス: 傘を開くよ。 #se:b23093459fc678f498899d1ceed37ba0 #sevolume:0.8
+イリス: 少し待っても、音楽は続くね。
+ノクス: 音楽を小さくしてみよう。 #bgm:6173ec6252f2abf4fa9a2cc0e057774f #bgmvolume:0.1 #bgmfade:0
+イリス: 何かが近づいてくる……！ #face:surprised #bgm:d1394cbc01bfdf443b2e150e616954ad #bgmvolume:0.25 #bgmfade:1.5 #se:3caa67ac5c639453d910ed8dc4b1851e #sevolume:0.7
+ノクス: 音楽が切り替わった。傘は閉じておこう。 #se:631315968a2b9e7428dc0aa7c2457e77 #sevolume:0.8
+イリス: もう大丈夫。音楽も静かに消えていく。 #face:soft_smile #bgm:stop #bgmfade:1
+ここは無音です。少し待って確認してください。
+ノクス: 無音のまま、ページをめくる音だけ鳴らすよ。 #se:3caa67ac5c639453d910ed8dc4b1851e #sevolume:0.5
+イリス: 最後に、音楽をすぐ戻してみよう。 #face:smile #bgm:6173ec6252f2abf4fa9a2cc0e057774f #bgmvolume:0.3 #bgmfade:0
+テスト完了。BGMを停止します。 #bgm:stop #bgmfade:0
+===
