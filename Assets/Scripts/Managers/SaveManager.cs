@@ -319,6 +319,16 @@ public sealed class SaveManager : MonoBehaviour
         return TrySaveCurrentGame(DefaultSlotIndex);
     }
 
+    public static bool TryAutoSaveCurrentGame(int slotIndex = DefaultSlotIndex)
+    {
+        bool saved = TrySaveCurrentGame(slotIndex);
+        if (saved)
+        {
+            AutoSaveNotification.Show();
+        }
+        return saved;
+    }
+
     public static bool TrySaveCurrentGame(int slotIndex)
     {
         if (!TryValidateSlotIndex(slotIndex))

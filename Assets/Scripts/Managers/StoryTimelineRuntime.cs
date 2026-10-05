@@ -89,7 +89,7 @@ public sealed class StoryTimelineRuntime : MonoBehaviour
         StageBgmController stageBgm = FindFirstObjectByType<StageBgmController>(FindObjectsInactive.Include);
         if (stageBgm != null)
         {
-            stageBgm.PlayTimelineBgm(clip, volume);
+            stageBgm.PlayTimelineBgm(clip, volume, fadeSeconds);
             return;
         }
 

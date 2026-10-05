@@ -872,7 +872,7 @@ public sealed class StoryEventController : MonoBehaviour
                 ApplyCompleteMutations();
             }
 
-            SaveManager.TrySaveCurrentGame();
+            SaveManager.TryAutoSaveCurrentGame();
         }
     }
 
@@ -1575,7 +1575,7 @@ public sealed class StoryEventController : MonoBehaviour
 
         if (autoSaveOnComplete)
         {
-            SaveManager.TrySaveCurrentGame();
+            SaveManager.TryAutoSaveCurrentGame();
         }
     }
 

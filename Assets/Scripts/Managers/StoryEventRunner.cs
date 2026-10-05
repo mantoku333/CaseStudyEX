@@ -517,7 +517,7 @@ public sealed class StoryEventRunner : MonoBehaviour
 
         if (definition.autoSaveOnComplete)
         {
-            SaveManager.TrySaveCurrentGame();
+            SaveManager.TryAutoSaveCurrentGame();
         }
     }
 

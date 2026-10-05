@@ -341,6 +341,18 @@ namespace CaseStudy.EditorTools
                 AppendMetadata(builder, dialogueLine.PreservedMetadata[i]);
             }
 
+            if (!string.IsNullOrEmpty(dialogueLine.Bgm))
+            {
+                AppendMetadata(builder, $"bgm:{dialogueLine.Bgm}");
+                AppendMetadata(builder, $"bgmvolume:{dialogueLine.BgmVolume.ToString("0.###", CultureInfo.InvariantCulture)}");
+                AppendMetadata(builder, $"bgmfade:{dialogueLine.BgmFade.ToString("0.###", CultureInfo.InvariantCulture)}");
+            }
+            if (!string.IsNullOrEmpty(dialogueLine.Se))
+            {
+                AppendMetadata(builder, $"se:{dialogueLine.Se}");
+                AppendMetadata(builder, $"sevolume:{dialogueLine.SeVolume.ToString("0.###", CultureInfo.InvariantCulture)}");
+            }
+
             if (!string.IsNullOrWhiteSpace(dialogueLine.Illustration))
             {
                 AppendMetadata(builder, $"illustration:{dialogueLine.Illustration.Trim()}");
@@ -385,6 +397,14 @@ namespace CaseStudy.EditorTools
         private static void ParseMetadata(string rawTag, EventCreationDialogueLine parsed)
         {
             string tag = (rawTag ?? string.Empty).Trim().TrimStart('#');
+            if (TryReadMetadataValue(tag, "bgm:", out string bgm)) { parsed.Bgm = bgm; return; }
+            if (TryReadMetadataValue(tag, "se:", out string se)) { parsed.Se = se; return; }
+            if (TryReadMetadataValue(tag, "bgmvolume:", out string bgmVolume) && TryReadAudioNumber(bgmVolume, out float bv))
+            { parsed.BgmVolume = Math.Min(1f, bv); return; }
+            if (TryReadMetadataValue(tag, "sevolume:", out string seVolume) && TryReadAudioNumber(seVolume, out float sv))
+            { parsed.SeVolume = Math.Min(1f, sv); return; }
+            if (TryReadMetadataValue(tag, "bgmfade:", out string bgmFade) && TryReadAudioNumber(bgmFade, out float bf))
+            { parsed.BgmFade = bf; return; }
             if (tag.Equals("shake", StringComparison.OrdinalIgnoreCase))
             {
                 parsed.Shake = true;
@@ -434,6 +454,12 @@ namespace CaseStudy.EditorTools
 
             value = string.Empty;
             return false;
+        }
+
+        private static bool TryReadAudioNumber(string value, out float number)
+        {
+            return float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out number) &&
+                number >= 0f && !float.IsNaN(number) && !float.IsInfinity(number);
         }
 
         private static bool IsProtectedYarnLine(string content)
@@ -629,6 +655,11 @@ namespace CaseStudy.EditorTools
         public string Text = string.Empty;
         public string Face = string.Empty;
         public string Illustration = string.Empty;
+        public string Bgm = string.Empty;
+        public string Se = string.Empty;
+        public float BgmVolume = 1f;
+        public float SeVolume = 1f;
+        public float BgmFade = 0.5f;
         public bool Shake;
         public bool HasFontScale;
         public float FontScale = 1f;
@@ -643,6 +674,11 @@ namespace CaseStudy.EditorTools
                 Text = Text,
                 Face = Face,
                 Illustration = Illustration,
+                Bgm = Bgm,
+                Se = Se,
+                BgmVolume = BgmVolume,
+                SeVolume = SeVolume,
+                BgmFade = BgmFade,
                 Shake = Shake,
                 HasFontScale = HasFontScale,
                 FontScale = FontScale

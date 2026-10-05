@@ -98,7 +98,7 @@ public sealed class AutoSaveTrigger2D : MonoBehaviour
 
         nextSaveAllowedTime = Time.unscaledTime + cooldownSeconds;
         int targetSlotIndex = Mathf.Clamp(slotIndex, SaveManager.MinSlotIndex, SaveManager.MaxSlotIndex);
-        bool saved = SaveManager.TrySaveCurrentGame(targetSlotIndex);
+        bool saved = SaveManager.TryAutoSaveCurrentGame(targetSlotIndex);
         if (saved)
         {
             hasSaved = true;

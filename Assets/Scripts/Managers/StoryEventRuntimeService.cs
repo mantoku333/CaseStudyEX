@@ -502,7 +502,7 @@ public sealed class StoryEventRuntimeService : MonoBehaviour
 
         if (definition.autoSaveOnComplete)
         {
-            SaveManager.TrySaveCurrentGame();
+            SaveManager.TryAutoSaveCurrentGame();
         }
     }
 
