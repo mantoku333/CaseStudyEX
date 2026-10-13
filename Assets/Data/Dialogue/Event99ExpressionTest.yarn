@@ -21,9 +21,10 @@ title: Event99_ExpressionTest
 イリス: 表情02_控えめ笑顔 #face:soft_smile
 イリス: 表情03_悲しい #face:sad
 イリス: 表情04_驚き #face:surprised
-イリス: 表情05_ジト目 #face:jitome
+イリス: 表情05_嫌悪 #face:disgust
 イリス: 表情06_笑顔 #face:smile
 イリス: 表情07_主張 #face:assertive
+イリス: 表情08_困り顔 #face:troubled
 イリス: 文字揺れテスト #shake
 以下、フォントサイズ1.5倍で20文字ちょうどのテスト
 イリス: １２３４５６７８９０１２３４５６７８９０ #size:1.5
@@ -57,7 +58,11 @@ title: ADVtest_PortraitAnimation
 ノクス: 次のセリフでも、アニメーションが続きます。
 イリス: 悲しい表情に切り替えます。 #face:sad
 イリス: この表情もループします。 #face:sad
-イリス: 静止画の笑顔に切り替えます。 #face:smile
+イリス: 笑顔のアニメーションに切り替えます。 #face:smile
+イリス: 決意した表情です。 #face:assertive
+イリス: 驚いた表情です。 #face:surprised
+イリス: 嫌悪の表情です。 #face:disgust
+イリス: 困り顔です。 #face:troubled
 イリス: 通常のアニメーションに戻ります。 #face:default
 ===
 

@@ -37,12 +37,13 @@ public static class EventUiPreviewVerification
             var animationTests = new DialoguePortraitAnimationTests();
             try
             {
+                animationTests.SharedPrefab_HasCompleteClipsWithStableSpriteBounds();
                 animationTests.LeftAndRightPortraits_KeepIndependentAnimationClocks();
                 animationTests.ExpressionChanges_RestartButRepeatedLinesKeepPlayingAndStaticFacesStop();
             }
             finally { animationTests.Cleanup(); }
             Render();
-            File.WriteAllText("Temp/EventUiPreview.result", "PASS: Nox left/right/return, Iris preserved, animation and conversation reset; artwork routing, button bindings, 30x2 normal / 20x1 emphasis, no shrinking, rich text, manual breaks, shake enlargement and page advance; previews rendered.");
+            File.WriteAllText("Temp/EventUiPreview.result", "PASS: all seven Iris animation clips, frame references, stable bounds/pivots, expression switching and loops; Nox left/right/return, Iris preserved, animation and conversation reset; artwork routing, button bindings, 30x2 normal / 20x1 emphasis, no shrinking, rich text, manual breaks, shake enlargement and page advance; previews rendered.");
         }
         catch (Exception e) { File.WriteAllText("Temp/EventUiPreview.result", e.ToString()); Debug.LogException(e); }
     }
@@ -84,6 +85,14 @@ public static class EventUiPreviewVerification
             ((GameObject)so.FindProperty("nextIndicator").objectReferenceValue).SetActive(true);
             Directory.CreateDirectory("outputs/event-ui");
             Capture(camera, texture, "iris");
+            foreach (string expression in new[] { "smile", "assertive", "surprised", "disgust", "troubled" })
+            {
+                apply.Invoke(view, new object[] { "イリス", expression });
+                typeof(DialogueView).GetMethod("AdvancePortraitAnimations", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Invoke(view, new object[] { .15f });
+                Capture(camera, texture, "iris-" + expression);
+            }
+            apply.Invoke(view, new object[] { "イリス", "default" });
             apply.Invoke(view, new object[] { "ノクス", "default" });
             Capture(camera, texture, "nox-left");
             apply.Invoke(view, new object[] { "タナトス", "default" });
