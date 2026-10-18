@@ -6,6 +6,24 @@ using UnityEngine.UI;
 public static class DecorationScrollInstaller
 {
     private const string PrefabPath = "Assets/Prefabs/UI/OptionsCanvas.prefab";
+    private const string SlotPrefabPath = "Assets/Prefabs/UI/DecorationItemSlot.prefab";
+
+    private const int Columns = 3;
+
+    // Padding / spacing measured off the approved decoration screenshot: column pitch
+    // is 214 units and row pitch 308, which these values reproduce for this panel.
+    private const int PadH = 34, PadV = 10, Gap = 2;
+
+    // Authored size of DecorationItemSlot.prefab. The grid forces its cell size onto
+    // every card, so the cell must keep this aspect — the card art (ItemCardBg) is drawn
+    // at a fixed size around the cell centre, so a cell shorter than the art makes the
+    // name and cost labels spill over the row below.
+    //
+    // The card art does NOT follow the cell size: it is sized by the slot prefab's root
+    // localScale (1.10, which draws it at ~95% of the cell pitch). Changing the cell size
+    // here means changing that scale by the same factor, or the cards overlap / drift apart.
+    private const float CardDesignWidth = 180f;
+    private const float CardDesignHeight = 260f;
 
     static DecorationScrollInstaller()
     {
@@ -45,8 +63,11 @@ public static class DecorationScrollInstaller
 
             if (alreadyDone)
             {
+                changed |= FixViewportRT(existing.viewport);
                 changed |= FixContentRT(existing.content);
+                changed |= FixGridLayout(existing.content, itemBg as RectTransform);
                 changed |= EnsureDecorationPageSlotContainer(prefabRoot, existing.content);
+                changed |= EnsureDecorationPageSlotPrefab(prefabRoot);
                 return; // finally handles save/unload
             }
 
@@ -102,19 +123,8 @@ public static class DecorationScrollInstaller
         RectTransform contentRT = contentGO.AddComponent<RectTransform>();
         ApplyContentRT(contentRT);
 
-        const int cols = 3;
-        const int padH = 10, padV = 10, gap = 2;
-        const float cellW = 190f, cellH = 270f;
-
         GridLayoutGroup grid = contentGO.AddComponent<GridLayoutGroup>();
-        grid.padding = new RectOffset(padH, padH, padV, padV);
-        grid.cellSize = new Vector2(cellW, cellH);
-        grid.spacing = new Vector2(gap, gap);
-        grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
-        grid.startAxis = GridLayoutGroup.Axis.Horizontal;
-        grid.childAlignment = TextAnchor.UpperLeft;
-        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        grid.constraintCount = cols;
+        ApplyGridLayout(grid, itemBg as RectTransform);
 
         ContentSizeFitter fitter = contentGO.AddComponent<ContentSizeFitter>();
         fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
@@ -150,6 +160,7 @@ public static class DecorationScrollInstaller
         scrollRect.scrollSensitivity = 30f;
 
         EnsureDecorationPageSlotContainer(prefabRoot, contentRT);
+        EnsureDecorationPageSlotPrefab(prefabRoot);
 
         Debug.Log($"[DecorationScrollInstaller] Full setup complete. {unknownItems.Count} items in Content.");
     }
@@ -179,14 +190,76 @@ public static class DecorationScrollInstaller
         rt.localScale = Vector3.one;
     }
 
+    // The viewport is both the scroll window and the RectMask2D clip rect, so it has to
+    // match 'Item back ground' exactly. Any offset here shifts the whole grid and lets
+    // cards draw outside the panel art.
     private static void ApplyViewportRT(RectTransform rt)
     {
         rt.anchorMin = Vector2.zero;
         rt.anchorMax = Vector2.one;
         rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = new Vector2(72f, 9f);
-        rt.sizeDelta = new Vector2(185f, 77f);
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
         rt.localScale = Vector3.one;
+    }
+
+    private static bool FixViewportRT(RectTransform rt)
+    {
+        if (rt == null) return false;
+        bool ok = rt.anchorMin == Vector2.zero
+               && rt.anchorMax == Vector2.one
+               && rt.offsetMin == Vector2.zero
+               && rt.offsetMax == Vector2.zero
+               && rt.localScale == Vector3.one;
+        if (ok) return false;
+        ApplyViewportRT(rt);
+        Debug.Log("[DecorationScrollInstaller] Fixed ScrollViewport RectTransform.");
+        return true;
+    }
+
+    // Cell width is derived from the container so the columns always fill it exactly.
+    // Formula: (containerWidth - leftPad - rightPad - spacing*(cols-1)) / cols
+    private static Vector2 CalculateCellSize(RectTransform itemBg)
+    {
+        float containerW = itemBg != null ? itemBg.rect.width : 0f;
+        if (containerW <= 0f && itemBg != null) containerW = itemBg.sizeDelta.x;
+        if (containerW <= 0f) return new Vector2(CardDesignWidth, CardDesignHeight);
+
+        float cellW = Mathf.Floor((containerW - PadH * 2 - Gap * (Columns - 1)) / Columns);
+        float cellH = Mathf.Round(cellW * (CardDesignHeight / CardDesignWidth));
+        return new Vector2(cellW, cellH);
+    }
+
+    private static void ApplyGridLayout(GridLayoutGroup grid, RectTransform itemBg)
+    {
+        grid.padding = new RectOffset(PadH, PadH, PadV, PadV);
+        grid.cellSize = CalculateCellSize(itemBg);
+        grid.spacing = new Vector2(Gap, Gap);
+        grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
+        grid.startAxis = GridLayoutGroup.Axis.Horizontal;
+        grid.childAlignment = TextAnchor.UpperLeft;
+        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        grid.constraintCount = Columns;
+    }
+
+    private static bool FixGridLayout(RectTransform content, RectTransform itemBg)
+    {
+        if (content == null) return false;
+        GridLayoutGroup grid = content.GetComponent<GridLayoutGroup>();
+        if (grid == null) return false;
+
+        Vector2 cellSize = CalculateCellSize(itemBg);
+        bool ok = grid.cellSize == cellSize
+               && grid.spacing == new Vector2(Gap, Gap)
+               && grid.padding.left == PadH && grid.padding.right == PadH
+               && grid.padding.top == PadV && grid.padding.bottom == PadV
+               && grid.constraint == GridLayoutGroup.Constraint.FixedColumnCount
+               && grid.constraintCount == Columns;
+        if (ok) return false;
+
+        ApplyGridLayout(grid, itemBg);
+        Debug.Log($"[DecorationScrollInstaller] Fixed grid layout. Cell size: {cellSize}");
+        return true;
     }
 
     private static bool FixContentRT(RectTransform rt)
@@ -198,6 +271,29 @@ public static class DecorationScrollInstaller
         if (ok) return false;
         ApplyContentRT(rt);
         Debug.Log("[DecorationScrollInstaller] Fixed Content RectTransform.");
+        return true;
+    }
+
+    // A reimport of the slot prefab while the editor holds OptionsCanvas loaded can drop
+    // this reference, and DecorationPage then instantiates null and shows no cards at all.
+    private static bool EnsureDecorationPageSlotPrefab(GameObject prefabRoot)
+    {
+        if (prefabRoot == null) return false;
+
+        DecorationPage page = prefabRoot.GetComponentInChildren<DecorationPage>(true);
+        if (page == null) return false;
+
+        SerializedObject serializedPage = new SerializedObject(page);
+        SerializedProperty slotPrefab = serializedPage.FindProperty("slotPrefab");
+        if (slotPrefab == null || slotPrefab.objectReferenceValue != null) return false;
+
+        GameObject slotAsset = AssetDatabase.LoadAssetAtPath<GameObject>(SlotPrefabPath);
+        DecorationItemSlot slot = slotAsset != null ? slotAsset.GetComponent<DecorationItemSlot>() : null;
+        if (slot == null) return false;
+
+        slotPrefab.objectReferenceValue = slot;
+        serializedPage.ApplyModifiedPropertiesWithoutUndo();
+        Debug.Log("[DecorationScrollInstaller] Restored DecorationPage.slotPrefab.");
         return true;
     }
 

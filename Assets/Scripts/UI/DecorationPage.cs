@@ -184,6 +184,16 @@ public sealed class DecorationPage : MonoBehaviour
         List<ItemData> orderedCatalog = BuildOrderedCatalog();
         int totalSlots = Mathf.Max(minimumSlotCount, orderedCatalog.Count);
 
+        if (slotPrefab == null || slotContainer == null)
+        {
+            Debug.LogError(
+                "[DecorationPage] slotPrefab / slotContainer が未設定のため装飾スロットを生成できません。" +
+                "OptionsCanvas.prefab の DecorationPage を確認してください。", this);
+            RefreshRightPanel();
+            RefreshElegantPointBalance();
+            return;
+        }
+
         for (int i = 0; i < totalSlots; i++)
         {
             ItemData data = i < orderedCatalog.Count ? orderedCatalog[i] : null;
