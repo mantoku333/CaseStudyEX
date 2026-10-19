@@ -118,6 +118,11 @@ public sealed class TitleSaveSlotView : MonoBehaviour
             return;
         }
 
+        // スロットごとに手作業の localScale が残っており、下の方のスロットだけ
+        // サムネイルが大きく表示されていた。表示サイズは stageThumbnailSize だけで
+        // 決まるように、スケールは常に等倍へ戻す。
+        stageThumbnailRoot.localScale = Vector3.one;
+
         stageThumbnailRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, stageThumbnailSize.x);
         stageThumbnailRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, stageThumbnailSize.y);
 

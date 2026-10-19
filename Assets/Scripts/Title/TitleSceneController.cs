@@ -19,6 +19,7 @@ public class TitleSceneController : MonoBehaviour
     [SerializeField] private GameObject titleLogoPanel;
 
     [Header("ボタン")]
+    [SerializeField] private Button startButton;
     [SerializeField] private Button noButton;
     [SerializeField] private Button yesButton;
     [SerializeField] private Button continueButton;
@@ -102,6 +103,7 @@ public class TitleSceneController : MonoBehaviour
             loadConfirmPanel.SetActive(false);
         }
 
+        ReleaseTitleSelectionLock();
         ResolveTitleLogoPanel();
         titleLogoPanelDefaultActive = titleLogoPanel == null || titleLogoPanel.activeSelf;
         RefreshTitleLogoPanelVisibility();
@@ -161,9 +163,43 @@ public class TitleSceneController : MonoBehaviour
         }
 
         startingNewGame = true;
+        LockTitleSelectionForStartTransition();
         SetMainTitleButtonsInteractable(false);
         SetLoadingCursorHidden(true);
         StartCoroutine(StartNewGameRainTransitionRoutine());
+    }
+
+    // 演出中は選択表示を「初めから」に固定し、ホバーやキー操作で動かないようにする。
+    private void LockTitleSelectionForStartTransition()
+    {
+        ResolveButtonReferences();
+
+        GameObject target = startButton != null ? startButton.gameObject : null;
+        if (target == null && EventSystem.current != null)
+        {
+            target = EventSystem.current.currentSelectedGameObject;
+        }
+
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.sendNavigationEvents = false;
+            if (target != null)
+            {
+                EventSystem.current.SetSelectedGameObject(target);
+            }
+        }
+
+        TitleButtonState.LockSelection(target);
+    }
+
+    private static void ReleaseTitleSelectionLock()
+    {
+        TitleButtonState.UnlockSelection();
+
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.sendNavigationEvents = true;
+        }
     }
 
     private IEnumerator StartNewGameRainTransitionRoutine()
@@ -371,6 +407,15 @@ public class TitleSceneController : MonoBehaviour
 
     private void ResolveButtonReferences()
     {
+        if (startButton == null)
+        {
+            var obj = GameObject.Find("Btn_NewGame");
+            if (obj != null)
+            {
+                startButton = obj.GetComponent<Button>();
+            }
+        }
+
         if (continueButton == null)
         {
             var obj = GameObject.Find("Btn_Countinue");

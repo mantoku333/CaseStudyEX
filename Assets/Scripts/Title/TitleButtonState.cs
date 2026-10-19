@@ -15,6 +15,8 @@ public sealed class TitleButtonState :
 
     private static TitleButtonState hoveredInstance;
     private static bool pointerVisualMode;
+    private static TitleButtonState lockedInstance;
+    private static bool selectionLocked;
 
     private void Awake()
     {
@@ -48,6 +50,8 @@ public sealed class TitleButtonState :
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (selectionLocked) return;
+
         pointerVisualMode  = true;
         hoveredInstance    = this;
         RefreshAll();
@@ -55,7 +59,25 @@ public sealed class TitleButtonState :
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (selectionLocked) return;
+
         if (hoveredInstance == this) hoveredInstance = null;
+        RefreshAll();
+    }
+
+    // 初めから演出中など、選択表示をひとつのボタンに固定したいときに使う。
+    // 固定している間はホバーもナビゲーションも見た目を変えない。
+    public static void LockSelection(GameObject target)
+    {
+        selectionLocked = true;
+        lockedInstance = target != null ? target.GetComponent<TitleButtonState>() : null;
+        RefreshAll();
+    }
+
+    public static void UnlockSelection()
+    {
+        selectionLocked = false;
+        lockedInstance = null;
         RefreshAll();
     }
 
@@ -68,9 +90,20 @@ public sealed class TitleButtonState :
 
     private void Refresh()
     {
-        bool showSelected = pointerVisualMode
-            ? hoveredInstance == this
-            : EventSystem.current != null && EventSystem.current.currentSelectedGameObject == gameObject;
+        bool showSelected;
+        if (selectionLocked)
+        {
+            showSelected = lockedInstance == this;
+        }
+        else if (pointerVisualMode)
+        {
+            showSelected = hoveredInstance == this;
+        }
+        else
+        {
+            showSelected = EventSystem.current != null
+                && EventSystem.current.currentSelectedGameObject == gameObject;
+        }
 
         if (selectState != null)
         {
