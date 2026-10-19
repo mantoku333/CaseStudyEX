@@ -33,7 +33,9 @@ namespace CaseStudy.EditorTools
                 { "disgust", "嫌悪" },
                 { "troubled", "困り顔" },
                 { "smile", "笑顔" },
-                { "assertive", "主張" }
+                { "assertive", "主張" },
+                { "angry", "怒り" },
+                { "happy", "上機嫌" }
             };
 
         [SerializeField] private string selectedAssetPath = string.Empty;

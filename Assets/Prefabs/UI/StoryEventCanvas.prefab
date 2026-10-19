@@ -208,27 +208,11 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[2].characterName
-      value: "\u30BF\u30CA\u30C8\u30B9"
+      propertyPath: characterPortraits.Array.data[1].slot
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[2].slot
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[2].portraitSprite
-      value:
-      objectReference: {fileID: 6377198010540484827, guid: f2d00decbfdcfbe4d9c7f78c00371ab1, type: 3}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[2].portraitAnimation
-      value:
-      objectReference: {fileID: 0}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[1].slot
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
@@ -236,60 +220,44 @@ PrefabInstance:
       value: "\u30CE\u30AF\u30B9"
       objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.size
-      value: 7
+      propertyPath: characterPortraits.Array.data[2].characterName
+      value: "\u30BF\u30CA\u30C8\u30B9"
       objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[6].portraitAnimation
+      propertyPath: characterPortraits.Array.data[0].portraitSprite
       value:
-      objectReference: {fileID: 11400000, guid: 6de4e418a2e24036afd459daa0cb26bf, type: 2}
+      objectReference: {fileID: -6975902402337957982, guid: 1a164e44a04640941b0755a8fa76444c, type: 3}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[6].portraitSprite
+      propertyPath: characterPortraits.Array.data[1].portraitSprite
       value:
-      objectReference: {fileID: -2428029872286128594, guid: 72cd9964c220443ca9c9c5fae0dcf313, type: 3}
+      objectReference: {fileID: 5155163167032735316, guid: 27ed02f9d5375e743bf8f0a62889bc21, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].portraitSprite
+      value:
+      objectReference: {fileID: 6377198010540484827, guid: f2d00decbfdcfbe4d9c7f78c00371ab1, type: 3}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].portraitAnimation
       value: 
       objectReference: {fileID: 11400000, guid: 5336aa9f5fbeb90530e0f1a0e61e1348, type: 2}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[1].portraitAnimation
-      value: 
-      objectReference: {fileID: 11400000, guid: 97aca28da61850417f12b28516be957e, type: 2}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[0].portraitAnimation
-      value: 
-      objectReference: {fileID: 11400000, guid: 5336aa9f5fbeb90530e0f1a0e61e1348, type: 2}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[2].portraitAnimation
-      value: 
-      objectReference: {fileID: 11400000, guid: ad19b1a8af024ec79148b8bbfd8ce9fb, type: 2}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[3].portraitAnimation
-      value: 
-      objectReference: {fileID: 11400000, guid: 37d793efd7cb4e3bb5e9b21702754b5d, type: 2}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[4].portraitAnimation
-      value: 
-      objectReference: {fileID: 11400000, guid: 7c606d9cc05845628c836274bdd4a03b, type: 2}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[5].portraitAnimation
-      value: 
-      objectReference: {fileID: 11400000, guid: 0e9aa29b22ae4417b33d7e13666b06ab, type: 2}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[0].portraitSprite
-      value: 
-      objectReference: {fileID: -6975902402337957982, guid: 1a164e44a04640941b0755a8fa76444c, type: 3}
-    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[1].portraitAnimation
       value: 
       objectReference: {fileID: 11400000, guid: 1b934182cd0e2c2e706437dc7d9c03ec, type: 2}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
-      propertyPath: characterPortraits.Array.data[1].portraitSprite
+      propertyPath: characterPortraits.Array.data[2].portraitAnimation
       value: 
-      objectReference: {fileID: 5155163167032735316, guid: 27ed02f9d5375e743bf8f0a62889bc21, type: 3}
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.size
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[1].expressionPortraits.Array.size
-      value: 1
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[0].portraitSprite
@@ -316,6 +284,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -2428029872286128594, guid: 17c86f104b904679a3c60e673500932e, type: 3}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[6].portraitSprite
+      value:
+      objectReference: {fileID: -2428029872286128594, guid: 72cd9964c220443ca9c9c5fae0dcf313, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[1].expressionPortraits.Array.data[0].expressionName
       value: assertive
       objectReference: {fileID: 0}
@@ -323,6 +295,58 @@ PrefabInstance:
       propertyPath: characterPortraits.Array.data[1].expressionPortraits.Array.data[0].portraitSprite
       value: 
       objectReference: {fileID: 2068786175613284719, guid: bdb4b024f283ef546b1f302090da8333, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[1].expressionPortraits.Array.data[1].expressionName
+      value: angry
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[1].expressionPortraits.Array.data[1].portraitSprite
+      value:
+      objectReference: {fileID: 4943319209126249903, guid: 99ec0a89d61b4a02b0c295dcadfe7807, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[1].expressionPortraits.Array.data[2].expressionName
+      value: happy
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[1].expressionPortraits.Array.data[2].portraitSprite
+      value:
+      objectReference: {fileID: 4943319209126249903, guid: 18eec3164f91f45499178770738f249b, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[0].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 5336aa9f5fbeb90530e0f1a0e61e1348, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[1].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 97aca28da61850417f12b28516be957e, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[2].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: ad19b1a8af024ec79148b8bbfd8ce9fb, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[3].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 37d793efd7cb4e3bb5e9b21702754b5d, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[4].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 7c606d9cc05845628c836274bdd4a03b, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[5].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 0e9aa29b22ae4417b33d7e13666b06ab, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[6].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 6de4e418a2e24036afd459daa0cb26bf, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[1].expressionPortraits.Array.data[1].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: e79886a651996654988d02a9385d7d8a, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[1].expressionPortraits.Array.data[2].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: a24d6a8d8acbfe849917bd64300d7738, type: 2}
     - target: {fileID: 4006928196693059032, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
