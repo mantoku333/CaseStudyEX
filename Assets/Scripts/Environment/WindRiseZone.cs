@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// WindRise のトリガー内で、傘を開いている空中のプレイヤーを上昇させ、
@@ -38,12 +39,28 @@ public class WindRiseZone : MonoBehaviour
     [SerializeField, Min(0f)] private float recoilRiseWindIgnoreSeconds = 0.6f;
     [SerializeField, Min(0f)] private float recoilRiseMinUpwardSpeed = 0.05f;
 
-    // Rigidbody2D ごとに、風エリア内にいるプレイヤー情報をキャッシュする。
-    private readonly Dictionary<Rigidbody2D, PlayerWindTarget> targets = new Dictionary<Rigidbody2D, PlayerWindTarget>();
-    // FixedUpdate 中に削除が必要になった対象を一時的に入れるリスト。
-    private readonly List<Rigidbody2D> staleTargets = new List<Rigidbody2D>();
+    // All zones share one player state and one velocity write per physics step.
+    // In particular, recoil suppression must survive a handoff to another zone.
+    private static readonly HashSet<WindRiseZone> activeZones = new HashSet<WindRiseZone>();
+    private static readonly Dictionary<Rigidbody2D, PlayerWindTarget> targets = new Dictionary<Rigidbody2D, PlayerWindTarget>();
+    private static readonly List<Rigidbody2D> staleTargets = new List<Rigidbody2D>();
+    private static readonly List<WindRiseZone> sortedZones = new List<WindRiseZone>();
+    private static readonly List<WindRiseZone> reachableZones = new List<WindRiseZone>();
+    private static double lastResolvedFixedTime = double.NegativeInfinity;
 
     private Collider2D windCollider;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetWindState()
+    {
+        targets.Clear();
+        staleTargets.Clear();
+        sortedZones.Clear();
+        reachableZones.Clear();
+        lastResolvedFixedTime = double.NegativeInfinity;
+        // Retain live registrations when both domain and scene reload are disabled.
+        activeZones.RemoveWhere(zone => zone == null || !zone.isActiveAndEnabled);
+    }
 
     private void Awake()
     {
@@ -53,6 +70,12 @@ public class WindRiseZone : MonoBehaviour
             // WindRise は足場ではなく風の判定なので、必ずトリガーとして扱う。
             windCollider.isTrigger = true;
         }
+    }
+
+    private void OnEnable()
+    {
+        windCollider = GetComponent<Collider2D>();
+        activeZones.Add(this);
     }
 
     private void OnValidate()
@@ -79,38 +102,125 @@ public class WindRiseZone : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (windCollider == null)
+        if (lastResolvedFixedTime == Time.fixedTimeAsDouble)
         {
             return;
         }
 
+        lastResolvedFixedTime = Time.fixedTimeAsDouble;
+        ResolveWindStep();
+    }
+
+    private static void ResolveWindStep()
+    {
+        sortedZones.Clear();
+        foreach (WindRiseZone zone in activeZones)
+        {
+            if (zone != null && zone.IsZoneActive()) sortedZones.Add(zone);
+        }
+        sortedZones.Sort(CompareZonePriority);
         staleTargets.Clear();
 
-        // 登録済みのプレイヤーに対して、条件を満たす間だけ風の速度補正を行う。
         foreach (KeyValuePair<Rigidbody2D, PlayerWindTarget> pair in targets)
         {
             Rigidbody2D body = pair.Key;
             PlayerWindTarget target = pair.Value;
 
-            if (body == null || target == null || target.BodyCollider == null)
+            if (body == null || !body.simulated || !body.gameObject.activeInHierarchy ||
+                target.BodyCollider == null || !target.BodyCollider.isActiveAndEnabled)
             {
                 staleTargets.Add(body);
                 continue;
             }
 
-            if (!CanApplyWind(target))
+            WindRiseZone controllingZone = ResolveControllingZone(target, out bool hasOverlap);
+            if (!hasOverlap)
             {
-                continue;
+                // Validate geometry every step: trigger exits are not guaranteed
+                // when a collider, player, or zone is disabled or destroyed.
+                staleTargets.Add(body);
             }
-
-            ApplyWind(target);
+            else if (controllingZone != null && controllingZone.CanApplyWind(target))
+            {
+                controllingZone.ApplyWind(target);
+            }
         }
 
-        // foreach 中に Dictionary を直接変更できないため、後でまとめて削除する。
         for (int i = 0; i < staleTargets.Count; i++)
         {
             targets.Remove(staleTargets[i]);
         }
+    }
+
+    private static WindRiseZone ResolveControllingZone(PlayerWindTarget target, out bool hasOverlap)
+    {
+        hasOverlap = false;
+        reachableZones.Clear();
+        Bounds playerBounds = target.BodyCollider.bounds;
+        PhysicsScene2D physicsScene = target.Rigidbody.gameObject.scene.GetPhysicsScene2D();
+
+        // Ascending world-space tops form an acyclic path through any number of
+        // touching/overlapping zones. A path always starts at a real body overlap.
+        foreach (WindRiseZone zone in sortedZones)
+        {
+            if (zone.gameObject.scene.GetPhysicsScene2D() != physicsScene ||
+                !zone.MatchesPlayer(target.Rigidbody)) continue;
+
+            bool reachable = CollidersOverlap(zone.windCollider, target.BodyCollider);
+            hasOverlap |= reachable;
+            if (!zone.IsEligibleTarget(target)) continue;
+
+            Bounds bounds = zone.windCollider.bounds;
+            for (int i = 0; !reachable && i < reachableZones.Count; i++)
+            {
+                WindRiseZone lowerZone = reachableZones[i];
+                Bounds lowerBounds = lowerZone.windCollider.bounds;
+                // Stay in the player's vertical corridor; a distant branch of a
+                // connected wind network must not attract the player sideways.
+                float corridorMin = Mathf.Max(playerBounds.min.x, Mathf.Max(bounds.min.x, lowerBounds.min.x));
+                float corridorMax = Mathf.Min(playerBounds.max.x, Mathf.Min(bounds.max.x, lowerBounds.max.x));
+                reachable = bounds.max.y > lowerBounds.max.y && corridorMin < corridorMax &&
+                    CollidersOverlap(lowerZone.windCollider, zone.windCollider);
+            }
+
+            if (reachable) reachableZones.Add(zone);
+        }
+
+        return reachableZones.Count == 0 ? null : reachableZones[reachableZones.Count - 1];
+    }
+
+    private bool IsZoneActive()
+    {
+        return isActiveAndEnabled && windCollider != null && windCollider.isActiveAndEnabled;
+    }
+
+    private bool MatchesPlayer(Rigidbody2D body)
+    {
+        return string.IsNullOrEmpty(playerTag) || body.CompareTag(playerTag);
+    }
+
+    private static bool CollidersOverlap(Collider2D first, Collider2D second)
+    {
+        ColliderDistance2D distance = first.Distance(second);
+        // Use the physics contact tolerance, including edge-touching stacks.
+        // Unlike an AABB-only test, this rejects disconnected rotated/polygon zones.
+        return distance.isValid && distance.distance <= Physics2D.defaultContactOffset;
+    }
+
+    private static int CompareZonePriority(WindRiseZone first, WindRiseZone second)
+    {
+        Bounds a = first.windCollider.bounds;
+        Bounds b = second.windCollider.bounds;
+        // Geometry and wind settings break ties, so creation/callback order never
+        // selects a different influence. Equal keys produce identical wind motion.
+        return (a.max.y, -first.hoverOffsetFromTop, a.min.y, a.min.x, a.max.x,
+            first.upwardAcceleration, first.maxRiseSpeed, first.hoverBandHeight,
+            first.hoverSpring, first.hoverDamping, first.bobAmplitude, first.bobFrequency,
+            first.recoilRiseWindIgnoreSeconds, first.recoilRiseMinUpwardSpeed).CompareTo(
+            (b.max.y, -second.hoverOffsetFromTop, b.min.y, b.min.x, b.max.x,
+            second.upwardAcceleration, second.maxRiseSpeed, second.hoverBandHeight,
+            second.hoverSpring, second.hoverDamping, second.bobAmplitude, second.bobFrequency,
+            second.recoilRiseWindIgnoreSeconds, second.recoilRiseMinUpwardSpeed));
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -131,20 +241,12 @@ public class WindRiseZone : MonoBehaviour
     private void AddTarget(Collider2D other)
     {
         // プレイヤー本体以外（攻撃・パリィ判定など）は対象外。
-        if (!TryBuildTarget(other, out PlayerWindTarget target))
+        if (!IsZoneActive() || !TryBuildTarget(other, out PlayerWindTarget target))
         {
             return;
         }
 
-        if (targets.TryGetValue(target.Rigidbody, out PlayerWindTarget existingTarget))
-        {
-            // プレイヤーに複数コライダーがある場合に備えて、重なっているコライダーを個別管理する。
-            existingTarget.OverlappingColliders.Add(other);
-            return;
-        }
-
-        target.OverlappingColliders.Add(other);
-        targets.Add(target.Rigidbody, target);
+        if (!targets.ContainsKey(target.Rigidbody)) targets.Add(target.Rigidbody, target);
     }
 
     private void RemoveTarget(Collider2D other)
@@ -161,11 +263,15 @@ public class WindRiseZone : MonoBehaviour
             return;
         }
 
-        target.OverlappingColliders.Remove(other);
-        if (target.OverlappingColliders.Count == 0)
+        // An ignored child exit must not remove a body that is still in the wind.
+        // Another zone can keep the shared target alive after this zone is left.
+        if (other != target.BodyCollider) return;
+        foreach (WindRiseZone zone in activeZones)
         {
-            targets.Remove(body);
+            if (zone != null && zone.IsZoneActive() && zone.MatchesPlayer(body) &&
+                CollidersOverlap(zone.windCollider, target.BodyCollider)) return;
         }
+        targets.Remove(body);
     }
 
     private bool TryBuildTarget(Collider2D other, out PlayerWindTarget target)
@@ -190,6 +296,8 @@ public class WindRiseZone : MonoBehaviour
         {
             return false;
         }
+
+        if (targets.TryGetValue(body, out target)) return true;
 
         target = new PlayerWindTarget
         {
@@ -220,7 +328,7 @@ public class WindRiseZone : MonoBehaviour
         return other.GetComponentInParent<Rigidbody2D>();
     }
 
-    private bool CanApplyWind(PlayerWindTarget target)
+    private bool IsEligibleTarget(PlayerWindTarget target)
     {
         // Rigidbody が無効なら物理速度を触らない。
         if (target.Rigidbody == null || !target.Rigidbody.simulated)
@@ -249,6 +357,13 @@ public class WindRiseZone : MonoBehaviour
             return false;
         }
 
+        return true;
+    }
+
+    private bool CanApplyWind(PlayerWindTarget target)
+    {
+        if (!IsEligibleTarget(target)) return false;
+
         if (target.GunController != null && target.GunController.GetRecoiling())
         {
             StartRecoilRiseWindSuppression(target);
@@ -260,13 +375,8 @@ public class WindRiseZone : MonoBehaviour
             return false;
         }
 
-        if (target.DodgeController != null && target.DodgeController.IsDodging())
-        {
-            // 回避中は WindRise が横移動/無敵挙動を邪魔しないようにする。
-            return false;
-        }
-
-        return true;
+        // 回避中は WindRise が横移動/無敵挙動を邪魔しないようにする。
+        return target.DodgeController == null || !target.DodgeController.IsDodging();
     }
 
     private void StartRecoilRiseWindSuppression(PlayerWindTarget target)
@@ -330,8 +440,13 @@ public class WindRiseZone : MonoBehaviour
 
     private void OnDisable()
     {
-        // 無効化時に古い参照を残さない。
-        targets.Clear();
+        activeZones.Remove(this);
+        if (activeZones.Count == 0)
+        {
+            targets.Clear();
+            sortedZones.Clear();
+            reachableZones.Clear();
+        }
     }
 
     /// <summary>
@@ -347,6 +462,5 @@ public class WindRiseZone : MonoBehaviour
         public DodgeController DodgeController;
         public bool IsRecoilRiseWindSuppressed;
         public float RecoilRiseWindIgnoreUntil;
-        public readonly HashSet<Collider2D> OverlappingColliders = new HashSet<Collider2D>();
     }
 }
