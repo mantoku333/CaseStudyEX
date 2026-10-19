@@ -30,7 +30,8 @@ namespace CaseStudy.EditorTools
                 { "soft_smile", "控えめな笑顔" },
                 { "sad", "悲しい" },
                 { "surprised", "驚き" },
-                { "jitome", "ジト目" },
+                { "disgust", "嫌悪" },
+                { "troubled", "困り顔" },
                 { "smile", "笑顔" },
                 { "assertive", "主張" }
             };

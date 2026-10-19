@@ -131,26 +131,67 @@ public sealed class DialoguePortraitAnimationTests : PortraitAnimationTestFixtur
     [Test]
     public void SharedPrefab_HasCompleteClipsWithStableSpriteBounds()
     {
-        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/StoryEventCanvas.prefab");
-        var portraits = new SerializedObject(prefab.GetComponentInChildren<DialogueView>(true)).FindProperty("characterPortraits");
-        var iris = portraits.GetArrayElementAtIndex(0);
-        var normal = (PortraitAnimationClip)iris.FindPropertyRelative("portraitAnimation").objectReferenceValue;
-        var sad = (PortraitAnimationClip)iris.FindPropertyRelative("expressionPortraits").GetArrayElementAtIndex(1).FindPropertyRelative("portraitAnimation").objectReferenceValue;
-        Assert.That(normal.FrameCount, Is.EqualTo(240)); Assert.That(sad.FrameCount, Is.EqualTo(120));
-        Vector2? expectedSize = null;
-        foreach (var clip in new[] { normal, sad })
+        var root = PrefabUtility.LoadPrefabContents("Assets/Prefabs/UI/StoryEventCanvas.prefab");
+        try
         {
-            Assert.That(clip.FramesPerSecond, Is.EqualTo(30f));
-            var frames = new SerializedObject(clip).FindProperty("frames");
-            for (int i = 0; i < frames.arraySize; i++)
+            var view = root.GetComponentInChildren<DialogueView>(true);
+            var serialized = new SerializedObject(view);
+            var iris = serialized.FindProperty("characterPortraits").GetArrayElementAtIndex(0);
+            var normal = (PortraitAnimationClip)iris.FindPropertyRelative("portraitAnimation").objectReferenceValue;
+            var expressions = iris.FindPropertyRelative("expressionPortraits");
+            var clips = new Dictionary<string, PortraitAnimationClip> { { "normal", normal } };
+            for (int i = 0; i < expressions.arraySize; i++)
             {
-                var frame = frames.GetArrayElementAtIndex(i).objectReferenceValue as Sprite;
-                Assert.That(frame, Is.Not.Null, $"{clip.name}: frame {i}");
-                expectedSize ??= frame.rect.size;
-                Assert.That(frame.rect.size, Is.EqualTo(expectedSize.Value), $"Unstable bounds: {clip.name}/{i}");
-                Assert.That(frame.texture.width, Is.LessThanOrEqualTo(1024));
+                var expression = expressions.GetArrayElementAtIndex(i);
+                clips.Add(expression.FindPropertyRelative("expressionName").stringValue,
+                    (PortraitAnimationClip)expression.FindPropertyRelative("portraitAnimation").objectReferenceValue);
             }
+            Assert.That(clips.Keys, Is.EquivalentTo(new[] {
+                "normal", "soft_smile", "sad", "surprised", "disgust", "smile", "assertive", "troubled"
+            }));
+            Assert.That(clips["soft_smile"], Is.SameAs(normal), "Keep the existing soft-smile placeholder.");
+            var expected = new Dictionary<string, (string asset, int frames)> {
+                { "normal", ("Iris_normal", 240) }, { "sad", ("Iris_sad", 120) },
+                { "smile", ("Iris_smile", 240) }, { "assertive", ("Iris_resolve", 120) },
+                { "surprised", ("Iris_surprised", 120) }, { "disgust", ("Iris_disgust", 120) },
+                { "troubled", ("Iris_troubled", 120) }
+            };
+            var image = (Image)serialized.FindProperty("rightPortraitImage").objectReferenceValue;
+            Vector2? expectedSize = null;
+            Vector2? expectedPivot = null;
+            view.OnDialogueStartedAsync();
+            foreach (var entry in expected)
+            {
+                var clip = clips[entry.Key];
+                Assert.That(clip, Is.Not.Null, entry.Key);
+                Assert.That(AssetDatabase.GetAssetPath(clip),
+                    Is.EqualTo($"Assets/Data/Dialogue/PortraitAnimations/{entry.Value.asset}.asset"));
+                Assert.That(clip.FrameCount, Is.EqualTo(entry.Value.frames));
+                Assert.That(clip.FramesPerSecond, Is.EqualTo(30f));
+                var frames = new SerializedObject(clip).FindProperty("frames");
+                for (int i = 0; i < frames.arraySize; i++)
+                {
+                    var frame = frames.GetArrayElementAtIndex(i).objectReferenceValue as Sprite;
+                    Assert.That(frame, Is.Not.Null, $"{clip.name}: frame {i}");
+                    expectedSize ??= frame.rect.size;
+                    expectedPivot ??= frame.pivot;
+                    Assert.That(frame.rect.size, Is.EqualTo(expectedSize.Value), $"Unstable bounds: {clip.name}/{i}");
+                    Assert.That(frame.pivot, Is.EqualTo(expectedPivot.Value), $"Unstable pivot: {clip.name}/{i}");
+                    Assert.That(frame.texture.width, Is.LessThanOrEqualTo(1024));
+                    Assert.That(AssetDatabase.GetAssetPath(frame),
+                        Is.EqualTo($"Assets/Art/temp/{entry.Value.asset}/イリス立ち絵ver01_{i:00000}.png"));
+                }
+                Assert.That(clip.GetFrame(clip.FrameCount / 30d), Is.SameAs(clip.FirstFrame));
+                Call(view, "ApplySpeaker", "イリス", entry.Key);
+                Assert.That(image.sprite, Is.SameAs(clip.FirstFrame), entry.Key);
+                Call(view, "AdvancePortraitAnimations", .15f);
+                Assert.That(image.sprite, Is.SameAs(clip.GetFrame(.15d)), entry.Key);
+                Call(view, "ApplySpeaker", "イリス", entry.Key);
+                Assert.That(image.sprite, Is.SameAs(clip.GetFrame(.15d)), "Repeated lines must keep playing.");
+            }
+            view.OnDialogueCompleteAsync();
         }
+        finally { PrefabUtility.UnloadPrefabContents(root); }
     }
 }
 

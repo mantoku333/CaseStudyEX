@@ -236,6 +236,18 @@ PrefabInstance:
       value: "\u30CE\u30AF\u30B9"
       objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[6].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 6de4e418a2e24036afd459daa0cb26bf, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[6].portraitSprite
+      value:
+      objectReference: {fileID: -2428029872286128594, guid: 72cd9964c220443ca9c9c5fae0dcf313, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].portraitAnimation
       value: 
       objectReference: {fileID: 11400000, guid: 5336aa9f5fbeb90530e0f1a0e61e1348, type: 2}
@@ -250,19 +262,19 @@ PrefabInstance:
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[2].portraitAnimation
       value: 
-      objectReference: {fileID: 11400000, guid: 5336aa9f5fbeb90530e0f1a0e61e1348, type: 2}
+      objectReference: {fileID: 11400000, guid: ad19b1a8af024ec79148b8bbfd8ce9fb, type: 2}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[3].portraitAnimation
       value: 
-      objectReference: {fileID: 11400000, guid: 5336aa9f5fbeb90530e0f1a0e61e1348, type: 2}
+      objectReference: {fileID: 11400000, guid: 37d793efd7cb4e3bb5e9b21702754b5d, type: 2}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[4].portraitAnimation
       value: 
-      objectReference: {fileID: 11400000, guid: 5336aa9f5fbeb90530e0f1a0e61e1348, type: 2}
+      objectReference: {fileID: 11400000, guid: 7c606d9cc05845628c836274bdd4a03b, type: 2}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[5].portraitAnimation
       value: 
-      objectReference: {fileID: 11400000, guid: 5336aa9f5fbeb90530e0f1a0e61e1348, type: 2}
+      objectReference: {fileID: 11400000, guid: 0e9aa29b22ae4417b33d7e13666b06ab, type: 2}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].portraitSprite
       value: 
@@ -290,19 +302,19 @@ PrefabInstance:
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[2].portraitSprite
       value: 
-      objectReference: {fileID: 2068786175613284719, guid: bdb4b024f283ef546b1f302090da8333, type: 3}
+      objectReference: {fileID: -2428029872286128594, guid: 0e8737c6cc2f48dcb8b0f89b076854d3, type: 3}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[3].portraitSprite
       value: 
-      objectReference: {fileID: 7216418365721353342, guid: f289902422d5f5b47a09618ef74a8952, type: 3}
+      objectReference: {fileID: -2428029872286128594, guid: fdbc97725d1844618f6b28f83f818e1b, type: 3}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[4].portraitSprite
       value: 
-      objectReference: {fileID: 7169617105104518282, guid: b6edb3de5da859c42b71a9cc18d539f6, type: 3}
+      objectReference: {fileID: -2428029872286128594, guid: 74c546bdd9a641d4bac05e04a964e0bf, type: 3}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[5].portraitSprite
       value: 
-      objectReference: {fileID: 6763432684061107258, guid: fa5a6d63922d3ed449d424c80392d11b, type: 3}
+      objectReference: {fileID: -2428029872286128594, guid: 17c86f104b904679a3c60e673500932e, type: 3}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[1].expressionPortraits.Array.data[0].expressionName
       value: assertive
