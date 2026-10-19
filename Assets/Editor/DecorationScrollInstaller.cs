@@ -14,6 +14,10 @@ public static class DecorationScrollInstaller
     // is 214 units and row pitch 308, which these values reproduce for this panel.
     private const int PadH = 34, PadV = 10, Gap = 2;
 
+    // ビューポートを背景の下端より少しだけ下に伸ばし、次の行のカードの上部が覗くようにする。
+    // これが無いと2行がちょうど収まってしまい、スクロールできることが分からない。
+    private const float ViewportBottomExtension = 50f;
+
     // Authored size of DecorationItemSlot.prefab. The grid forces its cell size onto
     // every card, so the cell must keep this aspect — the card art (ItemCardBg) is drawn
     // at a fixed size around the cell centre, so a cell shorter than the art makes the
@@ -190,15 +194,15 @@ public static class DecorationScrollInstaller
         rt.localScale = Vector3.one;
     }
 
-    // The viewport is both the scroll window and the RectMask2D clip rect, so it has to
-    // match 'Item back ground' exactly. Any offset here shifts the whole grid and lets
-    // cards draw outside the panel art.
+    // The viewport is both the scroll window and the RectMask2D clip rect. It matches
+    // 'Item back ground' except at the bottom, where it reaches a little further down
+    // (still inside the panel art) so the next row peeks in and the list reads as scrollable.
     private static void ApplyViewportRT(RectTransform rt)
     {
         rt.anchorMin = Vector2.zero;
         rt.anchorMax = Vector2.one;
         rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.offsetMin = Vector2.zero;
+        rt.offsetMin = new Vector2(0f, -ViewportBottomExtension);
         rt.offsetMax = Vector2.zero;
         rt.localScale = Vector3.one;
     }
@@ -208,7 +212,7 @@ public static class DecorationScrollInstaller
         if (rt == null) return false;
         bool ok = rt.anchorMin == Vector2.zero
                && rt.anchorMax == Vector2.one
-               && rt.offsetMin == Vector2.zero
+               && rt.offsetMin == new Vector2(0f, -ViewportBottomExtension)
                && rt.offsetMax == Vector2.zero
                && rt.localScale == Vector3.one;
         if (ok) return false;
