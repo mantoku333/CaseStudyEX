@@ -1,0 +1,956 @@
+[
+  {
+    "encounter": "Stage/Area/324/Col_324",
+    "mode": "arena-first",
+    "matchedSamples": 43,
+    "maxPositionDelta": 0.021790000000009968,
+    "maxSizeDelta": 0.015015599999999907,
+    "maxPlayerInputDelta": 0.0,
+    "maxBossInputDelta": 0.0,
+    "maxViewportDelta": 0.0005988999999999578,
+    "beforeEdgeTravel": 10.887079999999969,
+    "afterEdgeTravel": 10.886469999999917,
+    "beforeCenter": {
+      "phase": "center",
+      "encounter": "Stage/Area/324/Col_324",
+      "frame": 114414,
+      "time": 375.84964,
+      "aspect": 1.77777779,
+      "player": [
+        1071.29236,
+        112.28,
+        0.0
+      ],
+      "boss": [
+        1070.5354,
+        112.28,
+        0.0
+      ],
+      "expected": "Stage/Area/324/CN_324_Boss",
+      "selected": "Stage/Area/324/CN_324_Boss",
+      "outputPosition": [
+        1065.84827,
+        117.551216,
+        -10.0
+      ],
+      "outputSize": 12.9849806,
+      "cameraPosition": [
+        1065.84827,
+        117.551216,
+        -10.0
+      ],
+      "cameraSize": 12.9849806,
+      "playerViewport": [
+        0.617918,
+        0.297026634,
+        10.0
+      ],
+      "bossViewport": [
+        0.601522446,
+        0.297026634,
+        10.0
+      ],
+      "driverPosition": [
+        1065.84827,
+        121.551216,
+        0.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":74368},\"secondaryTarget\":{\"instanceID\":68888},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":-10.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":69272},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":68998},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":10.5,\"maxOrthographicSize\":13.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": true,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "afterCenter": {
+      "phase": "center",
+      "encounter": "Stage/Area/324/Col_324",
+      "frame": 5480,
+      "time": 91.3166656,
+      "aspect": 1.77777779,
+      "player": [
+        1071.29236,
+        112.28,
+        0.0
+      ],
+      "boss": [
+        1070.5354,
+        112.28,
+        0.0
+      ],
+      "expected": "Stage/Area/324/CN_324_Boss",
+      "selected": "Stage/Area/324/CN_324_Boss",
+      "outputPosition": [
+        1065.84888,
+        117.566086,
+        -10.0
+      ],
+      "outputSize": 12.9999962,
+      "cameraPosition": [
+        1065.84888,
+        117.566086,
+        -10.0
+      ],
+      "cameraSize": 12.9999962,
+      "playerViewport": [
+        0.617767334,
+        0.296689034,
+        10.0
+      ],
+      "bossViewport": [
+        0.601390839,
+        0.296689034,
+        10.0
+      ],
+      "driverPosition": [
+        1065.84888,
+        121.566086,
+        0.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":445538},\"secondaryTarget\":{\"instanceID\":440058},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":-10.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":440442},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":440168},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":10.5,\"maxOrthographicSize\":13.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": true,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "beforeLeft": {
+      "phase": "left",
+      "encounter": "Stage/Area/324/Col_324",
+      "frame": 114714,
+      "time": 380.84964,
+      "aspect": 1.77777779,
+      "player": [
+        1044.06372,
+        112.28,
+        0.0
+      ],
+      "boss": [
+        1070.5354,
+        112.28,
+        0.0
+      ],
+      "expected": "Stage/Area/324/CN_324_Boss",
+      "selected": "Stage/Area/324/CN_324_Boss",
+      "outputPosition": [
+        1065.84827,
+        117.566048,
+        -10.0
+      ],
+      "outputSize": 12.9999962,
+      "cameraPosition": [
+        1065.84827,
+        117.566048,
+        -10.0
+      ],
+      "cameraSize": 12.9999962,
+      "playerViewport": [
+        0.0286998749,
+        0.296690464,
+        10.0
+      ],
+      "bossViewport": [
+        0.6014042,
+        0.296690464,
+        10.0
+      ],
+      "driverPosition": [
+        1065.84827,
+        121.566048,
+        0.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":74368},\"secondaryTarget\":{\"instanceID\":68888},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":-10.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":69272},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":68998},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":10.5,\"maxOrthographicSize\":13.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": true,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "afterLeft": {
+      "phase": "left",
+      "encounter": "Stage/Area/324/Col_324",
+      "frame": 5780,
+      "time": 96.3166656,
+      "aspect": 1.77777779,
+      "player": [
+        1044.06372,
+        112.28,
+        0.0
+      ],
+      "boss": [
+        1070.5354,
+        112.28,
+        0.0
+      ],
+      "expected": "Stage/Area/324/CN_324_Boss",
+      "selected": "Stage/Area/324/CN_324_Boss",
+      "outputPosition": [
+        1065.84888,
+        117.566086,
+        -10.0
+      ],
+      "outputSize": 12.9999962,
+      "cameraPosition": [
+        1065.84888,
+        117.566086,
+        -10.0
+      ],
+      "cameraSize": 12.9999962,
+      "playerViewport": [
+        0.0286865234,
+        0.296689034,
+        10.0
+      ],
+      "bossViewport": [
+        0.601390839,
+        0.296689034,
+        10.0
+      ],
+      "driverPosition": [
+        1065.84888,
+        121.566086,
+        0.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":445538},\"secondaryTarget\":{\"instanceID\":440058},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":-10.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":440442},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":440168},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":10.5,\"maxOrthographicSize\":13.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": true,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "beforeRight": {
+      "phase": "right",
+      "encounter": "Stage/Area/324/Col_324",
+      "frame": 115014,
+      "time": 385.84964,
+      "aspect": 1.77777779,
+      "player": [
+        1098.521,
+        112.28,
+        0.0
+      ],
+      "boss": [
+        1070.5354,
+        112.28,
+        0.0
+      ],
+      "expected": "Stage/Area/324/CN_324_Boss",
+      "selected": "Stage/Area/324/CN_324_Boss",
+      "outputPosition": [
+        1076.73535,
+        117.566048,
+        -10.0
+      ],
+      "outputSize": 12.9999962,
+      "cameraPosition": [
+        1076.73535,
+        117.566048,
+        -10.0
+      ],
+      "cameraSize": 12.9999962,
+      "playerViewport": [
+        0.9713249,
+        0.296690464,
+        10.0
+      ],
+      "bossViewport": [
+        0.3658657,
+        0.296690464,
+        10.0
+      ],
+      "driverPosition": [
+        1076.73535,
+        121.566048,
+        0.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":74368},\"secondaryTarget\":{\"instanceID\":68888},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":-10.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":69272},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":68998},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":10.5,\"maxOrthographicSize\":13.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": true,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "afterRight": {
+      "phase": "right",
+      "encounter": "Stage/Area/324/Col_324",
+      "frame": 6080,
+      "time": 101.316666,
+      "aspect": 1.77777779,
+      "player": [
+        1098.521,
+        112.28,
+        0.0
+      ],
+      "boss": [
+        1070.5354,
+        112.28,
+        0.0
+      ],
+      "expected": "Stage/Area/324/CN_324_Boss",
+      "selected": "Stage/Area/324/CN_324_Boss",
+      "outputPosition": [
+        1076.73535,
+        117.566086,
+        -10.0
+      ],
+      "outputSize": 12.9999962,
+      "cameraPosition": [
+        1076.73535,
+        117.566086,
+        -10.0
+      ],
+      "cameraSize": 12.9999962,
+      "playerViewport": [
+        0.9713249,
+        0.296689034,
+        10.0
+      ],
+      "bossViewport": [
+        0.3658657,
+        0.296689034,
+        10.0
+      ],
+      "driverPosition": [
+        1076.73535,
+        121.566086,
+        0.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":445538},\"secondaryTarget\":{\"instanceID\":440058},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":-10.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":440442},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":440168},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":10.5,\"maxOrthographicSize\":13.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": true,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    }
+  },
+  {
+    "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+    "mode": "arena-first",
+    "matchedSamples": 43,
+    "maxPositionDelta": 0.0,
+    "maxSizeDelta": 0.0,
+    "maxPlayerInputDelta": 0.0,
+    "maxBossInputDelta": 0.0,
+    "maxViewportDelta": 0.0,
+    "beforeEdgeTravel": 15.355500000000006,
+    "afterEdgeTravel": 15.355500000000006,
+    "beforeCenter": {
+      "phase": "center",
+      "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+      "frame": 108152,
+      "time": 271.482971,
+      "aspect": 1.77777779,
+      "player": [
+        660.7541,
+        51.56,
+        0.0
+      ],
+      "boss": [
+        662.283447,
+        51.56,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "selected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "outputPosition": [
+        658.950134,
+        53.8493576,
+        -34.0
+      ],
+      "outputSize": 10.0000029,
+      "cameraPosition": [
+        658.950134,
+        53.8493576,
+        -34.0
+      ],
+      "cameraSize": 10.0000029,
+      "playerViewport": [
+        0.5507374,
+        0.3855321,
+        34.0
+      ],
+      "bossViewport": [
+        0.59375,
+        0.3855321,
+        34.0
+      ],
+      "driverPosition": [
+        658.950134,
+        53.8493576,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":74368},\"secondaryTarget\":{\"instanceID\":67014},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-15606},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-15600},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "afterCenter": {
+      "phase": "center",
+      "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+      "frame": 3266,
+      "time": 54.4166679,
+      "aspect": 1.77777779,
+      "player": [
+        660.7541,
+        51.56,
+        0.0
+      ],
+      "boss": [
+        662.283447,
+        51.56,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "selected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "outputPosition": [
+        658.950134,
+        53.8493576,
+        -34.0
+      ],
+      "outputSize": 10.0000029,
+      "cameraPosition": [
+        658.950134,
+        53.8493576,
+        -34.0
+      ],
+      "cameraSize": 10.0000029,
+      "playerViewport": [
+        0.5507374,
+        0.3855321,
+        34.0
+      ],
+      "bossViewport": [
+        0.59375,
+        0.3855321,
+        34.0
+      ],
+      "driverPosition": [
+        658.950134,
+        53.8493576,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":445538},\"secondaryTarget\":{\"instanceID\":438184},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-2864296},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-2864290},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "beforeLeft": {
+      "phase": "left",
+      "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+      "frame": 108452,
+      "time": 276.482971,
+      "aspect": 1.77777779,
+      "player": [
+        642.4983,
+        51.56,
+        0.0
+      ],
+      "boss": [
+        662.283447,
+        51.56,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "selected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "outputPosition": [
+        653.0763,
+        53.8493576,
+        -34.0
+      ],
+      "outputSize": 10.0000029,
+      "cameraPosition": [
+        653.0763,
+        53.8493576,
+        -34.0
+      ],
+      "cameraSize": 10.0000029,
+      "playerViewport": [
+        0.202493668,
+        0.3855321,
+        34.0
+      ],
+      "bossViewport": [
+        0.7589512,
+        0.3855321,
+        34.0
+      ],
+      "driverPosition": [
+        653.0763,
+        53.8493576,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":74368},\"secondaryTarget\":{\"instanceID\":67014},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-15606},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-15600},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "afterLeft": {
+      "phase": "left",
+      "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+      "frame": 3566,
+      "time": 59.4166679,
+      "aspect": 1.77777779,
+      "player": [
+        642.4983,
+        51.56,
+        0.0
+      ],
+      "boss": [
+        662.283447,
+        51.56,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "selected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "outputPosition": [
+        653.0763,
+        53.8493576,
+        -34.0
+      ],
+      "outputSize": 10.0000029,
+      "cameraPosition": [
+        653.0763,
+        53.8493576,
+        -34.0
+      ],
+      "cameraSize": 10.0000029,
+      "playerViewport": [
+        0.202493668,
+        0.3855321,
+        34.0
+      ],
+      "bossViewport": [
+        0.7589512,
+        0.3855321,
+        34.0
+      ],
+      "driverPosition": [
+        653.0763,
+        53.8493576,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":445538},\"secondaryTarget\":{\"instanceID\":438184},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-2864296},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-2864290},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "beforeRight": {
+      "phase": "right",
+      "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+      "frame": 108752,
+      "time": 281.482971,
+      "aspect": 1.77777779,
+      "player": [
+        679.0099,
+        51.56,
+        0.0
+      ],
+      "boss": [
+        662.283447,
+        51.56,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "selected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "outputPosition": [
+        668.4318,
+        53.8493576,
+        -34.0
+      ],
+      "outputSize": 10.0000038,
+      "cameraPosition": [
+        668.4318,
+        53.8493576,
+        -34.0
+      ],
+      "cameraSize": 10.0000038,
+      "playerViewport": [
+        0.79750824,
+        0.3855321,
+        34.0
+      ],
+      "bossViewport": [
+        0.327075958,
+        0.3855321,
+        34.0
+      ],
+      "driverPosition": [
+        668.4318,
+        53.8493576,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":74368},\"secondaryTarget\":{\"instanceID\":67014},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-15606},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-15600},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "afterRight": {
+      "phase": "right",
+      "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+      "frame": 3866,
+      "time": 64.4166641,
+      "aspect": 1.77777779,
+      "player": [
+        679.0099,
+        51.56,
+        0.0
+      ],
+      "boss": [
+        662.283447,
+        51.56,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "selected": "Stage/Boss/BossArea (1)/CN_Boss",
+      "outputPosition": [
+        668.4318,
+        53.8493576,
+        -34.0
+      ],
+      "outputSize": 10.0000038,
+      "cameraPosition": [
+        668.4318,
+        53.8493576,
+        -34.0
+      ],
+      "cameraSize": 10.0000038,
+      "playerViewport": [
+        0.79750824,
+        0.3855321,
+        34.0
+      ],
+      "bossViewport": [
+        0.327075958,
+        0.3855321,
+        34.0
+      ],
+      "driverPosition": [
+        668.4318,
+        53.8493576,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":445538},\"secondaryTarget\":{\"instanceID\":438184},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-2864296},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-2864290},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    }
+  },
+  {
+    "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+    "mode": "arena-first",
+    "matchedSamples": 43,
+    "maxPositionDelta": 0.0,
+    "maxSizeDelta": 0.0,
+    "maxPlayerInputDelta": 0.0,
+    "maxBossInputDelta": 0.0,
+    "maxViewportDelta": 0.0,
+    "beforeEdgeTravel": 12.811172,
+    "afterEdgeTravel": 12.811172,
+    "beforeCenter": {
+      "phase": "center",
+      "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+      "frame": 105638,
+      "time": 229.582977,
+      "aspect": 1.77777779,
+      "player": [
+        244.860168,
+        -57.5,
+        0.0
+      ],
+      "boss": [
+        245.6787,
+        -57.5,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea1/CN_Boss",
+      "selected": "Stage/Boss/BossArea1/CN_Boss",
+      "outputPosition": [
+        244.479431,
+        -54.7406044,
+        -34.0
+      ],
+      "outputSize": 10.5000038,
+      "cameraPosition": [
+        244.479431,
+        -54.7406044,
+        -34.0
+      ],
+      "cameraSize": 10.5000038,
+      "playerViewport": [
+        0.5101986,
+        0.36860016,
+        34.0
+      ],
+      "bossViewport": [
+        0.5321231,
+        0.36860016,
+        34.0
+      ],
+      "driverPosition": [
+        244.479431,
+        -54.7406044,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":74368},\"secondaryTarget\":{\"instanceID\":74960},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-16288},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-16282},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "afterCenter": {
+      "phase": "center",
+      "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+      "frame": 751,
+      "time": 12.5,
+      "aspect": 1.77777779,
+      "player": [
+        244.860168,
+        -57.5,
+        0.0
+      ],
+      "boss": [
+        245.6787,
+        -57.5,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea1/CN_Boss",
+      "selected": "Stage/Boss/BossArea1/CN_Boss",
+      "outputPosition": [
+        244.479431,
+        -54.7406044,
+        -34.0
+      ],
+      "outputSize": 10.5000038,
+      "cameraPosition": [
+        244.479431,
+        -54.7406044,
+        -34.0
+      ],
+      "cameraSize": 10.5000038,
+      "playerViewport": [
+        0.5101986,
+        0.36860016,
+        34.0
+      ],
+      "bossViewport": [
+        0.5321231,
+        0.36860016,
+        34.0
+      ],
+      "driverPosition": [
+        244.479431,
+        -54.7406044,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":445538},\"secondaryTarget\":{\"instanceID\":446130},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-2856030},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-2856024},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "beforeLeft": {
+      "phase": "left",
+      "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+      "frame": 105938,
+      "time": 234.582977,
+      "aspect": 1.77777779,
+      "player": [
+        227.148224,
+        -57.5,
+        0.0
+      ],
+      "boss": [
+        245.6787,
+        -57.5,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea1/CN_Boss",
+      "selected": "Stage/Boss/BossArea1/CN_Boss",
+      "outputPosition": [
+        238.453873,
+        -54.7406044,
+        -34.0
+      ],
+      "outputSize": 10.5000038,
+      "cameraPosition": [
+        238.453873,
+        -54.7406044,
+        -34.0
+      ],
+      "cameraSize": 10.5000038,
+      "playerViewport": [
+        0.197170258,
+        0.36860016,
+        34.0
+      ],
+      "bossViewport": [
+        0.693522,
+        0.36860016,
+        34.0
+      ],
+      "driverPosition": [
+        238.453873,
+        -54.7406044,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":74368},\"secondaryTarget\":{\"instanceID\":74960},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-16288},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-16282},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "afterLeft": {
+      "phase": "left",
+      "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+      "frame": 1051,
+      "time": 17.5,
+      "aspect": 1.77777779,
+      "player": [
+        227.148224,
+        -57.5,
+        0.0
+      ],
+      "boss": [
+        245.6787,
+        -57.5,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea1/CN_Boss",
+      "selected": "Stage/Boss/BossArea1/CN_Boss",
+      "outputPosition": [
+        238.453873,
+        -54.7406044,
+        -34.0
+      ],
+      "outputSize": 10.5000038,
+      "cameraPosition": [
+        238.453873,
+        -54.7406044,
+        -34.0
+      ],
+      "cameraSize": 10.5000038,
+      "playerViewport": [
+        0.197170258,
+        0.36860016,
+        34.0
+      ],
+      "bossViewport": [
+        0.693522,
+        0.36860016,
+        34.0
+      ],
+      "driverPosition": [
+        238.453873,
+        -54.7406044,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":445538},\"secondaryTarget\":{\"instanceID\":446130},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-2856030},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-2856024},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "beforeRight": {
+      "phase": "right",
+      "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+      "frame": 106238,
+      "time": 239.582977,
+      "aspect": 1.77777779,
+      "player": [
+        262.5721,
+        -57.5,
+        0.0
+      ],
+      "boss": [
+        245.6787,
+        -57.5,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea1/CN_Boss",
+      "selected": "Stage/Boss/BossArea1/CN_Boss",
+      "outputPosition": [
+        251.265045,
+        -54.7406044,
+        -34.0
+      ],
+      "outputSize": 10.5000029,
+      "cameraPosition": [
+        251.26503,
+        -54.7406044,
+        -34.0
+      ],
+      "cameraSize": 10.5000029,
+      "playerViewport": [
+        0.8028679,
+        0.368600368,
+        34.0
+      ],
+      "bossViewport": [
+        0.350365639,
+        0.368600368,
+        34.0
+      ],
+      "driverPosition": [
+        251.265045,
+        -54.7406044,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":74368},\"secondaryTarget\":{\"instanceID\":74960},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-16288},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-16282},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    },
+    "afterRight": {
+      "phase": "right",
+      "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+      "frame": 1351,
+      "time": 22.5,
+      "aspect": 1.77777779,
+      "player": [
+        262.5721,
+        -57.5,
+        0.0
+      ],
+      "boss": [
+        245.6787,
+        -57.5,
+        0.0
+      ],
+      "expected": "Stage/Boss/BossArea1/CN_Boss",
+      "selected": "Stage/Boss/BossArea1/CN_Boss",
+      "outputPosition": [
+        251.265045,
+        -54.7406044,
+        -34.0
+      ],
+      "outputSize": 10.5000029,
+      "cameraPosition": [
+        251.26503,
+        -54.7406044,
+        -34.0
+      ],
+      "cameraSize": 10.5000029,
+      "playerViewport": [
+        0.8028679,
+        0.368600368,
+        34.0
+      ],
+      "bossViewport": [
+        0.350365639,
+        0.368600368,
+        34.0
+      ],
+      "driverPosition": [
+        251.265045,
+        -54.7406044,
+        -24.0
+      ],
+      "driverSettings": "{\"primaryTarget\":{\"instanceID\":445538},\"secondaryTarget\":{\"instanceID\":446130},\"secondaryWeight\":0.5,\"worldOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"smoothTime\":0.3499999940395355,\"maxSpeed\":80.0,\"keepCurrentZ\":true,\"startFromCurrentMainCamera\":true,\"preferZoomOverCenterMovement\":true,\"innerFrame\":0.8199999928474426,\"controlledCamera\":{\"instanceID\":-2856030},\"assignSelfAsTrackingTarget\":true,\"confineCameraToBounds\":true,\"cameraBounds2D\":{\"instanceID\":-2856024},\"limitZoomToBounds\":true,\"boundsInset\":{\"x\":0.0,\"y\":0.0},\"adjustOrthographicSize\":true,\"useControlledCameraSizeAsMinimum\":true,\"minOrthographicSize\":8.0,\"maxOrthographicSize\":16.0,\"horizontalPadding\":4.0,\"verticalPadding\":3.0,\"zoomSmoothTime\":0.30000001192092898}",
+      "triggerEnabled": false,
+      "intro": false,
+      "started": true,
+      "dialogue": false
+    }
+  }
+]

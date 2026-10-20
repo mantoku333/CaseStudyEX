@@ -1,0 +1,150 @@
+{
+  "entries": [
+    {
+      "seq": 6071,
+      "timestampUtc": "2026-10-20T12:52:38.0873006Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 6072,
+      "timestampUtc": "2026-10-20T12:52:38.2227758Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 6745,
+      "timestampUtc": "2026-10-20T12:52:47.67802Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 6746,
+      "timestampUtc": "2026-10-20T12:52:47.6790198Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 6747,
+      "timestampUtc": "2026-10-20T12:52:47.6790198Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 7874,
+      "timestampUtc": "2026-10-20T12:53:06.006725Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 7875,
+      "timestampUtc": "2026-10-20T12:53:06.0082561Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 7876,
+      "timestampUtc": "2026-10-20T12:53:06.0082561Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 7877,
+      "timestampUtc": "2026-10-20T12:53:06.0082561Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 7888,
+      "timestampUtc": "2026-10-20T12:53:10.4830165Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 7889,
+      "timestampUtc": "2026-10-20T12:53:10.4845207Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 7890,
+      "timestampUtc": "2026-10-20T12:53:10.4845207Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 7891,
+      "timestampUtc": "2026-10-20T12:53:10.4845207Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    },
+    {
+      "seq": 7892,
+      "timestampUtc": "2026-10-20T12:53:10.4845207Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:2141 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000c0] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1337 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1252 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    }
+  ],
+  "cursor": 7901,
+  "session": "ec996a44d70549f39c1f26cf9fba1555",
+  "returned": 14,
+  "dropped": false,
+  "reset": false,
+  "counts": {
+    "error": 14,
+    "warn": 1917,
+    "log": 69
+  },
+  "groundTruth": {
+    "sampledUtc": "2026-10-20T12:53:19.1565461Z",
+    "ageMs": 84,
+    "compilationFailed": false,
+    "compiling": false,
+    "consoleErrors": 16,
+    "consoleWarnings": 2542,
+    "consoleLogs": 89,
+    "seeded": true
+  }
+}

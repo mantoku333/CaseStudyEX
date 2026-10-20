@@ -48,7 +48,8 @@ public sealed class DualTargetCameraTarget : MonoBehaviour
         Transform primary,
         Transform secondary,
         CinemachineCamera camera = null,
-        Collider2D bounds2D = null)
+        Collider2D bounds2D = null,
+        Vector3? initialViewPosition = null)
     {
         primaryTarget = primary;
         secondaryTarget = secondary;
@@ -64,7 +65,7 @@ public sealed class DualTargetCameraTarget : MonoBehaviour
         }
 
         CacheRuntimeZoomLimits();
-        MoveToCurrentMainCameraPosition();
+        MoveToCurrentMainCameraPosition(initialViewPosition);
         ApplyCameraTarget();
         positionVelocity = Vector3.zero;
     }
@@ -152,7 +153,7 @@ public sealed class DualTargetCameraTarget : MonoBehaviour
         }
     }
 
-    private void MoveToCurrentMainCameraPosition()
+    private void MoveToCurrentMainCameraPosition(Vector3? initialViewPosition)
     {
         if (!startFromCurrentMainCamera)
         {
@@ -160,12 +161,12 @@ public sealed class DualTargetCameraTarget : MonoBehaviour
         }
 
         Camera mainCamera = Camera.main;
-        if (mainCamera == null)
+        if (mainCamera == null && !initialViewPosition.HasValue)
         {
             return;
         }
 
-        Vector3 startPosition = mainCamera.transform.position;
+        Vector3 startPosition = initialViewPosition ?? mainCamera.transform.position;
         if (keepCurrentZ)
         {
             startPosition.z = transform.position.z;

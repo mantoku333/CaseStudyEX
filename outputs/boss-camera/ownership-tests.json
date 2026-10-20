@@ -1,0 +1,55 @@
+{
+  "status": "completed",
+  "duration": 0.23,
+  "summary": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0
+  },
+  "results": [
+    {
+      "FullName": "EncounterCameraOwnershipTests.CombatInitialization_CanUseTheIncomingViewWithoutChangingMotionSettings",
+      "Status": "Passed",
+      "Duration": 0.0467146,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Ownership_BlocksRoomAndPortalActivationUntilReleased",
+      "Status": "Passed",
+      "Duration": 0.0336086,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Ownership_DoesNotExposeTheCombatCameraToStoryMoveOrZoomTracks",
+      "Status": "Passed",
+      "Duration": 0.0290797,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Ownership_DoesNotRewritePoseLensFollowOrMovementDriver",
+      "Status": "Passed",
+      "Duration": 0.0275998,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Ownership_KeepsUsingTheLiveMovingCamera",
+      "Status": "Passed",
+      "Duration": 0.036735,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Ownership_TakesPrecedenceOverTimelineOverrideAndReleasesItCleanly",
+      "Status": "Passed",
+      "Duration": 0.0313577,
+      "Message": null,
+      "StackTrace": null
+    }
+  ]
+}

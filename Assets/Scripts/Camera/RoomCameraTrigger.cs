@@ -223,7 +223,7 @@ public class RoomCameraTrigger : MonoBehaviour
         MonoBehaviour portalOwner,
         RoomCameraTrigger destinationRoom)
     {
-        if (portalOwner == null ||
+        if (EncounterCameraOwnership.IsActive || portalOwner == null ||
             destinationRoom == null ||
             !destinationRoom.isActiveAndEnabled ||
             !destinationRoom.CanControlCamera())
@@ -252,7 +252,7 @@ public class RoomCameraTrigger : MonoBehaviour
         MonoBehaviour portalOwner,
         RoomCameraTrigger finalRoom)
     {
-        if (portalOwner == null ||
+        if (EncounterCameraOwnership.IsActive || portalOwner == null ||
             (portalCameraOwner != null && portalCameraOwner != portalOwner))
         {
             return false;
@@ -377,6 +377,11 @@ public class RoomCameraTrigger : MonoBehaviour
 
     public void ActivateCamera()
     {
+        if (EncounterCameraOwnership.IsActive)
+        {
+            return;
+        }
+
         if (IsActivationBlockedByPortalHold(this))
         {
             return;
@@ -737,6 +742,11 @@ public class RoomCameraTrigger : MonoBehaviour
 
     private static void ValidateActiveRoomAgainstPlayer()
     {
+        if (EncounterCameraOwnership.IsActive)
+        {
+            return;
+        }
+
         if (lastActiveRoomValidationFrame == Time.frameCount)
         {
             return;
@@ -829,7 +839,7 @@ public class RoomCameraTrigger : MonoBehaviour
         return true;
     }
 
-    private static void ClearPortalCameraHold()
+    internal static void ClearPortalCameraHold()
     {
         portalCameraOwner = null;
         portalCameraDestination = null;

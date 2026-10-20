@@ -1,0 +1,44 @@
+[
+  {
+    "encounter": "Stage/Area/324/Col_324",
+    "conversationFirst": false,
+    "weightDrops": 0,
+    "pausedStartWeight": 0.334625751,
+    "pausedEndWeight": 0.7757217
+  },
+  {
+    "encounter": "Stage/Area/324/Col_324",
+    "conversationFirst": true,
+    "weightDrops": 0,
+    "pausedStartWeight": 0.344506562,
+    "pausedEndWeight": 0.784393668
+  },
+  {
+    "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+    "conversationFirst": false,
+    "weightDrops": 0,
+    "pausedStartWeight": 0.318760574,
+    "pausedEndWeight": 0.7613046
+  },
+  {
+    "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+    "conversationFirst": true,
+    "weightDrops": 0,
+    "pausedStartWeight": 0.3262325,
+    "pausedEndWeight": 0.768064737
+  },
+  {
+    "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+    "conversationFirst": false,
+    "weightDrops": 0,
+    "pausedStartWeight": 0.319117218,
+    "pausedEndWeight": 0.7615378
+  },
+  {
+    "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+    "conversationFirst": true,
+    "weightDrops": 0,
+    "pausedStartWeight": 0.343298078,
+    "pausedEndWeight": 0.7833736
+  }
+]

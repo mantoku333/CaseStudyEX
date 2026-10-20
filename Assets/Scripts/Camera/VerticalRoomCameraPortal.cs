@@ -104,6 +104,11 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private void HandlePlayerEntered(Collider2D playerCollider, Transform player)
     {
+        if (EncounterCameraOwnership.IsActive)
+        {
+            return;
+        }
+
         bool wasOutsidePortal = overlappingPlayerColliders.Count == 0;
         overlappingPlayerColliders.Add(playerCollider);
         playerTransform = player;
@@ -223,6 +228,12 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private void UpdateTransitionCamera()
     {
+        if (EncounterCameraOwnership.IsActive)
+        {
+            OnDisable();
+            return;
+        }
+
         if (transitionCommitted || playerTransform == null)
         {
             return;

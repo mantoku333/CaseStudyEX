@@ -1,0 +1,48 @@
+{
+  "status": "completed",
+  "duration": 0.01,
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0
+  },
+  "results": [
+    {
+      "FullName": "StoryEventControllerDialogueCompletionTests.ActiveRunner_RemainsPendingWithoutTimeout",
+      "Status": "Passed",
+      "Duration": 0.0017825,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "StoryEventControllerDialogueCompletionTests.CompletionCallback_ClearsPendingState",
+      "Status": "Passed",
+      "Duration": 0.000552,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "StoryEventControllerDialogueCompletionTests.MissingRunner_GetsStartupObservationThenRecovers",
+      "Status": "Passed",
+      "Duration": 0.0003863,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "StoryEventControllerDialogueCompletionTests.StoppedRunner_RecoversWhenCompletionCallbackWasMissed",
+      "Status": "Passed",
+      "Duration": 0.0002747,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "StoryEventControllerDialogueCompletionTests.Unsubscribe_ClearsRunnerAndStateForNextDialogue",
+      "Status": "Passed",
+      "Duration": 0.0011534,
+      "Message": null,
+      "StackTrace": null
+    }
+  ]
+}

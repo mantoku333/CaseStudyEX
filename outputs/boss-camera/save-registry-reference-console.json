@@ -1,0 +1,42 @@
+{
+  "entries": [
+    {
+      "seq": 10176,
+      "timestampUtc": "2026-10-20T12:21:01.8169952Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "Coroutine couldn't be started because the the game object 'Event_01' is inactive!",
+      "stackTrace": "UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator)\nStoryEventController:StartLetterBoxTransition (UnityEngine.CanvasGroup,single,single,single,single,System.Action) (at Assets/Scripts/Managers/StoryEventController.cs:2109)\nStoryEventController:RestoreLetterBoxViewVisibility () (at Assets/Scripts/Managers/StoryEventController.cs:1911)\nStoryEventController:StopEvent () (at Assets/Scripts/Managers/StoryEventController.cs:293)\nStoryEventController:OnDisable () (at Assets/Scripts/Managers/StoryEventController.cs:234)\n",
+      "seeded": false
+    },
+    {
+      "seq": 10178,
+      "timestampUtc": "2026-10-20T12:21:02.5581342Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "[SaveManager] Save module restore failed: BossAreaController. UnityEngine.MissingReferenceException: The object of type 'BossAreaController' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.\r\n  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponentFastPath (System.Type type, System.IntPtr oneFurtherThanResultValue) [0x00006] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at UnityEngine.Component.GetComponent[T] () [0x00021] in <6a469c5cf96a43eab23a293167261e20>:0 \r\n  at BossAreaController.EnableTriggerComponents () [0x00000] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1998 \r\n  at BossAreaController.ResetUnfinishedEncounterAfterLoad () [0x000ac] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1299 \r\n  at BossAreaController.Restore (SaveGameData saveData) [0x0000f] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Environment\\BossAreaController.cs:1218 \r\n  at SaveManager.RestoreModules (SaveGameData saveData) [0x0001a] in C:\\Unity projects for classes\\4thyr\\CaseStudyEX\\Assets\\Scripts\\Managers\\SaveManager.cs:786 ",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nSaveManager:RestoreModules (SaveGameData) (at Assets/Scripts/Managers/SaveManager.cs:790)\nSaveManager:TryApplyPendingLoad () (at Assets/Scripts/Managers/SaveManager.cs:609)\nSaveManager:LateUpdate () (at Assets/Scripts/Managers/SaveManager.cs:93)\n",
+      "seeded": false
+    }
+  ],
+  "cursor": 10180,
+  "session": "59e9366247b34daeaccbcdb75ffb4b1f",
+  "returned": 2,
+  "dropped": false,
+  "reset": false,
+  "counts": {
+    "error": 2,
+    "warn": 1,
+    "log": 2
+  },
+  "groundTruth": {
+    "sampledUtc": "2026-10-20T12:21:19.6159548Z",
+    "ageMs": 124,
+    "compilationFailed": false,
+    "compiling": false,
+    "consoleErrors": 2,
+    "consoleWarnings": 1,
+    "consoleLogs": 2,
+    "seeded": true
+  }
+}
