@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 0.2
+    m_Start: 2
     m_ClipIn: 0.04999999999999999
     m_Asset: {fileID: 2869561812980922962}
     m_Duration: 0.033333333333333354
@@ -379,11 +379,11 @@ MonoBehaviour:
   - {fileID: 9018057022353266388}
   - {fileID: -8455305301741701886}
   - {fileID: 1112982847894433}
-  m_FixedDuration: 0
+  m_FixedDuration: 3
   m_EditorSettings:
     m_Framerate: 60
     m_ScenePreview: 1
-  m_DurationMode: 0
+  m_DurationMode: 1
   m_MarkerTrack: {fileID: 0}
 --- !u!114 &1112982847894433
 MonoBehaviour:
@@ -598,7 +598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
   m_Name: Event/Panel Point
   m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
-  m_Time: 0.2
+  m_Time: 1
   markerId: fd40845972ef46b19fe643c3bb200821
   markerMode: 1
   panelObject:
@@ -670,7 +670,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01067be7daffa5147979aee2eacf7d38, type: 3}
   m_Name: Event/Panel Point
   m_EditorClassIdentifier: Assembly-CSharp::EventPanelMarker
-  m_Time: 0.15
+  m_Time: 0.25
   markerId: fd40845972ef46b19fe643c3bb200821
   markerMode: 1
   panelObject:
