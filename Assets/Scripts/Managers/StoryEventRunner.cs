@@ -102,6 +102,7 @@ public sealed class StoryEventRunner : MonoBehaviour
 
         waitingDialogueCompletion = false;
         UnsubscribeFromDialogueComplete();
+        GameCursorController.SetMenuCursorModeActive(this, false);
         StoryPauseRuntime.ClearOverride();
         RestoreGameplayUiVisibility();
         RestoreEventCameraPriority();
@@ -117,6 +118,7 @@ public sealed class StoryEventRunner : MonoBehaviour
 
     private void OnDisable()
     {
+        GameCursorController.SetMenuCursorModeActive(this, false);
         if (activeRoutine != null)
         {
             StopCoroutine(activeRoutine);
@@ -214,6 +216,7 @@ public sealed class StoryEventRunner : MonoBehaviour
 
     private IEnumerator RunEventSequence(StoryEventDefinition definition, DialogueRunner runner)
     {
+        GameCursorController.SetMenuCursorModeActive(this, true);
         ElevateEventCameraPriority();
         HideGameplayUiForEvent();
         ShowLetterBoxView();
@@ -264,6 +267,7 @@ public sealed class StoryEventRunner : MonoBehaviour
         }
         finally
         {
+            GameCursorController.SetMenuCursorModeActive(this, false);
             waitingDialogueCompletion = false;
             UnsubscribeFromDialogueComplete();
             StoryPauseRuntime.ClearOverride();
