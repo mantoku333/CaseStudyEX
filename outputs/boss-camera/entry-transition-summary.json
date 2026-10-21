@@ -1,0 +1,212 @@
+[
+  {
+    "encounter": "Stage/Area/324/Col_324",
+    "conversationFirst": false,
+    "duration": 2.4,
+    "style": "EaseInOut",
+    "earlyWeight": 0.00211904943,
+    "midpointTime": 1.2267372945011346,
+    "midpointWeight": 0.498507142,
+    "completedBySeconds": 2.4935008999433137,
+    "fromPosition": [
+      1038.57483,
+      140.026779,
+      -10.0
+    ],
+    "fromSize": 12.4,
+    "earlyPosition": [
+      1038.73254,
+      139.979187,
+      -10.0
+    ],
+    "earlySize": 12.4012709,
+    "middlePosition": [
+      1052.22107,
+      128.829941,
+      -10.0
+    ],
+    "middleSize": 12.6991024,
+    "toPosition": [
+      1065.84839,
+      117.566055,
+      -10.0
+    ],
+    "toSize": 12.9999971,
+    "released": true
+  },
+  {
+    "encounter": "Stage/Area/324/Col_324",
+    "conversationFirst": true,
+    "duration": 2.4,
+    "style": "EaseInOut",
+    "earlyWeight": 0.00128160324,
+    "midpointTime": 1.2308839002267575,
+    "midpointWeight": 0.508818865,
+    "completedBySeconds": 2.430859899376422,
+    "fromPosition": [
+      1035.92871,
+      138.523819,
+      -10.0
+    ],
+    "fromSize": 12.4,
+    "earlyPosition": [
+      1035.967,
+      138.496964,
+      -10.0
+    ],
+    "earlySize": 12.4007683,
+    "middlePosition": [
+      1051.15247,
+      127.860115,
+      -10.0
+    ],
+    "middleSize": 12.70529,
+    "toPosition": [
+      1065.84839,
+      117.566055,
+      -10.0
+    ],
+    "toSize": 12.9999971,
+    "released": true
+  },
+  {
+    "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+    "conversationFirst": false,
+    "duration": 2.4,
+    "style": "EaseInOut",
+    "earlyWeight": 0.000720796,
+    "midpointTime": 1.1999999999999993,
+    "midpointWeight": 0.4816456,
+    "completedBySeconds": 2.4666118976757367,
+    "fromPosition": [
+      637.009338,
+      75.57239,
+      -10.0
+    ],
+    "fromSize": 12.4,
+    "earlyPosition": [
+      637.132141,
+      75.567276,
+      -10.0100908
+    ],
+    "earlySize": 12.39827,
+    "middlePosition": [
+      652.2722,
+      72.1581039,
+      -16.7430382
+    ],
+    "middleSize": 11.24405,
+    "toPosition": [
+      668.5906,
+      68.4836044,
+      -24.0
+    ],
+    "toSize": 10.0,
+    "released": true
+  },
+  {
+    "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+    "conversationFirst": true,
+    "duration": 2.4,
+    "style": "EaseInOut",
+    "earlyWeight": 0.00128646323,
+    "midpointTime": 1.2001544997165539,
+    "midpointWeight": 0.489587218,
+    "completedBySeconds": 2.466763903061228,
+    "fromPosition": [
+      637.009338,
+      75.57239,
+      -10.0
+    ],
+    "fromSize": 12.4,
+    "earlyPosition": [
+      637.05,
+      75.56327,
+      -10.01801
+    ],
+    "earlySize": 12.3969126,
+    "middlePosition": [
+      652.4711,
+      72.10181,
+      -16.8542213
+    ],
+    "middleSize": 11.2249908,
+    "toPosition": [
+      668.5906,
+      68.4836044,
+      -24.0
+    ],
+    "toSize": 10.0,
+    "released": true
+  },
+  {
+    "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+    "conversationFirst": false,
+    "duration": 2.4,
+    "style": "EaseInOut",
+    "earlyWeight": 0.0007455322,
+    "midpointTime": 1.1999445011337855,
+    "midpointWeight": 0.4820077,
+    "completedBySeconds": 2.4668089994331055,
+    "fromPosition": [
+      244.77951,
+      -52.0,
+      -24.3637142
+    ],
+    "fromSize": 12.0,
+    "earlyPosition": [
+      244.779556,
+      -52.0017166,
+      -24.3634434
+    ],
+    "earlySize": 11.9988813,
+    "middlePosition": [
+      244.8084,
+      -53.1086159,
+      -24.1884
+    ],
+    "middleSize": 11.276988,
+    "toPosition": [
+      244.839447,
+      -54.3,
+      -24.0
+    ],
+    "toSize": 10.5,
+    "released": true
+  },
+  {
+    "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+    "conversationFirst": true,
+    "duration": 2.4,
+    "style": "EaseInOut",
+    "earlyWeight": 0.00276516867,
+    "midpointTime": 1.2288077947845828,
+    "midpointWeight": 0.5076017,
+    "completedBySeconds": 2.4289208971088456,
+    "fromPosition": [
+      244.77951,
+      -52.0,
+      -24.3637142
+    ],
+    "fromSize": 12.0,
+    "earlyPosition": [
+      244.779678,
+      -52.00636,
+      -24.362709
+    ],
+    "earlySize": 11.9958525,
+    "middlePosition": [
+      244.809937,
+      -53.1674843,
+      -24.1790924
+    ],
+    "middleSize": 11.2385979,
+    "toPosition": [
+      244.839447,
+      -54.3,
+      -24.0
+    ],
+    "toSize": 10.5,
+    "released": true
+  }
+]

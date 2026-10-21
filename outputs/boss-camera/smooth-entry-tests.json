@@ -1,0 +1,76 @@
+{
+  "status": "completed",
+  "duration": 0.33,
+  "summary": {
+    "total": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0
+  },
+  "results": [
+    {
+      "FullName": "EncounterCameraOwnershipTests.CombatInitialization_CanUseTheIncomingViewWithoutChangingMotionSettings",
+      "Status": "Passed",
+      "Duration": 0.0471235,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Entry_BlendsFromTheRenderedViewToTheLiveCombatCameraWithoutRestarting",
+      "Status": "Passed",
+      "Duration": 0.0474398,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Entry_CanBeCancelledAndReacquiredWithoutRetainingTheOldBlend",
+      "Status": "Passed",
+      "Duration": 0.0329242,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Entry_UsesTheCurrentRoomBlendAndHonorsCustomBlendSettings",
+      "Status": "Passed",
+      "Duration": 0.032815,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Ownership_BlocksRoomAndPortalActivationUntilReleased",
+      "Status": "Passed",
+      "Duration": 0.0281182,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Ownership_DoesNotExposeTheCombatCameraToStoryMoveOrZoomTracks",
+      "Status": "Passed",
+      "Duration": 0.0285669,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Ownership_DoesNotRewritePoseLensFollowOrMovementDriver",
+      "Status": "Passed",
+      "Duration": 0.0277301,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Ownership_KeepsUsingTheLiveMovingCamera",
+      "Status": "Passed",
+      "Duration": 0.030519,
+      "Message": null,
+      "StackTrace": null
+    },
+    {
+      "FullName": "EncounterCameraOwnershipTests.Ownership_TakesPrecedenceOverTimelineOverrideAndReleasesItCleanly",
+      "Status": "Passed",
+      "Duration": 0.0303965,
+      "Message": null,
+      "StackTrace": null
+    }
+  ]
+}

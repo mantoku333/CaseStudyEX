@@ -121,6 +121,11 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private Coroutine lastBossHealthThresholdStoryRoutine;
     private LastBossController subscribedLastBossController;
     private bool lastBossHealthThresholdStoryEventPlayed;
+    private PlayerHealth cameraOwnershipPlayerHealth;
+    private bool encounterRoomCameraRestored;
+    private bool encounterCompletionFinished;
+    private Vector3? cameraViewBeforeOwnership;
+    private int cameraOwnershipAcquiredFrame = -1;
 
     public int Priority => 240;
     public string BossDisplayName => ResolveBossDisplayName();
@@ -213,6 +218,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void OnDisable()
     {
+        ReleaseEncounterCameraOwnership(restoreRoomCamera: true);
         StopEncounterStoryRoutines();
         UnsubscribeLastBossHealthChanged();
         StopStageBossIntroRoutine();
@@ -234,6 +240,19 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void Update()
     {
+        if (EncounterCameraOwnership.IsOwner(this))
+        {
+            if (SaveManager.IsLoadInProgress || cameraOwnershipPlayerHealth == null ||
+                cameraOwnershipPlayerHealth.CurrentHealth <= 0)
+            {
+                ReleaseEncounterCameraOwnership(restoreRoomCamera: !SaveManager.IsLoadInProgress);
+            }
+            else
+            {
+                EncounterCameraOwnership.Maintain(this);
+            }
+        }
+
         if (!encounterStarted || encounterCompleted)
         {
             return;
@@ -276,6 +295,15 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         if (!TryResolvePlayerBodyCollider(sourceCollider, out Collider2D bodyCollider))
         {
             return;
+        }
+
+        // Camera ownership begins on body overlap. The existing fully-inside
+        // check below still controls confinement, introduction and combat timing.
+        Collider2D areaCollider = GetComponent<Collider2D>();
+        if (areaCollider != null && areaCollider.bounds.Intersects(bodyCollider.bounds))
+        {
+            CachePlayerReferencesFromBodyCollider(bodyCollider);
+            AcquireEncounterCameraOwnership();
         }
 
         // 本体が半分だけ触れた状態で拘束を始めると、FixedUpdate の補正で部屋内へ押し込まれて見える。
@@ -1179,6 +1207,12 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void FinishEncounterCompletion()
     {
+        if (encounterCompletionFinished)
+        {
+            return;
+        }
+        encounterCompletionFinished = true;
+
         if (enableWallMechanic)
         {
             UnlockArea();
@@ -1225,6 +1259,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
             return;
         }
 
+        StopEncounterStoryRoutines();
         UnsubscribeLastBossHealthChanged();
         StopStageBossIntroRoutine();
         RestoreStageBossIntroPlayerLock();
@@ -1263,6 +1298,9 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void ResetUnfinishedEncounterAfterLoad()
     {
+        StopEncounterStoryRoutines();
+        encounterRoomCameraRestored = false;
+        encounterCompletionFinished = false;
         UnsubscribeLastBossHealthChanged();
         lastBossHealthThresholdStoryEventPlayed = false;
         StopStageBossIntroRoutine();
@@ -1900,6 +1938,96 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         }
     }
 
+    public static void AcquireCameraForStoryEvent(StoryEventController storyEvent)
+    {
+        if (storyEvent == null)
+        {
+            return;
+        }
+
+        BossAreaController[] areas = FindObjectsByType<BossAreaController>(FindObjectsSortMode.None);
+        for (int i = 0; i < areas.Length; i++)
+        {
+            BossAreaController area = areas[i];
+            if (area.isActiveAndEnabled && area.gameObject.scene == storyEvent.gameObject.scene &&
+                string.Equals(area.preEncounterStoryEventId?.Trim(), storyEvent.EventId, StringComparison.Ordinal))
+            {
+                area.AcquireEncounterCameraOwnership();
+            }
+        }
+    }
+
+    public static void ReleaseCameraForCancelledStoryEvent(StoryEventController storyEvent)
+    {
+        BossAreaController[] areas = FindObjectsByType<BossAreaController>(FindObjectsSortMode.None);
+        for (int i = 0; i < areas.Length; i++)
+        {
+            BossAreaController area = areas[i];
+            if (!area.encounterStarted && area.gameObject.scene == storyEvent.gameObject.scene &&
+                string.Equals(area.preEncounterStoryEventId?.Trim(), storyEvent.EventId, StringComparison.Ordinal))
+            {
+                area.ReleaseEncounterCameraOwnership(restoreRoomCamera: true);
+            }
+        }
+    }
+
+    private void AcquireEncounterCameraOwnership()
+    {
+        if (EncounterCameraOwnership.IsOwner(this) || IsEncounterCompleted ||
+            SaveManager.IsLoadInProgress || fixedBossCamera == null || !isActiveAndEnabled ||
+            !ResolveBossReferences(logIssues: false))
+        {
+            return;
+        }
+
+        CachePlayerReferences();
+        PlayerHealth health = playerRoot != null ? playerRoot.GetComponent<PlayerHealth>() : null;
+        Camera incomingCamera = Camera.main;
+        Vector3? incomingView = incomingCamera != null ? incomingCamera.transform.position : null;
+        if (health == null || health.CurrentHealth <= 0 ||
+            !EncounterCameraOwnership.Acquire(this, fixedBossCamera))
+        {
+            return;
+        }
+
+        encounterRoomCameraRestored = false;
+        cameraViewBeforeOwnership = incomingView;
+        cameraOwnershipAcquiredFrame = Time.frameCount;
+        cameraOwnershipPlayerHealth = health;
+        cameraOwnershipPlayerHealth.Died += OnCameraOwnershipPlayerDied;
+    }
+
+    private void OnCameraOwnershipPlayerDied()
+    {
+        ReleaseEncounterCameraOwnership(restoreRoomCamera: true);
+    }
+
+    internal void ReleaseEncounterCameraOwnership(bool restoreRoomCamera)
+    {
+        if (cameraOwnershipPlayerHealth != null)
+        {
+            cameraOwnershipPlayerHealth.Died -= OnCameraOwnershipPlayerDied;
+        }
+        cameraOwnershipPlayerHealth = null;
+        cameraViewBeforeOwnership = null;
+        cameraOwnershipAcquiredFrame = -1;
+
+        if (!EncounterCameraOwnership.Release(this))
+        {
+            return;
+        }
+
+        if (fixedBossCamera != null)
+        {
+            fixedBossCamera.Priority.Value = inactiveCameraPriority;
+            fixedBossCamera.Priority.Enabled = true;
+        }
+        if (restoreRoomCamera && restoreRoomCameraAfterBoss)
+        {
+            RestoreRoomCameraAfterBoss();
+        }
+    }
+
     private void ActivateBossCamera()
     {
         if (fixedBossCamera == null)
@@ -1910,10 +2038,12 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         ConfigureDualTargetCamera();
         fixedBossCamera.Priority.Value = activeCameraPriority;
         fixedBossCamera.Priority.Enabled = true;
+        AcquireEncounterCameraOwnership();
     }
 
     private void DeactivateBossCamera()
     {
+        ReleaseEncounterCameraOwnership(restoreRoomCamera: false);
         if (fixedBossCamera == null)
         {
             return;
@@ -1925,6 +2055,12 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
     private void RestoreRoomCameraAfterBoss()
     {
+        if (encounterRoomCameraRestored)
+        {
+            return;
+        }
+        encounterRoomCameraRestored = true;
+
         RoomCameraTrigger roomTrigger = GetComponent<RoomCameraTrigger>();
         if (roomTrigger != null)
         {
@@ -1969,7 +2105,14 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
 
         Transform primary = playerRoot != null ? playerRoot : ResolvePlayerRoot();
         Transform secondary = bossRoot;
-        dualTargetCameraTarget.Configure(primary, secondary, fixedBossCamera, GetComponent<Collider2D>());
+        // Ownership may have begun before this original combat initialization
+        // point. Seed from the incoming view, rather than the now-owned boss
+        // camera. Subsequent motion/zoom and the original bounds logic are unchanged.
+        Vector3? initialView = EncounterCameraOwnership.IsOwner(this) &&
+                               cameraOwnershipAcquiredFrame < Time.frameCount
+            ? cameraViewBeforeOwnership
+            : null;
+        dualTargetCameraTarget.Configure(primary, secondary, fixedBossCamera, GetComponent<Collider2D>(), initialView);
     }
 
     private Transform ResolvePlayerRoot()

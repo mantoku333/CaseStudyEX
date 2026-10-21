@@ -1,0 +1,24 @@
+{
+  "revision": "abc1924ecf1bf74f22bb3b4f609c90ef7eeac736",
+  "aspect": "16:9",
+  "sources": [
+    {
+      "path": "Assets/Scripts/Camera/DualTargetCameraTarget.cs",
+      "sha256": "3F8DEB06F3BCFC191AAD8C1BC05E9EFA28D93ADA16244550A3817EBEAAFDA9D5"
+    },
+    {
+      "path": "Assets/Scripts/Environment/BossAreaController.cs",
+      "sha256": "59B47205F9AD1291585653CA8F547E739F6FDE26354830C43E8BE255E8657057"
+    },
+    {
+      "path": "Assets/Scripts/Managers/StoryEventController.cs",
+      "sha256": "383C6330136DC02EE5B8ADA4CD72E0248A9313BF9F998E147F7F171AF06FDDF2"
+    },
+    {
+      "path": "Assets/Scenes/FixScenes/Fix_0925_NYAA.unity",
+      "sha256": "C54BD5A95C9BB2E1F4AF99D8D6ADFC9A463B9E51F1A44F260D3353B45A1E1B08"
+    }
+  ],
+  "recordedAtUtc": "2026-10-20T11:43:55.7622161Z",
+  "baselineComplete": true
+}

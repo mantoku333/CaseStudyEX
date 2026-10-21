@@ -1,0 +1,56 @@
+[
+  {
+    "mode": "arena-first",
+    "encounter": "Stage/Area/324/Col_324",
+    "samples": 43,
+    "maxPositionDelta": 0.0,
+    "maxSizeDelta": 0.0,
+    "maxActorCoordinateDelta": 0.0,
+    "maxActorViewportDelta": 0.0
+  },
+  {
+    "mode": "arena-first",
+    "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+    "samples": 43,
+    "maxPositionDelta": 0.0,
+    "maxSizeDelta": 0.0,
+    "maxActorCoordinateDelta": 0.0,
+    "maxActorViewportDelta": 0.0
+  },
+  {
+    "mode": "arena-first",
+    "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+    "samples": 43,
+    "maxPositionDelta": 0.0,
+    "maxSizeDelta": 0.0,
+    "maxActorCoordinateDelta": 0.0,
+    "maxActorViewportDelta": 0.0
+  },
+  {
+    "mode": "conversation-first",
+    "encounter": "Stage/Area/324/Col_324",
+    "samples": 43,
+    "maxPositionDelta": 0.016110000000026048,
+    "maxSizeDelta": 0.011030200000000434,
+    "maxActorCoordinateDelta": 0.0,
+    "maxActorViewportDelta": 0.00044250000000001233
+  },
+  {
+    "mode": "conversation-first",
+    "encounter": "Stage/Boss/BossArea (1)/Col_BossArea",
+    "samples": 43,
+    "maxPositionDelta": 0.0,
+    "maxSizeDelta": 0.0,
+    "maxActorCoordinateDelta": 0.0,
+    "maxActorViewportDelta": 0.0
+  },
+  {
+    "mode": "conversation-first",
+    "encounter": "Stage/Boss/BossArea1/Col_BossArea",
+    "samples": 43,
+    "maxPositionDelta": 0.0,
+    "maxSizeDelta": 0.0,
+    "maxActorCoordinateDelta": 0.0,
+    "maxActorViewportDelta": 0.0
+  }
+]

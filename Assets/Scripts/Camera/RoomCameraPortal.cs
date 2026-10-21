@@ -101,6 +101,11 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
     private void HandlePlayerEntered(Collider2D playerCollider, Transform player)
     {
+        if (EncounterCameraOwnership.IsActive)
+        {
+            return;
+        }
+
         bool wasOutsidePortal = overlappingPlayerColliders.Count == 0;
         overlappingPlayerColliders.Add(playerCollider);
         playerTransform = player;
@@ -204,6 +209,13 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
     private void UpdateTransitionCamera()
     {
+        if (EncounterCameraOwnership.IsActive)
+        {
+            // Discard a preview already in flight when the arena took ownership.
+            OnDisable();
+            return;
+        }
+
         if (transitionCommitted || playerTransform == null)
         {
             return;

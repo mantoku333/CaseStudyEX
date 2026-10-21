@@ -1,0 +1,19 @@
+{
+  "source": "restored original gameplay scripts",
+  "saved": true,
+  "loaded": true,
+  "disabled": [
+    {
+      "path": "Stage/Area/221/Col_221",
+      "id": 438386
+    }
+  ],
+  "expiredBefore": [],
+  "expiredAfter": [
+    {
+      "id": 438386,
+      "path": "Stage/Area/221/Col_221"
+    }
+  ],
+  "loadComplete": true
+}

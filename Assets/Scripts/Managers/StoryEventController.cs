@@ -253,11 +253,17 @@ public sealed class StoryEventController : MonoBehaviour
             return false;
         }
 
+        BossAreaController.AcquireCameraForStoryEvent(this);
         playRoutine = StartCoroutine(PlayEventRoutine(resolvedDirector));
         return true;
     }
 
     public void StopEvent()
+    {
+        StopEventInternal(cancelEncounterCamera: true);
+    }
+
+    private void StopEventInternal(bool cancelEncounterCamera)
     {
         GameCursorController.SetMenuCursorModeActive(this, false);
         bool hadCinematicState = cinematicSnapshot != null;
@@ -305,6 +311,10 @@ public sealed class StoryEventController : MonoBehaviour
         firedDialogueClipKeys.Clear();
         firedPanelClipKeys.Clear();
         firedTimelinePointKeys.Clear();
+        if (cancelEncounterCamera && !HasCompleted)
+        {
+            BossAreaController.ReleaseCameraForCancelledStoryEvent(this);
+        }
     }
 
     /// <summary>
@@ -322,7 +332,7 @@ public sealed class StoryEventController : MonoBehaviour
         // A manually-started or partially-initialised event must still receive
         // the same flag/ability contract as a normally completed event.
         ApplyStartMutations();
-        StopEvent();
+        StopEventInternal(cancelEncounterCamera: false);
         ApplyCompletionState();
         return true;
     }
@@ -413,7 +423,9 @@ public sealed class StoryEventController : MonoBehaviour
 
     public CinemachineCamera GetEventCameraForTimeline()
     {
-        return activeEventCamera != null ? activeEventCamera : ResolveEventCamera();
+        return EncounterCameraOwnership.IsActive
+            ? null
+            : activeEventCamera != null ? activeEventCamera : ResolveEventCamera();
     }
 
     private static void PlayAudioMarker(StoryAudioMarker marker)
@@ -2185,7 +2197,7 @@ public sealed class StoryEventController : MonoBehaviour
     {
         RestoreEventCameraPriority();
 
-        if (!useEventCameraDuringEvent)
+        if (!useEventCameraDuringEvent || EncounterCameraOwnership.IsActive)
         {
             return;
         }
@@ -2330,7 +2342,7 @@ public sealed class StoryEventController : MonoBehaviour
 
     private void RestoreRoomCameraOnEventExit()
     {
-        if (!restoreRoomCameraOnExit)
+        if (!restoreRoomCameraOnExit || EncounterCameraOwnership.IsActive)
         {
             cachedRoomCameraBeforeEvent = null;
             return;
@@ -2358,7 +2370,7 @@ public sealed class StoryEventController : MonoBehaviour
     {
         LetterBoxExitState letterBoxExit = BeginLetterBoxExit();
         CinemachineCamera handoffCamera = activeEventCamera;
-        bool shouldRestoreRoomCamera = restoreRoomCameraOnExit;
+        bool shouldRestoreRoomCamera = restoreRoomCameraOnExit && !EncounterCameraOwnership.IsActive;
         bool hasHandoffCamera = handoffCamera != null;
         bool hasCameraTarget = false;
         bool targetUsesDefaultCamera = false;
