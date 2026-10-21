@@ -265,6 +265,7 @@ public sealed class StoryEventController : MonoBehaviour
 
     private void StopEventInternal(bool cancelEncounterCamera)
     {
+        GameCursorController.SetMenuCursorModeActive(this, false);
         bool hadCinematicState = cinematicSnapshot != null;
         StopActiveDialogue();
         StopPanelFromTimeline(resumeDirector: false);
@@ -604,6 +605,7 @@ public sealed class StoryEventController : MonoBehaviour
 
     private IEnumerator PlayEventRoutine(PlayableDirector resolvedDirector)
     {
+        GameCursorController.SetMenuCursorModeActive(this, true);
         directorStopped = false;
         completeMutationsApplied = false;
         firedDialogueClipKeys.Clear();
@@ -679,6 +681,7 @@ public sealed class StoryEventController : MonoBehaviour
         }
 
         playRoutine = null;
+        GameCursorController.SetMenuCursorModeActive(this, false);
         PlayNextEventOnCompleteIfNeeded();
     }
 

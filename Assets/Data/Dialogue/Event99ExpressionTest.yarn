@@ -87,3 +87,18 @@ title: ADVtest_Thanatos
 タナトス: このまま止めて、配置を確認できます。 #face:default
 三人の表示を保ったまま、地の文では全員が暗くなります。
 ===
+
+
+title: ADVtest_NoxExpressions
+---
+ノクス: 通常の表情です。 #nox:left #face:normal
+ノクス: 怒り表情と怒り漫符を一緒に再生します。 #face:angry
+ノクス: 同じ怒り表情では再生が続きます。 #face:angry
+イリス: わたしが話しても、ノクスの漫符は動きます。 #face:normal
+ノクス: 上機嫌の音符アニメーションです。 #face:happy
+ノクス: 通常に戻すと漫符も消えます。 #face:normal
+タナトス: 右側の配置でも確認しましょう。
+ノクス: 右側でも怒り漫符がついてきます。 #face:angry
+ノクス: 上機嫌の音符も同じ位置に表示されます。 #face:happy
+ノクス: 左側へ戻って通常表情です。 #nox:left #face:default
+===

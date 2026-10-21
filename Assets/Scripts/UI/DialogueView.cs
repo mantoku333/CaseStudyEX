@@ -181,6 +181,14 @@ namespace Metroidvania.UI
             private PortraitAnimationClip? _clip;
             private string? _characterName;
             private double _elapsedSeconds;
+            private Image? _overlayImage;
+            private bool _mirrorOverlayPosition;
+
+            public void SetOverlayMirrored(bool mirrored)
+            {
+                _mirrorOverlayPosition = mirrored;
+                UpdateOverlay();
+            }
 
             public void Play(Image? image, Sprite sprite, PortraitAnimationClip? clip, string characterName)
             {
@@ -192,6 +200,7 @@ namespace Metroidvania.UI
                 _characterName = characterName;
                 if (!continuing) _elapsedSeconds = 0d;
                 SetPortrait(image, clip != null ? clip.GetFrame(_elapsedSeconds) ?? sprite : sprite, true);
+                UpdateOverlay();
             }
 
             public void Advance(float unscaledDeltaSeconds)
@@ -200,10 +209,49 @@ namespace Metroidvania.UI
                 _elapsedSeconds += Math.Max(0f, unscaledDeltaSeconds);
                 Sprite frame = _clip.GetFrame(_elapsedSeconds);
                 if (frame != null && _image.sprite != frame) _image.sprite = frame;
+                UpdateOverlay();
+            }
+
+            private void UpdateOverlay()
+            {
+                var overlay = _clip != null ? _clip.OverlayAnimation : null;
+                Sprite? frame = overlay != null ? overlay.GetFrame(_elapsedSeconds) : null;
+                if (_image == null || frame == null)
+                {
+                    if (_overlayImage != null) _overlayImage.gameObject.SetActive(false);
+                    return;
+                }
+
+                if (_overlayImage == null)
+                {
+                    var child = new GameObject("ExpressionOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                    _overlayImage = child.GetComponent<Image>();
+                    _overlayImage.raycastTarget = false;
+                    _overlayImage.preserveAspect = true;
+                }
+                var rect = _overlayImage.rectTransform;
+                rect.SetParent(_image.transform, false);
+                rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+                // Follow the displayed sprite, including letterboxing, rotation and side changes.
+                Vector2 size = _image.rectTransform.rect.size;
+                if (_image.preserveAspect && _image.sprite != null)
+                {
+                    float aspect = _image.sprite.rect.width / _image.sprite.rect.height;
+                    if (size.x > size.y * aspect) size.x = size.y * aspect;
+                    else size.y = size.x / aspect;
+                }
+                Vector2 position = _clip!.OverlayPosition;
+                if (_mirrorOverlayPosition) position.x = -position.x;
+                rect.anchoredPosition = Vector2.Scale(size, position);
+                rect.sizeDelta = Vector2.one * size.x * _clip.OverlayWidth;
+                _overlayImage.sprite = frame;
+                _overlayImage.color = _image.color;
+                _overlayImage.gameObject.SetActive(true);
             }
 
             public void Stop()
             {
+                if (_overlayImage != null) _overlayImage.gameObject.SetActive(false);
                 _image = null;
                 _clip = null;
                 _characterName = null;
@@ -752,6 +800,8 @@ namespace Metroidvania.UI
             rect.anchoredPosition = right ? noxRightPosition : noxLeftPosition;
             rect.sizeDelta = right ? noxRightSize : noxLeftSize;
             rect.localRotation = Quaternion.Euler(0f, 0f, right ? noxRightRotation : noxLeftRotation);
+            // Keep the mark on the inward side when Nox is partly outside the screen.
+            _noxPortraitPlayback.SetOverlayMirrored(right);
         }
 
         private void PositionIrisWithNox(bool paired)
