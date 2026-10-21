@@ -157,7 +157,7 @@ MonoBehaviour:
   playerTag: Player
   clearVelocity: 1
   promptText: {fileID: 0}
-  promptFontAsset: {fileID: 11400000, guid: 7d5b643ad04c2154ebad182b952e95d5, type: 2}
+  promptFontAsset: {fileID: 11400000, guid: a91ee816672104a358e3b7be965d2bd9, type: 2}
   autoCreatePrompt: 1
   promptMessage: "SPACE\u3067\u79FB\u52D5"
   promptTextColor: {r: 1, g: 1, b: 1, a: 1}
@@ -330,7 +330,7 @@ MonoBehaviour:
   playerTag: Player
   clearVelocity: 1
   promptText: {fileID: 0}
-  promptFontAsset: {fileID: 11400000, guid: 7d5b643ad04c2154ebad182b952e95d5, type: 2}
+  promptFontAsset: {fileID: 11400000, guid: a91ee816672104a358e3b7be965d2bd9, type: 2}
   autoCreatePrompt: 1
   promptMessage: "SPACE\u3067\u79FB\u52D5"
   promptTextColor: {r: 1, g: 1, b: 1, a: 1}
