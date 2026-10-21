@@ -9,10 +9,17 @@ namespace Metroidvania.UI
         [SerializeField] private Sprite[] frames = Array.Empty<Sprite>();
         [SerializeField, Min(1f)] private float framesPerSecond = 30f;
         [SerializeField] private bool loop = true;
+        [Tooltip("Optional expression mark, played on the same clock as the portrait.")]
+        [SerializeField] private PortraitAnimationClip overlayAnimation;
+        [SerializeField] private Vector2 overlayPosition = new Vector2(0.3f, 0.3f);
+        [SerializeField, Min(0.01f)] private float overlayWidth = 0.3f;
 
         public int FrameCount => frames?.Length ?? 0;
         public float FramesPerSecond => framesPerSecond;
         public Sprite FirstFrame => GetFrame(0d);
+        public PortraitAnimationClip OverlayAnimation => overlayAnimation;
+        public Vector2 OverlayPosition => overlayPosition;
+        public float OverlayWidth => overlayWidth;
 
         public Sprite GetFrame(double elapsedSeconds)
         {
