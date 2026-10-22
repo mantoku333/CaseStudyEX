@@ -5,7 +5,6 @@ using UnityEngine;
 namespace Metroidvania.Enemy
 {
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(EnemyBullet))]
     [RequireComponent(typeof(SpriteRenderer))]
     public sealed class EnemyBulletEffectPlayer : MonoBehaviour
     {
@@ -48,6 +47,7 @@ namespace Metroidvania.Enemy
         private Coroutine oneShotRoutine;
 
         public bool IsFinishing { get; private set; }
+        public Vector3 LoopScale => loopScale;
 
         private void Awake()
         {
@@ -96,12 +96,61 @@ namespace Metroidvania.Enemy
 
         public bool PlayImpactThenDestroy(Collider2D hitCollider)
         {
+            return PlayImpactThenDestroyAt(ResolveImpactPosition(hitCollider));
+        }
+
+        public bool PlayImpactThenDestroyAt(Vector3 position)
+        {
             BuildFramesIfNeeded();
             return PlayOneShotThenDestroy(
                 impactFrames,
                 impactFrameSeconds,
                 impactScale,
-                ResolveImpactPosition(hitCollider) + oneShotOffset);
+                position + oneShotOffset);
+        }
+
+        /// <summary>
+        /// Play the same impact animation for a cancelled shot, without creating a bullet.
+        /// This visual-only instance has no EnemyBullet, Rigidbody2D or collider.
+        /// </summary>
+        public EnemyBulletEffectPlayer SpawnImpactEffect(Vector3 position)
+        {
+            if (impactSpriteSheet == null)
+            {
+                return null;
+            }
+
+            GameObject impactObject = new GameObject("EnemyBulletImpact");
+            impactObject.SetActive(false);
+            impactObject.layer = gameObject.layer;
+            SpriteRenderer renderer = impactObject.AddComponent<SpriteRenderer>();
+            SpriteRenderer sourceRenderer = GetComponent<SpriteRenderer>();
+            if (sourceRenderer != null)
+            {
+                renderer.sharedMaterial = sourceRenderer.sharedMaterial;
+                renderer.sortingLayerID = sourceRenderer.sortingLayerID;
+                renderer.color = sourceRenderer.color;
+            }
+
+            EnemyBulletEffectPlayer visual = impactObject.AddComponent<EnemyBulletEffectPlayer>();
+            visual.impactSpriteSheet = impactSpriteSheet;
+            visual.impactColumns = impactColumns;
+            visual.impactRows = impactRows;
+            visual.impactFrameCount = impactFrameCount;
+            visual.impactFrameSeconds = impactFrameSeconds;
+            visual.impactScale = impactScale;
+            visual.pixelsPerUnit = pixelsPerUnit;
+            visual.oneShotOffset = oneShotOffset;
+            visual.sortingOrder = sortingOrder;
+            visual.forceWhiteColor = forceWhiteColor;
+            impactObject.SetActive(true);
+            if (!visual.PlayImpactThenDestroyAt(position))
+            {
+                Destroy(impactObject);
+                return null;
+            }
+
+            return visual;
         }
 
         private void CacheRenderer()

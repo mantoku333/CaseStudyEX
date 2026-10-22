@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Metroidvania.Enemy;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -249,6 +250,75 @@ public sealed class EnemyBulletTests
         EnemyBullet bullet = bulletObject.AddComponent<EnemyBullet>();
         InvokePrivate(bullet, "Awake");
         return bullet;
+    }
+
+    [Test]
+    public void SpawnPath_OutlineInteriorAndFarSideAreBlocked_AndOpenLeftIsClear()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Projectiles/bullet.prefab");
+        Assert.That(prefab, Is.Not.Null);
+        GameObject wall = CreateGroundObstacle("OutlineWall", new Vector2(3.5f, 0f), new Vector2(3.5f, 8f));
+        wall.AddComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        CompositeCollider2D composite = wall.AddComponent<CompositeCollider2D>();
+        composite.geometryType = CompositeCollider2D.GeometryType.Outlines;
+        wall.GetComponent<BoxCollider2D>().compositeOperation = Collider2D.CompositeOperation.Merge;
+        composite.GenerateGeometry();
+        Physics2D.SyncTransforms();
+
+        Vector2 insideWall = new Vector2(2.85f, 0f);
+        Assert.That(Physics2D.OverlapCircle(insideWall, 0.729f, GroundMask()), Is.Null,
+            "Reproduce the outline-interior hole that an endpoint-only check misses.");
+        Assert.That(EnemyBullet.IsSpawnPathBlocked(prefab, Vector2.zero, insideWall, GroundMask()), Is.True);
+        Assert.That(EnemyBullet.IsSpawnPathBlocked(prefab, Vector2.zero, new Vector2(6.5f, 0f), GroundMask()), Is.True);
+        Assert.That(EnemyBullet.IsSpawnPathBlocked(prefab, Vector2.zero, new Vector2(-2.85f, 0f), GroundMask()), Is.False);
+    }
+
+    [Test]
+    public void SpawnPath_UsesBulletWidthAndMask_EvenWhenCenterLineIsClear()
+    {
+        EnemyBullet prefab = CreateBullet(new Vector2(-10f, 0f), out _);
+        prefab.GetComponent<CircleCollider2D>().radius = 0.3f;
+        prefab.transform.localScale = Vector3.one * 2f;
+        GameObject wall = CreateGroundObstacle("GrazedWall", new Vector2(1.5f, 0.7f), new Vector2(0.2f, 0.4f));
+        Physics2D.SyncTransforms();
+
+        Assert.That(Physics2D.Linecast(Vector2.zero, Vector2.right * 3f, GroundMask()).collider, Is.Null);
+        Assert.That(EnemyBullet.IsSpawnPathBlocked(prefab.gameObject, Vector2.zero, Vector2.right * 3f, GroundMask()), Is.True);
+        wall.layer = 0;
+        Physics2D.SyncTransforms();
+        Assert.That(EnemyBullet.IsSpawnPathBlocked(prefab.gameObject, Vector2.zero, Vector2.right * 3f, GroundMask()), Is.False);
+    }
+
+    [Test]
+    public void SpawnPath_UsesEffectStartupScaleAndColliderOffset()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Projectiles/bullet.prefab");
+        // The prefab scale is 2, but Awake changes it to 1.62 (collision radius 0.729).
+        CreateGroundObstacle("BesideMuzzle", new Vector2(1.5f, 1f), new Vector2(0.2f, 0.4f));
+        Physics2D.SyncTransforms();
+        Assert.That(EnemyBullet.IsSpawnPathBlocked(prefab, Vector2.zero, Vector2.right * 3f, GroundMask()), Is.False);
+
+        EnemyBullet offsetBullet = CreateBullet(new Vector2(-10f, 0f), out _);
+        CircleCollider2D circle = offsetBullet.GetComponent<CircleCollider2D>();
+        circle.offset = Vector2.up * 0.9f;
+        circle.radius = 0.15f;
+        Physics2D.SyncTransforms();
+        Assert.That(EnemyBullet.IsSpawnPathBlocked(offsetBullet.gameObject, Vector2.zero, Vector2.right * 3f, GroundMask()), Is.True);
+    }
+
+    [Test]
+    public void SpawnPath_StationarySolidOverlapIsBlocked_WhenQueriesStartInCollidersIsFalse()
+    {
+        EnemyBullet prefab = CreateBullet(new Vector2(-10f, 0f), out _);
+        CreateGroundObstacle("SolidWall", Vector2.zero, Vector2.one * 2f);
+        Physics2D.SyncTransforms();
+        bool previousSetting = Physics2D.queriesStartInColliders;
+        try
+        {
+            Physics2D.queriesStartInColliders = false;
+            Assert.That(EnemyBullet.IsSpawnPathBlocked(prefab.gameObject, Vector2.zero, Vector2.zero, GroundMask()), Is.True);
+        }
+        finally { Physics2D.queriesStartInColliders = previousSetting; }
     }
 
     private GameObject CreateTarget(string name, Vector2 position)

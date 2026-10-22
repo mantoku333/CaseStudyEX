@@ -78,6 +78,8 @@ namespace Metroidvania.Enemy
 
         private readonly List<Vector2> currentPath = new List<Vector2>();
         private readonly List<Collider2D> ownerColliders = new List<Collider2D>();
+        private readonly List<RaycastHit2D> terrainHits = new List<RaycastHit2D>();
+        private readonly List<Collider2D> terrainOverlaps = new List<Collider2D>();
 
         private Rigidbody2D rb2D;
         // 弾自身の大きさを見て、壁からどれくらい離れて経路探索するかを決める。
@@ -86,6 +88,7 @@ namespace Metroidvania.Enemy
         // プレイヤーの Transform 位置ではなく、当たり判定の中心を狙うために使う。
         private Collider2D targetCollider;
         private bool initialized;
+        private bool isDespawning;
         private float bulletSpeed;
         private Transform target;
         private Transform owner;
@@ -151,7 +154,9 @@ namespace Metroidvania.Enemy
 
         private void FixedUpdate()
         {
-            if (UpdateEnemyPause())
+            // Check actual travel before CountTravelDistance advances previousPosition.
+            // Terrain collisions remain active after guidance, target loss and reflection.
+            if (isDespawning || UpdateEnemyPause() || CheckTerrainCollision())
             {
                 return;
             }
@@ -222,6 +227,148 @@ namespace Metroidvania.Enemy
             }
 
             SetVelocity(direction);
+        }
+
+        private void LateUpdate()
+        {
+            // Catch a skipped trigger contact in this frame, before rendering the bullet.
+            if (!isDespawning && !enemyPauseApplied)
+            {
+                CheckTerrainCollision();
+            }
+        }
+
+        /// <summary>
+        /// Check the entire muzzle offset before instantiating a live projectile.
+        /// An endpoint overlap alone misses the interior of outline composites.
+        /// </summary>
+        public static bool IsSpawnPathBlocked(
+            GameObject prefab, Vector2 from, Vector2 spawnPosition, LayerMask terrainMask, Transform owner = null)
+        {
+            return IsSpawnPathBlocked(prefab, from, spawnPosition, terrainMask, out _, owner);
+        }
+
+        public static bool IsSpawnPathBlocked(
+            GameObject prefab, Vector2 from, Vector2 spawnPosition, LayerMask terrainMask,
+            out Vector2 impactPosition, Transform owner = null)
+        {
+            impactPosition = spawnPosition;
+            EnemyBullet prefabBullet = prefab.GetComponent<EnemyBullet>();
+            if (terrainMask.value == 0)
+            {
+                terrainMask = prefabBullet != null && prefabBullet.destroyOnHitLayers.value != 0
+                    ? prefabBullet.destroyOnHitLayers
+                    : BuildDefaultObstacleMask();
+            }
+
+            Collider2D collider = prefab.GetComponent<Collider2D>();
+            EnemyBulletEffectPlayer effects = prefab.GetComponent<EnemyBulletEffectPlayer>();
+            // The effect applies this scale in Awake/OnEnable, before the first physics step.
+            Vector3 scale = effects != null ? effects.LoopScale : prefab.transform.localScale;
+            Vector2 offset = collider != null ? Vector2.Scale(collider.offset, scale) : Vector2.zero;
+            float radius = GetTerrainCollisionRadius(collider, scale);
+            var overlaps = new List<Collider2D>();
+            var hits = new List<RaycastHit2D>();
+            CollectTerrainContacts(from + offset, spawnPosition + offset, radius, terrainMask, overlaps, hits);
+
+            foreach (Collider2D overlap in overlaps)
+            {
+                if (IsIgnoredTerrainCollider(overlap, collider, owner)) continue;
+                impactPosition = overlap.ClosestPoint(from + offset);
+                return true;
+            }
+
+            foreach (RaycastHit2D hit in hits)
+            {
+                if (IsIgnoredTerrainCollider(hit.collider, collider, owner)) continue;
+                impactPosition = hit.point;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool CheckTerrainCollision()
+        {
+            Vector2 offset = bulletCollider != null
+                ? (Vector2)transform.TransformVector(bulletCollider.offset)
+                : Vector2.zero;
+            float radius = GetTerrainCollisionRadius(bulletCollider, transform.lossyScale);
+            CollectTerrainContacts(previousPosition + offset, (Vector2)transform.position + offset,
+                radius, destroyOnHitLayers, terrainOverlaps, terrainHits);
+
+            foreach (Collider2D overlap in terrainOverlaps)
+            {
+                if (HandleTerrainContact(overlap, overlap.ClosestPoint(previousPosition + offset))) return true;
+            }
+
+            // CircleCast results are ordered by distance, so a solid wall stops the sweep
+            // before any reflected breakable wall farther along the same movement.
+            foreach (RaycastHit2D hit in terrainHits)
+            {
+                if (HandleTerrainContact(hit.collider, hit.point)) return true;
+            }
+
+            return false;
+        }
+
+        private bool HandleTerrainContact(Collider2D collider, Vector2 impactPosition)
+        {
+            if (IsIgnoredTerrainCollider(collider, bulletCollider, isReflectedByPlayer ? null : owner))
+            {
+                return false;
+            }
+
+            if (isReflectedByPlayer && TryBreakReflectWall(collider, impactPosition))
+            {
+                return isDespawning;
+            }
+
+            DestroyWithTerrainImpact(impactPosition);
+            return true;
+        }
+
+        private static bool IsIgnoredTerrainCollider(Collider2D collider, Collider2D self, Transform owner)
+        {
+            return collider == null || collider == self ||
+                   (owner != null && collider.transform.IsChildOf(owner));
+        }
+
+        private static void CollectTerrainContacts(
+            Vector2 from, Vector2 to, float radius, LayerMask terrainMask,
+            List<Collider2D> overlaps, List<RaycastHit2D> hits)
+        {
+            var filter = new ContactFilter2D { useTriggers = true };
+            filter.SetLayerMask(terrainMask);
+            // Explicit overlap handles a stationary bullet or a solid start even when
+            // Physics2D.queriesStartInColliders is disabled globally.
+            Physics2D.OverlapCircle(from, radius, filter, overlaps);
+            Vector2 delta = to - from;
+            Physics2D.CircleCast(from, radius, delta.sqrMagnitude > 0f ? delta.normalized : Vector2.right,
+                filter, hits, delta.magnitude);
+        }
+
+        private static float GetTerrainCollisionRadius(Collider2D collider, Vector3 scale)
+        {
+            Vector2 absoluteScale = new Vector2(Mathf.Abs(scale.x), Mathf.Abs(scale.y));
+            float largestScale = Mathf.Max(absoluteScale.x, absoluteScale.y);
+            if (collider is CircleCollider2D circle)
+            {
+                return Mathf.Max(0.01f, circle.radius * largestScale);
+            }
+
+            // Enclose other collider shapes so their edges cannot skip thin terrain.
+            if (collider is BoxCollider2D box)
+            {
+                return Mathf.Max(0.01f, Vector2.Scale(box.size * 0.5f, absoluteScale).magnitude + box.edgeRadius * largestScale);
+            }
+
+            if (collider is CapsuleCollider2D capsule)
+            {
+                return Mathf.Max(0.01f, Vector2.Scale(capsule.size * 0.5f, absoluteScale).magnitude);
+            }
+
+            return collider != null ? Mathf.Max(0.01f, collider.bounds.extents.magnitude) : 0.01f;
         }
 
         /// <summary>
@@ -364,7 +511,7 @@ namespace Metroidvania.Enemy
 
         private void SetVelocity(Vector2 direction)
         {
-            if (rb2D == null || direction.sqrMagnitude <= 0.0001f)
+            if (isDespawning || rb2D == null || direction.sqrMagnitude <= 0.0001f)
             {
                 return;
             }
@@ -416,6 +563,11 @@ namespace Metroidvania.Enemy
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            if (isDespawning || CheckTerrainCollision())
+            {
+                return;
+            }
+
             if (other.GetComponent<AttackHitbox>() != null)
             {
                 Debug.Log("AttackHitboxに触れたので弾は消しません");
@@ -456,13 +608,18 @@ namespace Metroidvania.Enemy
 
             if (IsInLayerMask(other.gameObject.layer, destroyOnHitLayers))
             {
-                DestroySilently();
+                DestroyWithImpactEffect(other);
             }
         }
 
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            if (isDespawning || CheckTerrainCollision())
+            {
+                return;
+            }
+
             if (collision.gameObject.GetComponent<AttackHitbox>() != null)
             {
                 Debug.Log("AttackHitboxに衝突したので弾は消しません");
@@ -500,13 +657,17 @@ namespace Metroidvania.Enemy
 
             if (IsInLayerMask(collision.gameObject.layer, destroyOnHitLayers))
             {
-                DestroySilently();
+                DestroyWithImpactEffect(collision.collider);
             }
         }
 
         private bool TryApplyPlayerHit(Collider2D hitCollider)
         {
-            
+            if (isDespawning || CheckTerrainCollision())
+            {
+                return true;
+            }
+
             if (isReflectedByPlayer)
             {
                 return false;
@@ -1100,14 +1261,14 @@ namespace Metroidvania.Enemy
 
             if (IsObstacleAt(currentPosition))
             {
-                Destroy(gameObject);
+                DestroySilently();
                 return false;
             }
 
             direction = ResolveTerminalImpactDirection(currentPosition);
             if (direction.sqrMagnitude <= 0.0001f)
             {
-                Destroy(gameObject);
+                DestroySilently();
                 return false;
             }
 
@@ -1117,7 +1278,7 @@ namespace Metroidvania.Enemy
 
             if (!TryGetObstacleHit(currentPosition, direction, probeDistance, out RaycastHit2D obstacleHit))
             {
-                Destroy(gameObject);
+                DestroySilently();
                 return false;
             }
 
@@ -1297,12 +1458,12 @@ namespace Metroidvania.Enemy
 
         public bool CanJustParry()
         {
-            return aliveTimer <= justParryWindow;
+            return !isDespawning && aliveTimer <= justParryWindow;
         }
 
         public void ReflectByJustParry(Vector2 parryPosition)
         {
-            if (rb2D == null)
+            if (rb2D == null || isDespawning || CheckTerrainCollision())
             {
                 return;
             }
@@ -1408,7 +1569,7 @@ namespace Metroidvania.Enemy
                 return;
             }
 
-            Destroy(gameObject);
+            DestroySilently();
         }
 
         private bool TryApplyEnemyHit(Collider2D other)
@@ -1473,7 +1634,7 @@ namespace Metroidvania.Enemy
             return enemyController != null;
         }
 
-        private bool TryBreakReflectWall(Collider2D other)
+        private bool TryBreakReflectWall(Collider2D other, Vector2? impactPosition = null)
         {
             if (other == null || !isReflectedByPlayer)
             {
@@ -1490,7 +1651,14 @@ namespace Metroidvania.Enemy
 
             if (breakableWall.DestroyBulletOnBreak)
             {
-                DestroySilently();
+                if (impactPosition.HasValue)
+                {
+                    DestroyWithTerrainImpact(impactPosition.Value);
+                }
+                else
+                {
+                    DestroyWithImpactEffect(other);
+                }
             }
 
             return true;
@@ -1529,8 +1697,22 @@ namespace Metroidvania.Enemy
             DestroySilently();
         }
 
+        private void DestroyWithTerrainImpact(Vector2 impactPosition)
+        {
+            Vector3 position = new Vector3(impactPosition.x, impactPosition.y, transform.position.z);
+            // Disable gameplay before moving/scaling the visual to the swept contact.
+            DisableBulletDuringFinishEffect();
+            if (effectPlayer != null && effectPlayer.PlayImpactThenDestroyAt(position))
+            {
+                return;
+            }
+
+            DestroySilently();
+        }
+
         private void DisableBulletDuringFinishEffect()
         {
+            isDespawning = true;
             if (rb2D != null)
             {
                 rb2D.linearVelocity = Vector2.zero;
@@ -1548,6 +1730,8 @@ namespace Metroidvania.Enemy
 
         private void DestroySilently()
         {
+            DisableBulletDuringFinishEffect();
+            gameObject.SetActive(false);
             Destroy(gameObject);
         }
     }
