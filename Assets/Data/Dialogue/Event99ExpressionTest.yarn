@@ -85,6 +85,13 @@ title: ADVtest_Thanatos
 イリス: 左にタナトス、右にわたしとノクスがいます。 #face:normal
 ノクス: 話しているキャラだけ明るく表示されます。 #face:normal
 タナトス: このまま止めて、配置を確認できます。 #face:default
+タナトス: 通常のアニメーションです。 #face:normal
+タナトス: 同じ表情では途中から再生を続けます。 #face:normal
+タナトス: 疑う表情に切り替えます。 #face:doubt
+タナトス: 怒りの表情に切り替えます。 #face:angry
+タナトス: 安心の表情に切り替えます。 #face:relieved
+イリス: 話者が変わってもタナトスは動き続けます。 #face:normal
+タナトス: 通常の表情に戻ります。 #face:default
 三人の表示を保ったまま、地の文では全員が暗くなります。
 ===
 

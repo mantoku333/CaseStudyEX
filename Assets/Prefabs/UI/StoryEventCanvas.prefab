@@ -234,7 +234,7 @@ PrefabInstance:
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[2].portraitSprite
       value:
-      objectReference: {fileID: 6377198010540484827, guid: f2d00decbfdcfbe4d9c7f78c00371ab1, type: 3}
+      objectReference: {fileID: 21300000, guid: 3cd634e67c095ee98630360f2cf356dd, type: 3}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].portraitAnimation
       value: 
@@ -245,8 +245,8 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 1b934182cd0e2c2e706437dc7d9c03ec, type: 2}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[2].portraitAnimation
-      value: 
-      objectReference: {fileID: 0}
+      value:
+      objectReference: {fileID: 11400000, guid: 2fa22176199c57d3a4f87e8112940528, type: 2}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.size
       value: 7
@@ -257,8 +257,92 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.size
-      value: 0
+      value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[0].expressionName
+      value: "doubt"
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[0].portraitSprite
+      value:
+      objectReference: {fileID: 21300000, guid: 2883d6bb849b5c25a8e76cad1be820b9, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[0].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 0b9a16b2b1c45516bcfeff491923024d, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[1].expressionName
+      value: "angry"
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[1].portraitSprite
+      value:
+      objectReference: {fileID: 21300000, guid: 92660fd0ef6a56319a68df90c90a2eb1, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[1].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: e69ec5a3106c5dad8dbc421ce7449124, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[2].expressionName
+      value: "relieved"
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[2].portraitSprite
+      value:
+      objectReference: {fileID: 21300000, guid: faa449bc576a50a1bc8137c16e613a4a, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[2].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 50244acb3c9f55278da658363bb2ad17, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[3].expressionName
+      value: "\u901a\u5e38"
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[3].portraitSprite
+      value:
+      objectReference: {fileID: 21300000, guid: 3cd634e67c095ee98630360f2cf356dd, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[3].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 2fa22176199c57d3a4f87e8112940528, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[4].expressionName
+      value: "\u7591\u3046"
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[4].portraitSprite
+      value:
+      objectReference: {fileID: 21300000, guid: 2883d6bb849b5c25a8e76cad1be820b9, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[4].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 0b9a16b2b1c45516bcfeff491923024d, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[5].expressionName
+      value: "\u6012\u308a"
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[5].portraitSprite
+      value:
+      objectReference: {fileID: 21300000, guid: 92660fd0ef6a56319a68df90c90a2eb1, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[5].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: e69ec5a3106c5dad8dbc421ce7449124, type: 2}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[6].expressionName
+      value: "\u5b89\u5fc3"
+      objectReference: {fileID: 0}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[6].portraitSprite
+      value:
+      objectReference: {fileID: 21300000, guid: faa449bc576a50a1bc8137c16e613a4a, type: 3}
+    - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
+      propertyPath: characterPortraits.Array.data[2].expressionPortraits.Array.data[6].portraitAnimation
+      value:
+      objectReference: {fileID: 11400000, guid: 50244acb3c9f55278da658363bb2ad17, type: 2}
     - target: {fileID: 3138002632403830451, guid: 208cc313441185343a1ea4699b91db4f, type: 3}
       propertyPath: characterPortraits.Array.data[0].expressionPortraits.Array.data[0].portraitSprite
       value: 
