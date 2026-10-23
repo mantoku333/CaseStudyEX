@@ -256,6 +256,13 @@ namespace GameName.Enemy
             }
 
             Vector3 spawnPosition = ResolveProjectileSpawnPosition();
+            if (EnemyBullet.IsSpawnPathBlocked(bulletPrefab, GetBodyCenter(), spawnPosition, projectileObstacleMask,
+                    out Vector2 impactPosition, transform))
+            {
+                bulletPrefab.GetComponent<EnemyBulletEffectPlayer>()?.SpawnImpactEffect(
+                    new Vector3(impactPosition.x, impactPosition.y, spawnPosition.z));
+                return;
+            }
 
             GameObject bulletObject = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
             EnemyBullet bullet = bulletObject.GetComponent<EnemyBullet>();

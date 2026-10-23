@@ -51,6 +51,13 @@ namespace Metroidvania.Enemy
             }
 
             Vector3 spawnPosition = firePoint != null ? firePoint.position : transform.position;
+            if (EnemyBullet.IsSpawnPathBlocked(bulletPrefab, transform.position, spawnPosition, default,
+                    out Vector2 impactPosition, transform))
+            {
+                bulletPrefab.GetComponent<EnemyBulletEffectPlayer>()?.SpawnImpactEffect(
+                    new Vector3(impactPosition.x, impactPosition.y, spawnPosition.z));
+                return;
+            }
 
             GameObject bulletObject = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
 
