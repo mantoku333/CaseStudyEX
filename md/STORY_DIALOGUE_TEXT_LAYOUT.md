@@ -28,6 +28,21 @@
 - DialogueView の Nox Placement で左右それぞれの位置・サイズ・Z回転（Rotation）を調整できる。左配置は位置 (250, 250)、サイズ (418, 525)、Z回転20度。
 - `Event99_ExpressionTest` 冒頭で左 → タナトス登場で右 → イリスとの重ね表示 → 左への復帰を確認できる。
 - Unity メニュー `Tools/CaseStudy/Story/Verify and Export Event UI Previews` で配置・表示維持・アニメーション・リセットを検証し、`outputs/event-ui` に左右のプレビューを出力する。
-- タナトスの立ち絵は `Assets/Art/temp/素材/Thanatos.png` の本体スプライトを左枠に登録。`ADVtest_Thanatos` でタナトス登場、ノクスの右移動、三人の表示と話者の明暗を確認できる。
+- タナトスの立ち絵は `Assets/Art/Sprites/Dialogue/Thanatos/` の連番スプライトを左枠で再生。`ADVtest_Thanatos` で4表情の切り替え、タナトス登場、ノクスの右移動、三人の表示と話者の明暗を確認できる。
 
 - 二人が右にいる配置：ノクス位置 (-113.4, 433.9)、サイズ (520, 650)、Z回転 -8.92度。イリス位置 (-180.5, 280)、サイズ (420, 560)、Y回転180度。`Nox Placement` の `Iris With Nox` 各項目で調整し、左配置へ戻る際と会話終了時にはイリスの元のTransformを復元する。
+
+## タナトスの立ち絵アニメーション
+
+| 表情 | Yarnタグ | 日本語タグ |
+| --- | --- | --- |
+| 通常 | タグなし / `#face:default` / `#face:normal` | `#face:通常` |
+| 疑う | `#face:doubt` | `#face:疑う` |
+| 怒り | `#face:angry` | `#face:怒り` |
+| 安心 | `#face:relieved` | `#face:安心` |
+
+各240フレーム。元PNGを保持し、既存キャラと同じ30fps（8秒）でループする。
+速度は `Assets/Data/Dialogue/PortraitAnimations/Thanatos_*.asset` の `Frames Per Second` で調整できる。
+全表情・全フレームで共通のスプライト範囲と中心ピボットを使用し、テクスチャのインポート上限は1024px。
+同じ表情の連続台詞では再生を継続し、表情変更時は先頭に戻る。話していない間とゲーム停止中も再生し、会話終了時にリセットする。
+共通の `StoryEventCanvas.prefab` に登録しているため、このPrefabを使う既存イベントにも適用される。

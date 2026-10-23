@@ -40,7 +40,10 @@ public sealed class DialogueArtworkTests
             apply.Invoke(view, new object[] { "タナトス", "default" });
             Assert.That(left.gameObject.activeSelf, Is.True);
             Assert.That(left.sprite, Is.Not.Null);
-            Assert.That(AssetDatabase.GetAssetPath(left.sprite), Is.EqualTo("Assets/Art/temp/素材/Thanatos.png"));
+            var thanatosAnimation = AssetDatabase.LoadAssetAtPath<PortraitAnimationClip>(
+                "Assets/Data/Dialogue/PortraitAnimations/Thanatos_normal.asset");
+            Assert.That(thanatosAnimation, Is.Not.Null);
+            Assert.That(left.sprite, Is.SameAs(thanatosAnimation.FirstFrame));
             Assert.That(left.color, Is.EqualTo(Color.white));
             Assert.That(name.sprite, Is.EqualTo(serialized.FindProperty("thanatosNameSprite").objectReferenceValue));
             Assert.That(nox.rectTransform.anchorMin.x, Is.EqualTo(1));

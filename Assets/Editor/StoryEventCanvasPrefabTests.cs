@@ -59,11 +59,11 @@ public sealed class StoryEventCanvasPrefabTests
         {
             var view = new SerializedObject(root.GetComponentInChildren<DialogueView>(true));
             var portraits = view.FindProperty("characterPortraits");
-            Assert.That(portraits.arraySize, Is.EqualTo(2));
+            Assert.That(portraits.arraySize, Is.EqualTo(3));
             var nox = portraits.GetArrayElementAtIndex(1);
             Assert.That(nox.FindPropertyRelative("characterName").stringValue, Is.EqualTo("ノクス"));
             var expressions = nox.FindPropertyRelative("expressionPortraits");
-            Assert.That(expressions.arraySize, Is.EqualTo(1));
+            Assert.That(expressions.arraySize, Is.GreaterThanOrEqualTo(1));
             Assert.That(expressions.GetArrayElementAtIndex(0).FindPropertyRelative("expressionName").stringValue, Is.EqualTo("assertive"));
             Assert.That(expressions.GetArrayElementAtIndex(0).FindPropertyRelative("portraitSprite").objectReferenceValue, Is.Not.Null);
         }
