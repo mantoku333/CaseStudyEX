@@ -34,6 +34,8 @@ public static class EventUiPreviewVerification
             new DialogueArtworkTests().SharedPrefab_SwitchesArtworkAndKeepsUnknownNamesHidden();
             new DialogueArtworkTests().DialogueText_UsesThirtyByTwoOrTwentyByOneWithoutShrinking();
             new DialogueArtworkTests().Nox_MovesBetweenSidesWithoutReplacingIrisAndResetsNextConversation();
+            new StoryEventCanvasPrefabTests().Prefab_PreservesAuthoredPortraitOverrides();
+            new ThanatosPortraitAnimationTests().SharedPrefab_PlaysAllThanatosExpressionsAndPreservesConversationLayout();
             var animationTests = new DialoguePortraitAnimationTests();
             try
             {
@@ -43,7 +45,7 @@ public static class EventUiPreviewVerification
             }
             finally { animationTests.Cleanup(); }
             Render();
-            File.WriteAllText("Temp/EventUiPreview.result", "PASS: all seven Iris animation clips, frame references, stable bounds/pivots, expression switching and loops; Nox left/right/return, Iris preserved, animation and conversation reset; artwork routing, button bindings, 30x2 normal / 20x1 emphasis, no shrinking, rich text, manual breaks, shake enlargement and page advance; previews rendered.");
+            File.WriteAllText("Temp/EventUiPreview.result", "PASS: all four Thanatos and seven Iris animation clips, frame references, stable bounds/pivots, expression switching and loops; Nox left/right/return, Iris preserved, animation and conversation reset; artwork routing, button bindings, 30x2 normal / 20x1 emphasis, no shrinking, rich text, manual breaks, shake enlargement and page advance; previews rendered.");
         }
         catch (Exception e) { File.WriteAllText("Temp/EventUiPreview.result", e.ToString()); Debug.LogException(e); }
     }
@@ -97,6 +99,13 @@ public static class EventUiPreviewVerification
             Capture(camera, texture, "nox-left");
             apply.Invoke(view, new object[] { "タナトス", "default" });
             Capture(camera, texture, "thanatos");
+            foreach (string expression in new[] { "normal", "doubt", "angry", "relieved" })
+            {
+                apply.Invoke(view, new object[] { "タナトス", expression });
+                typeof(DialogueView).GetMethod("AdvancePortraitAnimations", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Invoke(view, new object[] { 2f });
+                Capture(camera, texture, "thanatos-" + expression);
+            }
             apply.Invoke(view, new object[] { "ノクス", "default" });
             Capture(camera, texture, "nox-right");
             apply.Invoke(view, new object[] { "イリス", "default" });
