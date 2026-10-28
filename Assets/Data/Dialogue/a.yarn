@@ -8,7 +8,7 @@
 ノクス: おい！そこのおまえ！！ #face:default #shake #size:1.5
 イリス: えっ……？ #face:surprised
 イリス: 傘が喋った？！ #face:surprised #shake #size:1.5
-ノクス: はやく助けろ！ #face:default
+ノクス: はやく助けろ！ #face:angry
 どうやら傘はボタンで留められていて身動きが取れないようだ。
 打ち上げれられた魚のようにバタバタと暴れている。
 イリス: じっとして。助けてあげるから #face:default
@@ -17,16 +17,17 @@
 ノクス: あぁ。助かった #face:default
 イリス: ……じゃあ #face:default
 イリスが傘を持ち、ベランダから外に出そうとする。
-ノクス: おい！！なにする気だ！！！ #face:default #shake #size:1.5
+ノクス: おい！！なにする気だ！！！ #face:angry #shake #size:1.5
 イリス: なにって…… #face:default
 イリス: 外から来たから帰してあげようと思って #face:default
-ノクス: 正気か？！ #face:default #shake #size:1.5
-ノクス: この雨の中でどうしろっていうんだ！ #face:default
-イリス: じゃあこの雨の中、どこからどうやってここに来たの？ #shake
+ノクス: 正気か？！ #face:angry #shake #size:1.5
+ノクス: この雨の中でどうしろっていうんだ！ #face:angry
+イリス: じゃあこの雨の中……
+イリス: どうやってここに来たの？ #face:default #shake #size:1.5
 ノクス: …… #face:default
 ノクス: そうだ、ちょうどいい #face:default
 ノクス: おまえ、俺をあそこへ連れていけ！ #face:default
-そういってノクスは窓から見える城を指差した。
+そういってノクスは窓から見える城を示した。
 イリス: まさか、あの海の上のリュミエール城のこと？ #illustration:event99_sample #face:surprised
 リュミエール城。
 大昔に高貴なものが住んでいたとされる、海の上に浮かぶ城。
@@ -37,8 +38,8 @@
 イリス: ……イリス #face:default
 ノクス: おれはノクスだ #face:default
 ノクス: お前が俺を連れて行ってくれないとずっとここにいる羽目になる #face:default
-イリス: ……それは嫌だな
-ノクス: 失礼なやつだな #face:default
+イリス: ……それは嫌だな #face:troubled
+ノクス: 失礼なやつだな #face:angry
 ノクス: まぁいい #face:default
 ノクス: 嫌ならおれを連れていけ #face:default
 イリス: ……分かった
@@ -108,7 +109,7 @@ title: TutorialStory_Attack1
 イリス: あれはなに？！ #face:surprised
 ノクス: あいつは…… #face:default
 ノクス: イリス、俺を使え #face:default
-ノクス: あんな奴蹴散らしてやるんだ！ #face:default
+ノクス: あんな奴蹴散らしてやるんだ！ #face:happy
 ===
 
 title: MiniEeventStory01
@@ -146,11 +147,11 @@ title: TutorialStory_Save
 ---
 イリス: こんなところに鳥？ #face:default
 ノクス: ちょうどいいな #face:default
-ノクス: おまえ物覚え悪そうだし、記録しておけ #face:default
-イリス: ……
-イリス: 置いて行ってもいいんだけど……
+ノクス: おまえ物覚え悪そうだし、記録しておけ #face:happy
+イリス: …… #face:disgust
+イリス: 置いて行ってもいいんだけど…… #face:disgust
 ノクス: あ？なんか言ったか？ #face:default
-イリス: ……なんでもない
+イリス: ……なんでもない #face:default
 ===
 
 title: EeventStory01
