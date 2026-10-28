@@ -4,7 +4,7 @@
 イリス: かみなり……？ #face:surprised
 イリス: なんだか……いつもより寂しい感じがする…… #face:default
 イリス: お姉ちゃん、起きてるかな
-イリスが部屋を出ようとした、その時ーー
+イリスが部屋を出ようとした、その時ーー #se:5809a0bdc4ff7194c9d6d294a78dcadc #sevolume:0.7
 ノクス: おい！そこのおまえ！！ #face:default #shake #size:1.5
 イリス: えっ……？ #face:surprised
 イリス: 傘が喋った？！ #face:surprised #shake #size:1.5
@@ -265,8 +265,8 @@ title: EeventStory08
 title: EeventStory09
 ---
 タナトス: 来たな #face:default
-タナトス: 随分と手を焼かされた #face:default
-タナトス: だが、ここで終わりだ #face:default #shake #size:1.5
+タナトス: 随分と手を焼かされた #face:angry
+タナトス: だが、ここで終わりだ #face:angry #shake #size:1.5
 イリス: わたしは #face:default
 イリス: あなたを倒して現実に帰る！ #face:assertive #shake #size:1.5
 ノクス: そうだ #face:default
@@ -275,9 +275,9 @@ title: EeventStory09
 
 title: EeventStory10
 ---
-タナトス: まさかここまでとは…… #face:default
-タナトス: だが #face:default
-タナトス: ここで終わりだ！ #shake #size:1.5
+タナトス: まさかここまでとは…… #face:疑う
+タナトス: だが #face:疑う
+タナトス: ここで終わりだ！ #face:angry #shake #size:1.5
 ===
 
 title: EeventStory11

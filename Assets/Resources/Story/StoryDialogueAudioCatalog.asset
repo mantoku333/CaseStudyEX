@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67175c9020ad4efd8c14a3684f3277cf, type: 3}
   m_Name: StoryDialogueAudioCatalog
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   entries:
   - key: 6173ec6252f2abf4fa9a2cc0e057774f
     clip: {fileID: 8300000, guid: 6173ec6252f2abf4fa9a2cc0e057774f, type: 3}
@@ -23,3 +23,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 631315968a2b9e7428dc0aa7c2457e77, type: 3}
   - key: 3caa67ac5c639453d910ed8dc4b1851e
     clip: {fileID: 8300000, guid: 3caa67ac5c639453d910ed8dc4b1851e, type: 3}
+  - key: 6ee640994cafd05419ee16d6e9b04320
+    clip: {fileID: 8300000, guid: 6ee640994cafd05419ee16d6e9b04320, type: 3}
+  - key: 5809a0bdc4ff7194c9d6d294a78dcadc
+    clip: {fileID: 8300000, guid: 5809a0bdc4ff7194c9d6d294a78dcadc, type: 3}
