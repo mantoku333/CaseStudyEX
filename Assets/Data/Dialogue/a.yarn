@@ -4,7 +4,7 @@
 イリス: かみなり……？ #face:surprised
 イリス: なんだか……いつもより寂しい感じがする…… #face:default
 イリス: お姉ちゃん、起きてるかな
-イリスが部屋を出ようとした、その時ーー
+イリスが部屋を出ようとした、その時ーー #se:5809a0bdc4ff7194c9d6d294a78dcadc #sevolume:0.7
 ノクス: おい！そこのおまえ！！ #face:default #shake #size:1.5
 イリス: えっ……？ #face:surprised
 イリス: 傘が喋った？！ #face:surprised #shake #size:1.5
@@ -22,7 +22,7 @@
 イリス: 外から来たから帰してあげようと思って #face:default
 ノクス: 正気か？！ #face:default #shake #size:1.5
 ノクス: この雨の中でどうしろっていうんだ！ #face:default
-イリス: じゃあこの雨の中、どこからどうやってここに来たの？ #shake
+イリス: じゃあこの雨の中、どこからどうやってここに来たの？ #face:jitome #shake
 ノクス: …… #face:default
 ノクス: そうだ、ちょうどいい #face:default
 ノクス: おまえ、俺をあそこへ連れていけ！ #face:default
@@ -37,17 +37,15 @@
 イリス: ……イリス #face:default
 ノクス: おれはノクスだ #face:default
 ノクス: お前が俺を連れて行ってくれないとずっとここにいる羽目になる #face:default
-イリス: ……それは嫌だな
+イリス: ……それは嫌だな #face:jitome
 ノクス: 失礼なやつだな #face:default
 ノクス: まぁいい #face:default
 ノクス: 嫌ならおれを連れていけ #face:default
-イリス: ……分かった
+イリス: ……分かった #face:jitome
 ===
 
 title: Prologue_Timeline_02
 ---
-イリス: なんだか……いつもより寂しい感じがする……
-イリス: お姉ちゃん、起きてるかな
 ===
 
 title: Prologue_Timeline_03
@@ -147,10 +145,10 @@ title: TutorialStory_Save
 イリス: こんなところに鳥？ #face:default
 ノクス: ちょうどいいな #face:default
 ノクス: おまえ物覚え悪そうだし、記録しておけ #face:default
-イリス: ……
-イリス: 置いて行ってもいいんだけど……
+イリス: …… #face:jitome
+イリス: 置いて行ってもいいんだけど…… #face:jitome
 ノクス: あ？なんか言ったか？ #face:default
-イリス: ……なんでもない
+イリス: ……なんでもない #face:jitome
 ===
 
 title: EeventStory01
@@ -264,8 +262,8 @@ title: EeventStory08
 title: EeventStory09
 ---
 タナトス: 来たな #face:default
-タナトス: 随分と手を焼かされた #face:default
-タナトス: だが、ここで終わりだ #face:default #shake #size:1.5
+タナトス: 随分と手を焼かされた #face:angry
+タナトス: だが、ここで終わりだ #face:angry #shake #size:1.5
 イリス: わたしは #face:default
 イリス: あなたを倒して現実に帰る！ #face:assertive #shake #size:1.5
 ノクス: そうだ #face:default
@@ -274,9 +272,9 @@ title: EeventStory09
 
 title: EeventStory10
 ---
-タナトス: まさかここまでとは…… #face:default
-タナトス: だが #face:default
-タナトス: ここで終わりだ！ #shake #size:1.5
+タナトス: まさかここまでとは…… #face:疑う
+タナトス: だが #face:疑う
+タナトス: ここで終わりだ！ #face:angry #shake #size:1.5
 ===
 
 title: EeventStory11
