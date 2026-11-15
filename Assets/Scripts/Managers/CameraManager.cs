@@ -93,12 +93,23 @@ public class CameraManager : MonoBehaviour
 
     private static void EnsurePlayerFollowBiasComponent(CinemachineCamera camera)
     {
-        if (camera == null || camera.GetComponent<FollowCameraFacingBias>() != null)
+        if (camera == null)
         {
             return;
         }
 
-        camera.gameObject.AddComponent<FollowCameraFacingBias>();
+        if (camera.GetComponent<FollowCameraFacingBias>() == null)
+        {
+            camera.gameObject.AddComponent<FollowCameraFacingBias>();
+        }
+
+        // The follow camera is used for every room that is too large to show at once. Without
+        // bounds it wanders past the room edges, which is where the darkness outside large rooms
+        // comes from and why the player's place in frame is not stable there.
+        if (camera.GetComponent<FollowCameraRoomClamp>() == null)
+        {
+            camera.gameObject.AddComponent<FollowCameraRoomClamp>();
+        }
     }
 
     public void ToggleCamera()
@@ -131,6 +142,47 @@ public class CameraManager : MonoBehaviour
         directFollowCam.Priority.Enabled = true;
         Debug.Log("[CameraManager] Camera switched to CN_FollowCam");
         return true;
+    }
+
+    /// <summary>Forces Cinemachine to re-read the follow cameras' priorities this frame.</summary>
+    public void PrioritizeFollowCameras()
+    {
+        if (followCam != null)
+        {
+            followCam.Prioritize();
+        }
+
+        if (directFollowCam != null)
+        {
+            directFollowCam.Prioritize();
+        }
+    }
+
+    /// <summary>
+    /// Recomputes the follow camera's pose now instead of at its next scheduled update.
+    ///
+    /// The player's Rigidbody2D is not interpolated, so under the brain's Smart Update the follow
+    /// camera is only evaluated on physics steps (50Hz). A room change happens in LateUpdate.
+    /// On that frame the camera still holds the pose from the last physics step, which was
+    /// computed with the previous room's limits - coming from a static room that is the static
+    /// room's own picture - while the fog has already moved to the new room. The result is a
+    /// frame of black at every cut into a follow area, and it lasts for as long as physics is
+    /// paused: a hit-stop sets timeScale to 0, so a cut that lands on one stayed black until
+    /// time resumed.
+    ///
+    /// A camera whose previous state was invalidated snaps to its framing; one that is already
+    /// following keeps its place (deltaTime 0 applies no damping) and only takes the new limits.
+    /// </summary>
+    public void RefreshFollowCameraStateNow()
+    {
+        if (followCam == null || !followCam.isActiveAndEnabled)
+        {
+            return;
+        }
+
+        followCam.InternalUpdateCameraState(
+            Vector3.up,
+            followCam.PreviousStateIsValid ? 0f : -1f);
     }
 
     public bool SwitchToDirectFollowCamera()
@@ -225,6 +277,12 @@ public class CameraManager : MonoBehaviour
 
         CacheDefaultFollowCameraSettings();
 
+        // Remember the framing so a change can be landed in one frame (see the end of this method).
+        float previousOrthographicSize = followCam.Lens.OrthographicSize;
+        CinemachinePositionComposer previousComposer = followCam.GetComponent<CinemachinePositionComposer>();
+        float previousOffsetY = previousComposer != null ? previousComposer.TargetOffset.y : 0f;
+        float previousScreenY = previousComposer != null ? previousComposer.Composition.ScreenPosition.y : 0f;
+
         if (overrideOrthographicSize && orthographicSize > 0f)
         {
             SetFollowCameraOrthographicSize(orthographicSize);
@@ -267,6 +325,75 @@ public class CameraManager : MonoBehaviour
             {
                 SetDirectFollowOffsetY(directFollow, defaultDirectFollowOffsetY);
             }
+        }
+
+        // Moving between two follow-camera areas whose zoom or offsets differ is an area change
+        // like any other, so it has to land finished. Without this the lens changed at once while
+        // the body eased to the new offsets over its 1 second damping: a jolt followed by a drift.
+        // Areas with identical framing are left alone so a plain crossing stays continuous.
+        bool framingChanged =
+            !Mathf.Approximately(previousOrthographicSize, followCam.Lens.OrthographicSize) ||
+            (previousComposer != null &&
+             (!Mathf.Approximately(previousOffsetY, previousComposer.TargetOffset.y) ||
+              !Mathf.Approximately(previousScreenY, previousComposer.Composition.ScreenPosition.y)));
+        if (framingChanged)
+        {
+            followCam.PreviousStateIsValid = false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Where the follow camera will sit, and at what zoom, once it is live in the given room.
+    /// The pose read from the camera's transform is not that: it ignores the room clamp, and
+    /// while another camera is live it is simply stale.
+    /// </summary>
+    public bool TryPredictFollowCameraPose(RoomCameraTrigger room, out Vector3 position, out float orthographicSize)
+    {
+        position = default;
+        orthographicSize = 0f;
+
+        if (followCam == null)
+        {
+            FindCameras();
+        }
+
+        if (followCam == null)
+        {
+            return false;
+        }
+
+        Transform target = followCam.Target.TrackingTarget;
+        CinemachinePositionComposer composer = followCam.GetComponent<CinemachinePositionComposer>();
+        if (target == null || composer == null)
+        {
+            return false;
+        }
+
+        CacheDefaultFollowCameraSettings();
+        float baseOrtho = hasDefaultFollowOrthographicSize ? defaultFollowOrthographicSize : followCam.Lens.OrthographicSize;
+        float baseOffsetY = hasDefaultFollowComposerTargetOffsetY ? defaultFollowComposerTargetOffsetY : composer.TargetOffset.y;
+        float baseScreenY = hasDefaultFollowComposerScreenPositionY ? defaultFollowComposerScreenPositionY : composer.Composition.ScreenPosition.y;
+
+        orthographicSize = room != null ? room.ResolveDefaultFollowCameraOrthographicSize(baseOrtho) : baseOrtho;
+        float offsetY = room != null ? room.ResolveDefaultFollowCameraTargetOffsetY(baseOffsetY) : baseOffsetY;
+        float screenY = room != null ? room.ResolveDefaultFollowCameraScreenPositionY(baseScreenY) : baseScreenY;
+
+        Camera main = Camera.main;
+        float aspect = main != null && main.aspect > 0.01f ? main.aspect : 16f / 9f;
+
+        // Screen position: +x is right of centre, +y is BELOW centre (Cinemachine flips Y).
+        Vector3 tracked = target.position + new Vector3(composer.TargetOffset.x, offsetY, 0f);
+        float screenX = composer.Composition.ScreenPosition.x;
+        position = new Vector3(
+            tracked.x - screenX * orthographicSize * aspect * 2f,
+            tracked.y + screenY * orthographicSize * 2f,
+            followCam.transform.position.z);
+
+        if (room != null && room.TryGetAreaBounds(out Bounds bounds))
+        {
+            position = FollowCameraRoomClamp.ClampToRoom(position, bounds, orthographicSize, aspect, target);
         }
 
         return true;
@@ -346,6 +473,82 @@ public class CameraManager : MonoBehaviour
         Vector3 followOffset = directFollow.FollowOffset;
         followOffset.y = offsetY;
         directFollow.FollowOffset = followOffset;
+    }
+
+    /// <summary>
+    /// Makes the follow camera land fully settled on the frame it becomes active, instead of
+    /// cutting to a stale pose and then sliding into place.
+    ///
+    /// The follow camera keeps its last pose while inactive, and its body damps at 1.0s. With a
+    /// cut transition the brain shows that stale pose immediately and the damping then drags the
+    /// view into position, which reads as a lurch right after an area change. Clearing
+    /// PreviousStateIsValid makes the body skip damping for one evaluation so it resolves exactly
+    /// onto its target, and the facing bias is reset so a look-ahead offset built up in the
+    /// previous room does not unwind on screen afterwards.
+    /// </summary>
+    public bool SnapFollowCameraToTarget()
+    {
+        if (followCam == null)
+        {
+            FindCameras();
+        }
+
+        if (followCam == null)
+        {
+            return false;
+        }
+
+        // Nothing to snap if this camera is already the one being rendered. Snapping anyway
+        // is visible as a jolt: moving between two adjoining free-camera rooms re-runs this
+        // path, and forcing PreviousStateIsValid there threw the view sideways mid-follow
+        // instead of leaving a continuous follow alone.
+        if (followCam.IsLive)
+        {
+            return false;
+        }
+
+        FollowCameraFacingBias facingBias = followCam.GetComponent<FollowCameraFacingBias>();
+        if (facingBias != null)
+        {
+            facingBias.ResetSmoothing();
+        }
+
+        followCam.PreviousStateIsValid = false;
+        return true;
+    }
+
+    /// <summary>
+    /// Prepares the follow camera to be cut to: look-ahead reset and body snapped onto its target,
+    /// so the first frame after the cut is already the settled framing.
+    ///
+    /// Called before the priority is raised. Does nothing when the follow camera is already
+    /// live, because then there is no change of view to absorb.
+    /// </summary>
+    public bool PrepareFollowCameraEntry()
+    {
+        if (followCam == null)
+        {
+            FindCameras();
+        }
+
+        if (followCam == null || followCam.IsLive)
+        {
+            return false;
+        }
+
+        FollowCameraFacingBias facingBias = followCam.GetComponent<FollowCameraFacingBias>();
+        if (facingBias != null)
+        {
+            facingBias.ResetSmoothing();
+        }
+
+        // Cut, and land settled. An earlier version eased the camera in from the outgoing view
+        // here. That made entering a free-camera area a half-second slide while leaving it was
+        // an instant cut - the same boundary behaving differently in each direction - and it
+        // kept the old room on screen while the fog was already closing over it. Every area
+        // change is a cut now, in both directions.
+        followCam.PreviousStateIsValid = false;
+        return true;
     }
 
     public void SuppressFollowCameraCenterOnActivateForFrames(int frameCount = 3)

@@ -43,7 +43,35 @@ public static class EncounterCameraOwnership
     private static CinemachineCamera camera;
 
     public static bool IsActive => owner != null && camera != null;
+
+    /// <summary>
+    /// The encounter whose camera is on screen, or null. RoomCameraTrigger reads this to keep
+    /// the active room in step with the picture: the brain override shows the boss room, so the
+    /// fog and enemy activity have to treat that room as the current one too.
+    /// </summary>
+    public static BossAreaController Owner => IsActive ? owner : null;
     public static bool IsOwner(BossAreaController candidate) => IsActive && owner == candidate;
+
+    /// <summary>
+    /// True while the picture is still easing in from the view the encounter interrupted.
+    /// False means the encounter camera is on screen at full weight - with a cut that is the
+    /// very first frame, so wherever the camera sits at that moment is what the player sees.
+    /// </summary>
+    public static bool HasEntryBlend
+    {
+        get
+        {
+            for (int i = 0; i < overrides.Count; i++)
+            {
+                if (overrides[i].From != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()

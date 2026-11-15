@@ -102,7 +102,33 @@ public sealed class FollowCameraFacingBias : MonoBehaviour
         directFollow.FollowOffset = followOffset;
     }
 
+    /// <summary>
+    /// Brings the look-ahead to its final value for this instant, with no smoothing, so the
+    /// follow camera can be cut to on a frame that is already correct.
+    ///
+    /// Clearing the smoothing fields alone was not enough, and that is why a lurch remained.
+    /// This component does not move the camera: it re-points the camera at a proxy transform
+    /// (<c>FollowCameraDownwardLookAheadTarget</c>) that it slides up to
+    /// <c>fallingLookAheadOffsetY</c> below the player, and it writes the composer's
+    /// <c>TargetOffset.x</c> for facing look-ahead. Both of those were still carrying the
+    /// previous room's values at the moment of the cut, and were only corrected in the next
+    /// Update - so the camera snapped onto a stale point and then slid up to 3 units
+    /// vertically and 2.25 horizontally.
+    /// </summary>
+    public void ResetSmoothing()
+    {
+        downwardCameraOffsetVelocity = 0f;
+        lastDescendingTime = float.NegativeInfinity;
+        wasLookingDown = false;
+        Apply(instant: true);
+    }
+
     private void Update()
+    {
+        Apply(instant: false);
+    }
+
+    private void Apply(bool instant)
     {
         if (!EnsureLookAheadTrackingTarget())
         {
@@ -150,14 +176,24 @@ public sealed class FollowCameraFacingBias : MonoBehaviour
         }
 
         float desiredDownwardCameraOffset = isFalling ? fallingLookAheadOffsetY : 0f;
-        currentDownwardCameraOffset = Mathf.SmoothDamp(
-            currentDownwardCameraOffset,
-            desiredDownwardCameraOffset,
-            ref downwardCameraOffsetVelocity,
-            verticalOffsetSmoothTime,
-            Mathf.Infinity,
-            Time.deltaTime);
+        if (instant)
+        {
+            currentDownwardCameraOffset = desiredDownwardCameraOffset;
+            downwardCameraOffsetVelocity = 0f;
+        }
+        else
+        {
+            currentDownwardCameraOffset = Mathf.SmoothDamp(
+                currentDownwardCameraOffset,
+                desiredDownwardCameraOffset,
+                ref downwardCameraOffsetVelocity,
+                verticalOffsetSmoothTime,
+                Mathf.Infinity,
+                Time.deltaTime);
+        }
 
+        // The proxy transform IS what the camera tracks, so it has to be moved here and not
+        // left for the next Update, or the cut lands on last frame's point.
         lookAheadTrackingTarget.localPosition =
             Vector3.down * currentDownwardCameraOffset;
 

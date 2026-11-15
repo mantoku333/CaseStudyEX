@@ -60,8 +60,18 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
     [SerializeField, Min(MinimumOverlaySortingOrder)] private int sortingOrder = 30000;
     [SerializeField] private float overlayZ = -1f;
 
-    [SerializeField, Min(0.01f)] private float revealDuration = 1.6f;
-    [SerializeField, Min(0.01f)] private float concealDuration = 1.8f;
+    // Paired with the camera transition. Room cameras now cut rather than pan, so a 1.6s
+    // reveal left the room you had just arrived in dark and the room you had left still
+    // fogged. These are the cut-matched values; if a scene goes back to a long camera blend,
+    // its fog has to lengthen with it.
+    [SerializeField, Min(0.01f)] private float revealDuration = 0.3f;
+    [SerializeField, Min(0.01f)] private float concealDuration = 0.35f;
+
+    [SerializeField, Tooltip(
+        "Show the room being entered as already clear instead of playing its reveal. Required " +
+        "while room cameras cut: with no camera motion to hide it, the reveal reads as a dark " +
+        "flash on every room change. The room left behind still conceals normally.")]
+    private bool revealInstantlyOnRoomChange = true;
     [SerializeField, Range(0f, 0.5f)] private float revealNoiseStrength = 0.18f;
     [SerializeField, Min(0f)] private float maskContinuityDuration = 0.15f;
 
@@ -189,6 +199,10 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         manager.fogEnabled = enabled;
         manager.RefreshForCurrentScene(true);
     }
+
+    /// <summary>The room the fog is currently showing. Read by the camera trace log only.</summary>
+    public static RoomCameraTrigger CurrentRoomForDiagnostics =>
+        instance != null ? instance.currentRoom : null;
 
     private static bool TryGetInstance(out RoomFogRevealManager manager)
     {
@@ -758,6 +772,18 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         float incomingRoomVisibility = restartEvenIfSame
             ? 0f
             : ResolveRoomVisibility(room, transitionTime);
+
+        // A room the player has not been in resolves to visibility 0, so entering it plays the
+        // full reveal from completely fogged. That was invisible while the camera took 2.4s to
+        // pan - the reveal happened behind the motion. Room cameras now cut, so there is no
+        // motion to hide it and the first frame of the new room is simply dark, once per room
+        // change. Treat the room being entered as already clear; the room left behind still
+        // conceals normally, so the effect is kept without the flash.
+        // An explicit RevealRoom() call (restartEvenIfSame) still plays the full animation.
+        if (revealInstantlyOnRoomChange && !restartEvenIfSame && previousRoom != room)
+        {
+            incomingRoomVisibility = 1f;
+        }
         bool preserveOutgoingField =
             previousRoom != null &&
             previousRoom == revealingRoom &&
@@ -829,6 +855,17 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
                 concealDuration,
                 concealProgress);
             concealComplete = concealDuration <= 0.01f;
+
+            // With a cut there is no camera motion for the closing fog to hide behind either.
+            // Room cameras show a couple of units past their own room, so the room just left
+            // stayed visible at the screen edge while its fog crawled shut, as noisy black
+            // patches over the new view. Close it in the same frame as the cut.
+            if (revealInstantlyOnRoomChange && !restartEvenIfSame && previousRoom != room)
+            {
+                concealComplete = true;
+                continuityRoom = null;
+                continuityActive = false;
+            }
         }
         else
         {
@@ -877,6 +914,27 @@ public sealed class RoomFogRevealManager : MonoBehaviour, ISaveDataModule
         }
 
         MarkAllMasksDirty();
+
+        // Paint in this frame rather than waiting for the next Update.
+        //
+        // The room changes in RoomCameraTrigger's LateUpdate, while this component's masks are
+        // painted in Update. So the frame that performs the camera cut was still rendering the
+        // previous frame's mask, which showed the room just entered as fully fogged - a one
+        // frame dark flash on every transition, independent of revealDuration.
+        FlushMasksNow();
+    }
+
+    /// <summary>
+    /// Repaints the masks immediately, using the same progress values Update would.
+    /// </summary>
+    private void FlushMasksNow()
+    {
+        if (!Application.isPlaying || !fogEnabled || !hasRooms)
+        {
+            return;
+        }
+
+        FlushDirtyMasks(ResolveRevealProgress(), ResolveConcealProgress());
     }
 
     private void RefreshTrackedRoomGeometry()

@@ -22,6 +22,16 @@ public sealed class RoomCameraPortal : MonoBehaviour
     [SerializeField] private RoomCameraTrigger roomB;
 
     [Header("Transition Camera")]
+    [SerializeField, Tooltip(
+        "Drive a separate preview camera across the gap between the two rooms.\n\n" +
+        "This existed to disguise a 2.4 second room blend. With a cut transition it is actively " +
+        "harmful: the preview camera outranks both rooms at priority 30, so the view cuts to it, " +
+        "slides for smoothTime, then cuts again - two jolts per crossing.\n\n" +
+        "Off by default. The portal still does its real job, which is to mark where the cut " +
+        "happens: these colliders sit in doorways, a median of 6 units away from the geometric " +
+        "room boundary, and that placement is hand-authored.")]
+    private bool useTransitionCamera;
+
     [SerializeField] private CinemachineCamera transitionCamera;
     [SerializeField] private int transitionPriority = 30;
     [SerializeField, Range(0f, 1f)] private float targetRoomWeight = 0.45f;
@@ -182,6 +192,17 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
     private void StartTransitionCamera(Vector3 playerPosition)
     {
+        // Every caller ends up here, including the one in HandlePlayerEntered that runs before
+        // the per-frame check. Left unguarded, that call raised the preview camera to priority
+        // 30 with nothing moving it: the view froze on the old room until the player left the
+        // portal, while the active room and its fog had already changed. In the trace log that
+        // is every "room != picture" span, from one frame at a doorway to three seconds on the
+        // climb between Col_202 and Col_203.
+        if (!useTransitionCamera)
+        {
+            return;
+        }
+
         if (pendingFromRoom == null || pendingToRoom == null)
         {
             return;
@@ -228,6 +249,14 @@ public sealed class RoomCameraPortal : MonoBehaviour
                 StopTransitionCamera();
             }
 
+            return;
+        }
+
+        if (!useTransitionCamera)
+        {
+            // Mark the cut point only: no preview camera, no pose interpolation.
+            // The room change still happens here, at the authored doorway.
+            TryCommitFullyEnteredRoom();
             return;
         }
 
@@ -719,6 +748,13 @@ public sealed class RoomCameraPortal : MonoBehaviour
 
     private void AlignDefaultFollowCameraBeforeCommit(RoomCameraTrigger finalRoom)
     {
+        // Copies the preview camera's pose onto the follow camera. Without a preview there is
+        // no pose to hand over, only wherever that shared camera was last left.
+        if (!useTransitionCamera)
+        {
+            return;
+        }
+
         if (finalRoom == null || !finalRoom.UsesDefaultCameraWhenEntered)
         {
             return;

@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FixScenes/Fix_0925_NYAA.unity
     guid: 1bcf1248714e844049100dfa19dab6ee
+  - enabled: 1
+    path: Assets/Scenes/FixScenes/Fix_1115_CameraRework.unity
+    guid: 5e4ec46a5e834519a001526c7cb6ff4c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

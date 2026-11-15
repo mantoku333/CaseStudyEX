@@ -2244,6 +2244,16 @@ public sealed class StoryEventController : MonoBehaviour
             return;
         }
 
+        // Start from what is on screen, not from a virtual camera's transform. Extensions such as
+        // the room clamp move the rendered view without moving that transform, so aligning to it
+        // made the picture jump at the first frame of an event (and show outside the room).
+        Camera renderedCamera = Camera.main;
+        if (renderedCamera != null && renderedCamera.orthographic)
+        {
+            ApplyCameraPose(targetCamera, renderedCamera.transform.position, renderedCamera.orthographicSize);
+            return;
+        }
+
         CinemachineCamera currentCamera = FindHighestPriorityCameraExcept(targetCamera);
         if (currentCamera == null)
         {
@@ -2521,6 +2531,19 @@ public sealed class StoryEventController : MonoBehaviour
         // 通常カメラの部屋でも追従カメラの姿勢を取得し、イベントカメラの復帰先にする。
         position = roomPosition;
         orthographicSize = roomOrthographicSize;
+
+        // 追従カメラの部屋では、実際に落ち着く姿勢（プレイヤー基準＋部屋のクランプ）を復帰先にする。
+        // transform から読んだ姿勢はクランプ前かつ非アクティブ中は古いので、そこへ補間すると
+        // 受け渡しの瞬間にもう一度画面が飛ぶ。
+        if (targetUsesDefaultCamera &&
+            CameraManager.Instance != null &&
+            CameraManager.Instance.TryPredictFollowCameraPose(
+                targetRoom, out Vector3 predictedPosition, out float predictedOrthographicSize))
+        {
+            position = predictedPosition;
+            orthographicSize = predictedOrthographicSize;
+        }
+
         return true;
     }
 

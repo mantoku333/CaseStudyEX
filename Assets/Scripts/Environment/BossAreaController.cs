@@ -126,6 +126,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
     private bool encounterCompletionFinished;
     private Vector3? cameraViewBeforeOwnership;
     private int cameraOwnershipAcquiredFrame = -1;
+    private bool bossCameraFramedAtOwnership;
 
     public int Priority => 240;
     public string BossDisplayName => ResolveBossDisplayName();
@@ -1995,6 +1996,22 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         cameraOwnershipAcquiredFrame = Time.frameCount;
         cameraOwnershipPlayerHealth = health;
         cameraOwnershipPlayerHealth.Died += OnCameraOwnershipPlayerDied;
+
+        // Ownership starts on body overlap, combat a moment later once the player is fully
+        // inside, and the boss camera was only aimed at that second step. With a blend the gap
+        // is invisible: the old view is still most of the picture. With a cut the camera is on
+        // screen from this frame, so for those 0.3 seconds it showed its resting pose - a part
+        // of the arena without the player in it - and then jumped (9.7 x 8.8 units in Col_221).
+        // Aim it now instead, so the cut lands on the framing.
+        if (!EncounterCameraOwnership.HasEntryBlend)
+        {
+            ConfigureDualTargetCamera();
+            if (dualTargetCameraTarget != null)
+            {
+                dualTargetCameraTarget.SnapToFraming();
+                bossCameraFramedAtOwnership = true;
+            }
+        }
     }
 
     private void OnCameraOwnershipPlayerDied()
@@ -2011,6 +2028,7 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
         cameraOwnershipPlayerHealth = null;
         cameraViewBeforeOwnership = null;
         cameraOwnershipAcquiredFrame = -1;
+        bossCameraFramedAtOwnership = false;
 
         if (!EncounterCameraOwnership.Release(this))
         {
@@ -2112,7 +2130,13 @@ public sealed class BossAreaController : MonoBehaviour, ISaveDataModule
                                cameraOwnershipAcquiredFrame < Time.frameCount
             ? cameraViewBeforeOwnership
             : null;
-        dualTargetCameraTarget.Configure(primary, secondary, fixedBossCamera, GetComponent<Collider2D>(), initialView);
+        dualTargetCameraTarget.Configure(
+            primary,
+            secondary,
+            fixedBossCamera,
+            GetComponent<Collider2D>(),
+            initialView,
+            keepCurrentPosition: bossCameraFramedAtOwnership);
     }
 
     private Transform ResolvePlayerRoot()

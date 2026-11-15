@@ -7,6 +7,12 @@ using Unity.Cinemachine;
 /// Room camera endpoint. Portals and gates call ActivateCamera at transitions;
 /// this component also validates the active room against the player's position.
 /// </summary>
+// The room is resolved in LateUpdate, and so is CinemachineBrain's blend. CinemachineBrain
+// declares no execution order, so without one here the two ran in an undefined order: when the
+// brain went first, it rendered a frame with the previous room's camera even though the player
+// had already changed rooms - a one frame hitch on every transition. A negative order puts the
+// room decision reliably before the brain reads priorities.
+[DefaultExecutionOrder(-50)]
 public class RoomCameraTrigger : MonoBehaviour
 {
     private const string DefaultPlayerTag = "Player";
@@ -14,10 +20,34 @@ public class RoomCameraTrigger : MonoBehaviour
     private static RoomCameraTrigger _activeTrigger;
     private static readonly List<RoomCameraTrigger> _registeredTriggers = new();
     private static int lastActiveRoomValidationFrame = -1;
+    private static float lastActiveRoomChangeTime = float.NegativeInfinity;
+    private static RoomCameraTrigger lastLeftRoom;
     private static MonoBehaviour portalCameraOwner;
     private static RoomCameraTrigger portalCameraDestination;
+    private static BossAreaController encounterRoomOwner;
+    private static RoomCameraTrigger encounterRoom;
+    private static bool encounterPublishedRoom;
 
     public static event Action<RoomCameraTrigger> ActiveRoomChanged;
+
+    // Static state here outlives a scene load. It is reset explicitly because the project may
+    // disable domain reload on entering play mode, which would otherwise carry a destroyed
+    // trigger and a stale portal hold into the next run.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        _activeTrigger = null;
+        _registeredTriggers.Clear();
+        lastActiveRoomValidationFrame = -1;
+        lastActiveRoomChangeTime = float.NegativeInfinity;
+        lastLeftRoom = null;
+        portalCameraOwner = null;
+        portalCameraDestination = null;
+        encounterRoomOwner = null;
+        encounterRoom = null;
+        encounterPublishedRoom = false;
+        ActiveRoomChanged = null;
+    }
 
     [Header("Camera Settings")]
     [SerializeField]
@@ -61,6 +91,14 @@ public class RoomCameraTrigger : MonoBehaviour
     [SerializeField]
     private bool _clampHorizontalFollowXToArea = true;
 
+    [SerializeField, Tooltip(
+        "Optional. Clamp and vertical centring use this shape instead of this room's own area.\n\n" +
+        "Give a run of adjoining rooms the same horizontal follow camera and the same shape here " +
+        "and the camera stops changing between them: it simply keeps following the player across " +
+        "the whole run. That is the only way to remove the jolt at a seam, because any transition " +
+        "between two cameras 38 units apart either whips or drifts.")]
+    private Collider2D _horizontalFollowClampBounds;
+
     [SerializeField, Min(0f)]
     private float _horizontalFollowSmoothTime = 0.15f;
 
@@ -86,6 +124,29 @@ public class RoomCameraTrigger : MonoBehaviour
     [SerializeField, Min(0f)]
     private float _maxDefaultCameraPreviewSize = 12f;
 
+    [Header("Room Switching Feel")]
+    [SerializeField, Min(0f), Tooltip(
+        "How far past this room's edge the player must go before the room is released. " +
+        "Stops the view flipping while walking along a shared boundary.")]
+    private float _roomExitMargin = 0.25f;
+
+    [SerializeField, Min(0f), Tooltip(
+        "How far inside a room the player must be before it takes the camera. " +
+        "Scaled down automatically for rooms too thin to reach it.")]
+    private float _roomEnterDepth = 0.25f;
+
+    [SerializeField, Min(0f), Tooltip(
+        "How far back inside the room just left the player must go before the camera returns " +
+        "to it. This is the only place a deep threshold belongs: a static room camera shows just " +
+        "about 2 units beyond its room, so a deep threshold on the way IN leaves the player off " +
+        "screen until the switch. Going in is prompt; only turning straight back is resisted.")]
+    private float _roomReturnDepth = 0.25f;
+
+    [SerializeField, Min(0f), Tooltip(
+        "How long a return to the room just left is resisted, so repeated crossings cannot " +
+        "strobe the view. Moving on to a different room is never delayed by this.")]
+    private float _roomMinHoldSeconds = 0f;
+
     [Header("Area Bounds")]
     [SerializeField]
     private Collider2D[] _areaColliders2D;
@@ -101,6 +162,32 @@ public class RoomCameraTrigger : MonoBehaviour
     private float horizontalFollowVelocityX;
 
     public static RoomCameraTrigger ActiveRoom => _activeTrigger;
+
+    /// <summary>
+    /// Set by <see cref="RoomCameraDirector"/> while it owns the camera.
+    ///
+    /// This component is not only a camera trigger: <c>RoomFogRevealManager</c>,
+    /// <c>RoomEnemyActivityManager</c> and <c>StoryEventController</c> all use it as the room
+    /// identity and listen to <see cref="ActiveRoomChanged"/>. So it has to stay on every room
+    /// even after the director takes over the camera, or fog, enemy sleep/wake and story-event
+    /// room restore all break. This flag silences only the camera-driving half of the component.
+    /// </summary>
+    public static bool ExternalCameraAuthority { get; set; }
+
+    /// <summary>
+    /// Lets the director publish the active room without touching camera priorities, so the
+    /// systems that key off <see cref="ActiveRoomChanged"/> keep working unchanged.
+    /// </summary>
+    public static void SetActiveRoomExternally(RoomCameraTrigger room)
+    {
+        if (_activeTrigger == room)
+        {
+            return;
+        }
+
+        _activeTrigger = room;
+        NotifyActiveRoomChanged();
+    }
     public bool UsesDefaultCameraWhenEntered => IsDefaultTrigger;
     public bool HasAssignedRoomCamera => HasRoomCamera;
     public bool UsesHorizontalFollowCameraWhenEntered => IsHorizontalFollowTrigger;
@@ -219,10 +306,29 @@ public class RoomCameraTrigger : MonoBehaviour
         return room != null;
     }
 
+    /// <summary>
+    /// Only an explicit teleport may force a room. The walk-through portals used to as well,
+    /// which made two things decide the active room with different thresholds: the portal
+    /// committed as soon as the player was inside the next room, and again by "portal side" on
+    /// leaving its collider, while the per-frame validation applied its own depth rule. The
+    /// recording of this scene shows the result as cuts 0.17s apart (133.33s -> 133.63s,
+    /// 134.40s -> 134.57s). Those portals sit on the room boundary anyway - a median of 0.32
+    /// units from it horizontally - so the validation switches at the same place.
+    /// </summary>
+    private static bool MayDriveCamera(MonoBehaviour portalOwner)
+    {
+        return portalOwner is RoomCameraSwitchPortal;
+    }
+
     public static bool HoldCameraForPortal(
         MonoBehaviour portalOwner,
         RoomCameraTrigger destinationRoom)
     {
+        if (!MayDriveCamera(portalOwner))
+        {
+            return false;
+        }
+
         if (EncounterCameraOwnership.IsActive || portalOwner == null ||
             destinationRoom == null ||
             !destinationRoom.isActiveAndEnabled ||
@@ -252,6 +358,11 @@ public class RoomCameraTrigger : MonoBehaviour
         MonoBehaviour portalOwner,
         RoomCameraTrigger finalRoom)
     {
+        if (!MayDriveCamera(portalOwner))
+        {
+            return false;
+        }
+
         if (EncounterCameraOwnership.IsActive || portalOwner == null ||
             (portalCameraOwner != null && portalCameraOwner != portalOwner))
         {
@@ -377,6 +488,15 @@ public class RoomCameraTrigger : MonoBehaviour
 
     public void ActivateCamera()
     {
+        // Under the director, priorities are not this component's to set. Callers such as
+        // WarpArea2D and StoryEventController still invoke this after moving the player; the
+        // director resolves the room from the player's position on its next LateUpdate, so the
+        // request is satisfied without two things writing priorities.
+        if (ExternalCameraAuthority)
+        {
+            return;
+        }
+
         if (EncounterCameraOwnership.IsActive)
         {
             return;
@@ -414,6 +534,43 @@ public class RoomCameraTrigger : MonoBehaviour
 
         _roomCamera.Priority.Value = _activePriority;
         _roomCamera.Priority.Enabled = true;
+        FlushCameraPriorities();
+    }
+
+    /// <summary>
+    /// Makes CinemachineBrain act on the priorities just written, in this frame.
+    ///
+    /// Cinemachine only notices a changed priority in each camera's own Update(), so a change
+    /// made here in LateUpdate is not seen by the brain until the next frame. The fog, on the
+    /// other hand, switches to the new room immediately. For that one frame the screen showed
+    /// the old camera with the new room's fog over it - a fully black frame on every cut.
+    /// Prioritize() forces the re-sort now, so the camera and the fog change together.
+    /// </summary>
+    private static void FlushCameraPriorities()
+    {
+        for (int i = _registeredTriggers.Count - 1; i >= 0; i--)
+        {
+            RoomCameraTrigger trigger = _registeredTriggers[i];
+            if (trigger == null)
+            {
+                continue;
+            }
+
+            if (trigger._roomCamera != null)
+            {
+                trigger._roomCamera.Prioritize();
+            }
+
+            if (trigger._horizontalFollowCamera != null)
+            {
+                trigger._horizontalFollowCamera.Prioritize();
+            }
+        }
+
+        if (CameraManager.Instance != null)
+        {
+            CameraManager.Instance.PrioritizeFollowCameras();
+        }
     }
 
     public void DeactivateCamera()
@@ -498,6 +655,16 @@ public class RoomCameraTrigger : MonoBehaviour
             return;
         }
 
+        // Moving into another room of the same camera run must not restart the follow.
+        // The camera object does not change, so Cinemachine sees no transition at all; if the
+        // smoothing velocity were zeroed here the motion would stall for a moment at every
+        // internal seam, which is the jolt this run setup exists to remove.
+        RoomCameraTrigger previous = _activeTrigger;
+        bool continuesSameCamera =
+            previous != null &&
+            previous != this &&
+            previous._horizontalFollowCamera == _horizontalFollowCamera;
+
         DeactivateAllRoomCamerasExcept(this);
 
         if (_activeTrigger != this)
@@ -506,12 +673,25 @@ public class RoomCameraTrigger : MonoBehaviour
             NotifyActiveRoomChanged();
         }
 
-        horizontalFollowVelocityX = 0f;
-        _horizontalFollowCamera.Follow = null;
-        _horizontalFollowCamera.Target.TrackingTarget = null;
+        if (continuesSameCamera)
+        {
+            horizontalFollowVelocityX = previous.horizontalFollowVelocityX;
+            if (previous.horizontalFollowPlayer != null)
+            {
+                horizontalFollowPlayer = previous.horizontalFollowPlayer;
+            }
+        }
+        else
+        {
+            horizontalFollowVelocityX = 0f;
+            _horizontalFollowCamera.Follow = null;
+            _horizontalFollowCamera.Target.TrackingTarget = null;
+        }
+
         UpdateHorizontalFollowCamera();
         _horizontalFollowCamera.Priority.Value = _activePriority;
         _horizontalFollowCamera.Priority.Enabled = true;
+        FlushCameraPriorities();
     }
 
     private void UpdateHorizontalFollowTarget()
@@ -541,7 +721,7 @@ public class RoomCameraTrigger : MonoBehaviour
 
         targetPosition.y = ResolveHorizontalFollowY();
 
-        if (_clampHorizontalFollowXToArea && TryGetAreaBounds(out Bounds bounds))
+        if (_clampHorizontalFollowXToArea && TryGetHorizontalFollowBounds(out Bounds bounds))
         {
             float halfWidth = ResolveCameraHalfWidth(_horizontalFollowCamera);
             float minX = bounds.min.x + halfWidth;
@@ -567,6 +747,38 @@ public class RoomCameraTrigger : MonoBehaviour
         _horizontalFollowCamera.transform.position = currentPosition;
     }
 
+    /// <summary>
+    /// Bounds the horizontal follow clamps against: the run shape when one is assigned,
+    /// otherwise this room's own area.
+    /// </summary>
+    private bool TryGetHorizontalFollowBounds(out Bounds bounds)
+    {
+        if (_horizontalFollowClampBounds != null)
+        {
+            // A run shape is a shape, not a physics body, so it is kept disabled - and a
+            // disabled Collider2D reports empty bounds. Read the box dimensions directly.
+            if (_horizontalFollowClampBounds is BoxCollider2D box)
+            {
+                Transform host = box.transform;
+                Vector3 scale = host.lossyScale;
+                Vector2 size = new Vector2(
+                    Mathf.Abs(box.size.x * scale.x),
+                    Mathf.Abs(box.size.y * scale.y));
+                Vector3 center = host.TransformPoint(box.offset);
+                bounds = new Bounds(center, new Vector3(size.x, size.y, 0f));
+                return true;
+            }
+
+            if (_horizontalFollowClampBounds.enabled)
+            {
+                bounds = _horizontalFollowClampBounds.bounds;
+                return true;
+            }
+        }
+
+        return TryGetAreaBounds(out bounds);
+    }
+
     private float ResolveHorizontalFollowY()
     {
         if (_useManualYForHorizontalFollow)
@@ -574,7 +786,7 @@ public class RoomCameraTrigger : MonoBehaviour
             return _horizontalFollowFixedY;
         }
 
-        if (TryGetAreaBounds(out Bounds bounds))
+        if (TryGetHorizontalFollowBounds(out Bounds bounds))
         {
             return bounds.center.y;
         }
@@ -622,6 +834,7 @@ public class RoomCameraTrigger : MonoBehaviour
 
         DeactivateAllRoomCamerasExcept(defaultTrigger);
         ActivateDefaultFollowCamera(defaultTrigger);
+        FlushCameraPriorities();
 
         if (_activeTrigger == defaultTrigger)
         {
@@ -630,12 +843,14 @@ public class RoomCameraTrigger : MonoBehaviour
 
         _activeTrigger = defaultTrigger;
         NotifyActiveRoomChanged();
+        RefreshFollowCameraState();
     }
 
     private static void ReleaseToGlobalDefaultFollowCamera()
     {
         DeactivateAllRoomCamerasExcept(null);
         ActivateDefaultFollowCamera(null);
+        FlushCameraPriorities();
 
         if (_activeTrigger == null)
         {
@@ -644,6 +859,19 @@ public class RoomCameraTrigger : MonoBehaviour
 
         _activeTrigger = null;
         NotifyActiveRoomChanged();
+        RefreshFollowCameraState();
+    }
+
+    /// <summary>
+    /// Called after the new room has been announced, so the follow camera's limits are already
+    /// the new room's when its pose is recomputed. See CameraManager.RefreshFollowCameraStateNow.
+    /// </summary>
+    private static void RefreshFollowCameraState()
+    {
+        if (CameraManager.Instance != null)
+        {
+            CameraManager.Instance.RefreshFollowCameraStateNow();
+        }
     }
 
     private static void ActivateDefaultFollowCamera(RoomCameraTrigger defaultTrigger)
@@ -655,11 +883,24 @@ public class RoomCameraTrigger : MonoBehaviour
             return;
         }
 
-        if (CameraManager.Instance != null &&
-            CameraManager.Instance.SwitchToFollowCamera())
+        if (CameraManager.Instance != null)
         {
+            // Order matters. Raising the priority first makes the brain cut to the follow
+            // camera's stale pose and old lens, and only then does the room's zoom and offset
+            // get written and the body damp into place - the lurch you see entering a
+            // free-camera area. Set the framing first, then hand over the priority.
+            //
+            // PrepareFollowCameraEntry also gives the camera the view it is replacing, so the
+            // player keeps its place on screen across the cut instead of jumping to the follow
+            // camera's composition. It is a no-op when the follow camera is already live, which
+            // is what keeps movement between two adjoining free-camera rooms completely still.
             defaultTrigger?.ApplyDefaultFollowCameraOverrides();
-            return;
+            CameraManager.Instance.PrepareFollowCameraEntry();
+
+            if (CameraManager.Instance.SwitchToFollowCamera())
+            {
+                return;
+            }
         }
 
         CinemachineCamera followCamera = null;
@@ -742,9 +983,30 @@ public class RoomCameraTrigger : MonoBehaviour
 
     private static void ValidateActiveRoomAgainstPlayer()
     {
-        if (EncounterCameraOwnership.IsActive)
+        // RoomCameraDirector owns the camera; this component is then only the room identity
+        // that fog, enemy activity and story events read.
+        if (ExternalCameraAuthority)
         {
             return;
+        }
+
+        if (EncounterCameraOwnership.IsActive)
+        {
+            PublishEncounterRoom();
+            return;
+        }
+
+        if (encounterPublishedRoom)
+        {
+            // The encounter only named the room; it never set camera priorities, and it can end
+            // without restoring the room camera (player death, load). Re-assert the room once so
+            // the camera that takes over belongs to the room the fog is showing.
+            encounterPublishedRoom = false;
+            RoomCameraTrigger room = _activeTrigger;
+            if (room != null && room.isActiveAndEnabled)
+            {
+                room.ActivateCamera();
+            }
         }
 
         if (lastActiveRoomValidationFrame == Time.frameCount)
@@ -764,24 +1026,203 @@ public class RoomCameraTrigger : MonoBehaviour
         }
 
         RoomCameraTrigger activeTrigger = _activeTrigger;
-        if (activeTrigger != null &&
-            activeTrigger.isActiveAndEnabled &&
-            activeTrigger.ContainsPoint(playerPosition))
+        bool hasActive = activeTrigger != null && activeTrigger.isActiveAndEnabled;
+
+        // Hold the current room until the player is clearly out of it.
+        //
+        // Without the margin, the room changed the instant the camera point crossed a collider
+        // edge. Neighbouring rooms here share their edges, so the flip band was effectively zero
+        // width: walking back and forth over a seam swapped the view every few frames, and each
+        // swap moves it about 38 units. That is the "switches too much" and "switches too early"
+        // problem. This only affects the per-frame validation; an explicit
+        // TryActivateRoomAtPosition (warp, story event, boss intro) still snaps immediately.
+        if (hasActive)
         {
-            return;
+            float exitMargin = Mathf.Max(0f, activeTrigger._roomExitMargin);
+            if (activeTrigger.ContainsPoint(playerPosition) ||
+                activeTrigger.GetDepthInside(playerPosition) > -exitMargin)
+            {
+                return;
+            }
         }
 
-        if (TryGetRoomAtPosition(playerPosition, out RoomCameraTrigger containingRoom))
+        RoomCameraTrigger containingRoom = hasActive
+            ? FindDeepestRoomContaining(
+                playerPosition,
+                activeTrigger._roomEnterDepth,
+                lastLeftRoom,
+                activeTrigger._roomReturnDepth)
+            : FindDeepestRoomContaining(playerPosition, 0f, null, 0f);
+
+        if (containingRoom != null)
         {
             if (containingRoom != activeTrigger)
             {
+                // Resist only going straight back to the room we just left. A blanket time lock
+                // would also delay legitimate fast transits: the player falls under gravity
+                // scale 2, so a vertical room crossing reaches about 28 units/second against
+                // 7 while running, and holding for 0.3s there would leave the camera roughly
+                // 8 units behind - a third of the way into the new room. Oscillation is always
+                // a return to the previous room, so that is the only case worth throttling.
+                float minHold = Mathf.Max(0f, activeTrigger != null ? activeTrigger._roomMinHoldSeconds : 0f);
+                if (hasActive &&
+                    containingRoom == lastLeftRoom &&
+                    Time.unscaledTime - lastActiveRoomChangeTime < minHold)
+                {
+                    return;
+                }
+
+                lastLeftRoom = activeTrigger;
                 containingRoom.ActivateCamera();
+                lastActiveRoomChangeTime = Time.unscaledTime;
             }
 
             return;
         }
 
+        // The player is inside no room at all. Room colliders in this scene do not tile
+        // perfectly, and dropping to the follow camera in those seams produced a visible snap
+        // out and straight back, so the last room is kept instead.
+        if (hasActive)
+        {
+            return;
+        }
+
         ReleaseToGlobalDefaultFollowCamera();
+    }
+
+    /// <summary>
+    /// While a boss encounter owns the camera, the room on screen is the boss room, so that is
+    /// the active room.
+    ///
+    /// The encounter takes the camera the moment the player's body touches the boss area, and
+    /// room validation is frozen from then on. The room itself only becomes active once the
+    /// player is a quarter unit inside, so the freeze always won: the picture cut to the boss
+    /// room while the active room stayed the corridor, and the fog kept the whole boss room
+    /// black for the entire fight. Only the room identity is published here - the encounter's
+    /// brain override already decides the picture, so priorities are left alone.
+    /// </summary>
+    private static void PublishEncounterRoom()
+    {
+        BossAreaController encounter = EncounterCameraOwnership.Owner;
+        if (encounter == null)
+        {
+            return;
+        }
+
+        if (encounterRoomOwner != encounter)
+        {
+            encounterRoomOwner = encounter;
+            encounterRoom = ResolveEncounterRoom(encounter);
+        }
+
+        RoomCameraTrigger room = encounterRoom;
+        if (room == null || !room.isActiveAndEnabled || _activeTrigger == room)
+        {
+            return;
+        }
+
+        lastLeftRoom = _activeTrigger;
+        _activeTrigger = room;
+        lastActiveRoomChangeTime = Time.unscaledTime;
+        encounterPublishedRoom = true;
+        NotifyActiveRoomChanged();
+    }
+
+    /// <summary>
+    /// The room a boss encounter takes place in.
+    ///
+    /// Only some arenas are the room object itself (Col_221, Col_324). The BossArea prefab is a
+    /// separate object dropped inside a room - the first boss sits inside Col_109 that way - so
+    /// it has no RoomCameraTrigger of its own and the room has to be found from where the arena
+    /// is. Looking on the same object only left that fight fogged from start to finish.
+    /// </summary>
+    private static RoomCameraTrigger ResolveEncounterRoom(BossAreaController encounter)
+    {
+        RoomCameraTrigger room = encounter.GetComponent<RoomCameraTrigger>();
+        if (room != null)
+        {
+            return room;
+        }
+
+        Collider2D area = encounter.GetComponent<Collider2D>();
+        Vector3 centre = area != null ? area.bounds.center : encounter.transform.position;
+        return FindDeepestRoomContaining(centre, 0f, null, 0f);
+    }
+
+    /// <summary>
+    /// Distance from the point to the nearest edge of this room. Positive inside, negative out.
+    /// </summary>
+    public float GetDepthInside(Vector3 worldPosition)
+    {
+        if (!TryGetAreaBounds(out Bounds bounds))
+        {
+            return float.NegativeInfinity;
+        }
+
+        float dx = Mathf.Min(worldPosition.x - bounds.min.x, bounds.max.x - worldPosition.x);
+        float dy = Mathf.Min(worldPosition.y - bounds.min.y, bounds.max.y - worldPosition.y);
+        return Mathf.Min(dx, dy);
+    }
+
+    /// <summary>
+    /// Deepest-inside room containing the point, requiring at least <paramref name="requiredDepth"/>
+    /// of penetration before a room qualifies.
+    ///
+    /// Replaces smallest-area selection for the per-frame validation. Area was a poor rule here:
+    /// Col_212 and Col_213 differ by one square unit, so which room won was effectively arbitrary
+    /// and unrelated to the direction the player came from.
+    /// </summary>
+    private static RoomCameraTrigger FindDeepestRoomContaining(
+        Vector3 worldPosition,
+        float requiredDepth,
+        RoomCameraTrigger returnRoom,
+        float returnDepth)
+    {
+        RoomCameraTrigger best = null;
+        float bestDepth = float.NegativeInfinity;
+
+        for (int i = _registeredTriggers.Count - 1; i >= 0; i--)
+        {
+            RoomCameraTrigger trigger = _registeredTriggers[i];
+            if (trigger == null)
+            {
+                _registeredTriggers.RemoveAt(i);
+                continue;
+            }
+
+            if (!trigger.isActiveAndEnabled ||
+                !trigger.CanControlCamera() ||
+                !trigger.ContainsPoint(worldPosition))
+            {
+                continue;
+            }
+
+            float depth = trigger.GetDepthInside(worldPosition);
+
+            // A room thinner than twice the requirement can never reach it, so scale the
+            // requirement to what that room can actually offer.
+            float required = trigger == returnRoom
+                ? Mathf.Max(requiredDepth, returnDepth)
+                : requiredDepth;
+            if (required > 0f && trigger.TryGetAreaBounds(out Bounds bounds))
+            {
+                required = Mathf.Min(required, Mathf.Min(bounds.extents.x, bounds.extents.y) * 0.5f);
+            }
+
+            if (depth < required)
+            {
+                continue;
+            }
+
+            if (depth > bestDepth)
+            {
+                bestDepth = depth;
+                best = trigger;
+            }
+        }
+
+        return best;
     }
 
     private bool CanControlCamera()

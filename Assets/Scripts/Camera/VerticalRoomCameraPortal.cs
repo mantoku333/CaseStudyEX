@@ -30,6 +30,12 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
     [SerializeField] private RoomCameraTrigger lowerRoom;
 
     [Header("Transition Camera")]
+    [SerializeField, Tooltip(
+        "Drive a separate preview camera between the two rooms. Off by default: it existed to " +
+        "disguise a long room blend, and with a cut transition it adds two jolts per crossing. " +
+        "The portal's authored position is still used as the cut point.")]
+    private bool useTransitionCamera;
+
     [SerializeField] private CinemachineCamera transitionCamera;
     [SerializeField] private int transitionPriority = 30;
     [SerializeField] private PortalDirection direction = PortalDirection.Bidirectional;
@@ -201,6 +207,17 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private void StartTransitionCamera(Vector3 playerPosition)
     {
+        // Every caller ends up here, including the one in HandlePlayerEntered that runs before
+        // the per-frame check. Left unguarded, that call raised the preview camera to priority
+        // 30 with nothing moving it: the view froze on the old room until the player left the
+        // portal, while the active room and its fog had already changed. In the trace log that
+        // is every "room != picture" span, from one frame at a doorway to three seconds on the
+        // climb between Col_202 and Col_203.
+        if (!useTransitionCamera)
+        {
+            return;
+        }
+
         if (pendingFromRoom == null || pendingToRoom == null)
         {
             return;
@@ -246,6 +263,13 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
                 StopTransitionCamera();
             }
 
+            return;
+        }
+
+        if (!useTransitionCamera)
+        {
+            // Mark the cut point only: no preview camera, no pose interpolation.
+            TryCommitFullyEnteredTargetRoom();
             return;
         }
 
@@ -626,6 +650,13 @@ public sealed class VerticalRoomCameraPortal : MonoBehaviour
 
     private void AlignDefaultFollowCameraBeforeCommit(RoomCameraTrigger finalRoom)
     {
+        // Copies the preview camera's pose onto the follow camera. Without a preview there is
+        // no pose to hand over, only wherever that shared camera was last left.
+        if (!useTransitionCamera)
+        {
+            return;
+        }
+
         if (finalRoom == null || !finalRoom.UsesDefaultCameraWhenEntered)
         {
             return;
