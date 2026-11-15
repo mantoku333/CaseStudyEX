@@ -49,7 +49,8 @@ public sealed class DualTargetCameraTarget : MonoBehaviour
         Transform secondary,
         CinemachineCamera camera = null,
         Collider2D bounds2D = null,
-        Vector3? initialViewPosition = null)
+        Vector3? initialViewPosition = null,
+        bool keepCurrentPosition = false)
     {
         primaryTarget = primary;
         secondaryTarget = secondary;
@@ -65,9 +66,23 @@ public sealed class DualTargetCameraTarget : MonoBehaviour
         }
 
         CacheRuntimeZoomLimits();
-        MoveToCurrentMainCameraPosition(initialViewPosition);
+        if (!keepCurrentPosition)
+        {
+            MoveToCurrentMainCameraPosition(initialViewPosition);
+            positionVelocity = Vector3.zero;
+        }
+
         ApplyCameraTarget();
-        positionVelocity = Vector3.zero;
+    }
+
+    /// <summary>
+    /// Puts the target where the easing would end up, in this frame. For a camera that comes
+    /// on screen with a cut: there is no previous picture to ease away from, so starting at
+    /// the old view only shows a framing that has neither target in it.
+    /// </summary>
+    public void SnapToFraming()
+    {
+        SnapToDesiredPosition();
     }
 
     private void OnEnable()

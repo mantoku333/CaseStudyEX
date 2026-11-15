@@ -57,8 +57,9 @@ MonoBehaviour:
   noiseScale: 0.32
   sortingOrder: 30000
   overlayZ: -1
-  revealDuration: 1.6
-  concealDuration: 1.8
+  revealDuration: 0.3
+  concealDuration: 0.35
+  revealInstantlyOnRoomChange: 1
   revealNoiseStrength: 0.18
   maskContinuityDuration: 0.15
   revealPortalEntrances: 1
